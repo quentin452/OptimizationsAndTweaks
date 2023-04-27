@@ -1,5 +1,7 @@
 package fr.iamacat.multithreading;
 
+import java.io.File;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -10,8 +12,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.multithreading.proxy.CommonProxy;
 import fr.iamacat.multithreading.utils.Reference;
-
-import java.io.File;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Reference.MC_VERSION)
 
@@ -59,25 +59,21 @@ public class Multithreaded {
         config.load();
 
         // Read the values from the configuration file
-        boolean MixinEntitySpawning = config.getBoolean(
-            "MixinEntitySpawning",
-            categoryMixins,
-            true,
-            "Enable multithreaded mob spawning");
+        boolean MixinEntitySpawning = config
+            .getBoolean("MixinEntitySpawning", categoryMixins, true, "Enable multithreaded mob spawning");
         /*
-        int someIntValue = config.getInt(
-            "SomeIntValue",
-            categoryOptimizations,
-            42,
-            0,
-            100,
-            "This is a comment for the integer value");
-        String someStringValue = config.getString(
-            "SomeStringValue",
-            categoryTweaks,
-            "default value",
-            "This is a comment for the string value");
-
+         * int someIntValue = config.getInt(
+         * "SomeIntValue",
+         * categoryOptimizations,
+         * 42,
+         * 0,
+         * 100,
+         * "This is a comment for the integer value");
+         * String someStringValue = config.getString(
+         * "SomeStringValue",
+         * categoryTweaks,
+         * "default value",
+         * "This is a comment for the string value");
          */
 
         // Save the updated configuration file
