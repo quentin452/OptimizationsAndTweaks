@@ -13,10 +13,7 @@ import fr.iamacat.multithreading.utils.Reference;
         @Mod(modid = Tags.MODID,
         version = Tags.VERSION,
         name = Tags.MODNAME,
-        acceptedMinecraftVersions = "[1.7.10]",
-            dependencies = "required-after:falsepatternlib@[0.10.13")
-    // dependencies = "required-after:falsepatternlib@[0.10.13,);required-after:gasstation@[0.5.0,);after:antiidconflict")
-
+            acceptedMinecraftVersions = Reference.MC_VERSION)
 
 public class Multithreaded {
 
