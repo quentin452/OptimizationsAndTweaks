@@ -37,8 +37,7 @@ public class Multithreaded {
         // Check if the loaded config version matches the current mod version
         if (loadedModVersion == null || !loadedModVersion.equals(VERSION)) {
             // Delete the old config
-            event.getSuggestedConfigurationFile()
-                .delete();
+            configFile.delete();
 
             // Get the config version from the configuration file or use the default value if it doesn't exist
             String configVersion = config.getString(
@@ -48,14 +47,14 @@ public class Multithreaded {
                 "The version of the configuration file. Change this to reset the configuration file.");
 
             // Create a new config with the specified config version
-            config = new Configuration(event.getSuggestedConfigurationFile(), configVersion);
+            config = new Configuration(configFile, configVersion);
         }
 
         // Load the configuration file
         config.load();
 
         // Read the values from the configuration file
-        boolean MixinEntitySpawning = config.getBoolean(
+        MixinEntitySpawning = config.getBoolean(
             "MixinEntitySpawning",
             Configuration.CATEGORY_GENERAL,
             true,
