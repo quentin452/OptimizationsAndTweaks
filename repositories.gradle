@@ -1,0 +1,9 @@
+// Add any additional repositories for your dependencies here
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "forge"
+        url = "https://maven.minecraftforge.net/"
+    }
+}
