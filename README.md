@@ -9,7 +9,11 @@ A: Yes, you can.
 
 # What this mod have for now?
 
-* Mob spawning multithreaded(reduce tps lag when mob get spawned) on heavily modded modpacks.
+* Multithreaded
+
+* Mob spawning(reduce tps lag when mob get spawned) on heavily modded modpacks.
+
+* Fixe
 
 # Links to descriptions of my projects.
 
