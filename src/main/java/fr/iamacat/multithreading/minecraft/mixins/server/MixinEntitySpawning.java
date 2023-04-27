@@ -20,10 +20,9 @@ package fr.iamacat.multithreading.minecraft.mixins.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.entity.Render;
@@ -43,16 +42,31 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
+    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Mob-Spawner-%d").build());
+
     @Shadow
     private WorldClient world;
-    private ExecutorService executorService = Executors.newFixedThreadPool(4);
     private List<Entity> spawnQueue = new ArrayList<>();
-    private int batchSize = 10;
+    private int batchSize = 5;
+
+    private int maxPoolSize = 8;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (Multithreaded.MixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
-            spawnMobsInQueue();
+            // Check if the world is saved
+            if (world.getSaveHandler().getWorldDirectory().exists()) {
+                // Disable batch spawning
+                batchSize = 1;
+                // Clear the spawn queue
+                spawnQueue.clear();
+                // Clear the entity list
+                world.loadedEntityList.clear();
+            } else {
+                spawnMobsInQueue();
+            }
         }
     }
 
@@ -70,6 +84,10 @@ public abstract class MixinEntitySpawning {
                 executorService.submit(() -> {
                     batch.forEach(e -> world.spawnEntityInWorld(e));
                 });
+                // Increase the pool size if the queue is full
+                if (executorService.getQueue().remainingCapacity() == 0 && executorService.getPoolSize() < maxPoolSize) {
+                    executorService.setMaximumPoolSize(executorService.getMaximumPoolSize() + 1);
+                }
             }
         }
     }
@@ -86,6 +104,7 @@ public abstract class MixinEntitySpawning {
         }
         render.doRender(entity, x, y, z, yaw, partialTicks);
     }
+
     @Final
     public void close() {
         executorService.shutdown();
