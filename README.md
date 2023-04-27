@@ -34,3 +34,7 @@ Use batch processing approach to spawn mobs. This can reduce the overhead of spa
 This mod require [Unimixins](https://legacy.curseforge.com/minecraft/mc-mods/unimixins/files/4492255)
 
 This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mods/fplib/files/4506858)
+
+# Secial Thanks
+
+Special thanks to Falsepattern code : [HERE](https://github.com/FalsePattern/FalseTweaks)
