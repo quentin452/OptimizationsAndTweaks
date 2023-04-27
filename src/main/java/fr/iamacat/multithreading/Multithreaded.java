@@ -17,7 +17,7 @@ import java.io.File;
 
 public class Multithreaded {
 
-    private static final String VERSION = "1.5"; // Change this to the desired version
+    private static final String VERSION = "1.6"; // Change this to the desired version
 
     public static boolean MixinEntitySpawning;
     private static Configuration config;
@@ -30,6 +30,11 @@ public class Multithreaded {
     public static void preInit(FMLPreInitializationEvent event) {
         File configFile = new File(event.getModConfigurationDirectory(), "Multithreadedandtweaks.cfg");
         Configuration config = new Configuration(configFile);
+
+        // Create categories in the configuration file
+        String categoryMixins = "Mixins";
+        String categoryOptimizations = "Optimizations";
+        String categoryTweaks = "Tweaks";
 
         // Get the loaded config version from the configuration file
         String loadedModVersion = config.getLoadedConfigVersion();
@@ -54,12 +59,26 @@ public class Multithreaded {
         config.load();
 
         // Read the values from the configuration file
-        MixinEntitySpawning = config.getBoolean(
+        boolean MixinEntitySpawning = config.getBoolean(
             "MixinEntitySpawning",
-            Configuration.CATEGORY_GENERAL,
+            categoryMixins,
             true,
             "Enable multithreaded mob spawning");
-        // int myIntValue = config.getInt("myIntValue", "general", 42, 0, 100, "This is another comment");
+        /*
+        int someIntValue = config.getInt(
+            "SomeIntValue",
+            categoryOptimizations,
+            42,
+            0,
+            100,
+            "This is a comment for the integer value");
+        String someStringValue = config.getString(
+            "SomeStringValue",
+            categoryTweaks,
+            "default value",
+            "This is a comment for the string value");
+
+         */
 
         // Save the updated configuration file
         if (config.hasChanged()) {
