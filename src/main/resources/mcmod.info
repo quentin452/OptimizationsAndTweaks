@@ -2,7 +2,7 @@
 {
   "modid": "multithreading",
   "name": "Multithreading Mod",
-  "description": "Just a mod with few things.",
+  "description": "Make mob spawning multithreaded to reduce tps lag on heavily modded pack.",
   "version": "0.1",
   "mcversion": "1.7.10",
   "url": "",
