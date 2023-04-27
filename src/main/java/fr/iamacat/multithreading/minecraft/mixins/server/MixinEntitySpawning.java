@@ -40,7 +40,6 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntitySpawning {
-
     @Shadow
     private WorldClient world;
     private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
@@ -59,7 +58,7 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/RenderGlobal;doRenderEntities(Lnet/minecraft/entity/Entity;DDDFFZ)V"))
     private void redirectDoRenderEntities(RenderGlobal renderGlobal, Entity renderViewEntity, double partialTicks,
-        double cameraX, double cameraY, double cameraZ, float frameDelta, boolean isInFrustum) {
+                                          double cameraX, double cameraY, double cameraZ, float frameDelta, boolean isInFrustum) {
         // Add mobs to the spawn queue instead of spawning them immediately
         for (Object entity : world.loadedEntityList) {
             if (entity instanceof EntityMob) {
@@ -74,7 +73,7 @@ public abstract class MixinEntitySpawning {
         }
 
         // Spawn mobs in batches of 10 using ThreadPoolExecutor
-        int batchSize = 10;
+        int batchSize = Runtime.getRuntime().availableProcessors() * 2;
         List<Entity> batch = new ArrayList<>(batchSize);
         for (int i = 0; i < batchSize && !spawnQueue.isEmpty(); i++) {
             batch.add(spawnQueue.remove(0));
