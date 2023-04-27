@@ -35,11 +35,13 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // region common
-    MixinEntitySpawning(Side.COMMON, condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
+    MixinEntitySpawning(Side.COMMON,
+        condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
     // region client
     // BlockRedstoneWireMixin(Side.CLIENT, condition(() -> GeneralConfig.extendBlockItem &&
     // GeneralConfig.extendRedstone), "redstone.BlockRedstoneWireMixin"),
     ;
+
     @Config.DefaultString("")
     public static String __NOTICE__;
 

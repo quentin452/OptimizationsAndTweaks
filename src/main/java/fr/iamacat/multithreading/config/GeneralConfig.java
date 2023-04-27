@@ -25,6 +25,7 @@ import fr.iamacat.multithreading.Tags;
 
 @Config(modid = Tags.MODID)
 public class GeneralConfig {
+
     static {
         ConfigurationManager.selfInit();
     }
@@ -34,12 +35,12 @@ public class GeneralConfig {
         + "TPS impact: none")
     @Config.DefaultBoolean(true)
     public static boolean MixinEntitySpawning;
-  //  @Config.Comment("Increases the max signal strength of redstone.\n"
-  //      + "Only has effect with both extendBlockItem and extendRedstone enabled.\n"
-  //      + "Vanilla value is 15.")
-   // @Config.RangeInt(min = 15, max = 127)
-   // @Config.DefaultInt(15)
-   // public static int maxRedstone;
+    // @Config.Comment("Increases the max signal strength of redstone.\n"
+    // + "Only has effect with both extendBlockItem and extendRedstone enabled.\n"
+    // + "Vanilla value is 15.")
+    // @Config.RangeInt(min = 15, max = 127)
+    // @Config.DefaultInt(15)
+    // public static int maxRedstone;
     /*
      * @Config.Comment(
      * "WARNING: THIS CONFIG IS EXTREMELY SENSITIVE TO CHANGES, DISABLING STUFF ONCE THEY HAVE BEEN ENABLED\n" +

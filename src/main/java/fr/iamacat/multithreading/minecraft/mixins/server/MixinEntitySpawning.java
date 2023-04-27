@@ -36,6 +36,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.Multithreaded;
+
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntitySpawning {
 
@@ -46,8 +48,7 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        // Process the spawn queue every 10 ticks
-        if (world.getTotalWorldTime() % 10 == 0) {
+        if (Multithreaded.MixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
             spawnMobsInQueue();
         }
     }
@@ -68,7 +69,7 @@ public abstract class MixinEntitySpawning {
     }
 
     private void spawnMobsInQueue() {
-        if (spawnQueue.isEmpty()) {
+        if (Multithreaded.MixinEntitySpawning && spawnQueue.isEmpty()) {
             return;
         }
 
