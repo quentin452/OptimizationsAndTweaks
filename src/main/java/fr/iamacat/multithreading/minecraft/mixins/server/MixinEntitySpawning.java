@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixins.minecraft.server;
+package fr.iamacat.multithreading.minecraft.mixins.server;
 
 import java.util.ArrayList;
 import java.util.List;

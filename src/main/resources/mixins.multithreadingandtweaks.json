@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8.5-GTNH",
   "package": "fr.iamacat.multithreading.mixins",
-  "refmap": "mixins.multithreaded.refmap.json",
+  "refmap": "mixins.multithreadingandtweaks.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [],

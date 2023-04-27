@@ -11,10 +11,14 @@ import fr.iamacat.multithreading.proxy.CommonProxy;
 import fr.iamacat.multithreading.utils.Reference;
 
 @Mod(
-    modid = Reference.MOD_ID,
-    name = Reference.MOD_NAME,
-    version = Reference.MOD_VERSION,
-    acceptedMinecraftVersions = Reference.MC_VERSION)
+        @Mod(modid = Tags.MODID,
+        version = Tags.VERSION,
+        name = Tags.MODNAME,
+        acceptedMinecraftVersions = "[1.7.10]",
+            dependencies = "required-after:falsepatternlib@[0.10.13")
+    // dependencies = "required-after:falsepatternlib@[0.10.13,);required-after:gasstation@[0.5.0,);after:antiidconflict")
+
+
 public class Multithreaded {
 
     @Mod.Instance(Reference.MOD_ID)
