@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer {
 
     @Shadow
     private WorldClient world;
-    private ExecutorService executorService = Executors.newFixedThreadPool(4); // 4 threads
+    private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     private List<Entity> spawnQueue = new ArrayList<>();
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -53,7 +54,7 @@ public abstract class MixinEntityRenderer {
             return;
         }
 
-        // Spawn mobs in batches of 10 using ExecutorService
+        // Spawn mobs in batches of 10 using ThreadPoolExecutor
         int batchSize = 10;
         List<Entity> batch = new ArrayList<>(batchSize);
         for (int i = 0; i < batchSize && !spawnQueue.isEmpty(); i++) {
@@ -64,6 +65,7 @@ public abstract class MixinEntityRenderer {
             executorService.execute(() -> entity.onEntityUpdate());
         }
     }
+
     @Final
     public void finalizeMixin() {
         executorService.shutdown();
