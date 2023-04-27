@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.minecraft.mixins.plugins;
+package fr.iamacat.multithreading.mixin.plugins;
 
 import static com.falsepattern.lib.mixin.IMixin.PredicateHelpers.condition;
 
@@ -27,7 +27,6 @@ import com.falsepattern.lib.config.Config;
 import com.falsepattern.lib.mixin.IMixin;
 import com.falsepattern.lib.mixin.ITargetedMod;
 
-import fr.iamacat.multithreading.config.GeneralConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -35,8 +34,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // region common
-    MixinEntitySpawning(Side.COMMON,
-        condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
+    //MixinEntitySpawning(Side.COMMON,
+       // condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
     // region client
     // BlockRedstoneWireMixin(Side.CLIENT, condition(() -> GeneralConfig.extendBlockItem &&
     // GeneralConfig.extendRedstone), "redstone.BlockRedstoneWireMixin"),

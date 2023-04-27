@@ -17,10 +17,12 @@ import fr.iamacat.multithreading.utils.Reference;
 
 public class Multithreaded {
 
-    private static final String VERSION = "1.6"; // Change this to the desired version
+    private static final String VERSION = "1.7"; // Change this to the desired version
 
     public static boolean MixinEntitySpawning;
+    public static boolean MixinGrowthSpreading;
     private static Configuration config;
+
     @Mod.Instance(Reference.MOD_ID)
     public static Multithreaded instance;
     @SidedProxy(clientSide = Reference.CLIENT_PROXY, serverSide = Reference.SERVER_PROXY)
@@ -60,7 +62,10 @@ public class Multithreaded {
 
         // Read the values from the configuration file
         boolean MixinEntitySpawning = config
-            .getBoolean("MixinEntitySpawning", categoryMixins, true, "Enable multithreaded mob spawning");
+            .getBoolean("MixinEntitySpawning", categoryMixins, true, "Enable multithreaded for mob spawning");
+        boolean MixinGrowthSpreading = config
+            .getBoolean("MixinGrowthSpreading", categoryMixins, true, "Enable multithreaded for block growth like suggar cane");
+
         /*
          * int someIntValue = config.getInt(
          * "SomeIntValue",
