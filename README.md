@@ -28,3 +28,5 @@ Mob spawning(reduce tps lag when mob get spawned) on heavily modded modpacks.
 # Requirement
 
 This mod require [Unimixins](https://legacy.curseforge.com/minecraft/mc-mods/unimixins/files/4492255)
+
+This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mods/fplib/files/4506858)
