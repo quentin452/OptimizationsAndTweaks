@@ -1,0 +1,16 @@
+[
+{
+  "modid": "catmod",
+  "name": "Cat Mod",
+  "description": "Just a mod with few things.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["I'm A Cat[FR]#7202"],
+  "credits": "I'm A Cat[FR]#7202,SkyDash#4150",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
