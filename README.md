@@ -1,3 +1,7 @@
+# Dangerzone
+
+This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo?
+
 # Description
 
 This mod make things multithreaded.
@@ -12,6 +16,7 @@ A: Yes, you can.
 ## Multithreaded
 
 Mob spawning using thread pool to spawn mobs in parallel. This can improve performance on systems with multiple cores.
+Growthing plant using thread pool to spawn mobs in parallel. This can improve performance on systems with multiple cores.
 
 ## Fixe
 
