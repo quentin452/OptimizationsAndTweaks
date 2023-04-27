@@ -11,11 +11,15 @@ A: Yes, you can.
 
 ## Multithreaded
 
-Mob spawning(reduce tps lag when mob get spawned) on heavily modded modpacks.
+Mob spawning using thread pool to spawn mobs in parallel. This can improve performance on systems with multiple cores.
 
 ## Fixe
 
-## Tweaks
+## Optimization
+
+Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
+
+
 
 # Links to descriptions of my projects.
 
