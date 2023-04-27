@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer {
 
+    // bug this code make less tps lag ,but sometimes the tps is slighly lower than vanilla on world startup
     @Shadow
     private WorldClient world;
 
