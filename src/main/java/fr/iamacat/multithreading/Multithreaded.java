@@ -22,7 +22,9 @@ public class Multithreaded {
 
     @Mod.Instance(Reference.MOD_ID)
     public static Multithreaded instance;
-    @SidedProxy(clientSide = Reference.CLIENT_PROXY, serverSide = Reference.SERVER_PROXY)
+            @SidedProxy(clientSide = Tags.GROUPNAME + ".patching.ClientManager",
+                serverSide = Tags.GROUPNAME + ".patching.ServerManager",
+                modId = Tags.MODID)
     public static CommonProxy proxy;
 
     @Mod.EventHandler
