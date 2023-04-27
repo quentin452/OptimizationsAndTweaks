@@ -1,34 +1,34 @@
 /*
  * FalseTweaks
- *
  * Copyright (C) 2022 FalsePattern
  * All Rights Reserved
- *
  * The above copyright notice, this permission notice and the word "SNEED"
  * shall be included in all copies or substantial portions of the Software.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package fr.iamacat.multithreading.mixins.minecraft.server;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
-import org.spongepowered.asm.mixin.Final;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,15 +36,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-
 @Mixin(EntityRenderer.class)
-public abstract class MixinEntityRenderer {
+public abstract class MixinEntitySpawning {
 
     @Shadow
     private WorldClient world;
@@ -59,11 +52,13 @@ public abstract class MixinEntityRenderer {
         }
     }
 
-    @Redirect(method = "renderWorld",
-        at = @At(value = "INVOKE",
+    @Redirect(
+        method = "renderWorld",
+        at = @At(
+            value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/RenderGlobal;doRenderEntities(Lnet/minecraft/entity/Entity;DDDFFZ)V"))
     private void redirectDoRenderEntities(RenderGlobal renderGlobal, Entity renderViewEntity, double partialTicks,
-                                          double cameraX, double cameraY, double cameraZ, float frameDelta, boolean isInFrustum) {
+        double cameraX, double cameraY, double cameraZ, float frameDelta, boolean isInFrustum) {
         // Add mobs to the spawn queue instead of spawning them immediately
         for (Object entity : world.loadedEntityList) {
             if (entity instanceof EntityMob) {
@@ -89,8 +84,8 @@ public abstract class MixinEntityRenderer {
         }
     }
 
-    @Final
-    public void finalizeMixin() {
+    @Inject(method = "onRemoveFromWorld", at = @At("TAIL"))
+    private void finalizeMixin(CallbackInfo ci) {
         executorService.shutdown();
     }
 }

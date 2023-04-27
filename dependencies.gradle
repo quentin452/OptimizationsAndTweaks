@@ -33,5 +33,15 @@
  *
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
+
 dependencies {
+    //Dev-only deps
+    compileOnly("org.projectlombok:lombok:[1.18.24,1.19)") {
+        transitive = false
+    }
+    annotationProcessor("org.projectlombok:lombok:[1.18.24,1.19)")
+
+    implementation("com.falsepattern:falsepatternlib-mc1.7.10:[0.11.1, 0.12):dev")
+
+    implementation("org.joml:joml:1.10.5")
 }

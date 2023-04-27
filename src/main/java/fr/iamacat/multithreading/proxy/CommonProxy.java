@@ -1,4 +1,4 @@
 package fr.iamacat.multithreading.proxy;
 
-public class CommonProxy{
+public class CommonProxy {
 }

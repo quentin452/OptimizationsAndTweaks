@@ -6,4 +6,15 @@ repositories {
         name = "forge"
         url = "https://maven.minecraftforge.net/"
     }
+    maven {
+        name = "cursemaven"
+        url = "https://mvn.falsepattern.com/cursemaven"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        name = "mvnpattern"
+        url = "https://mvn.falsepattern.com/releases"
+    }
 }
