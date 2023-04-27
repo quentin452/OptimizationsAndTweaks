@@ -10,7 +10,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.multithreading.proxy.CommonProxy;
 import fr.iamacat.multithreading.utils.Reference;
 
-@Mod(
         @Mod(modid = Tags.MODID,
         version = Tags.VERSION,
         name = Tags.MODNAME,
