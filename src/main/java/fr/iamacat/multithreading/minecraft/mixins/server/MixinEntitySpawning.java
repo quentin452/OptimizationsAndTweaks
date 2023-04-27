@@ -20,16 +20,17 @@ package fr.iamacat.multithreading.minecraft.mixins.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,59 +43,51 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
-
-    private static final Logger LOGGER = LogManager.getLogger(MixinEntitySpawning.class);
     @Shadow
     private WorldClient world;
-    private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
     private List<Entity> spawnQueue = new ArrayList<>();
+    private int batchSize = 10;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        LOGGER.debug("MixinEntitySpawning tick method called.");
-        LOGGER.debug("Multithreaded config is {}", Multithreaded.MixinEntitySpawning);
-        LOGGER.debug("World total time is {}", world.getTotalWorldTime());
         if (Multithreaded.MixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
-            LOGGER.debug("Spawning mobs in queue.");
             spawnMobsInQueue();
         }
     }
 
-
-    @Redirect(
-        method = "renderWorld",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderGlobal;doRenderEntities(Lnet/minecraft/entity/Entity;DDDFFZ)V"))
-    private void redirectDoRenderEntities(RenderGlobal renderGlobal, Entity renderViewEntity, double partialTicks,
-                                          double cameraX, double cameraY, double cameraZ, float frameDelta, boolean isInFrustum) {
-        // Add mobs to the spawn queue instead of spawning them immediately
-        for (Object entity : world.loadedEntityList) {
-            if (entity instanceof EntityMob) {
-                LOGGER.debug("Adding mob to spawn queue: {}", entity);
-                spawnQueue.add((Entity) entity);
+    private void spawnMobsInQueue() {
+        while (!spawnQueue.isEmpty()) {
+            List<Entity> batch = new ArrayList<>();
+            int batchSize = Math.min(spawnQueue.size(), this.batchSize);
+            for (int i = 0; i < batchSize; i++) {
+                Entity entity = spawnQueue.remove(0);
+                if (entity instanceof EntityMob) {
+                    batch.add(entity);
+                }
+            }
+            if (!batch.isEmpty()) {
+                executorService.submit(() -> {
+                    batch.forEach(e -> world.spawnEntityInWorld(e));
+                });
             }
         }
     }
 
-
-    // doesn't work
-    private void spawnMobsInQueue() {
-        if (Multithreaded.MixinEntitySpawning && spawnQueue.isEmpty()) {
-            LOGGER.debug("Spawn queue is empty.");
+    @Redirect(
+        method = "renderEntities",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
+    private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw, float partialTicks) {
+        // Don't render entities during mob spawning
+        if (!spawnQueue.isEmpty()) {
             return;
         }
-
-        // Spawn mobs in batches of 10 using ThreadPoolExecutor
-        int batchSize = Runtime.getRuntime()
-            .availableProcessors() * 2;
-        List<Entity> batch = new ArrayList<>(batchSize);
-        for (int i = 0; i < batchSize && !spawnQueue.isEmpty(); i++) {
-            batch.add(spawnQueue.remove(0));
-        }
-        for (Entity entity : batch) {
-            executorService.execute(() -> entity.onEntityUpdate());
-
-        }
+        render.doRender(entity, x, y, z, yaw, partialTicks);
+    }
+    @Final
+    public void close() {
+        executorService.shutdown();
     }
 }
