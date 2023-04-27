@@ -11,7 +11,7 @@ A: Yes, you can.
 
 * Multithreaded
 
-* Mob spawning(reduce tps lag when mob get spawned) on heavily modded modpacks.
+Mob spawning(reduce tps lag when mob get spawned) on heavily modded modpacks.
 
 * Fixe
 
