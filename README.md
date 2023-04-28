@@ -19,7 +19,7 @@ A: Yes, you can.
 
 ## Multithreaded
 
-* Mob spawning ,rowthing plantusing,Leaf decay,Do fire tick thread pool in parallel. This can improve server performance on systems with multiple cores.
+* Mob spawning ,growthing planting,Leaf decay,Do fire tick thread pool in parallel. This can improve server performance on systems with multiple cores.
 
 ## Fixe
 
@@ -33,7 +33,7 @@ A: Yes, you can.
 
 [*Github*](https://github.com/quentin452/Multithreadingandtweaks)
 
-[*Curseforge*]()
+[*Curseforge*](https://legacy.curseforge.com/minecraft/mc-mods/multithreadingandtweaks)
 
 # Requirement
 
