@@ -1,6 +1,8 @@
 # Dangerzone
 
-This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo?
+This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo? But i maked some tests and it seem to be not placebo on my modpack.
+
+And might be corrupt your world??????
 
 If anyone know a tool to properly test my mod ,tell me pls
 
@@ -17,25 +19,25 @@ A: Yes, you can.
 
 ## Multithreaded
 
-Mob spawning using thread pool to spawn mobs in parallel. This can improve server performance on systems with multiple cores.
+* Mob spawning using thread pool to spawn mobs in parallel. This can improve server performance on systems with multiple cores.
 
-Growthing plant using thread pool to Growth plants in parallel. This can improve server performance on systems with multiple cores.
+* Growthing plant using thread pool to Growth plants in parallel. This can improve server performance on systems with multiple cores.
 
-Leaf decay using thread pool to leaf decaying in parallel. This can improve server performance on systems with multiple cores.
+* Leaf decay using thread pool to leaf decaying in parallel. This can improve server performance on systems with multiple cores.
 
 ## Fixe
 
 ## Optimization
 
-Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
+* Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
 
-
+* Use batch processing approach to leaf decay. This can reduce the overhead of spawning mobs one at a time.
 
 # Links to descriptions of my projects.
 
-[*Modrinth*]()
+[*Modrinth*](https://modrinth.com/mod/multithreadingandtweaks)
 
-[*Github*]()
+[*Github*](https://github.com/quentin452/Multithreadingandtweaks)
 
 [*Curseforge*]()
 
@@ -48,3 +50,9 @@ This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mo
 # Secial Thanks
 
 Special thanks to Falsepattern code : [HERE](https://github.com/FalsePattern/FalseTweaks)
+
+# Discord
+
+Add me on discord : I'm A Cat[FR]#7202
+
+Discord server : https://discord.gg/ZnmHKJzKkZ
