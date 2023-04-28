@@ -19,7 +19,7 @@ A: Yes, you can.
 
 Mob spawning using thread pool to spawn mobs in parallel. This can improve performance on systems with multiple cores.
 
-Growthing plant using thread pool to spawn mobs in parallel. This can improve performance on systems with multiple cores.
+Growthing plant using thread pool to Growth plants in parallel. This can improve performance on systems with multiple cores.
 
 ## Fixe
 
