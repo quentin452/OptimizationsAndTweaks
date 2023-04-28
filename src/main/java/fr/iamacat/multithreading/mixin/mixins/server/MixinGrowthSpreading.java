@@ -44,56 +44,55 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
-    private PriorityQueue<ChunkCoordinates> growthQueue;
-    private ExecutorService growthExecutorService = Executors.newFixedThreadPool(2, new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d").build());
-
+    private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(1000, Comparator.comparingInt(o -> o.posY));
+    private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(2, 8, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d").build());
     @Shadow
     private WorldClient world;
     private int batchSize = 5;
-    //private int maxPoolSize = 8;
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
-        if (Multithreaded.MixinGrowthSpreading && world.getTotalWorldTime() % 10 == 0) {
-            // Check if the world is saved
-            if (world.getSaveHandler().getWorldDirectory().exists()) {
-                // Disable batch processing
-                batchSize = 1;
-                // Clear the growth queue
-                growthQueue.clear();
-            } else {
-                // Add the positions of the blocks that need to grow to the growth queue
-                for (int x = -64; x <= 64; x++) {
-                    for (int z = -64; z <= 64; z++) {
-                        for (int y = 0; y <= 255; y++) {
-                            ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                            Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
-                            // Add block positions to growth queue if block is a crop or sugarcane
-                            if (block instanceof BlockCrops || block instanceof BlockReed) {
-                                growthQueue.add(pos);
-                            }
-                        }
-                    }
-                }
+   // private int maxPoolSize = 8;
+   @Inject(method = "tick", at = @At("HEAD"))
+   private void onTick(CallbackInfo ci) {
+       if (Multithreaded.MixinGrowthSpreading && world.getTotalWorldTime() % 10 == 0) {
+           if (world.getSaveHandler().getWorldDirectory().exists()) {
+               batchSize = 1;
+               growthQueue.clear();
+           } else {
+               addBlocksToGrowthQueue();
+               processBlocksInGrowthQueue();
+           }
+       }
+   }
 
-                // Process blocks in growth queue using executor service
-                while (!growthQueue.isEmpty()) {
-                    List<ChunkCoordinates> batch = new ArrayList<>();
-                    int batchSize = Math.min(growthQueue.size(), this.batchSize);
-                    for (int i = 0; i < batchSize; i++) {
-                        batch.add(growthQueue.poll());
-                    }
-                    if (!batch.isEmpty()) {
-                        growthExecutorService.submit(() -> {
-                            batch.forEach(pos -> {
-                                Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
-                                // Trigger block update to simulate growth
-                                world.markBlockForUpdate(pos.posX, pos.posY, pos.posZ);
-                                // Notify neighbors of block update
-                                world.notifyBlocksOfNeighborChange(pos.posX, pos.posY, pos.posZ, block);
-                            });
-                        });
+    private void addBlocksToGrowthQueue() {
+        for (int x = -64; x <= 64; x++) {
+            for (int z = -64; z <= 64; z++) {
+                for (int y = 0; y <= 255; y++) {
+                    ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
+                    Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
+                    if (block instanceof BlockCrops || block instanceof BlockReed) {
+                        growthQueue.add(pos);
                     }
                 }
+            }
+        }
+    }
+
+    // Process blocks in growth queue using executor service
+    private void processBlocksInGrowthQueue() {
+        while (!growthQueue.isEmpty()) {
+            List<ChunkCoordinates> batch = new ArrayList<>();
+            int batchSize = Math.min(growthQueue.size(), this.batchSize);
+            for (int i = 0; i < batchSize; i++) {
+                batch.add(growthQueue.poll());
+            }
+            if (!batch.isEmpty()) {
+                growthExecutorService.submit(() -> {
+                    batch.forEach(pos -> {
+                        Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
+                        world.markBlockForUpdate(pos.posX, pos.posY, pos.posZ);
+                        world.notifyBlocksOfNeighborChange(pos.posX, pos.posY, pos.posZ, block);
+                    });
+                });
             }
         }
     }

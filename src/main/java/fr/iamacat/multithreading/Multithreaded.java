@@ -17,7 +17,7 @@ import fr.iamacat.multithreading.utils.Reference;
 
 public class Multithreaded {
 
-    private static final String VERSION = "1.7"; // Change this to the desired version
+    private static final String VERSION = "1.8"; // Change this to the desired version
 
     public static boolean MixinEntitySpawning;
     public static boolean MixinGrowthSpreading;

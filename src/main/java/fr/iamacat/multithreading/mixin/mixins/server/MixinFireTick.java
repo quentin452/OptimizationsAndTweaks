@@ -35,36 +35,45 @@ import java.util.concurrent.Executors;
 
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
-    private ExecutorService fireExecutorService = Executors.newFixedThreadPool(2);
+    public int fireTickBatchSize = 15; // Default batch size of 15.
+    private ExecutorService fireExecutorService = Executors.newCachedThreadPool();
+
 
     @Shadow
     public abstract void updateTick(WorldServer world, int x, int y, int z, Random random);
 
     @Inject(method = "updateTick", at = @At("HEAD"))
-    private void onUpdateTick(WorldServer world, int x, int y, int z, Random random, CallbackInfo ci) {
+    private synchronized void onUpdateTick(WorldServer world, int x, int y, int z, Random random, CallbackInfo ci) {
         if (Multithreaded.MixinFireTick) {
-            // Process fire ticks in batches using executor service
-            List<int[]> batches = new ArrayList<>();
-            int numBlocks = 0;
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        int fx = x + dx;
-                        int fy = y + dy;
-                        int fz = z + dz;
-                        if (world.getBlock(fx, fy, fz).isReplaceable(world, fx, fy, fz)) {
-                            numBlocks++;
-                            if (numBlocks % 50 == 0) {
-                                batches.add(new int[]{x, y, z});
+            // Process fire ticks using breadth-first search
+            List<int[]> blocksToUpdate = new ArrayList<>();
+            boolean[][][] visited = new boolean[3][3][3]; // 3x3x3 grid centered at (x, y, z)
+            visited[1][1][1] = true; // mark the center block as visited
+            blocksToUpdate.add(new int[]{x, y, z});
+            int index = 0;
+            while (index < blocksToUpdate.size()) {
+                int[] blockCoords = blocksToUpdate.get(index++);
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            if (dx == 0 && dy == 0 && dz == 0) {
+                                continue; // skip the center block
+                            }
+                            int fx = blockCoords[0] + dx;
+                            int fy = blockCoords[1] + dy;
+                            int fz = blockCoords[2] + dz;
+                            if (visited[dx+1][dy+1][dz+1] || !world.getBlock(fx, fy, fz).isReplaceable(world, fx, fy, fz)) {
+                                continue; // skip already visited or non-replaceable blocks
+                            }
+                            visited[dx+1][dy+1][dz+1] = true; // mark block as visited
+                            if (world.getBlock(fx, fy, fz) instanceof BlockFire) {
+                                blocksToUpdate.add(new int[]{fx, fy, fz}); // add adjacent fire block to update list
                             }
                         }
                     }
                 }
             }
-            if (numBlocks % 50 != 0) {
-                batches.add(new int[]{x, y, z});
-            }
-            for (int[] blockCoords : batches) {
+            for (int[] blockCoords : blocksToUpdate) {
                 fireExecutorService.submit(() -> updateTick(world, blockCoords[0], blockCoords[1], blockCoords[2], random));
             }
         }
