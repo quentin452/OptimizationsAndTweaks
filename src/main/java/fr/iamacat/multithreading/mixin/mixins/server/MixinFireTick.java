@@ -21,9 +21,12 @@ package fr.iamacat.multithreading.mixin.mixins.server;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import fr.iamacat.multithreading.FireExecutorService;
+import fr.iamacat.multithreading.Multithreaded;
 import net.minecraft.block.BlockFire;
 import net.minecraft.world.WorldServer;
 
@@ -33,28 +36,28 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.Multithreaded;
+
 
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
 
-    public int fireTickBatchSize = 15; // Default batch size of 15.
-    private ExecutorService fireExecutorService = Executors.newCachedThreadPool();
-
+    private static final int FIRE_TICK_BATCH_SIZE = 15; // Default batch size of 15.
+    private static final ExecutorService FIRE_EXECUTOR_SERVICE = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    private final ConcurrentLinkedQueue<int[]> blocksToUpdate = new ConcurrentLinkedQueue<>();
     @Shadow
     public abstract void updateTick(WorldServer world, int x, int y, int z, Random random);
 
     @Inject(method = "updateTick", at = @At("HEAD"))
-    private synchronized void onUpdateTick(WorldServer world, int x, int y, int z, Random random, CallbackInfo ci) {
+    private void onUpdateTick(WorldServer world, int x, int y, int z, Random random, CallbackInfo ci) {
         if (Multithreaded.MixinFireTick) {
             // Process fire ticks using breadth-first search
-            List<int[]> blocksToUpdate = new ArrayList<>();
             boolean[][][] visited = new boolean[3][3][3]; // 3x3x3 grid centered at (x, y, z)
-            visited[1][1][1] = true; // mark the center block as visited
-            blocksToUpdate.add(new int[] { x, y, z });
+            visited[1][1][1] = true;
+            ConcurrentLinkedQueue<int[]> blocksToUpdate = ((MixinFireTick)(Object)this).blocksToUpdate;
+            blocksToUpdate.add(new int[] {x, y, z});
             int index = 0;
             while (index < blocksToUpdate.size()) {
-                int[] blockCoords = blocksToUpdate.get(index++);
+                int[] blockCoords = {x, y, z};
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         for (int dz = -1; dz <= 1; dz++) {
@@ -77,9 +80,9 @@ public abstract class MixinFireTick {
                 }
             }
             for (int[] blockCoords : blocksToUpdate) {
-                fireExecutorService
-                    .submit(() -> updateTick(world, blockCoords[0], blockCoords[1], blockCoords[2], random));
+                FireExecutorService.INSTANCE.submit(() -> updateTick(world, blockCoords[0], blockCoords[1], blockCoords[2], random));
             }
+
         }
     }
 }
