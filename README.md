@@ -2,6 +2,8 @@
 
 This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo?
 
+And might be corrupt your world??????
+
 If anyone know a tool to properly test my mod ,tell me pls
 
 # Description
@@ -28,6 +30,8 @@ Leaf decay using thread pool to leaf decaying in parallel. This can improve serv
 ## Optimization
 
 Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
+
+Use batch processing approach to leaf decay. This can reduce the overhead of spawning mobs one at a time.
 
 
 
