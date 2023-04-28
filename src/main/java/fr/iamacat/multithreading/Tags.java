@@ -20,8 +20,8 @@ package fr.iamacat.multithreading;
 
 public class Tags {
 
-    public static final String MODID = "GRADLETOKEN_MODID";
-    public static final String MODNAME = "GRADLETOKEN_MODNAME";
-    public static final String VERSION = "GRADLETOKEN_VERSION";
-    public static final String GROUPNAME = "GRADLETOKEN_GROUPNAME";
+    public static final String MODID = "multithreadingandtweaks";
+    public static final String MODNAME = "Multithreading and Tweaks";
+    public static final String VERSION = "V0.3";
+    public static final String GROUPNAME = "fr.iamacat.multithreading";
 }

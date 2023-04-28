@@ -17,12 +17,14 @@ import fr.iamacat.multithreading.utils.Reference;
 
 public class Multithreaded {
 
-    private static final String VERSION = "1.8"; // Change this to the desired version
+    private static final String VERSION = "2.0"; // Change this to the desired version
 
     public static boolean MixinEntitySpawning;
     public static boolean MixinGrowthSpreading;
     public static boolean MixinLeafDecay;
     public static boolean MixinFireTick;
+
+    public static boolean MixinLiquidTick;
     private static Configuration config;
 
     @Mod.Instance(Reference.MOD_ID)
@@ -70,7 +72,9 @@ public class Multithreaded {
         boolean MixinLeafDecay = config
             .getBoolean("MixinLeafDecay", categoryMixins, true, "Enable multithreaded for leaf decay");
         boolean MixinFireTick = config
-            .getBoolean("MixinFireTick", categoryMixins, true, "Enable multithreaded for leaf decay");
+            .getBoolean("MixinFireTick", categoryMixins, true, "Enable multithreaded for fire tick");
+        boolean MixinLiquidTick = config
+            .getBoolean("MixinLiquidTick", categoryMixins, true, "Enable multithreaded for liquid tick");
 
         /*
          * int someIntValue = config.getInt(
