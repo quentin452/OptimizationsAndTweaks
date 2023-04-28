@@ -19,19 +19,19 @@ A: Yes, you can.
 
 ## Multithreaded
 
-Mob spawning using thread pool to spawn mobs in parallel. This can improve server performance on systems with multiple cores.
+* Mob spawning using thread pool to spawn mobs in parallel. This can improve server performance on systems with multiple cores.
 
-Growthing plant using thread pool to Growth plants in parallel. This can improve server performance on systems with multiple cores.
+* Growthing plant using thread pool to Growth plants in parallel. This can improve server performance on systems with multiple cores.
 
-Leaf decay using thread pool to leaf decaying in parallel. This can improve server performance on systems with multiple cores.
+* Leaf decay using thread pool to leaf decaying in parallel. This can improve server performance on systems with multiple cores.
 
 ## Fixe
 
 ## Optimization
 
-Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
+* Use batch processing approach to spawn mobs. This can reduce the overhead of spawning mobs one at a time.
 
-Use batch processing approach to leaf decay. This can reduce the overhead of spawning mobs one at a time.
+* Use batch processing approach to leaf decay. This can reduce the overhead of spawning mobs one at a time.
 
 
 
