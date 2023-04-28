@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -41,44 +42,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import fr.iamacat.multithreading.Multithreaded;
 
-    @Mixin(EntitySpawnHandler.class)
-    public abstract class MixinEntitySpawning {
-        private int availableProcessors;
-        private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+@Mixin(EntitySpawnHandler.class)
+public abstract class MixinEntitySpawning {
+    private int availableProcessors;
+    private ThreadPoolExecutor executorService;
+    private int maxPoolSize;
+
+    @Shadow
+    private WorldClient world;
+    private ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
+    private AtomicInteger batchSize = new AtomicInteger(6);
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        availableProcessors = Runtime.getRuntime().availableProcessors();
+
+        // Initialize executorService only once in onInit
+        executorService = new ThreadPoolExecutor(
             0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
             new ThreadFactoryBuilder().setNameFormat("Mob-Spawner-%d").build());
+        executorService.allowCoreThreadTimeOut(true);
 
-        @Shadow
-        private WorldClient world;
-        private LinkedList<Entity> spawnQueue = new LinkedList<>();
-        private int batchSize = 5;
+        // Initialize maxPoolSize only once in onInit
+        maxPoolSize = Math.max(availableProcessors, 1);
+        executorService.setMaximumPoolSize(maxPoolSize);
+    }
 
-        private int maxPoolSize = 8;
-
-        @Inject(method = "<init>", at = @At("RETURN"))
-        private void onInit(CallbackInfo ci) {
-            availableProcessors = Runtime.getRuntime().availableProcessors();
-
-            executorService = new ThreadPoolExecutor(
-                0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
-                new ThreadFactoryBuilder().setNameFormat("Mob-Spawner-%d").build());
-            executorService.allowCoreThreadTimeOut(true);
-
-            maxPoolSize = Math.max(availableProcessors, 1);
-            executorService.setMaximumPoolSize(maxPoolSize);
-        }
-        @Inject(method = "tick", at = @At("HEAD"))
-        private void onTick(CallbackInfo ci) {
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void onTick(CallbackInfo ci) {
             if (Multithreaded.MixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
-                // Check if the world is saved
-                if (world.getSaveHandler().getWorldDirectory().exists()) {
-                    // Disable batch spawning
-                    batchSize = 1;
-                    // Clear the spawn queue
-                    spawnQueue.clear();
-                    // Clear the entity list
-                    world.loadedEntityList.clear();
-                } else {
                     // Dynamically set the maximum pool size
                     int newMaxPoolSize = Math.max(availableProcessors, 1);
                     if (newMaxPoolSize != maxPoolSize) {
@@ -89,29 +81,28 @@ import fr.iamacat.multithreading.Multithreaded;
                     spawnMobsInQueue();
                 }
             }
-        }
 
-        private void spawnMobsInQueue() {
-            while (!spawnQueue.isEmpty()) {
-                List<Entity> batch = new ArrayList<>();
-                int batchSize = Math.min(spawnQueue.size(), this.batchSize);
-                for (int i = 0; i < batchSize; i++) {
-                    Entity entity = spawnQueue.remove(0);
-                    if (entity instanceof EntityMob) {
-                        batch.add(entity);
-                    }
+    private void spawnMobsInQueue() {
+        while (!spawnQueue.isEmpty()) {
+            List<Entity> batch = new ArrayList<>();
+            int size = batchSize.getAndSet(0);
+            for (int i = 0; i < size; i++) {
+                Entity entity = spawnQueue.remove();
+                if (entity instanceof EntityMob) {
+                    batch.add(entity);
                 }
-                if (!batch.isEmpty()) {
-                    executorService.submit(() -> {
-                        batch.forEach(e -> world.spawnEntityInWorld(e));
-                    });
-                    // Increase the pool size if the queue is full
-                    if (executorService.getQueue().remainingCapacity() == 0 && executorService.getPoolSize() < maxPoolSize) {
-                        executorService.setMaximumPoolSize(executorService.getMaximumPoolSize() + 1);
-                    }
+            }
+            if (!batch.isEmpty()) {
+                executorService.submit(() -> {
+                    batch.forEach(e -> world.spawnEntityInWorld(e));
+                });
+                // Increase the pool size if the queue is full
+                if (executorService.getQueue().remainingCapacity() == 0 && executorService.getPoolSize() < maxPoolSize) {
+                    executorService.setMaximumPoolSize(executorService.getMaximumPoolSize() + 1);
                 }
             }
         }
+    }
 
 
         @Redirect(
@@ -129,6 +120,10 @@ import fr.iamacat.multithreading.Multithreaded;
 
         @Final
         public void close() {
-            executorService.shutdown();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                executorService.shutdown();
+            }));
+
         }
     }
