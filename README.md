@@ -1,6 +1,6 @@
 # Dangerzone
 
-This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo?
+This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo? But i maked some tests and it seem to be not placebo on my modpack.
 
 And might be corrupt your world??????
 
