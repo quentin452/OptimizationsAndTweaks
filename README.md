@@ -17,15 +17,7 @@ A: Yes, you can.
 
 # What this mod have for now?
 
-## Multithreaded
-
-* Mob spawning ,growthing planting,Leaf decay,Do fire tick thread pool in parallel. This can improve server performance on systems with multiple cores.
-
-## Fixe
-
-## Optimization
-
-* Use batch processing approach to spawn mobs, leaf decay, Dofiretick. This can reduce the overhead of spawning mobs one at a time.
+Go here : [Wiki](https://github.com/quentin452/Multithreadingandtweaks/wiki)
 
 # Links to descriptions of my projects.
 
