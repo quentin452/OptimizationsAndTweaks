@@ -70,7 +70,7 @@ public class Multithreaded {
         boolean MixinLeafDecay = config
             .getBoolean("MixinLeafDecay", categoryMixins, true, "Enable multithreaded for leaf decay");
         boolean MixinFireTick = config
-            .getBoolean("MixinLeafDecay", categoryMixins, true, "Enable multithreaded for leaf decay");
+            .getBoolean("MixinFireTick", categoryMixins, true, "Enable multithreaded for leaf decay");
 
         /*
          * int someIntValue = config.getInt(
