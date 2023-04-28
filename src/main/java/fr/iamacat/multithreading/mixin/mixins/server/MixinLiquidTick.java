@@ -16,34 +16,37 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 package fr.iamacat.multithreading.mixin.mixins.server;
 
-import fr.iamacat.multithreading.Multithreaded;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.*;
+
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.concurrent.*;
+import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
+
     public MixinLiquidTick() {
         tickQueue = new LinkedBlockingQueue<>(1000);
     }
+
     private BlockingQueue<ChunkCoordinates> tickQueue;
     private ExecutorService tickExecutorService;
 
     private static final Comparator<ChunkCoordinates> DISTANCE_COMPARATOR = new Comparator<ChunkCoordinates>() {
+
         @Override
         public int compare(ChunkCoordinates o1, ChunkCoordinates o2) {
             return Double.compare(o1.getDistanceSquared(0, 0, 0), o2.getDistanceSquared(0, 0, 0));
@@ -63,7 +66,8 @@ public abstract class MixinLiquidTick {
                 for (int z = -64; z <= 64; z++) {
                     for (int y = 0; y <= 255; y++) {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                        if (worldObj.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
+                        if (worldObj.getChunkProvider()
+                            .chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
                             if (worldObj.getBlock(pos.posX, pos.posY, pos.posZ) instanceof BlockLiquid) {
                                 tickQueue.offer(pos);
                             }
@@ -79,14 +83,15 @@ public abstract class MixinLiquidTick {
                 TimeUnit.SECONDS, // Time unit for idle time
                 new LinkedBlockingQueue<>(1000), // Blocking queue for tasks
                 new ThreadFactory() {
+
                     @Override
                     public Thread newThread(Runnable r) {
-                        Thread thread = Executors.defaultThreadFactory().newThread(r);
+                        Thread thread = Executors.defaultThreadFactory()
+                            .newThread(r);
                         thread.setDaemon(true);
                         return thread;
                     }
-                }
-            );
+                });
             // Process liquid blocks in batches using executor service
             while (!tickQueue.isEmpty()) {
                 List<ChunkCoordinates> batch = new ArrayList<>();
@@ -96,6 +101,7 @@ public abstract class MixinLiquidTick {
                 }
                 if (!batch.isEmpty()) {
                     tickExecutorService.submit(new Runnable() {
+
                         @Override
                         public void run() {
                             for (ChunkCoordinates pos : batch) {
@@ -106,8 +112,8 @@ public abstract class MixinLiquidTick {
                     });
                 }
             }
-        // Shutdown tick executor service after it is used
-        tickExecutorService.shutdown();
-    }
+            // Shutdown tick executor service after it is used
+            tickExecutorService.shutdown();
+        }
     }
 }

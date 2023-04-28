@@ -67,8 +67,11 @@ public class Multithreaded {
         // Read the values from the configuration file
         boolean MixinEntitySpawning = config
             .getBoolean("MixinEntitySpawning", categoryMixins, true, "Enable multithreaded for mob spawning");
-        boolean MixinGrowthSpreading = config
-            .getBoolean("MixinGrowthSpreading", categoryMixins, true, "Enable multithreaded for block growth like suggar cane");
+        boolean MixinGrowthSpreading = config.getBoolean(
+            "MixinGrowthSpreading",
+            categoryMixins,
+            true,
+            "Enable multithreaded for block growth like suggar cane");
         boolean MixinLeafDecay = config
             .getBoolean("MixinLeafDecay", categoryMixins, true, "Enable multithreaded for leaf decay");
         boolean MixinFireTick = config

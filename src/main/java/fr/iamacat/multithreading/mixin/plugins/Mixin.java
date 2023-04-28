@@ -18,8 +18,6 @@
 
 package fr.iamacat.multithreading.mixin.plugins;
 
-import static com.falsepattern.lib.mixin.IMixin.PredicateHelpers.condition;
-
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -34,8 +32,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // region common
-    //MixinEntitySpawning(Side.COMMON,
-       // condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
+    // MixinEntitySpawning(Side.COMMON,
+    // condition(() -> GeneralConfig.MixinEntitySpawning && GeneralConfig.MixinEntitySpawning), "MixinEntitySpawning"),
     // region client
     // BlockRedstoneWireMixin(Side.CLIENT, condition(() -> GeneralConfig.extendBlockItem &&
     // GeneralConfig.extendRedstone), "redstone.BlockRedstoneWireMixin"),

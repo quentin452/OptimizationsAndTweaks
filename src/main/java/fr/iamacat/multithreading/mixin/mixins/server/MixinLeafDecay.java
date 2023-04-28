@@ -18,30 +18,31 @@
 
 package fr.iamacat.multithreading.mixin.mixins.server;
 
-import fr.iamacat.multithreading.Multithreaded;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.WorldServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(value = BlockLeavesBase.class, priority = 999)
 public abstract class MixinLeafDecay {
+
     private BlockingQueue<ChunkCoordinates> decayQueue;
     private ExecutorService decayExecutorService = new ThreadPoolExecutor(
         2, // Minimum number of threads
@@ -52,6 +53,7 @@ public abstract class MixinLeafDecay {
     );
 
     private static final Comparator<ChunkCoordinates> DISTANCE_COMPARATOR = new Comparator<ChunkCoordinates>() {
+
         @Override
         public int compare(ChunkCoordinates o1, ChunkCoordinates o2) {
             return Double.compare(o1.getDistanceSquared(0, 0, 0), o2.getDistanceSquared(0, 0, 0));
@@ -60,6 +62,7 @@ public abstract class MixinLeafDecay {
     private static final int BATCH_SIZE = 15;
     @Shadow
     private WorldClient world;
+
     public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
 
     @Inject(method = "updateLeafDecay", at = @At("RETURN"))
@@ -74,7 +77,8 @@ public abstract class MixinLeafDecay {
                 for (int z = -64; z <= 64; z++) {
                     for (int y = 0; y <= 255; y++) {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                        if (world.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
+                        if (world.getChunkProvider()
+                            .chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
                             Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
                             if (block instanceof BlockLeavesBase) {
                                 decayQueue.offer(pos);
@@ -93,10 +97,10 @@ public abstract class MixinLeafDecay {
                 }
                 if (!batch.isEmpty()) {
                     decayExecutorService.submit(new Runnable() {
+
                         @Override
                         public void run() {
-                            for (ChunkCoordinates pos : batch) {
-                            }
+                            for (ChunkCoordinates pos : batch) {}
                         }
                     });
                 }

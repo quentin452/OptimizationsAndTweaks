@@ -24,44 +24,56 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
-import com.falsepattern.lib.compat.BlockPos;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
 import net.minecraft.client.multiplayer.WorldClient;
-
-
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.WorldServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
-    private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(1000, Comparator.comparingInt(o -> o.posY));
-    private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(2, 8, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d").build());
+
+    private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
+        1000,
+        Comparator.comparingInt(o -> o.posY));
+    private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(
+        2,
+        8,
+        60L,
+        TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d")
+            .build());
     @Shadow
     private WorldClient world;
     private int batchSize = 5;
-   // private int maxPoolSize = 8;
-   @Inject(method = "tick", at = @At("HEAD"))
-   private void onTick(CallbackInfo ci) {
-       if (Multithreaded.MixinGrowthSpreading && world.getTotalWorldTime() % 10 == 0) {
-           if (world.getSaveHandler().getWorldDirectory().exists()) {
-               batchSize = 1;
-               growthQueue.clear();
-           } else {
-               addBlocksToGrowthQueue();
-               processBlocksInGrowthQueue();
-           }
-       }
-   }
+
+    // private int maxPoolSize = 8;
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void onTick(CallbackInfo ci) {
+        if (Multithreaded.MixinGrowthSpreading && world.getTotalWorldTime() % 10 == 0) {
+            if (world.getSaveHandler()
+                .getWorldDirectory()
+                .exists()) {
+                batchSize = 1;
+                growthQueue.clear();
+            } else {
+                addBlocksToGrowthQueue();
+                processBlocksInGrowthQueue();
+            }
+        }
+    }
 
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
