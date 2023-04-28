@@ -33,13 +33,11 @@ A: Yes, you can.
 
 * Use batch processing approach to leaf decay. This can reduce the overhead of spawning mobs one at a time.
 
-
-
 # Links to descriptions of my projects.
 
-[*Modrinth*]()
+[*Modrinth*](https://modrinth.com/mod/multithreadingandtweaks)
 
-[*Github*]()
+[*Github*](https://github.com/quentin452/Multithreadingandtweaks)
 
 [*Curseforge*]()
 
@@ -52,3 +50,9 @@ This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mo
 # Secial Thanks
 
 Special thanks to Falsepattern code : [HERE](https://github.com/FalsePattern/FalseTweaks)
+
+# Discord
+
+Add me on discord : I'm A Cat[FR]#7202
+
+Discord server : https://discord.gg/ZnmHKJzKkZ
