@@ -1,12 +1,14 @@
 # Dangerzone
 
-This mod is really not tested so idk really if it work , but i see improvement when i try the mod , might be placebo? But i maked some tests and it seem to be not placebo on my modpack.
+This mods seem to be work according to my tests.
 
-And might be corrupt your world??????
+might be corrupt your world??????
 
 If anyone know a tool to properly test my mod ,tell me pls
 
 # Description
+
+This mod is in alpha for now 
 
 This mod make things multithreaded.
 
