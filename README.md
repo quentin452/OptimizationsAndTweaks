@@ -1,6 +1,6 @@
 # Dangerzone
 
-This mods seem to be work according to my tests.
+This mods seem to be work according to my tests.But might have some bugs
 
 might be corrupt your world??????
 
