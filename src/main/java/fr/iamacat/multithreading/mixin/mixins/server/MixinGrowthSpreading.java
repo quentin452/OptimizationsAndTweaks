@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.Multithreaded;
 
-@Mixin(WorldServer.class)
+@Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
     private PriorityQueue<ChunkCoordinates> growthQueue;
     private ExecutorService growthExecutorService = Executors.newFixedThreadPool(2, new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d").build());

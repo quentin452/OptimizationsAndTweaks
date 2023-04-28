@@ -21,6 +21,7 @@ public class Multithreaded {
 
     public static boolean MixinEntitySpawning;
     public static boolean MixinGrowthSpreading;
+    public static boolean MixinLeafDecay;
     private static Configuration config;
 
     @Mod.Instance(Reference.MOD_ID)
@@ -65,6 +66,8 @@ public class Multithreaded {
             .getBoolean("MixinEntitySpawning", categoryMixins, true, "Enable multithreaded for mob spawning");
         boolean MixinGrowthSpreading = config
             .getBoolean("MixinGrowthSpreading", categoryMixins, true, "Enable multithreaded for block growth like suggar cane");
+        boolean MixinLeafDecay = config
+            .getBoolean("MixinLeafDecay", categoryMixins, true, "Enable multithreaded for leaf decay");
 
         /*
          * int someIntValue = config.getInt(
