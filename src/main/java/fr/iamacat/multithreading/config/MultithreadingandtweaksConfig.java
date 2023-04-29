@@ -40,6 +40,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinChunkPopulating;
+    @Config.Comment("Enable multithreaded for lightning engine")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinLightningBolt;
     /*
      * @Config.Comment("What the maximum render distance should be if raiseMaxRenderDistance is enabled.")
      * @Config.DefaultInt(32)

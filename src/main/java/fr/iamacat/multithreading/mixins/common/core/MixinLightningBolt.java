@@ -29,11 +29,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 import java.util.concurrent.*;
 
 @Mixin(EntityLightningBolt.class)
-public abstract class MixinEntityLightningBolt {
+public abstract class MixinLightningBolt {
 
     private static final int THREAD_COUNT_THRESHOLD = 50;
     private World worldObj;
@@ -41,7 +40,7 @@ public abstract class MixinEntityLightningBolt {
     private double posY;
     private double posZ;
 
-    public MixinEntityLightningBolt(World world, double x, double y, double z, boolean effectOnly) {
+    public MixinLightningBolt(World world, double x, double y, double z, boolean effectOnly) {
         super();
         this.worldObj = world;
         this.posX = x;
@@ -54,6 +53,7 @@ public abstract class MixinEntityLightningBolt {
         MultithreadingandtweaksConfig.enableMixinChunkPopulating = world.loadedEntityList != null && world.loadedEntityList.size() > THREAD_COUNT_THRESHOLD;
     }
 
+
     @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
     private void onOnUpdate(CallbackInfo ci) {
         if (!MultithreadingandtweaksConfig.enableMixinChunkPopulating) {
@@ -61,7 +61,6 @@ public abstract class MixinEntityLightningBolt {
             if (world == null || world.isRemote || world.loadedEntityList == null) {
                 return;
             }
-
             // Use a thread-safe collection to store the entities
             ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>(world.loadedEntityList);
 
