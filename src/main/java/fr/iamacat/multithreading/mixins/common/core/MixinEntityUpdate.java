@@ -20,6 +20,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.WorldServer;
@@ -39,28 +40,35 @@ public abstract class MixinEntityUpdate {
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
-    private WorldServer world;
+    private AtomicReference<WorldServer> world;
     // Store the entities to be updated in a thread-safe queue
-    private LinkedBlockingQueue<Entity> entitiesToUpdate;
+    private ConcurrentLinkedQueue<Entity> entitiesToUpdate;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
         availableProcessors = Runtime.getRuntime().availableProcessors();
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
-        executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool(builder.build());
-        world = (WorldServer) (Object) this;
+        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(availableProcessors, builder.build());
+        world = new AtomicReference<>((WorldServer) (Object) this);
+        List<Entity> entitiesToUpdateList = new ArrayList<>();
+        // Add code to populate the list of entities to update
+
+        for (Entity e : entitiesToUpdateList) {
+            ((WorldServer) (Object) this).updateEntityWithOptionalForce(e, true);
+            e.onEntityUpdate();
+        }
     }
 
-    // Define a getter method for the world object
-    public WorldServer getWorldServer() {
-        return world;
+    // Define a synchronized getter method for the world object
+    public synchronized WorldServer getWorldServer() {
+        return world.get();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         // Create a new queue of entities to be updated for this tick
-        entitiesToUpdate = new LinkedBlockingQueue<>();
+        entitiesToUpdate = new ConcurrentLinkedQueue<>();
 
         if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
             // Dynamically set the maximum pool size
@@ -70,6 +78,7 @@ public abstract class MixinEntityUpdate {
                 executorService.setMaximumPoolSize(maxPoolSize);
             }
         }
+
 
         // Add all entities to the queue to be updated
         for (Object e : ((WorldServer) (Object) this).loadedEntityList) {
@@ -81,9 +90,8 @@ public abstract class MixinEntityUpdate {
 
         // Update all entities in the queue
         while (!entitiesToUpdate.isEmpty()) {
-            Entity e = entitiesToUpdate.poll();
-            ((WorldServer) (Object) this).updateEntity(e);
-            e.onEntityUpdate();
+            Entity entity = entitiesToUpdate.poll();
+            entity.onEntityUpdate();
         }
     }
 
