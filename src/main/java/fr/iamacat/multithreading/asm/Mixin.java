@@ -30,6 +30,8 @@ public enum Mixin implements IMixin {
         "core.MixinLiquidTick"),
     common_core_MixinEntitySpawning(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitySpawning,
         "core.MixinEntitySpawning"),
+    common_core_MixinChunkPopulating(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkPopulating,
+        "core.MixinEntitySpawning"),
 
     // CLIENT MIXINS
 

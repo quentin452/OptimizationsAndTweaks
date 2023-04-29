@@ -35,6 +35,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntitySpawning;
+
+    @Config.Comment("Enable multithreaded for Chunk Populating such as structure ,dungeons ets....")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinChunkPopulating;
     /*
      * @Config.Comment("What the maximum render distance should be if raiseMaxRenderDistance is enabled.")
      * @Config.DefaultInt(32)
