@@ -1,9 +1,28 @@
+/*
+ * FalseTweaks
+ * Copyright (C) 2022 FalsePattern
+ * All Rights Reserved
+ * The above copyright notice, this permission notice and the word "SNEED"
+ * shall be included in all copies or substantial portions of the Software.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.*;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -45,6 +64,7 @@ public abstract class MixinChunkPopulating {
 
     @Inject(method = "populate", at = @At("HEAD"))
     private void onPopulate(Chunk chunk, IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
+        if (!MultithreadingandtweaksConfig.enableMixinChunkPopulating) {
         int count = 0;
         while (count < MAX_CHUNKS_PER_TICK) {
             Chunk chunkToPopulate = chunksToPopulate.poll();
@@ -77,4 +97,6 @@ public abstract class MixinChunkPopulating {
         }
         executorService.shutdown();
     }
+    }
 }
+

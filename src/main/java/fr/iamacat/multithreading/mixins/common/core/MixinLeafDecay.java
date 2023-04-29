@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
-@Mixin(value = BlockLeavesBase.class, priority = 999)
+@Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
 
     private BlockingQueue<ChunkCoordinates> decayQueue;

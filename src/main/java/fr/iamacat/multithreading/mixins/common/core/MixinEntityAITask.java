@@ -37,7 +37,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
-@Mixin(value = WorldServer.class, priority = 999)
+@Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
 
     private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime()
