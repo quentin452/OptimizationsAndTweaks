@@ -36,15 +36,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
+
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
 
-    private int BATCH_SIZE = 15;
-    int availableProcessors = Runtime.getRuntime().availableProcessors();
-    int threadNumber = availableProcessors;
-    int batchSize = (BATCH_SIZE / 2) / availableProcessors;
+    private static final int BATCH_SIZE = 15;
+    private final int availableProcessors = Runtime.getRuntime().availableProcessors();
+    private final int threadNumber = availableProcessors;
+    private final int batchSize = (BATCH_SIZE / 2) / availableProcessors;
     private final BlockingQueue<ChunkCoordinates> tickQueue = new LinkedBlockingQueue<>();
-    private ExecutorService tickExecutorService;
+    private final ExecutorService tickExecutorService = Executors.newFixedThreadPool(threadNumber);
     private CompletableFuture<Void> tickFuture = CompletableFuture.completedFuture(null);
 
     public MixinLiquidTick() {
@@ -62,24 +63,33 @@ public abstract class MixinLiquidTick {
                 try {
                     updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
                 } catch (Exception e) {
+                    // Log or handle the exception appropriately
+                    e.printStackTrace();
                 }
             });
-        }, tickExecutorService), tickExecutorService);
+        }, tickExecutorService), tickExecutorService).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                // Log or handle the exception appropriately
+                throwable.printStackTrace();
+            }
+            tickFuture = CompletableFuture.completedFuture(null);
+        });
     }
-
-
-    private void processQueue(World world) throws InterruptedException {
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
-        int threadNumber = availableProcessors;
-        batchSize = (BATCH_SIZE / 2) / availableProcessors;
-        tickExecutorService = new ThreadPoolExecutor(threadNumber, threadNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-
-        while (true) {
-            ChunkCoordinates pos = tickQueue.take();
-            List<ChunkCoordinates> batch = new ArrayList<>();
-            batch.add(pos);
-            tickQueue.drainTo(batch, batchSize - 1);
-            processBatch(batch, world);
+    private void processQueue(World world) {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(threadNumber, threadNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                ChunkCoordinates pos = tickQueue.take();
+                List<ChunkCoordinates> batch = new ArrayList<>();
+                batch.add(pos);
+                tickQueue.drainTo(batch, batchSize - 1);
+                executor.execute(() -> processBatch(batch, world));
+            }
+        } catch (InterruptedException e) {
+            // Log or handle the exception appropriately
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
         }
     }
 
