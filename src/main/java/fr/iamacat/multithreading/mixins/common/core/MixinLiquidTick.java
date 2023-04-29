@@ -18,10 +18,7 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
 import net.minecraft.block.BlockLiquid;
@@ -39,60 +36,53 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
-
+    private final CompletableFuture<Void> tickFuture = new CompletableFuture<>();
     private static final int BATCH_SIZE = 15;
-    private final int availableProcessors = Runtime.getRuntime().availableProcessors();
-    private final int threadNumber = availableProcessors;
-    private final int batchSize = (BATCH_SIZE / 2) / availableProcessors;
-    private final BlockingQueue<ChunkCoordinates> tickQueue = new LinkedBlockingQueue<>();
-    private final ExecutorService tickExecutorService = Executors.newFixedThreadPool(threadNumber);
-    private CompletableFuture<Void> tickFuture = CompletableFuture.completedFuture(null);
+    private final int corePoolSize = Runtime.getRuntime().availableProcessors();
+    private final int maximumPoolSize = corePoolSize * 2;
+    private final long keepAliveTime = 60L;
+    private final TimeUnit unit = TimeUnit.SECONDS;
+    private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
+    private final ExecutorService tickExecutorService = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
 
     public MixinLiquidTick() {
     }
 
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        synchronized (world) {
-            // Access and modify shared state in the World object here
-        }
+    public synchronized void updateTick(World world, int x, int y, int z, Random random){
+        // Access and modify shared state in the World object here
     }
 
+    private final Queue<List<ChunkCoordinates>> batchQueue = new ConcurrentLinkedQueue<>();
     private void processBatch(List<ChunkCoordinates> batch, World world) {
-        tickFuture = tickFuture.thenComposeAsync((Void) -> CompletableFuture.runAsync(() -> {
-            batch.parallelStream().forEach(pos -> {
-                try {
-                    updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
-                } catch (Exception e) {
-                    // Log or handle the exception appropriately
-                    e.printStackTrace();
-                }
-            });
-        }, tickExecutorService), tickExecutorService).whenComplete((result, throwable) -> {
-            if (throwable != null) {
+        batch.forEach(pos -> {
+            try {
+                updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
+            } catch (Exception e) {
                 // Log or handle the exception appropriately
-                throwable.printStackTrace();
+                e.printStackTrace();
             }
-            tickFuture = CompletableFuture.completedFuture(null);
         });
     }
     private void processQueue(World world) {
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(threadNumber, threadNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-        try {
-            while (!Thread.currentThread().isInterrupted()) {
-                ChunkCoordinates pos = tickQueue.take();
-                List<ChunkCoordinates> batch = new ArrayList<>();
-                batch.add(pos);
-                tickQueue.drainTo(batch, batchSize - 1);
-                executor.execute(() -> processBatch(batch, world));
+        while (!Thread.currentThread().isInterrupted()) {
+            List<ChunkCoordinates> batch = new ArrayList<>();
+            workQueue.drainTo(Collections.singleton(batch), BATCH_SIZE);
+            if (!batch.isEmpty()) {
+                List<Runnable> runnableBatch = new ArrayList<>();
+                for (ChunkCoordinates pos : batch) {
+                    Runnable task = () -> {
+                        // Perform actions on the ChunkCoordinates object here
+                    };
+                    runnableBatch.add(task);
+                }
+                List<ChunkCoordinates> chunkBatch = new ArrayList<>();
+                for (Runnable task : runnableBatch) {
+                    // Convert each Runnable object to a ChunkCoordinates object here
+                }
+                batchQueue.offer(chunkBatch);
             }
-        } catch (InterruptedException e) {
-            // Log or handle the exception appropriately
-            e.printStackTrace();
-        } finally {
-            executor.shutdown();
         }
     }
-
     @Inject(method = "liquidTick", at = @At("RETURN"))
     private void onLiquidTick(World world, CallbackInfo ci) throws InterruptedException {
         if (!MultithreadingandtweaksConfig.enableMixinliquidTick) {
@@ -102,13 +92,26 @@ public abstract class MixinLiquidTick {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
                         if (world.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
                             if (world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.water || world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.lava) {
-                                tickQueue.put(pos);
+                                if (workQueue.size() < BATCH_SIZE * corePoolSize) {
+                                    Runnable task = () -> {
+                                        // Perform actions on the ChunkCoordinates object here
+                                    };
+                                    workQueue.put(task);
+                                }
                             }
                         }
                     }
                 }
             }
-            processQueue(world);
+            tickExecutorService.submit(() -> {
+                try {
+                    processQueue(world);
+                    batchQueue.forEach(batch -> tickExecutorService.submit(() -> processBatch(batch, world)));
+                    tickFuture.complete(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 }
