@@ -20,6 +20,7 @@ public class Multithreaded {
     private static final String VERSION = "2.0"; // Change this to the desired version
 
     public static boolean MixinEntitySpawning;
+    public static boolean MixinEntityUpdate;
     public static boolean MixinGrowthSpreading;
     public static boolean MixinLeafDecay;
     public static boolean MixinFireTick;
@@ -78,6 +79,8 @@ public class Multithreaded {
             .getBoolean("MixinFireTick", categoryMixins, true, "Enable multithreaded for fire tick");
         boolean MixinLiquidTick = config
             .getBoolean("MixinLiquidTick", categoryMixins, true, "Enable multithreaded for liquid tick");
+        boolean MixinEntityUpdate = config
+            .getBoolean("MixinEntityUpdate", categoryMixins, true, "Enable multithreaded for Entities Update");
 
         /*
          * int someIntValue = config.getInt(
