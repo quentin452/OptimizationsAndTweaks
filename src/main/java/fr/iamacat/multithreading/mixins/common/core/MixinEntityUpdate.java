@@ -39,25 +39,30 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import scala.reflect.internal.Importers;
 
 @Mixin(value = WorldServer.class, priority = 1000)
-    public abstract class MixinEntityUpdate {
+public abstract class MixinEntityUpdate {
 
+    private ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     // Limit the number of entities updated per tick to 50
     private static final int MAX_ENTITIES_PER_TICK = 50;
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
     private AtomicReference<WorldServer> world;
-    private BlockingQueue<Entity> entitiesToUpdate = new LinkedBlockingQueue<>();
     private CopyOnWriteArrayList<Entity> loadedEntities;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
         availableProcessors = Runtime.getRuntime().availableProcessors();
-        executorService = new ThreadPoolExecutor(availableProcessors, availableProcessors, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
-            Thread t = new Thread(r);
-            t.setName("Mob-Spawner-" + this.hashCode() + "-" + t.getId());
-            return t;
-        });
+        executorService = new ThreadPoolExecutor(
+            availableProcessors, availableProcessors,
+            0L, TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue<>(MAX_ENTITIES_PER_TICK),
+            r -> {
+                Thread t = new Thread(r);
+                t.setName("Mob-Spawner-" + this.hashCode() + "-" + t.getId());
+                return t;
+            });
+        executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
         world = new AtomicReference<>((WorldServer) (Object) this);
         loadedEntities = new CopyOnWriteArrayList<>(getWorldServer().loadedEntityList);
     }
@@ -66,8 +71,13 @@ import scala.reflect.internal.Importers;
         return world.get();
     }
 
-    private synchronized void addEntityToUpdateQueue(Entity entity) throws InterruptedException {
-        entitiesToUpdate.put(entity);
+    private double getEntityPriority(Entity entity) {
+        // Calculate priority based on some criteria, such as distance from player or importance to game mechanics
+        return 0.0;
+    }
+
+    private synchronized void addEntityToUpdateQueue(Entity entity) {
+        entitiesToUpdate.add(entity);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -88,7 +98,12 @@ import scala.reflect.internal.Importers;
             if (!entitiesToUpdateBatch.isEmpty()) {
                 executorService.execute(() -> {
                     for (Entity entity : entitiesToUpdateBatch) {
-                        entity.onEntityUpdate();
+                        try {
+                            entity.onEntityUpdate();
+                        } catch (Exception e) {
+                            // Handle exceptions thrown by onEntityUpdate()
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
