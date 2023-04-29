@@ -5,7 +5,7 @@ This mods seem to be work according to my tests .Watch in screenshots(tested in 
 
 Make some ticks multithreading for 1.7.10 , to have more performances or servers.
 
-This mod is in alpha for now.
+This mod is in early stage for now.
 
 # What this mod have for now?
 
