@@ -20,6 +20,11 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -36,82 +41,107 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
-    private final CompletableFuture<Void> tickFuture = new CompletableFuture<>();
-    private static final int BATCH_SIZE = 15;
-    private final int corePoolSize = Runtime.getRuntime().availableProcessors();
-    private final int maximumPoolSize = corePoolSize * 2;
-    private final long keepAliveTime = 60L;
-    private final TimeUnit unit = TimeUnit.SECONDS;
-    private final BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-    private final ExecutorService tickExecutorService = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+    private static final int BATCH_SIZE = 100;
+
+    private ExecutorService executorService;
+    private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
+    private  Map<ChunkCoordinates, Material> blockMaterialMap;
 
     public MixinLiquidTick() {
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1,
+            r -> new Thread(r, "liquidTick-" + r.hashCode()));
+        batchQueue = new LinkedBlockingQueue<>();
+        blockMaterialMap = new ConcurrentHashMap<>();
     }
 
-    public synchronized void updateTick(World world, int x, int y, int z, Random random){
+    public void updateTick(World world, int x, int y, int z, Random random) {
         // Access and modify shared state in the World object here
-    }
-
-    private final Queue<List<ChunkCoordinates>> batchQueue = new ConcurrentLinkedQueue<>();
-    private void processBatch(List<ChunkCoordinates> batch, World world) {
-        batch.forEach(pos -> {
-            try {
-                updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
-            } catch (Exception e) {
-                // Log or handle the exception appropriately
-                e.printStackTrace();
+        ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
+        Material currentMaterial = null;
+        synchronized (blockMaterialMap) {
+            currentMaterial = blockMaterialMap.get(pos);
+        }
+        Material newMaterial = world.getBlock(x, y, z).getMaterial();
+        if (newMaterial == Material.water || newMaterial == Material.lava) {
+            if (currentMaterial != newMaterial) {
+                synchronized (blockMaterialMap) {
+                    blockMaterialMap.put(pos, newMaterial);
+                }
+                addToBatch(pos);
             }
-        });
-    }
-    private void processQueue(World world) {
-        while (!Thread.currentThread().isInterrupted()) {
-            List<ChunkCoordinates> batch = new ArrayList<>();
-            workQueue.drainTo(Collections.singleton(batch), BATCH_SIZE);
-            if (!batch.isEmpty()) {
-                List<Runnable> runnableBatch = new ArrayList<>();
-                for (ChunkCoordinates pos : batch) {
-                    Runnable task = () -> {
-                        // Perform actions on the ChunkCoordinates object here
-                    };
-                    runnableBatch.add(task);
-                }
-                List<ChunkCoordinates> chunkBatch = new ArrayList<>();
-                for (Runnable task : runnableBatch) {
-                    // Convert each Runnable object to a ChunkCoordinates object here
-                }
-                batchQueue.offer(chunkBatch);
+        } else {
+            synchronized (blockMaterialMap) {
+                blockMaterialMap.remove(pos);
             }
         }
     }
+
+    private void addToBatch(ChunkCoordinates pos) {
+        try {
+            List<ChunkCoordinates> batch = batchQueue.peek();
+            if (batch == null || batch.size() >= BATCH_SIZE) {
+                batch = new ArrayList<>(BATCH_SIZE);
+                batchQueue.put(batch);
+            }
+            batch.add(pos);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    private void processBatch(List<ChunkCoordinates> batch, World world) {
+        if (batch == null || batch.isEmpty()) {
+            return;
+        }
+        lock.readLock().lock();
+        try {
+            for (ChunkCoordinates pos : batch) {
+                updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
     @Inject(method = "liquidTick", at = @At("RETURN"))
-    private void onLiquidTick(World world, CallbackInfo ci) throws InterruptedException {
+    private void onLiquidTick(World world, CallbackInfo ci) {
         if (!MultithreadingandtweaksConfig.enableMixinliquidTick) {
+            int batchSize = BATCH_SIZE;
+            int numThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+            ((ThreadPoolExecutor) executorService).setMaximumPoolSize(numThreads);
+            List<ChunkCoordinates> liquidPositions = new ArrayList<>();
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
                     for (int y = 0; y <= 255; y++) {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
                         if (world.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
                             if (world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.water || world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.lava) {
-                                if (workQueue.size() < BATCH_SIZE * corePoolSize) {
-                                    Runnable task = () -> {
-                                        // Perform actions on the ChunkCoordinates object here
-                                    };
-                                    workQueue.put(task);
-                                }
+                                liquidPositions.add(pos);
                             }
                         }
                     }
                 }
             }
-            tickExecutorService.submit(() -> {
-                try {
-                    processQueue(world);
-                    batchQueue.forEach(batch -> tickExecutorService.submit(() -> processBatch(batch, world)));
-                    tickFuture.complete(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+            int numPositions = liquidPositions.size();
+            int numBatches = (int) Math.ceil((double) numPositions / batchSize);
+            List<CompletableFuture<Void>> taskBatch = new ArrayList<>(numBatches);
+            ReadWriteLock lock = new ReentrantReadWriteLock();
+            for (int i = 0; i < numBatches; i++) {
+                int startIndex = i * batchSize;
+                int endIndex = Math.min(startIndex + batchSize, numPositions);
+                List<ChunkCoordinates> batch = liquidPositions.subList(startIndex, endIndex);
+                taskBatch.add(CompletableFuture.runAsync(() -> {
+                    lock.readLock().lock();
+                    try {
+                        processBatch(batch, world);
+                    } finally {
+                        lock.readLock().unlock();
+                    }
+                }, executorService));
+            }
+            CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0])).join();
+            executorService.shutdown();
         }
     }
 }

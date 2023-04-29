@@ -51,7 +51,7 @@ public abstract class MixinEntitySpawning {
     WorldClient world = minecraft.theWorld;
 
     private ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
-    private AtomicInteger batchSize = new AtomicInteger(6);
+    private AtomicInteger batchSize = new AtomicInteger(100);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {

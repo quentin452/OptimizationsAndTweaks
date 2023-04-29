@@ -42,7 +42,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
 
-    private int batchSize = 5;
+    private int batchSize = 100;
 
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
         1000,
