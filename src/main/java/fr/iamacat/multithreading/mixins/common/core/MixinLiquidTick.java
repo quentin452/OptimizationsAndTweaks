@@ -97,7 +97,12 @@ public abstract class MixinLiquidTick {
                 List<ChunkCoordinates> batch = new ArrayList<>();
                 int batchSize = Math.max(Math.min(tickQueue.size(), BATCH_SIZE), 1);
                 for (int i = 0; i < batchSize; i++) {
-                    batch.add(tickQueue.poll());
+                    ChunkCoordinates pos = tickQueue.poll();
+                    if (pos.posX >= -30000000 && pos.posX < 30000000
+                        && pos.posZ >= -30000000 && pos.posZ < 30000000
+                        && pos.posY >= 0 && pos.posY < 256) {
+                        batch.add(pos);
+                    }
                 }
                 if (!batch.isEmpty()) {
                     tickExecutorService.submit(new Runnable() {
