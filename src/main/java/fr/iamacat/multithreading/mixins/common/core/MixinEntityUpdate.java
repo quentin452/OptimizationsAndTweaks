@@ -22,12 +22,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,10 +30,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import scala.reflect.internal.Importers;
 
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
@@ -49,17 +41,22 @@ public abstract class MixinEntityUpdate {
     private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
     private final CopyOnWriteArrayList<Entity> loadedEntities = new CopyOnWriteArrayList<>();
 
-    protected MixinEntityUpdate() {
-    }
+    protected MixinEntityUpdate() {}
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        int availableProcessors = Runtime.getRuntime()
+            .availableProcessors();
         executorService = new ThreadPoolExecutor(
-            availableProcessors, availableProcessors,
-            0L, TimeUnit.MILLISECONDS,
+            availableProcessors,
+            availableProcessors,
+            0L,
+            TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<>(MAX_ENTITIES_PER_TICK),
-            r -> new Thread(r, "Entity-Update-Thread-" + Thread.currentThread().getId()));
+            r -> new Thread(
+                r,
+                "Entity-Update-Thread-" + Thread.currentThread()
+                    .getId()));
         executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
         loadedEntities.addAll(getWorldServer().loadedEntityList);
     }
