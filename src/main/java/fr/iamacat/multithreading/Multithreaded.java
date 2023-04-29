@@ -1,7 +1,5 @@
 package fr.iamacat.multithreading;
 
-import java.io.File;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -23,8 +21,7 @@ public class Multithreaded {
     public static Configuration config;
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent event) {
-    }
+    public static void preInit(FMLPreInitializationEvent event) {}
 
     public static class WorldLoadHandler {
 
@@ -32,9 +29,9 @@ public class Multithreaded {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
-      //  if (config.hasChanged()) {
-      //      config.save();
-       // }
+        // if (config.hasChanged()) {
+        // config.save();
+        // }
     }
 
     @Mod.EventHandler

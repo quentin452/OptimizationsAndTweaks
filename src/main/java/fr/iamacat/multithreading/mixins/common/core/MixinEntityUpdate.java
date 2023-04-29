@@ -18,23 +18,25 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import fr.iamacat.multithreading.Multithreaded;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.WorldServer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.world.WorldServer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
+
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
@@ -45,11 +47,13 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime().availableProcessors();
+        availableProcessors = Runtime.getRuntime()
+            .availableProcessors();
         maxPoolSize = Math.max(availableProcessors * 2, 1); // Initialize maxPoolSize to a positive value
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
-        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); // use a LinkedBlockingQueue instead of a SynchronousQueue
+        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); // use a LinkedBlockingQueue instead of a
+                                                                     // SynchronousQueue
         executorService = new ThreadPoolExecutor(
             0,
             maxPoolSize,
@@ -57,17 +61,18 @@ public abstract class MixinEntityUpdate {
             TimeUnit.SECONDS,
             queue,
             builder.build(),
-            new ThreadPoolExecutor.AbortPolicy()
-        );
+            new ThreadPoolExecutor.AbortPolicy());
         executorService.allowCoreThreadTimeOut(true);
         executorService.setThreadFactory(builder.build());
         executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         world = (WorldServer) (Object) this;
     }
+
     // Define a getter method for the world object
     public WorldServer getWorldServer() {
         return world;
     }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
@@ -94,7 +99,8 @@ public abstract class MixinEntityUpdate {
         }
 
         // Remove dead entities from the map
-        for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToUpdate.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToUpdate.entrySet()
+            .iterator(); it.hasNext();) {
             Map.Entry<Integer, Entity> entry = it.next();
             if (entry.getValue().isDead) {
                 it.remove();
@@ -104,7 +110,7 @@ public abstract class MixinEntityUpdate {
 
     public void updateEntity(Entity entity) {
         // Call the original updateEntity method
-        ((WorldServer)(Object)this).updateEntity(entity);
+        ((WorldServer) (Object) this).updateEntity(entity);
 
         // Add the entity to the map to be updated later
         entitiesToUpdate.putIfAbsent(entity.getEntityId(), entity);

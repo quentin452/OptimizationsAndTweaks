@@ -1,19 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import fr.iamacat.multithreading.Multithreaded;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.world.WorldServer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +7,24 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.world.WorldServer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinEntityAITask {
+
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
@@ -37,7 +39,8 @@ public abstract class MixinEntityAITask {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime().availableProcessors();
+        availableProcessors = Runtime.getRuntime()
+            .availableProcessors();
         maxPoolSize = Math.max(availableProcessors * 2, 1);
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
@@ -48,8 +51,7 @@ public abstract class MixinEntityAITask {
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(), // use a LinkedBlockingQueue instead of a SynchronousQueue
             builder.build(),
-            new ThreadPoolExecutor.AbortPolicy()
-        );
+            new ThreadPoolExecutor.AbortPolicy());
         executorService.allowCoreThreadTimeOut(true);
         executorService.setThreadFactory(builder.build());
         executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -81,17 +83,20 @@ public abstract class MixinEntityAITask {
         }
 
         // Remove dead entities from the map
-        for (Iterator<Map.Entry<Integer, Entity>> it = entitiestoAIupdate.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<Integer, Entity>> it = entitiestoAIupdate.entrySet()
+            .iterator(); it.hasNext();) {
             Map.Entry<Integer, Entity> entry = it.next();
             if (entry.getValue().isDead) {
                 it.remove();
             }
         }
     }
+
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {
         // Update the entity immediately
-        this.getWorldServer().updateEntity(entity);
+        this.getWorldServer()
+            .updateEntity(entity);
 
         // Add the entity's AI task to the executor service
         if (entity instanceof EntityLiving) {

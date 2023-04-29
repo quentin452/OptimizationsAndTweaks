@@ -24,26 +24,24 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
+
     private int batchSize = 5;
 
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
@@ -66,7 +64,8 @@ public abstract class MixinGrowthSpreading {
     // private int maxPoolSize = 8;
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinGrowthSpreading && getWorldServer().getTotalWorldTime() % 10 == 0) {
+        if (!MultithreadingandtweaksConfig.enableMixinGrowthSpreading
+            && getWorldServer().getTotalWorldTime() % 10 == 0) {
             if (getWorldServer().getSaveHandler()
                 .getWorldDirectory()
                 .exists()) {

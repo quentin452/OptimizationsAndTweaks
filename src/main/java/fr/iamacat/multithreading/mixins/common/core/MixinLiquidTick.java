@@ -23,19 +23,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.*;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
@@ -43,6 +40,7 @@ public abstract class MixinLiquidTick {
     public MixinLiquidTick() {
         tickQueue = new LinkedBlockingQueue<>(1000);
     }
+
     private BlockingQueue<ChunkCoordinates> tickQueue;
     private ExecutorService tickExecutorService;
 
@@ -99,8 +97,10 @@ public abstract class MixinLiquidTick {
                 for (int i = 0; i < batchSize; i++) {
                     ChunkCoordinates pos = tickQueue.poll();
                     if (pos.posX >= -30000000 && pos.posX < 30000000
-                        && pos.posZ >= -30000000 && pos.posZ < 30000000
-                        && pos.posY >= 0 && pos.posY < 256) {
+                        && pos.posZ >= -30000000
+                        && pos.posZ < 30000000
+                        && pos.posY >= 0
+                        && pos.posY < 256) {
                         batch.add(pos);
                     }
                 }

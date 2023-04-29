@@ -32,18 +32,15 @@ import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChunkCoordinates;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = BlockLeavesBase.class, priority = 999)
 public abstract class MixinLeafDecay {
-
 
     private BlockingQueue<ChunkCoordinates> decayQueue;
     private ExecutorService decayExecutorService = new ThreadPoolExecutor(

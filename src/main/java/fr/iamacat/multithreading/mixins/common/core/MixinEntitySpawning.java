@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
@@ -32,7 +31,6 @@ import net.minecraft.entity.monster.EntityMob;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -41,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
-import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
