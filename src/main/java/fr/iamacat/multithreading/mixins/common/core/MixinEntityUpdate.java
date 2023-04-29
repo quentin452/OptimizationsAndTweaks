@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixin.mixins.server;
+package fr.iamacat.multithreading.mixins.common.core;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,17 +33,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
 
-@Mixin(WorldServer.class)
-public abstract class MixinWorldServer {
+@Mixin(value = WorldServer.class, priority = 1000)
+public abstract class MixinEntityUpdate {
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
+    private WorldServer world;
 
     // Store the entities to be updated in a thread-safe map
     private ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>();
-
-    @Shadow
-    public abstract void updateEntity(Entity entity);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
@@ -50,23 +49,28 @@ public abstract class MixinWorldServer {
         maxPoolSize = Math.max(availableProcessors * 2, 1); // Initialize maxPoolSize to a positive value
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
+        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); // use a LinkedBlockingQueue instead of a SynchronousQueue
         executorService = new ThreadPoolExecutor(
             0,
             maxPoolSize,
             60L,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), // use a LinkedBlockingQueue instead of a SynchronousQueue
+            queue,
             builder.build(),
             new ThreadPoolExecutor.AbortPolicy()
         );
         executorService.allowCoreThreadTimeOut(true);
         executorService.setThreadFactory(builder.build());
         executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        world = (WorldServer) (Object) this;
     }
-
+    // Define a getter method for the world object
+    public WorldServer getWorldServer() {
+        return world;
+    }
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (Multithreaded.MixinEntitySpawning) {
+        if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(availableProcessors, 1);
             if (newMaxPoolSize != maxPoolSize) {
@@ -98,10 +102,9 @@ public abstract class MixinWorldServer {
         }
     }
 
-    @Inject(method = "updateEntity", at = @At("HEAD"))
-    private void onUpdateEntity(Entity entity, CallbackInfo ci) {
-        // Update the entity immediately
-        this.updateEntity(entity);
+    public void updateEntity(Entity entity) {
+        // Call the original updateEntity method
+        ((WorldServer)(Object)this).updateEntity(entity);
 
         // Add the entity to the map to be updated later
         entitiesToUpdate.putIfAbsent(entity.getEntityId(), entity);

@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixin.mixins.server;
+package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
@@ -43,6 +44,7 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
+    private int batchSize = 5;
 
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
         1000,
@@ -55,15 +57,17 @@ public abstract class MixinGrowthSpreading {
         new LinkedBlockingQueue<>(),
         new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d")
             .build());
-    @Shadow
-    private WorldClient world;
-    private int batchSize = 5;
+
+    // Define a getter method for the world object
+    public WorldServer getWorldServer() {
+        return (WorldServer) (Object) this;
+    }
 
     // private int maxPoolSize = 8;
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (Multithreaded.MixinGrowthSpreading && world.getTotalWorldTime() % 10 == 0) {
-            if (world.getSaveHandler()
+        if (!MultithreadingandtweaksConfig.enableMixinGrowthSpreading && getWorldServer().getTotalWorldTime() % 10 == 0) {
+            if (getWorldServer().getSaveHandler()
                 .getWorldDirectory()
                 .exists()) {
                 batchSize = 1;
@@ -80,7 +84,7 @@ public abstract class MixinGrowthSpreading {
             for (int z = -64; z <= 64; z++) {
                 for (int y = 0; y <= 255; y++) {
                     ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                    Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
+                    Block block = getWorldServer().getBlock(pos.posX, pos.posY, pos.posZ);
                     if (block instanceof BlockCrops || block instanceof BlockReed) {
                         growthQueue.add(pos);
                     }
@@ -91,6 +95,7 @@ public abstract class MixinGrowthSpreading {
 
     // Process blocks in growth queue using executor service
     private void processBlocksInGrowthQueue() {
+        ExecutorService executor = Executors.newFixedThreadPool(8);
         while (!growthQueue.isEmpty()) {
             List<ChunkCoordinates> batch = new ArrayList<>();
             int batchSize = Math.min(growthQueue.size(), this.batchSize);
@@ -98,14 +103,20 @@ public abstract class MixinGrowthSpreading {
                 batch.add(growthQueue.poll());
             }
             if (!batch.isEmpty()) {
-                growthExecutorService.submit(() -> {
+                executor.submit(() -> {
                     batch.forEach(pos -> {
-                        Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
-                        world.markBlockForUpdate(pos.posX, pos.posY, pos.posZ);
-                        world.notifyBlocksOfNeighborChange(pos.posX, pos.posY, pos.posZ, block);
+                        Block block = getWorldServer().getBlock(pos.posX, pos.posY, pos.posZ);
+                        getWorldServer().markBlockForUpdate(pos.posX, pos.posY, pos.posZ);
+                        getWorldServer().notifyBlocksOfNeighborChange(pos.posX, pos.posY, pos.posZ, block);
                     });
                 });
             }
+        }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            // Handle interruption
         }
     }
 }

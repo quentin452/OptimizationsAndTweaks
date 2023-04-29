@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixin.mixins.server;
+package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,6 +32,7 @@ import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChunkCoordinates;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,6 +43,7 @@ import fr.iamacat.multithreading.Multithreaded;
 
 @Mixin(value = BlockLeavesBase.class, priority = 999)
 public abstract class MixinLeafDecay {
+
 
     private BlockingQueue<ChunkCoordinates> decayQueue;
     private ExecutorService decayExecutorService = new ThreadPoolExecutor(
@@ -60,14 +62,12 @@ public abstract class MixinLeafDecay {
         }
     };
     private static final int BATCH_SIZE = 15;
-    @Shadow
-    private WorldClient world;
 
     public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
 
     @Inject(method = "updateLeafDecay", at = @At("RETURN"))
-    private void onUpdateEntities(CallbackInfo ci) {
-        if (Multithreaded.MixinLeafDecay) {
+    private void onUpdateEntities(WorldClient world, CallbackInfo ci) {
+        if (!MultithreadingandtweaksConfig.enableMixinLeafDecay) {
             // Initialize decay queue if it doesn't exist
             if (decayQueue == null) {
                 decayQueue = new LinkedBlockingQueue<>(1000);

@@ -16,13 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixin.mixins.server;
+package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -47,9 +49,9 @@ public abstract class MixinEntitySpawning {
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
+    Minecraft minecraft = Minecraft.getMinecraft();
+    WorldClient world = minecraft.theWorld;
 
-    @Shadow
-    private WorldClient world;
     private ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
     private AtomicInteger batchSize = new AtomicInteger(6);
 
@@ -76,7 +78,7 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (Multithreaded.MixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
+        if (!MultithreadingandtweaksConfig.enableMixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(availableProcessors, 1);
             if (newMaxPoolSize != maxPoolSize) {

@@ -16,14 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.iamacat.multithreading.mixin.mixins.server;
+package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.*;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -41,7 +43,6 @@ public abstract class MixinLiquidTick {
     public MixinLiquidTick() {
         tickQueue = new LinkedBlockingQueue<>(1000);
     }
-
     private BlockingQueue<ChunkCoordinates> tickQueue;
     private ExecutorService tickExecutorService;
 
@@ -53,14 +54,13 @@ public abstract class MixinLiquidTick {
         }
     };
     private static final int BATCH_SIZE = 15;
-    @Shadow
-    private World worldObj;
 
     public abstract void func_149813_h(int x, int y, int z);
 
     @Inject(method = "liquidtick", at = @At("RETURN"))
-    private void onUpdateTick(CallbackInfo ci) {
-        if (Multithreaded.MixinLiquidTick) {
+    private void onUpdateTick(World worldObj, CallbackInfo ci) {
+        // Use the 'world' parameter instead of 'worldObj'
+        if (!MultithreadingandtweaksConfig.enableMixinliquidTick) {
             // Add liquid blocks that need to be ticked to the queue
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
