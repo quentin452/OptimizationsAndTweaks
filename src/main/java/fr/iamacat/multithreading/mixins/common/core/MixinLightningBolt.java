@@ -49,10 +49,9 @@ public abstract class MixinLightningBolt {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(World world, double x, double y, double z, boolean effectOnly, CallbackInfo ci) {
+    private void onInit(World world, double x, double y, double z, CallbackInfo ci) {
         MultithreadingandtweaksConfig.enableMixinChunkPopulating = world.loadedEntityList != null && world.loadedEntityList.size() > THREAD_COUNT_THRESHOLD;
     }
-
 
     @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
     private void onOnUpdate(CallbackInfo ci) {
