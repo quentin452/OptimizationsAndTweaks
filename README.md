@@ -7,11 +7,6 @@ Make some ticks multithreading for 1.7.10 , to have more performances or servers
 
 This mod is in alpha for now.
 
-- A Question and Answer .
-
-Q: Can I use this mod in my modpack?
-A: Yes, you can.
-
 # What this mod have for now?
 
 Go here : [Wiki](https://github.com/quentin452/Multithreadingandtweaks/wiki)
