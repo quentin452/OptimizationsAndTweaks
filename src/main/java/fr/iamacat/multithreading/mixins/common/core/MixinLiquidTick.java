@@ -19,11 +19,13 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.*;
 
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -37,88 +39,66 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
 
+    private int BATCH_SIZE = 15;
+    int availableProcessors = Runtime.getRuntime().availableProcessors();
+    int threadNumber = availableProcessors;
+    int batchSize = (BATCH_SIZE / 2) / availableProcessors;
+    private final BlockingQueue<ChunkCoordinates> tickQueue = new LinkedBlockingQueue<>();
+    private ExecutorService tickExecutorService;
+    private CompletableFuture<Void> tickFuture = CompletableFuture.completedFuture(null);
+
     public MixinLiquidTick() {
-        tickQueue = new LinkedBlockingQueue<>(1000);
     }
 
-    private BlockingQueue<ChunkCoordinates> tickQueue;
-    private ExecutorService tickExecutorService;
-
-    private static final Comparator<ChunkCoordinates> DISTANCE_COMPARATOR = new Comparator<ChunkCoordinates>() {
-
-        @Override
-        public int compare(ChunkCoordinates o1, ChunkCoordinates o2) {
-            return Double.compare(o1.getDistanceSquared(0, 0, 0), o2.getDistanceSquared(0, 0, 0));
+    public void updateTick(World world, int x, int y, int z, Random random) {
+        synchronized (world) {
+            // Access and modify shared state in the World object here
         }
-    };
-    private static final int BATCH_SIZE = 15;
+    }
 
-    public abstract void func_149813_h(int x, int y, int z);
+    private void processBatch(List<ChunkCoordinates> batch, World world) {
+        tickFuture = tickFuture.thenComposeAsync((Void) -> CompletableFuture.runAsync(() -> {
+            batch.parallelStream().forEach(pos -> {
+                try {
+                    updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
+                } catch (Exception e) {
+                }
+            });
+        }, tickExecutorService), tickExecutorService);
+    }
 
-    @Inject(method = "liquidtick", at = @At("RETURN"))
-    private void onUpdateTick(World worldObj, CallbackInfo ci) {
-        // Use the 'world' parameter instead of 'worldObj'
+
+    private void processQueue(World world) throws InterruptedException {
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        int threadNumber = availableProcessors;
+        batchSize = (BATCH_SIZE / 2) / availableProcessors;
+        tickExecutorService = new ThreadPoolExecutor(threadNumber, threadNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+        while (true) {
+            ChunkCoordinates pos = tickQueue.take();
+            List<ChunkCoordinates> batch = new ArrayList<>();
+            batch.add(pos);
+            tickQueue.drainTo(batch, batchSize - 1);
+            processBatch(batch, world);
+        }
+    }
+
+    @Inject(method = "liquidTick", at = @At("RETURN"))
+    private void onLiquidTick(World world, CallbackInfo ci) throws InterruptedException {
         if (!MultithreadingandtweaksConfig.enableMixinliquidTick) {
-            // Add liquid blocks that need to be ticked to the queue
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
                     for (int y = 0; y <= 255; y++) {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                        if (worldObj.getChunkProvider()
-                            .chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
-                            if (worldObj.getBlock(pos.posX, pos.posY, pos.posZ) instanceof BlockLiquid) {
-                                tickQueue.offer(pos);
+                        if (world.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
+                            if (world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.water || world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.lava) {
+                                tickQueue.put(pos);
                             }
                         }
                     }
                 }
             }
-            // Initialize tick executor service with daemon threads
-            tickExecutorService = new ThreadPoolExecutor(
-                2, // Minimum number of threads
-                6, // Maximum number of threads
-                60L, // Thread idle time before termination
-                TimeUnit.SECONDS, // Time unit for idle time
-                new LinkedBlockingQueue<>(1000), // Blocking queue for tasks
-                new ThreadFactory() {
-
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        Thread thread = Executors.defaultThreadFactory()
-                            .newThread(r);
-                        thread.setDaemon(true);
-                        return thread;
-                    }
-                });
-            // Process liquid blocks in batches using executor service
-            while (!tickQueue.isEmpty()) {
-                List<ChunkCoordinates> batch = new ArrayList<>();
-                int batchSize = Math.max(Math.min(tickQueue.size(), BATCH_SIZE), 1);
-                for (int i = 0; i < batchSize; i++) {
-                    ChunkCoordinates pos = tickQueue.poll();
-                    if (pos.posX >= -30000000 && pos.posX < 30000000
-                        && pos.posZ >= -30000000
-                        && pos.posZ < 30000000
-                        && pos.posY >= 0
-                        && pos.posY < 256) {
-                        batch.add(pos);
-                    }
-                }
-                if (!batch.isEmpty()) {
-                    tickExecutorService.submit(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (ChunkCoordinates pos : batch) {
-                                func_149813_h(pos.posX, pos.posY, pos.posZ);
-                            }
-                        }
-
-                    });
-                }
-            }
-            // Shutdown tick executor service after it is used
-            tickExecutorService.shutdown();
+            processQueue(world);
         }
     }
 }
