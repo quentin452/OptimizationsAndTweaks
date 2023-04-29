@@ -18,8 +18,7 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
@@ -41,30 +40,15 @@ public abstract class MixinEntityUpdate {
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
     private WorldServer world;
-
-    // Store the entities to be updated in a thread-safe map
-    private ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>();
+    // Store the entities to be updated in a thread-safe queue
+    private LinkedBlockingQueue<Entity> entitiesToUpdate;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime()
-            .availableProcessors();
-        maxPoolSize = Math.max(availableProcessors * 2, 1); // Initialize maxPoolSize to a positive value
+        availableProcessors = Runtime.getRuntime().availableProcessors();
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
-        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(); // use a LinkedBlockingQueue instead of a
-                                                                     // SynchronousQueue
-        executorService = new ThreadPoolExecutor(
-            0,
-            maxPoolSize,
-            60L,
-            TimeUnit.SECONDS,
-            queue,
-            builder.build(),
-            new ThreadPoolExecutor.AbortPolicy());
-        executorService.allowCoreThreadTimeOut(true);
-        executorService.setThreadFactory(builder.build());
-        executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool(builder.build());
         world = (WorldServer) (Object) this;
     }
 
@@ -75,6 +59,9 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
+        // Create a new queue of entities to be updated for this tick
+        entitiesToUpdate = new LinkedBlockingQueue<>();
+
         if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(availableProcessors, 1);
@@ -84,40 +71,25 @@ public abstract class MixinEntityUpdate {
             }
         }
 
-        // Update all entities in the map
-        for (Entity entity : entitiesToUpdate.values()) {
-            entity.onEntityUpdate();
+        // Add all entities to the queue to be updated
+        for (Object e : ((WorldServer) (Object) this).loadedEntityList) {
+            entitiesToUpdate.offer((Entity) e);
         }
-        // Clear the map of entities to be updated for the next tick
-        entitiesToUpdate.clear();
-    }
-
-    public void updateEntities() {
-        // Update all entities in the map
-        for (Entity entity : entitiesToUpdate.values()) {
-            entity.onEntityUpdate();
+        for (Object e : ((WorldServer) (Object) this).weatherEffects) {
+            entitiesToUpdate.offer((Entity) e);
         }
 
-        // Remove dead entities from the map
-        for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToUpdate.entrySet()
-            .iterator(); it.hasNext();) {
-            Map.Entry<Integer, Entity> entry = it.next();
-            if (entry.getValue().isDead) {
-                it.remove();
-            }
+        // Update all entities in the queue
+        while (!entitiesToUpdate.isEmpty()) {
+            Entity e = entitiesToUpdate.poll();
+            ((WorldServer) (Object) this).updateEntity(e);
+            e.onEntityUpdate();
         }
     }
 
-    public void updateEntity(Entity entity) {
-        // Call the original updateEntity method
-        ((WorldServer) (Object) this).updateEntity(entity);
-
-        // Add the entity to the map to be updated later
-        entitiesToUpdate.putIfAbsent(entity.getEntityId(), entity);
-
-        // Add a check to remove the entity from the queue if it is dead
-        if (entity.isDead) {
-            entitiesToUpdate.remove(entity);
-        }
+    @Inject(method = "close", at = @At("HEAD"))
+    private void onClose(CallbackInfo ci) {
+        // Shutdown the executorService to avoid a memory leak
+        executorService.shutdown();
     }
 }
