@@ -46,7 +46,8 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime().availableProcessors();
+        availableProcessors = Runtime.getRuntime()
+            .availableProcessors();
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
         executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(availableProcessors, builder.build());
@@ -78,7 +79,6 @@ public abstract class MixinEntityUpdate {
                 executorService.setMaximumPoolSize(maxPoolSize);
             }
         }
-
 
         // Add all entities to the queue to be updated
         for (Object e : ((WorldServer) (Object) this).loadedEntityList) {

@@ -20,10 +20,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -43,13 +40,15 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinEntityAITask {
 
-    private int maxPoolSize;
     private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime()
         .availableProcessors();
+
+    private int maxPoolSize = Math.max(AVAILABLE_PROCESSORS * 2, 1);
+
     private ThreadPoolExecutor executorService;
 
     // Store the entities to be updated in a thread-safe map
-    private final ConcurrentHashMap<Integer, Entity> entitiestoAIupdate = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Entity> entitiesToAIUpdate = new ConcurrentHashMap<>();
 
     // Define a getter method for the world object
     public WorldServer getWorldServer() {
@@ -58,7 +57,6 @@ public abstract class MixinEntityAITask {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        maxPoolSize = Math.max(AVAILABLE_PROCESSORS * 2, 1);
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
         executorService = new ThreadPoolExecutor(
@@ -78,7 +76,7 @@ public abstract class MixinEntityAITask {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(
                 Runtime.getRuntime()
-                    .availableProcessors(),
+                    .availableProcessors() * 2,
                 1);
             if (newMaxPoolSize != maxPoolSize) {
                 maxPoolSize = newMaxPoolSize;
@@ -89,13 +87,13 @@ public abstract class MixinEntityAITask {
 
     public void updateEntities() {
         // Update all entities in the map
-        synchronized (entitiestoAIupdate) { // synchronize the map access
-            for (Entity entity : entitiestoAIupdate.values()) {
+        synchronized (entitiesToAIUpdate) { // synchronize the map access
+            for (Entity entity : entitiesToAIUpdate.values()) {
                 entity.onEntityUpdate();
             }
 
             // Remove dead entities from the map
-            for (Iterator<Map.Entry<Integer, Entity>> it = entitiestoAIupdate.entrySet()
+            for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToAIUpdate.entrySet()
                 .iterator(); it.hasNext();) {
                 Map.Entry<Integer, Entity> entry = it.next();
                 if (entry.getValue().isDead) {
@@ -103,11 +101,6 @@ public abstract class MixinEntityAITask {
                 }
             }
         }
-    }
-
-    @Inject(method = "stopServer", at = @At("RETURN"))
-    private void onStopServer(CallbackInfo ci) {
-        executorService.shutdown();
     }
 
     @Inject(method = "updateEntity", at = @At("HEAD"))
@@ -124,29 +117,44 @@ public abstract class MixinEntityAITask {
                     if (taskEntryObj instanceof EntityAITasks.EntityAITaskEntry) {
                         EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) taskEntryObj;
                         if (taskEntry.action instanceof EntityAIBase) {
-                            executorService.submit(() -> {
-                                try {
-                                    taskEntry.action.startExecuting(); // start the task
-                                    while (taskEntry.action.shouldExecute()) {
-                                        taskEntry.action.updateTask(); // run the task
+                            try {
+                                executorService.execute(() -> {
+                                    try {
+                                        taskEntry.action.startExecuting(); // start the task
+                                        while (taskEntry.action.shouldExecute()) {
+                                            taskEntry.action.updateTask(); // run the task
+                                        }
+                                        taskEntry.action.resetTask(); // reset the task
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                    taskEntry.action.resetTask(); // reset the task
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
+                                });
+                            } catch (RejectedExecutionException e) {
+                                // Discard the oldest task and try again
+                                executorService.getQueue()
+                                    .poll();
+                                executorService.execute(() -> {
+                                    try {
+                                        taskEntry.action.startExecuting(); // start the task
+                                        while (taskEntry.action.shouldExecute()) {
+                                            taskEntry.action.updateTask(); // run the task
+                                        }
+                                        taskEntry.action.resetTask(); // reset the task
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                });
+                            }
                         }
                     }
                 }
             }
 
             // Add the entity to the thread-safe map to be updated later
-            entitiestoAIupdate.putIfAbsent(entity.getEntityId(), entity);
-        }
-
-        // Remove the entity from the map if it is dead
-        if (entity.isDead) {
-            entitiestoAIupdate.remove(entity.getEntityId());
+            entitiesToAIUpdate.putIfAbsent(entity.getEntityId(), entity);
+        } else {
+            // Remove the entity from the map if it is dead or not an instance of EntityLiving
+            entitiesToAIUpdate.remove(entity.getEntityId());
         }
     }
 }
