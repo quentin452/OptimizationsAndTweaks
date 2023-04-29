@@ -20,10 +20,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.minecraft.block.BlockLiquid;
@@ -38,17 +35,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
-
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
+
     private static final int BATCH_SIZE = 100;
 
     private ExecutorService executorService;
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
-    private  Map<ChunkCoordinates, Material> blockMaterialMap;
+    private Map<ChunkCoordinates, Material> blockMaterialMap;
 
     public MixinLiquidTick() {
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1,
+        executorService = Executors.newFixedThreadPool(
+            Runtime.getRuntime()
+                .availableProcessors() - 1,
             r -> new Thread(r, "liquidTick-" + r.hashCode()));
         batchQueue = new LinkedBlockingQueue<>();
         blockMaterialMap = new ConcurrentHashMap<>();
@@ -61,7 +60,8 @@ public abstract class MixinLiquidTick {
         synchronized (blockMaterialMap) {
             currentMaterial = blockMaterialMap.get(pos);
         }
-        Material newMaterial = world.getBlock(x, y, z).getMaterial();
+        Material newMaterial = world.getBlock(x, y, z)
+            .getMaterial();
         if (newMaterial == Material.water || newMaterial == Material.lava) {
             if (currentMaterial != newMaterial) {
                 synchronized (blockMaterialMap) {
@@ -95,28 +95,38 @@ public abstract class MixinLiquidTick {
         if (batch == null || batch.isEmpty()) {
             return;
         }
-        lock.readLock().lock();
+        lock.readLock()
+            .lock();
         try {
             for (ChunkCoordinates pos : batch) {
                 updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
             }
         } finally {
-            lock.readLock().unlock();
+            lock.readLock()
+                .unlock();
         }
     }
+
     @Inject(method = "liquidTick", at = @At("RETURN"))
     private void onLiquidTick(World world, CallbackInfo ci) {
         if (!MultithreadingandtweaksConfig.enableMixinliquidTick) {
             int batchSize = BATCH_SIZE;
-            int numThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+            int numThreads = Math.max(
+                1,
+                Runtime.getRuntime()
+                    .availableProcessors() - 1);
             ((ThreadPoolExecutor) executorService).setMaximumPoolSize(numThreads);
             List<ChunkCoordinates> liquidPositions = new ArrayList<>();
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
                     for (int y = 0; y <= 255; y++) {
                         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                        if (world.getChunkProvider().chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
-                            if (world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.water || world.getBlock(pos.posX, pos.posY, pos.posZ).getMaterial() == Material.lava) {
+                        if (world.getChunkProvider()
+                            .chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
+                            if (world.getBlock(pos.posX, pos.posY, pos.posZ)
+                                .getMaterial() == Material.water
+                                || world.getBlock(pos.posX, pos.posY, pos.posZ)
+                                    .getMaterial() == Material.lava) {
                                 liquidPositions.add(pos);
                             }
                         }
@@ -132,15 +142,18 @@ public abstract class MixinLiquidTick {
                 int endIndex = Math.min(startIndex + batchSize, numPositions);
                 List<ChunkCoordinates> batch = liquidPositions.subList(startIndex, endIndex);
                 taskBatch.add(CompletableFuture.runAsync(() -> {
-                    lock.readLock().lock();
+                    lock.readLock()
+                        .lock();
                     try {
                         processBatch(batch, world);
                     } finally {
-                        lock.readLock().unlock();
+                        lock.readLock()
+                            .unlock();
                     }
                 }, executorService));
             }
-            CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0])).join();
+            CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0]))
+                .join();
             executorService.shutdown();
         }
     }
