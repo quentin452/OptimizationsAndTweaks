@@ -26,6 +26,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,43 +43,33 @@ import scala.reflect.internal.Importers;
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
 
-    private ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    // Limit the number of entities updated per tick to 50
+    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private static final int MAX_ENTITIES_PER_TICK = 50;
-    private int availableProcessors;
     private ThreadPoolExecutor executorService;
-    private int maxPoolSize;
-    private AtomicReference<WorldServer> world;
-    private CopyOnWriteArrayList<Entity> loadedEntities;
+    private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
+    private final CopyOnWriteArrayList<Entity> loadedEntities = new CopyOnWriteArrayList<>();
+
+    protected MixinEntityUpdate() {
+    }
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime().availableProcessors();
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
         executorService = new ThreadPoolExecutor(
             availableProcessors, availableProcessors,
             0L, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<>(MAX_ENTITIES_PER_TICK),
-            r -> {
-                Thread t = new Thread(r);
-                t.setName("Mob-Spawner-" + this.hashCode() + "-" + t.getId());
-                return t;
-            });
+            r -> new Thread(r, "Entity-Update-Thread-" + Thread.currentThread().getId()));
         executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
-        world = new AtomicReference<>((WorldServer) (Object) this);
-        loadedEntities = new CopyOnWriteArrayList<>(getWorldServer().loadedEntityList);
+        loadedEntities.addAll(getWorldServer().loadedEntityList);
     }
 
     public synchronized WorldServer getWorldServer() {
         return world.get();
     }
 
-    private double getEntityPriority(Entity entity) {
-        // Calculate priority based on some criteria, such as distance from player or importance to game mechanics
-        return 0.0;
-    }
-
-    private synchronized void addEntityToUpdateQueue(Entity entity) {
-        entitiesToUpdate.add(entity);
+    private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
+        entitiesToUpdate.addAll(entities);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -85,10 +77,7 @@ public abstract class MixinEntityUpdate {
         if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
             List<Entity> entitiesToUpdateBatch = new ArrayList<>();
 
-            // Limit the number of entities updated per tick
             int count = 0;
-
-            // Process entities in batches
             while (!entitiesToUpdate.isEmpty() && count < MAX_ENTITIES_PER_TICK) {
                 Entity entity = entitiesToUpdate.poll();
                 entitiesToUpdateBatch.add(entity);
@@ -101,7 +90,6 @@ public abstract class MixinEntityUpdate {
                         try {
                             entity.onEntityUpdate();
                         } catch (Exception e) {
-                            // Handle exceptions thrown by onEntityUpdate()
                             e.printStackTrace();
                         }
                     }
@@ -115,4 +103,3 @@ public abstract class MixinEntityUpdate {
         executorService.shutdown();
     }
 }
-
