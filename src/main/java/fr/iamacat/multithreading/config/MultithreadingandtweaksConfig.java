@@ -11,12 +11,12 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinLeafDecay;
-    @Config.Comment("Enable multithreaded for AI Task.")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Enable multithreaded for AI Task.(disabled because laggy)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityAITask;
-    @Config.Comment("Enable multithreaded for Entity Update.")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Enable multithreaded for Entity Update.(disabled because laggy)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityUpdate;
     @Config.Comment("Enable multithreaded for Fire Tick.")
