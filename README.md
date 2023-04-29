@@ -37,7 +37,7 @@ This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mo
 
 # Secial Thanks
 
-Special thanks to Falsepattern code : [HERE](https://github.com/FalsePattern/FalseTweaks)
+Special thanks to Falsetweaks code : [HERE](https://github.com/FalsePattern/FalseTweaks)
 
 # Discord
 
