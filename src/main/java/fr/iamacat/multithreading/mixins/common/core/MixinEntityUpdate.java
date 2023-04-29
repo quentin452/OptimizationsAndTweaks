@@ -22,7 +22,10 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,71 +36,68 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import scala.reflect.internal.Importers;
 
 @Mixin(value = WorldServer.class, priority = 1000)
-public abstract class MixinEntityUpdate {
+    public abstract class MixinEntityUpdate {
 
+    // Limit the number of entities updated per tick to 50
+    private static final int MAX_ENTITIES_PER_TICK = 50;
     private int availableProcessors;
     private ThreadPoolExecutor executorService;
     private int maxPoolSize;
     private AtomicReference<WorldServer> world;
-    // Store the entities to be updated in a thread-safe queue
-    private ConcurrentLinkedQueue<Entity> entitiesToUpdate;
+    private BlockingQueue<Entity> entitiesToUpdate = new LinkedBlockingQueue<>();
+    private CopyOnWriteArrayList<Entity> loadedEntities;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime()
-            .availableProcessors();
-        ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
-        builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
-        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(availableProcessors, builder.build());
+        availableProcessors = Runtime.getRuntime().availableProcessors();
+        executorService = new ThreadPoolExecutor(availableProcessors, availableProcessors, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
+            Thread t = new Thread(r);
+            t.setName("Mob-Spawner-" + this.hashCode() + "-" + t.getId());
+            return t;
+        });
         world = new AtomicReference<>((WorldServer) (Object) this);
-        List<Entity> entitiesToUpdateList = new ArrayList<>();
-        // Add code to populate the list of entities to update
-
-        for (Entity e : entitiesToUpdateList) {
-            ((WorldServer) (Object) this).updateEntityWithOptionalForce(e, true);
-            e.onEntityUpdate();
-        }
+        loadedEntities = new CopyOnWriteArrayList<>(getWorldServer().loadedEntityList);
     }
 
-    // Define a synchronized getter method for the world object
     public synchronized WorldServer getWorldServer() {
         return world.get();
     }
 
+    private synchronized void addEntityToUpdateQueue(Entity entity) throws InterruptedException {
+        entitiesToUpdate.put(entity);
+    }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        // Create a new queue of entities to be updated for this tick
-        entitiesToUpdate = new ConcurrentLinkedQueue<>();
-
         if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
-            // Dynamically set the maximum pool size
-            int newMaxPoolSize = Math.max(availableProcessors, 1);
-            if (newMaxPoolSize != maxPoolSize) {
-                maxPoolSize = newMaxPoolSize;
-                executorService.setMaximumPoolSize(maxPoolSize);
+            List<Entity> entitiesToUpdateBatch = new ArrayList<>();
+
+            // Limit the number of entities updated per tick
+            int count = 0;
+
+            // Process entities in batches
+            while (!entitiesToUpdate.isEmpty() && count < MAX_ENTITIES_PER_TICK) {
+                Entity entity = entitiesToUpdate.poll();
+                entitiesToUpdateBatch.add(entity);
+                count++;
             }
-        }
 
-        // Add all entities to the queue to be updated
-        for (Object e : ((WorldServer) (Object) this).loadedEntityList) {
-            entitiesToUpdate.offer((Entity) e);
-        }
-        for (Object e : ((WorldServer) (Object) this).weatherEffects) {
-            entitiesToUpdate.offer((Entity) e);
-        }
-
-        // Update all entities in the queue
-        while (!entitiesToUpdate.isEmpty()) {
-            Entity entity = entitiesToUpdate.poll();
-            entity.onEntityUpdate();
+            if (!entitiesToUpdateBatch.isEmpty()) {
+                executorService.execute(() -> {
+                    for (Entity entity : entitiesToUpdateBatch) {
+                        entity.onEntityUpdate();
+                    }
+                });
+            }
         }
     }
 
     @Inject(method = "close", at = @At("HEAD"))
     private void onClose(CallbackInfo ci) {
-        // Shutdown the executorService to avoid a memory leak
         executorService.shutdown();
     }
 }
+
