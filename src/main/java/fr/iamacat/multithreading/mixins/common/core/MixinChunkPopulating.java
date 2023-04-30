@@ -43,25 +43,23 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinChunkPopulating {
 
-    private final ConcurrentLinkedQueue<Chunk> chunksToPopulate = new ConcurrentLinkedQueue<>();
-    private final Set<Chunk> chunksInProgress = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final CopyOnWriteArrayList<Chunk> chunksToPopulate = new CopyOnWriteArrayList<>();
+    private final ConcurrentSkipListSet<Chunk> chunksInProgress = new ConcurrentSkipListSet<>();
     private static final int MAX_CHUNKS_PER_TICK = 50;
-    private ExecutorService executorService;
-    private ExecutorCompletionService<Void> completionService;
-    private final int numThreads = MultithreadingandtweaksConfig.numberofcpus;
+    private static final int NUM_THREADS = MultithreadingandtweaksConfig.numberofcpus;
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        NUM_THREADS, NUM_THREADS, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()
+    );
+    private final CountDownLatch latch = new CountDownLatch(MAX_CHUNKS_PER_TICK);
 
     @Inject(method = "Lnet/minecraft/world/WorldServer;<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/ExecutorService;Lnet/minecraft/world/storage/ISaveHandler;Lnet/minecraft/world/storage/WorldInfo;Lnet/minecraft/world/WorldProvider;Lnet/minecraft/profiler/Profiler;Lnet/minecraft/crash/CrashReport;Lnet/minecraft/util/ReportedException;)V", at = @At("RETURN"))
     private void onInitialize(MinecraftServer server, ExecutorService executorService, ISaveHandler saveHandler, WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
-        this.executorService = Executors.newFixedThreadPool(numThreads);
-        this.completionService = new ExecutorCompletionService<>(executorService);
         for (Object chunk : ((ChunkProviderServer) provider.createChunkGenerator()).loadedChunks) {
             if (chunk instanceof Chunk && !((Chunk) chunk).isTerrainPopulated && ((Chunk) chunk).isChunkLoaded) {
                 Chunk chunkToAdd = (Chunk) chunk;
-                synchronized (chunksInProgress) {
-                    if (!chunksInProgress.contains(chunkToAdd)) {
-                        chunksToPopulate.add(chunkToAdd);
-                        chunksInProgress.add(chunkToAdd);
-                    }
+                if (!chunksInProgress.contains(chunkToAdd)) {
+                    chunksToPopulate.add(chunkToAdd);
+                    chunksInProgress.add(chunkToAdd);
                 }
             }
         }
@@ -71,35 +69,34 @@ public abstract class MixinChunkPopulating {
     private void onPopulate(Chunk chunk, IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
         if (!MultithreadingandtweaksConfig.enableMixinChunkPopulating) {
             int count = 0;
-            while (count < MAX_CHUNKS_PER_TICK) {
-                Chunk chunkToPopulate = chunksToPopulate.poll();
-                if (chunkToPopulate == null) {
+            for (Chunk chunkToPopulate : chunksToPopulate) {
+                if (count >= MAX_CHUNKS_PER_TICK) {
                     break;
                 }
-                completionService.submit(() -> {
-                    if (chunkToPopulate.isChunkLoaded && !chunkToPopulate.isTerrainPopulated) {
-                        chunkToPopulate.isTerrainPopulated = true;
-                        chunkToPopulate.populateChunk(
-                            chunkProvider,
-                            chunkProvider1,
-                            chunkToPopulate.xPosition,
-                            chunkToPopulate.zPosition);
-                    }
-                    synchronized (chunksInProgress) {
+                if (!chunkToPopulate.isTerrainPopulated) {
+                    executorService.execute(() -> {
+                        if (chunkToPopulate.isChunkLoaded) {
+                            chunkToPopulate.isTerrainPopulated = true;
+                            chunkToPopulate.populateChunk(
+                                chunkProvider,
+                                chunkProvider1,
+                                chunkToPopulate.xPosition,
+                                chunkToPopulate.zPosition
+                            );
+                        }
                         chunksInProgress.remove(chunkToPopulate);
-                    }
-                    return null;
-                });
-                count++;
+                        latch.countDown();
+                    });
+                    chunksInProgress.add(chunkToPopulate);
+                    chunksToPopulate.remove(chunkToPopulate);
+                    count++;
+                }
             }
             try {
-                for (int i = 0; i < count; i++) {
-                    completionService.take().get();
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                // Handle exceptions appropriately
+                latch.await();
+            } catch (InterruptedException e) {
+                // Handle exception appropriately
             }
-            executorService.shutdown();
         }
     }
 }
