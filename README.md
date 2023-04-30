@@ -1,11 +1,10 @@
 # Description
 
+This mod add multithreading for some features in 1.7.10. that can improve tps and fps in some situations.
 
-This mods seem to be work according to my tests .Watch in screenshots(tested in my 1.7.10 Biggess Pack Cat Edition +850mods).But might have some bugs.
+This mod is in early stages , so he can have somes bugs and unexpected behavior.
 
-Make some ticks multithreading for 1.7.10 , to have more performances or servers.
-
-This mod is in early stage for now.
+this mod isn't a solution to fix magically all tps issues.
 
 # What this mod have for now?
 
