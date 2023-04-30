@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
@@ -48,13 +48,13 @@ public abstract class MixinLeafDecay {
             return Double.compare(o1.getDistanceSquared(0, 0, 0), o2.getDistanceSquared(0, 0, 0));
         }
     };
-    private static final int BATCH_SIZE = 15;
+    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
 
     public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
 
     @Inject(method = "updateLeafDecay", at = @At("RETURN"))
     private void onUpdateEntities(WorldClient world, CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinLeafDecay) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
             // Initialize decay queue if it doesn't exist
             if (decayQueue == null) {
                 decayQueue = new LinkedBlockingQueue<>(1000);
@@ -76,7 +76,7 @@ public abstract class MixinLeafDecay {
             }
 
             // Process leaf blocks in batches using executor service
-            int numThreads = MultithreadingandtweaksConfig.numberofcpus;
+            int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
             decayExecutorService = Executors.newFixedThreadPool(numThreads);
             while (!decayQueue.isEmpty()) {
                 List<ChunkCoordinates> batch = new ArrayList<>();

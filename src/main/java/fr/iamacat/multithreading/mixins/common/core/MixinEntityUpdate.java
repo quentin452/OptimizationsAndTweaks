@@ -30,14 +30,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
 
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    private static final int MAX_ENTITIES_PER_TICK = 50;
+    private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;;
     private ThreadPoolExecutor executorService;
+    private int BATCH_SIZE = 100;
     private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
     private final CopyOnWriteArrayList<Entity> loadedEntities = new CopyOnWriteArrayList<>();
 
@@ -45,7 +46,7 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        int availableProcessors = MultithreadingandtweaksConfig.numberofcpus;
+        int availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
         executorService = new ThreadPoolExecutor(
             availableProcessors,
             availableProcessors,
@@ -70,7 +71,7 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinEntityUpdate) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             List<Entity> entitiesToUpdateBatch = new ArrayList<>();
 
             int count = 0;
@@ -82,9 +83,13 @@ public abstract class MixinEntityUpdate {
 
             if (!entitiesToUpdateBatch.isEmpty()) {
                 executorService.execute(() -> {
-                    for (Entity entity : entitiesToUpdateBatch) {
+                    for (int i = 0; i < entitiesToUpdateBatch.size(); i += BATCH_SIZE) {
+                        List<Entity> batch = entitiesToUpdateBatch
+                            .subList(i, Math.min(i + BATCH_SIZE, entitiesToUpdateBatch.size()));
                         try {
-                            entity.onEntityUpdate();
+                            for (Entity entity : batch) {
+                                entity.onEntityUpdate();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

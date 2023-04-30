@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
@@ -51,11 +51,11 @@ public abstract class MixinEntitySpawning {
     WorldClient world = minecraft.theWorld;
 
     private ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
-    private AtomicInteger batchSize = new AtomicInteger(100);
+    private AtomicInteger batchSize = new AtomicInteger(MultithreadingandtweaksMultithreadingConfig.batchsize);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = MultithreadingandtweaksConfig.numberofcpus;
+        availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
 
         // Initialize executorService only once in onInit
         executorService = new ThreadPoolExecutor(
@@ -75,7 +75,8 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinEntitySpawning && world.getTotalWorldTime() % 10 == 0) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning
+            && world.getTotalWorldTime() % 10 == 0) {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(availableProcessors, 1);
             if (newMaxPoolSize != maxPoolSize) {
@@ -98,7 +99,6 @@ public abstract class MixinEntitySpawning {
                 }
             }
             if (!batch.isEmpty()) {
-                executorService.submit(() -> { batch.forEach(e -> world.spawnEntityInWorld(e)); });
                 // Increase the pool size if the queue is full
                 if (executorService.getQueue()
                     .remainingCapacity() == 0 && executorService.getPoolSize() < maxPoolSize) {
@@ -124,9 +124,7 @@ public abstract class MixinEntitySpawning {
 
     @Final
     public void close() {
-
         Runtime.getRuntime()
             .addShutdownHook(new Thread(() -> { executorService.shutdown(); }));
-
     }
 }

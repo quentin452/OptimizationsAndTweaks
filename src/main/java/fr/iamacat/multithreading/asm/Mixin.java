@@ -1,40 +1,42 @@
 package fr.iamacat.multithreading.asm;
 
-import static com.falsepattern.lib.mixin.IMixin.PredicateHelpers.*;
-
 import java.util.*;
 import java.util.function.Predicate;
 
 import com.falsepattern.lib.mixin.IMixin;
 import com.falsepattern.lib.mixin.ITargetedMod;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
 
-    // SERVER MIXINS
-    common_core_MixinLeafDecay(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinLeafDecay,
+    // MULTITHREADING MIXINS
+    common_core_MixinLeafDecay(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay,
         "core.MixinLeafDecay"),
-    common_core_MixinEntityAITask(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityAITask,
+    common_core_MixinEntityAITask(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask,
         "core.MixinEntityAITask"),
-    common_core_MixinMixinEntityUpdate(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityUpdate,
-        "core.MixinEntityUpdate"),
-    common_core_MixinFireTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinFireTick,
+    common_core_MixinMixinEntityUpdate(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate, "core.MixinEntityUpdate"),
+    common_core_MixinFireTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick,
         "core.MixinFireTick"),
-    common_core_MixinGrowthSpreading(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinGrowthSpreading,
-        "core.MixinGrowthSpreading"),
-    common_core_MixinLiquidTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinliquidTick,
+    common_core_MixinGrowthSpreading(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading, "core.MixinGrowthSpreading"),
+    common_core_MixinLiquidTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick,
         "core.MixinLiquidTick"),
-    common_core_MixinEntitySpawning(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitySpawning,
-        "core.MixinEntitySpawning"),
-    common_core_MixinChunkPopulating(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkPopulating,
-        "core.MixinChunkPopulating"),
+    common_core_MixinEntitySpawning(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning, "core.MixinEntitySpawning"),
+    common_core_MixinChunkPopulating(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating, "core.MixinChunkPopulating"),
 
-    common_core_MixinLightningBolt(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinLightningBolt,
-        "core.MixinLightningBolt"),
+    common_core_MixinLightningBolt(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLightningBolt, "core.MixinLightningBolt"),
+
+    // OPTIMIZATIONS MIXINS
+
+    // TWEAKS MIXINS
 
     // CLIENT MIXINS
 

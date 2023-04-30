@@ -37,12 +37,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
 
-    private int batchSize = 100;
+    private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;;
 
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
         1000,
@@ -50,8 +50,8 @@ public abstract class MixinGrowthSpreading {
 
     // Use the value from MultithreadingandtweaksConfig.numberofcpus for the thread pool size
     private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksConfig.numberofcpus,
-        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -66,7 +66,7 @@ public abstract class MixinGrowthSpreading {
     // private int maxPoolSize = 8;
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinGrowthSpreading
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading
             && getWorldServer().getTotalWorldTime() % 10 == 0) {
             if (getWorldServer().getSaveHandler()
                 .getWorldDirectory()
@@ -96,7 +96,8 @@ public abstract class MixinGrowthSpreading {
 
     // Process blocks in growth queue using executor service
     private void processBlocksInGrowthQueue() {
-        ExecutorService executor = Executors.newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
+        ExecutorService executor = Executors
+            .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
         while (!growthQueue.isEmpty()) {
             List<ChunkCoordinates> batch = new ArrayList<>();
             int batchSize = Math.min(growthQueue.size(), this.batchSize);

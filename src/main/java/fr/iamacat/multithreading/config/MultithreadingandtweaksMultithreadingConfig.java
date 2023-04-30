@@ -5,7 +5,7 @@ import com.falsepattern.lib.config.Config;
 import fr.iamacat.multithreading.Tags;
 
 @Config(modid = Tags.MODID)
-public class MultithreadingandtweaksConfig {
+public class MultithreadingandtweaksMultithreadingConfig {
 
     @Config.Comment("Enable multithreaded for leaf decay.")
     @Config.DefaultBoolean(true)
@@ -49,6 +49,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)
     public static int numberofcpus;
+
+    @Config.Comment("Batch size ,if you have tps issues try lowering or highering the batch size.")
+    @Config.DefaultInt(500)
+    @Config.RangeInt(min = 1, max = 10000)
+    public static int batchsize;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

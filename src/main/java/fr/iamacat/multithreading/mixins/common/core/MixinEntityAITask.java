@@ -18,7 +18,9 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -35,13 +37,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
 
-    private int maxPoolSize = Math.max(MultithreadingandtweaksConfig.numberofcpus, 1);
+    private int maxPoolSize = Math.max(MultithreadingandtweaksMultithreadingConfig.numberofcpus, 1);
 
+    private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private ThreadPoolExecutor executorService;
 
     // Store the entities to be updated in a thread-safe map
@@ -69,7 +72,7 @@ public abstract class MixinEntityAITask {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinEntityAITask) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
             // Dynamically set the maximum pool size
             int newMaxPoolSize = Math.max(
                 Runtime.getRuntime()
@@ -83,10 +86,15 @@ public abstract class MixinEntityAITask {
     }
 
     public void updateEntities() {
-        // Update all entities in the map
+        // Update all entities in the map in batches
         synchronized (entitiesToAIUpdate) { // synchronize the map access
-            for (Entity entity : entitiesToAIUpdate.values()) {
-                entity.onEntityUpdate();
+            List<Entity> entities = new ArrayList<>(entitiesToAIUpdate.values());
+            for (int i = 0; i < entities.size(); i += BATCH_SIZE) {
+                int end = Math.min(i + BATCH_SIZE, entities.size());
+                List<Entity> batch = entities.subList(i, end);
+                for (Entity entity : batch) {
+                    entity.onEntityUpdate();
+                }
             }
 
             // Remove dead entities from the map
