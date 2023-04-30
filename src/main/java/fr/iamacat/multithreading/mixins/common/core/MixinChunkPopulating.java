@@ -38,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 998)
@@ -47,13 +48,12 @@ public abstract class MixinChunkPopulating {
     private final ConcurrentSkipListSet<Chunk> chunksInProgress = new ConcurrentSkipListSet<>();
     private static final int MAX_CHUNKS_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize; // Batch size
     private static final int NUM_THREADS = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        NUM_THREADS,
-        NUM_THREADS,
-        0L,
-        TimeUnit.MILLISECONDS,
-        new LinkedBlockingQueue<Runnable>());
     private final CountDownLatch latch = new CountDownLatch(MAX_CHUNKS_PER_TICK);
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
+    }
 
     @Inject(
         method = "Lnet/minecraft/world/WorldServer;<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/ExecutorService;Lnet/minecraft/world/storage/ISaveHandler;Lnet/minecraft/world/storage/WorldInfo;Lnet/minecraft/world/WorldProvider;Lnet/minecraft/profiler/Profiler;Lnet/minecraft/crash/CrashReport;Lnet/minecraft/util/ReportedException;)V",
@@ -93,21 +93,22 @@ public abstract class MixinChunkPopulating {
                 final int startIndex = i * MAX_CHUNKS_PER_TICK;
                 final int endIndex = Math.min(startIndex + MAX_CHUNKS_PER_TICK, numChunks);
                 List<Chunk> batchChunks = chunksToProcess.subList(startIndex, endIndex);
-                executorService.execute(() -> {
-                    for (Chunk batchChunk : batchChunks) {
-                        if (batchChunk.isChunkLoaded) {
-                            batchChunk.isTerrainPopulated = true;
-                            batchChunk.populateChunk(
-                                chunkProvider,
-                                chunkProvider1,
-                                batchChunk.xPosition,
-                                batchChunk.zPosition);
+                SharedThreadPool.getExecutorService()
+                    .execute(() -> {
+                        for (Chunk batchChunk : batchChunks) {
+                            if (batchChunk.isChunkLoaded) {
+                                batchChunk.isTerrainPopulated = true;
+                                batchChunk.populateChunk(
+                                    chunkProvider,
+                                    chunkProvider1,
+                                    batchChunk.xPosition,
+                                    batchChunk.zPosition);
+                            }
+                            chunksInProgress.remove(batchChunk);
+                            latch.countDown();
                         }
-                        chunksInProgress.remove(batchChunk);
-                        latch.countDown();
-                    }
-                    batchLatch.countDown();
-                });
+                        batchLatch.countDown();
+                    });
                 chunksInProgress.addAll(batchChunks);
             }
             try {

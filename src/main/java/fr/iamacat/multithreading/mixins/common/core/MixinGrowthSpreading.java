@@ -35,8 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 998)
@@ -48,22 +47,16 @@ public abstract class MixinGrowthSpreading {
         1000,
         Comparator.comparingInt(o -> o.posY));
 
-    // Use the value from MultithreadingandtweaksConfig.numberofcpus for the thread pool size
-    private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Growth-Executor-%d")
-            .build());
-
     // Define a getter method for the world object
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
     }
 
-    // private int maxPoolSize = 8;
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
+    }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading

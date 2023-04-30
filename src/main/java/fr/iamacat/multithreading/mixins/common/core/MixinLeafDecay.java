@@ -19,7 +19,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -33,17 +32,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
 
     private BlockingQueue<ChunkCoordinates> decayQueue;
-    private ExecutorService decayExecutorService;
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
 
     public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
+    }
 
     @Inject(method = "updateLeafDecay", at = @At("RETURN"))
     private void onUpdateEntities(WorldClient world, CallbackInfo ci) {
@@ -52,7 +56,6 @@ public abstract class MixinLeafDecay {
             if (decayQueue == null) {
                 decayQueue = new LinkedBlockingQueue<>(1000);
             }
-
 
             // Add leaf blocks that need to decay to the queue
             for (int x = -64; x <= 64; x++) {
@@ -70,10 +73,9 @@ public abstract class MixinLeafDecay {
                 }
             }
 
-
             // Process leaf blocks in batches using executor service
             int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-            decayExecutorService = Executors.newFixedThreadPool(numThreads);
+            ExecutorService executorService = SharedThreadPool.getExecutorService();
             while (!decayQueue.isEmpty()) {
                 List<ChunkCoordinates> batch = new ArrayList<>();
                 int batchSize = Math.max(Math.min(decayQueue.size(), BATCH_SIZE), 1);
@@ -81,7 +83,7 @@ public abstract class MixinLeafDecay {
                     batch.add(decayQueue.poll());
                 }
                 if (!batch.isEmpty()) {
-                    decayExecutorService.submit(new Runnable() {
+                    executorService.submit(new Runnable() {
 
                         @Override
                         public void run() {
@@ -90,10 +92,8 @@ public abstract class MixinLeafDecay {
                     });
                 }
             }
+            // Shutdown decay executor service after it is used
+            executorService.shutdown();
         }
-
-
-         //Shutdown decay executor service after it is used
-        decayExecutorService.shutdown();
     }
 }

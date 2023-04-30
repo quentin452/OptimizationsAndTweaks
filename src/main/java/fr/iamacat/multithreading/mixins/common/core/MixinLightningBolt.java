@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLightningBolt.class)
@@ -41,6 +42,12 @@ public abstract class MixinLightningBolt {
     private double posX;
     private double posY;
     private double posZ;
+
+    // not sure
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
+    }
 
     private MixinLightningBolt(World world, double x, double y, double z, boolean effectOnly) {
         super();

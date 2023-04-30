@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.BlockPos;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(BlockFire.class)
@@ -44,6 +45,12 @@ public abstract class MixinFireTick {
 
     private boolean isReplaceable(BlockFire block, World world, BlockPos pos) {
         return block.isReplaceable(world, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    // not sure
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
     }
 
     @Unique

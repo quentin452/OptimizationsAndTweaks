@@ -33,21 +33,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
-
-    private ExecutorService executorService;
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
     private Map<ChunkCoordinates, Material> blockMaterialMap;
 
-    public MixinLiquidTick() {
-        executorService = Executors.newFixedThreadPool(
-            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-            r -> new Thread(r, "liquidTick-" + r.hashCode()));
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        SharedThreadPool.getExecutorService();
         batchQueue = new LinkedBlockingQueue<>();
         blockMaterialMap = new ConcurrentHashMap<>();
     }
@@ -114,7 +112,7 @@ public abstract class MixinLiquidTick {
                 1,
                 Runtime.getRuntime()
                     .availableProcessors() - 1);
-            ((ThreadPoolExecutor) executorService).setMaximumPoolSize(numThreads);
+            ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).setMaximumPoolSize(numThreads);
             List<ChunkCoordinates> liquidPositions = new ArrayList<>();
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
@@ -149,11 +147,12 @@ public abstract class MixinLiquidTick {
                         lock.readLock()
                             .unlock();
                     }
-                }, executorService));
+                }, SharedThreadPool.getExecutorService()));
             }
             CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0]))
                 .join();
-            executorService.shutdown();
+            SharedThreadPool.getExecutorService()
+                .shutdown();
         }
     }
 }

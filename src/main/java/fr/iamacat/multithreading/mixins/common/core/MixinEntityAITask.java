@@ -35,8 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 901)
@@ -45,7 +44,6 @@ public abstract class MixinEntityAITask {
     private int maxPoolSize = Math.max(MultithreadingandtweaksMultithreadingConfig.numberofcpus, 1);
 
     private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private ThreadPoolExecutor executorService;
 
     // Store the entities to be updated in a thread-safe map
     private final ConcurrentHashMap<Integer, Entity> entitiesToAIUpdate = new ConcurrentHashMap<>();
@@ -57,31 +55,13 @@ public abstract class MixinEntityAITask {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
-        builder.setNameFormat("Mob-Spawner-" + this.hashCode() + "-%d");
-        executorService = new ThreadPoolExecutor(
-            maxPoolSize, // fix the maximumPoolSize bug
-            maxPoolSize,
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), // use a LinkedBlockingQueue instead of a SynchronousQueue
-            builder.build(),
-            new ThreadPoolExecutor.DiscardOldestPolicy()); // use DiscardOldestPolicy to handle rejected tasks
-        executorService.allowCoreThreadTimeOut(true);
+        SharedThreadPool.getExecutorService();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
-            // Dynamically set the maximum pool size
-            int newMaxPoolSize = Math.max(
-                Runtime.getRuntime()
-                    .availableProcessors() * 2,
-                1);
-            if (newMaxPoolSize != maxPoolSize) {
-                maxPoolSize = newMaxPoolSize;
-                executorService.setMaximumPoolSize(maxPoolSize);
-            }
+            ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).setMaximumPoolSize(maxPoolSize);
         }
     }
 
@@ -123,7 +103,7 @@ public abstract class MixinEntityAITask {
                         EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) taskEntryObj;
                         if (taskEntry.action instanceof EntityAIBase) {
                             try {
-                                executorService.execute(() -> {
+                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
                                     try {
                                         taskEntry.action.startExecuting(); // start the task
                                         while (taskEntry.action.shouldExecute()) {
@@ -136,9 +116,9 @@ public abstract class MixinEntityAITask {
                                 });
                             } catch (RejectedExecutionException e) {
                                 // Discard the oldest task and try again
-                                executorService.getQueue()
+                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).getQueue()
                                     .poll();
-                                executorService.execute(() -> {
+                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
                                     try {
                                         taskEntry.action.startExecuting(); // start the task
                                         while (taskEntry.action.shouldExecute()) {

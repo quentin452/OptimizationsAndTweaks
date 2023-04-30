@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 1000)
@@ -37,8 +38,7 @@ public abstract class MixinEntityUpdate {
 
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;;
-    private ThreadPoolExecutor executorService;
-    private int BATCH_SIZE = 100;
+    private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
     private final CopyOnWriteArrayList<Entity> loadedEntities = new CopyOnWriteArrayList<>();
 
@@ -47,17 +47,7 @@ public abstract class MixinEntityUpdate {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
         int availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-        executorService = new ThreadPoolExecutor(
-            availableProcessors,
-            availableProcessors,
-            0L,
-            TimeUnit.MILLISECONDS,
-            new ArrayBlockingQueue<>(MAX_ENTITIES_PER_TICK),
-            r -> new Thread(
-                r,
-                "Entity-Update-Thread-" + Thread.currentThread()
-                    .getId()));
-        executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        SharedThreadPool.getExecutorService();
         loadedEntities.addAll(getWorldServer().loadedEntityList);
     }
 
@@ -82,25 +72,27 @@ public abstract class MixinEntityUpdate {
             }
 
             if (!entitiesToUpdateBatch.isEmpty()) {
-                executorService.execute(() -> {
-                    for (int i = 0; i < entitiesToUpdateBatch.size(); i += BATCH_SIZE) {
-                        List<Entity> batch = entitiesToUpdateBatch
-                            .subList(i, Math.min(i + BATCH_SIZE, entitiesToUpdateBatch.size()));
-                        try {
-                            for (Entity entity : batch) {
-                                entity.onEntityUpdate();
+                SharedThreadPool.getExecutorService()
+                    .execute(() -> {
+                        for (int i = 0; i < entitiesToUpdateBatch.size(); i += BATCH_SIZE) {
+                            List<Entity> batch = entitiesToUpdateBatch
+                                .subList(i, Math.min(i + BATCH_SIZE, entitiesToUpdateBatch.size()));
+                            try {
+                                for (Entity entity : batch) {
+                                    entity.onEntityUpdate();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                    }
-                });
+                    });
             }
         }
     }
 
     @Inject(method = "close", at = @At("HEAD"))
     private void onClose(CallbackInfo ci) {
-        executorService.shutdown();
+        SharedThreadPool.getExecutorService()
+            .shutdown();
     }
 }

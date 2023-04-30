@@ -36,17 +36,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
+import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
 
-    private int availableProcessors;
-    private ThreadPoolExecutor executorService;
-    private int maxPoolSize;
     Minecraft minecraft = Minecraft.getMinecraft();
     WorldClient world = minecraft.theWorld;
 
@@ -55,35 +51,13 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-
-        // Initialize executorService only once in onInit
-        executorService = new ThreadPoolExecutor(
-            0,
-            Integer.MAX_VALUE,
-            60L,
-            TimeUnit.SECONDS,
-            new SynchronousQueue<>(),
-            new ThreadFactoryBuilder().setNameFormat("Mob-Spawner-%d")
-                .build());
-        executorService.allowCoreThreadTimeOut(true);
-
-        // Initialize maxPoolSize only once in onInit
-        maxPoolSize = Math.max(availableProcessors, 1);
-        executorService.setMaximumPoolSize(maxPoolSize);
+        SharedThreadPool.getExecutorService();
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning
             && world.getTotalWorldTime() % 10 == 0) {
-            // Dynamically set the maximum pool size
-            int newMaxPoolSize = Math.max(availableProcessors, 1);
-            if (newMaxPoolSize != maxPoolSize) {
-                maxPoolSize = newMaxPoolSize;
-                executorService.setMaximumPoolSize(maxPoolSize);
-            }
-
             spawnMobsInQueue();
         }
     }
@@ -96,13 +70,6 @@ public abstract class MixinEntitySpawning {
                 Entity entity = spawnQueue.remove();
                 if (entity instanceof EntityMob) {
                     batch.add(entity);
-                }
-            }
-            if (!batch.isEmpty()) {
-                // Increase the pool size if the queue is full
-                if (executorService.getQueue()
-                    .remainingCapacity() == 0 && executorService.getPoolSize() < maxPoolSize) {
-                    executorService.setMaximumPoolSize(executorService.getMaximumPoolSize() + 1);
                 }
             }
         }
@@ -125,6 +92,11 @@ public abstract class MixinEntitySpawning {
     @Final
     public void close() {
         Runtime.getRuntime()
-            .addShutdownHook(new Thread(() -> { executorService.shutdown(); }));
+            .addShutdownHook(
+                new Thread(
+                    () -> {
+                        SharedThreadPool.getExecutorService()
+                            .shutdown();
+                    }));
     }
 }
