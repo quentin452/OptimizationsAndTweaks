@@ -55,8 +55,7 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        availableProcessors = Runtime.getRuntime()
-            .availableProcessors();
+        availableProcessors = MultithreadingandtweaksConfig.numberofcpus;
 
         // Initialize executorService only once in onInit
         executorService = new ThreadPoolExecutor(

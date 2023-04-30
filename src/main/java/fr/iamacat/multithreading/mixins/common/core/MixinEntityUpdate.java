@@ -45,8 +45,7 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        int availableProcessors = Runtime.getRuntime()
-            .availableProcessors();
+        int availableProcessors = MultithreadingandtweaksConfig.numberofcpus;
         executorService = new ThreadPoolExecutor(
             availableProcessors,
             availableProcessors,

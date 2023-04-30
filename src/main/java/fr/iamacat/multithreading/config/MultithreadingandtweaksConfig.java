@@ -11,12 +11,12 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinLeafDecay;
-    @Config.Comment("Enable multithreaded for AI Task.(disabled because laggy)")
-    @Config.DefaultBoolean(false)
+    @Config.Comment("Enable multithreaded for AI Task.)")
+    @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityAITask;
-    @Config.Comment("Enable multithreaded for Entity Update.(disabled because laggy)")
-    @Config.DefaultBoolean(false)
+    @Config.Comment("Enable multithreaded for Entity Update.")
+    @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityUpdate;
     @Config.Comment("Enable multithreaded for Fire Tick.")
@@ -44,12 +44,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinLightningBolt;
-    /*
-     * @Config.Comment("What the maximum render distance should be if raiseMaxRenderDistance is enabled.")
-     * @Config.DefaultInt(32)
-     * @Config.RangeInt(min = 16, max = 128)
-     * public static int newMaxRenderDistance;
-     */
+
+    @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
+    @Config.DefaultInt(6)
+    @Config.RangeInt(min = 1, max = 64)
+    public static int numberofcpus;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

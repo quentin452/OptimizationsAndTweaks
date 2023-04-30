@@ -21,11 +21,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
@@ -43,13 +39,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 public abstract class MixinLeafDecay {
 
     private BlockingQueue<ChunkCoordinates> decayQueue;
-    private ExecutorService decayExecutorService = new ThreadPoolExecutor(
-        2, // Minimum number of threads
-        4, // Maximum number of threads
-        60L, // Thread idle time before termination
-        TimeUnit.SECONDS, // Time unit for idle time
-        new LinkedBlockingQueue<>(1000) // Blocking queue for tasks
-    );
+    private ExecutorService decayExecutorService;
 
     private static final Comparator<ChunkCoordinates> DISTANCE_COMPARATOR = new Comparator<ChunkCoordinates>() {
 
@@ -86,6 +76,8 @@ public abstract class MixinLeafDecay {
             }
 
             // Process leaf blocks in batches using executor service
+            int numThreads = MultithreadingandtweaksConfig.numberofcpus;
+            decayExecutorService = Executors.newFixedThreadPool(numThreads);
             while (!decayQueue.isEmpty()) {
                 List<ChunkCoordinates> batch = new ArrayList<>();
                 int batchSize = Math.max(Math.min(decayQueue.size(), BATCH_SIZE), 1);

@@ -40,10 +40,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
 
-    private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime()
-        .availableProcessors();
-
-    private int maxPoolSize = Math.max(AVAILABLE_PROCESSORS * 2, 1);
+    private int maxPoolSize = Math.max(MultithreadingandtweaksConfig.numberofcpus, 1);
 
     private ThreadPoolExecutor executorService;
 

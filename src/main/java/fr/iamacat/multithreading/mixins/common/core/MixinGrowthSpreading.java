@@ -47,9 +47,11 @@ public abstract class MixinGrowthSpreading {
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
         1000,
         Comparator.comparingInt(o -> o.posY));
+
+    // Use the value from MultithreadingandtweaksConfig.numberofcpus for the thread pool size
     private ThreadPoolExecutor growthExecutorService = new ThreadPoolExecutor(
-        2,
-        8,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -94,7 +96,7 @@ public abstract class MixinGrowthSpreading {
 
     // Process blocks in growth queue using executor service
     private void processBlocksInGrowthQueue() {
-        ExecutorService executor = Executors.newFixedThreadPool(8);
+        ExecutorService executor = Executors.newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
         while (!growthQueue.isEmpty()) {
             List<ChunkCoordinates> batch = new ArrayList<>();
             int batchSize = Math.min(growthQueue.size(), this.batchSize);

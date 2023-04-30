@@ -18,18 +18,19 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.concurrent.*;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.concurrent.*;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntityLightningBolt.class)
 public abstract class MixinLightningBolt {
@@ -50,7 +51,8 @@ public abstract class MixinLightningBolt {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(World world, double x, double y, double z, CallbackInfo ci) {
-        MultithreadingandtweaksConfig.enableMixinChunkPopulating = world.loadedEntityList != null && world.loadedEntityList.size() > THREAD_COUNT_THRESHOLD;
+        MultithreadingandtweaksConfig.enableMixinChunkPopulating = world.loadedEntityList != null
+            && world.loadedEntityList.size() > THREAD_COUNT_THRESHOLD;
     }
 
     @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
@@ -64,7 +66,7 @@ public abstract class MixinLightningBolt {
             ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>(world.loadedEntityList);
 
             // Use a thread pool with the number of threads equal to the number of available processors
-            int numThreads = Runtime.getRuntime().availableProcessors();
+            int numThreads = MultithreadingandtweaksConfig.numberofcpus;
             ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
             CompletionService<Void> completionService = new ExecutorCompletionService<>(executorService);
 
@@ -85,7 +87,8 @@ public abstract class MixinLightningBolt {
 
             try {
                 for (int i = 0; i < numThreads; i++) {
-                    completionService.take().get();
+                    completionService.take()
+                        .get();
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();

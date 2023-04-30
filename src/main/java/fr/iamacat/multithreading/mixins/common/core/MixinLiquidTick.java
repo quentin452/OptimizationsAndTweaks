@@ -46,8 +46,7 @@ public abstract class MixinLiquidTick {
 
     public MixinLiquidTick() {
         executorService = Executors.newFixedThreadPool(
-            Runtime.getRuntime()
-                .availableProcessors() - 1,
+            MultithreadingandtweaksConfig.numberofcpus,
             r -> new Thread(r, "liquidTick-" + r.hashCode()));
         batchQueue = new LinkedBlockingQueue<>();
         blockMaterialMap = new ConcurrentHashMap<>();

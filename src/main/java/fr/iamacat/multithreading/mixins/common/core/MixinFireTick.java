@@ -37,6 +37,8 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
 
+    private int numberOfCPUs = MultithreadingandtweaksConfig.numberofcpus;
+
     private boolean isReplaceable(BlockFire block, World world, BlockPos pos) {
         return block.isReplaceable(world, pos.getX(), pos.getY(), pos.getZ());
     }
@@ -47,10 +49,14 @@ public abstract class MixinFireTick {
     @Inject(method = "updateTick", at = @At("HEAD"))
     public void updateTick(World world, int x, int y, int z, Random random, CallbackInfo info) {
         if (!MultithreadingandtweaksConfig.enableMixinFireTick) {
+            int numberOfCPUs = MultithreadingandtweaksConfig.numberofcpus;
             // Process fire ticks using breadth-first search
             boolean[][][] visited = new boolean[3][3][3]; // 3x3x3 grid centered at (x, y, z)
             visited[1][1][1] = true;
             ConcurrentLinkedQueue<int[]> blocksToUpdate = this.blocksToUpdate;
+            for (int i = 0; i < numberOfCPUs; i++) {
+                blocksToUpdate.add(new int[3]);
+            }
             blocksToUpdate.add(new int[] { x, y, z });
             int index = 0;
             while (index < blocksToUpdate.size()) {
