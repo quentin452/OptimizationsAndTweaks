@@ -41,13 +41,6 @@ public abstract class MixinLeafDecay {
     private BlockingQueue<ChunkCoordinates> decayQueue;
     private ExecutorService decayExecutorService;
 
-    private static final Comparator<ChunkCoordinates> DISTANCE_COMPARATOR = new Comparator<ChunkCoordinates>() {
-
-        @Override
-        public int compare(ChunkCoordinates o1, ChunkCoordinates o2) {
-            return Double.compare(o1.getDistanceSquared(0, 0, 0), o2.getDistanceSquared(0, 0, 0));
-        }
-    };
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
 
     public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
@@ -59,6 +52,8 @@ public abstract class MixinLeafDecay {
             if (decayQueue == null) {
                 decayQueue = new LinkedBlockingQueue<>(1000);
             }
+
+
             // Add leaf blocks that need to decay to the queue
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
@@ -74,6 +69,7 @@ public abstract class MixinLeafDecay {
                     }
                 }
             }
+
 
             // Process leaf blocks in batches using executor service
             int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
@@ -95,8 +91,9 @@ public abstract class MixinLeafDecay {
                 }
             }
         }
-        // Shutdown decay executor service after it is used
+
+
+         //Shutdown decay executor service after it is used
         decayExecutorService.shutdown();
     }
-
 }
