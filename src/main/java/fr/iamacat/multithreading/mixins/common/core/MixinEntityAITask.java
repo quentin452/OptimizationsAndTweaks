@@ -42,7 +42,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
 
-    private int maxPoolSize = Math.max(MultithreadingandtweaksMultithreadingConfig.numberofcpus, 1);
+    private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
 
     private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
@@ -62,7 +62,7 @@ public abstract class MixinEntityAITask {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
-            ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).setMaximumPoolSize(maxPoolSize);
+            ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).setMaximumPoolSize(numberOfCPUs);
         }
     }
 
@@ -73,19 +73,20 @@ public abstract class MixinEntityAITask {
             for (int i = 0; i < entities.size(); i += BATCH_SIZE) {
                 int end = Math.min(i + BATCH_SIZE, entities.size());
                 List<Entity> batch = entities.subList(i, end);
-                batch.parallelStream().forEach(entity -> {
-                    entity.onEntityUpdate();
-                    if (entity instanceof EntityAgeable) {
-                        EntityAgeable ageable = (EntityAgeable) entity;
-                        if (ageable.isChild()) {
-                            int growingAge = ageable.getGrowingAge();
-                            if (growingAge < 0) {
-                                growingAge++;
-                                ageable.setGrowingAge(growingAge);
+                batch.parallelStream()
+                    .forEach(entity -> {
+                        entity.onEntityUpdate();
+                        if (entity instanceof EntityAgeable) {
+                            EntityAgeable ageable = (EntityAgeable) entity;
+                            if (ageable.isChild()) {
+                                int growingAge = ageable.getGrowingAge();
+                                if (growingAge < 0) {
+                                    growingAge++;
+                                    ageable.setGrowingAge(growingAge);
+                                }
                             }
                         }
-                    }
-                });
+                    });
             }
 
             // Remove dead entities from the map
@@ -98,7 +99,6 @@ public abstract class MixinEntityAITask {
             }
         }
     }
-
 
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {

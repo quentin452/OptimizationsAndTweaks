@@ -129,7 +129,8 @@ public abstract class MixinFireTick {
                     e.printStackTrace();
                 }
             }
-            SharedThreadPool.getExecutorService().shutdown();
+            SharedThreadPool.getExecutorService()
+                .shutdown();
         }
     }
 }

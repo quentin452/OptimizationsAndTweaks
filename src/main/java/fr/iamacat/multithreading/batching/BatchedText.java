@@ -1,7 +1,7 @@
 package fr.iamacat.multithreading.batching;
 
-
 public class BatchedText {
+
     public final int x;
     public final int y;
     public final String text;

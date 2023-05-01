@@ -107,7 +107,8 @@ public abstract class MixinGrowthSpreading {
                 });
             }
         }
-        SharedThreadPool.getExecutorService().shutdown();
+        SharedThreadPool.getExecutorService()
+            .shutdown();
         try {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {

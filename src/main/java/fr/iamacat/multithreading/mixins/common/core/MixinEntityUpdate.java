@@ -38,6 +38,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
 
+    private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
     private final ConcurrentHashMap<Integer, Entity> loadedEntities = new ConcurrentHashMap<>();
@@ -52,14 +53,10 @@ public abstract class MixinEntityUpdate {
         addEntitiesToUpdateQueue(worldServer.loadedEntityList);
     }
 
-    public synchronized WorldServer getWorldServer() {
-        return world.get();
-    }
-
-    private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
-        for (Entity entity : entities) {
-            loadedEntities.putIfAbsent(entity.getEntityId(), entity);
-        }
+    private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
+        loadedEntities.putAll(
+            entities.stream()
+                .collect(Collectors.toConcurrentMap(Entity::getEntityId, Function.identity(), (e1, e2) -> e1)));
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -67,25 +64,39 @@ public abstract class MixinEntityUpdate {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
             loadedEntities.clear();
-            ExecutorService executorService = SharedThreadPool.getExecutorService();
-            if (!executorService.isShutdown()) {
-                int availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+
+            int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up
+                                                                                                            // division
+            List<List<Entity>> batches = new ArrayList<>(numBatches);
+            Iterator<Entity> iter = entitiesToUpdate.values()
+                .iterator();
+            for (int i = 0; i < numBatches; i++) {
+                List<Entity> batch = new ArrayList<>(MAX_ENTITIES_PER_TICK);
+                for (int j = 0; j < MAX_ENTITIES_PER_TICK && iter.hasNext(); j++) {
+                    batch.add(iter.next());
+                }
+                batches.add(batch);
+            }
+
+            ExecutorService executorService = Executors.newFixedThreadPool(numberOfCPUs);
+            for (List<Entity> batch : batches) {
                 executorService.execute(() -> {
-                    entitiesToUpdate.values().parallelStream().forEach(entity -> {
+                    for (Entity entity : batch) {
                         try {
                             if (entity != null) {
                                 entity.onEntityUpdate();
                             }
                         } catch (Exception e) {
-                            // Handle the exception in a specific way, such as logging the error and continuing with the program.
+                            // Handle the exception in a specific way, such as logging the error and continuing with the
+                            // program.
                             e.printStackTrace();
                         }
-                    });
+                    }
                 });
             }
+            executorService.shutdown();
         }
     }
-
 
     @Inject(method = "close", at = @At("HEAD"))
     private void onClose(CallbackInfo ci) {

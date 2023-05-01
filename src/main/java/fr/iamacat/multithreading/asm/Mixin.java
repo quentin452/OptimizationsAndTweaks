@@ -32,22 +32,23 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating, "core.MixinChunkPopulating"),
 
     common_core_MixinEntityLightningBolt(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt, "core.MixinEntityLightningBolt"),
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt,
+        "core.MixinEntityLightningBolt"),
 
-    common_core_MixinTileEntities(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities, "core.MixinTileEntities"),
-    common_core_MixinParticle(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle, "core.MixinParticleManager"),
-    common_core_MixinEntities(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntities, "core.MixinEntities"),
+    common_core_MixinTileEntities(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities,
+        "core.MixinTileEntities"),
+    common_core_MixinParticle(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
+        "core.MixinParticleManager"),
+    common_core_MixinEntities(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntities,
+        "core.MixinEntities"),
 
     // OPTIMIZATIONS MIXINS
 
     // TWEAKS MIXINS
 
     // CLIENT MIXINS
-    client_core_MixinGUIHUD(Side.CLIENT,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD, "core.MixinGUIHUD"),
+    client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD,
+        "core.MixinGUIHUD"),
 
     // MOD-FILTERED MIXINS
 

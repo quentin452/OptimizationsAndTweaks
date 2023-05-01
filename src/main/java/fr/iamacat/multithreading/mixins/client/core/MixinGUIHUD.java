@@ -18,37 +18,40 @@
 
 package fr.iamacat.multithreading.mixins.client.core;
 
-import fr.iamacat.multithreading.SharedThreadPool;
-import fr.iamacat.multithreading.batching.BatchedText;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
+
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import fr.iamacat.multithreading.SharedThreadPool;
+import fr.iamacat.multithreading.batching.BatchedText;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(GuiIngame.class)
 public abstract class MixinGUIHUD {
+
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<BatchedText> renderQueue = new ConcurrentLinkedQueue<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService().execute(this::drawLoop);
+        SharedThreadPool.getExecutorService()
+            .execute(this::drawLoop);
     }
 
     @Inject(method = "renderGameOverlay", at = @At("HEAD"))
     private void onRenderGameOverlay(CallbackInfo ci) {
-        if (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
+        if (Minecraft.getMinecraft().ingameGUI.getChatGUI()
+            .getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
             return;
         }
         renderQueue.add(new BatchedText(100, 100, "Hello, world!", 0xFFFFFF));
@@ -56,7 +59,8 @@ public abstract class MixinGUIHUD {
 
     private synchronized void drawLoop() {
         try {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread()
+                .isInterrupted()) {
                 BatchedText[] batch = new BatchedText[BATCH_SIZE];
                 int count = 0;
                 synchronized (renderQueue) {
@@ -72,13 +76,17 @@ public abstract class MixinGUIHUD {
                 TimeUnit.MILLISECONDS.sleep(Math.max(0, 5000 - count * 50));
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread()
+                .interrupt();
         }
     }
 
     private void drawBatch(BatchedText[] batch, int count) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+            ScaledResolution sr = new ScaledResolution(
+                Minecraft.getMinecraft(),
+                Minecraft.getMinecraft().displayWidth,
+                Minecraft.getMinecraft().displayHeight);
             int scaleFactor = sr.getScaleFactor();
             int prevWidth = GL11.glGetInteger(GL11.GL_SCISSOR_BOX);
             boolean scissorTestEnabled = GL11.glGetBoolean(GL11.GL_SCISSOR_TEST);
@@ -96,7 +104,12 @@ public abstract class MixinGUIHUD {
                     stringBuilder.append('\n');
                 }
             }
-            Minecraft.getMinecraft().fontRenderer.drawSplitString(stringBuilder.toString(), batch[0].x, batch[0].y, Minecraft.getMinecraft().displayWidth, batch[0].color);
+            Minecraft.getMinecraft().fontRenderer.drawSplitString(
+                stringBuilder.toString(),
+                batch[0].x,
+                batch[0].y,
+                Minecraft.getMinecraft().displayWidth,
+                batch[0].color);
 
             GL11.glPopMatrix();
 
