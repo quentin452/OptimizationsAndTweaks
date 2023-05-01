@@ -46,7 +46,7 @@ public abstract class MixinChunkPopulating {
 
     private final CopyOnWriteArrayList<Chunk> chunksToPopulate = new CopyOnWriteArrayList<>();
     private final ConcurrentSkipListSet<Chunk> chunksInProgress = new ConcurrentSkipListSet<>();
-    private static final int MAX_CHUNKS_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize; // Batch size
+    private static final int MAX_CHUNKS_PER_TICK = 20; // Lowered from 50 to reduce server lag spikes
     private static final int NUM_THREADS = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
     private final CountDownLatch latch = new CountDownLatch(MAX_CHUNKS_PER_TICK);
 
@@ -59,7 +59,8 @@ public abstract class MixinChunkPopulating {
         method = "Lnet/minecraft/world/WorldServer;<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/ExecutorService;Lnet/minecraft/world/storage/ISaveHandler;Lnet/minecraft/world/storage/WorldInfo;Lnet/minecraft/world/WorldProvider;Lnet/minecraft/profiler/Profiler;Lnet/minecraft/crash/CrashReport;Lnet/minecraft/util/ReportedException;)V",
         at = @At("RETURN"))
     private void onInitialize(MinecraftServer server, ExecutorService executorService, ISaveHandler saveHandler,
-        WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
+                              WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
+        // Only load necessary chunks
         for (Object chunk : ((ChunkProviderServer) provider.createChunkGenerator()).loadedChunks) {
             if (chunk instanceof Chunk && !((Chunk) chunk).isTerrainPopulated && ((Chunk) chunk).isChunkLoaded) {
                 Chunk chunkToAdd = (Chunk) chunk;
@@ -70,7 +71,6 @@ public abstract class MixinChunkPopulating {
             }
         }
     }
-
     @Inject(method = "populate", at = @At("HEAD"))
     private void onPopulate(Chunk chunk, IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
@@ -89,26 +89,33 @@ public abstract class MixinChunkPopulating {
             int numChunks = chunksToProcess.size();
             int numBatches = (numChunks + MAX_CHUNKS_PER_TICK - 1) / MAX_CHUNKS_PER_TICK;
             CountDownLatch batchLatch = new CountDownLatch(numBatches);
-            for (int i = 0; i < numBatches; i++) {
-                final int startIndex = i * MAX_CHUNKS_PER_TICK;
-                final int endIndex = Math.min(startIndex + MAX_CHUNKS_PER_TICK, numChunks);
-                List<Chunk> batchChunks = chunksToProcess.subList(startIndex, endIndex);
-                SharedThreadPool.getExecutorService()
-                    .execute(() -> {
-                        for (Chunk batchChunk : batchChunks) {
-                            if (batchChunk.isChunkLoaded) {
-                                batchChunk.isTerrainPopulated = true;
-                                batchChunk.populateChunk(
-                                    chunkProvider,
-                                    chunkProvider1,
-                                    batchChunk.xPosition,
-                                    batchChunk.zPosition);
-                            }
-                            chunksInProgress.remove(batchChunk);
-                            latch.countDown();
+            ExecutorService executorService = SharedThreadPool.getExecutorService();
+            BlockingQueue<Chunk> priorityQueue = new PriorityBlockingQueue<>(numChunks, (c1, c2) -> {
+                int dist1 = Math.abs(c1.xPosition - chunk.xPosition) + Math.abs(c1.zPosition - chunk.zPosition);
+                int dist2 = Math.abs(c2.xPosition - chunk.xPosition) + Math.abs(c2.zPosition - chunk.zPosition);
+                return Integer.compare(dist1, dist2);
+            });
+            for (Chunk batchChunk : chunksToProcess) {
+                priorityQueue.offer(batchChunk);
+            }
+            while (!priorityQueue.isEmpty()) {
+                List<Chunk> batchChunks = new ArrayList<>(MAX_CHUNKS_PER_TICK);
+                priorityQueue.drainTo(batchChunks, MAX_CHUNKS_PER_TICK);
+                executorService.execute(() -> {
+                    for (Chunk batchChunk : batchChunks) {
+                        if (batchChunk.isChunkLoaded) {
+                            batchChunk.isTerrainPopulated = true;
+                            batchChunk.populateChunk(
+                                chunkProvider,
+                                chunkProvider1,
+                                batchChunk.xPosition,
+                                batchChunk.zPosition);
                         }
-                        batchLatch.countDown();
-                    });
+                        chunksInProgress.remove(batchChunk);
+                        latch.countDown();
+                    }
+                    batchLatch.countDown();
+                });
                 chunksInProgress.addAll(batchChunks);
             }
             try {

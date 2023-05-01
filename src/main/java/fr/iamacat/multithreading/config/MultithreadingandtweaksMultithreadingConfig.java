@@ -11,6 +11,11 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinLeafDecay;
+
+    @Config.Comment("Enable multithreaded/batched for leaf decay.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinGrassUpdateTick;
     @Config.Comment("Enable multithreaded/batched for AI Task.)")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart

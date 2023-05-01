@@ -1,9 +1,10 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
@@ -19,30 +20,79 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinEntities {
+    private static final int NUM_CPUS = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+    private List<Entity> loadedEntityList;
+    private final Map<Class<? extends Entity>, List<Entity>> entityMap = new HashMap<>();
 
-    @Shadow
-    public abstract List<Entity> getEntitiesWithinAABB(Class<? extends Entity> clazz, AxisAlignedBB aabb);
+    public List<Entity> getEntitiesWithinAABBQuadTree(Class<? extends Entity> clazz, AxisAlignedBB aabb) {
+        List<Entity> entities = entityMap.get(clazz);
+        if (entities == null) {
+            return Collections.emptyList();
+        }
 
-    public CompletableFuture<List<Entity>> getEntitiesWithinAABBMultithreaded(Class<? extends Entity> clazz,
-        AxisAlignedBB aabb) {
-        int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;;
-        Executor executor = SharedThreadPool.getExecutorService();
+        int numCores = Math.min(Runtime.getRuntime().availableProcessors(), NUM_CPUS);
+        int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-        List<CompletableFuture<List<Entity>>> futures = Lists.partition(getEntitiesWithinAABB(clazz, aabb), batchSize)
-            .stream()
-            .map(
-                entities -> CompletableFuture.supplyAsync(
-                    () -> entities.stream()
-                        .filter(entity -> entity.getClass() == clazz)
-                        .collect(Collectors.toList()),
-                    executor))
+        return IntStream.range(0, (entities.size() + batchSize - 1) / batchSize)
+            .parallel()
+            .mapToObj(i -> entities.subList(i * batchSize, Math.min(entities.size(), (i + 1) * batchSize)))
+            .flatMap(List::stream)
+            .filter(entity -> entity.getBoundingBox().intersectsWith(aabb))
             .collect(Collectors.toList());
+    }
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
-            .thenApply(
-                ignored -> futures.stream()
-                    .map(CompletableFuture::join)
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList()));
+
+    public void addEntityToMap(Entity entity) {
+        Class<? extends Entity> clazz = entity.getClass();
+        List<Entity> entities = entityMap.get(clazz);
+        if (entities == null) {
+            entities = new ArrayList<>();
+            entityMap.put(clazz, entities);
+        }
+        entities.add(entity);
+    }
+
+    public void removeEntityFromMap(Entity entity) {
+        Class<? extends Entity> clazz = entity.getClass();
+        List<Entity> entities = entityMap.get(clazz);
+        if (entities != null) {
+            entities.remove(entity);
+        }
+    }
+
+    // this method is called from WorldServer::getEntityByID and WorldServer::getEntityByUuid
+    public Entity getEntityFromMap(int entityId) {
+        for (List<Entity> entities : entityMap.values()) {
+            for (Entity entity : entities) {
+                if (entity.getEntityId() == entityId) {
+                    return entity;
+                }
+            }
+        }
+        return null;
+    }
+
+    // this method is called from EntityTracker::trackEntity
+    public void trackEntityInMap(Entity entity) {
+        addEntityToMap(entity);
+    }
+
+    // this method is called from EntityTracker::untrackEntity
+    public void untrackEntityInMap(Entity entity) {
+        removeEntityFromMap(entity);
+    }
+
+    // this method is called from Chunk::addEntity and Chunk::removeEntity
+    public void updateEntityInMap(Entity entity) {
+        removeEntityFromMap(entity);
+        addEntityToMap(entity);
+    }
+
+    // this method is called from WorldServer::tick and WorldServer::updateEntities
+    public void updateMap() {
+        entityMap.clear();
+        for (Entity entity : this.loadedEntityList) {
+            addEntityToMap(entity);
+        }
     }
 }
