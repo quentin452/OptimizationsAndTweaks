@@ -41,7 +41,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
 
-    private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;;
+    private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
         1000,
@@ -107,7 +107,7 @@ public abstract class MixinGrowthSpreading {
                 });
             }
         }
-        executor.shutdown();
+        SharedThreadPool.getExecutorService().shutdown();
         try {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {

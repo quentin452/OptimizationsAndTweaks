@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +21,7 @@ public class SharedThreadPool {
         EXECUTOR_SERVICE.allowCoreThreadTimeOut(true);
     }
 
-    public static ExecutorService getExecutorService() {
+    public static ThreadPoolExecutor getExecutorService() {
         return EXECUTOR_SERVICE;
     }
 }

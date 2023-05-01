@@ -18,82 +18,138 @@
 
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
+import com.falsepattern.lib.compat.BlockPos;
+import fr.iamacat.multithreading.SharedThreadPool;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLeavesBase;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
+import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
 
-    private BlockingQueue<ChunkCoordinates> decayQueue;
+    private final List<BlockPos> decayQueue = new ArrayList<>();
+    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
+    private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
 
-    public abstract boolean func_147477_a(Block block, int x, int y, int z, boolean decay);
+    private final List<BlockPos> neighborPositions = new ArrayList<>(27);
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService();
+    @Inject(method = "updateLeaves", at = @At("RETURN"))
+    private void onUpdateLeaves(World world, int x, int y, int z, Random random, CallbackInfo ci) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
+            // Add leaf blocks that need to decay to the queue
+            WorldServer worldServer = (WorldServer) world;
+            ChunkProviderServer chunkProvider = worldServer.theChunkProviderServer;
+
+            List<Chunk> loadedChunks = new ArrayList<>(chunkProvider.loadedChunks);
+
+            loadedChunks.parallelStream().forEach(chunk -> {
+                IntStream.range(chunk.xPosition * 16, chunk.xPosition * 16 + 16).parallel().forEach(i -> {
+                    IntStream.range(0, 256).parallel().forEach(j -> {
+                        IntStream.range(chunk.zPosition * 16, chunk.zPosition * 16 + 16).parallel().forEach(k -> {
+                            Block block = world.getBlock(i, j, k);
+                            if (block instanceof BlockLeaves) {
+                                decayQueue.add(new BlockPos(i, j, k));
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+
+        int queueSize = decayQueue.size();
+        int numBatches = (queueSize + BATCH_SIZE - 1) / BATCH_SIZE;
+        List<CompletableFuture<Void>> futures = new ArrayList<>(numBatches);
+        for (int i = 0; i < numBatches; i++) {
+            int startIndex = i * BATCH_SIZE;
+            int endIndex = Math.min(startIndex + BATCH_SIZE, queueSize);
+            List<BlockPos> batch = decayQueue.subList(startIndex, endIndex);
+            futures.add(CompletableFuture.runAsync(() -> processLeafBlocks(batch, world),  SharedThreadPool.getExecutorService()));
+        }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
-    @Inject(method = "updateLeafDecay", at = @At("RETURN"))
-    private void onUpdateEntities(WorldClient world, CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
-            // Initialize decay queue if it doesn't exist
-            if (decayQueue == null) {
-                decayQueue = new LinkedBlockingQueue<>(1000);
-            }
-
-            // Add leaf blocks that need to decay to the queue
-            for (int x = -64; x <= 64; x++) {
-                for (int z = -64; z <= 64; z++) {
-                    for (int y = 0; y <= 255; y++) {
-                        ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                        if (world.getChunkProvider()
-                            .chunkExists(pos.posX >> 4, pos.posZ >> 4)) {
-                            Block block = world.getBlock(pos.posX, pos.posY, pos.posZ);
-                            if (block instanceof BlockLeavesBase) {
-                                decayQueue.offer(pos);
+    public void processLeafBlocks(List<BlockPos> batch, World world) {
+        for (BlockPos pos : batch) {
+            try {
+                Block block = world.getBlock(pos.getX(), pos.getY(), pos.getZ());
+                if (block == Blocks.leaves) {
+                    if (shouldDecay(pos, world)) {
+                        world.setBlockToAir(pos.getX(), pos.getY(), pos.getZ());
+                        getNeighborPositions(pos, neighborPositions);
+                        for (BlockPos neighbor : neighborPositions) {
+                            Chunk chunk = world.getChunkFromBlockCoords(neighbor.getX(), neighbor.getZ());
+                            if (chunk != null && chunk.isChunkLoaded) {
+                                Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
+                                if (neighborBlock == Blocks.leaves) {
+                                    decayQueue.add(neighbor.toImmutable());
+                                }
                             }
                         }
                     }
                 }
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to process leaf block at " + pos, e);
             }
-
-            // Process leaf blocks in batches using executor service
-            int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-            ExecutorService executorService = SharedThreadPool.getExecutorService();
-            while (!decayQueue.isEmpty()) {
-                List<ChunkCoordinates> batch = new ArrayList<>();
-                int batchSize = Math.max(Math.min(decayQueue.size(), BATCH_SIZE), 1);
-                for (int i = 0; i < batchSize; i++) {
-                    batch.add(decayQueue.poll());
-                }
-                if (!batch.isEmpty()) {
-                    executorService.submit(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (ChunkCoordinates pos : batch) {}
-                        }
-                    });
-                }
-            }
-            // Shutdown decay executor service after it is used
-            executorService.shutdown();
         }
     }
+
+    public boolean shouldDecay(BlockPos pos, World world) {
+        for (int x = pos.getX() - 1; x <= pos.getX() + 1; x++) {
+            for (int y = pos.getY() - 1; y <= pos.getY() + 1; y++) {
+                for (int z = pos.getZ() - 1; z <= pos.getZ() + 1; z++) {
+                    if (x == pos.getX() && y == pos.getY() && z == pos.getZ()) {
+                        continue;
+                    }
+                    Block block = world.getBlock(x, y, z);
+                    if (block == Blocks.leaves) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static final BlockPos[] NEIGHBOR_OFFSETS = new BlockPos[27];
+    static {
+        int index = 0;
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    NEIGHBOR_OFFSETS[index++] = new BlockPos(x, y, z);
+                }
+            }
+        }
+    }
+    private List<BlockPos> getNeighborPositions(BlockPos pos, List<BlockPos> neighborPositions) {
+        List<BlockPos> neighbors = new ArrayList<>(NEIGHBOR_OFFSETS.length);
+        for (BlockPos offset : NEIGHBOR_OFFSETS) {
+            BlockPos neighborPos = pos.add(offset);
+            neighbors.add(neighborPos);
+        }
+        return neighbors;
+    }
 }
+

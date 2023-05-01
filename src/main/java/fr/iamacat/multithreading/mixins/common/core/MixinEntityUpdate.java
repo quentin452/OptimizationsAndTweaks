@@ -21,6 +21,8 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.WorldServer;
@@ -36,19 +38,18 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(value = WorldServer.class, priority = 1000)
 public abstract class MixinEntityUpdate {
 
-    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;;
-    private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
-    private final CopyOnWriteArrayList<Entity> loadedEntities = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<Integer, Entity> loadedEntities = new ConcurrentHashMap<>();
 
     protected MixinEntityUpdate() {}
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        int availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+        WorldServer worldServer = (WorldServer) (Object) this;
+        world.set(worldServer);
         SharedThreadPool.getExecutorService();
-        loadedEntities.addAll(getWorldServer().loadedEntityList);
+        addEntitiesToUpdateQueue(worldServer.loadedEntityList);
     }
 
     public synchronized WorldServer getWorldServer() {
@@ -56,43 +57,41 @@ public abstract class MixinEntityUpdate {
     }
 
     private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
-        entitiesToUpdate.addAll(entities);
+        for (Entity entity : entities) {
+            loadedEntities.putIfAbsent(entity.getEntityId(), entity);
+        }
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            List<Entity> entitiesToUpdateBatch = new ArrayList<>();
-
-            int count = 0;
-            while (!entitiesToUpdate.isEmpty() && count < MAX_ENTITIES_PER_TICK) {
-                Entity entity = entitiesToUpdate.poll();
-                entitiesToUpdateBatch.add(entity);
-                count++;
-            }
-
-            if (!entitiesToUpdateBatch.isEmpty()) {
-                SharedThreadPool.getExecutorService()
-                    .execute(() -> {
-                        for (int i = 0; i < entitiesToUpdateBatch.size(); i += BATCH_SIZE) {
-                            List<Entity> batch = entitiesToUpdateBatch
-                                .subList(i, Math.min(i + BATCH_SIZE, entitiesToUpdateBatch.size()));
-                            try {
-                                for (Entity entity : batch) {
-                                    entity.onEntityUpdate();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+            ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
+            loadedEntities.clear();
+            ExecutorService executorService = SharedThreadPool.getExecutorService();
+            if (!executorService.isShutdown()) {
+                int availableProcessors = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+                executorService.execute(() -> {
+                    entitiesToUpdate.values().parallelStream().forEach(entity -> {
+                        try {
+                            if (entity != null) {
+                                entity.onEntityUpdate();
                             }
+                        } catch (Exception e) {
+                            // Handle the exception in a specific way, such as logging the error and continuing with the program.
+                            e.printStackTrace();
                         }
                     });
+                });
             }
         }
     }
 
+
     @Inject(method = "close", at = @At("HEAD"))
     private void onClose(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService()
-            .shutdown();
+        ExecutorService executorService = SharedThreadPool.getExecutorService();
+        if (executorService != null) {
+            executorService.shutdown();
+        }
     }
 }

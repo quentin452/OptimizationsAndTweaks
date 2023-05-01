@@ -36,20 +36,14 @@ import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLightningBolt.class)
-public abstract class MixinLightningBolt {
+public abstract class MixinEntityLightningBolt {
 
     private World worldObj;
     private double posX;
     private double posY;
     private double posZ;
 
-    // not sure
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService();
-    }
-
-    private MixinLightningBolt(World world, double x, double y, double z, boolean effectOnly) {
+    private MixinEntityLightningBolt(World world, double x, double y, double z, boolean effectOnly) {
         super();
         this.worldObj = world;
         this.posX = x;
@@ -61,11 +55,12 @@ public abstract class MixinLightningBolt {
     private void onInit(World world, double x, double y, double z, CallbackInfo ci) {
         MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating = world.loadedEntityList != null
             && world.loadedEntityList.size() > MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+        SharedThreadPool.getExecutorService();
     }
 
     @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
     private void onUpdate(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt) {
             World world = this.worldObj;
             if (world == null || world.isRemote || world.loadedEntityList == null) {
                 return;

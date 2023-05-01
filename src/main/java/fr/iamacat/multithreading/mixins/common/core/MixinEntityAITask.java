@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -72,9 +73,19 @@ public abstract class MixinEntityAITask {
             for (int i = 0; i < entities.size(); i += BATCH_SIZE) {
                 int end = Math.min(i + BATCH_SIZE, entities.size());
                 List<Entity> batch = entities.subList(i, end);
-                for (Entity entity : batch) {
+                batch.parallelStream().forEach(entity -> {
                     entity.onEntityUpdate();
-                }
+                    if (entity instanceof EntityAgeable) {
+                        EntityAgeable ageable = (EntityAgeable) entity;
+                        if (ageable.isChild()) {
+                            int growingAge = ageable.getGrowingAge();
+                            if (growingAge < 0) {
+                                growingAge++;
+                                ageable.setGrowingAge(growingAge);
+                            }
+                        }
+                    }
+                });
             }
 
             // Remove dead entities from the map
@@ -88,58 +99,61 @@ public abstract class MixinEntityAITask {
         }
     }
 
+
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {
-        // Update the entity immediately
-        this.getWorldServer()
-            .updateEntity(entity);
+        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
+            // Update the entity immediately
+            this.getWorldServer()
+                .updateEntity(entity);
 
-        // Add the entity's AI task to the executor service
-        if (entity instanceof EntityLiving) {
-            EntityLiving livingEntity = (EntityLiving) entity;
-            if (livingEntity.tasks.taskEntries.size() > 0) {
-                for (Object taskEntryObj : livingEntity.tasks.taskEntries) {
-                    if (taskEntryObj instanceof EntityAITasks.EntityAITaskEntry) {
-                        EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) taskEntryObj;
-                        if (taskEntry.action instanceof EntityAIBase) {
-                            try {
-                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
-                                    try {
-                                        taskEntry.action.startExecuting(); // start the task
-                                        while (taskEntry.action.shouldExecute()) {
-                                            taskEntry.action.updateTask(); // run the task
+            // Add the entity's AI task to the executor service
+            if (entity instanceof EntityLiving) {
+                EntityLiving livingEntity = (EntityLiving) entity;
+                if (livingEntity.tasks.taskEntries.size() > 0) {
+                    for (Object taskEntryObj : livingEntity.tasks.taskEntries) {
+                        if (taskEntryObj instanceof EntityAITasks.EntityAITaskEntry) {
+                            EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) taskEntryObj;
+                            if (taskEntry.action instanceof EntityAIBase) {
+                                try {
+                                    ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
+                                        try {
+                                            taskEntry.action.startExecuting(); // start the task
+                                            while (taskEntry.action.shouldExecute()) {
+                                                taskEntry.action.updateTask(); // run the task
+                                            }
+                                            taskEntry.action.resetTask(); // reset the task
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                        taskEntry.action.resetTask(); // reset the task
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                });
-                            } catch (RejectedExecutionException e) {
-                                // Discard the oldest task and try again
-                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).getQueue()
-                                    .poll();
-                                ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
-                                    try {
-                                        taskEntry.action.startExecuting(); // start the task
-                                        while (taskEntry.action.shouldExecute()) {
-                                            taskEntry.action.updateTask(); // run the task
+                                    });
+                                } catch (RejectedExecutionException e) {
+                                    // Discard the oldest task and try again
+                                    ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).getQueue()
+                                        .poll();
+                                    ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).execute(() -> {
+                                        try {
+                                            taskEntry.action.startExecuting(); // start the task
+                                            while (taskEntry.action.shouldExecute()) {
+                                                taskEntry.action.updateTask(); // run the task
+                                            }
+                                            taskEntry.action.resetTask(); // reset the task
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
                                         }
-                                        taskEntry.action.resetTask(); // reset the task
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // Add the entity to the thread-safe map to be updated later
-            entitiesToAIUpdate.putIfAbsent(entity.getEntityId(), entity);
-        } else {
-            // Remove the entity from the map if it is dead or not an instance of EntityLiving
-            entitiesToAIUpdate.remove(entity.getEntityId());
+                // Add the entity to the thread-safe map to be updated later
+                entitiesToAIUpdate.putIfAbsent(entity.getEntityId(), entity);
+            } else {
+                // Remove the entity from the map if it is dead or not an instance of EntityLiving
+                entitiesToAIUpdate.remove(entity.getEntityId());
+            }
         }
     }
 }

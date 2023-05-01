@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -63,15 +64,19 @@ public abstract class MixinEntitySpawning {
     }
 
     private void spawnMobsInQueue() {
-        while (!spawnQueue.isEmpty()) {
-            List<Entity> batch = new ArrayList<>();
-            int size = batchSize.getAndSet(0);
-            for (int i = 0; i < size; i++) {
-                Entity entity = spawnQueue.remove();
-                if (entity instanceof EntityMob) {
-                    batch.add(entity);
-                }
+        List<Entity> entities = new ArrayList<>();
+        int numEntities = batchSize.getAndSet(0);
+        for (Entity entity : spawnQueue) {
+            if (entity instanceof EntityMob && numEntities > 0) {
+                entities.add(entity);
+                numEntities--;
+            } else {
+                break;
             }
+        }
+        spawnQueue.removeAll(entities);
+        for (Entity entity : entities) {
+            world.spawnEntityInWorld(entity);
         }
     }
 
@@ -81,7 +86,7 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-        float partialTicks) {
+                                          float partialTicks) {
         // Don't render entities during mob spawning
         if (!spawnQueue.isEmpty()) {
             return;
