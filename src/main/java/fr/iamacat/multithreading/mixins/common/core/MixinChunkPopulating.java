@@ -74,54 +74,43 @@ public abstract class MixinChunkPopulating {
     @Inject(method = "populate", at = @At("HEAD"))
     private void onPopulate(Chunk chunk, IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
-            int count = 0;
             List<Chunk> chunksToProcess = new ArrayList<>();
             for (Chunk chunkToPopulate : chunksToPopulate) {
-                if (count >= MAX_CHUNKS_PER_TICK) {
-                    break;
-                }
-                if (!chunkToPopulate.isTerrainPopulated) {
+                if (!chunkToPopulate.isTerrainPopulated && chunkToPopulate.isChunkLoaded) {
                     chunksToProcess.add(chunkToPopulate);
-                    count++;
                 }
             }
             chunksToPopulate.removeAll(chunksToProcess);
             int numChunks = chunksToProcess.size();
-            int numBatches = (numChunks + MAX_CHUNKS_PER_TICK - 1) / MAX_CHUNKS_PER_TICK;
-            CountDownLatch batchLatch = new CountDownLatch(numBatches);
-            ExecutorService executorService = SharedThreadPool.getExecutorService();
-            BlockingQueue<Chunk> priorityQueue = new PriorityBlockingQueue<>(numChunks, (c1, c2) -> {
-                int dist1 = Math.abs(c1.xPosition - chunk.xPosition) + Math.abs(c1.zPosition - chunk.zPosition);
-                int dist2 = Math.abs(c2.xPosition - chunk.xPosition) + Math.abs(c2.zPosition - chunk.zPosition);
-                return Integer.compare(dist1, dist2);
-            });
-            for (Chunk batchChunk : chunksToProcess) {
-                priorityQueue.offer(batchChunk);
-            }
-            while (!priorityQueue.isEmpty()) {
-                List<Chunk> batchChunks = new ArrayList<>(MAX_CHUNKS_PER_TICK);
-                priorityQueue.drainTo(batchChunks, MAX_CHUNKS_PER_TICK);
-                executorService.execute(() -> {
-                    for (Chunk batchChunk : batchChunks) {
-                        if (batchChunk.isChunkLoaded) {
+            if (numChunks > 0) {
+                int numThreads = Math.min(numChunks, NUM_THREADS);
+                int numChunksPerThread = (numChunks + numThreads - 1) / numThreads;
+                CountDownLatch batchLatch = new CountDownLatch(numThreads);
+                ExecutorService executorService = SharedThreadPool.getExecutorService();
+                for (int i = 0; i < numThreads; i++) {
+                    int startIndex = i * numChunksPerThread;
+                    int endIndex = Math.min(startIndex + numChunksPerThread, numChunks);
+                    List<Chunk> batchChunks = chunksToProcess.subList(startIndex, endIndex);
+                    executorService.execute(() -> {
+                        for (Chunk batchChunk : batchChunks) {
                             batchChunk.isTerrainPopulated = true;
                             batchChunk.populateChunk(
                                 chunkProvider,
                                 chunkProvider1,
                                 batchChunk.xPosition,
                                 batchChunk.zPosition);
+                            chunksInProgress.remove(batchChunk);
+                            latch.countDown();
                         }
-                        chunksInProgress.remove(batchChunk);
-                        latch.countDown();
-                    }
-                    batchLatch.countDown();
-                });
-                chunksInProgress.addAll(batchChunks);
-            }
-            try {
-                batchLatch.await();
-            } catch (InterruptedException e) {
-                // Handle exception appropriately
+                        batchLatch.countDown();
+                    });
+                    chunksInProgress.addAll(batchChunks);
+                }
+                try {
+                    batchLatch.await();
+                } catch (InterruptedException e) {
+                    // Handle exception appropriately
+                }
             }
         }
     }
