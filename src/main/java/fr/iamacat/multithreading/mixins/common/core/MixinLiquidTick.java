@@ -1,21 +1,3 @@
-/*
- * FalseTweaks
- * Copyright (C) 2022 FalsePattern
- * All Rights Reserved
- * The above copyright notice, this permission notice and the word "SNEED"
- * shall be included in all copies or substantial portions of the Software.
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
@@ -23,6 +5,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
@@ -33,22 +16,26 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
-
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
-    private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
-    private Map<ChunkCoordinates, Material> blockMaterialMap;
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Liquid-Tick-%d").build());
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService();
         batchQueue = new LinkedBlockingQueue<>();
         blockMaterialMap = new ConcurrentHashMap<>();
     }
+    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
+    private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
+    private Map<ChunkCoordinates, Material> blockMaterialMap;
 
     public void updateTick(World world, int x, int y, int z, Random random) {
         // Access and modify shared state in the World object here
@@ -112,7 +99,7 @@ public abstract class MixinLiquidTick {
                 1,
                 Runtime.getRuntime()
                     .availableProcessors() - 1);
-            ((ThreadPoolExecutor) SharedThreadPool.getExecutorService()).setMaximumPoolSize(numThreads);
+            ((ThreadPoolExecutor) executorService).setMaximumPoolSize(numThreads);
             List<ChunkCoordinates> liquidPositions = new ArrayList<>();
             for (int x = -64; x <= 64; x++) {
                 for (int z = -64; z <= 64; z++) {
@@ -147,11 +134,11 @@ public abstract class MixinLiquidTick {
                         lock.readLock()
                             .unlock();
                     }
-                }, SharedThreadPool.getExecutorService()));
+                }, executorService));
             }
             CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0]))
                 .join();
-            SharedThreadPool.getExecutorService()
+            executorService
                 .shutdown();
         }
     }

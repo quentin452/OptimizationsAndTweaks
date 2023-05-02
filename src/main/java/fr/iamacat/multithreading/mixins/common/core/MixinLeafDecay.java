@@ -1,27 +1,10 @@
-/*
- * FalseTweaks
- * Copyright (C) 2022 FalsePattern
- * All Rights Reserved
- * The above copyright notice, this permission notice and the word "SNEED"
- * shall be included in all copies or substantial portions of the Software.
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLeavesBase;
@@ -38,11 +21,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.BlockPos;
 
-import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Leaf-Decay-%d").build());
 
     private final List<BlockPos> decayQueue = new ArrayList<>();
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
@@ -94,7 +83,7 @@ public abstract class MixinLeafDecay {
             futures.add(
                 CompletableFuture.runAsync(
                     () -> processLeafBlocks(new ArrayList<>(batch), world),
-                    SharedThreadPool.getExecutorService()));
+                    executorService));
         }
 
         try {

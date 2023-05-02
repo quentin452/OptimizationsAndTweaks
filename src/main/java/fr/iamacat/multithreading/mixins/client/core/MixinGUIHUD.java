@@ -1,28 +1,14 @@
-/*
- * FalseTweaks
- * Copyright (C) 2022 FalsePattern
- * All Rights Reserved
- * The above copyright notice, this permission notice and the word "SNEED"
- * shall be included in all copies or substantial portions of the Software.
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
@@ -34,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.batching.BatchedText;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
@@ -42,43 +27,36 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinGUIHUD {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final LinkedList<BatchedText> renderQueue = new LinkedList<>();
-    private final Lock renderQueueLock = new ReentrantLock();
-    private Map<String, Integer> cachedStrings = new HashMap<>();
-
-    // private final Map<String, CachedBatch> cachedBatches = new HashMap<String, CachedBatch>();
-    private boolean scissorTestEnabled = false;
+    private final List<BatchedText> renderQueue = new LinkedList<>();
+    private volatile boolean scissorTestEnabled = false;
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Chunk-Populator-%d").build());
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService()
-            .execute(this::drawLoop);
+        executorService.execute(this::drawLoop);
     }
 
     @Inject(method = "renderGameOverlay", at = @At("HEAD"))
     private void onRenderGameOverlay(CallbackInfo ci) {
-        if (Minecraft.getMinecraft().ingameGUI.getChatGUI()
-            .getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
+        if (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
             return;
         }
 
         // add text to render queue
-        renderQueueLock.lock();
-        try {
-            renderQueue.add(new BatchedText("Hello, world!", 100, 100, 0xFFFFFF, 0x000000));
-        } finally {
-            renderQueueLock.unlock();
-        }
+        renderQueue.add(new BatchedText("Hello, world!", 100, 100, 0xFFFFFF, 0x000000));
     }
 
     @Inject(method = "renderGameOverlay", at = @At("TAIL"))
     private void onRenderGameOverlayPost(CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             // draw cached strings
-            ScaledResolution sr = new ScaledResolution(
-                Minecraft.getMinecraft(),
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayHeight);
+            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
             int scaleFactor = sr.getScaleFactor();
             int prevWidth = GL11.glGetInteger(GL11.GL_SCISSOR_BOX);
 
@@ -89,26 +67,16 @@ public abstract class MixinGUIHUD {
             GL11.glPushMatrix();
             GL11.glScaled(scaleFactor, scaleFactor, 1.0D);
 
-            for (BatchedText batchedText : renderQueue) {
-                int color = batchedText.color;
-                String text = batchedText.text;
-                int x = batchedText.x;
-                int y = batchedText.y;
-
-                // check if the string is already cached
-                Integer stringWidth = cachedStrings.get(text);
-                if (stringWidth == null) {
-                    // cache the string if it's not already cached
-                    stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
-                    cachedStrings.put(text, stringWidth);
-                }
-
-                // draw the string
-                Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color);
-
-                // clear the cached strings if the render queue is empty
-                if (renderQueue.isEmpty()) {
-                    cachedStrings.clear();
+            synchronized (renderQueue) {
+                if (!renderQueue.isEmpty()) {
+                    int numBatches = (int) Math.ceil((double) renderQueue.size() / BATCH_SIZE);
+                    for (int i = 0; i < numBatches; i++) {
+                        int start = i * BATCH_SIZE;
+                        int end = Math.min(start + BATCH_SIZE, renderQueue.size());
+                        List<BatchedText> batch = renderQueue.subList(start, end);
+                        drawBatch(batch.toArray(new BatchedText[batch.size()]), batch.size());
+                    }
+                    renderQueue.clear();
                 }
             }
 
@@ -125,29 +93,28 @@ public abstract class MixinGUIHUD {
 
     private void drawLoop() {
         try {
-            while (!Thread.currentThread()
-                .isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 BatchedText[] batch = new BatchedText[BATCH_SIZE];
                 int count = 0;
-                renderQueueLock.lock();
-                try {
-                    while (!renderQueue.isEmpty() && count < BATCH_SIZE) {
-                        batch[count++] = renderQueue.poll();
+
+                while (count < BATCH_SIZE) {
+                    BatchedText text = renderQueue.remove(0);
+                    if (text == null) {
+                        break; // queue is empty
                     }
-                } finally {
-                    renderQueueLock.unlock();
+                    batch[count++] = text;
                 }
+
                 if (count > 0) {
                     drawBatch(batch, count);
                 }
+
                 TimeUnit.MILLISECONDS.sleep(Math.max(0, 5000 - count * 50));
             }
         } catch (InterruptedException e) {
-            Thread.currentThread()
-                .interrupt();
+            Thread.currentThread().interrupt();
         }
     }
-
     private void drawBatch(BatchedText[] batch, int count) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             Minecraft mc = Minecraft.getMinecraft();

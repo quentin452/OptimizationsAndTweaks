@@ -1,21 +1,3 @@
-/*
- * FalseTweaks
- * Copyright (C) 2022 FalsePattern
- * All Rights Reserved
- * The above copyright notice, this permission notice and the word "SNEED"
- * shall be included in all copies or substantial portions of the Software.
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
@@ -23,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.BlockFire;
 import net.minecraft.world.World;
 
@@ -34,11 +17,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.BlockPos;
 
-import fr.iamacat.multithreading.SharedThreadPool;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d").build());
 
     private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
     private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;; // batch size
@@ -50,7 +39,6 @@ public abstract class MixinFireTick {
     // not sure
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        SharedThreadPool.getExecutorService();
     }
 
     @Unique
@@ -129,7 +117,7 @@ public abstract class MixinFireTick {
                     e.printStackTrace();
                 }
             }
-            SharedThreadPool.getExecutorService()
+            executorService
                 .shutdown();
         }
     }

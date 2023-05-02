@@ -38,8 +38,6 @@ public enum Mixin implements IMixin {
         "core.MixinTileEntities"),
     common_core_MixinParticle(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
         "core.MixinParticleManager"),
-    common_core_MixinEntities(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntities,
-        "core.MixinEntities"),
 
     // OPTIMIZATIONS MIXINS
 
