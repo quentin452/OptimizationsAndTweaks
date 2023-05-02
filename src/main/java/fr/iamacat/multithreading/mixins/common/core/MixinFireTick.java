@@ -42,9 +42,7 @@ public abstract class MixinFireTick {
     private final ConcurrentLinkedQueue<int[][]> blocksToUpdate = new ConcurrentLinkedQueue<>();
     @Inject(method = "updateTick", at = @At("HEAD"))
     public void updateTick(World world, int x, int y, int z, Random random, CallbackInfo info) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
-            return;
-        }
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
 
         // Process fire ticks using breadth-first search
         boolean[][][] visited = new boolean[3][3][3]; // 3x3x3 grid centered at (x, y, z)
@@ -104,4 +102,5 @@ public abstract class MixinFireTick {
         }
         executor.shutdown();
     }
+}
 }
