@@ -59,7 +59,7 @@ public abstract class MixinChunkPopulating {
         method = "Lnet/minecraft/world/WorldServer;<init>(Lnet/minecraft/server/MinecraftServer;Ljava/util/concurrent/ExecutorService;Lnet/minecraft/world/storage/ISaveHandler;Lnet/minecraft/world/storage/WorldInfo;Lnet/minecraft/world/WorldProvider;Lnet/minecraft/profiler/Profiler;Lnet/minecraft/crash/CrashReport;Lnet/minecraft/util/ReportedException;)V",
         at = @At("RETURN"))
     private void onInitialize(MinecraftServer server, ExecutorService executorService, ISaveHandler saveHandler,
-                              WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
+        WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
         // Only load necessary chunks
         for (Object chunk : ((ChunkProviderServer) provider.createChunkGenerator()).loadedChunks) {
             if (chunk instanceof Chunk && !((Chunk) chunk).isTerrainPopulated && ((Chunk) chunk).isChunkLoaded) {
@@ -71,6 +71,7 @@ public abstract class MixinChunkPopulating {
             }
         }
     }
+
     @Inject(method = "populate", at = @At("HEAD"))
     private void onPopulate(Chunk chunk, IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {

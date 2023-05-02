@@ -6,11 +6,13 @@ public class BatchedText {
     public final int y;
     public final String text;
     public final int color;
+    public int backgroundColor; // add this line
 
-    public BatchedText(int x, int y, String text, int color) {
+    public BatchedText(String text, int x, int y, int color, int backgroundColor) {
+        this.text = text;
         this.x = x;
         this.y = y;
-        this.text = text;
         this.color = color;
+        this.backgroundColor = backgroundColor; // initialize the field
     }
 }

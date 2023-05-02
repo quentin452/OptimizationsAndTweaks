@@ -20,7 +20,7 @@ public abstract class MixinParticleManager {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    private final BlockingQueue<EntityFX> particleQueue = new LinkedBlockingQueue<>();
+    private final ConcurrentLinkedQueue<EntityFX> particleQueue = new ConcurrentLinkedQueue<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
@@ -33,17 +33,19 @@ public abstract class MixinParticleManager {
             while (!Thread.currentThread()
                 .isInterrupted()) {
                 EntityFX[] particles = new EntityFX[BATCH_SIZE];
-                final int[] count = { 0 };
+                int count = 0;
 
-                List<EntityFX> particleList = new ArrayList<>();
-                particleQueue.drainTo(particleList, BATCH_SIZE);
+                while (count < BATCH_SIZE) {
+                    EntityFX particle = particleQueue.poll();
+                    if (particle == null) {
+                        break;
+                    }
+                    particles[count++] = particle;
+                }
 
-                particleList.parallelStream()
-                    .forEach(particle -> { particles[count[0]++] = particle; });
-
-                if (count[0] > 0) {
+                if (count > 0) {
                     try {
-                        BatchedParticles.drawBatch(particles, count[0]);
+                        BatchedParticles.drawBatch(particles, count);
                     } catch (Exception e) {
                         // Log the exception to the console
                         e.printStackTrace();
