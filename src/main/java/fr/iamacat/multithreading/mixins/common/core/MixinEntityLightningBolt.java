@@ -48,7 +48,7 @@ public abstract class MixinEntityLightningBolt {
 
     @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
     private void onUpdate(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt) {
             World world = this.worldObj;
             if (world == null || world.isRemote || world.loadedEntityList == null) {
                 return;

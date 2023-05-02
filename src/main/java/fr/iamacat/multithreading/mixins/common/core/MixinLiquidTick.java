@@ -93,7 +93,7 @@ public abstract class MixinLiquidTick {
 
     @Inject(method = "liquidTick", at = @At("RETURN"))
     private void onLiquidTick(World world, CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick) {
             int batchSize = BATCH_SIZE;
             int numThreads = Math.max(
                 1,

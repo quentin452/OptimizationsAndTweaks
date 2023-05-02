@@ -78,7 +78,7 @@ public abstract class MixinEntityAITask {
 
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
             this.getWorldServer().updateEntity(entity);
             executorService.submit(() -> {
                 try {

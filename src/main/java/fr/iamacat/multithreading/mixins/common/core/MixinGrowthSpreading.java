@@ -47,7 +47,7 @@ public abstract class MixinGrowthSpreading {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading
             && getWorldServer().getTotalWorldTime() % 10 == 0) {
             if (getWorldServer().getSaveHandler()
                 .getWorldDirectory()

@@ -56,7 +56,7 @@ public abstract class MixinChunkPopulating {
 
     @Inject(method = "populate", at = @At("TAIL"))
     private void onPopulate(IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
             List<Chunk> chunksToProcess = new ArrayList<>();
             chunksToPopulate.poll();
             int numChunks = chunksToProcess.size();

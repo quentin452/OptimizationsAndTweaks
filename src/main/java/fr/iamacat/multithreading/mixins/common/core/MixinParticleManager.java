@@ -35,7 +35,7 @@ public abstract class MixinParticleManager {
     }
 
     private void drawLoop() {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinParticle) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinParticle) {
             while (!Thread.currentThread()
                 .isInterrupted()) {
                 EntityFX[] particles = new EntityFX[BATCH_SIZE];

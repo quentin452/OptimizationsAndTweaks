@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(value = WorldServer.class, priority = 1000)
+@Mixin(value = WorldServer.class, priority = 997)
 public abstract class MixinEntityUpdate {
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -49,7 +49,7 @@ public abstract class MixinEntityUpdate {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
             loadedEntities.clear();
 

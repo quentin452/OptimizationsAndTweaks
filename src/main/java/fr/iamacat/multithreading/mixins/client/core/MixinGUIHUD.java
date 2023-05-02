@@ -54,7 +54,7 @@ public abstract class MixinGUIHUD {
 
     @Inject(method = "renderGameOverlay", at = @At("TAIL"))
     private void onRenderGameOverlayPost(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             // draw cached strings
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
             int scaleFactor = sr.getScaleFactor();
@@ -116,7 +116,7 @@ public abstract class MixinGUIHUD {
         }
     }
     private void drawBatch(BatchedText[] batch, int count) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             Minecraft mc = Minecraft.getMinecraft();
             FontRenderer fontRenderer = mc.fontRenderer;
             int scaleFactor = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();

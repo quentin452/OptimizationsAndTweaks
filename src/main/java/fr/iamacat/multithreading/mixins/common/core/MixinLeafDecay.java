@@ -40,7 +40,7 @@ public abstract class MixinLeafDecay {
 
     @Inject(method = "updateLeaves", at = @At("RETURN"))
     private void onUpdateLeaves(World world, int x, int y, int z, Random random, CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
             // Add leaf blocks that need to decay to the queue
             WorldServer worldServer = (WorldServer) world;
             ChunkProviderServer chunkProvider = worldServer.theChunkProviderServer;
