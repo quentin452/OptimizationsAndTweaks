@@ -1,5 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.concurrent.*;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -26,18 +28,16 @@ public abstract class MixinParticleManager {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    private final ConcurrentLinkedQueue<EntityFX> particleQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<EntityFX> particleQueue = new ArrayDeque<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        executorService
-            .execute(this::drawLoop);
+        executorService.execute(this::drawLoop);
     }
 
     private void drawLoop() {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinParticle) {
-            while (!Thread.currentThread()
-                .isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 EntityFX[] particles = new EntityFX[BATCH_SIZE];
                 int count = 0;
 
@@ -55,6 +55,13 @@ public abstract class MixinParticleManager {
                     } catch (Exception e) {
                         // Log the exception to the console
                         e.printStackTrace();
+                    }
+                } else {
+                    // Wait for a short amount of time to reduce TPS usage
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
