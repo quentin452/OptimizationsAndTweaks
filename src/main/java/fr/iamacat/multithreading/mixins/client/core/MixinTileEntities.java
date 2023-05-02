@@ -1,4 +1,4 @@
-package fr.iamacat.multithreading.mixins.common.core;
+package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +66,7 @@ public abstract class MixinTileEntities {
     }
 
     private void processBatch(List<TileEntity> batch) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
             for (TileEntity tileEntity : batch) {
                 // Process each tile entity
                 tileEntity.updateEntity();
