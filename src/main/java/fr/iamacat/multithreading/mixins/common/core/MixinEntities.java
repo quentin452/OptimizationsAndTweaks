@@ -19,22 +19,7 @@ public abstract class MixinEntities {
 
     private final Map<Class<? extends Entity>, List<Entity>> entityMap = new ConcurrentHashMap<>();
     private final List<Entity> loadedEntityList = new CopyOnWriteArrayList<>();
-
-    public List<Entity> getEntitiesWithinAABB(Class<? extends Entity> clazz, AxisAlignedBB aabb) {
-        List<Entity> entities = entityMap.get(clazz);
-        if (entities == null) {
-            return Collections.emptyList();
-        }
-
-        List<Entity> results = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (entity.getBoundingBox()
-                .intersectsWith(aabb)) {
-                results.add(entity);
-            }
-        }
-        return results;
-    }
+    private final List<Entity> entitiesInAABB = new CopyOnWriteArrayList<>(); // New list for entities within AABB
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
@@ -87,5 +72,26 @@ public abstract class MixinEntities {
         entityMap.clear();
         entitiesToUpdate.parallelStream()
             .forEach(this::addEntityToMap);
+    }
+
+    // New method to add entities within specified AABB to separate list
+    public void addEntitiesWithinAABB(Class<? extends Entity> clazz, AxisAlignedBB aabb) {
+        List<Entity> entities = entityMap.get(clazz);
+        if (entities == null) {
+            return;
+        }
+
+        entitiesInAABB.clear(); // Clear list before adding new entities
+
+        for (Entity entity : entities) {
+            if (entity.getBoundingBox().intersectsWith(aabb)) {
+                entitiesInAABB.add(entity); // Add entity to list
+            }
+        }
+    }
+
+    // New method to get the list of entities within specified AABB
+    public List<Entity> getEntitiesInAABB() {
+        return entitiesInAABB;
     }
 }
