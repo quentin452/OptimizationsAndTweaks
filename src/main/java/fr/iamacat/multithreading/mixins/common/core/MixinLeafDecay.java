@@ -97,6 +97,7 @@ public abstract class MixinLeafDecay {
     }
 
     public void processLeafBlocks(List<BlockPos> batch, World world) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
         List<BlockPos> neighborPositions = new ArrayList<>();
         for (BlockPos pos : batch) {
             try {
@@ -124,7 +125,7 @@ public abstract class MixinLeafDecay {
             }
         }
     }
-
+    }
     public boolean shouldDecay(BlockPos pos, World world) {
         Block block = world.getBlock(pos.getX(), pos.getY(), pos.getZ());
         if (block instanceof BlockLeaves) {

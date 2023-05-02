@@ -19,6 +19,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = WorldServer.class, priority = 997)
 public abstract class MixinEntityUpdate {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -50,11 +51,10 @@ public abstract class MixinEntityUpdate {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
+                ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
             loadedEntities.clear();
 
-            int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up
-                                                                                                            // division
+            int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up             // division
             List<List<Entity>> batches = new ArrayList<>(numBatches);
             Iterator<Entity> iter = entitiesToUpdate.values()
                 .iterator();

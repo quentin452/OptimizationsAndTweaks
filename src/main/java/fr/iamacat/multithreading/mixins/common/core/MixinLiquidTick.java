@@ -20,6 +20,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -116,7 +117,6 @@ public abstract class MixinLiquidTick {
                         }
                     }
                 }
-            }
             int numPositions = liquidPositions.size();
             int numBatches = (int) Math.ceil((double) numPositions / batchSize);
             List<CompletableFuture<Void>> taskBatch = new ArrayList<>(numBatches);
@@ -142,4 +142,5 @@ public abstract class MixinLiquidTick {
                 .shutdown();
         }
     }
+}
 }

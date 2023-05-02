@@ -36,13 +36,20 @@ public enum Mixin implements IMixin {
         "core.MixinEntityLightningBolt"),
     common_core_MixinParticle(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
         "core.MixinParticleManager"),
+    common_core_MixinEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesTick,
+        "core.MixinEntitiesTick"),
+
+    common_core_MixinTileEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick,
+        "core.MixinEntitiesTick"),
 
     // CLIENT MIXINS
-
+    client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering,
+        "core.MixinGUIHUD"),
     client_core_MixinTileEntities(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities,
         "core.MixinTileEntities"),
     client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD,
         "core.MixinGUIHUD"),
+
 
     // MOD-FILTERED MIXINS
 

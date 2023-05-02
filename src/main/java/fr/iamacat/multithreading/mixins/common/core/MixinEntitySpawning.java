@@ -2,6 +2,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
+import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,6 +36,9 @@ public abstract class MixinEntitySpawning {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
+
+    private final Map<Integer, Vector3d> previousPositions = new ConcurrentHashMap<>();
+
     private final AtomicInteger batchSize = new AtomicInteger(BATCH_SIZE);
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -59,7 +64,7 @@ public abstract class MixinEntitySpawning {
         spawnQueue.removeAll(entities);
         int numThreads = Math.min(MultithreadingandtweaksMultithreadingConfig.numberofcpus, entities.size());
         if (numThreads > 1) {
-            List<List<Entity>> partitions = Lists.partition(entities, (entities.size() + numThreads - 1) / numThreads);
+            List<List<Entity>> partitions = Lists.partition(entities, (entities.size()));
             List<Future<?>> futures = new ArrayList<>(numThreads);
             for (List<Entity> partition : partitions) {
                 futures.add(executorService.submit(() -> {

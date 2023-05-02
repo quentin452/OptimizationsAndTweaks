@@ -23,6 +23,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
+
     private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
 
@@ -65,7 +66,6 @@ public abstract class MixinEntityAITask {
                     }
                 }
             });
-        }
 
         // Remove dead entities from the map
         for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToAIUpdate.entrySet().iterator(); it.hasNext(); ) {
@@ -75,7 +75,7 @@ public abstract class MixinEntityAITask {
             }
         }
     }
-
+    }
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {

@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -53,7 +52,6 @@ public abstract class MixinChunkPopulating {
             }
         }
     }
-
     @Inject(method = "populate", at = @At("TAIL"))
     private void onPopulate(IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
