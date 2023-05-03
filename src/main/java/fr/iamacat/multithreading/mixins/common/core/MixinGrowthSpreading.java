@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
@@ -18,17 +17,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d")
+            .build());
 
     private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
@@ -42,8 +45,7 @@ public abstract class MixinGrowthSpreading {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-    }
+    private void onInit(CallbackInfo ci) {}
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -95,8 +97,7 @@ public abstract class MixinGrowthSpreading {
                 });
             }
         }
-        executorService
-            .shutdown();
+        executorService.shutdown();
         try {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {

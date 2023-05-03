@@ -5,7 +5,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
@@ -15,6 +14,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
@@ -27,13 +28,15 @@ public abstract class MixinLiquidTick {
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Liquid-Tick-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Liquid-Tick-%d")
+            .build());
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
         batchQueue = new LinkedBlockingQueue<>();
         blockMaterialMap = new ConcurrentHashMap<>();
     }
+
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
     private Map<ChunkCoordinates, Material> blockMaterialMap;
@@ -117,30 +120,29 @@ public abstract class MixinLiquidTick {
                         }
                     }
                 }
-            int numPositions = liquidPositions.size();
-            int numBatches = (int) Math.ceil((double) numPositions / batchSize);
-            List<CompletableFuture<Void>> taskBatch = new ArrayList<>(numBatches);
-            ReadWriteLock lock = new ReentrantReadWriteLock();
-            for (int i = 0; i < numBatches; i++) {
-                int startIndex = i * batchSize;
-                int endIndex = Math.min(startIndex + batchSize, numPositions);
-                List<ChunkCoordinates> batch = liquidPositions.subList(startIndex, endIndex);
-                taskBatch.add(CompletableFuture.runAsync(() -> {
-                    lock.readLock()
-                        .lock();
-                    try {
-                        processBatch(batch, world);
-                    } finally {
+                int numPositions = liquidPositions.size();
+                int numBatches = (int) Math.ceil((double) numPositions / batchSize);
+                List<CompletableFuture<Void>> taskBatch = new ArrayList<>(numBatches);
+                ReadWriteLock lock = new ReentrantReadWriteLock();
+                for (int i = 0; i < numBatches; i++) {
+                    int startIndex = i * batchSize;
+                    int endIndex = Math.min(startIndex + batchSize, numPositions);
+                    List<ChunkCoordinates> batch = liquidPositions.subList(startIndex, endIndex);
+                    taskBatch.add(CompletableFuture.runAsync(() -> {
                         lock.readLock()
-                            .unlock();
-                    }
-                }, executorService));
+                            .lock();
+                        try {
+                            processBatch(batch, world);
+                        } finally {
+                            lock.readLock()
+                                .unlock();
+                        }
+                    }, executorService));
+                }
+                CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0]))
+                    .join();
+                executorService.shutdown();
             }
-            CompletableFuture.allOf(taskBatch.toArray(new CompletableFuture[0]))
-                .join();
-            executorService
-                .shutdown();
         }
     }
-}
 }

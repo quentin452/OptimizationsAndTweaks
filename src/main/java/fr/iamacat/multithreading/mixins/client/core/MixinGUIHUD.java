@@ -1,14 +1,10 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
@@ -19,6 +15,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.batching.BatchedText;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -35,7 +33,8 @@ public abstract class MixinGUIHUD {
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Chunk-Populator-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Chunk-Populator-%d")
+            .build());
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
@@ -44,7 +43,8 @@ public abstract class MixinGUIHUD {
 
     @Inject(method = "renderGameOverlay", at = @At("HEAD"))
     private void onRenderGameOverlay(CallbackInfo ci) {
-        if (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
+        if (Minecraft.getMinecraft().ingameGUI.getChatGUI()
+            .getChatOpen() || Minecraft.getMinecraft().currentScreen != null) {
             return;
         }
 
@@ -56,7 +56,10 @@ public abstract class MixinGUIHUD {
     private void onRenderGameOverlayPost(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             // draw cached strings
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+            ScaledResolution sr = new ScaledResolution(
+                Minecraft.getMinecraft(),
+                Minecraft.getMinecraft().displayWidth,
+                Minecraft.getMinecraft().displayHeight);
             int scaleFactor = sr.getScaleFactor();
             int prevWidth = GL11.glGetInteger(GL11.GL_SCISSOR_BOX);
 
@@ -93,7 +96,8 @@ public abstract class MixinGUIHUD {
 
     private void drawLoop() {
         try {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread()
+                .isInterrupted()) {
                 BatchedText[] batch = new BatchedText[BATCH_SIZE];
                 int count = 0;
 
@@ -112,9 +116,11 @@ public abstract class MixinGUIHUD {
                 TimeUnit.MILLISECONDS.sleep(Math.max(0, 5000 - count * 50));
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread()
+                .interrupt();
         }
     }
+
     private void drawBatch(BatchedText[] batch, int count) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
             Minecraft mc = Minecraft.getMinecraft();

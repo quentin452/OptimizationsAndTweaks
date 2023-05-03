@@ -55,10 +55,20 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean enableMixinParticle;
 
-    @Config.Comment("Enable multithreaded/batched TIleEntities rendering")
+    @Config.Comment("Enable multithreaded/batched TileEntities rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntities;
+
+    @Config.Comment("Enable multithreaded Worldgen")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinWorldgen;
+
+    @Config.Comment("Enable multithreaded Worldgen Tick")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinWorldTick;
 
     @Config.Comment("Enable multithreaded/batched Entities Tick")
     @Config.DefaultBoolean(true)
@@ -70,10 +80,15 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean enableMixinEntitiesRendering;
 
-    @Config.Comment("Enable multithreaded/batched Tile Entities Tick")
+    @Config.Comment("Enable multithreaded Tile Entities Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntitiesTick;
+
+    @Config.Comment("Remove Lightning update when break or place a block for better fps")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresMcRestart
+    public static boolean disablelightningupdate;
 
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)

@@ -1,31 +1,33 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import java.util.concurrent.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.world.WorldServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-import java.util.concurrent.*;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(WorldServer.class)
 public abstract class MixinEntitiesTick {
+
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-Tick-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Entity-Tick-%d")
+            .build());
 
     private CopyOnWriteArrayList<Entity> entityList = new CopyOnWriteArrayList<>();
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
     public void onPreUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesTick) {
-        // Save a copy of the entity list to avoid concurrent modification
+            // Save a copy of the entity list to avoid concurrent modification
         }
     }
 

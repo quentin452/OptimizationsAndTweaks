@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -18,6 +17,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
@@ -33,7 +34,8 @@ public abstract class MixinEntityAITask {
         60L,
         TimeUnit.SECONDS,
         new ArrayBlockingQueue<>(1000),
-        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d").build(),
+        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
+            .build(),
         new ThreadPoolExecutor.CallerRunsPolicy());
 
     public WorldServer getWorldServer() {
@@ -45,7 +47,8 @@ public abstract class MixinEntityAITask {
     }
 
     public void updateEntities() {
-        entityMap.values().forEach(this::updateEntityMap);
+        entityMap.values()
+            .forEach(this::updateEntityMap);
     }
 
     private void updateEntityMap(ConcurrentMap<Integer, Entity> entitiesToAIUpdate) {
@@ -67,19 +70,22 @@ public abstract class MixinEntityAITask {
                 }
             });
 
-        // Remove dead entities from the map
-        for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToAIUpdate.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<Integer, Entity> entry = it.next();
-            if (entry.getValue().isDead) {
-                it.remove();
+            // Remove dead entities from the map
+            for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToAIUpdate.entrySet()
+                .iterator(); it.hasNext();) {
+                Map.Entry<Integer, Entity> entry = it.next();
+                if (entry.getValue().isDead) {
+                    it.remove();
+                }
             }
         }
     }
-    }
+
     @Inject(method = "updateEntity", at = @At("HEAD"))
     private void onUpdateEntity(Entity entity, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
-            this.getWorldServer().updateEntity(entity);
+            this.getWorldServer()
+                .updateEntity(entity);
             executorService.submit(() -> {
                 try {
                     if (entity instanceof EntityLiving) {

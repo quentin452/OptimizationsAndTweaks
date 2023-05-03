@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import org.joml.Vector3d;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,19 +18,22 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d")
+            .build());
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
@@ -87,8 +88,13 @@ public abstract class MixinEntitySpawning {
         }
     }
 
-    @Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
-    private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw, float partialTicks) {
+    @Redirect(
+        method = "renderEntities",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
+    private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
+        float partialTicks) {
         // Don't render entities during mob spawning
         if (!spawnQueue.isEmpty()) {
             render.doRender(entity, x, y, z, yaw, partialTicks);

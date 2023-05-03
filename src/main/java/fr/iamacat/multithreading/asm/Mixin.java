@@ -38,18 +38,23 @@ public enum Mixin implements IMixin {
         "core.MixinParticleManager"),
     common_core_MixinEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesTick,
         "core.MixinEntitiesTick"),
+    common_core_MixinTileEntitiesTick(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick, "core.MixinTileEntitiesTick"),
+    common_core_MixinWorldgen(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
+        "core.MixinWorldgen"),
 
-    common_core_MixinTileEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick,
-        "core.MixinEntitiesTick"),
+    common_core_MixinWorldTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick,
+        "core.MixinWorldTick"),
 
     // CLIENT MIXINS
-    client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering,
-        "core.MixinGUIHUD"),
+    client_core_MixinEntitiesRendering(Side.CLIENT,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering, "core.MixinEntitiesRendering"),
     client_core_MixinTileEntities(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities,
         "core.MixinTileEntities"),
     client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD,
         "core.MixinGUIHUD"),
-
+    client_core_MixinRemoveLightning(Side.CLIENT,
+        m -> MultithreadingandtweaksMultithreadingConfig.disablelightningupdate, "core.MixinRemoveLightning"),
 
     // MOD-FILTERED MIXINS
 
