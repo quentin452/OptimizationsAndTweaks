@@ -29,9 +29,8 @@ public abstract class MixinWorldgen {
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d")
-            .build());
+        new LinkedBlockingQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d").build());
 
     private World world;
 
