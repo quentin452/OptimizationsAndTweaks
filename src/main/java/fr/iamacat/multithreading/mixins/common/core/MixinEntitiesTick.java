@@ -3,6 +3,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +15,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(WorldServer.class)
+@Mixin(World.class)
 public abstract class MixinEntitiesTick {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(

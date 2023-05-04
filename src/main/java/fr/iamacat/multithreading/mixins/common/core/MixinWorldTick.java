@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,21 +23,22 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(value = WorldServer.class, priority = 900)
+@Mixin(World.class)
 public abstract class MixinWorldTick {
 
-    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
+    @Final
+    private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("World-Tick-%d")
-            .build());
+        new ThreadFactoryBuilder().setNameFormat("World-Tick-%d").build()
+    );
 
-    @Inject(method = "updatechunks", at = @At("HEAD"))
-    private void onUpdateChunks(CallbackInfo ci) {
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick) {
             // Update chunks asynchronously
             CompletableFuture.runAsync(() -> {
                 try {
-                    updateChunks((WorldServer) (Object) this);
+                    updateChunks((World) (Object) this);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -43,7 +46,7 @@ public abstract class MixinWorldTick {
         }
     }
 
-    private void updateChunks(WorldServer world) throws Exception {
+    private void updateChunks(World world) throws Exception {
         // Get the chunk loader and the number of loaded chunks
         ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
         IChunkLoader chunkLoader = chunkProvider.currentChunkLoader;
@@ -77,5 +80,4 @@ public abstract class MixinWorldTick {
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
             .join();
     }
-
 }

@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,13 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
-    @Mixin(value = WorldServer.class, priority = 902)
+    @Mixin(value = World.class, priority = 902)
     public abstract class MixinEntityUpdate {
 
         private final ThreadPoolExecutor executorService;
         private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
         private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-        private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
+        private final AtomicReference<World> world = new AtomicReference<>((World) (Object) this);
         private final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
 
         protected MixinEntityUpdate() {
@@ -39,9 +39,9 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
         @Inject(method = "<init>", at = @At("RETURN"))
         private void onInit(CallbackInfo ci) {
-            WorldServer worldServer = (WorldServer) (Object) this;
-            world.set(worldServer);
-            addEntitiesToUpdateQueue(worldServer.loadedEntityList);
+            World World = (World) (Object) this;
+            world.set(World);
+            addEntitiesToUpdateQueue(World.loadedEntityList);
         }
 
         private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
