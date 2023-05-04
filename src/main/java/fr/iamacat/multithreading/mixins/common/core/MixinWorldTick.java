@@ -25,7 +25,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinWorldTick {
-
+    private Object chunkLock = new Object();
     @Final
     private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -53,7 +53,7 @@ public abstract class MixinWorldTick {
         int loadedChunkCount = chunkProvider.getLoadedChunkCount();
 
         // Divide the chunks into batches
-        int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+        int batchSize = 16;
         List<ChunkCoordIntPair> chunkCoords = new ArrayList<>();
         for (int i = 0; i < loadedChunkCount; i++) {
             chunkCoords.add(new ChunkCoordIntPair(i / 16, i % 16));
@@ -64,7 +64,10 @@ public abstract class MixinWorldTick {
         List<CompletableFuture<Void>> futures = batches.parallelStream()
             .map(batch -> CompletableFuture.runAsync(() -> {
                 for (ChunkCoordIntPair chunkCoord : batch) {
-                    Chunk chunk = chunkProvider.provideChunk(chunkCoord.chunkXPos, chunkCoord.chunkZPos);
+                    Chunk chunk;
+                    synchronized (chunkLock) {
+                        chunk = chunkProvider.provideChunk(chunkCoord.chunkXPos, chunkCoord.chunkZPos);
+                    }
                     if (chunk != null) {
                         synchronized (chunk) {
                             synchronized (chunkLoader) {
