@@ -40,11 +40,12 @@ public enum Mixin implements IMixin {
         "core.MixinEntitiesTick"),
     common_core_MixinTileEntitiesTick(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick, "core.MixinTileEntitiesTick"),
-    common_core_MixinWorldgen(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
-        "core.MixinWorldgen"),
 
     common_core_MixinWorldTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick,
         "core.MixinWorldTick"),
+
+    common_core_MixinEntityLivingBase(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingBase, "core.MixinEntityLivingBase"),
 
     // CLIENT MIXINS
     client_core_MixinEntitiesRendering(Side.CLIENT,
@@ -55,6 +56,9 @@ public enum Mixin implements IMixin {
         "core.MixinGUIHUD"),
     client_core_MixinRemoveLightning(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.disablelightningupdate, "core.MixinRemoveLightning"),
+
+    common_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
+        "core.MixinWorldgen"),
 
     // MOD-FILTERED MIXINS
 

@@ -24,19 +24,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = WorldServer.class, priority = 901)
 public abstract class MixinEntityAITask {
-
-    private int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
 
-    private final ExecutorService executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(1000),
+    private final ExecutorService executorService = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
-            .build(),
-        new ThreadPoolExecutor.CallerRunsPolicy());
+            .build());
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
@@ -48,15 +40,14 @@ public abstract class MixinEntityAITask {
 
     public void updateEntities() {
         entityMap.values()
+            .parallelStream()
             .forEach(this::updateEntityMap);
     }
 
     private void updateEntityMap(ConcurrentMap<Integer, Entity> entitiesToAIUpdate) {
         List<Entity> entities = new ArrayList<>(entitiesToAIUpdate.values());
-        for (int i = 0; i < entities.size(); i += BATCH_SIZE) {
-            int end = Math.min(i + BATCH_SIZE, entities.size());
-            List<Entity> batch = entities.subList(i, end);
-            batch.forEach(entity -> {
+        entities.parallelStream()
+            .forEach(entity -> {
                 entity.onEntityUpdate();
                 if (entity instanceof EntityAgeable) {
                     EntityAgeable ageable = (EntityAgeable) entity;
@@ -70,19 +61,15 @@ public abstract class MixinEntityAITask {
                 }
             });
 
-            // Remove dead entities from the map
-            for (Iterator<Map.Entry<Integer, Entity>> it = entitiesToAIUpdate.entrySet()
-                .iterator(); it.hasNext();) {
-                Map.Entry<Integer, Entity> entry = it.next();
-                if (entry.getValue().isDead) {
-                    it.remove();
-                }
-            }
-        }
+        // Remove dead entities from the map
+        entitiesToAIUpdate.keySet()
+            .parallelStream()
+            .filter(key -> entitiesToAIUpdate.get(key).isDead)
+            .forEach(entitiesToAIUpdate::remove);
     }
 
-    @Inject(method = "updateEntity", at = @At("HEAD"))
-    private void onUpdateEntity(Entity entity, CallbackInfo ci) {
+    @Inject(method = "updateEntityTask", at = @At("HEAD"))
+    private void updateEntityTask(Entity entity, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
             this.getWorldServer()
                 .updateEntity(entity);

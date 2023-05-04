@@ -23,20 +23,11 @@ public class Multithreaded {
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {}
 
-    public static class WorldLoadHandler {
-
-    }
-
     @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent event) {
-        // if (config.hasChanged()) {
-        // config.save();
-        // }
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        // Register the proxy as an event handler
         MinecraftForge.EVENT_BUS.register(proxy);
     }
 }

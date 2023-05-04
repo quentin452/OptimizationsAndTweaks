@@ -1,10 +1,9 @@
-package fr.iamacat.multithreading.mixins.common.core;
+package fr.iamacat.multithreading.mixins.client.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
@@ -18,18 +17,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(WorldClient.class)
 public abstract class MixinWorldgen {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d")
+            .build());
 
     private World world;
 
@@ -37,7 +39,8 @@ public abstract class MixinWorldgen {
     private void onDoPreChunk(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen) {
             // Load chunk asynchronously
-            CompletableFuture.supplyAsync(this::loadChunk, executorService).thenAccept(this::onChunkLoaded);
+            CompletableFuture.supplyAsync(this::loadChunk, executorService)
+                .thenAccept(this::onChunkLoaded);
         } else {
             setActivePlayerChunksAndCheckLightPublic();
         }
@@ -67,7 +70,8 @@ public abstract class MixinWorldgen {
 
     public void setActivePlayerChunksAndCheckLightPublic() {
         try {
-            Method setActivePlayerChunksAndCheckLight = WorldClient.class.getDeclaredMethod("setActivePlayerChunksAndCheckLight");
+            Method setActivePlayerChunksAndCheckLight = WorldClient.class
+                .getDeclaredMethod("setActivePlayerChunksAndCheckLight");
             setActivePlayerChunksAndCheckLight.setAccessible(true);
             setActivePlayerChunksAndCheckLight.invoke(world);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

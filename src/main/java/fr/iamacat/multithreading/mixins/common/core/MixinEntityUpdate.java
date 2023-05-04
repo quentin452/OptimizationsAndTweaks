@@ -17,83 +17,71 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+    @Mixin(value = WorldServer.class, priority = 902)
+    public abstract class MixinEntityUpdate {
 
-@Mixin(value = WorldServer.class, priority = 997)
-public abstract class MixinEntityUpdate {
+        private final ThreadPoolExecutor executorService;
+        private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+        private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
+        private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
+        private final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
 
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d")
-            .build());
+        protected MixinEntityUpdate() {
+            int corePoolSize = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+            int maxPoolSize = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+            long keepAliveTime = 60L;
+            TimeUnit unit = TimeUnit.SECONDS;
+            BlockingQueue<Runnable> workQueue = new SynchronousQueue<>();
+            ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d").build();
+            executorService = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+            numberOfCPUs = corePoolSize;
+        }
 
-    private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-    private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final AtomicReference<WorldServer> world = new AtomicReference<>((WorldServer) (Object) this);
-    private final ConcurrentHashMap<Integer, Entity> loadedEntities = new ConcurrentHashMap<>();
+        @Inject(method = "<init>", at = @At("RETURN"))
+        private void onInit(CallbackInfo ci) {
+            WorldServer worldServer = (WorldServer) (Object) this;
+            world.set(worldServer);
+            addEntitiesToUpdateQueue(worldServer.loadedEntityList);
+        }
 
-    protected MixinEntityUpdate() {}
+        private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
+            entitiesToUpdate.addAll(entities);
+        }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        WorldServer worldServer = (WorldServer) (Object) this;
-        world.set(worldServer);
-        addEntitiesToUpdateQueue(worldServer.loadedEntityList);
-    }
-
-    private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
-        loadedEntities.putAll(
-            entities.stream()
-                .collect(Collectors.toConcurrentMap(Entity::getEntityId, Function.identity(), (e1, e2) -> e1)));
-    }
-
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            ConcurrentHashMap<Integer, Entity> entitiesToUpdate = new ConcurrentHashMap<>(loadedEntities);
-            loadedEntities.clear();
-
-            int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up
-                                                                                                            // //
-                                                                                                            // division
-            List<List<Entity>> batches = new ArrayList<>(numBatches);
-            Iterator<Entity> iter = entitiesToUpdate.values()
-                .iterator();
-            for (int i = 0; i < numBatches; i++) {
-                List<Entity> batch = new ArrayList<>(MAX_ENTITIES_PER_TICK);
-                for (int j = 0; j < MAX_ENTITIES_PER_TICK && iter.hasNext(); j++) {
-                    batch.add(iter.next());
-                }
-                batches.add(batch);
-            }
-
-            ExecutorService executorService = Executors.newFixedThreadPool(numberOfCPUs);
-            for (List<Entity> batch : batches) {
-                executorService.execute(() -> {
-                    for (Entity entity : batch) {
-                        try {
-                            if (entity != null) {
-                                entity.onEntityUpdate();
-                            }
-                        } catch (Exception e) {
-                            // Handle the exception in a specific way, such as logging the error and continuing with the
-                            // program.
-                            e.printStackTrace();
-                        }
+        @Inject(method = "tick", at = @At("HEAD"))
+        private void onTick(CallbackInfo ci) {
+            if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
+                int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up
+                // division
+                List<List<Entity>> batches = new ArrayList<>(numBatches);
+                for (int i = 0; i < numBatches; i++) {
+                    List<Entity> batch = new ArrayList<>(MAX_ENTITIES_PER_TICK);
+                    for (int j = 0; j < MAX_ENTITIES_PER_TICK && i * MAX_ENTITIES_PER_TICK + j < entitiesToUpdate.size(); j++) {
+                        batch.add(entitiesToUpdate.get(i * MAX_ENTITIES_PER_TICK + j));
                     }
-                });
-            }
-            executorService.shutdown();
-        }
-    }
+                    batches.add(batch);
+                }
 
-    @Inject(method = "close", at = @At("HEAD"))
-    private void onClose(CallbackInfo ci) {
-        if (executorService != null) {
+                for (List<Entity> batch : batches) {
+                    executorService.execute(() -> {
+                        for (Entity entity : batch) {
+                            try {
+                                if (entity != null) {
+                                    entity.onEntityUpdate();
+                                }
+                            } catch (Exception e) {
+                                // Handle the exception in a specific way, such as logging the error and continuing with the
+                                // program.
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        @Inject(method = "close", at = @At("HEAD"))
+        private void onClose(CallbackInfo ci) {
             executorService.shutdown();
         }
     }
-}
