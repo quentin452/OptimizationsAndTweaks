@@ -41,8 +41,8 @@ public abstract class MixinGrowthSpreading {
         Comparator.comparingInt(o -> o.posY));
 
     // Define a getter method for the world object
-    public World getWorld() {
-        return (World) (Object) this;
+    public WorldServer getWorld() {
+        return (WorldServer) (Object) this;
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
