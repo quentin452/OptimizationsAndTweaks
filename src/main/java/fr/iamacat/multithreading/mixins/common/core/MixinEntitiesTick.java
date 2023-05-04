@@ -19,7 +19,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(WorldServer.class)
 public abstract class MixinEntitiesTick {
-    @Shadow public abstract List<Entity> getEntities();
+    public abstract List<Entity> getEntities();
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Entity-Tick-%d").build()
