@@ -90,11 +90,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean disablelightningupdate;
 
-    @Config.Comment("Enable Mob Instance Stacking to reduce tps lag")
-    @Config.DefaultBoolean(false)
-    @Config.RequiresMcRestart
-    public static boolean enableMixinEntityLivingBase;
-
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)

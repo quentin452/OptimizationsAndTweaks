@@ -44,9 +44,6 @@ public enum Mixin implements IMixin {
     common_core_MixinWorldTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick,
         "core.MixinWorldTick"),
 
-    common_core_MixinEntityLivingBase(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingBase, "core.MixinEntityLivingBase"),
-
     // CLIENT MIXINS
     client_core_MixinEntitiesRendering(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering, "core.MixinEntitiesRendering"),
