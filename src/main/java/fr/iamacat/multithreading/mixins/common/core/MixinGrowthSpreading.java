@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(value = World.class, priority = 998)
+@Mixin(value = WorldServer.class, priority = 998)
 public abstract class MixinGrowthSpreading {
 
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
@@ -64,6 +64,8 @@ public abstract class MixinGrowthSpreading {
         }
     }
 
+
+
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
             for (int z = -64; z <= 64; z++) {
@@ -77,6 +79,7 @@ public abstract class MixinGrowthSpreading {
             }
         }
     }
+
 
     // Process blocks in growth queue using executor service
     private void processBlocksInGrowthQueue() {
