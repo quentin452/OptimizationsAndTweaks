@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 
@@ -22,7 +23,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(EntityLiving.class)
+@Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesRendering {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(

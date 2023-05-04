@@ -54,7 +54,7 @@ public enum Mixin implements IMixin {
     client_core_MixinRemoveLightning(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.disablelightningupdate, "core.MixinRemoveLightning"),
 
-    common_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
+    client_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
         "core.MixinWorldgen"),
 
     // MOD-FILTERED MIXINS
