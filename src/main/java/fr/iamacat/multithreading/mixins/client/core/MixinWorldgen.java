@@ -30,7 +30,8 @@ public abstract class MixinWorldgen {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Worldgen-%d")
+            .build());
 
     private World world;
 

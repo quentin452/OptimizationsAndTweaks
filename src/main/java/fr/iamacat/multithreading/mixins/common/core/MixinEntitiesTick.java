@@ -4,7 +4,6 @@ import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

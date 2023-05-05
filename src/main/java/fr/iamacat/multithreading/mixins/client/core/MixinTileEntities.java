@@ -29,15 +29,6 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(TileEntity.class)
 public abstract class MixinTileEntities {
 
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Tile-Entity-%d")
-            .build());
-
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     private World world;

@@ -1,9 +1,7 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,14 +23,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinGUIHUD {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final List<BatchedText> renderQueue = new LinkedList<>();
+    private final ConcurrentLinkedQueue<BatchedText> renderQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean scissorTestEnabled = false;
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
+        new LinkedBlockingQueue<>(),
         new ThreadFactoryBuilder().setNameFormat("Chunk-Populator-%d")
             .build());
 
@@ -73,15 +71,18 @@ public abstract class MixinGUIHUD {
             synchronized (renderQueue) {
                 if (!renderQueue.isEmpty()) {
                     int numBatches = (int) Math.ceil((double) renderQueue.size() / BATCH_SIZE);
+                    Iterator<BatchedText> iterator = renderQueue.iterator();
                     for (int i = 0; i < numBatches; i++) {
-                        int start = i * BATCH_SIZE;
-                        int end = Math.min(start + BATCH_SIZE, renderQueue.size());
-                        List<BatchedText> batch = renderQueue.subList(start, end);
+                        List<BatchedText> batch = new ArrayList<>();
+                        for (int j = 0; j < BATCH_SIZE && iterator.hasNext(); j++) {
+                            batch.add(iterator.next());
+                        }
                         drawBatch(batch.toArray(new BatchedText[batch.size()]), batch.size());
                     }
                     renderQueue.clear();
                 }
             }
+
 
             GL11.glPopMatrix();
 
@@ -102,7 +103,7 @@ public abstract class MixinGUIHUD {
                 int count = 0;
 
                 while (count < BATCH_SIZE) {
-                    BatchedText text = renderQueue.remove(0);
+                    BatchedText text = renderQueue.poll();
                     if (text == null) {
                         break; // queue is empty
                     }

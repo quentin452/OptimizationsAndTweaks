@@ -1,9 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
@@ -25,9 +23,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = World.class, priority = 901)
 public abstract class MixinEntityAITask {
+
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+    private final ExecutorService executorService = Executors.newFixedThreadPool(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
             .build());
 

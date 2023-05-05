@@ -1,11 +1,11 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
@@ -25,12 +25,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinWorldTick {
-    private Object chunkLock = new Object();
+
+    private static final int BATCH_SIZE = 8;
+    private final ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>();
+
     @Final
     private ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("World-Tick-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("World-Tick-%d").build());
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -47,40 +49,36 @@ public abstract class MixinWorldTick {
     }
 
     private void updateChunks(World world) throws Exception {
-        // Get the chunk loader and the number of loaded chunks
         ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
         IChunkLoader chunkLoader = chunkProvider.currentChunkLoader;
-        int loadedChunkCount = chunkProvider.getLoadedChunkCount();
 
-        // Divide the chunks into batches
-        int batchSize = 16;
-        List<ChunkCoordIntPair> chunkCoords = new ArrayList<>();
-        for (int i = 0; i < loadedChunkCount; i++) {
-            chunkCoords.add(new ChunkCoordIntPair(i / 16, i % 16));
+        // Add all chunks that need to be updated to the queue
+        for (Object chunk : chunkProvider.loadedChunks) {
+            chunksToUpdate.offer((Chunk) chunk);
         }
-        List<List<ChunkCoordIntPair>> batches = Lists.partition(chunkCoords, batchSize);
 
-        // Update each batch of chunks in parallel
-        List<CompletableFuture<Void>> futures = batches.parallelStream()
-            .map(batch -> CompletableFuture.runAsync(() -> {
-                for (ChunkCoordIntPair chunkCoord : batch) {
-                    Chunk chunk;
-                    synchronized (chunkLock) {
-                        chunk = chunkProvider.provideChunk(chunkCoord.chunkXPos, chunkCoord.chunkZPos);
-                    }
-                    if (chunk != null) {
-                        synchronized (chunk) {
-                            synchronized (chunkLoader) {
-                                chunkLoader.saveExtraChunkData(world, chunk);
-                            }
-                        }
-                    }
+        // Process the chunks in batches
+        while (!chunksToUpdate.isEmpty()) {
+            List<Chunk> batch = new ArrayList<>();
+            for (int i = 0; i < BATCH_SIZE && !chunksToUpdate.isEmpty(); i++) {
+                Chunk chunk = chunksToUpdate.poll();
+                if (chunk != null) {
+                    batch.add(chunk);
                 }
-            }, executorService))
-            .collect(Collectors.toList());
+            }
+            processBatch(chunkProvider, chunkLoader, batch);
+        }
+    }
 
-        // Wait for all the futures to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-            .join();
+    private void processBatch(ChunkProviderServer chunkProvider, IChunkLoader chunkLoader, List<Chunk> batch) {
+        // Load the chunks from disk and save them
+        batch.parallelStream().forEach(chunk -> {
+            synchronized (chunk) {
+                synchronized (chunkLoader) {
+                    WorldProvider worldProvider = chunkProvider.worldObj.provider;
+                    chunkLoader.saveExtraChunkData(worldProvider.worldObj, chunk);
+                }
+            }
+        });
     }
 }

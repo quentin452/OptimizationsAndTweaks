@@ -10,9 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-
 import net.minecraft.world.WorldServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -64,8 +63,6 @@ public abstract class MixinGrowthSpreading {
         }
     }
 
-
-
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
             for (int z = -64; z <= 64; z++) {
@@ -79,7 +76,6 @@ public abstract class MixinGrowthSpreading {
             }
         }
     }
-
 
     // Process blocks in growth queue using executor service
     private void processBlocksInGrowthQueue() {
