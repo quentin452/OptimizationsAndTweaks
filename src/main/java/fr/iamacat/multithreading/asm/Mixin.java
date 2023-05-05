@@ -70,7 +70,6 @@ public enum Mixin implements IMixin {
 
     client_core_MixinLiquidRendering(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLiquidRendering, "core.MixinLiquidRendering"),
-
     // MOD-FILTERED MIXINS
 
     // The modFilter argument is a predicate, so you can also use the .and(), .or(), and .negate() methods to mix and

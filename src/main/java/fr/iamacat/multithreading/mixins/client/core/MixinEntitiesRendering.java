@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -70,47 +69,39 @@ public abstract class MixinEntitiesRendering {
 
     public void renderEntities(World world, Collection<Entity> entities, RenderManager renderManager, float tickDelta) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering) {
-            int batchSize = BATCH_SIZE; // The maximum number of entities to render per batch
-            List<List<Entity>> entityBatches = splitEntitiesIntoBatches(entities);
+            List<Entity> entityList = new ArrayList<>(entities);
+            int entityCount = entityList.size();
+            if (entityCount == 0) {
+                return;
+            }
 
-            // Submit rendering tasks to the thread pool using parallel stream
-            List<CompletableFuture<Void>> renderingFutures = entityBatches.parallelStream()
-                .map(entityBatch -> CompletableFuture.runAsync(() -> {
-                    for (Entity entity : entityBatch) {
-                        renderManager.renderEntityWithPosYaw(
-                            entity,
-                            entity.posX - RenderManager.renderPosX,
-                            entity.posY - RenderManager.renderPosY,
-                            entity.posZ - RenderManager.renderPosZ,
-                            entity.rotationYaw,
-                            tickDelta);
-                    }
-                }, executorService))
-                .collect(Collectors.toList());
+            // Compute the number of tasks to use based on the number of available processors
+            int taskCount = Math.min(entityCount, ForkJoinPool.getCommonPoolParallelism());
+            int batchSize = (int) Math.ceil((double) entityCount / taskCount);
 
-            // Wait for all rendering tasks to complete
-            CompletableFuture.allOf(renderingFutures.toArray(new CompletableFuture[0]))
-                .join();
-        }
-    }
-
-    private List<List<Entity>> splitEntitiesIntoBatches(Collection<Entity> entities) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
-            int batchSize = BATCH_SIZE; // The maximum number of entities to render per batch
+            // Split entities into batches
             List<List<Entity>> entityBatches = new ArrayList<>();
-            List<Entity> entityBatch = new ArrayList<>();
-            for (Entity entity : entities) {
-                entityBatch.add(entity);
-                if (entityBatch.size() == batchSize) {
-                    entityBatches.add(entityBatch);
-                    entityBatch = new ArrayList<>();
-                }
+            for (int i = 0; i < entityCount; i += batchSize) {
+                int end = Math.min(i + batchSize, entityCount);
+                entityBatches.add(entityList.subList(i, end));
             }
-            if (!entityBatch.isEmpty()) {
-                entityBatches.add(entityBatch);
-            }
-            return entityBatches;
+
+            // Submit rendering tasks to the ForkJoinPool
+            ForkJoinPool.commonPool()
+                .execute(() -> {
+                    entityBatches.parallelStream()
+                        .forEach(entityBatch -> {
+                            for (Entity entity : entityBatch) {
+                                renderManager.renderEntityWithPosYaw(
+                                    entity,
+                                    entity.posX - RenderManager.renderPosX,
+                                    entity.posY - RenderManager.renderPosY,
+                                    entity.posZ - RenderManager.renderPosZ,
+                                    entity.rotationYaw,
+                                    tickDelta);
+                            }
+                        });
+                });
         }
-        return new ArrayList<>();
     }
 }

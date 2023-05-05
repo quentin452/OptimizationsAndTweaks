@@ -9,7 +9,6 @@ import net.minecraft.block.BlockReed;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,9 +20,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinGrowthSpreading {
+
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d")
+            .build());
     private World world;
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
@@ -36,13 +37,12 @@ public abstract class MixinGrowthSpreading {
     private void onTick(CallbackInfo ci) {
         this.world = world; // assign world parameter to instance variable
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading) {
-             growthQueue.clear();
+            growthQueue.clear();
         } else {
             addBlocksToGrowthQueue();
             processBlocksInGrowthQueue();
         }
     }
-
 
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
@@ -67,9 +67,7 @@ public abstract class MixinGrowthSpreading {
             }
             if (!batch.isEmpty()) {
                 EXECUTOR.submit(() -> {
-                    batch.forEach(pos -> {
-                        Block block = getBlock(pos.getX(), pos.getY(), pos.getZ());
-                    });
+                    batch.forEach(pos -> { Block block = getBlock(pos.getX(), pos.getY(), pos.getZ()); });
                     batch.clear();
                 });
             }

@@ -1,12 +1,12 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,10 +25,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinTileEntities {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final ExecutorService THREAD_POOL = Executors
+        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
     private World world;
     private List<TileEntity> tileEntities;
-    private final Object lock = new Object();
 
     @Inject(method = "init", at = @At("RETURN"))
     public void init(CallbackInfo ci) {
@@ -36,37 +37,41 @@ public abstract class MixinTileEntities {
         this.tileEntities = new ArrayList<>();
     }
 
-    @Inject(method = "func_147455_a", at = @At("RETURN"))
     public void addTileEntity(TileEntity tileEntity) {
-        synchronized (lock) {
-            this.tileEntities.add(tileEntity);
-        }
+        this.tileEntities.add(tileEntity);
     }
 
-    @Inject(method = "process", at = @At("RETURN"))
-    public void process(CallbackInfo ci) {
+    public void processTileEntities() {
         // Split the tile entities into batches
         List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
 
-        // Process each batch using a for loop
+        // Process each batch using a thread pool
+        List<Future<?>> futures = new ArrayList<>();
         for (List<TileEntity> batch : batches) {
-            processBatch(batch);
+            futures.add(THREAD_POOL.submit(() -> processBatch(batch)));
+        }
+
+        // Wait for all tasks to complete
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void processBatch(List<TileEntity> batch) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
-            for (TileEntity tileEntity : batch) {
-                // Process each tile entity
-                tileEntity.updateEntity();
-                NBTTagCompound tag = new NBTTagCompound();
-                tileEntity.writeToNBT(tag);
-                this.world.setTileEntity(
-                    tileEntity.xCoord,
-                    tileEntity.yCoord,
-                    tileEntity.zCoord,
-                    TileEntity.createAndLoadEntity(tag));
-            }
+        for (TileEntity tileEntity : batch) {
+            // Process each tile entity
+            tileEntity.updateEntity();
+            NBTTagCompound tag = new NBTTagCompound();
+            tileEntity.writeToNBT(tag);
+            this.world.setTileEntity(
+                tileEntity.xCoord,
+                tileEntity.yCoord,
+                tileEntity.zCoord,
+                TileEntity.createAndLoadEntity(tag));
         }
     }
 
@@ -79,42 +84,34 @@ public abstract class MixinTileEntities {
 
     @Inject(method = "renderTileEntities", at = @At("HEAD"))
     public void renderTileEntities(World world, List<TileEntity> tileEntities, CallbackInfo ci) {
-        // Use a ForkJoinPool with the number of threads equal to the number of available processors
-        ForkJoinPool pool = new ForkJoinPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        // Process each tile entity in parallel using a thread pool
+        List<Future<?>> futures = new ArrayList<>();
+        for (TileEntity tileEntity : tileEntities) {
+            if (tileEntity != null) {
+                futures.add(THREAD_POOL.submit(() -> renderTileEntity(tileEntity)));
+            }
+        }
 
-        // Process each tile entity in parallel
-        pool.submit(
-            () -> tileEntities.parallelStream()
-                .forEach(tileEntity -> {
-                    if (tileEntity != null) {
-                        world.addTileEntity(tileEntity);
-                    }
-                }))
-            .join();
-
-        pool.shutdown();
+        // Wait for all tasks to complete
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void render(TileEntity tileentity, float partialTicks, int destroyStage, double x, double y, double z) {
-        double dx = tileentity.xCoord - x;
-        double dy = tileentity.yCoord - y;
-        double dz = tileentity.zCoord - z;
-        double distanceSq = dx * dx + dy * dy + dz * dz;
-        if (distanceSq < 4096.0D) {
-            // Use multithreaded rendering
-            List<TileEntity> tileEntities = Collections.singletonList(tileentity);
-            tileEntities.parallelStream()
-                .forEach(te -> {
-                    GL11.glPushMatrix();
-                    GL11.glTranslated(te.xCoord + 0.5 - x, te.yCoord + 0.5 - y, te.zCoord + 0.5 - z);
-                    TileEntitySpecialRenderer renderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(te);
-                    if (renderer != null) {
-                        if (te.shouldRenderInPass(destroyStage)) {
-                            renderer.renderTileEntityAt(te, x, y, z, partialTicks);
-                        }
-                    }
-                    GL11.glPopMatrix();
-                });
+    private void renderTileEntity(TileEntity tileentity) {
+        GL11.glPushMatrix();
+        GL11.glTranslated(
+            tileentity.xCoord + 0.5 - RenderManager.renderPosX,
+            tileentity.yCoord + 0.5 - RenderManager.renderPosY,
+            tileentity.zCoord + 0.5 - RenderManager.renderPosZ);
+        TileEntitySpecialRenderer renderer = TileEntityRendererDispatcher.instance.getSpecialRenderer(tileentity);
+        if (renderer != null) {
+            renderer.renderTileEntityAt(tileentity, 0, 0, 0, 0);
         }
+        GL11.glPopMatrix();
     }
 }

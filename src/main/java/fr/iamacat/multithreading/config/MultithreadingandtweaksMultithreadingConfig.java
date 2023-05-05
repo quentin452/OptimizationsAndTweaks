@@ -60,7 +60,7 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntities;
 
-    @Config.Comment("Enable multithreaded Worldgen")
+    @Config.Comment("Enable multithreaded Worldgen)")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinWorldgen;
