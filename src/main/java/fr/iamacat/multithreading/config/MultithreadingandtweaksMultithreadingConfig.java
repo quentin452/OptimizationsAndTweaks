@@ -60,12 +60,12 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntities;
 
-    @Config.Comment("Enable multithreaded Worldgen")
+    @Config.Comment("Enable multithreaded Worldgen(not recommanded to be enabled with enableThreadedChunkUpdates from archaicfix)")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinWorldgen;
 
-    @Config.Comment("Enable multithreaded Worldgen Tick")
+    @Config.Comment("Enable multithreaded Worldgen Tick(not recommanded to be enabled with enableThreadedChunkUpdates from archaicfix)")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinWorldTick;

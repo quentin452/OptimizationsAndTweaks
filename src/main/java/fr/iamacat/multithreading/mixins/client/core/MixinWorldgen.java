@@ -2,13 +2,13 @@ package fr.iamacat.multithreading.mixins.client.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.falsepattern.lib.compat.ChunkPos;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -34,30 +35,41 @@ public abstract class MixinWorldgen {
             .build());
 
     private World world;
+    private final Map<Long, Chunk> loadedChunks = new ConcurrentHashMap<>();
 
     @Inject(method = "doPreChunk", at = @At("HEAD"))
     private void onDoPreChunk(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen) {
+            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+            int x = Math.floorDiv((int) player.posX, 16);
+            int z = Math.floorDiv((int) player.posZ, 16);
+
             // Load chunk asynchronously
-            CompletableFuture.supplyAsync(this::loadChunk, executorService)
+            CompletableFuture.supplyAsync(() -> loadChunk(x, z), executorService)
                 .thenAccept(this::onChunkLoaded);
         } else {
             setActivePlayerChunksAndCheckLightPublic();
         }
     }
 
-    private Chunk loadChunk() {
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-        int x = MathHelper.floor_double(player.posX) >> 4;
-        int z = MathHelper.floor_double(player.posZ) >> 4;
-        boolean loadChunk = true;
+    private Chunk loadChunk(int x, int z) {
+        long key = ChunkPos.asLong(x, z);
+        Chunk cachedChunk = loadedChunks.get(key);
+        if (cachedChunk != null) {
+            return cachedChunk;
+        }
 
         ChunkProviderClient chunkProvider = (ChunkProviderClient) world.getChunkProvider();
         Chunk chunk = chunkProvider.provideChunk(x, z);
-        if (loadChunk && chunk == null) {
+        if (chunk == null) {
             // Load chunk synchronously
             chunkProvider.loadChunk(x, z);
             chunk = chunkProvider.provideChunk(x, z);
+        }
+
+        // Cache the loaded chunk
+        if (chunk != null) {
+            loadedChunks.put(key, chunk);
         }
         return chunk;
     }

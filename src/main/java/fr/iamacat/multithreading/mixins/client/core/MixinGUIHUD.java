@@ -83,7 +83,6 @@ public abstract class MixinGUIHUD {
                 }
             }
 
-
             GL11.glPopMatrix();
 
             if (scissorTestEnabled) {
