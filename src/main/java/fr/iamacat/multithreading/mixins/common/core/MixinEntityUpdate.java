@@ -3,6 +3,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
@@ -57,33 +58,26 @@ public abstract class MixinEntityUpdate {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            int numBatches = (entitiesToUpdate.size() + MAX_ENTITIES_PER_TICK - 1) / MAX_ENTITIES_PER_TICK; // round up
-            // division
-            List<List<Entity>> batches = new ArrayList<>(numBatches);
-            for (int i = 0; i < numBatches; i++) {
-                List<Entity> batch = new ArrayList<>(MAX_ENTITIES_PER_TICK);
-                for (int j = 0; j < MAX_ENTITIES_PER_TICK
-                    && i * MAX_ENTITIES_PER_TICK + j < entitiesToUpdate.size(); j++) {
-                    batch.add(entitiesToUpdate.get(i * MAX_ENTITIES_PER_TICK + j));
-                }
-                batches.add(batch);
-            }
+            List<List<Entity>> batches = entitiesToUpdate.stream()
+                .collect(
+                    Collectors.groupingByConcurrent(
+                        entity -> (int) Math.floor(entitiesToUpdate.indexOf(entity) / (double) MAX_ENTITIES_PER_TICK)))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
 
-            for (List<Entity> batch : batches) {
-                executorService.execute(() -> {
-                    for (Entity entity : batch) {
+            batches.parallelStream()
+                .forEach(batch -> {
+                    batch.forEach(entity -> {
                         try {
                             if (entity != null) {
                                 entity.onEntityUpdate();
                             }
                         } catch (Exception e) {
-                            // Handle the exception in a specific way, such as logging the error and continuing with the
-                            // program.
                             e.printStackTrace();
                         }
-                    }
+                    });
                 });
-            }
         }
     }
 

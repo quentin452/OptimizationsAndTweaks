@@ -34,8 +34,6 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityLightningBolt(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLightningBolt,
         "core.MixinEntityLightningBolt"),
-    common_core_MixinParticle(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
-        "core.MixinParticleManager"),
     common_core_MixinEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesTick,
         "core.MixinEntitiesTick"),
     common_core_MixinTileEntitiesTick(Side.COMMON,
@@ -44,18 +42,34 @@ public enum Mixin implements IMixin {
     common_core_MixinWorldTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick,
         "core.MixinWorldTick"),
 
+    common_core_MixinExplosions(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinExplosions,
+        "core.MixinExplosions"),
+
+    common_core_MixinBlockCHunkUpdate(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinBlockCHunkUpdate, "core.MixinBlockCHunkUpdate"),
+    common_core_MixinFallBlocksTick(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick, "core.MixinFallBlocksTick"),
     // CLIENT MIXINS
+
+    client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
+        "core.MixinParticleManager"),
     client_core_MixinEntitiesRendering(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering, "core.MixinEntitiesRendering"),
     client_core_MixinTileEntities(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities,
         "core.MixinTileEntities"),
     client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD,
         "core.MixinGUIHUD"),
-    client_core_MixinRemoveLightning(Side.CLIENT,
-        m -> MultithreadingandtweaksMultithreadingConfig.disablelightningupdate, "core.MixinRemoveLightning"),
-
+    client_core_MixinMultithreadedSkyLightning(Side.CLIENT,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinMultithreadedSkyLightning,
+        "core.MixinMultithreadedSkyLightning"),
     client_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
         "core.MixinWorldgen"),
+
+    client_core_MixinHUDCaching(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinHUDCaching,
+        "core.MixinHUDCaching"),
+
+    client_core_MixinLiquidRendering(Side.CLIENT,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLiquidRendering, "core.MixinLiquidRendering"),
 
     // MOD-FILTERED MIXINS
 

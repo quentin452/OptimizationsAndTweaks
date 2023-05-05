@@ -9,19 +9,19 @@ import java.util.concurrent.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockReed;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.falsepattern.lib.compat.BlockPos;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(value = WorldServer.class, priority = 998)
+@Mixin(value = World.class, priority = 998)
 public abstract class MixinGrowthSpreading {
 
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
@@ -35,40 +35,30 @@ public abstract class MixinGrowthSpreading {
 
     private int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    private PriorityQueue<ChunkCoordinates> growthQueue = new PriorityQueue<>(
-        1000,
-        Comparator.comparingInt(o -> o.posY));
+    private PriorityQueue<BlockPos> growthQueue = new PriorityQueue<>(1000, Comparator.comparingInt(BlockPos::getY));
 
     // Define a getter method for the world object
-    public WorldServer getWorld() {
-        return (WorldServer) (Object) this;
+    public World getWorld() {
+        return (World) (Object) this;
     }
-
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {}
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading
             && getWorld().getTotalWorldTime() % 10 == 0) {
-            if (getWorld().getSaveHandler()
-                .getWorldDirectory()
-                .exists()) {
-                batchSize = 1;
                 growthQueue.clear();
             } else {
                 addBlocksToGrowthQueue();
                 processBlocksInGrowthQueue();
             }
         }
-    }
 
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
             for (int z = -64; z <= 64; z++) {
                 for (int y = 0; y <= 255; y++) {
-                    ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-                    Block block = getWorld().getBlock(pos.posX, pos.posY, pos.posZ);
+                    BlockPos pos = new BlockPos(x, y, z);
+                    Block block = getWorld().getBlock(pos.getX(), pos.getY(), pos.getZ());
                     if (block instanceof BlockCrops || block instanceof BlockReed) {
                         growthQueue.add(pos);
                     }
@@ -82,7 +72,7 @@ public abstract class MixinGrowthSpreading {
         ExecutorService executor = Executors
             .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
         while (!growthQueue.isEmpty()) {
-            List<ChunkCoordinates> batch = new ArrayList<>();
+            List<BlockPos> batch = new ArrayList<>();
             int batchSize = Math.min(growthQueue.size(), this.batchSize);
             for (int i = 0; i < batchSize; i++) {
                 batch.add(growthQueue.poll());
@@ -90,14 +80,15 @@ public abstract class MixinGrowthSpreading {
             if (!batch.isEmpty()) {
                 executor.submit(() -> {
                     batch.forEach(pos -> {
-                        Block block = getWorld().getBlock(pos.posX, pos.posY, pos.posZ);
-                        getWorld().markBlockForUpdate(pos.posX, pos.posY, pos.posZ);
-                        getWorld().notifyBlocksOfNeighborChange(pos.posX, pos.posY, pos.posZ, block);
+                        Block block = getWorld().getBlock(pos.getX(), pos.getY(), pos.getZ());
+                        getWorld().markBlockForUpdate(pos.getX(), pos.getY(), pos.getZ());
+                        getWorld().notifyBlockOfNeighborChange(pos.getX(), pos.getY(), pos.getZ(), block);
+
                     });
                 });
             }
         }
-        executorService.shutdown();
+        executor.shutdown();
         try {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {

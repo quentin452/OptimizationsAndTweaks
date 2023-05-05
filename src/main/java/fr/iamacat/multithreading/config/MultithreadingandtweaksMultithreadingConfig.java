@@ -7,7 +7,7 @@ import fr.iamacat.multithreading.Tags;
 @Config(modid = Tags.MODID)
 public class MultithreadingandtweaksMultithreadingConfig {
 
-    @Config.Comment("Enable multithreaded/batched for leaf decay.")
+    @Config.Comment("Enable multithreaded for leaf decay.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinLeafDecay;
@@ -16,66 +16,66 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityAITask;
-    @Config.Comment("Enable multithreaded/batched for Entity Update.")
+    @Config.Comment("Enable multithreaded for Entity Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityUpdate;
-    @Config.Comment("Enable multithreaded/batched for Fire Tick.")
+    @Config.Comment("Enable multithreaded for Fire Tick.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinFireTick;
-    @Config.Comment("Enable multithreaded/batched for Growth Spreading.")
+    @Config.Comment("Enable multithreaded for Growth Spreading.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinGrowthSpreading;
-    @Config.Comment("Enable multithreaded/batched for Liquid Tick.")
+    @Config.Comment("Enable multithreaded for Liquid Tick.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinliquidTick;
-    @Config.Comment("Enable multithreaded/batched for Entity Spawning.")
+    @Config.Comment("Enable multithreaded for Entity Spawning.")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntitySpawning;
 
-    @Config.Comment("Enable multithreaded/batched for Chunk Populating such as structure ,dungeons ets....")
+    @Config.Comment("Enable multithreaded for Chunk Populating such as structure ,dungeons ets....")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinChunkPopulating;
-    @Config.Comment("Enable multithreaded/batched for Entity Thunderbolt")
+    @Config.Comment("Enable multithreaded for Entity Thunderbolt")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntityLightningBolt;
-    @Config.Comment("Enable multithreaded/batched GUI/HUD/TEXT rendering")
+    @Config.Comment("Enable multithreaded GUI/HUD/TEXT rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinGUIHUD;
 
-    @Config.Comment("Enable multithreaded/batched Particle rendering")
+    @Config.Comment("Enable multithreaded Particle rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinParticle;
 
-    @Config.Comment("Enable multithreaded/batched TileEntities rendering")
+    @Config.Comment("Enable multithreaded TileEntities rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntities;
 
-    @Config.Comment("Enable multithreaded Worldgen(not recommanded to be enabled with enableThreadedChunkUpdates from archaicfix)")
+    @Config.Comment("Enable multithreaded Worldgen")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinWorldgen;
 
-    @Config.Comment("Enable multithreaded Worldgen Tick(not recommanded to be enabled with enableThreadedChunkUpdates from archaicfix)")
+    @Config.Comment("Enable multithreaded Worldgen Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinWorldTick;
 
-    @Config.Comment("Enable multithreaded/batched Entities Tick")
+    @Config.Comment("Enable multithreaded Entities Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntitiesTick;
 
-    @Config.Comment("Enable multithreaded/batched Entities Rendering")
+    @Config.Comment("Enable multithreaded Entities Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
     public static boolean enableMixinEntitiesRendering;
@@ -85,10 +85,34 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresMcRestart
     public static boolean enableMixinTileEntitiesTick;
 
-    @Config.Comment("Remove Lightning update when break or place a block for better fps")
-    @Config.DefaultBoolean(false)
+    @Config.Comment("Enable multithreaded Explosions")
+    @Config.DefaultBoolean(true)
     @Config.RequiresMcRestart
-    public static boolean disablelightningupdate;
+    public static boolean enableMixinExplosions;
+
+    @Config.Comment("Enable Sky Lightning Multithreaded update when break or place a block for better fps")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinMultithreadedSkyLightning;
+
+    @Config.Comment("Enable HUD Caching")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinHUDCaching;
+
+    @Config.Comment("Enable Multithreaded BlockChunk Updating")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinBlockCHunkUpdate;
+
+    @Config.Comment("Enable Multithreaded Fall Blocks Tick")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinFallBlocksTick;
+    @Config.Comment("Enable Multithreaded Liquid Rendering")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresMcRestart
+    public static boolean enableMixinLiquidRendering;
 
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)

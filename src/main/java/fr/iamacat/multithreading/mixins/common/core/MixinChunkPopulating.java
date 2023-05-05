@@ -41,14 +41,12 @@ public abstract class MixinChunkPopulating {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
             int maxChunksPerTick = 10; // Change this value to limit the number of chunks to be processed per tick
             int numChunksProcessed = 0;
-            while (numChunksProcessed < maxChunksPerTick) {
-                Chunk chunk = chunksToPopulate.poll();
-                if (chunk == null) {
-                    break; // No more chunks to process
-                }
+            Chunk chunk = null;
+            while (numChunksProcessed < maxChunksPerTick && (chunk = chunksToPopulate.poll()) != null) {
+                Chunk finalChunk = chunk;
                 executorService.execute(() -> {
-                    chunk.isTerrainPopulated = true;
-                    chunk.populateChunk(chunkProvider, chunkProvider1, chunk.xPosition, chunk.zPosition);
+                    finalChunk.isTerrainPopulated = true;
+                    finalChunk.populateChunk(chunkProvider, chunkProvider1, finalChunk.xPosition, finalChunk.zPosition);
                 });
                 numChunksProcessed++;
             }

@@ -65,6 +65,19 @@ public abstract class MixinWorldgen {
             // Load chunk synchronously
             chunkProvider.loadChunk(x, z);
             chunk = chunkProvider.provideChunk(x, z);
+
+            // Load adjacent chunks asynchronously
+            for (int i = x - 1; i <= x + 1; i++) {
+                for (int j = z - 1; j <= z + 1; j++) {
+                    if (i == x && j == z) {
+                        continue; // Skip the current chunk
+                    }
+                    int finalI = i;
+                    int finalJ = j;
+                    CompletableFuture.supplyAsync(() -> loadChunk(finalI, finalJ), executorService)
+                        .thenAccept(this::onChunkLoaded);
+                }
+            }
         }
 
         // Cache the loaded chunk

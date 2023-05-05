@@ -1,4 +1,4 @@
-package fr.iamacat.multithreading.mixins.common.core;
+package fr.iamacat.multithreading.mixins.client.core;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
