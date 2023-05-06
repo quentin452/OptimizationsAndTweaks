@@ -20,10 +20,12 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinWorldTick {
 
+    private final Object lock = new Object();
     private static final int updatechunkatonce = 10;
     private final ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
     private final Map<ChunkCoordIntPair, CompletableFuture<Chunk>> loadingChunks = new ConcurrentHashMap<>();
+    private final Object tickLock = new Object(); // Lock for accessing TickNextTick list
 
     @Final
     private ForkJoinPool executorService = new ForkJoinPool(
@@ -97,9 +99,12 @@ public abstract class MixinWorldTick {
             loadingChunks.clear();
 
             // Process the batch of chunks
-         //   processBatch(chunkProvider, batch);
+            synchronized (tickLock) { // Synchronize access to TickNextTick list
+                processBatch(chunkProvider, batch);
+            }
         }
     }
+
 
     private Set<ChunkCoordIntPair> getAdjacentChunks(ChunkCoordIntPair chunkCoord) {
         Set<ChunkCoordIntPair> adjacentChunks = new HashSet<>();
@@ -116,7 +121,6 @@ public abstract class MixinWorldTick {
         }
         return adjacentChunks;
     }
-    private final Object lock = new Object();
     private void processBatch(ChunkProviderServer chunkProvider, List<Chunk> batch) {
         // Load the chunks from disk asynchronously and save them
         CompletableFuture.runAsync(() -> {

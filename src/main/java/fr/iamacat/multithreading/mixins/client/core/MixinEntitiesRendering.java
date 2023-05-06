@@ -1,42 +1,43 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesRendering {
-
+    private final ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d")
-            .build());
+        new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d").build());
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private long lastRenderTime = System.currentTimeMillis();
 
     protected abstract void myBindEntityTexture(Entity entity);
+    private int tickCounter;
 
     protected abstract void myRenderShadow(Entity entity, double x, double y, double z, float yaw, float partialTicks);
 
     @Inject(method = "doRender", at = @At("HEAD"))
-    public void onDoRender(Entity entity, double x, double y, double z, float yaw, float partialTicks,
-        CallbackInfo ci) {
+    public void onDoRender(Entity entity, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
             // Skip rendering if entity is not visible or if rendering is already in progress
             if (!entity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())
@@ -45,63 +46,58 @@ public abstract class MixinEntitiesRendering {
                 return;
             }
 
-            // Submit rendering task to the thread pool
-            executorService.submit(() -> {
-                try {
-                    // Bind entity texture
-                    myBindEntityTexture(entity);
+            // Add entity to queue
+            entityQueue.add(entity);
 
-                    // Render entity shadow
-                    myRenderShadow(entity, x, y, z, yaw, partialTicks);
-
-                    // Render entity
-                    renderEntities(
-                        entity.worldObj,
-                        Collections.singletonList(entity),
-                        RenderManager.instance,
-                        partialTicks);
-                } catch (Exception e) {
-                    // Handle exceptions as appropriate
-                }
-            });
+            // Submit rendering task to the thread pool if not already running
+            if (entityQueue.size() >= BATCH_SIZE) {
+                executorService.submit(() -> {
+                    try {
+                        renderEntities(entityQueue);
+                    } catch (Exception e) {
+                        // Log exception and rethrow
+                        FMLLog.getLogger().error("Error rendering entities", e);
+                        throw e;
+                    } finally {
+                        entityQueue.clear();
+                    }
+                });
+            }
         }
     }
 
-    public void renderEntities(World world, Collection<Entity> entities, RenderManager renderManager, float tickDelta) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering) {
-            List<Entity> entityList = new ArrayList<>(entities);
-            int entityCount = entityList.size();
-            if (entityCount == 0) {
-                return;
+    public void renderEntities(Collection<Entity> entities) {
+        // Divide entities into batches
+        List<List<Entity>> entityBatches = new ArrayList<>();
+        int entityCount = entities.size();
+        int batchSize = (int) Math.ceil((double) entityCount / BATCH_SIZE);
+        Iterator<Entity> entityIterator = entities.iterator();
+        for (int i = 0; i < BATCH_SIZE; i++) {
+            List<Entity> entityBatch = new ArrayList<>();
+            for (int j = 0; j < batchSize; j++) {
+                if (entityIterator.hasNext()) {
+                    entityBatch.add(entityIterator.next());
+                }
             }
-
-            // Compute the number of tasks to use based on the number of available processors
-            int taskCount = Math.min(entityCount, ForkJoinPool.getCommonPoolParallelism());
-            int batchSize = (int) Math.ceil((double) entityCount / taskCount);
-
-            // Split entities into batches
-            List<List<Entity>> entityBatches = new ArrayList<>();
-            for (int i = 0; i < entityCount; i += batchSize) {
-                int end = Math.min(i + batchSize, entityCount);
-                entityBatches.add(entityList.subList(i, end));
+            if (!entityBatch.isEmpty()) {
+                entityBatches.add(entityBatch);
             }
+        }
 
-            // Submit rendering tasks to the ForkJoinPool
-            ForkJoinPool.commonPool()
-                .execute(() -> {
-                    entityBatches.parallelStream()
-                        .forEach(entityBatch -> {
-                            for (Entity entity : entityBatch) {
-                                renderManager.renderEntityWithPosYaw(
-                                    entity,
-                                    entity.posX - RenderManager.renderPosX,
-                                    entity.posY - RenderManager.renderPosY,
-                                    entity.posZ - RenderManager.renderPosZ,
-                                    entity.rotationYaw,
-                                    tickDelta);
-                            }
-                        });
-                });
+        // Render entities in batches
+        RenderManager renderManager = RenderManager.instance;
+        tickCounter++; // Increment the tick counter
+        long currentTime = System.currentTimeMillis();
+        float tickDelta = (currentTime - lastRenderTime) / 1000.0f;
+        lastRenderTime = currentTime;
+        for (List<Entity> entityBatch : entityBatches) {
+            renderManager.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            renderManager.renderEngine.bindTexture(TextureMap.locationItemsTexture);
+            GL11.glPushMatrix();
+            for (Entity entity : entityBatch) {
+                renderManager.renderEntityStatic(entity, tickDelta, true);
+            }
+            GL11.glPopMatrix();
         }
     }
 }

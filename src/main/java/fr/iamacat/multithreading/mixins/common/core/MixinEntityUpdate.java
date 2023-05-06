@@ -2,6 +2,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -21,10 +22,10 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntityUpdate {
 
     private final ThreadPoolExecutor executorService;
-    private int numberOfCPUs = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+    private final int numberOfCPUs;
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<World> world = new AtomicReference<>((World) (Object) this);
-    private final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
+    private final LinkedBlockingQueue<Entity> entitiesToUpdate = new LinkedBlockingQueue<>();
 
     protected MixinEntityUpdate() {
         int corePoolSize = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
@@ -51,32 +52,30 @@ public abstract class MixinEntityUpdate {
         addEntitiesToUpdateQueue(World.loadedEntityList);
     }
 
-    private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
+    private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
         entitiesToUpdate.addAll(entities);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            List<List<Entity>> batches = entitiesToUpdate.stream()
-                .collect(
-                    Collectors.groupingByConcurrent(
-                        entity -> (int) Math.floor(entitiesToUpdate.indexOf(entity) / (double) MAX_ENTITIES_PER_TICK)))
+            AtomicInteger indexCounter = new AtomicInteger(0);
+            entitiesToUpdate.parallelStream()
+                .collect(Collectors.groupingByConcurrent(
+                    entity -> (int) Math.floor(indexCounter.getAndIncrement() / (double) MAX_ENTITIES_PER_TICK)))
                 .values()
-                .stream()
-                .collect(Collectors.toList());
-
-            batches.parallelStream()
+                .parallelStream()
                 .forEach(batch -> {
-                    batch.forEach(entity -> {
-                        try {
-                            if (entity != null) {
-                                entity.onEntityUpdate();
+                    batch.parallelStream()
+                        .forEach(entity -> {
+                            try {
+                                if (entity != null) {
+                                    executorService.submit(entity::onEntityUpdate);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
+                        });
                 });
         }
     }

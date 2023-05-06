@@ -1,6 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -26,19 +27,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
 
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+    private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d")
-            .build());
+        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d").build());
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ConcurrentLinkedQueue<Entity> spawnQueue = new ConcurrentLinkedQueue<>();
+    private final LinkedBlockingQueue<Entity> spawnQueue = new LinkedBlockingQueue<>();
 
-    private final Map<Integer, Vector3d> previousPositions = new ConcurrentHashMap<>();
+    private final ConcurrentSkipListMap<Integer, Vector3d> previousPositions = new ConcurrentSkipListMap<>();
 
     private final AtomicInteger batchSize = new AtomicInteger(BATCH_SIZE);
 
@@ -55,14 +51,11 @@ public abstract class MixinEntitySpawning {
     private void spawnEntitiesInQueue(World world) {
         List<Entity> entities = new ArrayList<>(BATCH_SIZE);
         int numEntities = batchSize.getAndSet(0);
-        for (Entity entity : spawnQueue) {
-            if (numEntities == 0) {
-                break;
-            }
-            entities.add(entity);
+        for (Iterator<Entity> iterator = spawnQueue.iterator(); iterator.hasNext() && numEntities > 0;) {
+            entities.add(iterator.next());
+            iterator.remove();
             numEntities--;
         }
-        spawnQueue.removeAll(entities);
         int numThreads = Math.min(MultithreadingandtweaksMultithreadingConfig.numberofcpus, entities.size());
         if (numThreads > 1) {
             List<List<Entity>> partitions = Lists.partition(entities, (entities.size()));
@@ -94,14 +87,10 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-        float partialTicks) {
-        // Don't render entities during mob spawning
-        if (!spawnQueue.isEmpty()) {
-            render.doRender(entity, x, y, z, yaw, partialTicks);
-        } else {
-            render.doRender(entity, x, y, z, yaw, partialTicks);
-        }
+                                          float partialTicks) {
+        render.doRender(entity, x, y, z, yaw, partialTicks);
     }
+
 
     public void close() {
         executorService.shutdown();
