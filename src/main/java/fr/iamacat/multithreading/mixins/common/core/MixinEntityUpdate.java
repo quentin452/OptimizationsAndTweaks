@@ -61,8 +61,9 @@ public abstract class MixinEntityUpdate {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             AtomicInteger indexCounter = new AtomicInteger(0);
             entitiesToUpdate.parallelStream()
-                .collect(Collectors.groupingByConcurrent(
-                    entity -> (int) Math.floor(indexCounter.getAndIncrement() / (double) MAX_ENTITIES_PER_TICK)))
+                .collect(
+                    Collectors.groupingByConcurrent(
+                        entity -> (int) Math.floor(indexCounter.getAndIncrement() / (double) MAX_ENTITIES_PER_TICK)))
                 .values()
                 .parallelStream()
                 .forEach(batch -> {

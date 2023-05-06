@@ -21,14 +21,15 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinWorldTick {
 
     private final Object lock = new Object();
-    private static final int updatechunkatonce = 10;
+    private static final int UPDATE_CHUNK_AT_ONCE = 10;
     private final ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
     private final Map<ChunkCoordIntPair, CompletableFuture<Chunk>> loadingChunks = new ConcurrentHashMap<>();
+
     private final Object tickLock = new Object(); // Lock for accessing TickNextTick list
 
     @Final
-    private ForkJoinPool executorService = new ForkJoinPool(
+    private volatile ForkJoinPool executorService = new ForkJoinPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         ForkJoinPool.defaultForkJoinWorkerThreadFactory,
         null,
@@ -47,67 +48,77 @@ public abstract class MixinWorldTick {
             }, executorService);
         }
     }
-
     private void updateChunks(World world) throws Exception {
         ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
         IChunkLoader chunkLoader = chunkProvider.currentChunkLoader;
 
-        // Add all chunks that need to be updated to the queue
-        for (Object chunk : chunkProvider.loadedChunks) {
-            Chunk loadedChunk = (Chunk) chunk;
-            ChunkCoordIntPair chunkCoord = loadedChunk.getChunkCoordIntPair();
-            loadedChunks.put(chunkCoord, loadedChunk);
-            chunksToUpdate.offer(loadedChunk);
+        List<Chunk> chunksToUpdateCopy;
+        synchronized (chunkProvider.loadedChunks) {
+            chunksToUpdateCopy = new ArrayList<>(chunkProvider.loadedChunks);
         }
 
-        // Process the chunks in batches
+        List<CompletableFuture<Chunk>> futures = new ArrayList<>();
+        Set<ChunkCoordIntPair> adjacentChunks = new HashSet<>();
+        Iterator<Chunk> iter = chunksToUpdateCopy.iterator();
+
+        ConcurrentHashMap<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>((Map) chunkProvider.loadedChunks);
+        ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>(chunksToUpdateCopy);
+        ConcurrentHashMap<ChunkCoordIntPair, CompletableFuture<Chunk>> loadingChunks = new ConcurrentHashMap<>();
+
+        while (iter.hasNext()) {
+            Chunk chunk = iter.next();
+            ChunkCoordIntPair chunkCoord = chunk.getChunkCoordIntPair();
+            loadedChunks.put(chunkCoord, chunk);
+            chunksToUpdate.offer(chunk);
+            adjacentChunks.addAll(getAdjacentChunks(chunkCoord));
+            iter.remove(); // remove chunk from the list while iterating
+        }
+
         while (!chunksToUpdate.isEmpty()) {
             List<Chunk> batch = new ArrayList<>();
-            Set<ChunkCoordIntPair> adjacentChunks = new HashSet<>();
-            for (int i = 0; i < updatechunkatonce && !chunksToUpdate.isEmpty(); i++) {
-                Chunk chunk = chunksToUpdate.poll();
-                if (chunk != null) {
-                    batch.add(chunk);
-                    ChunkCoordIntPair chunkCoord = chunk.getChunkCoordIntPair();
-                    adjacentChunks.addAll(getAdjacentChunks(chunkCoord));
-                }
+            for (int i = 0; i < UPDATE_CHUNK_AT_ONCE && !chunksToUpdate.isEmpty(); i++) {
+                batch.add(chunksToUpdate.poll());
             }
 
-            // Load the adjacent chunks if they are not already loaded
             for (ChunkCoordIntPair chunkCoord : adjacentChunks) {
                 if (!loadedChunks.containsKey(chunkCoord) && !loadingChunks.containsKey(chunkCoord)) {
-                    loadingChunks.put(chunkCoord, CompletableFuture.supplyAsync(() -> {
+                    CompletableFuture<Chunk> future = CompletableFuture.supplyAsync(() -> {
                         try {
-                            Chunk adjacentChunk = chunkLoader
-                                .loadChunk(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
+                            Chunk adjacentChunk;
+                            synchronized (lock) {
+                                adjacentChunk = chunkLoader.loadChunk(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
+                                chunkProvider.saveChunks(false, null);
+                            }
                             loadedChunks.put(chunkCoord, adjacentChunk);
                             return adjacentChunk;
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                    }, executorService));
+                    }, executorService);
+                    futures.add(future);
+                    loadingChunks.put(chunkCoord, future);
                 }
             }
 
-            // Wait for the adjacent chunks to finish loading
-            for (CompletableFuture<Chunk> future : loadingChunks.values()) {
+            for (CompletableFuture<Chunk> future : futures) {
                 Chunk adjacentChunk = future.join();
                 if (adjacentChunk != null) {
                     loadedChunks.put(adjacentChunk.getChunkCoordIntPair(), adjacentChunk);
                 }
             }
-            loadingChunks.clear();
+            futures.clear();
 
-            // Process the batch of chunks
-            synchronized (tickLock) { // Synchronize access to TickNextTick list
-                processBatch(chunkProvider, batch);
+            synchronized (tickLock) {
+                processBatch(chunkProvider, new CopyOnWriteArrayList<>(batch));
             }
         }
     }
 
 
+
+
     private Set<ChunkCoordIntPair> getAdjacentChunks(ChunkCoordIntPair chunkCoord) {
-        Set<ChunkCoordIntPair> adjacentChunks = new HashSet<>();
+        Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
         int chunkX = chunkCoord.chunkXPos;
         int chunkZ = chunkCoord.chunkZPos;
         int radius = 1;
@@ -124,17 +135,15 @@ public abstract class MixinWorldTick {
     private void processBatch(ChunkProviderServer chunkProvider, List<Chunk> batch) {
         // Load the chunks from disk asynchronously and save them
         CompletableFuture.runAsync(() -> {
-            batch.parallelStream()
-                .forEach(chunk -> {
-                    synchronized (lock) {
-                        chunkProvider.saveChunks(true, null);
-                    }
-                });
-            // Save all loaded chunks
             synchronized (lock) {
-                chunkProvider.saveChunks(true, null);
+                for (Chunk chunk : batch) {
+                    chunkProvider.saveChunks(true, null);
+                }
+                // Save all loaded chunks
+                for (Chunk chunk : loadedChunks.values()) {
+                    chunkProvider.saveChunks(true, null);
+                }
             }
         }, executorService);
     }
-
 }

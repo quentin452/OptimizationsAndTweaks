@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +23,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(WorldClient.class)
 public abstract class MixinWorldgen {
+
     private WorldClient world;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(6);

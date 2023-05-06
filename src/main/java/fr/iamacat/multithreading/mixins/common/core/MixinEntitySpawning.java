@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +28,8 @@ public abstract class MixinEntitySpawning {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d")
+            .build());
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final LinkedBlockingQueue<Entity> spawnQueue = new LinkedBlockingQueue<>();
@@ -87,10 +87,9 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-                                          float partialTicks) {
+        float partialTicks) {
         render.doRender(entity, x, y, z, yaw, partialTicks);
     }
-
 
     public void close() {
         executorService.shutdown();

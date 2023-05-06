@@ -3,10 +3,6 @@ package fr.iamacat.multithreading.mixins.client.core;
 import java.util.*;
 import java.util.concurrent.*;
 
-import cpw.mods.fml.common.FMLLog;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -20,18 +16,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import cpw.mods.fml.common.FMLLog;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesRendering {
+
     private final ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d").build());
+        new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d")
+            .build());
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private long lastRenderTime = System.currentTimeMillis();
 
     protected abstract void myBindEntityTexture(Entity entity);
+
     private int tickCounter;
 
     protected abstract void myRenderShadow(Entity entity, double x, double y, double z, float yaw, float partialTicks);
@@ -56,7 +57,8 @@ public abstract class MixinEntitiesRendering {
                         renderEntities(entityQueue);
                     } catch (Exception e) {
                         // Log exception and rethrow
-                        FMLLog.getLogger().error("Error rendering entities", e);
+                        FMLLog.getLogger()
+                            .error("Error rendering entities", e);
                         throw e;
                     } finally {
                         entityQueue.clear();
