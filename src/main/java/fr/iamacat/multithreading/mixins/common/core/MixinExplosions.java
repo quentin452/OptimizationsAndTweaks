@@ -49,16 +49,19 @@ public abstract class MixinExplosions {
     }
 
     private void processExplosions() {
-        List<ExplosionTask> batch = new ArrayList<>();
-        ExplosionTask task = explosionsToProcess.poll();
-        while (task != null) {
-            batch.add(task);
-            task = explosionsToProcess.poll();
+        while (!explosionsToProcess.isEmpty()) {
+            List<ExplosionTask> batch = new ArrayList<>();
+            ExplosionTask task = explosionsToProcess.poll();
+            while (task != null) {
+                batch.add(task);
+                task = explosionsToProcess.poll();
+            }
+            List<CompletableFuture<Void>> futures = batch.stream()
+                .map(t -> CompletableFuture.runAsync(t::renderExplosion, executorService))
+                .collect(Collectors.toList());
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .join();
         }
-        List<CompletableFuture<Void>> futures = batch.stream()
-            .map(t -> CompletableFuture.runAsync(t::renderExplosion, executorService))
-            .collect(Collectors.toList());
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-            .thenRunAsync((Runnable) this::processExplosions, (Executor) Minecraft.getMinecraft());
     }
+
 }
