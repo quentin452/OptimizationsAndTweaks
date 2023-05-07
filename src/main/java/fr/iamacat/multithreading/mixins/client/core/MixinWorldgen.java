@@ -24,8 +24,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(WorldClient.class)
 public abstract class MixinWorldgen {
 
-    private WorldClient world;
-
+    private WorldClient world = Minecraft.getMinecraft().theWorld;
     private final ExecutorService executorService = Executors.newFixedThreadPool(6);
     private final Map<Long, Chunk> loadedChunks = new ConcurrentHashMap<>();
     private final AtomicInteger chunksBeingLoaded = new AtomicInteger(0);
@@ -76,15 +75,20 @@ public abstract class MixinWorldgen {
                                 .supplyAsync(
                                     () -> loadedChunks.computeIfAbsent(key, k -> loadChunk(finalI, finalJ)),
                                     executorService)
-                                .thenAccept(this::onChunkLoaded);
+                                .thenAccept(this::onChunkLoaded)
+                                .exceptionally(ex -> {
+                                    ex.printStackTrace();
+                                    return null;
+                                });
                         } else {
                             try {
                                 Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                            } finally {
+                                i--; // Retry current chunk in next batch
+                                chunksBeingLoaded.decrementAndGet();
                             }
-                            i--; // Retry current chunk in next batch
-                            chunksBeingLoaded.decrementAndGet();
                         }
                     }
                 }
