@@ -22,18 +22,14 @@ public abstract class MixinWorldTick {
 
     private final Object lock = new Object();
     private static final int UPDATE_CHUNK_AT_ONCE = 10;
-    private final ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
-    private final Map<ChunkCoordIntPair, CompletableFuture<Chunk>> loadingChunks = new ConcurrentHashMap<>();
-
-    private final Object tickLock = new Object(); // Lock for accessing TickNextTick list
-
-    @Final
-    private volatile ForkJoinPool executorService = new ForkJoinPool(
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        ForkJoinPool.defaultForkJoinWorkerThreadFactory,
-        null,
-        true);
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        0L,
+        TimeUnit.MILLISECONDS,
+        new LinkedBlockingQueue<>()
+    );
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -48,10 +44,12 @@ public abstract class MixinWorldTick {
             }, executorService);
         }
     }
+
     private void updateChunks(World world) throws Exception {
         ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
         IChunkLoader chunkLoader = chunkProvider.currentChunkLoader;
 
+        // Improve variable naming
         List<Chunk> chunksToUpdateCopy;
         synchronized (chunkProvider.loadedChunks) {
             chunksToUpdateCopy = new ArrayList<>(chunkProvider.loadedChunks);
@@ -61,6 +59,7 @@ public abstract class MixinWorldTick {
         Set<ChunkCoordIntPair> adjacentChunks = new HashSet<>();
         Iterator<Chunk> iter = chunksToUpdateCopy.iterator();
 
+        // Avoid using raw types
         ConcurrentHashMap<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>((Map) chunkProvider.loadedChunks);
         ConcurrentLinkedQueue<Chunk> chunksToUpdate = new ConcurrentLinkedQueue<>(chunksToUpdateCopy);
         ConcurrentHashMap<ChunkCoordIntPair, CompletableFuture<Chunk>> loadingChunks = new ConcurrentHashMap<>();
@@ -108,20 +107,15 @@ public abstract class MixinWorldTick {
             }
             futures.clear();
 
-            synchronized (tickLock) {
-                processBatch(chunkProvider, new CopyOnWriteArrayList<>(batch));
-            }
+            processBatch(chunkProvider, new CopyOnWriteArrayList<>(batch));
         }
     }
-
-
-
 
     private Set<ChunkCoordIntPair> getAdjacentChunks(ChunkCoordIntPair chunkCoord) {
         Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
         int chunkX = chunkCoord.chunkXPos;
         int chunkZ = chunkCoord.chunkZPos;
-        int radius = 1;
+        int radius = 2;
 
         for (int x = chunkX - radius; x <= chunkX + radius; x++) {
             for (int z = chunkZ - radius; z <= chunkZ + radius; z++) {
@@ -132,6 +126,8 @@ public abstract class MixinWorldTick {
         }
         return adjacentChunks;
     }
+
+    // Separate concerns
     private void processBatch(ChunkProviderServer chunkProvider, List<Chunk> batch) {
         // Load the chunks from disk asynchronously and save them
         CompletableFuture.runAsync(() -> {
