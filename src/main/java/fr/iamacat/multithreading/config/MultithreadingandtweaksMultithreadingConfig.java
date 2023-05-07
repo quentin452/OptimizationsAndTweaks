@@ -42,10 +42,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkPopulating;
-    @Config.Comment("Enable multithreaded for Entity Thunderbolt")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityLightningBolt;
     @Config.Comment("Enable multithreaded GUI/HUD/TEXT rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
