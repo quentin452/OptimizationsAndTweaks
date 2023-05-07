@@ -22,6 +22,9 @@ public class Tags {
 
     public static final String MODID = "multithreadingandtweaks";
     public static final String MODNAME = "Multithreading and Tweaks";
-    public static final String VERSION = "V0.3";
+    public static final String VERSION = "V0.8.3";
+    public static final String MCVERSION = "1.7.10";
     public static final String GROUPNAME = "fr.iamacat.multithreading";
+    public static final String CLIENTPROXY = "fr.iamacat.multithreading.proxy.ClientProxy";
+    public static final String SERVERPROXY = "fr.iamacat.multithreading.proxy.CommonProxy";
 }

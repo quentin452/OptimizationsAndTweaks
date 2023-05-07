@@ -9,14 +9,13 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.multithreading.proxy.CommonProxy;
-import fr.iamacat.multithreading.utils.Reference;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Reference.MC_VERSION)
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class Multithreaded {
 
-    @Mod.Instance(Reference.MOD_ID)
+    @Mod.Instance(Tags.MODID)
     public static Multithreaded instance;
-    @SidedProxy(clientSide = Reference.CLIENT_PROXY, serverSide = Reference.SERVER_PROXY)
+    @SidedProxy(clientSide = Tags.CLIENTPROXY, serverSide = Tags.SERVERPROXY)
     public static CommonProxy proxy;
     public static Configuration config;
 

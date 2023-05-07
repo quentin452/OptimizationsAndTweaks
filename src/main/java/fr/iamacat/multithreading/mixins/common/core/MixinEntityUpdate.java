@@ -2,9 +2,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
@@ -23,7 +21,7 @@ public abstract class MixinEntityUpdate {
     private final ExecutorService executorService;
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<World> world = new AtomicReference<>((World) (Object) this);
-    private final List<Entity> entitiesToUpdate = Collections.synchronizedList(new ArrayList<>());
+    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
 
     public MixinEntityUpdate() {
         int poolSize = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
@@ -37,7 +35,7 @@ public abstract class MixinEntityUpdate {
         addEntitiesToUpdateQueue(world.loadedEntityList);
     }
 
-    private synchronized void addEntitiesToUpdateQueue(Collection<Entity> entities) {
+    private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
         entitiesToUpdate.addAll(entities);
     }
 
@@ -47,15 +45,8 @@ public abstract class MixinEntityUpdate {
             List<Entity> entityList = new ArrayList<>(entitiesToUpdate);
             entitiesToUpdate.clear();
             int numBatches = (int) Math.ceil((double) entityList.size() / MAX_ENTITIES_PER_TICK);
-            for (int i = 0; i < numBatches; i++) {
-                int start = i * MAX_ENTITIES_PER_TICK;
-                int end = Math.min(start + MAX_ENTITIES_PER_TICK, entityList.size());
-                List<Entity> batch = entityList.subList(start, end);
-                CompletableFuture.allOf(batch.stream().map(entity ->
-                            CompletableFuture.runAsync(entity::onEntityUpdate, executorService))
-                        .toArray(CompletableFuture[]::new))
-                    .join();
-            }
+            entityList.parallelStream().forEach(entity ->
+                executorService.execute(entity::onEntityUpdate));
         }
     }
 
@@ -64,4 +55,3 @@ public abstract class MixinEntityUpdate {
         executorService.shutdown();
     }
 }
-
