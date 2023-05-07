@@ -106,6 +106,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinNetworkManager;
+    @Config.Comment("Enable Multithreaded Block Updates")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldUpdateBlocks;
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)

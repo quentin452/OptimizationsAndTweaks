@@ -9,7 +9,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,9 +18,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinWorldTick {
+
     private static final int UPDATE_CHUNK_AT_ONCE = 10;
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+    private final ExecutorService executorService = Executors
+        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
     private final List<Chunk> chunksToUpdate = new CopyOnWriteArrayList<>();
     private final Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
 
@@ -72,7 +73,8 @@ public abstract class MixinWorldTick {
                         try {
                             Chunk adjacentChunk;
                             synchronized (chunkLoader) {
-                                adjacentChunk = chunkLoader.loadChunk(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
+                                adjacentChunk = chunkLoader
+                                    .loadChunk(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
                                 chunkProvider.saveChunks(false, null);
                             }
                             return adjacentChunk;
@@ -89,12 +91,12 @@ public abstract class MixinWorldTick {
                 }
             }
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .join();
 
             processBatch(chunkProvider, batch);
         }
     }
-
 
     private Set<ChunkCoordIntPair> getAdjacentChunks(ChunkCoordIntPair chunkCoord) {
         Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();

@@ -48,6 +48,8 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick, "core.MixinFallBlocksTick"),
     common_core_MixinNetworkManager(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinNetworkManager, "core.MixinNetworkManager"),
+    common_core_MixinWorldUpdateBlocks(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks, "core.MixinWorldUpdateBlocks"),
 
     // CLIENT MIXINS
 
@@ -73,6 +75,7 @@ public enum Mixin implements IMixin {
     // The modFilter argument is a predicate, so you can also use the .and(), .or(), and .negate() methods to mix and
     // match multiple predicates.
     ;
+
     @Getter
     public final Side side;
     @Getter

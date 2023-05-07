@@ -18,6 +18,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinEntityUpdate {
+
     private final ExecutorService executorService;
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final AtomicReference<World> world = new AtomicReference<>((World) (Object) this);
@@ -25,7 +26,10 @@ public abstract class MixinEntityUpdate {
 
     public MixinEntityUpdate() {
         int poolSize = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
-        executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d").build());
+        executorService = Executors.newFixedThreadPool(
+            poolSize,
+            new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d")
+                .build());
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -45,8 +49,8 @@ public abstract class MixinEntityUpdate {
             List<Entity> entityList = new ArrayList<>(entitiesToUpdate);
             entitiesToUpdate.clear();
             int numBatches = (int) Math.ceil((double) entityList.size() / MAX_ENTITIES_PER_TICK);
-            entityList.parallelStream().forEach(entity ->
-                executorService.execute(entity::onEntityUpdate));
+            entityList.parallelStream()
+                .forEach(entity -> executorService.execute(entity::onEntityUpdate));
         }
     }
 

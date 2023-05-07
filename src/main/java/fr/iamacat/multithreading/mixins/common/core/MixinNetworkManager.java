@@ -1,19 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.WorldServer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +8,26 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.world.WorldServer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+
 @Mixin(value = NetworkManager.class, remap = false)
 public abstract class MixinNetworkManager {
-    private static final int MAX_PACKETS_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize; // Adjust to your liking
+
+    private static final int MAX_PACKETS_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize; // Adjust to
+                                                                                                           // your
+                                                                                                           // liking
     private final List<Packet> packetsToSend = Collections.synchronizedList(new ArrayList<Packet>());
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private WorldServer worldServer;
@@ -68,16 +71,16 @@ public abstract class MixinNetworkManager {
                         if (obj instanceof EntityPlayerMP) {
                             EntityPlayerMP otherPlayer = (EntityPlayerMP) obj;
                             if (otherPlayer.getEntityWorld().provider.dimensionId == dimensionId) {
-                                ((EntityPlayerMP)otherPlayer).playerNetServerHandler.sendPacket(packet);
+                                ((EntityPlayerMP) otherPlayer).playerNetServerHandler.sendPacket(packet);
                             }
                         }
                     }
-                }, executorService).thenRunAsync((Runnable) () -> {
-                    serverThread.run();
-                }, (Executor) serverThread);
+                }, executorService)
+                    .thenRunAsync((Runnable) () -> { serverThread.run(); }, (Executor) serverThread);
                 j++;
             }
-            CompletableFuture.allOf(futures).join();
+            CompletableFuture.allOf(futures)
+                .join();
         }
     }
 }
