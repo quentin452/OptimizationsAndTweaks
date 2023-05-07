@@ -49,6 +49,8 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinBlockCHunkUpdate, "core.MixinBlockCHunkUpdate"),
     common_core_MixinFallBlocksTick(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick, "core.MixinFallBlocksTick"),
+    common_core_MixinNetworkManager(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinNetworkManager, "core.MixinNetworkManager"),
     // CLIENT MIXINS
 
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
