@@ -18,7 +18,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(EntityLightningBolt.class)
+@Mixin(World.class)
 public abstract class MixinEntityLightningBolt {
 
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(

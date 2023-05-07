@@ -50,6 +50,8 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinNetworkManager, "core.MixinNetworkManager"),
     common_core_MixinWorldUpdateBlocks(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks, "core.MixinWorldUpdateBlocks"),
+    common_core_MixinGrassSpread(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGrassSpread, "core.MixinGrassSpread"),
 
     // CLIENT MIXINS
 

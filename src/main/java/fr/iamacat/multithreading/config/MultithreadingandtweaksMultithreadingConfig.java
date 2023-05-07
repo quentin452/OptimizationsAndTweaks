@@ -110,6 +110,11 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldUpdateBlocks;
+
+    @Config.Comment("Enable Multithreaded Grass Block Spreading")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGrassSpread;
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)
@@ -117,7 +122,7 @@ public class MultithreadingandtweaksMultithreadingConfig {
     public static int numberofcpus;
 
     @Config.Comment("Batch size ,if you have tps issues try lowering or highering the batch size.")
-    @Config.DefaultInt(50)
+    @Config.DefaultInt(150)
     @Config.RangeInt(min = 1, max = 1000)
     @Config.RequiresWorldRestart
     public static int batchsize;
