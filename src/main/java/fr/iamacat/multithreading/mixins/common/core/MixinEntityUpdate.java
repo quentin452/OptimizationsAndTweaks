@@ -20,31 +20,23 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 @Mixin(World.class)
 public abstract class MixinEntityUpdate {
+
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final World world = (World) (Object) this;
     private final List<Entity> entitiesToUpdate = new LinkedList<>();
     private final ExecutorService updateExecutor = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
     public MixinEntityUpdate() {
     }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        addEntitiesToUpdateQueue(world.loadedEntityList);
-    }
-
-    private void addEntitiesToUpdateQueue(Collection<Entity> entities) {
-        entitiesToUpdate.addAll(entities);
-    }
-
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
+    @Inject(method = "updateEntities", at = @At("HEAD"))
+    private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             List<Entity> entitiesToUpdateCopy = new ArrayList<>(entitiesToUpdate);
             int numEntitiesToUpdate = Math.min(entitiesToUpdateCopy.size(), MAX_ENTITIES_PER_TICK);
+            List<Future<?>> futures = new ArrayList<>(numEntitiesToUpdate);
             for (int i = 0; i < numEntitiesToUpdate; i++) {
                 Entity entity = entitiesToUpdateCopy.get(i);
-                updateExecutor.execute(() -> {
+                futures.add(updateExecutor.submit(() -> {
                     entity.isInWater();
                     if (entity.isEntityAlive()) {
                         entity.onEntityUpdate();
@@ -54,7 +46,14 @@ public abstract class MixinEntityUpdate {
                             livingEntity.getDataWatcher().getWatchableObjectFloat(6);
                         }
                     }
-                });
+                }));
+            }
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
