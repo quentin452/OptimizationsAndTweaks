@@ -41,13 +41,14 @@ public abstract class MixinExplosions {
     private void onNewExplosion(Entity entityIn, double x, double y, double z, float strength, boolean isFlaming,
         boolean isSmoking, CallbackInfoReturnable<Explosion> ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinExplosions) {
-        ExplosionTask task = new ExplosionTask(ci.getReturnValue(), entityIn.worldObj);
-        explosionsToProcess.add(task);
-        if (explosionsToProcess.size() == 1) {
-            executorService.submit(this::processExplosions);
+            ExplosionTask task = new ExplosionTask(ci.getReturnValue(), entityIn.worldObj);
+            explosionsToProcess.add(task);
+            if (explosionsToProcess.size() == 1) {
+                executorService.submit(this::processExplosions);
             }
         }
     }
+
     private void processExplosions() {
         while (!explosionsToProcess.isEmpty()) {
             List<ExplosionTask> batch = new ArrayList<>();

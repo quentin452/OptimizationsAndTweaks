@@ -7,10 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,12 +22,15 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus, MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L, TimeUnit.SECONDS,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
         new SynchronousQueue<Runnable>());
 
-  //  private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    // private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     @Inject(method = "updateLeaves", at = @At("RETURN"))
     private void onUpdateLeaves(World world, int x, int y, int z, Random random, CallbackInfo ci) {
@@ -69,7 +71,8 @@ public abstract class MixinLeafDecay {
                     }
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed to process leaf block at " + pos, e);
+                LogManager.getLogger()
+                    .error("Failed to process leaf block at " + pos, e);
             }
             neighborPositions.clear();
         }
@@ -89,7 +92,8 @@ public abstract class MixinLeafDecay {
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to process leaf block at " + pos, e);
+            LogManager.getLogger()
+                .error("Failed to process leaf block at " + pos, e);
         }
     }
 

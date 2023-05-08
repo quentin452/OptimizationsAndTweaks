@@ -2,6 +2,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -31,7 +32,8 @@ public abstract class MixinWorldUpdateBlocks {
 
     @Inject(method = "updateBlocks", at = @At("HEAD"))
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.world == world && MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks) {
+        if (event.phase == TickEvent.Phase.END && event.world == world
+            && MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks) {
             int minX = -30000000;
             int minY = 0;
             int minZ = -30000000;
@@ -44,17 +46,18 @@ public abstract class MixinWorldUpdateBlocks {
             int chunkMaxX = maxX >> 4;
             int chunkMaxZ = maxZ >> 4;
 
-            for (int chunkX = chunkMinX; chunkX <= chunkMaxX; chunkX++) {
-                for (int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++) {
-                    final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-                    if (chunk != null) {
-                        final int finalChunkX = chunkX;
-                        final int finalChunkZ = chunkZ;
-                        executorService.submit(
-                            () -> updateChunk(chunk, minX, minY, minZ, maxX, maxY, maxZ, finalChunkX, finalChunkZ));
-                    }
-                }
-            }
+            IntStream.rangeClosed(chunkMinX, chunkMaxX)
+                .parallel()
+                .forEach(chunkX -> {
+                    IntStream.rangeClosed(chunkMinZ, chunkMaxZ)
+                        .parallel()
+                        .forEach(chunkZ -> {
+                            final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+                            if (chunk != null) {
+                                updateChunk(chunk, minX, minY, minZ, maxX, maxY, maxZ, chunkX, chunkZ);
+                            }
+                        });
+                });
         }
     }
 

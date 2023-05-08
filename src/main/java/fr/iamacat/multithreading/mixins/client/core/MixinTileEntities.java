@@ -43,21 +43,21 @@ public abstract class MixinTileEntities {
 
     public void processTileEntities() {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
-        // Split the tile entities into batches
-        List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
+            // Split the tile entities into batches
+            List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
 
-        // Process each batch using a thread pool
-        List<Future<?>> futures = new ArrayList<>();
-        for (List<TileEntity> batch : batches) {
-            futures.add(THREAD_POOL.submit(() -> processBatch(batch)));
-        }
+            // Process each batch using a thread pool
+            List<Future<?>> futures = new ArrayList<>();
+            for (List<TileEntity> batch : batches) {
+                futures.add(THREAD_POOL.submit(() -> processBatch(batch)));
+            }
 
-        // Wait for all tasks to complete
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            // Wait for all tasks to complete
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
         }
