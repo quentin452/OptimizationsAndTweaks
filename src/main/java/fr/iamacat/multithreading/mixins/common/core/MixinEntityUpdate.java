@@ -23,7 +23,6 @@ public abstract class MixinEntityUpdate {
 
     // Configurable constants
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private static final int CHUNK_BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     // Thread-safe data structures
     private final List<Entity> entitiesToUpdate = new CopyOnWriteArrayList<>();
@@ -41,12 +40,58 @@ public abstract class MixinEntityUpdate {
         this.world = world;
     }
 
-    // Add comments to explain which methods are affected by the mixin
+    private void processEntityUpdates(List<Entity> entities) {
+        for (Entity entity : entities) {
+            if (entity.isEntityAlive()) {
+                entity.onEntityUpdate();
+                if (entity instanceof EntityLivingBase) {
+                    EntityLivingBase livingEntity = (EntityLivingBase) entity;
+                    livingEntity.getHealth();
+                    livingEntity.getDataWatcher()
+                        .getWatchableObjectFloat(3);
+                }
+            }
+            if (entity.isInWater()) {
+                entitiesInWater.add(entity);
+            }
+            if (entity instanceof EntityLiving) {
+                int posX = (int) entity.posX;
+                int posY = (int) entity.posY;
+                int posZ = (int) entity.posZ;
+                Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
+                entityLivingMap.computeIfAbsent(chunk, k -> new ArrayList<>())
+                    .add((EntityLiving) entity);
+            }
+        }
+    }
+
+    private void processChunks(List<Chunk> chunks) {
+        int numChunks = Math.min(chunks.size(), 8);
+        List<Future<?>> futures = new ArrayList<>(numChunks);
+        for (int i = 0; i < numChunks; i++) {
+            Chunk chunk = chunks.get(i);
+            futures.add(updateExecutor.submit(() -> {
+                List<EntityLiving> batchEntities = entityLivingMap.get(chunk);
+                for (EntityLiving entity : batchEntities) {
+                    chunk.addEntity(entity);
+                }
+            }));
+        }
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+// Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class every tick to update all entities in the world.
      * The mixin optimizes the update process by using thread-safe data structures and parallel execution.
-     * The mixin also limits the number of entities that are updated per tick, and only processes chunks that have
+     * The mixin also limits the number of entities and chunks that are updated per tick, and only processes chunks that have
      * living entities.
      * The mixin affects the following methods of the Entity class: addEntity, removeEntity.
      */
@@ -55,90 +100,14 @@ public abstract class MixinEntityUpdate {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             entitiesInWater.clear();
             entityLivingMap.clear();
-            for (Entity entity : entitiesToUpdate) {
-                entity.isInWater();
-                if (entity.isEntityAlive()) {
-                    entity.onEntityUpdate();
-                    if (entity instanceof EntityLivingBase) {
-                        EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                        livingEntity.getHealth();
-                        livingEntity.getDataWatcher()
-                            .getWatchableObjectFloat(6);
-                    }
-                }
-                if (entity.isInWater()) {
-                    entitiesInWater.add(entity);
-                }
-                if (entity instanceof EntityLiving) {
-                    int posX = MathHelper.floor_double(entity.posX);
-                    int posY = MathHelper.floor_double(entity.posY);
-                    int posZ = MathHelper.floor_double(entity.posZ);
-                    Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
-                    entityLivingMap.computeIfAbsent(chunk, k -> new ArrayList<>())
-                        .add((EntityLiving) entity);
-                }
-            }
-            List<Future<?>> futures = new ArrayList<>(entitiesToUpdate.size());
-            for (Entity entity : entitiesToUpdate) {
-                futures.add(updateExecutor.submit(() -> {
-                    if (entitiesInWater.contains(entity)) {
-                        entity.isInWater();
-                    }
-                }));
-            }
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-            int numEntitiesToUpdate = Math.min(entitiesToUpdate.size(), MAX_ENTITIES_PER_TICK);
-            futures.clear();
-            for (int i = 0; i < numEntitiesToUpdate; i++) {
-                Entity entity = entitiesToUpdate.get(i);
-                futures.add(updateExecutor.submit(() -> {
-                    if (entity instanceof EntityLivingBase) {
-                        EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                        livingEntity.getHealth();
-                        livingEntity.getDataWatcher()
-                            .getWatchableObjectFloat(6);
-                    }
-                }));
-            }
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
+            int numEntities = Math.min(entitiesToUpdate.size(), MAX_ENTITIES_PER_TICK);
+            processEntityUpdates(entitiesToUpdate.subList(0, numEntities));
             List<Chunk> chunks = new ArrayList<>(entityLivingMap.keySet());
-            int numChunks = chunks.size();
-            futures.clear();
-            for (int i = 0; i < numChunks; i += CHUNK_BATCH_SIZE) {
-                int endIndex = Math.min(i + CHUNK_BATCH_SIZE, numChunks);
-                List<Chunk> batchChunks = chunks.subList(i, endIndex);
-                futures.add(updateExecutor.submit(() -> {
-                    for (Chunk chunk : batchChunks) {
-                        List<EntityLiving> batchEntities = entityLivingMap.get(chunk);
-                        for (EntityLiving entity : batchEntities) {
-                            chunk.addEntity(entity);
-                        }
-                    }
-                }));
-            }
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
+            processChunks(chunks);
         }
     }
 
-    // Add comments to explain which methods are affected by the mixin
+// Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class when a new entity is added to the world.
@@ -150,7 +119,7 @@ public abstract class MixinEntityUpdate {
         entitiesToUpdate.add(entity);
     }
 
-    // Add comments to explain which methods are affected by the mixin
+// Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class when an entity is removed from the world.
