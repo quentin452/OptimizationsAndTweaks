@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,15 +27,12 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-Spawning-%d")
-            .build());
+    private final ExecutorService executorService;
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final LinkedBlockingQueue<Entity> spawnQueue = new LinkedBlockingQueue<>();
+    private final ArrayDeque<Entity> spawnQueue = new ArrayDeque<>();
 
-    private final ConcurrentSkipListMap<Integer, Vector3d> previousPositions = new ConcurrentSkipListMap<>();
+    private final ConcurrentHashMap<Integer, Vector3d> previousPositions = new ConcurrentHashMap<>();
 
     private final AtomicInteger batchSize = new AtomicInteger(BATCH_SIZE);
 
@@ -49,7 +47,7 @@ public abstract class MixinEntitySpawning {
     }
 
     private void spawnEntitiesInQueue(World world) {
-        List<Entity> entities = new ArrayList<>(BATCH_SIZE);
+        List<Entity> entities = new ArrayList<>();
         int numEntities = batchSize.getAndSet(0);
         for (Iterator<Entity> iterator = spawnQueue.iterator(); iterator.hasNext() && numEntities > 0;) {
             entities.add(iterator.next());
@@ -60,8 +58,10 @@ public abstract class MixinEntitySpawning {
         if (numThreads > 1) {
             List<List<Entity>> partitions = Lists.partition(entities, (entities.size()));
             List<Future<?>> futures = new ArrayList<>(numThreads);
+            ForkJoinPool pool = new ForkJoinPool(numThreads, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+
             for (List<Entity> partition : partitions) {
-                futures.add(executorService.submit(() -> {
+                futures.add(pool.submit(() -> {
                     for (Entity entity : partition) {
                         world.spawnEntityInWorld(entity);
                     }
@@ -71,7 +71,7 @@ public abstract class MixinEntitySpawning {
                 try {
                     future.get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         } else {
@@ -87,11 +87,16 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-        float partialTicks) {
+                                          float partialTicks) {
         render.doRender(entity, x, y, z, yaw, partialTicks);
+    }
+
+    public MixinEntitySpawning() {
+        executorService = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
     }
 
     public void close() {
         executorService.shutdown();
     }
+
 }
