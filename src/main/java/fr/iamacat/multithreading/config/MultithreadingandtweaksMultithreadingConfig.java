@@ -110,6 +110,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitiesCollision;
+    @Config.Comment("Enable Multithreaded Update Time and Light")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitiesUpdateTimeandLight;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

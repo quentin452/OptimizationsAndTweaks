@@ -52,6 +52,8 @@ public enum Mixin implements IMixin {
     common_core_MixinEntitiesCollision(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision, "core.MixinEntitiesCollision"),
 
+    common_core_MixinEntitiesUpdateTimeandLight(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesUpdateTimeandLight, "core.MixinEntitiesUpdateTimeandLight"),
     common_core_MixinGodZillaFix(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix, "core.MixinGodZillaFix"),
 
