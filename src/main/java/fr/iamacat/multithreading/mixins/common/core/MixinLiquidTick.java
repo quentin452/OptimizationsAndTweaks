@@ -39,28 +39,22 @@ public abstract class MixinLiquidTick {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
-    private Map<ChunkCoordinates, Material> blockMaterialMap;
+    private ConcurrentHashMap<ChunkCoordinates, Material> blockMaterialMap;
 
     public void updateTick(World world, int x, int y, int z, Random random) {
-        // Access and modify shared state in the World object here
+// Access and modify shared state in the World object here
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
         Material currentMaterial = null;
-        synchronized (blockMaterialMap) {
-            currentMaterial = blockMaterialMap.get(pos);
-        }
+        blockMaterialMap.get(pos);
         Material newMaterial = world.getBlock(x, y, z)
             .getMaterial();
         if (newMaterial == Material.water || newMaterial == Material.lava) {
             if (currentMaterial != newMaterial) {
-                synchronized (blockMaterialMap) {
-                    blockMaterialMap.put(pos, newMaterial);
-                }
+                blockMaterialMap.put(pos, newMaterial);
                 addToBatch(pos);
             }
         } else {
-            synchronized (blockMaterialMap) {
-                blockMaterialMap.remove(pos);
-            }
+            blockMaterialMap.remove(pos);
         }
     }
 
@@ -86,9 +80,8 @@ public abstract class MixinLiquidTick {
         lock.readLock()
             .lock();
         try {
-            for (ChunkCoordinates pos : batch) {
-                updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand);
-            }
+            batch.parallelStream()
+                .forEach(pos -> updateTick(world, pos.posX, pos.posY, pos.posZ, world.rand));
         } finally {
             lock.readLock()
                 .unlock();
@@ -114,7 +107,7 @@ public abstract class MixinLiquidTick {
                             if (world.getBlock(pos.posX, pos.posY, pos.posZ)
                                 .getMaterial() == Material.water
                                 || world.getBlock(pos.posX, pos.posY, pos.posZ)
-                                    .getMaterial() == Material.lava) {
+                                .getMaterial() == Material.lava) {
                                 liquidPositions.add(pos);
                             }
                         }
