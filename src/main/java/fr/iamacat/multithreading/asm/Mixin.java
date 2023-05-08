@@ -52,6 +52,9 @@ public enum Mixin implements IMixin {
     common_core_MixinEntitiesCollision(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision, "core.MixinEntitiesCollision"),
 
+    common_core_MixinGodZillaFix(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix, "core.MixinGodZillaFix"),
+
     // CLIENT MIXINS
 
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
