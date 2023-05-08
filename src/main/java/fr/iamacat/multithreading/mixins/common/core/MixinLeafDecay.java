@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,9 +23,12 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = BlockLeavesBase.class, priority = 900)
 public abstract class MixinLeafDecay {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
-    private final Queue<BlockPos> decayQueue = new ConcurrentLinkedQueue<>();
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus, MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L, TimeUnit.SECONDS,
+        new SynchronousQueue<Runnable>());
+
+  //  private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     @Inject(method = "updateLeaves", at = @At("RETURN"))
     private void onUpdateLeaves(World world, int x, int y, int z, Random random, CallbackInfo ci) {
@@ -33,47 +37,22 @@ public abstract class MixinLeafDecay {
         }
 
         // Add leaf blocks that need to decay to the queue
-        List loadedChunks = Collections.singletonList(world.getChunkProvider().getLoadedChunkCount());
-        for (Object obj : loadedChunks) {
-            Chunk chunk = (Chunk)obj;
+        List<Chunk> loadedChunks = ((ChunkProviderServer) world.getChunkProvider()).loadedChunks;
+        for (Chunk chunk : loadedChunks) {
+            List<BlockPos> chunkBlocks = new ArrayList<>();
             for (int i = chunk.xPosition * 16; i < chunk.xPosition * 16 + 16; i++) {
                 for (int j = 0; j < 256; j++) {
                     for (int k = chunk.zPosition * 16; k < chunk.zPosition * 16 + 16; k++) {
                         Block block = world.getBlock(i, j, k);
                         if (block != null && block.isLeaves(world, i, j, k)) {
-                            decayQueue.add(new BlockPos(i, j, k));
+                            chunkBlocks.add(new BlockPos(i, j, k));
                         }
                     }
                 }
             }
+            processLeafBlocks(chunkBlocks, world);
         }
-
-        int queueSize = decayQueue.size();
-        int numThreads = Math.min(queueSize / BATCH_SIZE + 1, MultithreadingandtweaksMultithreadingConfig.numberofcpus);
-        List<List<BlockPos>> batches = new ArrayList<>(numThreads);
-        Iterator<BlockPos> iterator = decayQueue.iterator();
-        for (int i = 0; i < numThreads; i++) {
-            List<BlockPos> batch = new ArrayList<>(BATCH_SIZE);
-            for (int j = 0; j < BATCH_SIZE && iterator.hasNext(); j++) {
-                batch.add(iterator.next());
-            }
-            batches.add(batch);
-        }
-
-        List<CompletableFuture<Void>> futures = new ArrayList<>(numThreads);
-        for (List<BlockPos> batch : batches) {
-            futures.add(CompletableFuture.runAsync(() -> processLeafBlocks(batch, world), executorService));
-        }
-
-        try {
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Failed to process leaf blocks", e);
-        }
-
-        decayQueue.clear();
     }
-
 
     public void processLeafBlocks(List<BlockPos> batch, World world) {
         List<BlockPos> neighborPositions = new ArrayList<>();
@@ -85,7 +64,7 @@ public abstract class MixinLeafDecay {
                     for (BlockPos neighbor : neighborPositions) {
                         Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
                         if (neighborBlock instanceof BlockLeaves) {
-                            decayQueue.add(neighbor.toImmutable());
+                            executorService.execute(() -> processLeafBlock(neighbor, world));
                         }
                     }
                 }
@@ -93,6 +72,24 @@ public abstract class MixinLeafDecay {
                 LogManager.getLogger().error("Failed to process leaf block at " + pos, e);
             }
             neighborPositions.clear();
+        }
+    }
+
+    public void processLeafBlock(BlockPos pos, World world) {
+        List<BlockPos> neighborPositions = new ArrayList<>();
+        try {
+            if (shouldDecay(pos, world)) {
+                world.setBlockToAir(pos.getX(), pos.getY(), pos.getZ());
+                getNeighborPositions(pos, neighborPositions);
+                for (BlockPos neighbor : neighborPositions) {
+                    Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
+                    if (neighborBlock instanceof BlockLeaves) {
+                        executorService.execute(() -> processLeafBlock(neighbor, world));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LogManager.getLogger().error("Failed to process leaf block at " + pos, e);
         }
     }
 
