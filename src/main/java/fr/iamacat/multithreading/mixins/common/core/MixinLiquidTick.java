@@ -42,7 +42,7 @@ public abstract class MixinLiquidTick {
     private ConcurrentHashMap<ChunkCoordinates, Material> blockMaterialMap;
 
     public void updateTick(World world, int x, int y, int z, Random random) {
-// Access and modify shared state in the World object here
+        // Access and modify shared state in the World object here
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
         Material currentMaterial = null;
         blockMaterialMap.get(pos);
@@ -107,7 +107,7 @@ public abstract class MixinLiquidTick {
                             if (world.getBlock(pos.posX, pos.posY, pos.posZ)
                                 .getMaterial() == Material.water
                                 || world.getBlock(pos.posX, pos.posY, pos.posZ)
-                                .getMaterial() == Material.lava) {
+                                    .getMaterial() == Material.lava) {
                                 liquidPositions.add(pos);
                             }
                         }

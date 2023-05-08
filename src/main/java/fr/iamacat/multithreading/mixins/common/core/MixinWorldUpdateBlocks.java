@@ -70,7 +70,7 @@ public abstract class MixinWorldUpdateBlocks {
     }
 
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
-                             int chunkZ) {
+        int chunkZ) {
         int chunkMinX = chunkX << 4;
         int chunkMinY = minY < 0 ? 0 : minY;
         int chunkMinZ = chunkZ << 4;

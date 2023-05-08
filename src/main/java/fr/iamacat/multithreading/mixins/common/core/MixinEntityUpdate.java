@@ -6,7 +6,6 @@ import java.util.concurrent.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -86,12 +85,13 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-// Add comments to explain which methods are affected by the mixin
+    // Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class every tick to update all entities in the world.
      * The mixin optimizes the update process by using thread-safe data structures and parallel execution.
-     * The mixin also limits the number of entities and chunks that are updated per tick, and only processes chunks that have
+     * The mixin also limits the number of entities and chunks that are updated per tick, and only processes chunks that
+     * have
      * living entities.
      * The mixin affects the following methods of the Entity class: addEntity, removeEntity.
      */
@@ -107,7 +107,7 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-// Add comments to explain which methods are affected by the mixin
+    // Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class when a new entity is added to the world.
@@ -119,7 +119,7 @@ public abstract class MixinEntityUpdate {
         entitiesToUpdate.add(entity);
     }
 
-// Add comments to explain which methods are affected by the mixin
+    // Add comments to explain which methods are affected by the mixin
     /**
      * Mixin method that modifies the behavior of the Entity class.
      * This method is called by the WorldServer class when an entity is removed from the world.
