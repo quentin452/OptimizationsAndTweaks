@@ -19,12 +19,27 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinWorldTick {
 
+    private static final int CACHE_CAPACITY = 256;
     private static final int UPDATE_CHUNK_AT_ONCE = 10;
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
+
+    // private final List<Chunk> cachedChunks = new ArrayList<>();
+    private final Set<Chunk> cachedChunks;
     private final ExecutorService executorService = Executors
         .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
     private final List<Chunk> chunksToUpdate = new CopyOnWriteArrayList<>();
     private final Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
+
+    private final Queue<CompletableFuture<Chunk>> loadingQueue;
+    private final int loadingBatchSize = 32;
+
+    private final List<CompletableFuture<Chunk>> futures;
+
+    public MixinWorldTick() {
+        cachedChunks = new HashSet<>(CACHE_CAPACITY);
+        loadingQueue = new ArrayDeque<>();
+        futures = new ArrayList<>();
+    }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -56,7 +71,9 @@ public abstract class MixinWorldTick {
             int numChunksToUpdate = Math.min(chunksToUpdate.size(), UPDATE_CHUNK_AT_ONCE);
             List<Chunk> batch = new ArrayList<>(numChunksToUpdate);
             for (int i = 0; i < numChunksToUpdate; i++) {
-                batch.add(chunksToUpdate.remove(0));
+                if (!cachedChunks.contains(chunksToUpdate.get(0))) {
+                    batch.add(chunksToUpdate.remove(0));
+                }
             }
 
             adjacentChunks.clear();
@@ -66,32 +83,13 @@ public abstract class MixinWorldTick {
                 adjacentChunks.addAll(getAdjacentChunks(chunkCoord));
             }
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
-            for (ChunkCoordIntPair chunkCoord : adjacentChunks) {
-                if (!loadedChunks.containsKey(chunkCoord)) {
-                    CompletableFuture<Chunk> future = CompletableFuture.supplyAsync(() -> {
-                        try {
-                            Chunk adjacentChunk;
-                            synchronized (chunkLoader) {
-                                adjacentChunk = chunkLoader
-                                    .loadChunk(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
-                                chunkProvider.saveChunks(false, null);
-                            }
-                            return adjacentChunk;
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }, executorService);
-                    futures.add(future.thenAcceptAsync(adjacentChunk -> {
-                        if (adjacentChunk != null) {
-                            loadedChunks.put(adjacentChunk.getChunkCoordIntPair(), adjacentChunk);
-                            chunksToUpdate.add(adjacentChunk);
-                        }
-                    }));
-                }
+            int futuresCount = 0;
+            while (futuresCount < loadingBatchSize && !adjacentChunks.isEmpty() && !loadingQueue.isEmpty()) {
+                CompletableFuture<Chunk> future = loadingQueue.remove();
+                futuresCount++;
             }
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+            CompletableFuture.allOf(futuresCount > 0 ? futures.toArray(new CompletableFuture[futuresCount]) : new CompletableFuture[0])
                 .join();
 
             processBatch(chunkProvider, batch);
@@ -105,7 +103,7 @@ public abstract class MixinWorldTick {
         int radius = 2;
 
         for (int x = chunkX - radius; x <= chunkX + radius; x++) {
-            for (int z = chunkZ - radius; z <= chunkZ + radius; z++) {
+            for (int z = chunkX - radius; z <= chunkX + radius; z++) {
                 if (x != chunkX || z != chunkZ) {
                     adjacentChunks.add(new ChunkCoordIntPair(x, z));
                 }
@@ -116,14 +114,14 @@ public abstract class MixinWorldTick {
 
     private void processBatch(ChunkProviderServer chunkProvider, List<Chunk> batch) {
         CompletableFuture.runAsync(() -> {
-            synchronized (chunkProvider) {
-                for (Chunk chunk : batch) {
-                    chunkProvider.saveChunks(true, null);
-                }
-                for (Chunk chunk : loadedChunks.values()) {
-                    chunkProvider.saveChunks(true, null);
-                }
+            // synchronized (chunkProvider) {
+            for (Chunk chunk : batch) {
+                chunkProvider.saveChunks(true, null);
             }
+            for (Chunk chunk : loadedChunks.values()) {
+                chunkProvider.saveChunks(true, null);
+            }
+            // }
         }, executorService);
     }
 }
