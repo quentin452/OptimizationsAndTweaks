@@ -19,18 +19,17 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(Entity.class)
 public abstract class MixinEntityUpdate {
-
-    // Configurable constants
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    // Thread-safe data structures
     private final List<Entity> entitiesToUpdate = new CopyOnWriteArrayList<>();
-    private final ExecutorService updateExecutor = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+    private final ThreadPoolExecutor updateExecutor = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        1L, TimeUnit.MINUTES,
+        new LinkedBlockingQueue<Runnable>());
+
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
     private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
-
-    // Non-configurable fields
     private IChunkProvider chunkProvider;
     private World world;
 
@@ -45,9 +44,7 @@ public abstract class MixinEntityUpdate {
                 entity.onEntityUpdate();
                 if (entity instanceof EntityLivingBase) {
                     EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                    livingEntity.getHealth();
-                    livingEntity.getDataWatcher()
-                        .getWatchableObjectFloat(3);
+
                 }
             }
             if (entity.isInWater()) {
@@ -58,8 +55,11 @@ public abstract class MixinEntityUpdate {
                 int posY = (int) entity.posY;
                 int posZ = (int) entity.posZ;
                 Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
-                entityLivingMap.computeIfAbsent(chunk, k -> new ArrayList<>())
-                    .add((EntityLiving) entity);
+                entityLivingMap.compute(chunk, (k, v) -> {
+                    if (v == null) v = new ArrayList<>();
+                    v.add((EntityLiving) entity);
+                    return v;
+                });
             }
         }
     }
@@ -80,21 +80,10 @@ public abstract class MixinEntityUpdate {
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
-
-    // Add comments to explain which methods are affected by the mixin
-    /**
-     * Mixin method that modifies the behavior of the Entity class.
-     * This method is called by the WorldServer class every tick to update all entities in the world.
-     * The mixin optimizes the update process by using thread-safe data structures and parallel execution.
-     * The mixin also limits the number of entities and chunks that are updated per tick, and only processes chunks that
-     * have
-     * living entities.
-     * The mixin affects the following methods of the Entity class: addEntity, removeEntity.
-     */
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -106,26 +95,11 @@ public abstract class MixinEntityUpdate {
             processChunks(chunks);
         }
     }
-
-    // Add comments to explain which methods are affected by the mixin
-    /**
-     * Mixin method that modifies the behavior of the Entity class.
-     * This method is called by the WorldServer class when a new entity is added to the world.
-     * The mixin adds the new entity to the entitiesToUpdate list, so it will be updated every tick.
-     * The mixin affects the following methods of the Entity class: updateEntities, removeEntity.
-     */
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);
     }
 
-    // Add comments to explain which methods are affected by the mixin
-    /**
-     * Mixin method that modifies the behavior of the Entity class.
-     * This method is called by the WorldServer class when an entity is removed from the world.
-     * The mixin removes the entity from the entitiesToUpdate list, so it will no longer be updated every tick.
-     * The mixin affects the following methods of the Entity class: updateEntities, addEntity.
-     */
     @Inject(method = "removeEntity", at = @At("RETURN"))
     private void onRemoveEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.remove(entity);
