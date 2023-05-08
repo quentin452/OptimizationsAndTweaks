@@ -31,7 +31,7 @@ public abstract class MixinWorldUpdateBlocks {
 
     @Inject(method = "updateBlocks", at = @At("HEAD"))
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.world == world) {
+        if (event.phase == TickEvent.Phase.END && event.world == world && MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks) {
             int minX = -30000000;
             int minY = 0;
             int minZ = -30000000;

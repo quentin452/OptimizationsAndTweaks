@@ -50,7 +50,7 @@ public abstract class MixinNetworkManager {
 
     @Inject(method = "update()V", at = @At("HEAD"))
     private void onUpdate(CallbackInfo ci) {
-        if (worldServer == null) {
+        if (worldServer == null && MultithreadingandtweaksMultithreadingConfig.enableMixinNetworkManager) {
             player = ((NetHandlerPlayServer) this.getNetHandler()).playerEntity;
             worldServer = player.getServerForPlayer();
             serverThread = Thread.currentThread();

@@ -42,6 +42,7 @@ public abstract class MixinTileEntities {
     }
 
     public void processTileEntities() {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
         // Split the tile entities into batches
         List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
 
@@ -57,6 +58,7 @@ public abstract class MixinTileEntities {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                }
             }
         }
     }

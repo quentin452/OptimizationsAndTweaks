@@ -82,10 +82,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMultithreadedSkyLightning;
-    @Config.Comment("Enable HUD Caching")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinHUDCaching;
     @Config.Comment("Enable Multithreaded BlockChunk Updating")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -106,7 +102,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldUpdateBlocks;
-
     @Config.Comment("Enable Multithreaded Grass Block Spreading")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -116,7 +111,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RangeInt(min = 1, max = 64)
     @Config.RequiresWorldRestart
     public static int numberofcpus;
-
     @Config.Comment("Batch size ,if you have tps issues try lowering or highering the batch size.")
     @Config.DefaultInt(150)
     @Config.RangeInt(min = 1, max = 1000)

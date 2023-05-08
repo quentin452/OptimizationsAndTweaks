@@ -65,8 +65,6 @@ public enum Mixin implements IMixin {
         "core.MixinMultithreadedSkyLightning"),
     client_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen,
         "core.MixinWorldgen"),
-    client_core_MixinHUDCaching(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinHUDCaching,
-        "core.MixinHUDCaching"),
     client_core_MixinLiquidRendering(Side.CLIENT,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLiquidRendering, "core.MixinLiquidRendering"),
     // MOD-FILTERED MIXINS

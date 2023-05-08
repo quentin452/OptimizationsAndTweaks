@@ -39,7 +39,7 @@ public abstract class MixinEntitiesRendering {
 
     @Inject(method = "doRender", at = @At("HEAD"))
     public void onDoRender(Entity entity, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering) {
             // Skip rendering if entity is not visible or if rendering is already in progress
             if (!entity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())
                 || MinecraftForgeClient.getRenderPass() == -1
