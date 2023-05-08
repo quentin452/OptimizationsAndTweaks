@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -89,7 +88,9 @@ public abstract class MixinWorldTick {
                 futuresCount++;
             }
 
-            CompletableFuture.allOf(futuresCount > 0 ? futures.toArray(new CompletableFuture[futuresCount]) : new CompletableFuture[0])
+            CompletableFuture
+                .allOf(
+                    futuresCount > 0 ? futures.toArray(new CompletableFuture[futuresCount]) : new CompletableFuture[0])
                 .join();
 
             processBatch(chunkProvider, batch);
