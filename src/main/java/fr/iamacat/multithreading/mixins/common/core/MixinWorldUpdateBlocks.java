@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
@@ -25,6 +26,7 @@ public abstract class MixinWorldUpdateBlocks {
             .build());
 
     private World world;
+    private final ConcurrentLinkedQueue<Chunk> updateQueue = new ConcurrentLinkedQueue<>();
 
     public MixinWorldUpdateBlocks(World world) {
         this.world = world;
@@ -54,15 +56,21 @@ public abstract class MixinWorldUpdateBlocks {
                         .forEach(chunkZ -> {
                             final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
                             if (chunk != null) {
-                                updateChunk(chunk, minX, minY, minZ, maxX, maxY, maxZ, chunkX, chunkZ);
+                                updateQueue.add(chunk);
                             }
                         });
                 });
+            executorService.submit(() -> {
+                Chunk chunk;
+                while ((chunk = updateQueue.poll()) != null) {
+                    updateChunk(chunk, minX, minY, minZ, maxX, maxY, maxZ, chunk.xPosition, chunk.zPosition);
+                }
+            });
         }
     }
 
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
-        int chunkZ) {
+                             int chunkZ) {
         int chunkMinX = chunkX << 4;
         int chunkMinY = minY < 0 ? 0 : minY;
         int chunkMinZ = chunkZ << 4;
@@ -81,7 +89,7 @@ public abstract class MixinWorldUpdateBlocks {
             int x = i & 15;
             for (int j = yMin; j <= yMax; j++) {
                 for (int k = zMin; k <= zMax; k++) {
-                    chunk.func_150807_a(x, j, k, world.getBlock(i, j, k), world.getBlockMetadata(i, j, k));
+                    world.setBlock(i, j, k, world.getBlock(i, j, k), world.getBlockMetadata(i, j, k), 3);
                 }
             }
         }
