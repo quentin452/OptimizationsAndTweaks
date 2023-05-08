@@ -18,12 +18,9 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinWorldTick {
 
-    private static final int CACHE_CAPACITY = 256;
     private static final int UPDATE_CHUNK_AT_ONCE = 10;
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
-
-    // private final List<Chunk> cachedChunks = new ArrayList<>();
-    private final Set<Chunk> cachedChunks;
+    private final Set<ChunkCoordIntPair> loadedChunkCoordinates;
     private final ExecutorService executorService = Executors
         .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
     private final List<Chunk> chunksToUpdate = new CopyOnWriteArrayList<>();
@@ -35,7 +32,7 @@ public abstract class MixinWorldTick {
     private final List<CompletableFuture<Chunk>> futures;
 
     public MixinWorldTick() {
-        cachedChunks = new HashSet<>(CACHE_CAPACITY);
+        loadedChunkCoordinates = new HashSet<>();
         loadingQueue = new ArrayDeque<>();
         futures = new ArrayList<>();
     }
@@ -70,7 +67,9 @@ public abstract class MixinWorldTick {
             int numChunksToUpdate = Math.min(chunksToUpdate.size(), UPDATE_CHUNK_AT_ONCE);
             List<Chunk> batch = new ArrayList<>(numChunksToUpdate);
             for (int i = 0; i < numChunksToUpdate; i++) {
-                if (!cachedChunks.contains(chunksToUpdate.get(0))) {
+                ChunkCoordIntPair chunkCoord = chunksToUpdate.get(0)
+                    .getChunkCoordIntPair();
+                if (!loadedChunkCoordinates.contains(chunkCoord) && !loadedChunks.containsKey(chunkCoord)) {
                     batch.add(chunksToUpdate.remove(0));
                 }
             }
@@ -79,6 +78,7 @@ public abstract class MixinWorldTick {
             for (Chunk chunk : batch) {
                 ChunkCoordIntPair chunkCoord = chunk.getChunkCoordIntPair();
                 loadedChunks.put(chunkCoord, chunk);
+                loadedChunkCoordinates.add(chunkCoord);
                 adjacentChunks.addAll(getAdjacentChunks(chunkCoord));
             }
 

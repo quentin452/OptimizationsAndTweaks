@@ -62,10 +62,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldTick;
-    @Config.Comment("Enable multithreaded Entities Tick")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntitiesTick;
     @Config.Comment("Enable multithreaded Entities Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
