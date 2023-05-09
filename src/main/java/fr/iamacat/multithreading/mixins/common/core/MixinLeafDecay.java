@@ -21,31 +21,57 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(BlockLeavesBase.class)
 public abstract class MixinLeafDecay {
 
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
-        new SynchronousQueue<Runnable>());
+        new LinkedBlockingQueue<>());
+
+    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     @Inject(method = "removeLeaves", at = @At("RETURN"))
     private void onRemoveLeaves(World world, int x, int y, int z, CallbackInfo ci) {
         Chunk chunk = world.getChunkFromBlockCoords(x, z);
+        int numLeaves = 0;
         for (int i = 0; i < 16; i++) {
             for (int k = 0; k < 16; k++) {
                 int j = 0;
                 while (j < 128) {
                     Block block = chunk.getBlock(i, j, k);
                     if (block != null && block.isLeaves(world, i, j, k)) {
-                        processLeafBlock(
-                            new BlockPos(chunk.xPosition * 16 + i, j, chunk.zPosition * 16 + k),
+                        numLeaves++;
+                        if (numLeaves % batchSize == 0) {
+                            processLeavesBatch(world);
+                        }
+                        int finalI = i;
+                        int finalJ = j;
+                        int finalK = k;
+                        executorService.execute(() -> processLeafBlock(
+                            new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
                             world,
-                            true);
+                            true));
                     }
                     j++;
                 }
             }
         }
+        processLeavesBatch(world);
+    }
+
+    private void processLeavesBatch(World world) {
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        executorService = new ThreadPoolExecutor(
+            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>());
     }
 
     private void processLeafBlock(BlockPos pos, World world, boolean isInitial) {

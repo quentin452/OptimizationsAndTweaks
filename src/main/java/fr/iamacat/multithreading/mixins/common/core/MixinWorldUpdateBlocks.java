@@ -27,6 +27,7 @@ public abstract class MixinWorldUpdateBlocks {
 
     private World world;
     private final ConcurrentLinkedQueue<Chunk> updateQueue = new ConcurrentLinkedQueue<>();
+    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     public MixinWorldUpdateBlocks(World world) {
         this.world = world;
@@ -57,20 +58,27 @@ public abstract class MixinWorldUpdateBlocks {
                             final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
                             if (chunk != null) {
                                 updateQueue.add(chunk);
+                                if (updateQueue.size() >= batchSize) {
+                                    processChunkBatch();
+                                }
                             }
                         });
                 });
-            executorService.submit(() -> {
-                Chunk chunk;
-                while ((chunk = updateQueue.poll()) != null) {
-                    updateChunk(chunk, minX, minY, minZ, maxX, maxY, maxZ, chunk.xPosition, chunk.zPosition);
-                }
-            });
+            processChunkBatch();
         }
     }
 
+    private void processChunkBatch() {
+        executorService.submit(() -> {
+            Chunk chunk;
+            while ((chunk = updateQueue.poll()) != null) {
+                updateChunk(chunk, -30000000, 0, -30000000, 30000000, 255, 30000000, chunk.xPosition, chunk.zPosition);
+            }
+        });
+    }
+
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
-        int chunkZ) {
+                             int chunkZ) {
         int chunkMinX = chunkX << 4;
         int chunkMinY = minY < 0 ? 0 : minY;
         int chunkMinZ = chunkZ << 4;
