@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.falsepattern.lib.compat.ChunkPos;
 import net.minecraft.block.Block;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +22,8 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinBlockCHunkUpdate {
 
     private static int batchsize = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+    private static final ExecutorService THREAD_POOL = Executors
+        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
     @Inject(method = "updateBlocks", at = @At("HEAD"))
     private void onServerTick(CallbackInfo ci) {
@@ -56,7 +55,8 @@ public abstract class MixinBlockCHunkUpdate {
         }
 
         // Unload queued chunks after all the batches have been ticked
-        world.getChunkProvider().unloadQueuedChunks();
+        world.getChunkProvider()
+            .unloadQueuedChunks();
     }
 
     private void tickChunkBatch(World world, List<Chunk> chunks) {
@@ -70,7 +70,12 @@ public abstract class MixinBlockCHunkUpdate {
                     for (int z = 0; z < 16; z++) {
                         Block block = chunk.getBlock(x, y, z);
                         if (block != null) {
-                            block.updateTick(world, x + chunkPos.chunkXPos * 16, y, z + chunkPos.chunkZPos * 16, world.rand);
+                            block.updateTick(
+                                world,
+                                x + chunkPos.chunkXPos * 16,
+                                y,
+                                z + chunkPos.chunkZPos * 16,
+                                world.rand);
                         }
                     }
                 }

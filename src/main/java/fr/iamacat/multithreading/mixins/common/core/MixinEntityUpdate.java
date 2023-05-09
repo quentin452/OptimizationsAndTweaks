@@ -112,9 +112,10 @@ public abstract class MixinEntityUpdate {
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
                 processChunks(time);
-        }
+            }
         }
     }
+
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);

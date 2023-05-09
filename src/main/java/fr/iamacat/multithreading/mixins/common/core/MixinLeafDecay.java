@@ -47,10 +47,11 @@ public abstract class MixinLeafDecay {
                         int finalI = i;
                         int finalJ = j;
                         int finalK = k;
-                        executorService.execute(() -> processLeafBlock(
-                            new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
-                            world,
-                            true));
+                        executorService.execute(
+                            () -> processLeafBlock(
+                                new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
+                                world,
+                                true));
                     }
                     j++;
                 }
