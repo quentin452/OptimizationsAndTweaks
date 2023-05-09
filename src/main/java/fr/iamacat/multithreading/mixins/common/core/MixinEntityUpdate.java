@@ -22,7 +22,7 @@ public abstract class MixinEntityUpdate {
 
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
-    private final List<Entity> entitiesToUpdate = new CopyOnWriteArrayList<>();
+    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private final ThreadPoolExecutor updateExecutor = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -30,51 +30,67 @@ public abstract class MixinEntityUpdate {
         TimeUnit.MINUTES,
         new LinkedBlockingQueue<Runnable>());
 
-    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
+    private final ConcurrentSkipListMap<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentSkipListMap<>();
     private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private IChunkProvider chunkProvider;
     private World world;
 
+    private long lastUpdateTime;
+
     public MixinEntityUpdate(World world, IChunkProvider chunkProvider) {
         this.chunkProvider = chunkProvider;
         this.world = world;
+        this.lastUpdateTime = world.getTotalWorldTime();
     }
 
-    private void processEntityUpdates(List<Entity> entities) {
-        for (Entity entity : entities) {
+    private void processEntityUpdates(long time) {
+        int numEntities = 0;
+        Entity entity;
+        while ((entity = entitiesToUpdate.poll()) != null && numEntities < MAX_ENTITIES_PER_TICK) {
             if (entity.isEntityAlive()) {
-                entity.onEntityUpdate();
                 if (entity instanceof EntityLivingBase) {
                     EntityLivingBase livingEntity = (EntityLivingBase) entity;
-
+                    if (livingEntity.getHealth() > 0) {
+                        livingEntity.onLivingUpdate();
+                    }
+                } else {
+                    entity.onEntityUpdate();
+                }
+                if (entity.isInWater()) {
+                    entitiesInWater.add(entity);
+                }
+                if (entity instanceof EntityLiving) {
+                    int posX = (int) entity.posX;
+                    int posY = (int) entity.posY;
+                    int posZ = (int) entity.posZ;
+                    Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
+                    Entity finalEntity = entity;
+                    entityLivingMap.compute(chunk, (k, v) -> {
+                        if (v == null) {
+                            v = new ArrayList<>();
+                        }
+                        v.add((EntityLiving) finalEntity);
+                        return v;
+                    });
                 }
             }
-            if (entity.isInWater()) {
-                entitiesInWater.add(entity);
-            }
-            if (entity instanceof EntityLiving) {
-                int posX = (int) entity.posX;
-                int posY = (int) entity.posY;
-                int posZ = (int) entity.posZ;
-                Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
-                entityLivingMap.compute(chunk, (k, v) -> {
-                    if (v == null) v = new ArrayList<>();
-                    v.add((EntityLiving) entity);
-                    return v;
-                });
-            }
+            numEntities++;
         }
+        this.lastUpdateTime = time;
     }
 
-    private void processChunks(List<Chunk> chunks) {
-        int numChunks = Math.min(chunks.size(), 8);
+    private void processChunks(long time) {
+        int numChunks = Math.min(entityLivingMap.size(), 8);
         List<Future<?>> futures = new ArrayList<>(numChunks);
         for (int i = 0; i < numChunks; i++) {
-            Chunk chunk = chunks.get(i);
+            Map.Entry<Chunk, List<EntityLiving>> entry = entityLivingMap.pollFirstEntry();
             futures.add(updateExecutor.submit(() -> {
-                List<EntityLiving> batchEntities = entityLivingMap.get(chunk);
+                Chunk chunk = entry.getKey();
+                List<EntityLiving> batchEntities = entry.getValue();
                 for (EntityLiving entity : batchEntities) {
-                    chunk.addEntity(entity);
+                    if (entity.isEntityAlive()) {
+                        chunk.addEntity(entity);
+                    }
                 }
             }));
         }
@@ -90,15 +106,15 @@ public abstract class MixinEntityUpdate {
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            entitiesInWater.clear();
-            entityLivingMap.clear();
-            int numEntities = Math.min(entitiesToUpdate.size(), MAX_ENTITIES_PER_TICK);
-            processEntityUpdates(entitiesToUpdate.subList(0, numEntities));
-            List<Chunk> chunks = new ArrayList<>(entityLivingMap.keySet());
-            processChunks(chunks);
+            long time = world.getTotalWorldTime();
+            long timeElapsed = time - lastUpdateTime;
+            int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
+            processEntityUpdates(time);
+            if (!entityLivingMap.isEmpty()) {
+                processChunks(time);
+        }
         }
     }
-
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);
