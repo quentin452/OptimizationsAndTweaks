@@ -90,10 +90,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLiquidRendering;
-    @Config.Comment("Enable Multithreaded NetWork Manager")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinNetworkManager;
     @Config.Comment("Enable Multithreaded Block Updates")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
