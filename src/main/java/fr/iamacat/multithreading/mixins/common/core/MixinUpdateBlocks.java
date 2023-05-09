@@ -1,10 +1,13 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -18,25 +21,27 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(World.class)
-public abstract class MixinWorldUpdateBlocks {
+public abstract class MixinUpdateBlocks {
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(
+    private final ExecutorService executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("MixinWorldUpdateBlocks-worker-%d")
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        0L, TimeUnit.MILLISECONDS,
+        new LinkedBlockingQueue<>(MultithreadingandtweaksMultithreadingConfig.batchsize),
+        new ThreadFactoryBuilder().setNameFormat("MixinUpdateBlocks-worker-%d")
             .build());
 
     private World world;
-    private final ConcurrentLinkedQueue<Chunk> updateQueue = new ConcurrentLinkedQueue<>();
-    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final Queue<Chunk> updateQueue = new ConcurrentLinkedQueue<>();
 
-    public MixinWorldUpdateBlocks(World world) {
+    public MixinUpdateBlocks(World world) {
         this.world = world;
     }
 
     @Inject(method = "updateBlocks", at = @At("HEAD"))
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END && event.world == world
-            && MultithreadingandtweaksMultithreadingConfig.enableMixinWorldUpdateBlocks) {
+            && MultithreadingandtweaksMultithreadingConfig.enableMixinUpdateBlocks) {
             int minX = -30000000;
             int minY = 0;
             int minZ = -30000000;
@@ -58,7 +63,7 @@ public abstract class MixinWorldUpdateBlocks {
                             final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
                             if (chunk != null) {
                                 updateQueue.add(chunk);
-                                if (updateQueue.size() >= batchSize) {
+                                if (updateQueue.size() >= MultithreadingandtweaksMultithreadingConfig.batchsize) {
                                     processChunkBatch();
                                 }
                             }
@@ -70,15 +75,24 @@ public abstract class MixinWorldUpdateBlocks {
 
     private void processChunkBatch() {
         executorService.submit(() -> {
+            List<Chunk> chunks = new ArrayList<>(MultithreadingandtweaksMultithreadingConfig.batchsize);
             Chunk chunk;
             while ((chunk = updateQueue.poll()) != null) {
-                updateChunk(chunk, -30000000, 0, -30000000, 30000000, 255, 30000000, chunk.xPosition, chunk.zPosition);
+                chunks.add(chunk);
+                if (chunks.size() >= MultithreadingandtweaksMultithreadingConfig.batchsize) {
+                    break;
+                }
             }
+            updateChunks(chunks);
         });
     }
 
+    private void updateChunks(List<Chunk> chunks) {
+        chunks.forEach(chunk -> updateChunk(chunk, -30000000, 0, -30000000, 30000000, 255, 30000000, chunk.xPosition, chunk.zPosition));
+    }
+
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
-        int chunkZ) {
+                             int chunkZ) {
         int chunkMinX = chunkX << 4;
         int chunkMinY = minY < 0 ? 0 : minY;
         int chunkMinZ = chunkZ << 4;
@@ -93,11 +107,17 @@ public abstract class MixinWorldUpdateBlocks {
         int yMax = Math.min(chunkMaxY, maxY);
         int zMax = Math.min(chunkMaxZ, maxZ);
 
-        for (int i = xMin; i <= xMax; i++) {
-            int x = i & 15;
-            for (int j = yMin; j <= yMax; j++) {
-                for (int k = zMin; k <= zMax; k++) {
-                    world.setBlock(i, j, k, world.getBlock(i, j, k), world.getBlockMetadata(i, j, k), 3);
+        for (int x = xMin; x <= xMax; x++) {
+            for (int y = yMin; y <= yMax; y++) {
+                for (int z = zMin; z <= zMax; z++) {
+                    Block block = chunk.getBlock(x & 15, y, z & 15);
+                    int metadata = chunk.getBlockMetadata(x & 15, y, z & 15);
+                    if (block.hasTileEntity(metadata)) {
+                        TileEntity tileEntity = chunk.getTileEntityUnsafe(x & 15, y, z & 15);
+                        if (tileEntity != null) {
+                            tileEntity.updateContainingBlockInfo();
+                        }
+                    }
                 }
             }
         }

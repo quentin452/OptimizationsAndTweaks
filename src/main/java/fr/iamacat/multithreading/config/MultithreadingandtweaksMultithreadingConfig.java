@@ -89,7 +89,7 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.Comment("Enable Multithreaded Block Updates")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinWorldUpdateBlocks;
+    public static boolean enableMixinUpdateBlocks;
     @Config.Comment("Enable Multithreaded Grass Block Spreading")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
