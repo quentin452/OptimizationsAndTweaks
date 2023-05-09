@@ -37,8 +37,6 @@ public enum Mixin implements IMixin {
         "core.MixinWorldTick"),
     common_core_MixinExplosions(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinExplosions,
         "core.MixinExplosions"),
-    common_core_MixinBlockCHunkUpdate(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinBlockCHunkUpdate, "core.MixinBlockCHunkUpdate"),
     common_core_MixinFallBlocksTick(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick, "core.MixinFallBlocksTick"),
     common_core_MixinWorldUpdateBlocks(Side.COMMON,

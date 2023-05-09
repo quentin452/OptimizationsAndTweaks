@@ -27,7 +27,7 @@ public abstract class MixinWorldTick {
     private final Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
 
     private final Queue<CompletableFuture<Chunk>> loadingQueue;
-    private final int loadingBatchSize = 32;
+    private final int loadingBatchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     private final List<CompletableFuture<Chunk>> futures;
 

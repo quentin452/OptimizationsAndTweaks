@@ -78,10 +78,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMultithreadedSkyLightning;
-    @Config.Comment("Enable Multithreaded BlockChunk Updating")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinBlockCHunkUpdate;
     @Config.Comment("Enable Multithreaded Fall Blocks Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
