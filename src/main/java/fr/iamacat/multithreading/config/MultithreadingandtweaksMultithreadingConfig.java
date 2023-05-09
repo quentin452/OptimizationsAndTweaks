@@ -102,6 +102,11 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitiesUpdateTimeandLight;
+
+    @Config.Comment("Enable Multithreaded Chunk Provider Server")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunkProviderServer;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
