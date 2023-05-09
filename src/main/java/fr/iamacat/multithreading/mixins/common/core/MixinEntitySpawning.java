@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -58,7 +57,11 @@ public abstract class MixinEntitySpawning {
         if (numThreads > 1) {
             List<List<Entity>> partitions = Lists.partition(entities, (entities.size()));
             List<Future<?>> futures = new ArrayList<>(numThreads);
-            ForkJoinPool pool = new ForkJoinPool(numThreads, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
+            ForkJoinPool pool = new ForkJoinPool(
+                numThreads,
+                ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+                null,
+                true);
 
             for (List<Entity> partition : partitions) {
                 futures.add(pool.submit(() -> {
@@ -87,7 +90,7 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-                                          float partialTicks) {
+        float partialTicks) {
         render.doRender(entity, x, y, z, yaw, partialTicks);
     }
 

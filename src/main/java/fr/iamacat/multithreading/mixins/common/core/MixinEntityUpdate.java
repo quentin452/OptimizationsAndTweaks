@@ -19,13 +19,15 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(Entity.class)
 public abstract class MixinEntityUpdate {
+
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     private final List<Entity> entitiesToUpdate = new CopyOnWriteArrayList<>();
     private final ThreadPoolExecutor updateExecutor = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        1L, TimeUnit.MINUTES,
+        1L,
+        TimeUnit.MINUTES,
         new LinkedBlockingQueue<Runnable>());
 
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
@@ -84,6 +86,7 @@ public abstract class MixinEntityUpdate {
             }
         }
     }
+
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -95,6 +98,7 @@ public abstract class MixinEntityUpdate {
             processChunks(chunks);
         }
     }
+
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);
