@@ -111,10 +111,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
-    @Config.Comment("Fix Duplicated stats ids crash")
+    @Config.Comment("Print stats ids to help to fix duplicated stats ids crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinStatBaseFix;
+    public static boolean enableMixinStatList;
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)

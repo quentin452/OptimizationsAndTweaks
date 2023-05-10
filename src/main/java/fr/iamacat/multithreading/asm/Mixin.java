@@ -55,8 +55,8 @@ public enum Mixin implements IMixin {
         "core.MixinChunkProviderServer"),
     common_core_MixinGodZillaFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
-    common_core_MixinStatBaseFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatBaseFix,
-        "core.MixinStatBaseFix"),
+    common_core_MixinStatList(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatList,
+        "core.MixinStatList"),
     // CLIENT MIXINS
 
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,
