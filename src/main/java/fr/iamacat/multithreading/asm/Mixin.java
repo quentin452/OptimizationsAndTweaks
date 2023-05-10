@@ -39,8 +39,8 @@ public enum Mixin implements IMixin {
         "core.MixinExplosions"),
     common_core_MixinFallBlocksTick(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick, "core.MixinFallBlocksTick"),
-    common_core_MixinUpdateBlocks(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinUpdateBlocks, "core.MixinUpdateBlocks"),
+    common_core_MixinUpdateBlocks(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinUpdateBlocks,
+        "core.MixinUpdateBlocks"),
     common_core_MixinGrassSpread(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGrassSpread,
         "core.MixinGrassSpread"),
     common_core_MixinEntitiesCollision(Side.COMMON,
@@ -55,7 +55,8 @@ public enum Mixin implements IMixin {
         "core.MixinChunkProviderServer"),
     common_core_MixinGodZillaFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
-
+    common_core_MixinStatBaseFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatBaseFix,
+        "core.MixinStatBaseFix"),
     // CLIENT MIXINS
 
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,

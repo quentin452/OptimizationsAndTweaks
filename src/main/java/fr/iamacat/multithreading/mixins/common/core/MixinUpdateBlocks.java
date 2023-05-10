@@ -26,7 +26,8 @@ public abstract class MixinUpdateBlocks {
     private final ExecutorService executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        0L, TimeUnit.MILLISECONDS,
+        0L,
+        TimeUnit.MILLISECONDS,
         new LinkedBlockingQueue<>(MultithreadingandtweaksMultithreadingConfig.batchsize),
         new ThreadFactoryBuilder().setNameFormat("MixinUpdateBlocks-worker-%d")
             .build());
@@ -88,11 +89,21 @@ public abstract class MixinUpdateBlocks {
     }
 
     private void updateChunks(List<Chunk> chunks) {
-        chunks.forEach(chunk -> updateChunk(chunk, -30000000, 0, -30000000, 30000000, 255, 30000000, chunk.xPosition, chunk.zPosition));
+        chunks.forEach(
+            chunk -> updateChunk(
+                chunk,
+                -30000000,
+                0,
+                -30000000,
+                30000000,
+                255,
+                30000000,
+                chunk.xPosition,
+                chunk.zPosition));
     }
 
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
-                             int chunkZ) {
+        int chunkZ) {
         int chunkMinX = chunkX << 4;
         int chunkMinY = minY < 0 ? 0 : minY;
         int chunkMinZ = chunkZ << 4;
