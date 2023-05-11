@@ -31,11 +31,11 @@ public abstract class MixinGUIHUD {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Chunk-Populator-%d")
+        new ThreadFactoryBuilder().setNameFormat("Gui-HUD-%d")
             .build());
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "net/minecraft/client/gui/GuiIngame.<init>(Lnet/minecraft/client/Minecraft;)V"))
+    private void onInitPostConstructor(CallbackInfo ci) {
         executorService.execute(this::drawLoop);
     }
 

@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -44,7 +45,7 @@ public abstract class MixinEntitiesUpdateTimeandLight {
             for (int i = 0; i < batchCount; i++) {
                 int startIndex = i * batchSize;
                 int endIndex = Math.min(startIndex + batchSize, entityCount);
-                final List<Entity> batch = worldServer.loadedEntityList.subList(startIndex, endIndex);
+                final List<Entity> batch = new ArrayList<>(worldServer.loadedEntityList.subList(startIndex, endIndex));
                 this.executorService.submit(() -> {
                     for (Entity entity : batch) {
                         if (entity != null) {

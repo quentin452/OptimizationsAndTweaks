@@ -11,6 +11,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -20,6 +21,11 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityUpdate {
+    @Shadow
+    public abstract void onLivingUpdate();
+
+    @Shadow
+    public abstract float getHealth();
 
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -27,17 +33,18 @@ public abstract class MixinEntityUpdate {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Update-" + MixinEntityUpdate.this.hashCode()));
+        r -> new Thread(r, "Entity-Update-%d" + MixinEntityUpdate.this.hashCode()));
+
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
+    private final CopyOnWriteArrayList<EntityLivingBase> entitiesToUpdate = new CopyOnWriteArrayList<>();
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
-    private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
     private ChunkProviderServer chunkProvider;
+
     private World world;
     private long lastUpdateTime;
-
+    private Set<Entity> processedEntities = new HashSet<>();
     private final ConcurrentLinkedQueue<EntityLivingBase> entitiesToMove = new ConcurrentLinkedQueue<>();
-    private final ForkJoinPool moveExecutor = ForkJoinPool.commonPool();
     private static final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private double strafe;
     private double forward;
@@ -50,35 +57,36 @@ public abstract class MixinEntityUpdate {
     }
 
     private void processEntityUpdates(long time) {
-        for (int numEntities = 0; numEntities < MAX_ENTITIES_PER_TICK && !entitiesToUpdate.isEmpty(); numEntities++) {
-            Entity entity = entitiesToUpdate.poll();
-            if (entity instanceof EntityLivingBase) {
-                EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                if (livingEntity.getHealth() > 0) {
-                    livingEntity.onLivingUpdate();
-                }
-            } else {
-                entity.onEntityUpdate();
+        List<EntityLivingBase> entitiesToRemove = new ArrayList<>();
+        int numEntities = 0;
+
+        Iterator<EntityLivingBase> iterator = entitiesToUpdate.iterator();
+        while (iterator.hasNext() && numEntities < MAX_ENTITIES_PER_TICK) {
+            EntityLivingBase entity = iterator.next();
+
+            // Check if the entity has already been processed
+            if (processedEntities.contains(entity)) {
+                // Skip processing this entity
+                continue;
             }
-            if (entity.isInWater()) {
-                entitiesInWater.add(entity);
-            }
-            if (entity instanceof EntityLiving) {
-                int posX = (int) entity.posX;
-                int posY = (int) entity.posY;
-                int posZ = (int) entity.posZ;
-                Chunk chunk = world.getChunkFromBlockCoords(posX, posZ);
-                entityLivingMap.compute(chunk, (k, v) -> {
-                    if (v == null) {
-                        v = new ArrayList<>();
-                    }
-                    v.add((EntityLiving) entity);
-                    return v;
-                });
-            }
+
+            // Process the entity
+            // ...
+
+            // Add the entity to the processed set
+            processedEntities.add(entity);
+
+            // Add the entity to the removal list
+            entitiesToRemove.add(entity);
+
+            numEntities++;
         }
+
+
+        // Remove the entities that were processed
+        entitiesToUpdate.removeAll(entitiesToRemove);
+
         this.lastUpdateTime = time;
-        entitiesToUpdate.clear();
     }
 
     private void processChunks(long time) {
@@ -90,7 +98,12 @@ public abstract class MixinEntityUpdate {
             // Process chunks asynchronously
             executorService.submit(() -> {
                 for (Chunk chunk : chunksToUpdate) {
-                    // Process each chunk
+                    try {
+                        // Process each chunk
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // Log exception
+                    }
                 }
             });
         } catch (Exception e) {
@@ -119,7 +132,7 @@ public abstract class MixinEntityUpdate {
     private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed,
         CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            entitiesToUpdate.add((Entity) (Object) this);
+            entitiesToUpdate.add((EntityLivingBase) (Object) this);
         }
     }
 
@@ -130,19 +143,23 @@ public abstract class MixinEntityUpdate {
         return entity != (Entity) (Object) this ? entity : null;
     }
 
-    @Inject(method = "onLivingUpdate", at = @At("HEAD"))
     private void batchOnLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            // Update entities in batches
-            while (entitiesToUpdate.size() > 0 && entitiesToUpdate.size() <= MAX_ENTITIES_PER_TICK) {
-                Entity entity = entitiesToUpdate.poll();
-                updateEntityBatch(entity);
-            }
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate && getHealth() > 0) {
+            executorService.execute(this::executeOnLivingUpdate);
+        }
+    }
+
+    private void executeOnLivingUpdate() {
+        try {
+            onLivingUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle the exception appropriately
         }
     }
 
     private void moveEntities(List<EntityLivingBase> entities, double strafe, double forward, float friction) {
-        moveExecutor.submit(() -> {
+        executorService.submit(() -> {
             try {
                 for (EntityLivingBase entity : entities) {
                     entity.moveEntity(strafe, forward, friction);
@@ -152,17 +169,6 @@ public abstract class MixinEntityUpdate {
             }
         });
     }
-
-    @Inject(method = "moveEntity", at = @At("HEAD"), cancellable = true)
-    public void batchMoveEntity(float strafe, float forward, float friction, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
-            this.strafe = strafe;
-            this.forward = forward;
-            this.friction = friction;
-            entitiesToMove.add((EntityLivingBase) (Object) this);
-        }
-    }
-
     @Inject(method = "updateEntities", at = @At("TAIL"))
     private void moveBatchedEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -177,19 +183,29 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-    private void updateEntityBatch(Entity entity) {
-        if (entity instanceof EntityLivingBase) {
-            ((EntityLivingBase) entity).onLivingUpdate();
+    @Inject(method = "moveEntity", at = @At("HEAD"), cancellable = true)
+    public void batchMoveEntity(float strafe, float forward, float friction, CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
+            this.strafe = strafe;
+            this.forward = forward;
+            this.friction = friction;
+            entitiesToMove.add((EntityLivingBase) (Object) this);
+            ci.cancel();
         }
     }
 
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
-        entitiesToUpdate.add(entity);
+        entitiesToUpdate.add((EntityLivingBase) entity);
     }
 
     @Inject(method = "removeEntity", at = @At("RETURN"))
     private void onRemoveEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.remove(entity);
+    }
+
+    @Inject(method = "onLivingUpdate", at = @At("TAIL"))
+    private void shutdownExecutorService(CallbackInfo ci) {
+        executorService.shutdown();
     }
 }

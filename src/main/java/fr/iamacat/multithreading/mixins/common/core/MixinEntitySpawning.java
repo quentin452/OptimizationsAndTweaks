@@ -34,7 +34,7 @@ public abstract class MixinEntitySpawning {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Spawning-" + MixinEntitySpawning.this.hashCode()));
+        r -> new Thread(r, "Entity-Spawning-%d" + MixinEntitySpawning.this.hashCode()));
 
     public void close() {
         executorService.shutdown();

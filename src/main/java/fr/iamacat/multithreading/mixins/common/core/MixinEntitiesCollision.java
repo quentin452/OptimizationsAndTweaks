@@ -32,27 +32,31 @@ public abstract class MixinEntitiesCollision {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Collision-" + MixinEntitiesCollision.this.hashCode()));
+        r -> new Thread(r, "Entity-Collision-%d" + MixinEntitiesCollision.this.hashCode()));
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void overrideCollideWithNearbyEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
-            World world = ((EntityLivingBase) (Object) this).worldObj;
-            AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
+            executorService.execute(this::collideWithNearbyEntitiesAsync);
+        }
+    }
 
-            List<Entity> entities = getEntitiesWithinAABBExcludingEntity(world, boundingBox);
-            List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
+    private void collideWithNearbyEntitiesAsync() {
+        World world = ((EntityLivingBase) (Object) this).worldObj;
+        AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
 
-            entityBatches.parallelStream()
-                .forEach(batch -> collideWithEntitiesBatch(batch)); // Process batches in parallel
+        List<Entity> entities = getEntitiesWithinAABBExcludingEntity(world, boundingBox);
+        List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
-            // Shutdown the executor service to release resources
-            executorService.shutdown();
-            try {
-                executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException e) {
-                // Handle the interruption
-            }
+        entityBatches.parallelStream()
+            .forEach(this::collideWithEntitiesBatch); // Process batches in parallel
+
+        // Shutdown the executor service to release resources
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            // Handle the interruption
         }
     }
 
@@ -76,9 +80,6 @@ public abstract class MixinEntitiesCollision {
             List<Entity> batch = entities.subList(fromIndex, toIndex);
             entityBatches.add(batch);
         }
-        for (List<Entity> batch : entityBatches) {
-            executorService.execute(() -> collideWithEntitiesBatch(batch));
-        }
 
         return entityBatches;
     }
@@ -96,9 +97,8 @@ public abstract class MixinEntitiesCollision {
                     }
                 }
 
-                // Vanilla collision logic
+                // Cancel vanilla collision logic
                 entity.applyEntityCollision((EntityLivingBase) (Object) this);
-
             }
         }
     }

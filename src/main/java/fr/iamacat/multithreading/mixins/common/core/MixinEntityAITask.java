@@ -2,13 +2,14 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.world.WorldServer;
@@ -20,17 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
+import static fr.iamacat.multithreading.MultithreadingLogger.LOGGER;
+
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityAITask {
+    private final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final LinkedBlockingDeque<Entity> batchedUpdates = new LinkedBlockingDeque<>(1000); // Capacity of 1000
 
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Aitask-" + MixinEntityAITask.this.hashCode()));
+    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
@@ -45,9 +45,17 @@ public abstract class MixinEntityAITask {
             .parallelStream()
             .forEach(this::updateEntityMap);
     }
+    private void batchedMoveEntities(List<Entity> batch) {
+        try {
+            // Parallel stream entities
+        } catch (Exception e) {
+            LOGGER.error("Failed to batch move entities", e);
+            // Log exception appropriately
+        }
+    }
 
     private void updateEntityMap(ConcurrentMap<Integer, Entity> entitiesToAIUpdate) {
-        List<Entity> entities = new ArrayList<>(entitiesToAIUpdate.values());
+        List<Entity> entities = new CopyOnWriteArrayList<>(entitiesToAIUpdate.values());  // Use CopyOnWriteArrayList
         entities.parallelStream()
             .forEach(entity -> {
                 entity.onEntityUpdate();
@@ -82,13 +90,14 @@ public abstract class MixinEntityAITask {
                         Field tasksField = EntityAITasks.class.getDeclaredField("tasks");
                         tasksField.setAccessible(true);
                         EntityAITasks entityAITasks = (EntityAITasks) tasksField.get(livingEntity.tasks);
-                        List<EntityAITasks.EntityAITaskEntry> taskEntries = entityAITasks.taskEntries;
+                        List<EntityAITasks.EntityAITaskEntry> taskEntries = new ArrayList<>(entityAITasks.taskEntries);
                         taskEntries.parallelStream()
                             .filter(taskEntry -> taskEntry.action instanceof EntityAIBase)
                             .forEach(taskEntry -> {
                                 try {
                                     EntityAIBase aiBase = (EntityAIBase) taskEntry.action;
                                     aiBase.startExecuting();
+                                    entityAITasks.taskEntries.remove(taskEntry); // Cancel vanilla EntityAITask
                                 } catch (Exception e) {
                                     // Handle the exception appropriately
                                     e.printStackTrace();
@@ -115,6 +124,104 @@ public abstract class MixinEntityAITask {
             executorService.shutdown();
         }
     }
+    @Inject(method = "updateAITasks", at = @At("HEAD"))
+    private void batchUpdateAITasks(CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
+            batchedUpdates.add((Entity) (Object) this);
+        }
+    }
+
+    private void updateAITasksParallel(List<Entity> batch, CallbackInfo ci) {
+        executorService.submit(() -> {
+            try {
+                batch.parallelStream().forEach(entity -> {
+                    if (entity instanceof EntityLiving) {
+                        EntityLiving livingEntity = (EntityLiving) entity;
+                        EntityAITasks entityAITasks = livingEntity.tasks;
+                        if (entityAITasks != null) {
+                            entityAITasks.onUpdateTasks(); // Call the batched onUpdateTasks
+                        }
+                    }
+                });
+
+                batch.forEach(entity -> {
+                    ci.cancel();
+                });
+            } catch (Exception e) {
+                // Handle exception
+            }
+        });
+    }
+
+
+    @Inject(method = "onUpdateTasks", at = @At("HEAD"), cancellable = true)
+    private void batchOnUpdateTasks(CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
+            // Execute the batched updates
+            processBatchedUpdates(ci);
+            // Cancel the vanilla onUpdateTasks method
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/EntityAITasks;onUpdateTasks()V"))
+    private void cancelVanillaOnUpdateTasks(CallbackInfo ci)  {
+        ci.cancel();
+    }
+    public void processBatchedUpdates(CallbackInfo ci) {
+        while (batchedUpdates.size() >= BATCH_SIZE) {
+            List<Entity> batch = new ArrayList<>();
+
+            // Populate batch...
+            updateAITasksParallel(batch, ci);
+
+            batchedMoveEntities(batch);
+        }
+    }
+    private void batchMoveWithHeading(List<EntityLivingBase> entities, float moveStrafing, float moveForward) {
+        executorService.submit(() -> {
+            try {
+                entities.parallelStream().forEach(entity -> {
+                    entity.moveEntityWithHeading(moveStrafing, moveForward);
+                });
+            } catch (Exception e) {
+                // Handle exception
+            }
+        });
+    }
+    public void moveEntityWithHeading(float moveStrafing, float moveForward) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
+            if (batchedUpdates.contains(this)) {
+                // Move is part of a batch update
+                batchMoveWithHeading(Collections.singletonList((EntityLivingBase) (Object) this), moveStrafing, moveForward);
+            } else {
+                // Regular move, execute on the current thread
+                ((EntityLivingBase) (Object) this).moveEntityWithHeading(moveStrafing, moveForward);
+            }
+        } else {
+            // Regular move, execute on the current thread
+            ((EntityLivingBase) (Object) this).moveEntityWithHeading(moveStrafing, moveForward);
+        }
+    }
+
+    private void onUpdateTasksParallel(List<Entity> batch) {
+        executorService.submit(() -> {
+            try {
+                batch.parallelStream().forEach(entity -> {
+                    if (entity instanceof EntityLiving) {
+                        EntityLiving livingEntity = (EntityLiving) entity;
+                        EntityAITasks entityAITasks = livingEntity.tasks;
+                        if (entityAITasks != null) {
+                            entityAITasks.onUpdateTasks(); // Call the batched onUpdateTasks
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                // Handle exception
+            }
+        });
+    }
+
 
     public void shutdownExecutorService() {
         if (!executorService.isShutdown()) {
