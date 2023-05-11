@@ -20,7 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
-@Mixin(value = Entity.class, priority = 901)
+@Mixin(EntityLiving.class)
 public abstract class MixinEntityAITask {
 
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
