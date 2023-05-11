@@ -24,11 +24,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntityAITask {
 
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
-
-    private final ExecutorService executorService = Executors.newFixedThreadPool(
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
-            .build());
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d").build()
+    );
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;

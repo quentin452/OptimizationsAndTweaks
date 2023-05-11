@@ -3,9 +3,9 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
@@ -22,35 +22,37 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer {
-
     @Shadow
     public Chunk loadChunk(int x, int z) {
         return null;
     }
 
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Chunk-Provider-Server-%d").build()
+    );
+
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void tick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkProviderServer) {
             try {
-                // Number of chunks to process per tick
                 int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
-                // Number of threads to use
                 int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
 
-                // Create a list of chunks to process
                 List<Chunk> chunksToProcess = new ArrayList<>();
                 WorldServer world = MinecraftServer.getServer().worldServers[0];
                 ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
 
-                // Use reflection to make the currentChunkSet field accessible
                 Field currentChunkSetField = ChunkProviderServer.class.getDeclaredField("currentChunkSet");
                 currentChunkSetField.setAccessible(true);
                 ChunkCoordIntPair currentChunkSet = (ChunkCoordIntPair) currentChunkSetField.get(chunkProvider);
 
-                for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX
-                    <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
-                    for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ
-                        <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
+                for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
+                    for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
                         Chunk chunk = chunkProvider.loadChunk(chunkX, chunkZ);
                         if (chunk != null) {
                             chunksToProcess.add(chunk);
@@ -58,10 +60,8 @@ public abstract class MixinChunkProviderServer {
                     }
                 }
 
-                // Process the chunks using a thread pool
-                ExecutorService executor = Executors.newFixedThreadPool(numThreads);
                 for (Chunk chunk : chunksToProcess) {
-                    executor.execute(() -> {
+                    executorService.execute(() -> {
                         ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition);
                         if (chunk.isModified) {
                             chunk.isModified = false;
@@ -69,7 +69,8 @@ public abstract class MixinChunkProviderServer {
                         }
                     });
                 }
-                executor.shutdown();
+
+                executorService.shutdown();
 
                 ci.cancel();
             } catch (NoSuchFieldException | IllegalAccessException e) {

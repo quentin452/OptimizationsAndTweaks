@@ -2,9 +2,9 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
@@ -26,9 +26,17 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinEntitiesCollision {
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ExecutorService collisionExecutor = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
+
+    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d").build()
+    );
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void overrideCollideWithNearbyEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
@@ -41,7 +49,7 @@ public abstract class MixinEntitiesCollision {
             entityBatches.parallelStream().forEach(batch -> collideWithEntitiesBatch(batch)); // Process batches in parallel
 
             // Shutdown the executor service to release resources
-            collisionExecutor.shutdown();
+            executorService.shutdown();
         }
     }
 
@@ -65,10 +73,12 @@ public abstract class MixinEntitiesCollision {
             List<Entity> batch = entities.subList(fromIndex, toIndex);
             entityBatches.add(batch);
         }
+        for (List<Entity> batch : entityBatches) {
+            executorService.execute(() -> collideWithEntitiesBatch(batch));
+        }
 
         return entityBatches;
     }
-
     private void collideWithEntitiesBatch(List<Entity> batch) {
         for (Entity entity : batch) {
             if (entity != null && entity.isEntityAlive() && entity.canBeCollidedWith()) {
@@ -81,6 +91,7 @@ public abstract class MixinEntitiesCollision {
 
                 // Vanilla collision logic
                 entity.applyEntityCollision((EntityLivingBase) (Object) this);
+
             }
         }
     }

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,9 +24,16 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityUpdate {
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d").build()
+    );
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    private final ForkJoinPool updateExecutor = ForkJoinPool.commonPool();
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
     private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private ChunkProviderServer chunkProvider;
@@ -77,20 +85,23 @@ public abstract class MixinEntityUpdate {
         entitiesToUpdate.clear();
     }
 
+
     private void processChunks(long time) {
         // Batch multiple chunk updates
         List<Chunk> chunksToUpdate = new ArrayList<>(entityLivingMap.keySet());
         entityLivingMap.clear();
 
-        updateExecutor.submit(() -> {
-            try {
-                // Process chunks
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Log exception
+        try {
+            // Process chunks
+            for (Chunk chunk : chunksToUpdate) {
+                // Process each chunk
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log exception
+        }
     }
+
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
@@ -100,12 +111,11 @@ public abstract class MixinEntityUpdate {
             int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
-                // Process chunks asynchronously in a separate thread
-                processChunks(time);
+                // Process chunks asynchronously using the executor service
+                executorService.execute(() -> processChunks(time));
             }
         }
     }
-
     @Inject(method = "updateEntityWithOptionalForce", at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
     private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {

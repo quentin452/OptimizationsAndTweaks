@@ -1,9 +1,9 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -22,7 +22,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinEntitiesUpdateTimeandLight {
 
-    private ExecutorService executor;
+    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadFactoryBuilder().setNameFormat("Entity-Time-Light-%d").build()
+    );
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void updateTimeLightAndEntitiesBatched(boolean p_147456_1_, CallbackInfo ci) {
@@ -32,15 +39,12 @@ public abstract class MixinEntitiesUpdateTimeandLight {
             int entityCount = worldServer.loadedEntityList.size();
             int batchCount = (entityCount + batchSize - 1) / batchSize;
 
-            // create a thread pool to run the batches
-            this.executor = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
-
             // submit each batch to the thread pool
             for (int i = 0; i < batchCount; i++) {
                 int startIndex = i * batchSize;
                 int endIndex = Math.min(startIndex + batchSize, entityCount);
                 final List<Entity> batch = worldServer.loadedEntityList.subList(startIndex, endIndex);
-                this.executor.submit(() -> {
+                this.executorService.submit(() -> {
                     for (Entity entity : batch) {
                         if (entity != null) {
                             try {
@@ -66,9 +70,9 @@ public abstract class MixinEntitiesUpdateTimeandLight {
     @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
     private void updateTimeLightAndEntitiesCleanup(boolean p_147456_1_, CallbackInfo ci) {
         // shut down the thread pool when done
-        if (this.executor != null) {
-            this.executor.shutdown();
-            this.executor = null;
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+            this.executorService = null;
         }
     }
 }
