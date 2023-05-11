@@ -15,9 +15,7 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.util.AxisAlignedBB;
 
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,16 +25,20 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinEntitiesCollision {
 
-
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d").build()
-    );
+    private final ThreadPoolExecutor executorService;
+
+    public MixinEntitiesCollision() {
+        executorService = new ThreadPoolExecutor(
+            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+            60L,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d").build()
+        );
+    }
+
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void overrideCollideWithNearbyEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
@@ -50,6 +52,11 @@ public abstract class MixinEntitiesCollision {
 
             // Shutdown the executor service to release resources
             executorService.shutdown();
+            try {
+                executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                // Handle the interruption
+            }
         }
     }
 
@@ -79,6 +86,7 @@ public abstract class MixinEntitiesCollision {
 
         return entityBatches;
     }
+
     private void collideWithEntitiesBatch(List<Entity> batch) {
         for (Entity entity : batch) {
             if (entity != null && entity.isEntityAlive() && entity.canBeCollidedWith()) {
