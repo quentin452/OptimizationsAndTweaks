@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(World.class)
-public class MixinEntitiesUpdateTimeandLight {
+public abstract class MixinEntitiesUpdateTimeandLight {
 
     private ExecutorService executor;
 

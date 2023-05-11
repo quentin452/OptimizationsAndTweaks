@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(StatList.class)
-public class MixinStatList {
+public abstract class MixinStatList {
 
     @Inject(method = "func_151182_a", at = @At("TAIL"), remap = false)
     private static void onRegisterStat(EntityList.EntityEggInfo eggInfo, CallbackInfoReturnable<StatBase> info) {

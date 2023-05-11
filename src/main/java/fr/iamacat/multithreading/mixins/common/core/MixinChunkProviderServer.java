@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(ChunkProviderServer.class)
-public class MixinChunkProviderServer {
+public abstract class MixinChunkProviderServer {
 
     @Shadow
     public Chunk loadChunk(int x, int z) {
