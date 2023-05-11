@@ -32,6 +32,13 @@ public abstract class MixinEntityUpdate {
     private World world;
     private long lastUpdateTime;
 
+    private final ConcurrentLinkedQueue<EntityLivingBase> entitiesToMove = new ConcurrentLinkedQueue<>();
+    private final ForkJoinPool moveExecutor = ForkJoinPool.commonPool();
+    private static final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private double strafe;
+    private double forward;
+    private float friction;
+
     public MixinEntityUpdate(World world, ChunkProviderServer chunkProvider) {
         this.chunkProvider = chunkProvider;
         this.world = world;
@@ -122,6 +129,42 @@ public abstract class MixinEntityUpdate {
         }
     }
 
+    private void moveEntities(List<EntityLivingBase> entities, double strafe, double forward, float friction) {
+        moveExecutor.submit(() -> {
+            try {
+                for (EntityLivingBase entity : entities) {
+                    entity.moveEntity(strafe, forward, friction);
+                }
+            } catch (Exception e) {
+                // Log exception
+            }
+        });
+    }
+
+    @Inject(method = "moveEntity", at = @At("HEAD"), cancellable = true)
+    public void batchMoveEntity(float strafe, float forward, float friction, CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
+            this.strafe = strafe;
+            this.forward = forward;
+            this.friction = friction;
+            entitiesToMove.add((EntityLivingBase) (Object) this);
+        }
+    }
+
+
+    @Inject(method = "updateEntities", at = @At("TAIL"))
+    private void moveBatchedEntities(CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
+            while (!entitiesToMove.isEmpty()) {
+                List<EntityLivingBase> batch = new ArrayList<>();
+                for (int i = 0; i < batchSize && !entitiesToMove.isEmpty(); i++) {
+                    EntityLivingBase entity = entitiesToMove.poll();
+                    batch.add(entity);
+                }
+                moveEntities(batch, strafe, forward, friction);
+            }
+        }
+    }
     private void updateEntityBatch(Entity entity) {
         if (entity instanceof EntityLivingBase) {
             ((EntityLivingBase) entity).onLivingUpdate();
