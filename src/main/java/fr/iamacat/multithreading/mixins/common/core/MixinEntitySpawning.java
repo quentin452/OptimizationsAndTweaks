@@ -41,7 +41,7 @@ public abstract class MixinEntitySpawning {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(World world, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning && !spawnQueue.isEmpty()) {
-            spawnEntitiesInQueue(world);
+            executorService.submit(() -> spawnEntitiesInQueue(world));
         }
     }
 

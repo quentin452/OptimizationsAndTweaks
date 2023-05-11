@@ -22,14 +22,7 @@ public abstract class MixinEntityUpdate {
 
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final Queue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    private final ThreadPoolExecutor updateExecutor = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        1L,
-        TimeUnit.MINUTES,
-        new LinkedBlockingQueue<Runnable>());
-
-    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new HashMap<>();
+    private final ExecutorService updateExecutor = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new HashMap<>();
     private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new HashMap<>());
     private IChunkProvider chunkProvider;
     private World world;
@@ -45,32 +38,31 @@ public abstract class MixinEntityUpdate {
     private void processEntityUpdates(long time) {
         int numEntities = 0;
         while (!entitiesToUpdate.isEmpty() && numEntities < MAX_ENTITIES_PER_TICK) {
-            Entity entity = entitiesToUpdate.poll();{
-                if (entity instanceof EntityLivingBase) {
-                    EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                    if (livingEntity.getHealth() > 0) {
-                        livingEntity.onLivingUpdate();
+            Entity entity = entitiesToUpdate.poll();
+            if (entity instanceof EntityLivingBase) {
+                EntityLivingBase livingEntity = (EntityLivingBase) entity;
+                if (livingEntity.getHealth() > 0) {
+                    livingEntity.onLivingUpdate();
+                }
+            } else {
+                entity.onEntityUpdate();
+            }
+            if (entity.isInWater()) {
+                entitiesInWater.add(entity);
+            }
+            if (entity instanceof EntityLiving) {
+                int posX = (int) entity.posX;
+                int posY = (int) entity.posY;
+                int posZ = (int) entity.posZ;
+                Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
+                Entity finalEntity = entity;
+                entityLivingMap.compute(chunk, (k, v) -> {
+                    if (v == null) {
+                        v = new ArrayList<>();
                     }
-                } else {
-                    entity.onEntityUpdate();
-                }
-                if (entity.isInWater()) {
-                    entitiesInWater.add(entity);
-                }
-                if (entity instanceof EntityLiving) {
-                    int posX = (int) entity.posX;
-                    int posY = (int) entity.posY;
-                    int posZ = (int) entity.posZ;
-                    Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
-                    Entity finalEntity = entity;
-                    entityLivingMap.compute(chunk, (k, v) -> {
-                        if (v == null) {
-                            v = new ArrayList<>();
-                        }
-                        v.add((EntityLiving) finalEntity);
-                        return v;
-                    });
-                }
+                    v.add((EntityLiving) finalEntity);
+                    return v;
+                });
             }
             numEntities++;
         }
@@ -100,14 +92,8 @@ public abstract class MixinEntityUpdate {
             int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
-                // Process chunks sequentially
-                for (Chunk chunk : entityLivingMap.keySet()) {
-                    List<EntityLiving> entities = entityLivingMap.get(chunk);
-                    for (EntityLiving entity : entities) {
-                        chunk.addEntity(entity);
-                    }
-                }
-                entityLivingMap.clear();
+                // Process chunks asynchronously in a separate thread
+                processChunks(time);
             }
         }
     }
@@ -116,7 +102,6 @@ public abstract class MixinEntityUpdate {
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);
     }
-
     @Inject(method = "removeEntity", at = @At("RETURN"))
     private void onRemoveEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.remove(entity);

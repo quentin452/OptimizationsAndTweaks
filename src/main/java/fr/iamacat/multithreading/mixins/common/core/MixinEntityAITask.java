@@ -99,4 +99,14 @@ public abstract class MixinEntityAITask {
             });
         }
     }
+    @Inject(method = "onEntityRemoved", at = @At("RETURN"))
+    private void onEntityRemoved(Entity entity, CallbackInfo ci) {
+        if (entity instanceof EntityLiving) {
+            EntityLiving livingEntity = (EntityLiving) entity;
+            ConcurrentMap<Integer, Entity> entityMap = getEntityMapForClass(livingEntity.getClass());
+            entityMap.remove(entity.getEntityId());
+        }
+    }
 }
+
+

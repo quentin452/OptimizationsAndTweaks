@@ -40,25 +40,21 @@ public class MixinEntitiesUpdateTimeandLight {
                 int startIndex = i * batchSize;
                 int endIndex = Math.min(startIndex + batchSize, entityCount);
                 final List<Entity> batch = worldServer.loadedEntityList.subList(startIndex, endIndex);
-                this.executor.submit(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        for (Entity entity : batch) {
-                            if (entity != null) {
-                                try {
-                                    entity.onUpdate();
-                                    if (entity instanceof EntityPlayer) {
-                                        EntityPlayer player = (EntityPlayer) entity;
-                                        player.sendPlayerAbilities();
-                                    }
-                                } catch (Throwable throwable) {
-                                    CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Ticking entity");
-                                    CrashReportCategory crashReportCategory = crashReport
-                                        .makeCategory("Entity being ticked");
-                                    entity.addEntityCrashInfo(crashReportCategory);
-                                    throw new ReportedException(crashReport);
+                this.executor.submit(() -> {
+                    for (Entity entity : batch) {
+                        if (entity != null) {
+                            try {
+                                entity.onUpdate();
+                                if (entity instanceof EntityPlayer) {
+                                    EntityPlayer player = (EntityPlayer) entity;
+                                    player.sendPlayerAbilities();
                                 }
+                            } catch (Throwable throwable) {
+                                CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Ticking entity");
+                                CrashReportCategory crashReportCategory = crashReport
+                                    .makeCategory("Entity being ticked");
+                                entity.addEntityCrashInfo(crashReportCategory);
+                                throw new ReportedException(crashReport);
                             }
                         }
                     }
