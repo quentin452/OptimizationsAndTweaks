@@ -98,14 +98,19 @@ public abstract class MixinEntityUpdate {
 
         try {
             // Process chunks
-            for (Chunk chunk : chunksToUpdate) {
-                // Process each chunk
-            }
+            ForkJoinPool forkJoinPool = new ForkJoinPool();
+            forkJoinPool.submit(() -> {
+                for (Chunk chunk : chunksToUpdate) {
+                    // Process each chunk
+                }
+            }).get();
+            forkJoinPool.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
             // Log exception
         }
     }
+
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
@@ -115,8 +120,8 @@ public abstract class MixinEntityUpdate {
             int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
-                // Process chunks asynchronously using the executor service
-                executorService.execute(() -> processChunks(time));
+                // Process chunks asynchronously using the moveExecutor
+                moveExecutor.submit(() -> processChunks(time));
             }
         }
     }

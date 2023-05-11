@@ -3,10 +3,12 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.world.WorldServer;
@@ -29,9 +31,15 @@ public abstract class MixinEntityAITask {
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
-            .build());
+        new LinkedBlockingQueue<>(),
+        new ThreadFactory() {
+            private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "Entity-AI-" + threadNumber.getAndIncrement());
+            }
+        }
+    );
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
@@ -89,6 +97,7 @@ public abstract class MixinEntityAITask {
                                             EntityAIBase aiBase = (EntityAIBase) taskEntry.action;
                                             aiBase.startExecuting();
                                         } catch (Exception e) {
+                                            // Handle the exception appropriately
                                             e.printStackTrace();
                                         }
                                     }
@@ -97,6 +106,7 @@ public abstract class MixinEntityAITask {
                         }
                     }
                 } catch (Exception e) {
+                    // Handle the exception appropriately
                     e.printStackTrace();
                 }
             });
@@ -109,6 +119,15 @@ public abstract class MixinEntityAITask {
             EntityLiving livingEntity = (EntityLiving) entity;
             ConcurrentMap<Integer, Entity> entityMap = getEntityMapForClass(livingEntity.getClass());
             entityMap.remove(entity.getEntityId());
+        }
+        // Check if the executorService is shutdown before shutting it down
+        if (!executorService.isShutdown()) {
+            executorService.shutdown();
+        }
+    }
+    public void shutdownExecutorService() {
+        if (!executorService.isShutdown()) {
+            executorService.shutdown();
         }
     }
 }
