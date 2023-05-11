@@ -38,9 +38,13 @@ public abstract class MixinEntitiesCollision {
             List<Entity> entities = getEntitiesWithinAABBExcludingEntity(world, boundingBox);
             List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
-            entityBatches.forEach(batch -> collisionExecutor.submit(() -> collideWithEntitiesBatch(batch))); // Process batches in a separate thread
+            entityBatches.parallelStream().forEach(batch -> collideWithEntitiesBatch(batch)); // Process batches in parallel
+
+            // Shutdown the executor service to release resources
+            collisionExecutor.shutdown();
         }
     }
+
     private List<Entity> getEntitiesWithinAABBExcludingEntity(World world, AxisAlignedBB boundingBox) {
         // Implement your custom logic here to retrieve the entities within the AABB
         // excluding the current entity
