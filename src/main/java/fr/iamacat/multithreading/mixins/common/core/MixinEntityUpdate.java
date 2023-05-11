@@ -21,8 +21,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntityUpdate {
 
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-
-    private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
+    private final Queue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private final ThreadPoolExecutor updateExecutor = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -30,8 +29,8 @@ public abstract class MixinEntityUpdate {
         TimeUnit.MINUTES,
         new LinkedBlockingQueue<Runnable>());
 
-    private final ConcurrentSkipListMap<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentSkipListMap<>();
-    private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new HashMap<>();
+    private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new HashMap<>());
     private IChunkProvider chunkProvider;
     private World world;
 
@@ -45,9 +44,8 @@ public abstract class MixinEntityUpdate {
 
     private void processEntityUpdates(long time) {
         int numEntities = 0;
-        Entity entity;
-        while ((entity = entitiesToUpdate.poll()) != null && numEntities < MAX_ENTITIES_PER_TICK) {
-            if (entity.isEntityAlive()) {
+        while (!entitiesToUpdate.isEmpty() && numEntities < MAX_ENTITIES_PER_TICK) {
+            Entity entity = entitiesToUpdate.poll();{
                 if (entity instanceof EntityLivingBase) {
                     EntityLivingBase livingEntity = (EntityLivingBase) entity;
                     if (livingEntity.getHealth() > 0) {
@@ -80,27 +78,18 @@ public abstract class MixinEntityUpdate {
     }
 
     private void processChunks(long time) {
-        int numChunks = Math.min(entityLivingMap.size(), 8);
-        List<Future<?>> futures = new ArrayList<>(numChunks);
-        for (int i = 0; i < numChunks; i++) {
-            Map.Entry<Chunk, List<EntityLiving>> entry = entityLivingMap.pollFirstEntry();
-            futures.add(updateExecutor.submit(() -> {
-                Chunk chunk = entry.getKey();
-                List<EntityLiving> batchEntities = entry.getValue();
-                for (EntityLiving entity : batchEntities) {
-                    if (entity.isEntityAlive()) {
-                        chunk.addEntity(entity);
-                    }
+        // Batch multiple chunk updates
+        List<Chunk> chunksToUpdate = new ArrayList<>(entityLivingMap.keySet());
+        entityLivingMap.clear();
+
+        updateExecutor.submit(() -> {
+            for (Chunk chunk : chunksToUpdate) {
+                List<EntityLiving> entities = entityLivingMap.get(chunk);
+                for (EntityLiving entity : entities) {
+                    chunk.addEntity(entity);
                 }
-            }));
-        }
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
             }
-        }
+        });
     }
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
@@ -111,7 +100,14 @@ public abstract class MixinEntityUpdate {
             int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
-                processChunks(time);
+                // Process chunks sequentially
+                for (Chunk chunk : entityLivingMap.keySet()) {
+                    List<EntityLiving> entities = entityLivingMap.get(chunk);
+                    for (EntityLiving entity : entities) {
+                        chunk.addEntity(entity);
+                    }
+                }
+                entityLivingMap.clear();
             }
         }
     }

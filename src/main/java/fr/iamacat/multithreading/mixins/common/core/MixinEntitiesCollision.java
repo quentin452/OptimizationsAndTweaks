@@ -32,20 +32,12 @@ import javax.swing.*;
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesCollision {
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Collision-Thread-%d").build()
-    );
 
     @Shadow
     public abstract void collideWithEntity(Entity entity);
 
     @Inject(at = @At("RETURN"), method = "collideWithNearbyEntities")
-    private void getNearbyEntitiesMultithreaded(CallbackInfo ci) {
+    private void collideWithNearbyEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
             World world = ((EntityLivingBase) (Object) this).worldObj;
             AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
@@ -53,9 +45,7 @@ public abstract class MixinEntitiesCollision {
             List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity((EntityLivingBase) (Object) this, boundingBox);
             List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
-            for (List<Entity> batch : entityBatches) {
-                executorService.execute(() -> collideWithEntitiesBatch(batch));
-            }
+            entityBatches.parallelStream().forEach(this::collideWithEntitiesBatch);
         }
     }
 
@@ -74,20 +64,21 @@ public abstract class MixinEntitiesCollision {
     }
 
     private void collideWithEntitiesBatch(List<Entity> batch) {
+        EntityLivingBase entityLivingBase = (EntityLivingBase) (Object) this;
+
         for (Entity entity : batch) {
             if (entity != null && entity.isEntityAlive() && entity.canBeCollidedWith()) {
+                // Custom collision logic
                 if (entity instanceof EntityHorse || entity instanceof EntityPig || entity instanceof EntityMinecart || entity instanceof EntityBoat || entity instanceof EntityBat) {
                     if (entity.riddenByEntity != null) {
                         continue; // Skip collision if the entity is rideable and already being ridden
                     }
                 }
 
+                // Vanilla collision logic
                 collideWithEntity(entity);
             }
         }
     }
-
-    public void dispose() {
-        executorService.shutdown();
-    }
 }
+
