@@ -26,7 +26,7 @@ import static fr.iamacat.multithreading.MultithreadingLogger.LOGGER;
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityAITask {
     private final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final LinkedBlockingDeque<Entity> batchedUpdates = new LinkedBlockingDeque<>(1000); // Capacity of 1000
+    private final ConcurrentLinkedQueue<Entity> batchedUpdates = new ConcurrentLinkedQueue<>();
 
     private final ConcurrentMap<Class<? extends Entity>, ConcurrentMap<Integer, Entity>> entityMap = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(
