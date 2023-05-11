@@ -30,8 +30,8 @@ public abstract class MixinEntityAITask {
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Entity-AI-%d")
+            .build());
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
@@ -102,6 +102,7 @@ public abstract class MixinEntityAITask {
             });
         }
     }
+
     @Inject(method = "onEntityRemoved", at = @At("RETURN"))
     private void onEntityRemoved(Entity entity, CallbackInfo ci) {
         if (entity instanceof EntityLiving) {
@@ -111,5 +112,3 @@ public abstract class MixinEntityAITask {
         }
     }
 }
-
-

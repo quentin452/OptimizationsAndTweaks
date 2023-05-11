@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
@@ -13,12 +12,14 @@ import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.util.AxisAlignedBB;
-
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
@@ -35,8 +36,8 @@ public abstract class MixinEntitiesCollision {
             60L,
             TimeUnit.SECONDS,
             new SynchronousQueue<>(),
-            new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d").build()
-        );
+            new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d")
+                .build());
     }
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
@@ -48,7 +49,8 @@ public abstract class MixinEntitiesCollision {
             List<Entity> entities = getEntitiesWithinAABBExcludingEntity(world, boundingBox);
             List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
-            entityBatches.parallelStream().forEach(batch -> collideWithEntitiesBatch(batch)); // Process batches in parallel
+            entityBatches.parallelStream()
+                .forEach(batch -> collideWithEntitiesBatch(batch)); // Process batches in parallel
 
             // Shutdown the executor service to release resources
             executorService.shutdown();
@@ -91,7 +93,10 @@ public abstract class MixinEntitiesCollision {
         for (Entity entity : batch) {
             if (entity != null && entity.isEntityAlive() && entity.canBeCollidedWith()) {
                 // Custom collision logic
-                if (entity instanceof EntityHorse || entity instanceof EntityPig || entity instanceof EntityMinecart || entity instanceof EntityBoat || entity instanceof EntityBat) {
+                if (entity instanceof EntityHorse || entity instanceof EntityPig
+                    || entity instanceof EntityMinecart
+                    || entity instanceof EntityBoat
+                    || entity instanceof EntityBat) {
                     if (entity.riddenByEntity != null) {
                         continue; // Skip collision if the entity is rideable and already being ridden
                     }

@@ -2,36 +2,35 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
-
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityUpdate {
+
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Entity-Update-%d")
+            .build());
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
@@ -85,7 +84,6 @@ public abstract class MixinEntityUpdate {
         entitiesToUpdate.clear();
     }
 
-
     private void processChunks(long time) {
         // Batch multiple chunk updates
         List<Chunk> chunksToUpdate = new ArrayList<>(entityLivingMap.keySet());
@@ -102,7 +100,6 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -116,14 +113,20 @@ public abstract class MixinEntityUpdate {
             }
         }
     }
-    @Inject(method = "updateEntityWithOptionalForce", at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
-    private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed, CallbackInfo ci) {
+
+    @Inject(
+        method = "updateEntityWithOptionalForce",
+        at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
+    private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed,
+        CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             entitiesToUpdate.add((Entity) (Object) this);
         }
     }
 
-    @ModifyArg(method = "updateEntityWithOptionalForce", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;updateEntity(Lnet/minecraft/entity/Entity;)V"))
+    @ModifyArg(
+        method = "updateEntityWithOptionalForce",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;updateEntity(Lnet/minecraft/entity/Entity;)V"))
     private Entity LivingOnUpdate(Entity entity) {
         return entity != (Entity) (Object) this ? entity : null;
     }
@@ -161,7 +164,6 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-
     @Inject(method = "updateEntities", at = @At("TAIL"))
     private void moveBatchedEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -175,15 +177,18 @@ public abstract class MixinEntityUpdate {
             }
         }
     }
+
     private void updateEntityBatch(Entity entity) {
         if (entity instanceof EntityLivingBase) {
             ((EntityLivingBase) entity).onLivingUpdate();
         }
     }
+
     @Inject(method = "addEntity", at = @At("RETURN"))
     private void onAddEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.add(entity);
     }
+
     @Inject(method = "removeEntity", at = @At("RETURN"))
     private void onRemoveEntity(Entity entity, CallbackInfo ci) {
         entitiesToUpdate.remove(entity);

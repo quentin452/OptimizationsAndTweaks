@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.List;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -17,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(World.class)
@@ -28,8 +29,8 @@ public abstract class MixinEntitiesUpdateTimeandLight {
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Entity-Time-Light-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Entity-Time-Light-%d")
+            .build());
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void updateTimeLightAndEntitiesBatched(boolean p_147456_1_, CallbackInfo ci) {

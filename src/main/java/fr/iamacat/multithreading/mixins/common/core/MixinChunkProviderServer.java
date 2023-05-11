@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
@@ -18,10 +17,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer {
+
     @Shadow
     public Chunk loadChunk(int x, int z) {
         return null;
@@ -33,8 +35,8 @@ public abstract class MixinChunkProviderServer {
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Chunk-Provider-Server-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Chunk-Provider-Server-%d")
+            .build());
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void tick(CallbackInfo ci) {
@@ -51,8 +53,10 @@ public abstract class MixinChunkProviderServer {
                 currentChunkSetField.setAccessible(true);
                 ChunkCoordIntPair currentChunkSet = (ChunkCoordIntPair) currentChunkSetField.get(chunkProvider);
 
-                for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
-                    for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
+                for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX
+                    <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
+                    for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ
+                        <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
                         Chunk chunk = chunkProvider.loadChunk(chunkX, chunkZ);
                         if (chunk != null) {
                             chunksToProcess.add(chunk);
