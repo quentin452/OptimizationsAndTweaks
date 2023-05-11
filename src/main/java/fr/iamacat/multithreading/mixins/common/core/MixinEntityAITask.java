@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -78,32 +79,29 @@ public abstract class MixinEntityAITask {
             .filter(key -> entitiesToAIUpdate.get(key).isDead)
             .forEach(entitiesToAIUpdate::remove);
     }
-
     @Inject(method = "updateEntityTask", at = @At("HEAD"))
     private void updateEntityTask(Entity entity, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
-            this.getWorldServer()
-                .updateEntity(entity);
+            this.getWorldServer().updateEntity(entity);
             executorService.submit(() -> {
                 try {
                     if (entity instanceof EntityLiving) {
                         EntityLiving livingEntity = (EntityLiving) entity;
-                        if (livingEntity.tasks.taskEntries.size() > 0) {
-                            for (Object taskEntryObj : livingEntity.tasks.taskEntries) {
-                                if (taskEntryObj instanceof EntityAITasks.EntityAITaskEntry) {
-                                    EntityAITasks.EntityAITaskEntry taskEntry = (EntityAITasks.EntityAITaskEntry) taskEntryObj;
-                                    if (taskEntry.action instanceof EntityAIBase) {
-                                        try {
-                                            EntityAIBase aiBase = (EntityAIBase) taskEntry.action;
-                                            aiBase.startExecuting();
-                                        } catch (Exception e) {
-                                            // Handle the exception appropriately
-                                            e.printStackTrace();
-                                        }
-                                    }
+                        Field tasksField = EntityAITasks.class.getDeclaredField("tasks");
+                        tasksField.setAccessible(true);
+                        EntityAITasks entityAITasks = (EntityAITasks) tasksField.get(livingEntity.tasks);
+                        List<EntityAITasks.EntityAITaskEntry> taskEntries = entityAITasks.taskEntries;
+                        taskEntries.parallelStream()
+                            .filter(taskEntry -> taskEntry.action instanceof EntityAIBase)
+                            .forEach(taskEntry -> {
+                                try {
+                                    EntityAIBase aiBase = (EntityAIBase) taskEntry.action;
+                                    aiBase.startExecuting();
+                                } catch (Exception e) {
+                                    // Handle the exception appropriately
+                                    e.printStackTrace();
                                 }
-                            }
-                        }
+                            });
                     }
                 } catch (Exception e) {
                     // Handle the exception appropriately

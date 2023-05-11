@@ -33,11 +33,10 @@ public abstract class MixinEntitiesCollision {
         executorService = new ThreadPoolExecutor(
             MultithreadingandtweaksMultithreadingConfig.numberofcpus,
             MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-            60L,
-            TimeUnit.SECONDS,
-            new SynchronousQueue<>(),
-            new ThreadFactoryBuilder().setNameFormat("Entity-Collision-%d")
-                .build());
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(),
+            r -> new Thread(r, "Entity-Collision"));
     }
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")

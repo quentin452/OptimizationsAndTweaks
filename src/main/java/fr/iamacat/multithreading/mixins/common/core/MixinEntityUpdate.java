@@ -30,14 +30,7 @@ public abstract class MixinEntityUpdate {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        new ThreadFactory() {
-            private final AtomicInteger threadNumber = new AtomicInteger(1);
-
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "Entity-Update-" + threadNumber.getAndIncrement());
-            }
-        }
-    );
+        r -> new Thread(r, "Entity-Update"));
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
@@ -97,14 +90,12 @@ public abstract class MixinEntityUpdate {
         entityLivingMap.clear();
 
         try {
-            // Process chunks
-            ForkJoinPool forkJoinPool = new ForkJoinPool();
-            forkJoinPool.submit(() -> {
+            // Process chunks asynchronously
+            executorService.submit(() -> {
                 for (Chunk chunk : chunksToUpdate) {
                     // Process each chunk
                 }
-            }).get();
-            forkJoinPool.shutdown();
+            });
         } catch (Exception e) {
             e.printStackTrace();
             // Log exception
@@ -120,12 +111,11 @@ public abstract class MixinEntityUpdate {
             int numEntitiesPerTick = (int) (timeElapsed * MAX_ENTITIES_PER_TICK / 20L);
             processEntityUpdates(time);
             if (!entityLivingMap.isEmpty()) {
-                // Process chunks asynchronously using the moveExecutor
-                moveExecutor.submit(() -> processChunks(time));
+                // Process chunks asynchronously using the executorService
+                executorService.submit(() -> processChunks(time));
             }
         }
     }
-
     @Inject(
         method = "updateEntityWithOptionalForce",
         at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
