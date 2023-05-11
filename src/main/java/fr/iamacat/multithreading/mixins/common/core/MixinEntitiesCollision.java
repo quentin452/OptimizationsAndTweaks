@@ -19,25 +19,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(World.class)
 public abstract class MixinEntitiesCollision {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private final ThreadPoolExecutor executorService;
 
-    public MixinEntitiesCollision() {
-        executorService = new ThreadPoolExecutor(
-            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-            0L,
-            TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(),
-            r -> new Thread(r, "Entity-Collision"));
-    }
+    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        60L,
+        TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(),
+        r -> new Thread(r, "Entity-Collision-" + MixinEntitiesCollision.this.hashCode()));
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void overrideCollideWithNearbyEntities(CallbackInfo ci) {

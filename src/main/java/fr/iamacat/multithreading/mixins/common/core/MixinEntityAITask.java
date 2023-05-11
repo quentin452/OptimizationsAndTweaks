@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.world.WorldServer;
@@ -18,8 +17,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
@@ -33,14 +30,7 @@ public abstract class MixinEntityAITask {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        new ThreadFactory() {
-            private final AtomicInteger threadNumber = new AtomicInteger(1);
-
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "Entity-AI-" + threadNumber.getAndIncrement());
-            }
-        }
-    );
+        r -> new Thread(r, "Entity-Aitask-" + MixinEntityAITask.this.hashCode()));
 
     public WorldServer getWorldServer() {
         return (WorldServer) (Object) this;
@@ -79,10 +69,12 @@ public abstract class MixinEntityAITask {
             .filter(key -> entitiesToAIUpdate.get(key).isDead)
             .forEach(entitiesToAIUpdate::remove);
     }
+
     @Inject(method = "updateEntityTask", at = @At("HEAD"))
     private void updateEntityTask(Entity entity, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask) {
-            this.getWorldServer().updateEntity(entity);
+            this.getWorldServer()
+                .updateEntity(entity);
             executorService.submit(() -> {
                 try {
                     if (entity instanceof EntityLiving) {
@@ -123,6 +115,7 @@ public abstract class MixinEntityAITask {
             executorService.shutdown();
         }
     }
+
     public void shutdownExecutorService() {
         if (!executorService.isShutdown()) {
             executorService.shutdown();

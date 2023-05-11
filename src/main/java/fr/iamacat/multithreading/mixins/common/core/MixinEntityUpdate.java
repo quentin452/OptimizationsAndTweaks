@@ -2,7 +2,6 @@ package fr.iamacat.multithreading.mixins.common.core;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -17,8 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(EntityLivingBase.class)
@@ -30,7 +27,7 @@ public abstract class MixinEntityUpdate {
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Update"));
+        r -> new Thread(r, "Entity-Update-" + MixinEntityUpdate.this.hashCode()));
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
     private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
@@ -102,7 +99,6 @@ public abstract class MixinEntityUpdate {
         }
     }
 
-
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void onUpdateEntities(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
@@ -116,11 +112,12 @@ public abstract class MixinEntityUpdate {
             }
         }
     }
+
     @Inject(
         method = "updateEntityWithOptionalForce",
         at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
     private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed,
-                                     CallbackInfo ci) {
+        CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
             entitiesToUpdate.add((Entity) (Object) this);
         }

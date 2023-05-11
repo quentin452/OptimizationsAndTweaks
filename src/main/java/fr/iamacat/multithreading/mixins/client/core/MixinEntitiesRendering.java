@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.client.core;
 import java.util.*;
 import java.util.concurrent.*;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -15,6 +14,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.FMLLog;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -48,12 +49,14 @@ public abstract class MixinEntitiesRendering {
             // Submit rendering task to the thread pool if not already running
             if (entityQueue.size() >= BATCH_SIZE) {
                 executorService.submit(new Runnable() {
+
                     @Override
                     public void run() {
                         try {
                             renderEntities(entityQueue);
                         } catch (Exception e) {
-                            FMLLog.getLogger().error("Error rendering entities", e);
+                            FMLLog.getLogger()
+                                .error("Error rendering entities", e);
                             throw e;
                         } finally {
                             entityQueue.clear();

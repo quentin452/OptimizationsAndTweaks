@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +10,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
-import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,10 +31,10 @@ public abstract class MixinEntitySpawning {
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-    0L,
-        TimeUnit.MILLISECONDS,
-    new LinkedBlockingQueue<>(),
-    r -> new Thread(r, "Entity-Spawning"));
+        60L,
+        TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(),
+        r -> new Thread(r, "Entity-Spawning-" + MixinEntitySpawning.this.hashCode()));
 
     public void close() {
         executorService.shutdown();
@@ -96,7 +94,7 @@ public abstract class MixinEntitySpawning {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
-                                          float partialTicks) {
+        float partialTicks) {
         render.doRender(entity, x, y, z, yaw, partialTicks);
     }
 }
