@@ -13,7 +13,7 @@ import cpw.mods.fml.common.FMLLog;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(ForgeInternalHandler.class)
-public class MixinGodZillaFix {
+public abstract class MixinGodZillaFix {
 
     @Redirect(
         method = "onEntityJoinWorld",
