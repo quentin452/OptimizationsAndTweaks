@@ -3,6 +3,7 @@ package fr.iamacat.multithreading.mixins.client.core;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -14,8 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.FMLLog;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -29,13 +28,9 @@ public abstract class MixinEntitiesRendering {
         new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d")
             .build());
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-    private long lastRenderTime = System.currentTimeMillis();
-
-    protected abstract void myBindEntityTexture(Entity entity);
+    private long lastRenderTime = System.nanoTime();
 
     private int tickCounter;
-
-    protected abstract void myRenderShadow(Entity entity, double x, double y, double z, float yaw, float partialTicks);
 
     @Inject(method = "doRender", at = @At("HEAD"))
     public void onDoRender(Entity entity, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
@@ -52,16 +47,17 @@ public abstract class MixinEntitiesRendering {
 
             // Submit rendering task to the thread pool if not already running
             if (entityQueue.size() >= BATCH_SIZE) {
-                executorService.submit(() -> {
-                    try {
-                        renderEntities(entityQueue);
-                    } catch (Exception e) {
-                        // Log exception and rethrow
-                        FMLLog.getLogger()
-                            .error("Error rendering entities", e);
-                        throw e;
-                    } finally {
-                        entityQueue.clear();
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            renderEntities(entityQueue);
+                        } catch (Exception e) {
+                            FMLLog.getLogger().error("Error rendering entities", e);
+                            throw e;
+                        } finally {
+                            entityQueue.clear();
+                        }
                     }
                 });
             }
@@ -89,8 +85,8 @@ public abstract class MixinEntitiesRendering {
         // Render entities in batches
         RenderManager renderManager = RenderManager.instance;
         tickCounter++; // Increment the tick counter
-        long currentTime = System.currentTimeMillis();
-        float tickDelta = (currentTime - lastRenderTime) / 1000.0f;
+        long currentTime = System.nanoTime();
+        float tickDelta = (currentTime - lastRenderTime) / 1000000000.0f;
         lastRenderTime = currentTime;
         for (List<Entity> entityBatch : entityBatches) {
             renderManager.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
