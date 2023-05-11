@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,25 +23,23 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityUpdate {
-
     private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final ConcurrentLinkedQueue<Entity> entitiesToUpdate = new ConcurrentLinkedQueue<>();
-    private final ExecutorService updateExecutor = Executors.newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new HashMap<>();
-    private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new HashMap<>());
-    private IChunkProvider chunkProvider;
+    private final ForkJoinPool updateExecutor = ForkJoinPool.commonPool();
+    private final Map<Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
+    private final Set<Entity> entitiesInWater = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private ChunkProviderServer chunkProvider;
     private World world;
     private long lastUpdateTime;
 
-
-    public MixinEntityUpdate(World world, IChunkProvider chunkProvider) {
+    public MixinEntityUpdate(World world, ChunkProviderServer chunkProvider) {
         this.chunkProvider = chunkProvider;
         this.world = world;
         this.lastUpdateTime = world.getTotalWorldTime();
     }
 
     private void processEntityUpdates(long time) {
-        int numEntities = 0;
-        while (!entitiesToUpdate.isEmpty() && numEntities < MAX_ENTITIES_PER_TICK) {
+        for (int numEntities = 0; numEntities < MAX_ENTITIES_PER_TICK && !entitiesToUpdate.isEmpty(); numEntities++) {
             Entity entity = entitiesToUpdate.poll();
             if (entity instanceof EntityLivingBase) {
                 EntityLivingBase livingEntity = (EntityLivingBase) entity;
@@ -57,17 +56,15 @@ public abstract class MixinEntityUpdate {
                 int posX = (int) entity.posX;
                 int posY = (int) entity.posY;
                 int posZ = (int) entity.posZ;
-                Chunk chunk = entity.worldObj.getChunkFromBlockCoords(posX, posZ);
-                Entity finalEntity = entity;
+                Chunk chunk = world.getChunkFromBlockCoords(posX, posZ);
                 entityLivingMap.compute(chunk, (k, v) -> {
                     if (v == null) {
                         v = new ArrayList<>();
                     }
-                    v.add((EntityLiving) finalEntity);
+                    v.add((EntityLiving) entity);
                     return v;
                 });
             }
-            numEntities++;
         }
         this.lastUpdateTime = time;
         entitiesToUpdate.clear();
@@ -86,7 +83,6 @@ public abstract class MixinEntityUpdate {
                 // Log exception
             }
         });
-
     }
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
@@ -102,6 +98,7 @@ public abstract class MixinEntityUpdate {
             }
         }
     }
+
     @Inject(method = "updateEntityWithOptionalForce", at = @At(value = "HEAD", target = "Lnet/minecraft/entity/EntityLivingBase;onLivingUpdate()V"))
     private void enqueueEntityUpdate(double x, double y, double z, boolean doBlockCollisions, boolean canBePushed, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityUpdate) {
