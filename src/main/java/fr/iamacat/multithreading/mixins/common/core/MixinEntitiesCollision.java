@@ -25,22 +25,29 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntitiesCollision {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
-
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        r -> new Thread(r, "Entity-Collision-%d" + MixinEntitiesCollision.this.hashCode()));
-
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
-    private void overrideCollideWithNearbyEntities(CallbackInfo ci) {
+    private void batchCollisions(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
-            executorService.execute(this::collideWithNearbyEntitiesAsync);
+            ci.cancel();
+            collisionExecutor.execute(this::batchCollisionsAsync);
         }
     }
+    private final ExecutorService collisionExecutor = Executors.newFixedThreadPool(
+        MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
+    private void batchCollisionsAsync() {
+        // Get entities within bounding box
+        List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
+
+        // Batch entities
+        List<List<Entity>> entityBatches = createEntityBatches(entities);
+
+        // Process each batch in parallel
+        entityBatches.parallelStream().forEach(this::collideWithEntitiesBatch);
+
+        // Shutdown executor
+        collisionExecutor.shutdown();
+    }
     private void collideWithNearbyEntitiesAsync() {
         World world = ((EntityLivingBase) (Object) this).worldObj;
         AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
@@ -52,22 +59,42 @@ public abstract class MixinEntitiesCollision {
             .forEach(this::collideWithEntitiesBatch); // Process batches in parallel
 
         // Shutdown the executor service to release resources
-        executorService.shutdown();
+        collisionExecutor.shutdown();
         try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            collisionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             // Handle the interruption
         }
     }
-
     private List<Entity> getEntitiesWithinAABBExcludingEntity(World world, AxisAlignedBB boundingBox) {
-        // Implement your custom logic here to retrieve the entities within the AABB
-        // excluding the current entity
-
-        // Example implementation:
         List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, boundingBox);
         entities.remove((Entity) (Object) this);
+
         return entities;
+    }
+
+    private List<Entity> getEntitiesWithinAABBExcludingEntity() {
+        World world = ((EntityLivingBase) (Object) this).worldObj;
+        AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
+
+        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, boundingBox);
+        entities.remove((Entity) (Object) this);
+
+        return entities;
+    }
+
+    private List<List<Entity>> createEntityBatches(List<Entity> entities) {
+        List<List<Entity>> entityBatches = new ArrayList<>();
+
+        int numBatches = (int) Math.ceil(entities.size() / (double) BATCH_SIZE);
+        for (int i = 0; i < numBatches; i++) {
+            int fromIndex = i * BATCH_SIZE;
+            int toIndex = Math.min(fromIndex + BATCH_SIZE, entities.size());
+            List<Entity> batch = entities.subList(fromIndex, toIndex);
+            entityBatches.add(batch);
+        }
+
+        return entityBatches;
     }
 
     private List<List<Entity>> createEntityBatches(List<Entity> entities, int batchSize) {
