@@ -34,7 +34,11 @@ public abstract class MixinGUIHUD {
         new ThreadFactoryBuilder().setNameFormat("Gui-HUD-%d")
             .build());
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "net/minecraft/client/gui/GuiIngame.<init>(Lnet/minecraft/client/Minecraft;)V"))
+    @Inject(
+        method = "<init>",
+        at = @At(
+            value = "INVOKE",
+            target = "net/minecraft/client/gui/GuiIngame.<init>(Lnet/minecraft/client/Minecraft;)V"))
     private void onInitPostConstructor(CallbackInfo ci) {
         executorService.execute(this::drawLoop);
     }

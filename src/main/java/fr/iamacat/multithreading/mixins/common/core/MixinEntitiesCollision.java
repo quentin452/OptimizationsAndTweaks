@@ -6,11 +6,6 @@ import java.util.concurrent.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -25,17 +20,37 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntitiesCollision {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
-    private void batchCollisions(CallbackInfo ci) {
+    private void batchCollisions(World world, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+            // Cancel vanilla method
             ci.cancel();
-            collisionExecutor.execute(this::batchCollisionsAsync);
+
+            AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
+            List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
+            List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
+
+            // Process entity batches in parallel
+            entityBatches.parallelStream()
+                .forEach(this::collideWithEntitiesBatch);
+
+            // Shutdown executor service
+            collisionExecutor.shutdown();
         }
     }
-    private final ExecutorService collisionExecutor = Executors.newFixedThreadPool(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
-    private void batchCollisionsAsync() {
+    private void collideWithEntitiesBatch(List<Entity> batch) {
+        for (Entity entity : batch) {
+            // Custom collision logic
+            entity.applyEntityCollision((EntityLivingBase) (Object) this);
+        }
+    }
+
+    private final ExecutorService collisionExecutor = Executors
+        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+
+    private void batchCollisionsAsync() throws InterruptedException {
         // Get entities within bounding box
         List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
 
@@ -43,11 +58,14 @@ public abstract class MixinEntitiesCollision {
         List<List<Entity>> entityBatches = createEntityBatches(entities);
 
         // Process each batch in parallel
-        entityBatches.parallelStream().forEach(this::collideWithEntitiesBatch);
+        entityBatches.parallelStream()
+            .forEach(this::collideWithEntitiesBatch);
 
         // Shutdown executor
         collisionExecutor.shutdown();
+        collisionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
+
     private void collideWithNearbyEntitiesAsync() {
         World world = ((EntityLivingBase) (Object) this).worldObj;
         AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
@@ -66,6 +84,7 @@ public abstract class MixinEntitiesCollision {
             // Handle the interruption
         }
     }
+
     private List<Entity> getEntitiesWithinAABBExcludingEntity(World world, AxisAlignedBB boundingBox) {
         List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, boundingBox);
         entities.remove((Entity) (Object) this);
@@ -109,24 +128,5 @@ public abstract class MixinEntitiesCollision {
         }
 
         return entityBatches;
-    }
-
-    private void collideWithEntitiesBatch(List<Entity> batch) {
-        for (Entity entity : batch) {
-            if (entity != null && entity.isEntityAlive() && entity.canBeCollidedWith()) {
-                // Custom collision logic
-                if (entity instanceof EntityHorse || entity instanceof EntityPig
-                    || entity instanceof EntityMinecart
-                    || entity instanceof EntityBoat
-                    || entity instanceof EntityBat) {
-                    if (entity.riddenByEntity != null) {
-                        continue; // Skip collision if the entity is rideable and already being ridden
-                    }
-                }
-
-                // Cancel vanilla collision logic
-                entity.applyEntityCollision((EntityLivingBase) (Object) this);
-            }
-        }
     }
 }

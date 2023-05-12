@@ -18,10 +18,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITask;
-    @Config.Comment("Enable multithreaded for Entity Update.")
+    @Config.Comment("Enable multithreaded for EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityUpdate;
+    public static boolean enableMixinEntityLivingUpdate;
     @Config.Comment("Enable multithreaded for Fire Tick.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
