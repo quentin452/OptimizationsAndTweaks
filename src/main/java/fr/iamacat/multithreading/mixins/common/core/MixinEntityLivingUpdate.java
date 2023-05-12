@@ -6,7 +6,6 @@ import java.util.concurrent.*;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +18,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate {
+
     private EntityLivingBase entityObject;
+
     @Shadow
     public abstract float getHealth();
+    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
+    private final List<CompletableFuture<Void>> updateFutures = new ArrayList<>();
 
     private double strafe;
     private double forward;
@@ -45,14 +49,13 @@ public abstract class MixinEntityLivingUpdate {
             return new Thread(wrappedRunnable, "Entity-Living-Update-%d" + MixinEntityLivingUpdate.this.hashCode());
         });
     private final Map<net.minecraft.world.chunk.Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
-    private static final int MAX_ENTITIES_PER_TICK = MultithreadingandtweaksMultithreadingConfig.batchsize;
-
+    // private static final int batchsize = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final CopyOnWriteArrayList<MixinEntityLivingUpdate> entitiesToUpdate = new CopyOnWriteArrayList<MixinEntityLivingUpdate>();
     private ChunkProviderServer chunkProvider;
-
     private World world;
     private long lastUpdateTime;
-    private Set<MixinEntityLivingUpdate> processedEntities;
+    private Set<MixinEntityLivingUpdate> processedEntities = ConcurrentHashMap.newKeySet();
+
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(World worldIn, CallbackInfo ci) {
         this.entityObject = (EntityLivingBase) (Object) this;
@@ -64,29 +67,8 @@ public abstract class MixinEntityLivingUpdate {
         this.chunkProvider = chunkProvider;
         this.world = world;
         this.lastUpdateTime = world.getTotalWorldTime();
+        this.processedEntities = new HashSet<>();
     }
-
-    @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
-    private void onLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
-            // Cancel vanilla method
-            ci.cancel();
-            // Process entity updates
-            // cause crash when enabled
-          // processEntityUpdates(world.getTotalWorldTime());
-        }
-    }
-
-   private void processUpdates() {
-        executorService.submit(() -> {
-            try {
-                // Process entity updates here
-            } catch (Exception e) {
-                // Handle exception
-            }
-        });
-    }
-
 
     private void moveEntities(double strafe, double forward, float friction) {
         executorService.submit(() -> {
@@ -100,38 +82,16 @@ public abstract class MixinEntityLivingUpdate {
                 e.printStackTrace();
             }
         });
-   }
-
-private void processEntityUpdates(long time) {
-    // Get the list of entities to process
-    List<MixinEntityLivingUpdate> entitiesToProcess = new ArrayList<>(entitiesToUpdate);
-
-    for (MixinEntityLivingUpdate entity : entitiesToProcess) {
-        // Check if entity has already been processed
-        if (processedEntities.contains(entity)) continue;
-        try {
-            // Process entity...
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        // Add entity to processed set (do not remove from list)
-        if (processedEntities == null) {
-            processedEntities = new HashSet<>();
-        }
-        processedEntities.add(entity);
     }
-    this.lastUpdateTime = time;
-}
 
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
-            processChunks(world.getTotalWorldTime());
+            // processChunks(world.getTotalWorldTime());
         }
     }
-    private void processChunks(long time) {
+
+   private void processChunks(long time) {
         // Remove processed entities from list (thread-safe in pool)
         entitiesToUpdate.removeAll(processedEntities);
 
@@ -150,18 +110,90 @@ private void processEntityUpdates(long time) {
     }
 
 
+
+    private synchronized void processEntityUpdates(long time) {
+        // Get the list of entities to process
+        List<MixinEntityLivingUpdate> entitiesToProcess = new ArrayList<>(entitiesToUpdate);
+
+        for (MixinEntityLivingUpdate entity : entitiesToProcess) {
+            // Check if entity has already been processed
+            if (processedEntities.contains(entity)) continue;
+
+            // Add entity to batch for processing
+            batchedEntities.add(entity);
+
+            // Check if the batch size has been reached
+            if (batchedEntities.size() >= batchSize) {
+                // Process the batched entities asynchronously
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    processEntities(batchedEntities);
+                }, executorService);
+                updateFutures.add(future);
+                batchedEntities.clear();
+            }
+        }
+        this.lastUpdateTime = time;
+    }
+    @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
+    private void onLivingUpdate(CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+            boolean needsUpdate = strafe != 0 || forward != 0 || friction != 0;
+
+            if (needsUpdate) {
+                // Call the updated method to handle movement and updates
+                executeOnLivingUpdate();
+            }
+
+            // Cancel the vanilla method if needed
+        //   ci.cancel();
+        }
+    }
+
+
+    private void processEntities(List<MixinEntityLivingUpdate> entities) {
+        for (MixinEntityLivingUpdate entity : entities) {
+            try {
+                // Example processing action: Set the entity's health to 0
+                entity.entityObject.setHealth(0);
+
+                // Perform additional actions on the entity as needed
+
+                // Example: Print a message for the processed entity
+                System.out.println("Entity processed!");
+
+                // Add your custom processing logic here
+
+            } catch (Exception e) {
+                // Handle any exceptions that occur during entity processing
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void processUpdates() {
+        executorService.submit(() -> {
+            try {
+                // Process entity updates here
+                // Assuming you have a processEntity method, process the batched entities
+                processEntities(batchedEntities);
+                batchedEntities.clear();
+            } catch (Exception e) {
+                // Handle exception
+            }
+        });
+    }
+
     private void executeOnLivingUpdate() {
         try {
-            // Call custom update method
             doUpdate();
-
-            // Actual async update logic
+            strafe = 0;
+            forward = 0;
+            friction = 0;
             moveEntities(strafe, forward, friction);
         } catch (Exception e) {
             // Handle exception
         }
     }
-
 
     @Inject(method = "doUpdate", at = @At("HEAD"), cancellable = true)
     private void doUpdateInject(CallbackInfo ci) {
@@ -173,4 +205,5 @@ private void processEntityUpdates(long time) {
     private void doUpdate() {
         entityObject.moveEntity(this.strafe, this.forward, this.friction);
     }
+
 }
