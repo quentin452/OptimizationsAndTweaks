@@ -1,20 +1,17 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import fr.iamacat.multithreading.MixinEntityLivingUpdateSubClass;
+import fr.iamacat.multithreading.subclass.MixinEntityLivingUpdateSubClass;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,6 +51,7 @@ public class MixinMinecraftServer {
             // Start the entity tick thread
             entityTickThread = new Thread(this::entityTickLoop, "EntityTickThread");
             entityTickThread.start();
+
         }
     }
 
@@ -78,7 +76,6 @@ public class MixinMinecraftServer {
         while (running) {
             if (worldServers != null) {
                 for (WorldServer world : worldServers) {
-                    System.out.println("Processing entities for world " + world);
                     processEntityUpdates(world, null); // Pass null as the CallbackInfo object for now
                 }
             }
