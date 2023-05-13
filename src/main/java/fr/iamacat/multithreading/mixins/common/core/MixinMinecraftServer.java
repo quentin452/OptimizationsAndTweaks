@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
@@ -9,14 +10,31 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
-    @Shadow
-    private WorldServer[] worldServers;
+    private CopyOnWriteArrayList<WorldServer> worldServers;
 
     private Thread worldTickThread;
     private Thread entityTickThread;
     private boolean running;
+
+    @Inject(method = "func_71190_q", at = @At("RETURN"))
+    private void captureWorldServers(CallbackInfo ci) {
+        try {
+            Field field = MinecraftServer.class.getDeclaredFields()[0];
+            field.setAccessible(true);
+
+            worldServers = new CopyOnWriteArrayList<>((List<WorldServer>) field.get(this));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Inject(method = "run", at = @At("HEAD"))
     private void startThreads(CallbackInfo ci) {
@@ -35,8 +53,10 @@ public class MixinMinecraftServer {
 
     private void worldTickLoop() {
         while (running) {
-            for (WorldServer world : worldServers) {
-                world.tick();
+            if (worldServers != null) {
+                for (WorldServer world : worldServers) {
+                    world.tick();
+                }
             }
 
             try {
@@ -50,8 +70,10 @@ public class MixinMinecraftServer {
 
     private void entityTickLoop() {
         while (running) {
-            for (WorldServer world : worldServers) {
-                world.updateEntities();
+            if (worldServers != null) {
+                for (WorldServer world : worldServers) {
+                    world.updateEntities();
+                }
             }
 
             try {
