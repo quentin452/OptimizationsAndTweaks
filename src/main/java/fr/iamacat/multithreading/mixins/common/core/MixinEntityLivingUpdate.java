@@ -23,6 +23,7 @@ public abstract class MixinEntityLivingUpdate {
 
     @Shadow
     public abstract float getHealth();
+
     private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
     private final List<CompletableFuture<Void>> updateFutures = new ArrayList<>();
@@ -90,8 +91,8 @@ public abstract class MixinEntityLivingUpdate {
             processEntityUpdates(world.getTotalWorldTime());
         }
     }
-   private void processChunks(long time) {
-       System.out.println("7");
+
+    private void processChunks(long time) {
         // Remove processed entities from list (thread-safe in pool)
         entitiesToUpdate.removeAll(processedEntities);
 
@@ -105,12 +106,9 @@ public abstract class MixinEntityLivingUpdate {
         executorService.submit(() -> {
             for (net.minecraft.world.chunk.Chunk chunk : chunksToUpdate) {
                 // Process chunk
-                System.out.println("7");
             }
         });
     }
-
-
 
     private synchronized void processEntityUpdates(long time) {
 
@@ -126,8 +124,8 @@ public abstract class MixinEntityLivingUpdate {
             if (batchedEntities.size() >= batchSize) {
 
                 // Process the batched entities asynchronously
-                CompletableFuture future = CompletableFuture.runAsync(
-                    () -> processEntities(batchedEntities), executorService);
+                CompletableFuture future = CompletableFuture
+                    .runAsync(() -> processEntities(batchedEntities), executorService);
 
                 // Add the future to the list
                 updateFutures.add(future);
@@ -138,12 +136,12 @@ public abstract class MixinEntityLivingUpdate {
         }
         processedEntities.addAll(entitiesToProcess);
         this.lastUpdateTime = time;
-        System.out.println("9");
     }
+
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
-           // System.out.println("Cancelling vanilla onLivingUpdate()");
+            // System.out.println("Cancelling vanilla onLivingUpdate()");
             boolean needsUpdate = strafe != 0 || forward != 0 || friction != 0;
 
             if (needsUpdate) {
@@ -152,10 +150,9 @@ public abstract class MixinEntityLivingUpdate {
             }
 
             // Cancel the vanilla method if needed
-        //   ci.cancel();
+            // ci.cancel();
         }
     }
-
 
     private void processEntities(List<MixinEntityLivingUpdate> entities) {
         for (MixinEntityLivingUpdate entity : entities) {

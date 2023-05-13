@@ -1,23 +1,26 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.subclass.MixinEntityLivingUpdateSubClass;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Field;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.subclass.MixinEntityLivingUpdateSubClass;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
+    // todo idk why but EntityLivingBase is running in Server thread , is supposed to run in Entity Tick Thread
+
     private CopyOnWriteArrayList<WorldServer> worldServers;
 
     private Thread worldTickThread;
@@ -67,7 +70,8 @@ public class MixinMinecraftServer {
                 // Adjust the sleep duration as needed
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                Thread.currentThread()
+                    .interrupt();
             }
         }
     }
@@ -84,7 +88,8 @@ public class MixinMinecraftServer {
                 // Adjust the sleep duration as needed
                 Thread.sleep(20);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                Thread.currentThread()
+                    .interrupt();
             }
         }
     }
@@ -94,7 +99,10 @@ public class MixinMinecraftServer {
         for (Entity entity : entities) {
             if (entity instanceof EntityLivingBase) {
                 EntityLivingBase livingEntity = (EntityLivingBase) entity;
-                MixinEntityLivingUpdateSubClass myLivingUpdate = new MixinEntityLivingUpdateSubClass(livingEntity, world, world.getChunkProvider());
+                MixinEntityLivingUpdateSubClass myLivingUpdate = new MixinEntityLivingUpdateSubClass(
+                    livingEntity,
+                    world,
+                    world.getChunkProvider());
                 myLivingUpdate.onLivingUpdate(ci); // Pass the CallbackInfo object as an argument
             }
         }

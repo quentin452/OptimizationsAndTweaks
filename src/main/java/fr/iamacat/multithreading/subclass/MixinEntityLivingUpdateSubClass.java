@@ -1,15 +1,16 @@
 package fr.iamacat.multithreading.subclass;
 
-import fr.iamacat.multithreading.mixins.common.core.MixinEntityLivingUpdate;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import fr.iamacat.multithreading.mixins.common.core.MixinEntityLivingUpdate;
 
 public class MixinEntityLivingUpdateSubClass extends MixinEntityLivingUpdate {
+
     @Override
     public float getHealth() {
         return 0;

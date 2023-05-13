@@ -20,6 +20,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntitiesCollision {
 
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private AxisAlignedBB boundingBox;
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void batchCollisions(World world, CallbackInfo ci) {
@@ -27,23 +28,13 @@ public abstract class MixinEntitiesCollision {
             // Cancel vanilla method
             ci.cancel();
 
-            AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
-            List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
-            List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
-
-            // Process entity batches in parallel
-            entityBatches.parallelStream()
-                .forEach(this::collideWithEntitiesBatch);
-
-            // Shutdown executor service
-            collisionExecutor.shutdown();
-        }
-    }
-
-    private void collideWithEntitiesBatch(List<Entity> batch) {
-        for (Entity entity : batch) {
-            // Custom collision logic
-            entity.applyEntityCollision((EntityLivingBase) (Object) this);
+            // Perform batched collisions asynchronously
+            try {
+                batchCollisionsAsync();
+            } catch (InterruptedException e) {
+                // Handle the interruption
+                e.printStackTrace();
+            }
         }
     }
 
@@ -55,22 +46,28 @@ public abstract class MixinEntitiesCollision {
         List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
 
         // Batch entities
-        List<List<Entity>> entityBatches = createEntityBatches(entities);
+        List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
         // Process each batch in parallel
-        entityBatches.parallelStream()
-            .forEach(this::collideWithEntitiesBatch);
+        for (List<Entity> batch : entityBatches) {
+            collisionExecutor.submit(() -> collideWithEntitiesBatch(batch));
+        }
 
         // Shutdown executor
         collisionExecutor.shutdown();
         collisionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
+    private void collideWithEntitiesBatch(List<Entity> batch) {
+        for (Entity entity : batch) {
+            // Custom collision logic
+            entity.applyEntityCollision((EntityLivingBase) (Object) this);
+        }
+    }
+
     private void collideWithNearbyEntitiesAsync() {
         World world = ((EntityLivingBase) (Object) this).worldObj;
-        AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
-
-        List<Entity> entities = getEntitiesWithinAABBExcludingEntity(world, boundingBox);
+        List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
         List<List<Entity>> entityBatches = createEntityBatches(entities, BATCH_SIZE);
 
         entityBatches.parallelStream()
@@ -85,11 +82,31 @@ public abstract class MixinEntitiesCollision {
         }
     }
 
-    private List<Entity> getEntitiesWithinAABBExcludingEntity(World world, AxisAlignedBB boundingBox) {
+    private void checkCollisions(World world, AxisAlignedBB boundingBox) {
+        // Get nearby entities
         List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, boundingBox);
-        entities.remove((Entity) (Object) this);
 
-        return entities;
+        // Batch entities into lists of size BATCH_SIZE
+        List<List<Entity>> batches = createEntityBatches(entities, BATCH_SIZE);
+
+        // Check collisions for each batch
+        for (List<Entity> batch : batches) {
+            collideWithBatch(batch);
+        }
+    }
+
+    private void collideWithBatch(List<Entity> batch) {
+        for (Entity entity : batch) {
+            if (!entity.equals(this)) {
+                // Check collision
+            }
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
+    private void cancelVanillaCollision(CallbackInfo ci) {
+        // Cancel vanilla collision logic
+        ci.cancel();
     }
 
     private List<Entity> getEntitiesWithinAABBExcludingEntity() {
@@ -100,20 +117,6 @@ public abstract class MixinEntitiesCollision {
         entities.remove((Entity) (Object) this);
 
         return entities;
-    }
-
-    private List<List<Entity>> createEntityBatches(List<Entity> entities) {
-        List<List<Entity>> entityBatches = new ArrayList<>();
-
-        int numBatches = (int) Math.ceil(entities.size() / (double) BATCH_SIZE);
-        for (int i = 0; i < numBatches; i++) {
-            int fromIndex = i * BATCH_SIZE;
-            int toIndex = Math.min(fromIndex + BATCH_SIZE, entities.size());
-            List<Entity> batch = entities.subList(fromIndex, toIndex);
-            entityBatches.add(batch);
-        }
-
-        return entityBatches;
     }
 
     private List<List<Entity>> createEntityBatches(List<Entity> entities, int batchSize) {

@@ -24,41 +24,53 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinEntitiesUpdateTimeandLight {
 
-    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+    ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
         new ThreadFactoryBuilder().setNameFormat("Entity-Time-Light-%d")
-            .build());
+            .build(),
+        new ThreadPoolExecutor.CallerRunsPolicy() // Execute rejected tasks in the caller thread
+    );
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void updateTimeLightAndEntitiesBatched(boolean p_147456_1_, CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesUpdateTimeandLight) {
             WorldServer worldServer = (WorldServer) (Object) this;
-            int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize; // adjust this to suit your needs
-            int entityCount = worldServer.loadedEntityList.size();
+            int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize * 3;
+
+            List<Entity> entities = new ArrayList<>(worldServer.loadedEntityList); // Create a copy of the entity list
+
+            int entityCount = entities.size();
             int batchCount = (entityCount + batchSize - 1) / batchSize;
 
-            // submit each batch to the thread pool
             for (int i = 0; i < batchCount; i++) {
                 int startIndex = i * batchSize;
+                if (entityCount <= startIndex) {
+                    break; // No more entities to process
+                }
                 int endIndex = Math.min(startIndex + batchSize, entityCount);
-                final List<Entity> batch = new ArrayList<>(worldServer.loadedEntityList.subList(startIndex, endIndex));
+
+                if (startIndex >= endIndex) {
+                    break; // No more entities to process
+                }
+
+                final List<Entity> batch = entities.subList(startIndex, endIndex);
+
                 this.executorService.submit(() -> {
                     for (Entity entity : batch) {
-                        if (entity != null) {
+                        if (entity != null && entity.isEntityAlive()) {
                             try {
                                 entity.onUpdate();
                                 if (entity instanceof EntityPlayer) {
                                     EntityPlayer player = (EntityPlayer) entity;
                                     player.sendPlayerAbilities();
                                 }
-                            } catch (Throwable throwable) {
-                                CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Ticking entity");
-                                CrashReportCategory crashReportCategory = crashReport
-                                    .makeCategory("Entity being ticked");
+                            } catch (Exception e) {
+                                CrashReport crashReport = CrashReport.makeCrashReport(e, "Ticking entity");
+                                CrashReportCategory crashReportCategory = crashReport.makeCategory("Entity being ticked");
                                 entity.addEntityCrashInfo(crashReportCategory);
                                 throw new ReportedException(crashReport);
                             }
@@ -77,4 +89,48 @@ public abstract class MixinEntitiesUpdateTimeandLight {
             this.executorService = null;
         }
     }
+
+    @Inject(method = "updateEntities", at = @At("HEAD"))
+    private void updateEntitiesBatched(CallbackInfo ci) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesUpdateTimeandLight) {
+            World world = (World) (Object) this;
+            int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+
+            List<Entity> entities = new ArrayList<>(world.loadedEntityList); // Create a copy of the entity list
+
+            int entityCount = entities.size();
+            int batchCount = (entityCount + batchSize - 1) / batchSize;
+
+            if (!entities.isEmpty()) { // Check if the entities list is not empty
+                for (int i = 0; i < batchCount; i++) {
+                    int startIndex = i * batchSize;
+                    int endIndex = Math.min(startIndex + batchSize, entityCount);
+
+                    if (startIndex >= endIndex) {
+                        break; // No more entities to process
+                    }
+
+                    final List<Entity> batch = new ArrayList<>(entities.subList(startIndex, endIndex)); // Create a thread-safe copy of the batch
+
+                    this.executorService.submit(() -> {
+                        for (Entity entity : batch) {
+                            if (entity != null && entity.isEntityAlive()) { // Check for null and entity liveness
+                                try {
+                                    // todo this line make crash
+                          //          entity.onUpdate();
+                                } catch (Exception e) {
+                                    CrashReport crashReport = CrashReport.makeCrashReport(e, "Entity update");
+                                    CrashReportCategory crashReportCategory = crashReport.makeCategory("Entity being updated");
+                                    entity.addEntityCrashInfo(crashReportCategory);
+                                    throw new ReportedException(crashReport);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+
 }
