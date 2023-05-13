@@ -87,10 +87,9 @@ public abstract class MixinEntityLivingUpdate {
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
-            // processChunks(world.getTotalWorldTime());
+            processEntityUpdates(world.getTotalWorldTime());
         }
     }
-
    private void processChunks(long time) {
         // Remove processed entities from list (thread-safe in pool)
         entitiesToUpdate.removeAll(processedEntities);
@@ -112,31 +111,36 @@ public abstract class MixinEntityLivingUpdate {
 
 
     private synchronized void processEntityUpdates(long time) {
+
         // Get the list of entities to process
         List<MixinEntityLivingUpdate> entitiesToProcess = new ArrayList<>(entitiesToUpdate);
 
         for (MixinEntityLivingUpdate entity : entitiesToProcess) {
-            // Check if entity has already been processed
-            if (processedEntities.contains(entity)) continue;
 
             // Add entity to batch for processing
             batchedEntities.add(entity);
 
             // Check if the batch size has been reached
             if (batchedEntities.size() >= batchSize) {
+
                 // Process the batched entities asynchronously
-                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                    processEntities(batchedEntities);
-                }, executorService);
+                CompletableFuture future = CompletableFuture.runAsync(
+                    () -> processEntities(batchedEntities), executorService);
+
+                // Add the future to the list
                 updateFutures.add(future);
+
+                // Clear the batched list
                 batchedEntities.clear();
             }
         }
+        processedEntities.addAll(entitiesToProcess);
         this.lastUpdateTime = time;
     }
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
-    private void onLivingUpdate(CallbackInfo ci) {
+    public void onLivingUpdate(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+            System.out.println("Cancelling vanilla onLivingUpdate()");
             boolean needsUpdate = strafe != 0 || forward != 0 || friction != 0;
 
             if (needsUpdate) {
@@ -184,6 +188,7 @@ public abstract class MixinEntityLivingUpdate {
     }
 
     private void executeOnLivingUpdate() {
+        System.out.println("Executing entity update in entity tick thread");
         try {
             doUpdate();
             strafe = 0;
