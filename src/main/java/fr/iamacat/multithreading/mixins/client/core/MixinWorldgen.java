@@ -1,15 +1,15 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +24,6 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(WorldClient.class)
 public abstract class MixinWorldgen {
 
-    private WorldClient world = Minecraft.getMinecraft().theWorld;
     private final ExecutorService executorService = Executors.newFixedThreadPool(6);
     private final Map<Long, Chunk> loadedChunks = new ConcurrentHashMap<>();
     private final AtomicInteger chunksBeingLoaded = new AtomicInteger(0);
@@ -32,18 +31,26 @@ public abstract class MixinWorldgen {
     @Inject(method = "doPreChunk", at = @At("HEAD"))
     private void onDoPreChunk(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen) {
-            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
             int x = Math.floorDiv((int) player.posX, 16);
             int z = Math.floorDiv((int) player.posZ, 16);
 
-            // Load chunk asynchronously if it's not already loaded
-            CompletableFuture
-                .supplyAsync(
-                    () -> loadedChunks.computeIfAbsent(ChunkPos.asLong(x, z), key -> loadChunk(x, z)),
-                    executorService)
-                .thenAccept(this::onChunkLoaded);
+            long chunkPosKey = ChunkPos.asLong(x, z);
+            loadChunkAsync(x, z);
         } else {
             setActivePlayerChunksAndCheckLightPublic();
+        }
+    }
+
+    private void loadChunkAsync(int x, int z) {
+        if (!loadedChunks.containsKey(ChunkPos.asLong(x, z))) {
+            CompletableFuture.runAsync(() -> {
+                Chunk chunk = loadChunk(x, z);
+                if (chunk != null) {
+                    loadedChunks.put(ChunkPos.asLong(x, z), chunk);
+                    onChunkLoaded(chunk);
+                }
+            }, executorService);
         }
     }
 
@@ -53,8 +60,10 @@ public abstract class MixinWorldgen {
             return cachedChunk;
         }
 
+        WorldClient world = Minecraft.getMinecraft().theWorld;
         ChunkProviderClient chunkProvider = (ChunkProviderClient) world.getChunkProvider();
         Chunk chunk = chunkProvider.provideChunk(x, z);
+
         if (chunk == null) {
             // Load chunk synchronously
             chunkProvider.loadChunk(x, z);
@@ -86,7 +95,7 @@ public abstract class MixinWorldgen {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } finally {
-                                i--; // Retry current chunk in next batch
+                                i--; // Retry current chunk in the next batch
                                 chunksBeingLoaded.decrementAndGet();
                             }
                         }
@@ -110,12 +119,12 @@ public abstract class MixinWorldgen {
     }
 
     public void setActivePlayerChunksAndCheckLightPublic() {
+        WorldClient world = Minecraft.getMinecraft().theWorld;
         try {
-            Method setActivePlayerChunksAndCheckLight = WorldClient.class
-                .getDeclaredMethod("setActivePlayerChunksAndCheckLight");
-            setActivePlayerChunksAndCheckLight.setAccessible(true);
-            setActivePlayerChunksAndCheckLight.invoke(world);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            Method method = World.class.getDeclaredMethod("setActivePlayerChunksAndCheckLight");
+            method.setAccessible(true);
+            method.invoke(world);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

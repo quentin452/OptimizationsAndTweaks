@@ -70,7 +70,8 @@ public abstract class MixinEntitiesUpdateTimeandLight {
                                 }
                             } catch (Exception e) {
                                 CrashReport crashReport = CrashReport.makeCrashReport(e, "Ticking entity");
-                                CrashReportCategory crashReportCategory = crashReport.makeCategory("Entity being ticked");
+                                CrashReportCategory crashReportCategory = crashReport
+                                    .makeCategory("Entity being ticked");
                                 entity.addEntityCrashInfo(crashReportCategory);
                                 throw new ReportedException(crashReport);
                             }
@@ -110,17 +111,17 @@ public abstract class MixinEntitiesUpdateTimeandLight {
                         break; // No more entities to process
                     }
 
-                    final List<Entity> batch = new ArrayList<>(entities.subList(startIndex, endIndex)); // Create a thread-safe copy of the batch
+                    final List<Entity> batch = new ArrayList<>(entities.subList(startIndex, endIndex));
 
                     this.executorService.submit(() -> {
                         for (Entity entity : batch) {
                             if (entity != null && entity.isEntityAlive()) { // Check for null and entity liveness
                                 try {
-                                    // todo this line make crash
-                          //          entity.onUpdate();
+                                    // entity.onUpdate();
                                 } catch (Exception e) {
                                     CrashReport crashReport = CrashReport.makeCrashReport(e, "Entity update");
-                                    CrashReportCategory crashReportCategory = crashReport.makeCategory("Entity being updated");
+                                    CrashReportCategory crashReportCategory = crashReport
+                                        .makeCategory("Entity being updated");
                                     entity.addEntityCrashInfo(crashReportCategory);
                                     throw new ReportedException(crashReport);
                                 }
@@ -131,6 +132,4 @@ public abstract class MixinEntitiesUpdateTimeandLight {
             }
         }
     }
-
-
 }
