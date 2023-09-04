@@ -35,10 +35,7 @@ public abstract class MixinWorldgen {
             int x = Math.floorDiv((int) player.posX, 16);
             int z = Math.floorDiv((int) player.posZ, 16);
 
-            long chunkPosKey = ChunkPos.asLong(x, z);
             loadChunkAsync(x, z);
-        } else {
-            setActivePlayerChunksAndCheckLightPublic();
         }
     }
 
@@ -68,40 +65,6 @@ public abstract class MixinWorldgen {
             // Load chunk synchronously
             chunkProvider.loadChunk(x, z);
             chunk = chunkProvider.provideChunk(x, z);
-
-            // Load adjacent chunks asynchronously if they're not already loaded
-            for (int i = x - 1; i <= x + 1; i++) {
-                for (int j = z - 1; j <= z + 1; j++) {
-                    if (i == x && j == z) {
-                        continue; // Skip the current chunk
-                    }
-                    long key = ChunkPos.asLong(i, j);
-                    if (!loadedChunks.containsKey(key)) {
-                        if (chunksBeingLoaded.incrementAndGet() <= 6) {
-                            int finalI = i;
-                            int finalJ = j;
-                            CompletableFuture
-                                .supplyAsync(
-                                    () -> loadedChunks.computeIfAbsent(key, k -> loadChunk(finalI, finalJ)),
-                                    executorService)
-                                .thenAccept(this::onChunkLoaded)
-                                .exceptionally(ex -> {
-                                    ex.printStackTrace();
-                                    return null;
-                                });
-                        } else {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } finally {
-                                i--; // Retry current chunk in the next batch
-                                chunksBeingLoaded.decrementAndGet();
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         // Cache the loaded chunk
@@ -114,18 +77,6 @@ public abstract class MixinWorldgen {
     private void onChunkLoaded(Chunk chunk) {
         if (chunk != null) {
             chunksBeingLoaded.decrementAndGet();
-            setActivePlayerChunksAndCheckLightPublic();
-        }
-    }
-
-    public void setActivePlayerChunksAndCheckLightPublic() {
-        WorldClient world = Minecraft.getMinecraft().theWorld;
-        try {
-            Method method = World.class.getDeclaredMethod("setActivePlayerChunksAndCheckLight");
-            method.setAccessible(true);
-            method.invoke(world);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
