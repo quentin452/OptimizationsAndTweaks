@@ -2,6 +2,8 @@
 
 This mod add multithreading for some features in 1.7.10. that can improve tps and fps in some situations.
 
+This mod add some tweaks in the config file to fix bugs.
+
 This mod is in early stages , so he can have somes bugs and unexpected behavior.
 
 this mod isn't a solution to fix magically all tps issues.
