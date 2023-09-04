@@ -1,5 +1,8 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
@@ -18,55 +21,46 @@ public class MixinMinecraftServer {
     @Shadow
     private WorldServer[] worldServers;
 
-    private Thread worldTickThread;
-    private Thread entityTickThread;
-    private boolean running;
+    private final ExecutorService worldTickExecutor = Executors.newFixedThreadPool(worldServers.length);
+    private final ExecutorService entityTickExecutor = Executors.newFixedThreadPool(worldServers.length);
 
-    @Inject(method = "run", at = @At("HEAD"))
-    private void startThreads(CallbackInfo ci) {
+    @Inject(method = "init", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinMinecraftServer) {
-            running = true;
-
-            // Start the world tick thread
-            worldTickThread = new Thread(this::worldTickLoop, "WorldTickThread");
-            worldTickThread.start();
-
-            // Start the entity tick thread
-            entityTickThread = new Thread(this::entityTickLoop, "EntityTickThread");
-            entityTickThread.start();
-        }
-    }
-
-    private void worldTickLoop() {
-        while (running) {
+            // Start the world tick threads after worldServers is fully initialized
             for (WorldServer world : worldServers) {
-                MultithreadingLogger.LOGGER.debug("World tick loop - {}", world.provider.getDimensionName());
-                world.tick();
-            }
-
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                MultithreadingLogger.LOGGER.error("World tick loop interrupted", e);
-                Thread.currentThread()
-                    .interrupt();
+                worldTickExecutor.submit(() -> worldTickLoop(world));
+                entityTickExecutor.submit(() -> entityTickLoop(world));
             }
         }
     }
 
-    private void entityTickLoop() {
-        while (running) {
-            for (WorldServer world : worldServers) {
-                MultithreadingLogger.LOGGER.debug("Entity tick loop - {}", world.provider.getDimensionName());
-                world.updateEntities();
+    private void worldTickLoop(WorldServer world) {
+        while (!Thread.currentThread().isInterrupted()) {
+            synchronized (worldTickExecutor) {
+                try {
+                    MultithreadingLogger.LOGGER.info("World tick loop - {}", world.provider.getDimensionName());
+                    world.tick();
+                    worldTickExecutor.wait(50); // Adjust the wait duration as needed
+                } catch (InterruptedException e) {
+                    MultithreadingLogger.LOGGER.error("World tick loop interrupted", e);
+                    Thread.currentThread().interrupt();
+                }
             }
+        }
+    }
 
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                MultithreadingLogger.LOGGER.error("Entity tick loop interrupted", e);
-                Thread.currentThread()
-                    .interrupt();
+    private void entityTickLoop(WorldServer world) {
+        while (!Thread.currentThread().isInterrupted()) {
+            synchronized (entityTickExecutor) {
+                try {
+                    MultithreadingLogger.LOGGER.info("Entity tick loop - {}", world.provider.getDimensionName());
+                    world.updateEntities();
+                    entityTickExecutor.wait(50); // Adjust the wait duration as needed
+                } catch (InterruptedException e) {
+                    MultithreadingLogger.LOGGER.error("Entity tick loop interrupted", e);
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
