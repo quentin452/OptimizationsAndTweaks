@@ -136,6 +136,11 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

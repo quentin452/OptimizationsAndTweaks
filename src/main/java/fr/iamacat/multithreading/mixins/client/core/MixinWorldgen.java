@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.client.core;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Mixin;

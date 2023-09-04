@@ -13,6 +13,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
     // BUGFIX MIXINS
+
+    common_minefactoryreloaded_MixinFixRubberTreesCascadingWorldgenLag(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix,
+        "minefactoryreloaded.MixinFixRubberTreesCascadingWorldgenLag"),
     common_minefactoryreloaded_MixinFixNoSuchMethodException(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixNoSuchMethodException,
         "minefactoryreloaded.MixinFixNoSuchMethodException"),
@@ -21,7 +25,6 @@ public enum Mixin implements IMixin {
         "core.MixinGodZillaFix"),
     common_core_MixinStatList(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatList,
         "core.MixinStatList"),
-
 
     // MULTITHREADING MIXINS
     common_core_MixinLeafDecay(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay,
