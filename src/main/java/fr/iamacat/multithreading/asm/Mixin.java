@@ -12,12 +12,20 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
+    // BUGFIX MIXINS
+    common_minefactoryreloaded_MixinFixNoSuchMethodException(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixNoSuchMethodException,
+        "minefactoryreloaded.MixinFixNoSuchMethodException"),
+
+    common_core_MixinGodZillaFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix,
+        "core.MixinGodZillaFix"),
+    common_core_MixinStatList(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatList,
+        "core.MixinStatList"),
+
 
     // MULTITHREADING MIXINS
     common_core_MixinLeafDecay(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay,
         "core.MixinLeafDecay"),
-    common_core_MixinEntityAITask(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityAITask,
-        "core.MixinEntityAITask"),
     common_core_MixinEntityLivingUpdate(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate, "core.MixinEntityLivingUpdate"),
     common_core_MixinFireTick(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick,
@@ -55,10 +63,6 @@ public enum Mixin implements IMixin {
     common_core_MixinChunkProviderServer(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
-    common_core_MixinGodZillaFix(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix,
-        "core.MixinGodZillaFix"),
-    common_core_MixinStatList(Side.COMMON, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinStatList,
-        "core.MixinStatList"),
     // CLIENT MIXINS
 
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksMultithreadingConfig.enableMixinParticle,

@@ -1,5 +1,7 @@
 package fr.iamacat.multithreading.asm;
 
+import static com.falsepattern.lib.mixin.ITargetedMod.PredicateHelpers.startsWith;
+
 import java.util.function.Predicate;
 
 import com.falsepattern.lib.mixin.ITargetedMod;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum TargetedMod implements ITargetedMod {
+
     /*
      * CHICKENCHUNKS("ChickenChunks", false, startsWith("chickenchunks")),
      * MRTJPCORE("MrTJPCore", false, startsWith("mrtjpcore")),
@@ -26,7 +29,7 @@ public enum TargetedMod implements ITargetedMod {
      * COFHCORE("CoFHCore", false, startsWith("cofhcore")),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
-    ;
+    MINEFACTORYRELOADED("MinefactoryReloaded", true, startsWith("minefactoryreloaded")),;
 
     @Getter
     private final String modName;

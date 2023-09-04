@@ -43,33 +43,35 @@ public abstract class MixinChunkProviderServer {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkProviderServer) {
             try {
                 int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
-                int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
 
                 List<Chunk> chunksToProcess = new ArrayList<>();
                 WorldServer world = MinecraftServer.getServer().worldServers[0];
                 ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
 
-                Field currentChunkSetField = ChunkProviderServer.class.getDeclaredField("currentChunkSet");
-                currentChunkSetField.setAccessible(true);
-                ChunkCoordIntPair currentChunkSet = (ChunkCoordIntPair) currentChunkSetField.get(chunkProvider);
+                synchronized (chunkProvider) {
+                    Field currentChunkSetField = ChunkProviderServer.class.getDeclaredField("currentChunkSet");
+                    currentChunkSetField.setAccessible(true);
+                    ChunkCoordIntPair currentChunkSet = (ChunkCoordIntPair) currentChunkSetField.get(chunkProvider);
 
-                for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX
-                    <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
-                    for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ
-                        <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
-                        Chunk chunk = chunkProvider.loadChunk(chunkX, chunkZ);
-                        if (chunk != null) {
-                            chunksToProcess.add(chunk);
+                    for (int chunkX = currentChunkSet.chunkXPos - batchSize; chunkX
+                        <= currentChunkSet.chunkXPos + batchSize; chunkX++) {
+                        for (int chunkZ = currentChunkSet.chunkZPos - batchSize; chunkZ
+                            <= currentChunkSet.chunkZPos + batchSize; chunkZ++) {
+                            Chunk chunk = chunkProvider.loadChunk(chunkX, chunkZ);
+                            if (chunk != null) {
+                                chunksToProcess.add(chunk);
+                            }
                         }
                     }
                 }
 
                 for (Chunk chunk : chunksToProcess) {
                     executorService.execute(() -> {
-                        ChunkCoordIntPair chunkCoords = new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition);
-                        if (chunk.isModified) {
-                            chunk.isModified = false;
-                            chunkProvider.saveChunks(true, null);
+                        synchronized (chunk) {
+                            if (chunk.isModified) {
+                                chunk.isModified = false;
+                                chunkProvider.saveChunks(true, null);
+                            }
                         }
                     });
                 }

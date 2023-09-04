@@ -7,9 +7,9 @@ import fr.iamacat.multithreading.Tags;
 @Config(modid = Tags.MODID)
 public class MultithreadingandtweaksMultithreadingConfig {
 
-    // Make inconfig ingame
-    // make categories
-
+    // Make inconfig ingame Fixme todo
+    // make categories Fixme todo
+    // Multithreading/Batch
     @Config.Comment("Enable multithreaded for leaf decay.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -107,14 +107,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;
-    @Config.Comment("Fix Godzilla Spam Log from orespawn")
-    @Config.DefaultBoolean(false)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinGodZillaFix;
-    @Config.Comment("Print stats ids to help to fix duplicated stats ids crash")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinStatList;
     @Config.Comment("Enable separate threads for world ticking and entity ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -129,6 +121,21 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RangeInt(min = 1, max = 1000)
     @Config.RequiresWorldRestart
     public static int batchsize;
+
+    // BugFix Mixins
+
+    @Config.Comment("Fix Godzilla Spam Log from orespawn")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGodZillaFix;
+    @Config.Comment("Print stats ids to help to fix duplicated stats ids crash")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinStatList;
+    @Config.Comment("Fix Spam logs when minefactory reloaded is installed with several mod(see the mixin to find which")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixNoSuchMethodException;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

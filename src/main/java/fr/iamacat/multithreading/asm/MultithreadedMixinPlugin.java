@@ -18,7 +18,7 @@ public class MultithreadedMixinPlugin implements IMixinPlugin {
 
     public MultithreadedMixinPlugin() {
         try {
-            ConfigurationManager.registerConfig(MultithreadingandtweaksMultithreadingConfig.class);
+            ConfigurationManager.initialize(MultithreadingandtweaksMultithreadingConfig.class);
         } catch (ConfigException e) {
             throw new RuntimeException(e);
         }

@@ -88,7 +88,11 @@ public abstract class MixinEntityLivingUpdate {
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
-            processEntityUpdates(world.getTotalWorldTime());
+            try {
+                processEntityUpdates(world.getTotalWorldTime());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,31 +115,34 @@ public abstract class MixinEntityLivingUpdate {
     }
 
     private synchronized void processEntityUpdates(long time) {
+        try {
+            // Get the list of entities to process
+            List<MixinEntityLivingUpdate> entitiesToProcess = new ArrayList<>(entitiesToUpdate);
 
-        // Get the list of entities to process
-        List<MixinEntityLivingUpdate> entitiesToProcess = new ArrayList<>(entitiesToUpdate);
+            for (MixinEntityLivingUpdate entity : entitiesToProcess) {
 
-        for (MixinEntityLivingUpdate entity : entitiesToProcess) {
+                // Add entity to batch for processing
+                batchedEntities.add(entity);
 
-            // Add entity to batch for processing
-            batchedEntities.add(entity);
+                // Check if the batch size has been reached
+                if (batchedEntities.size() >= batchSize) {
 
-            // Check if the batch size has been reached
-            if (batchedEntities.size() >= batchSize) {
+                    // Process the batched entities asynchronously
+                    CompletableFuture future = CompletableFuture
+                        .runAsync(() -> processEntities(batchedEntities), executorService);
 
-                // Process the batched entities asynchronously
-                CompletableFuture future = CompletableFuture
-                    .runAsync(() -> processEntities(batchedEntities), executorService);
+                    // Add the future to the list
+                    updateFutures.add(future);
 
-                // Add the future to the list
-                updateFutures.add(future);
-
-                // Clear the batched list
-                batchedEntities.clear();
+                    // Clear the batched list
+                    batchedEntities.clear();
+                }
             }
+            processedEntities.addAll(entitiesToProcess);
+            this.lastUpdateTime = time;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        processedEntities.addAll(entitiesToProcess);
-        this.lastUpdateTime = time;
     }
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
@@ -195,7 +202,7 @@ public abstract class MixinEntityLivingUpdate {
             friction = 0;
             moveEntities(strafe, forward, friction);
         } catch (Exception e) {
-            // Handle exception
+            e.printStackTrace();
         }
     }
 
