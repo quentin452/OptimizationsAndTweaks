@@ -1,6 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.minefactoryreloaded;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -8,14 +9,16 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import powercrystals.minefactoryreloaded.world.WorldGenLakesMeta;
 
-import java.util.Random;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import powercrystals.minefactoryreloaded.world.WorldGenLakesMeta;
 
 @Mixin(WorldGenLakesMeta.class)
 public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerator {
+
     @Unique
     private Block multithreading1_7_10$_block; // Declare _block variable at the class level
 
@@ -23,7 +26,6 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
     private static int multithreading1_7_10$lakeGenerationCounter = 0;
     @Unique
     private static final int MAX_LAKE_GENERATIONS_PER_TICK = 5; // Adjust this value as needed
-
 
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
@@ -104,7 +106,8 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
                             if (aboolean[(i1 * 16 + j2) * 8 + i2]) {
                                 int chunkX = x / 16 + i1;
                                 int chunkZ = z / 16 + j2;
-                                world.getChunkProvider().provideChunk(chunkX, chunkZ);
+                                world.getChunkProvider()
+                                    .provideChunk(chunkX, chunkZ);
                             }
                         }
                     }
@@ -119,13 +122,16 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
                                 int blockY = y + i2;
                                 int blockZ = z + j2;
 
-                                Material material = world.getBlock(blockX, blockY, blockZ).getMaterial();
+                                Material material = world.getBlock(blockX, blockY, blockZ)
+                                    .getMaterial();
 
                                 if (i2 >= 4 && material.isLiquid()) {
                                     return false;
                                 }
 
-                                if (i2 < 4 && !material.isSolid() && !world.getBlock(blockX, blockY, blockZ).equals(multithreading1_7_10$_block)) {
+                                if (i2 < 4 && !material.isSolid()
+                                    && !world.getBlock(blockX, blockY, blockZ)
+                                        .equals(multithreading1_7_10$_block)) {
                                     return false;
                                 }
                             }
@@ -136,7 +142,8 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
                 for (i1 = 0; i1 < 16; ++i1) {
                     for (j2 = 0; j2 < 16; ++j2) {
                         for (i2 = 4; i2 < 8; ++i2) {
-                            if (aboolean[(i1 * 16 + j2) * 8 + i2] && world.getBlock(x + i1, y + i2 - 1, z + j2).equals(Blocks.dirt)
+                            if (aboolean[(i1 * 16 + j2) * 8 + i2] && world.getBlock(x + i1, y + i2 - 1, z + j2)
+                                .equals(Blocks.dirt)
                                 && world.getSavedLightValue(EnumSkyBlock.Sky, x + i1, y + i2, z + j2) > 0) {
                                 BiomeGenBase biomegenbase = world.getBiomeGenForCoords(x + i1, z + j2);
 

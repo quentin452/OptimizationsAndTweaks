@@ -11,12 +11,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.falsepattern.lib.compat.BlockPos;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
@@ -27,8 +25,8 @@ public abstract class MixinFireTick {
     // Use a shared thread pool with a fixed number of threads
     private static final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d").build()
-    );
+        new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d")
+            .build());
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {}

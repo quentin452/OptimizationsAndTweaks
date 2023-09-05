@@ -2,23 +2,22 @@ package fr.iamacat.multithreading.mixins.common.minefactoryreloaded;
 
 import java.util.Random;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
 
 @Mixin(WorldGenRubberTree.class)
 public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
+
     @Unique
     protected boolean doBlockNotify;
 
@@ -74,7 +73,8 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
                             int checkZ = z + zOffset;
 
                             // Check if the destination chunk is generated
-                            if (world.getChunkProvider().chunkExists(checkX >> 4, checkZ >> 4)) {
+                            if (world.getChunkProvider()
+                                .chunkExists(checkX >> 4, checkZ >> 4)) {
                                 Block block = world.getBlock(checkX, checkY, checkZ);
 
                                 // You can customize this condition to match the blocks that indicate trees
@@ -138,7 +138,8 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
                                     for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
                                         block = world.getBlock(xOffset, yOffset, zOffset);
 
-                                        if (block.getMaterial().isLiquid()) {
+                                        if (block.getMaterial()
+                                            .isLiquid()) {
                                             return false;
                                         }
                                     }
@@ -188,8 +189,8 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 
                             if (((xPos != center || zPos != center) || rand.nextInt(2) != 0 && var12 != 0)
                                 && (block == null || block.isLeaves(world, xOffset, yOffset, zOffset)
-                                || block.isAir(world, xOffset, yOffset, zOffset)
-                                || block.canBeReplacedByLeaves(world, xOffset, yOffset, zOffset))) {
+                                    || block.isAir(world, xOffset, yOffset, zOffset)
+                                    || block.canBeReplacedByLeaves(world, xOffset, yOffset, zOffset))) {
 
                                 this.setBlockAndNotifyAdequately(
                                     world,
