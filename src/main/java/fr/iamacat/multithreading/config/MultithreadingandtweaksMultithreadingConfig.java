@@ -103,10 +103,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;
-    @Config.Comment("Enable separate threads for world ticking and entity ticking")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinMinecraftServer;
     @Config.Comment("Choose the number of processor/CPU of your computer to fix potential issues.")
     @Config.DefaultInt(6)
     @Config.RangeInt(min = 1, max = 64)

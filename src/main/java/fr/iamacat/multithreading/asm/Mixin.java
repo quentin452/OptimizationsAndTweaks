@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // BUGFIX MIXINS
-
     common_slimecarnage_MixinFixCascadingFromWorldGenSlimeCarnage(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage,
         "slimecarnage.MixinFixCascadingFromWorldGenSlimeCarnage"),

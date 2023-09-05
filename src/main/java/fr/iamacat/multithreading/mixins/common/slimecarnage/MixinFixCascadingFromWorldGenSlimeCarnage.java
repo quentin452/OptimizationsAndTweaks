@@ -11,8 +11,11 @@ import net.minecraft.world.chunk.IChunkProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import com.lulan.shincolle.utility.LogHelper;
+
 import cpw.mods.fml.common.IWorldGenerator;
-import supremopete.SlimeCarnage.commom.LogHelper;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.mixins.common.slimecarnage.classes.FixCascadingFromWorldGenSewers;
 import supremopete.SlimeCarnage.worldgen.*;
 import supremopete.SlimeCarnage.worldgen.WorldGenSlimeCarnage;
 
@@ -24,92 +27,115 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
-                         IChunkProvider chunkProvider) {
-        switch (world.provider.dimensionId) {
-            case -1:
-                generateNether(world, random, chunkX, chunkZ);
-                break;
-            case 0:
-                generateSurface(world, random, chunkX, chunkZ);
-                break;
-            case 1:
-                generateEnd(world, random, chunkX, chunkZ);
-                break;
-            default:
-                break;
+        IChunkProvider chunkProvider) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage) {
+            switch (world.provider.dimensionId) {
+                case -1:
+                    generateNether(world, random, chunkX, chunkZ);
+                    break;
+
+                case 0:
+                    generateSurface(world, random, chunkX, chunkZ);
+                    break;
+
+                case 1:
+                    generateEnd(world, random, chunkX, chunkZ);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
     @Unique
     private void generateSurface(World world, Random random, int chunkX, int chunkZ) {
-        // Cache the biome for this chunk
+        // Use the same Random instance for consistency
+        Random rand = random;
+
+        if (oldCave == 0 && generateCave(world, rand, chunkX, chunkZ)) {
+            return;
+        }
+
+        int biomeCheck = getBiomeCheck(world, rand, chunkX, chunkZ);
+        if (biomeCheck == 1) {
+            generateDesertRuins(world, rand, chunkX, chunkZ);
+        } else if (biomeCheck == 2) {
+            generateStoneRuins(world, rand, chunkX, chunkZ);
+        }
+
+        if (generateMadLab(rand)) {
+            generateMadLab(world, rand, chunkX, chunkZ);
+        }
+
+        if (biomeCheck == 1 && generateDesertTomb(rand)) {
+            generateDesertTomb(world, rand, chunkX, chunkZ);
+        }
+    }
+
+    @Unique
+    private boolean generateCave(World world, Random rand, int chunkX, int chunkZ) {
+        int Xcoord2 = chunkX + rand.nextInt(16);
+        int Ycoord2 = 64 + rand.nextInt(6);
+        int Zcoord2 = chunkZ + rand.nextInt(16);
+        if ((new FixCascadingFromWorldGenSewers().modifyFunc76484a(world, rand, Xcoord2, Ycoord2, Zcoord2))) {
+            ++this.oldCave;
+            LogHelper.info("Cave at: " + Xcoord2 + " " + Ycoord2 + " " + Zcoord2);
+            return true;
+        }
+        return false;
+    }
+
+    @Unique
+    private int getBiomeCheck(World world, Random rand, int chunkX, int chunkZ) {
         BiomeGenBase biomegenbase = world.getBiomeGenForCoords(chunkX * 16, chunkZ * 16);
-
-        int Ycoord1;
-        int Xcoord2;
-        int Xcoord5;
-        if (this.oldCave == 0) {
-            int Xcoord1 = chunkX * 16 + random.nextInt(16);
-            Ycoord1 = 64 + random.nextInt(16);
-            Xcoord2 = chunkZ * 16 + random.nextInt(16);
-            if ((new WorldGenOldManCave()).func_76484_a(world, random, Xcoord1, Ycoord1, Xcoord2)) {
-                ++this.oldCave;
-                LogHelper.info("Cave at: " + Xcoord1 + " " + Ycoord1 + " " + Xcoord2);
-            }
-        }
-
-        Random rand = new Random(world.getSeed());
-        rand.nextInt(); 
-
-        Ycoord1 = rand.nextInt(20);
-        int scrub2;
-        int scrub4;
-        if (Ycoord1 == 0) {
-            Xcoord2 = chunkX * 16 + random.nextInt(16);
-            scrub2 = 64 + random.nextInt(6);
-            scrub4 = chunkZ * 16 + random.nextInt(16);
-            (new WorldGenSewers()).func_76484_a(world, random, Xcoord2, scrub2, scrub4);
-        }
-
-        int Xcoord4;
-        int scrub5;
         if (biomegenbase instanceof BiomeGenDesert) {
-            scrub2 = rand.nextInt(10);
-            if (scrub2 == 0) {
-                scrub4 = chunkX * 16 + random.nextInt(16);
-                Xcoord4 = 66 + random.nextInt(12);
-                scrub5 = chunkZ * 16 + random.nextInt(16);
-                (new WorldGenDesertRuins()).func_76484_a(world, random, scrub4, Xcoord4, scrub5);
-            }
+            return rand.nextInt(10);
+        } else if (biomegenbase instanceof BiomeGenPlains) {
+            return rand.nextInt(4);
         }
+        return 0;
+    }
 
-        if (biomegenbase instanceof BiomeGenPlains) {
-            scrub4 = rand.nextInt(4);
-            if (scrub4 == 0) {
-                Xcoord4 = chunkX * 16 + random.nextInt(16);
-                scrub5 = 66 + random.nextInt(12);
-                Xcoord5 = chunkZ * 16 + random.nextInt(16);
-                (new WorldGenStoneRuins()).func_76484_a(world, random, Xcoord4, scrub5, Xcoord5);
-            }
-        }
+    @Unique
+    private void generateDesertRuins(World world, Random rand, int chunkX, int chunkZ) {
+        int Xcoord4 = chunkX + rand.nextInt(16);
+        int scrub4 = 66 + rand.nextInt(12);
+        int Xcoord5 = chunkZ + rand.nextInt(16);
+        (new WorldGenDesertRuins()).func_76484_a(world, rand, Xcoord4, scrub4, Xcoord5);
+    }
 
-        scrub4 = rand.nextInt(16);
-        if (scrub4 == 0) {
-            Xcoord4 = chunkX * 16 + random.nextInt(16);
-            scrub5 = 66 + random.nextInt(6);
-            Xcoord5 = chunkZ * 16 + random.nextInt(16);
-            (new WorldGenMadLab()).func_76484_a(world, random, Xcoord4, scrub5, Xcoord5);
-        }
+    @Unique
+    private void generateStoneRuins(World world, Random rand, int chunkX, int chunkZ) {
+        int Xcoord4 = chunkX + rand.nextInt(16);
+        int Xcoord5 = chunkZ + rand.nextInt(16);
+        (new WorldGenStoneRuins()).func_76484_a(world, rand, Xcoord4, 66 + rand.nextInt(12), Xcoord5);
+    }
 
-        if (biomegenbase instanceof BiomeGenDesert) {
-            scrub5 = rand.nextInt(10);
-            if (scrub5 == 0) {
-                Xcoord5 = chunkX * 16 + random.nextInt(16);
-                int Ycoord5 = 64 + random.nextInt(8);
-                int Zcoord5 = chunkZ * 16 + random.nextInt(16);
-                (new WorldGenDesertTomb()).func_76484_a(world, random, Xcoord5, Ycoord5, Zcoord5);
-            }
-        }
+    @Unique
+    private boolean generateMadLab(Random rand) {
+        return rand.nextInt(16) == 0;
+    }
+
+    @Unique
+    private void generateMadLab(World world, Random rand, int chunkX, int chunkZ) {
+        int Xcoord4 = chunkX + rand.nextInt(16);
+        int scrub5 = 66 + rand.nextInt(6);
+        int Xcoord5 = chunkZ + rand.nextInt(16);
+        (new WorldGenMadLab()).func_76484_a(world, rand, Xcoord4, scrub5, Xcoord5);
+    }
+
+    @Unique
+    private boolean generateDesertTomb(Random rand) {
+        return rand.nextInt(10) == 0;
+    }
+
+    @Unique
+    private void generateDesertTomb(World world, Random rand, int chunkX, int chunkZ) {
+        int Xcoord5 = chunkX + rand.nextInt(16);
+        int Ycoord5 = 64 + rand.nextInt(8);
+        int Zcoord5 = chunkZ + rand.nextInt(16);
+        (new WorldGenDesertTomb()).func_76484_a(world, rand, Xcoord5, Ycoord5, Zcoord5);
     }
 
     @Unique
