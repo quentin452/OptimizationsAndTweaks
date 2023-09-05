@@ -156,11 +156,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShipwreckGen;
 
-    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenHandler from Battle Towers Mod")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinFixCascadingFromWorldGenHandler;
-
     @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
