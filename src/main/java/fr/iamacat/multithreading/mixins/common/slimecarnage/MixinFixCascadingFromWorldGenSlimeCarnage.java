@@ -15,7 +15,6 @@ import com.lulan.shincolle.utility.LogHelper;
 
 import cpw.mods.fml.common.IWorldGenerator;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
-import fr.iamacat.multithreading.mixins.common.slimecarnage.classes.FixCascadingFromWorldGenSewers;
 import supremopete.SlimeCarnage.worldgen.*;
 import supremopete.SlimeCarnage.worldgen.WorldGenSlimeCarnage;
 
@@ -78,7 +77,7 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
         int Xcoord2 = chunkX + rand.nextInt(16);
         int Ycoord2 = 64 + rand.nextInt(6);
         int Zcoord2 = chunkZ + rand.nextInt(16);
-        if ((new FixCascadingFromWorldGenSewers().modifyFunc76484a(world, rand, Xcoord2, Ycoord2, Zcoord2))) {
+        if ((new WorldGenSewers().func_76484_a(world, rand, Xcoord2, Ycoord2, Zcoord2))) {
             ++this.oldCave;
             LogHelper.info("Cave at: " + Xcoord2 + " " + Ycoord2 + " " + Zcoord2);
             return true;
