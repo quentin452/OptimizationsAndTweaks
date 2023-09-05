@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum TargetedMod implements ITargetedMod {
-
     /*
      * CHICKENCHUNKS("ChickenChunks", false, startsWith("chickenchunks")),
      * MRTJPCORE("MrTJPCore", false, startsWith("mrtjpcore")),

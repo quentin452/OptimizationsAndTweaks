@@ -50,23 +50,16 @@ dependencies {
     implementation "curse.maven:minefactory-reloaded-66672:2366149-deobf-sources-api"
     implementation "curse.maven:cofh-core-69162:2388750-deobf-sources-api"
     implementation "curse.maven:shincolle-228395:2405620-deobf-sources-api"
-
-
     implementation "curse.maven:shipwrecks-291608:3275625-deobf-sources-api"
     implementation "curse.maven:advent-of-ascension-nevermine-311054:2973564-deobf-sources-api"
     implementation "curse.maven:atomicstrykers-battle-towers-227877:2231443-deobf-sources-api"
-
-
     implementation "curse.maven:atum-59621:2256356-deobf-sources-api"
     implementation "curse.maven:farlanders-336432:2777303-deobf-sources-api"
     implementation "curse.maven:slime-carnage-224146:2276988-deobf-sources-api"
-
     implementation "curse.maven:pams-harvestcraft-221857:2270206-deobf-sources-api"
 
-  //  implementation "curse.maven:saltymod-expanded-659083:3985032-deobf-sources-api"
-
- //   implementation 'com.github.GTNewHorizons:BuildCraft:d11b3b8cd5'
-    //implementation 'com.github.GTNewHorizons:TConstruct:1bb6fed60a'
+    runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
+    runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
 
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 }
