@@ -31,7 +31,16 @@ public enum TargetedMod implements ITargetedMod {
     // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
-    MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),;
+    MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
+    ATUM("Atum", false, startsWith("atum")),
+    FARLANDERS("The Farlanders", false, startsWith("farlanders")),
+    SLIMECARNAGE("Slime Carnage", false, startsWith("slimecarnage")),
+    ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("AS_BattleTowers")),
+    SALTYMOD_EXPANDED("Salty Mod Expanded", false, startsWith("SaltMod")),
+    BUILDCRAFT("BuildCraft", false, startsWith("BuildCraft|Core")),
+    TCONSTRUCT("Tinkers' Construct", false, startsWith("TConstruct")),
+    ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
+    SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),;
 
     @Getter
     private final String modName;

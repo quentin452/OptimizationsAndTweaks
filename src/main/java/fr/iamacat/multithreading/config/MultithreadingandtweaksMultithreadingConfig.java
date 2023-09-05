@@ -137,23 +137,28 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
 
-    @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded")
+    @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix;
-    @Config.Comment("Fix Some Cascading Worldgen caused by Lakes from minefactory reloaded")
+    @Config.Comment("Fix Some Cascading Worldgen caused by Lakes from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix;
-    @Config.Comment("Fix All Cascading Worldgen caused by Poly Gravel from Shinkeiseikan Collection(ATTENTION this mixin disabling Poly Gravel generation)")
+    @Config.Comment("Fix All Cascading Worldgen caused by Poly Gravel from Shinkeiseikan Collection Mod (ATTENTION this mixin disabling Poly Gravel generation)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromWorldGenPolyGravel;
 
-    @Config.Comment("Fix Some Cascading Worldgen caused by Shincolle World Gen from Shinkeiseikan Collection")
+    @Config.Comment("Fix Some Cascading Worldgen caused by Shincolle World Gen from Shinkeiseikan Collection Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShinColleWorldGen;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by Shipwreck Gen from Shipwreck Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingFromShipwreckGen;
     /*
      * @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
      * @Config.DefaultBoolean(true)

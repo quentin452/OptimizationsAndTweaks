@@ -20,6 +20,9 @@ public enum Mixin implements IMixin {
      * m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixPamsTreesCascadingWorldgenLag,
      * "pamsharvestcraft.MixinFixPamsTreesCascadingWorldgenLag"),
      */
+    MixinFixCascadingFromShipwreckGen(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShipwreckGen,
+        "shipwreck.MixinFixCascadingFromShipwreckGen"),
     common_shincolle_MixinFixCascadingFromWorldGenPolyGravel(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromWorldGenPolyGravel,
         "shincolle.MixinFixCascadingFromWorldGenPolyGravel"),
