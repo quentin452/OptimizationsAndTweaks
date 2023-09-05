@@ -20,92 +20,50 @@ import org.spongepowered.asm.mixin.Unique;
 public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
 
     @Unique
-    private static List biomelist;
+    private static List<BiomeGenBase> validBiomes;
+
+    static {
+        validBiomes = Arrays.asList(
+            BiomeGenBase.beach,
+            BiomeGenBase.coldBeach,
+            BiomeGenBase.stoneBeach
+        );
+    }
+
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-        switch(world.provider.dimensionId) {
-            case 0: // Overworld
-                this.generateSurface(world, chunkX * 16, chunkZ * 16);
-            default:
+        if (world.provider.dimensionId == 0) {
+            generateSurface(world, chunkX * 16, chunkZ * 16, random);
         }
     }
 
     @Unique
-    private void generateSurface(World world, int posX, int posZ) {
-        BiomeGenBase b = world.getBiomeGenForCoords(posX, posZ);
-        Random random = new Random();
-        if (this.canSpawnStructureAtCoords(world, posX, posZ)) {
-            posX += random.nextInt(8) - 16;
-            posZ += random.nextInt(8) - 16;
-            RandomWeightedShip beachList;
-            String structure;
-            if (!b.biomeName.equals("Ocean") && !b.biomeName.equals("Deep Ocean") && !b.biomeName.equals("FrozenOcean")) {
-                if (b.biomeName.equals("Beach") || b.biomeName.equals("Cold Beach") || b.biomeName.equals("Stone Beach")) {
-                    beachList = new RandomWeightedShip();
-                    beachList.add((double) ShipwreckConfig.waverunnerOceanRarity, "waverunner");
-                    beachList.add((double)ShipwreckConfig.schoonerOceanRarity, "schooner");
-                    beachList.add((double)ShipwreckConfig.sloopOceanRarity, "sloop");
-                    beachList.add((double)ShipwreckConfig.sailboatOceanRarity, "sailboat");
-                    beachList.add((double)ShipwreckConfig.rowboatOceanRarity, "rowboat");
-                    structure = (String)beachList.next();
-                    if (structure == "rowboat") {
-                        RowboatGen.generateRowboat(world, random, posX, posZ);
-                    } else if (structure == "sailUp") {
-                        SailboatUprightGen.generateSailboatUpright(world, random, posX, posZ);
-                    } else if (structure == "sailSide") {
-                        SailboatSideGen.generateSailboatSide(world, random, posX, posZ);
-                    } else if (structure == "sloop") {
-                        SloopGen.generateSloop(world, random, posX, posZ);
-                    } else if (structure == "schooner") {
-                        SchoonerGen.generateSchooner(world, random, posX, posZ);
-                    } else if (structure == "waverunner") {
-                        WaverunnerGen.generateWaverunner(world, random, posX, posZ);
-                    }
-                }
-            } else {
-                beachList = new RandomWeightedShip();
-                beachList.add((double)ShipwreckConfig.waverunnerOceanRarity, "waverunner");
-                beachList.add((double)ShipwreckConfig.schoonerOceanRarity, "schooner");
-                beachList.add((double)ShipwreckConfig.sloopOceanRarity, "sloop");
-                beachList.add((double)(ShipwreckConfig.sailboatOceanRarity / 2), "sailUp");
-                beachList.add((double)(ShipwreckConfig.sailboatOceanRarity / 2), "sailSide");
-                beachList.add((double)ShipwreckConfig.rowboatOceanRarity, "rowboat");
-                beachList.add((double)ShipwreckConfig.spireRarity, "spire");
-                structure = (String)beachList.next();
-                if (structure == "rowboat") {
-                    RowboatGen.generateRowboat(world, random, posX, posZ);
-                } else if (structure == "sailUp") {
-                    SailboatUprightGen.generateSailboatUpright(world, random, posX, posZ);
-                } else if (structure == "sailSide") {
-                    SailboatSideGen.generateSailboatSide(world, random, posX, posZ);
-                } else if (structure == "sloop") {
-                    SloopGen.generateSloop(world, random, posX, posZ);
-                } else if (structure == "spire") {
-                    SpireGen.generateSpire(world, random, posX, posZ);
-                } else if (structure == "schooner") {
-                    SchoonerGen.generateSchooner(world, random, posX, posZ);
-                } else if (structure == "waverunner") {
-                    WaverunnerGen.generateWaverunner(world, random, posX, posZ);
-                }
-            }
-        }
+    private void generateSurface(World world, int posX, int posZ, Random random) {
+        BiomeGenBase biome = world.getBiomeGenForCoords(posX, posZ);
 
+        if (isValidBiome(biome) && canSpawnStructureAtCoords(posX, posZ, random)) {
+            String structure = getRandomStructure(random);
+            generateStructure(world, posX, posZ, random, structure);
+        }
     }
 
     @Unique
-    protected boolean canSpawnStructureAtCoords(World world, int posX, int posZ) {
+    private boolean isValidBiome(BiomeGenBase biome) {
+        return validBiomes.contains(biome);
+    }
+
+    @Unique
+    private boolean canSpawnStructureAtCoords(int posX, int posZ, Random random) {
         int maxDist = ShipwreckConfig.shipwreckMaxDistance;
         int minDist = ShipwreckConfig.shipwreckMinDistance;
+
         if (minDist < 0) {
             minDist = 0;
         }
 
-        Random random;
-        for(random = new Random(); maxDist <= minDist; ++maxDist) {
-        }
-
         int xVal = posX / 16;
         int zVal = posZ / 16;
+
         if (xVal < 0) {
             xVal *= -1;
         }
@@ -117,14 +75,57 @@ public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
         int chunkRange = maxDist - minDist;
         int checkX = xVal / maxDist;
         int checkZ = zVal / maxDist;
+
         checkX *= maxDist;
         checkZ *= maxDist;
         checkX += random.nextInt(chunkRange);
         checkZ += random.nextInt(chunkRange);
+
         return xVal == checkX && zVal == checkZ;
     }
 
-    static {
-        biomelist = Arrays.asList(BiomeGenBase.plains, BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.megaTaiga, BiomeGenBase.megaTaigaHills);
+    @Unique
+    private String getRandomStructure(Random random) {
+        RandomWeightedShip weightedShip = new RandomWeightedShip();
+        weightedShip.add(ShipwreckConfig.waverunnerOceanRarity, "waverunner");
+        weightedShip.add(ShipwreckConfig.schoonerOceanRarity, "schooner");
+        weightedShip.add(ShipwreckConfig.sloopOceanRarity, "sloop");
+        weightedShip.add(ShipwreckConfig.sailboatOceanRarity, "sailboat");
+        weightedShip.add(ShipwreckConfig.rowboatOceanRarity, "rowboat");
+
+        if (isValidBiome(BiomeGenBase.stoneBeach)) {
+            weightedShip.add(ShipwreckConfig.spireRarity, "spire");
+        }
+
+        return (String) weightedShip.next();
+    }
+
+    @Unique
+    private void generateStructure(World world, int posX, int posZ, Random random, String structure) {
+        switch (structure) {
+            case "rowboat":
+                RowboatGen.generateRowboat(world, random, posX, posZ);
+                break;
+            case "sailUp":
+                SailboatUprightGen.generateSailboatUpright(world, random, posX, posZ);
+                break;
+            case "sailSide":
+                SailboatSideGen.generateSailboatSide(world, random, posX, posZ);
+                break;
+            case "sloop":
+                SloopGen.generateSloop(world, random, posX, posZ);
+                break;
+            case "schooner":
+                SchoonerGen.generateSchooner(world, random, posX, posZ);
+                break;
+            case "waverunner":
+                WaverunnerGen.generateWaverunner(world, random, posX, posZ);
+                break;
+            case "spire":
+                SpireGen.generateSpire(world, random, posX, posZ);
+                break;
+            default:
+                break;
+        }
     }
 }
