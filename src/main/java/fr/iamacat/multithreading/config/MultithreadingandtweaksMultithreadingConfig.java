@@ -145,6 +145,15 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix;
+    @Config.Comment("Fix Some Cascading Worldgen caused by Poly Gravel from Shinkeiseikan Collection")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingFromWorldGenPolyGravel;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by Shincolle World Gen from Shinkeiseikan Collection")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingFromShinColleWorldGen;
     /*
      * @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
      * @Config.DefaultBoolean(true)

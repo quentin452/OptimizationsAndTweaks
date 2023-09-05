@@ -29,7 +29,7 @@ public enum TargetedMod implements ITargetedMod {
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
     // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
-
+    SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),;
 
