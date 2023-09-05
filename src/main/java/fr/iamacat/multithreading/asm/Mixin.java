@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
     // BUGFIX MIXINS
-
+    common_minefactoryreloaded_MixinFixWorldGenLakesMetaCascadingWorldgenLag(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix,
+        "minefactoryreloaded.MixinFixWorldGenLakesMetaCascadingWorldgenLag"),
     common_minefactoryreloaded_MixinFixRubberTreesCascadingWorldgenLag(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix,
         "minefactoryreloaded.MixinFixRubberTreesCascadingWorldgenLag"),
