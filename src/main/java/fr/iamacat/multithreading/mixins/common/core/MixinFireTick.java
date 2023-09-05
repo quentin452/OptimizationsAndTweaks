@@ -24,24 +24,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
 
-    private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+    // Use a shared thread pool with a fixed number of threads
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d")
-            .build());
-
-    private boolean isReplaceable(BlockFire block, World world, BlockPos pos) {
-        return block.isReplaceable(world, pos.getX(), pos.getY(), pos.getZ());
-    }
+        new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d").build()
+    );
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {}
-
-    @Unique
-    private final ConcurrentLinkedQueue<int[][]> blocksToUpdate = new ConcurrentLinkedQueue<>();
 
     @Inject(method = "updateTick", at = @At("HEAD"))
     public void updateTick(World world, int x, int y, int z, Random random, CallbackInfo info) {
@@ -53,8 +43,6 @@ public abstract class MixinFireTick {
             BlockingQueue<int[]> blocksToUpdate = new LinkedBlockingQueue<>();
             blocksToUpdate.add(new int[] { x, y, z });
 
-            ExecutorService executor = Executors
-                .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
             List<Future<Void>> futures = new ArrayList<>();
 
             while (!blocksToUpdate.isEmpty()) {
@@ -90,7 +78,7 @@ public abstract class MixinFireTick {
 
                 int[] blockToUpdate = blocksToUpdate.poll();
                 if (blockToUpdate != null) {
-                    futures.add(executor.submit(() -> {
+                    futures.add(executorService.submit(() -> {
                         // Code to update block at coords goes here
                         return null;
                     }));
@@ -104,7 +92,11 @@ public abstract class MixinFireTick {
                     e.printStackTrace();
                 }
             }
-            executor.shutdown();
         }
+    }
+
+    // Properly shut down the executor service when it's no longer needed
+    private static void shutdownExecutorService() {
+        executorService.shutdown();
     }
 }
