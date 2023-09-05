@@ -156,10 +156,15 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShipwreckGen;
 
-    @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
+    @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixPamsTreesCascadingWorldgenLag;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenSlimeCarnage from Slime Carnage mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingFromWorldGenSlimeCarnage;
+
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })
