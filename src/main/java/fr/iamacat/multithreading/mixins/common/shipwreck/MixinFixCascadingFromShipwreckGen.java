@@ -2,19 +2,20 @@ package fr.iamacat.multithreading.mixins.common.shipwreck;
 
 import java.util.*;
 
-import com.winslow.shipwreckworldgen.RandomWeightedShip;
-import com.winslow.shipwreckworldgen.ShipwreckConfig;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
+import com.winslow.shipwreckworldgen.RandomWeightedShip;
+import com.winslow.shipwreckworldgen.ShipwreckConfig;
 import com.winslow.shipwreckworldgen.ShipwreckGen;
 import com.winslow.shipwreckworldgen.shipwrecks.*;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import org.spongepowered.asm.mixin.Unique;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(ShipwreckGen.class)
 public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
@@ -23,16 +24,14 @@ public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
     private static List<BiomeGenBase> validBiomes;
 
     static {
-        validBiomes = Arrays.asList(
-            BiomeGenBase.beach,
-            BiomeGenBase.coldBeach,
-            BiomeGenBase.stoneBeach
-        );
+        validBiomes = Arrays.asList(BiomeGenBase.beach, BiomeGenBase.coldBeach, BiomeGenBase.stoneBeach);
     }
 
     @Override
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-        if (world.provider.dimensionId == 0) {
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+        IChunkProvider chunkProvider) {
+        if (world.provider.dimensionId == 0
+            && MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShipwreckGen) {
             generateSurface(world, chunkX * 16, chunkZ * 16, random);
         }
     }

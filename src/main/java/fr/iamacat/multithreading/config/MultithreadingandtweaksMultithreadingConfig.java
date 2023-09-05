@@ -14,10 +14,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLeafDecay;
-    @Config.Comment("Enable multithreaded for AI Task.)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAITask;
     @Config.Comment("Enable multithreaded for EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -159,12 +155,16 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShipwreckGen;
-    /*
-     * @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
-     * @Config.DefaultBoolean(true)
-     * @Config.RequiresWorldRestart
-     * public static boolean enableMixinFixPamsTreesCascadingWorldgenLag;
-     */
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenHandler from Battle Towers Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingFromWorldGenHandler;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixPamsTreesCascadingWorldgenLag;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

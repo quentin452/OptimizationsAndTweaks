@@ -14,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // BUGFIX MIXINS
-    // todo fixme
-    /*
-     * common_pamsharvestcraft_MixinFixPamsTreesCascadingWorldgenLag(Side.COMMON,
-     * m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixPamsTreesCascadingWorldgenLag,
-     * "pamsharvestcraft.MixinFixPamsTreesCascadingWorldgenLag"),
-     */
-    MixinFixCascadingFromShipwreckGen(Side.COMMON,
+    common_pamsharvestcraft_MixinFixPamsTreesCascadingWorldgenLag(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixPamsTreesCascadingWorldgenLag,
+        "pamsharvestcraft.MixinFixPamsTreesCascadingWorldgenLag"),
+
+    common_MixinFixCascadingFromWorldGenHandler(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromWorldGenHandler,
+        "battletowers.MixinFixCascadingFromWorldGenHandler"),
+    common_MixinFixCascadingFromShipwreckGen(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShipwreckGen,
         "shipwreck.MixinFixCascadingFromShipwreckGen"),
     common_shincolle_MixinFixCascadingFromWorldGenPolyGravel(Side.COMMON,

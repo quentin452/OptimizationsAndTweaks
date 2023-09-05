@@ -1,6 +1,6 @@
 package fr.iamacat.multithreading.asm;
 
-import static com.falsepattern.lib.mixin.ITargetedMod.PredicateHelpers.startsWith;
+import static com.falsepattern.lib.mixin.ITargetedMod.PredicateHelpers.*;
 
 import java.util.function.Predicate;
 
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum TargetedMod implements ITargetedMod {
+
     /*
      * CHICKENCHUNKS("ChickenChunks", false, startsWith("chickenchunks")),
      * MRTJPCORE("MrTJPCore", false, startsWith("mrtjpcore")),
@@ -27,14 +28,14 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
-    // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
+    PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
     SLIMECARNAGE("Slime Carnage", false, startsWith("slimecarnage")),
-    ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("AS_BattleTowers")),
+    ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("battletower")),
     SALTYMOD_EXPANDED("Salty Mod Expanded", false, startsWith("SaltMod")),
     BUILDCRAFT("BuildCraft", false, startsWith("BuildCraft|Core")),
     TCONSTRUCT("Tinkers' Construct", false, startsWith("TConstruct")),
