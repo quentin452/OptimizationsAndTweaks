@@ -29,8 +29,9 @@ public enum TargetedMod implements ITargetedMod {
      * COFHCORE("CoFHCore", false, startsWith("cofhcore")),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
-    PAMSHARVESTCRAFT("Pam's HarvestCraft", true, startsWith("harvestcraft")),
-    MINEFACTORYRELOADED("MinefactoryReloaded", true, startsWith("minefactoryreloaded")),;
+    // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", true, startsWith("harvestcraft")),
+    MINEFACTORYRELOADED("MinefactoryReloaded", true, startsWith("minefactoryreloaded")),
+    ;
 
     @Getter
     private final String modName;

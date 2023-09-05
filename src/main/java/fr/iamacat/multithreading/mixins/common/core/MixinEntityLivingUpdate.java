@@ -18,6 +18,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate {
+
     // Fixme todo
     private EntityLivingBase entityObject;
 

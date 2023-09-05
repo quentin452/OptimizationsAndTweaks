@@ -23,6 +23,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer {
+
     // Fixme todo
     @Shadow
     public Chunk loadChunk(int x, int z) {

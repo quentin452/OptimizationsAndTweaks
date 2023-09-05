@@ -22,7 +22,8 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesRendering {
-   // Fixme todo
+
+    // Fixme todo
     private final ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
