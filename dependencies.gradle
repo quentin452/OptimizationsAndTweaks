@@ -48,7 +48,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.16.0'
 
     implementation "curse.maven:minefactory-reloaded-66672:2366149-deobf-sources-api"
-    implementation "curse.maven:pams-harvestcraft-221857:2270206-deobf-sources-api"
+    implementation "curse.maven:cofh-core-69162:2388750-deobf-sources-api"
+  //  implementation "curse.maven:pams-harvestcraft-221857:2270206-deobf-sources-api"
 
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 }

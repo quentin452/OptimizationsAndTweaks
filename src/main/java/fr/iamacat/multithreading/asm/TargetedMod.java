@@ -26,12 +26,12 @@ public enum TargetedMod implements ITargetedMod {
      * OPTIFINE("OptiFine", false, startsWith("optifine")),
      * MEKANISM("Mekanism", false, startsWith("mekanism")),
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
-     * COFHCORE("CoFHCore", false, startsWith("cofhcore")),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
-    // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", true, startsWith("harvestcraft")),
-    MINEFACTORYRELOADED("MinefactoryReloaded", true, startsWith("minefactoryreloaded")),
-    ;
+    // todo fixme PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
+
+    COFHCORE("CoFHCore", false, startsWith("cofhcore")),
+    MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),;
 
     @Getter
     private final String modName;
