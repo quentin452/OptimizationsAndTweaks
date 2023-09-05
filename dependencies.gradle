@@ -57,6 +57,8 @@ dependencies {
     implementation "curse.maven:farlanders-336432:2777303-deobf-sources-api"
     implementation "curse.maven:slime-carnage-224146:2276988-deobf-sources-api"
     implementation "curse.maven:pams-harvestcraft-221857:2270206-deobf-sources-api"
+    implementation "curse.maven:the-kingdoms-of-the-overworld-876236:4592109-deobf-sources-api"
+    implementation "curse.maven:minecraft-mineralogy-240974:2497867-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
