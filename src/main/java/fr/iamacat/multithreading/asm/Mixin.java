@@ -20,9 +20,6 @@ public enum Mixin implements IMixin {
      * m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixPamsTreesCascadingWorldgenLag,
      * "pamsharvestcraft.MixinFixPamsTreesCascadingWorldgenLag"),
      */
-    common_cofh_MixinFixCascadingworldgenBetweenCofhandothermods(Side.COMMON,
-        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingworldgenBetweenCofhandothermods,
-        "cofh.MixinFixCascadingworldgenBetweenCofhandothermods"),
     common_minefactoryreloaded_MixinFixWorldGenLakesMetaCascadingWorldgenLag(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix,
         "minefactoryreloaded.MixinFixWorldGenLakesMetaCascadingWorldgenLag"),
