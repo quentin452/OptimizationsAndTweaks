@@ -19,13 +19,21 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
     @Unique
     private Block multithreading1_7_10$_block; // Declare _block variable at the class level
 
-    public MixinFixWorldGenLakesMetaCascadingWorldgenLag(Block block, int blockMeta) {
-        multithreading1_7_10$_block = block;
-    }
+    @Unique
+    private static int multithreading1_7_10$lakeGenerationCounter = 0;
+    @Unique
+    private static final int MAX_LAKE_GENERATIONS_PER_TICK = 5; // Adjust this value as needed
+
 
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix) {
+            if (multithreading1_7_10$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {
+                // Limit lake generation to prevent cascading issues
+                return false;
+            }
+
+            multithreading1_7_10$lakeGenerationCounter++;
             // Limit frequency and biome checks
             if (random.nextInt(100) >= 10) {
                 return false;
