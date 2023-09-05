@@ -18,7 +18,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(World.class)
 public abstract class MixinEntitiesCollision {
-
+    // Fixme todo
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private AxisAlignedBB boundingBox;
 

@@ -27,7 +27,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 
 @Mixin(WorldRenderer.class)
 public class MixinMultithreadedSkyLightning {
-
+    // Fixme todo
     private EnumSkyBlock skyBlockType;
     private int posX;
     private int posY;
