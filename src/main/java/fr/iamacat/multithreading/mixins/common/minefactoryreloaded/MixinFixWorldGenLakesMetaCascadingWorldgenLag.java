@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,37 +82,6 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
 
                 int i2;
                 int j2;
-
-                // Check for existing lake blocks before proceeding
-                for (i1 = 0; i1 < 16; ++i1) {
-                    for (j2 = 0; j2 < 16; ++j2) {
-                        for (i2 = 0; i2 < 8; ++i2) {
-                            if (aboolean[(i1 * 16 + j2) * 8 + i2]) {
-                                int blockX = x + i1;
-                                int blockY = y + i2;
-                                int blockZ = z + j2;
-
-                                if (world.getBlock(blockX, blockY, blockZ) != Blocks.air) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Load and populate chunks here
-                for (i1 = 0; i1 < 16; ++i1) {
-                    for (j2 = 0; j2 < 16; ++j2) {
-                        for (i2 = 0; i2 < 8; ++i2) {
-                            if (aboolean[(i1 * 16 + j2) * 8 + i2]) {
-                                int chunkX = x / 16 + i1;
-                                int chunkZ = z / 16 + j2;
-                                world.getChunkProvider()
-                                    .provideChunk(chunkX, chunkZ);
-                            }
-                        }
-                    }
-                }
 
                 // Continue with block placement
                 for (i1 = 0; i1 < 16; ++i1) {

@@ -1,13 +1,15 @@
 package fr.iamacat.multithreading.mixins.common.shincolle;
 
-import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import java.util.Random;
+
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Random;
+import org.spongepowered.asm.mixin.Mixin;
+
+import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(WorldGenPolyGravel.class)
 public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGenerator {
@@ -19,7 +21,7 @@ public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGener
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShinColleWorldGen) {
-        return false;
+            return false;
         }
         return false;
     }
