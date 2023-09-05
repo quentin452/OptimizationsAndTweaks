@@ -23,7 +23,15 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
     protected boolean doBlockNotify;
 
     @Unique
-    private static final int MAX_GENERATION_ATTEMPTS = 3; // Adjust this as needed.
+    private static final int MAX_GENERATION_ATTEMPTS = 5; // Increase the number of attempts
+
+    // Reduce the search radius to 4 blocks
+    @Unique
+    private static final int SEARCH_RADIUS = 4;
+
+    // Limit the range of movement after a failed attempt
+    @Unique
+    private static final int MAX_MOVE_RANGE = 8; // Adjust as needed
 
     /**
      * Generates a rubber tree with anti-cascading optimizations.
@@ -35,17 +43,51 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             while (generationAttempts < MAX_GENERATION_ATTEMPTS) {
                 int y = this.getSurfaceBlockY(world, x, z);
 
-                if (y > 0 && !this.growTree(world, rand, x, y + 1, z)) {
-                    generationAttempts++;
+                // Check if there's already a tree nearby
+                if (!isTreeNearby(world, x, y, z)) {
+                    if (y > 0 && !this.growTree(world, rand, x, y + 1, z)) {
+                        generationAttempts++;
+                    } else {
+                        break; // Successfully generated tree
+                    }
                 } else {
-                    break; // Successfully generated tree
+                    // Move coordinates a small random amount and retry
+                    x += rand.nextInt(MAX_MOVE_RANGE) - (MAX_MOVE_RANGE / 2);
+                    z += rand.nextInt(MAX_MOVE_RANGE) - (MAX_MOVE_RANGE / 2);
+                    generationAttempts++;
                 }
-
-                x += rand.nextInt(16) - 8;
-                z += rand.nextInt(16) - 8;
             }
         }
         return true;
+    }
+
+    @Unique
+    private boolean isTreeNearby(World world, int x, int y, int z) {
+        // Move the nearby tree check radius inside the generation attempt loop
+        for (int generationAttempt = 0; generationAttempt < MAX_GENERATION_ATTEMPTS; generationAttempt++) {
+            for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; xOffset++) {
+                for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; zOffset++) {
+                    for (int yOffset = -SEARCH_RADIUS; yOffset <= SEARCH_RADIUS; yOffset++) {
+                        if (Math.abs(xOffset) + Math.abs(yOffset) + Math.abs(zOffset) <= SEARCH_RADIUS) {
+                            int checkX = x + xOffset;
+                            int checkY = y + yOffset;
+                            int checkZ = z + zOffset;
+
+                            // Check if the destination chunk is generated
+                            if (world.getChunkProvider().chunkExists(checkX >> 4, checkZ >> 4)) {
+                                Block block = world.getBlock(checkX, checkY, checkZ);
+
+                                // You can customize this condition to match the blocks that indicate trees
+                                if (block.isWood(world, checkX, checkY, checkZ)) {
+                                    return true; // Another tree is nearby
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false; // No trees found nearby
     }
 
     @Unique
