@@ -145,7 +145,7 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix;
-    @Config.Comment("Fix Some Cascading Worldgen caused by Poly Gravel from Shinkeiseikan Collection")
+    @Config.Comment("Fix All Cascading Worldgen caused by Poly Gravel from Shinkeiseikan Collection(ATTENTION this mixin disabling Poly Gravel generation)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromWorldGenPolyGravel;
