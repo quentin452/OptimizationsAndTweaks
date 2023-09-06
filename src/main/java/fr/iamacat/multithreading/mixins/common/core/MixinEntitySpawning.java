@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -24,10 +25,14 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
 
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    @Unique
     private final List<Entity> spawnQueue = new ArrayList<>();
 
+    @Unique
     private final AtomicInteger batchSize = new AtomicInteger(BATCH_SIZE);
+    @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -47,6 +52,7 @@ public abstract class MixinEntitySpawning {
         }
     }
 
+    @Unique
     private void spawnEntitiesInQueue(World world) {
         List<Entity> entities = new ArrayList<>();
         int numEntities = batchSize.getAndSet(0);
@@ -95,6 +101,8 @@ public abstract class MixinEntitySpawning {
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
         float partialTicks) {
-        render.doRender(entity, x, y, z, yaw, partialTicks);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning) {
+            render.doRender(entity, x, y, z, yaw, partialTicks);
+        }
     }
 }

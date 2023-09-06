@@ -11,6 +11,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,6 +23,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
 
+    @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -33,14 +35,20 @@ public abstract class MixinLiquidTick {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        batchQueue = new LinkedBlockingQueue<>();
-        blockMaterialMap = new ConcurrentHashMap<>();
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick) {
+            batchQueue = new LinkedBlockingQueue<>();
+            blockMaterialMap = new ConcurrentHashMap<>();
+        }
     }
 
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
+    @Unique
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
+    @Unique
     private ConcurrentHashMap<ChunkCoordinates, Material> blockMaterialMap;
 
+    @Unique
     public void updateTick(World world, int x, int y, int z, Random random) {
         // Access and modify shared state in the World object here
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
@@ -58,6 +66,7 @@ public abstract class MixinLiquidTick {
         }
     }
 
+    @Unique
     private void addToBatch(ChunkCoordinates pos) {
         try {
             List<ChunkCoordinates> batch = batchQueue.peek();
@@ -71,8 +80,10 @@ public abstract class MixinLiquidTick {
         }
     }
 
+    @Unique
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+    @Unique
     private void processBatch(List<ChunkCoordinates> batch, World world) {
         if (batch == null || batch.isEmpty()) {
             return;

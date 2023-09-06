@@ -10,6 +10,7 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,7 +21,9 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinFallBlocksTick {
 
     // Fixme todo
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    @Unique
     private static final ExecutorService THREAD_POOL = Executors
         .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
@@ -44,6 +47,7 @@ public abstract class MixinFallBlocksTick {
         }
     }
 
+    @Unique
     private void tickFallingBlocks(List<Entity> fallingBlocks) {
         for (Entity entity : fallingBlocks) {
             entity.onUpdate();

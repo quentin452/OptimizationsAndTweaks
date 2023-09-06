@@ -9,6 +9,7 @@ import net.minecraft.block.BlockReed;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,16 +22,20 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinGrowthSpreading {
 
+    @Unique
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d")
             .build());
+    @Unique
     private World world;
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
+    @Unique
     private final Queue<BlockPos> growthQueue = new ConcurrentLinkedQueue<>();
 
-    // Define a getter method for the world object
+    @Unique
     public abstract Block getBlock(int x, int y, int z);
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -44,6 +49,7 @@ public abstract class MixinGrowthSpreading {
         }
     }
 
+    @Unique
     private void addBlocksToGrowthQueue() {
         for (int x = -64; x <= 64; x++) {
             for (int z = -64; z <= 64; z++) {
@@ -57,7 +63,7 @@ public abstract class MixinGrowthSpreading {
         }
     }
 
-    // Process blocks in growth queue using executor service
+    @Unique
     private void processBlocksInGrowthQueue() {
         List<BlockPos> batch = new ArrayList<>(BATCH_SIZE);
         while (!growthQueue.isEmpty()) {

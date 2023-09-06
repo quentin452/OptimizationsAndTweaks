@@ -10,6 +10,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,6 +21,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntitiesCollision {
 
     // Fixme todo
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
     private AxisAlignedBB boundingBox;
 
@@ -39,9 +41,11 @@ public abstract class MixinEntitiesCollision {
         }
     }
 
+    @Unique
     private final ExecutorService collisionExecutor = Executors
         .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
 
+    @Unique
     private void batchCollisionsAsync() throws InterruptedException {
         // Get entities within bounding box
         List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
@@ -59,6 +63,7 @@ public abstract class MixinEntitiesCollision {
         collisionExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
+    @Unique
     private void collideWithEntitiesBatch(List<Entity> batch) {
         for (Entity entity : batch) {
             // Custom collision logic
@@ -66,6 +71,7 @@ public abstract class MixinEntitiesCollision {
         }
     }
 
+    @Unique
     private void collideWithNearbyEntitiesAsync() {
         World world = ((EntityLivingBase) (Object) this).worldObj;
         List<Entity> entities = getEntitiesWithinAABBExcludingEntity();
@@ -83,6 +89,7 @@ public abstract class MixinEntitiesCollision {
         }
     }
 
+    @Unique
     private void checkCollisions(World world, AxisAlignedBB boundingBox) {
         // Get nearby entities
         List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, boundingBox);
@@ -96,6 +103,7 @@ public abstract class MixinEntitiesCollision {
         }
     }
 
+    @Unique
     private void collideWithBatch(List<Entity> batch) {
         for (Entity entity : batch) {
             if (!entity.equals(this)) {
@@ -106,10 +114,14 @@ public abstract class MixinEntitiesCollision {
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void cancelVanillaCollision(CallbackInfo ci) {
-        // Cancel vanilla collision logic
-        ci.cancel();
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+
+            // Cancel vanilla collision logic
+            ci.cancel();
+        }
     }
 
+    @Unique
     private List<Entity> getEntitiesWithinAABBExcludingEntity() {
         World world = ((EntityLivingBase) (Object) this).worldObj;
         AxisAlignedBB boundingBox = ((EntityLivingBase) (Object) this).boundingBox.expand(0.2, 0.2, 0.2);
@@ -120,6 +132,7 @@ public abstract class MixinEntitiesCollision {
         return entities;
     }
 
+    @Unique
     private List<List<Entity>> createEntityBatches(List<Entity> entities, int batchSize) {
         List<List<Entity>> entityBatches = new ArrayList<>();
         int numBatches = (int) Math.ceil(entities.size() / (double) batchSize);

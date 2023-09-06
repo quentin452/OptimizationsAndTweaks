@@ -9,6 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,20 +19,27 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinTileEntitiesTick {
 
+    @Unique
     private final Queue<TileEntity> tileEntitiesToTick = new ConcurrentLinkedQueue<>();
+    @Unique
     private int tickIndex = 0;
+    @Unique
     private int tickPerBatch = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
     @Inject(method = "func_147448_a", at = @At("TAIL"))
     private void onAddTileEntity(Collection<TileEntity> tileEntityCollection, CallbackInfo ci) {
-        tileEntitiesToTick.addAll(tileEntityCollection);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick) {
+            tileEntitiesToTick.addAll(tileEntityCollection);
+        }
     }
 
     @Inject(method = "removeTileEntity", at = @At("TAIL"))
     private void onRemoveTileEntity(int x, int y, int z, CallbackInfo ci) {
-        // Remove tile entity from the ticking queue if it exists
-        tileEntitiesToTick
-            .removeIf(tileEntity -> tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntitiesTick) {
+            // Remove tile entity from the ticking queue if it exists
+            tileEntitiesToTick
+                .removeIf(tileEntity -> tileEntity.xCoord == x && tileEntity.yCoord == y && tileEntity.zCoord == z);
+        }
     }
 
     @Inject(method = "updateTileEntities", at = @At("TAIL"))

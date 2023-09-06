@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,6 +25,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinEntitiesUpdateTimeandLight {
 
+    @Unique
     ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -84,10 +86,12 @@ public abstract class MixinEntitiesUpdateTimeandLight {
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
     private void updateTimeLightAndEntitiesCleanup(boolean p_147456_1_, CallbackInfo ci) {
-        // shut down the thread pool when done
-        if (this.executorService != null) {
-            this.executorService.shutdown();
-            this.executorService = null;
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+            // shut down the thread pool when done
+            if (this.executorService != null) {
+                this.executorService.shutdown();
+                this.executorService = null;
+            }
         }
     }
 

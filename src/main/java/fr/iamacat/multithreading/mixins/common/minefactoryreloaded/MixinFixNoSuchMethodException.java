@@ -119,14 +119,13 @@ public class MixinFixNoSuchMethodException {
      */
     @Overwrite
     public static void sendMessage(String message, Object value) {
-        try {
-            Class.forName("powercrystals.minefactoryreloaded.api.FactoryRegistry");
-        } catch (ClassNotFoundException e) {
-            MultithreadingLogger.LOGGER.error("MFR not present, cannot override sendMessage");
-            return; // MFR not present, exit early
-        }
-
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixNoSuchMethodException) {
+            try {
+                Class.forName("powercrystals.minefactoryreloaded.api.FactoryRegistry");
+            } catch (ClassNotFoundException e) {
+                MultithreadingLogger.LOGGER.error("MFR not present, cannot override sendMessage");
+                return; // MFR not present, exit early
+            }
             if (!Loader.isModLoaded("minefactoryreloaded") || Loader.instance()
                 .activeModContainer() == null) {
                 return;

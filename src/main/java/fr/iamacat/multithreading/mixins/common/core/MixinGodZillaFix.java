@@ -25,12 +25,14 @@ public abstract class MixinGodZillaFix {
         if (event.entity instanceof EntityItem && MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix) {
             EntityItem entityItem = (EntityItem) event.entity;
             ItemStack itemStack = entityItem.getEntityItem();
+            if (MultithreadingandtweaksMultithreadingConfig.enableMixinGodZillaFix) {
 
-            if (itemStack == null || itemStack.getItem() == null) {
-                return;
+                if (itemStack == null || itemStack.getItem() == null) {
+                    return;
+                }
+            } else {
+                FMLLog.warning(message, params);
             }
-        } else {
-            FMLLog.warning(message, params);
         }
     }
 }

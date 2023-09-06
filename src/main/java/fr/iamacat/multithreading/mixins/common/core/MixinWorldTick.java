@@ -9,6 +9,7 @@ import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,17 +19,26 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinWorldTick {
 
+    @Unique
     private static final int UPDATE_CHUNK_AT_ONCE = 10;
+    @Unique
     private final Map<ChunkCoordIntPair, Chunk> loadedChunks = new ConcurrentHashMap<>();
+    @Unique
     private final Set<ChunkCoordIntPair> loadedChunkCoordinates;
+    @Unique
     private final ExecutorService executorService = Executors
         .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+    @Unique
     private final List<Chunk> chunksToUpdate = new CopyOnWriteArrayList<>();
+    @Unique
     private final Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
 
+    @Unique
     private final Queue<CompletableFuture<Chunk>> loadingQueue;
+    @Unique
     private final int loadingBatchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
 
+    @Unique
     private final List<CompletableFuture<Chunk>> futures;
 
     public MixinWorldTick() {
@@ -44,6 +54,7 @@ public abstract class MixinWorldTick {
         }
     }
 
+    @Unique
     private void updateChunksAsync(World world) {
         CompletableFuture.runAsync(() -> {
             try {
@@ -54,6 +65,7 @@ public abstract class MixinWorldTick {
         }, executorService);
     }
 
+    @Unique
     private void updateChunks(World world) throws Exception {
         ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
         IChunkLoader chunkLoader = chunkProvider.currentChunkLoader;
@@ -97,6 +109,7 @@ public abstract class MixinWorldTick {
         }
     }
 
+    @Unique
     private Set<ChunkCoordIntPair> getAdjacentChunks(ChunkCoordIntPair chunkCoord) {
         Set<ChunkCoordIntPair> adjacentChunks = ConcurrentHashMap.newKeySet();
         int chunkX = chunkCoord.chunkXPos;
@@ -113,6 +126,7 @@ public abstract class MixinWorldTick {
         return adjacentChunks;
     }
 
+    @Unique
     private void processBatch(ChunkProviderServer chunkProvider, List<Chunk> batch) {
         CompletableFuture.runAsync(() -> {
             // synchronized (chunkProvider) {

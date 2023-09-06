@@ -10,6 +10,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,19 +21,27 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntityLivingUpdate {
 
     // Fixme todo
+    @Unique
     private EntityLivingBase entityObject;
 
     @Shadow
     public abstract float getHealth();
 
+    @Unique
     private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    @Unique
     private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
+    @Unique
     private final List<CompletableFuture<Void>> updateFutures = new ArrayList<>();
 
+    @Unique
     private double strafe;
+    @Unique
     private double forward;
+    @Unique
     private float friction;
 
+    @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -50,18 +59,26 @@ public abstract class MixinEntityLivingUpdate {
             };
             return new Thread(wrappedRunnable, "Entity-Living-Update-%d" + MixinEntityLivingUpdate.this.hashCode());
         });
+    @Unique
     private final Map<net.minecraft.world.chunk.Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
     // private static final int batchsize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    @Unique
     private final CopyOnWriteArrayList<MixinEntityLivingUpdate> entitiesToUpdate = new CopyOnWriteArrayList<MixinEntityLivingUpdate>();
+    @Unique
     private ChunkProviderServer chunkProvider;
+    @Unique
     private World world;
+    @Unique
     private long lastUpdateTime;
+    @Unique
     private Set<MixinEntityLivingUpdate> processedEntities = ConcurrentHashMap.newKeySet();
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(World worldIn, CallbackInfo ci) {
-        this.entityObject = (EntityLivingBase) (Object) this;
-        processedEntities = new HashSet<>();
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+            this.entityObject = (EntityLivingBase) (Object) this;
+            processedEntities = new HashSet<>();
+        }
     }
 
     public MixinEntityLivingUpdate(EntityLivingBase entity, World world, ChunkProviderServer chunkProvider) {
@@ -72,6 +89,7 @@ public abstract class MixinEntityLivingUpdate {
         this.processedEntities = new HashSet<>();
     }
 
+    @Unique
     private void moveEntities(double strafe, double forward, float friction) {
         executorService.submit(() -> {
             try {
@@ -97,6 +115,7 @@ public abstract class MixinEntityLivingUpdate {
         }
     }
 
+    @Unique
     private void processChunks(long time) {
         // Remove processed entities from list (thread-safe in pool)
         entitiesToUpdate.removeAll(processedEntities);
@@ -115,6 +134,7 @@ public abstract class MixinEntityLivingUpdate {
         });
     }
 
+    @Unique
     private synchronized void processEntityUpdates(long time) {
         try {
             // Get the list of entities to process
@@ -162,6 +182,7 @@ public abstract class MixinEntityLivingUpdate {
         }
     }
 
+    @Unique
     private void processEntities(List<MixinEntityLivingUpdate> entities) {
         for (MixinEntityLivingUpdate entity : entities) {
             try {
@@ -182,6 +203,7 @@ public abstract class MixinEntityLivingUpdate {
         }
     }
 
+    @Unique
     private void processUpdates() {
         executorService.submit(() -> {
             try {
@@ -195,6 +217,7 @@ public abstract class MixinEntityLivingUpdate {
         });
     }
 
+    @Unique
     private void executeOnLivingUpdate() {
         try {
             doUpdate();
@@ -214,6 +237,7 @@ public abstract class MixinEntityLivingUpdate {
         }
     }
 
+    @Unique
     private void doUpdate() {
         entityObject.moveEntity(this.strafe, this.forward, this.friction);
     }

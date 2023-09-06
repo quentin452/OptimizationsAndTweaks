@@ -10,6 +10,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -22,7 +23,9 @@ import fr.iamacat.multithreading.tasking.ExplosionTask;
 @Mixin(World.class)
 public abstract class MixinExplosions {
 
+    @Unique
     private final ConcurrentLinkedDeque<ExplosionTask> explosionsToProcess = new ConcurrentLinkedDeque<>();
+    @Unique
     private final ThreadPoolExecutor executorService;
 
     public MixinExplosions() {
@@ -49,6 +52,7 @@ public abstract class MixinExplosions {
         }
     }
 
+    @Unique
     private void processExplosions() {
         while (!explosionsToProcess.isEmpty()) {
             List<ExplosionTask> batch = new ArrayList<>();

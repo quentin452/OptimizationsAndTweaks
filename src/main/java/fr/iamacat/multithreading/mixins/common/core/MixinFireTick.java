@@ -28,9 +28,6 @@ public abstract class MixinFireTick {
         new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d")
             .build());
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {}
-
     @Inject(method = "updateTick", at = @At("HEAD"))
     public void updateTick(World world, int x, int y, int z, Random random, CallbackInfo info) {
         if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {

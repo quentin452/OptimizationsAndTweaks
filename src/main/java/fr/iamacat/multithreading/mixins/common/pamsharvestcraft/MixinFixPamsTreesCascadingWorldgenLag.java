@@ -17,6 +17,7 @@ import com.pam.harvestcraft.WorldGenPamFruitLogTree;
 import com.pam.harvestcraft.WorldGenPamFruitTree;
 
 import cpw.mods.fml.common.IWorldGenerator;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 
 @Mixin(PamTreeGenerator.class)
 public class MixinFixPamsTreesCascadingWorldgenLag implements IWorldGenerator {
@@ -279,9 +280,11 @@ public class MixinFixPamsTreesCascadingWorldgenLag implements IWorldGenerator {
         IChunkProvider chunkProvider) {
         BiomeGenBase biome = world.getWorldChunkManager()
             .getBiomeGenAt(chunkX * 16, chunkZ * 16);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixPamsTreesCascadingWorldgenLag) {
 
-        if (!BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.DEAD)) {
-            generateFruitTrees(world, random, chunkX * 16, chunkZ * 16);
+            if (!BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.DEAD)) {
+                generateFruitTrees(world, random, chunkX * 16, chunkZ * 16);
+            }
         }
     }
 }

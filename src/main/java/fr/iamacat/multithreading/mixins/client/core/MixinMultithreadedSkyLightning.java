@@ -55,7 +55,7 @@ public class MixinMultithreadedSkyLightning {
 
     @Inject(method = "func_147436_a", at = @At("RETURN"))
     private void onPostUpdateLightByType(CallbackInfo ci) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinMultithreadedSkyLightning) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinMultithreadedSkyLightning) {
             // Call the batched sky lighting update method on a separate thread
             new Thread(() -> batchUpdateSkyLighting()).start();
         }

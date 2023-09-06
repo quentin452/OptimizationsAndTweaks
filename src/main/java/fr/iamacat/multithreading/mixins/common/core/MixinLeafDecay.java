@@ -33,31 +33,33 @@ public abstract class MixinLeafDecay {
     @Inject(method = "removeLeaves", at = @At("RETURN"))
     private void onRemoveLeaves(World world, int x, int y, int z, CallbackInfo ci) {
         Chunk chunk = world.getChunkFromBlockCoords(x, z);
-        int numLeaves = 0;
-        for (int i = 0; i < 16; i++) {
-            for (int k = 0; k < 16; k++) {
-                int j = 0;
-                while (j < 128) {
-                    Block block = chunk.getBlock(i, j, k);
-                    if (block != null && block.isLeaves(world, i, j, k)) {
-                        numLeaves++;
-                        if (numLeaves % batchSize == 0) {
-                            processLeavesBatch(world);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
+            int numLeaves = 0;
+            for (int i = 0; i < 16; i++) {
+                for (int k = 0; k < 16; k++) {
+                    int j = 0;
+                    while (j < 128) {
+                        Block block = chunk.getBlock(i, j, k);
+                        if (block != null && block.isLeaves(world, i, j, k)) {
+                            numLeaves++;
+                            if (numLeaves % batchSize == 0) {
+                                processLeavesBatch(world);
+                            }
+                            int finalI = i;
+                            int finalJ = j;
+                            int finalK = k;
+                            executorService.execute(
+                                () -> processLeafBlock(
+                                    new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
+                                    world,
+                                    true));
                         }
-                        int finalI = i;
-                        int finalJ = j;
-                        int finalK = k;
-                        executorService.execute(
-                            () -> processLeafBlock(
-                                new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
-                                world,
-                                true));
+                        j++;
                     }
-                    j++;
                 }
             }
+            processLeavesBatch(world);
         }
-        processLeavesBatch(world);
     }
 
     private void processLeavesBatch(World world) {

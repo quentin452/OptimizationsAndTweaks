@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 
@@ -23,6 +24,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinUpdateBlocks {
 
+    @Unique
     private final ExecutorService executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -32,7 +34,9 @@ public abstract class MixinUpdateBlocks {
         new ThreadFactoryBuilder().setNameFormat("MixinUpdateBlocks-worker-%d")
             .build());
 
+    @Unique
     private World world;
+    @Unique
     private final Queue<Chunk> updateQueue = new ConcurrentLinkedQueue<>();
 
     public MixinUpdateBlocks(World world) {
@@ -74,6 +78,7 @@ public abstract class MixinUpdateBlocks {
         }
     }
 
+    @Unique
     private void processChunkBatch() {
         executorService.submit(() -> {
             List<Chunk> chunks = new ArrayList<>(MultithreadingandtweaksMultithreadingConfig.batchsize);
@@ -88,6 +93,7 @@ public abstract class MixinUpdateBlocks {
         });
     }
 
+    @Unique
     private void updateChunks(List<Chunk> chunks) {
         chunks.forEach(
             chunk -> updateChunk(
@@ -102,6 +108,7 @@ public abstract class MixinUpdateBlocks {
                 chunk.zPosition));
     }
 
+    @Unique
     private void updateChunk(Chunk chunk, int minX, int minY, int minZ, int maxX, int maxY, int maxZ, int chunkX,
         int chunkZ) {
         int chunkMinX = chunkX << 4;

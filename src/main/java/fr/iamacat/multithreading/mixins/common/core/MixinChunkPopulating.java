@@ -19,6 +19,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,8 +30,10 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 @Mixin(World.class)
 public abstract class MixinChunkPopulating {
 
+    @Unique
     private final LinkedBlockingQueue<Chunk> chunksToPopulate = new LinkedBlockingQueue<>();
 
+    @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
@@ -65,17 +68,19 @@ public abstract class MixinChunkPopulating {
         at = @At("RETURN"))
     private void onInitialize(MinecraftServer server, ExecutorService executorService, ISaveHandler saveHandler,
         WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
-        ServerConfigurationManager playerList = server.getConfigurationManager();
-        EntityPlayerMP player = (EntityPlayerMP) playerList.playerEntityList.get(0);
-        int viewDistance = playerList.getViewDistance() * 16; // Distance in blocks
-        int playerX = MathHelper.floor_double(player.posX) >> 4;
-        int playerZ = MathHelper.floor_double(player.posZ) >> 4;
-        for (int x = playerX - viewDistance; x <= playerX + viewDistance; x++)
-            for (int z = playerZ - viewDistance; z <= playerZ + viewDistance; z++) {
-                Chunk chunk = provider.worldObj.getChunkFromChunkCoords(x, z);
-                if (!chunk.isTerrainPopulated && chunk.isChunkLoaded) {
-                    chunksToPopulate.offer(chunk);
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
+            ServerConfigurationManager playerList = server.getConfigurationManager();
+            EntityPlayerMP player = (EntityPlayerMP) playerList.playerEntityList.get(0);
+            int viewDistance = playerList.getViewDistance() * 16; // Distance in blocks
+            int playerX = MathHelper.floor_double(player.posX) >> 4;
+            int playerZ = MathHelper.floor_double(player.posZ) >> 4;
+            for (int x = playerX - viewDistance; x <= playerX + viewDistance; x++)
+                for (int z = playerZ - viewDistance; z <= playerZ + viewDistance; z++) {
+                    Chunk chunk = provider.worldObj.getChunkFromChunkCoords(x, z);
+                    if (!chunk.isTerrainPopulated && chunk.isChunkLoaded) {
+                        chunksToPopulate.offer(chunk);
+                    }
                 }
-            }
+        }
     }
 }
