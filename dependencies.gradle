@@ -59,7 +59,9 @@ dependencies {
     implementation "curse.maven:pams-harvestcraft-221857:2270206-deobf-sources-api"
     implementation "curse.maven:the-kingdoms-of-the-overworld-876236:4592109-deobf-sources-api"
     implementation "curse.maven:minecraft-mineralogy-240974:2497867-deobf-sources-api"
-
+    implementation "curse.maven:cofh-core-69162:2388750-deobf-sources-api"
+    implementation "curse.maven:thermal-foundation-222880:2388752-deobf-sources-api"
+    implementation "curse.maven:thermal-expansion-69163:2388758-deobf-sources-api"
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
 
