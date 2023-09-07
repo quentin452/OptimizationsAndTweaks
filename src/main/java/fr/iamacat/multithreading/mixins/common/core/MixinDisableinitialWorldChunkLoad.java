@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import net.minecraft.server.MinecraftServer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,5 +17,8 @@ public class MixinDisableinitialWorldChunkLoad {
      *         https://github.com/quentin452/BattleTowersFixes/blob/1.7.10-backport/src/main/java/mod/acgaming/btfixes/mixin/vanilla/MinecraftServerMixin.java
      */
     @Overwrite
-    public void initialWorldChunkLoad() {}
+    public void initialWorldChunkLoad() {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinDisableinitialWorldChunkLoad){
+        }
+    }
 }
