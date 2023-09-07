@@ -164,6 +164,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOreDictCofhFix;
+    @Config.Comment("Disable Intial World Chunk Load to make world load Faster,but player will see void area for some sec")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinDisableinitialWorldChunkLoad;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })
