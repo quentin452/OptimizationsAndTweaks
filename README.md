@@ -32,6 +32,6 @@ Special thanks to Falsetweaks code : [HERE](https://github.com/FalsePattern/Fals
 
 # Discord
 
-Add me on discord : I'm A Cat[FR]#7202
+Add me on discord : imacatfr
 
 Discord server : https://discord.gg/ZnmHKJzKkZ
