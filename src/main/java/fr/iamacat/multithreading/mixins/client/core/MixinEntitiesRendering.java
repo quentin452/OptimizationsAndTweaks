@@ -11,6 +11,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,14 +25,19 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingCon
 public abstract class MixinEntitiesRendering {
 
     // Fixme todo
+    @Unique
     private final ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>();
+    @Unique
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         MultithreadingandtweaksMultithreadingConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d")
             .build());
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    @Unique
     private long lastRenderTime = System.nanoTime();
 
+    @Unique
     private int tickCounter;
 
     @Inject(method = "doRender", at = @At("HEAD"))
@@ -68,6 +74,7 @@ public abstract class MixinEntitiesRendering {
         }
     }
 
+    @Unique
     public void renderEntities(Collection<Entity> entities) {
         // Divide entities into batches
         List<List<Entity>> entityBatches = new ArrayList<>();

@@ -6,6 +6,7 @@ import fr.iamacat.multithreading.Tags;
 
 @Config(modid = Tags.MODID)
 public class MultithreadingandtweaksMultithreadingConfig {
+
     // Make inconfig ingame Fixme todo
     // make categories Fixme todo
     // Multithreading/Batch
