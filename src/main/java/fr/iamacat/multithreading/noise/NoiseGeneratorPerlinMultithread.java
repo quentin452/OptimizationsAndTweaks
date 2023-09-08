@@ -1,8 +1,8 @@
 package fr.iamacat.multithreading.noise;
 
-import java.util.Random;
-
 import net.minecraft.world.gen.NoiseGenerator;
+
+import java.util.Random;
 
 public class NoiseGeneratorPerlinMultithread extends NoiseGenerator {
 

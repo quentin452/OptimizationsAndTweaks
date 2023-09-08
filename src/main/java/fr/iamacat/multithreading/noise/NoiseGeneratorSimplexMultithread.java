@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class NoiseGeneratorSimplexMultithread {
-
+    private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private static int[][] field_151611_e = new int[][] { { 1, 1, 0 }, { -1, 1, 0 }, { 1, -1, 0 }, { -1, -1, 0 },
         { 1, 0, 1 }, { -1, 0, 1 }, { 1, 0, -1 }, { -1, 0, -1 }, { 0, 1, 1 }, { 0, -1, 1 }, { 0, 1, -1 },
         { 0, -1, -1 } };
@@ -115,10 +115,7 @@ public class NoiseGeneratorSimplexMultithread {
     }
 
     public void func_151606_a(double[] p_151606_1_, double p_151606_2_, double p_151606_4_, int p_151606_6_,
-        int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
-        ExecutorService executorService = Executors.newFixedThreadPool(
-            Runtime.getRuntime()
-                .availableProcessors());
+                              int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
 
         Future<?>[] futures = new Future[p_151606_7_];
 
@@ -200,7 +197,5 @@ public class NoiseGeneratorSimplexMultithread {
                 e.printStackTrace();
             }
         }
-
-        executorService.shutdown();
     }
 }
