@@ -1,8 +1,8 @@
 package fr.iamacat.multithreading.worldgen;
 
-import com.grack.nanojson.noise.NoiseGeneratorOctavesMultithread;
-import com.grack.nanojson.noise.NoiseGeneratorPerlinMultithread;
 import cpw.mods.fml.common.eventhandler.Event.Result;
+import fr.iamacat.multithreading.noise.NoiseGeneratorOctavesMultithread;
+import fr.iamacat.multithreading.noise.NoiseGeneratorPerlinMultithread;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EnumCreatureType;
