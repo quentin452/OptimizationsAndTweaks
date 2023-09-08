@@ -6,7 +6,6 @@ import fr.iamacat.multithreading.Tags;
 
 @Config(modid = Tags.MODID)
 public class MultithreadingandtweaksMultithreadingConfig {
-
     // Make inconfig ingame Fixme todo
     // make categories Fixme todo
     // Multithreading/Batch
@@ -113,7 +112,6 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RangeInt(min = 1, max = 1000)
     @Config.RequiresWorldRestart
     public static int batchsize;
-
     // BugFix Mixins
 
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
