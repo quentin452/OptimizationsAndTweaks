@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
+    // ATTENTION IT BREAK VANILLA SEED PARITY
 
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private int[] permutations;

@@ -38,7 +38,7 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
 
 public class ChunkProviderGenerateTwo implements IChunkProvider {
-
+    // ATTENTION IT BREAK VANILLA SEED PARITY
     /** RNG. */
     private Random rand;
     private NoiseGeneratorOctavesMultithread field_147431_j;

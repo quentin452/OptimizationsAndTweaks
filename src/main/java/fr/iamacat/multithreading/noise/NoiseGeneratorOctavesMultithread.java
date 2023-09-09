@@ -6,6 +6,7 @@ import net.minecraft.world.gen.NoiseGenerator;
 import java.util.Random;
 
 public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
+    // ATTENTION IT BREAK VANILLA SEED PARITY
 
     /** Collection of noise generation functions. Output is combined to produce different octaves of noise. */
     private NoiseGeneratorImprovedMultithread[] generatorCollection;

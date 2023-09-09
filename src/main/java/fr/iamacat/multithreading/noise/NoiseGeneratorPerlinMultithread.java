@@ -5,6 +5,7 @@ import net.minecraft.world.gen.NoiseGenerator;
 import java.util.Random;
 
 public class NoiseGeneratorPerlinMultithread extends NoiseGenerator {
+    // ATTENTION IT BREAK VANILLA SEED PARITY
 
     private NoiseGeneratorSimplexMultithread[] field_151603_a;
     private int field_151602_b;
