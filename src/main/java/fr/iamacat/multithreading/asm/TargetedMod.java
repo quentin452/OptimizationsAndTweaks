@@ -33,6 +33,8 @@ public enum TargetedMod implements ITargetedMod {
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
+    MINEFACTORYRELOADED2("MinefactoryReloaded", false, startsWith("cofh_mine")),
+
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
     SLIMECARNAGE("Slime Carnage", false, startsWith("slimecarnage")),
@@ -43,7 +45,8 @@ public enum TargetedMod implements ITargetedMod {
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("ani_koto")),
     MINERALOGY("Mineralogy", false, startsWith("mineralogy")),
-    SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),;
+    SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),
+    STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),;
 
     @Getter
     private final String modName;

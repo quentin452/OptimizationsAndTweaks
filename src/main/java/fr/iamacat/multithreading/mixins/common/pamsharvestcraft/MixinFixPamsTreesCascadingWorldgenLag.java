@@ -151,7 +151,8 @@ public class MixinFixPamsTreesCascadingWorldgenLag implements IWorldGenerator {
                             case 3:
 
                                 if (BlockRegistry.datetreeGeneration) {
-                                    (new WorldGenPamFruitTree(true, 5, 3, 3, BlockRegistry.pamDate)).generate(world, rand, i1, l, j1);
+                                    (new WorldGenPamFruitTree(true, 5, 3, 3, BlockRegistry.pamDate))
+                                        .generate(world, rand, i1, l, j1);
                                 }
 
                             case 4:

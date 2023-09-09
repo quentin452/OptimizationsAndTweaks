@@ -14,6 +14,12 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // BUGFIX MIXINS
+    common_pamsharvestcraft_MixinFixWorldGenPamFruitTree(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixWorldGenPamFruitTree,
+        "pamsharvestcraft.MixinFixWorldGenPamFruitTree"),
+    common_steamcraft2_MixinFixCascadingFromWorldGenBrassTree(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromWorldGenBrassTree,
+        "steamcraft2.MixinFixCascadingFromWorldGenBrassTree"),
     common_core_MixinDisableinitialWorldChunkLoad(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinDisableinitialWorldChunkLoad,
         "core.MixinDisableinitialWorldChunkLoad"),
