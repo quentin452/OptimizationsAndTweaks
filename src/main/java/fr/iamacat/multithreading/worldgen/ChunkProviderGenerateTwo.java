@@ -1,8 +1,11 @@
 package fr.iamacat.multithreading.worldgen;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import fr.iamacat.multithreading.noise.NoiseGeneratorOctavesMultithread;
-import fr.iamacat.multithreading.noise.NoiseGeneratorPerlinMultithread;
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
+import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
+
+import java.util.List;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EnumCreatureType;
@@ -31,13 +34,12 @@ import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
-import java.util.List;
-import java.util.Random;
-
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import fr.iamacat.multithreading.noise.NoiseGeneratorOctavesMultithread;
+import fr.iamacat.multithreading.noise.NoiseGeneratorPerlinMultithread;
 
 public class ChunkProviderGenerateTwo implements IChunkProvider {
+
     // ATTENTION IT BREAK VANILLA SEED PARITY
     /** RNG. */
     private Random rand;

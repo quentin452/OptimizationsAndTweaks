@@ -3,10 +3,10 @@ package fr.iamacat.multithreading.math.fastrandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class Utils {
+
     private static final AtomicLong seed = new AtomicLong();
 
-    private Utils() {
-    }
+    private Utils() {}
 
     /** Returns (ax + b) mod p. */
     public static long lcg(long x) {

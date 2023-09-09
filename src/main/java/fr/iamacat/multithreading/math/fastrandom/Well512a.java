@@ -9,9 +9,10 @@ import java.io.Serializable;
  * Panneton.
  */
 public class Well512a extends AbstractFastRandom implements FastRandom, Serializable {
+
     private static final long serialVersionUID = -178962713019714243L;
 
-    private static final int R  = 16;
+    private static final int R = 16;
     private static final int M1 = 13;
     private static final int M2 = 9;
 

@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Generators" by L'Ecuyer.
  */
 public class Taus88 extends AbstractFastRandom implements FastRandom, Serializable {
+
     private static final long serialVersionUID = 3042624850227558320L;
 
     private int s0, s1, s2;
@@ -44,9 +45,9 @@ public class Taus88 extends AbstractFastRandom implements FastRandom, Serializab
 
     @Override
     protected int next(int bits) {
-        s0 = ((s0 &  -2) << 12) ^ (((s0 << 13) ^ s0) >>> 19);
-        s1 = ((s1 &  -8) <<  4) ^ (((s1 <<  2) ^ s1) >>> 25);
-        s2 = ((s2 & -16) << 17) ^ (((s2 <<  3) ^ s2) >>> 11);
+        s0 = ((s0 & -2) << 12) ^ (((s0 << 13) ^ s0) >>> 19);
+        s1 = ((s1 & -8) << 4) ^ (((s1 << 2) ^ s1) >>> 25);
+        s2 = ((s2 & -16) << 17) ^ (((s2 << 3) ^ s2) >>> 11);
         return (s0 ^ s1 ^ s2) >>> (32 - bits);
     }
 }

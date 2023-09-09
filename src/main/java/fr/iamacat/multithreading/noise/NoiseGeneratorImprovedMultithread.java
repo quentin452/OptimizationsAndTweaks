@@ -1,25 +1,32 @@
 package fr.iamacat.multithreading.noise;
 
-import net.minecraft.world.gen.NoiseGenerator;
-
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import net.minecraft.world.gen.NoiseGenerator;
+
 public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
     // ATTENTION IT BREAK VANILLA SEED PARITY
 
-    private final Executor executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final Executor executor = Executors.newFixedThreadPool(
+        Runtime.getRuntime()
+            .availableProcessors());
     private int[] permutations;
     public double xCoord;
     public double yCoord;
     public double zCoord;
-    private static final double[] field_152381_e = new double[] { 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 0.0D, -1.0D, 0.0D };
-    private static final double[] field_152382_f = new double[] { 1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D };
-    private static final double[] field_152383_g = new double[] { 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, -1.0D, -1.0D, 1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 1.0D, 0.0D, -1.0D };
-    private static final double[] field_152384_h = new double[] { 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 0.0D, -1.0D, 0.0D };
-    private static final double[] field_152385_i = new double[] { 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, -1.0D, -1.0D, 1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 1.0D, 0.0D, -1.0D };
+    private static final double[] field_152381_e = new double[] { 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D,
+        0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 0.0D, -1.0D, 0.0D };
+    private static final double[] field_152382_f = new double[] { 1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 0.0D, 0.0D, 0.0D,
+        1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D };
+    private static final double[] field_152383_g = new double[] { 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, -1.0D, -1.0D,
+        1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 1.0D, 0.0D, -1.0D };
+    private static final double[] field_152384_h = new double[] { 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D, 1.0D, -1.0D,
+        0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 0.0D, -1.0D, 0.0D };
+    private static final double[] field_152385_i = new double[] { 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, -1.0D, -1.0D,
+        1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 1.0D, 0.0D, -1.0D };
 
     public NoiseGeneratorImprovedMultithread() {
         this(new Random());
@@ -46,9 +53,10 @@ public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
     }
 
     public void populateNoiseArray(final double[] p_76308_1_, final double p_76308_2_, final double p_76308_4_,
-                                   final double p_76308_6_, final int p_76308_8_, final int p_76308_9_, final int p_76308_10_,
-                                   final double p_76308_11_, final double p_76308_13_, final double p_76308_15_, final double p_76308_17_) {
-        int numThreads = Runtime.getRuntime().availableProcessors();
+        final double p_76308_6_, final int p_76308_8_, final int p_76308_9_, final int p_76308_10_,
+        final double p_76308_11_, final double p_76308_13_, final double p_76308_15_, final double p_76308_17_) {
+        int numThreads = Runtime.getRuntime()
+            .availableProcessors();
         final int chunkSize = p_76308_8_ / numThreads;
 
         CompletableFuture<Void>[] futures = new CompletableFuture[numThreads];

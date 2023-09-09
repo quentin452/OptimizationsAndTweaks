@@ -1,9 +1,9 @@
 package fr.iamacat.multithreading.noise;
 
+import java.util.Random;
+
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.gen.NoiseGenerator;
-
-import java.util.Random;
 
 public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
     // ATTENTION IT BREAK VANILLA SEED PARITY
