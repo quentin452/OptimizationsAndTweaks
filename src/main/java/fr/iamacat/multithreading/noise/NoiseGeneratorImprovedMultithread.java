@@ -3,15 +3,14 @@ package fr.iamacat.multithreading.noise;
 import net.minecraft.world.gen.NoiseGenerator;
 
 import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
     // ATTENTION IT BREAK VANILLA SEED PARITY
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final Executor executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private int[] permutations;
     public double xCoord;
     public double yCoord;
@@ -51,11 +50,12 @@ public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
                                    final double p_76308_11_, final double p_76308_13_, final double p_76308_15_, final double p_76308_17_) {
         int numThreads = Runtime.getRuntime().availableProcessors();
         final int chunkSize = p_76308_8_ / numThreads;
-        Future<?>[] futures = new Future[numThreads];
+
+        CompletableFuture<Void>[] futures = new CompletableFuture[numThreads];
 
         for (int thread = 0; thread < numThreads; thread++) {
             final int finalThread = thread;
-            futures[thread] = executor.submit(() -> {
+            futures[thread] = CompletableFuture.runAsync(() -> {
                 int start = finalThread * chunkSize;
                 int end = finalThread == numThreads - 1 ? p_76308_8_ : (finalThread + 1) * chunkSize;
 
@@ -73,16 +73,16 @@ public class NoiseGeneratorImprovedMultithread extends NoiseGenerator {
                         }
                     }
                 }
-            });
+            }, executor);
         }
 
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures);
+
         // Wait for all threads to finish
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            allOf.get();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
