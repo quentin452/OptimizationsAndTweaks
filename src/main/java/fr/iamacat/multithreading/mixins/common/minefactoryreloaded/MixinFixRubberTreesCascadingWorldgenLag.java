@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.common.IPlantable;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,23 +31,31 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 
         int y = getSurfaceBlockY(world, x, z);
 
-        if (y > 0) {
-            int treeHeight = rand.nextInt(3) + 5;
-            int worldHeight = world.getHeight();
-
-            if (y >= 1 && y + treeHeight + 1 <= worldHeight && placeSapling(world, x, y, z)) {
-                generateLeaves(world, rand, x, y, z, treeHeight);
-                generateTrunk(world, x, y, z, treeHeight);
-                return true;
-            }
+        if (y <= 0) {
+            return true;
         }
-        return false;
+
+        return growTree(world, rand, x, y + 1, z);
     }
 
     @Unique
     private int getSurfaceBlockY(World world, int x, int z) {
         int y = world.getHeightValue(x, z);
         return y > 0 ? y - 1 : -1;
+    }
+
+    @Unique
+    public boolean growTree(World world, Random rand, int x, int y, int z) {
+        int treeHeight = rand.nextInt(3) + 5;
+        int worldHeight = world.getHeight();
+
+        if (y < 1 || y + treeHeight + 1 > worldHeight || !placeSapling(world, x, y, z)) {
+            return false;
+        }
+
+        generateLeaves(world, rand, x, y, z, treeHeight);
+        generateTrunk(world, x, y, z, treeHeight);
+        return true;
     }
 
     @Unique
@@ -95,6 +104,24 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             return true;
         }
         return false;
+    }
+
+    @Unique
+    private boolean isSpaceAvailable(World world, int x, int y, int z, int height) {
+        for (int yOffset = 0; yOffset < height + 3; ++yOffset) {
+            for (int xOffset = -1; xOffset <= 1; ++xOffset) {
+                for (int zOffset = -1; zOffset <= 1; ++zOffset) {
+                    Block block = world.getBlock(x + xOffset, y + yOffset, z + zOffset);
+
+                    if (!(block instanceof IPlantable || block.isLeaves(world, x + xOffset, y + yOffset, z + zOffset)
+                        || block.isAir(world, x + xOffset, y + yOffset, z + zOffset)
+                        || block.isReplaceable(world, x + xOffset, y + yOffset, z + zOffset))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override
