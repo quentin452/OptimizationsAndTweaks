@@ -146,7 +146,7 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShinColleWorldGen;
 
-    @Config.Comment("Fix Some Cascading Worldgen caused by Shipwreck Gen from Shipwreck Mod")
+    @Config.Comment("Fix Completly Cascading Worldgen caused by Shipwreck Gen from Shipwreck Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShipwreckGen;

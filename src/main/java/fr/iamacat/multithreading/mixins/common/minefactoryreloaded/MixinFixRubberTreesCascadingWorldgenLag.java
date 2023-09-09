@@ -53,13 +53,12 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             return false;
         }
 
-        generateLeaves(world, rand, x, y, z, treeHeight);
-        generateTrunk(world, x, y, z, treeHeight);
-        return true;
-    }
+        for (int yOffset = 0; yOffset < treeHeight; ++yOffset) {
+            if (isReplaceableOrLeaves(world, x, y + yOffset, z)) {
+                setBlockAndNotifyAdequately(world, x, y + yOffset, z, MFRThings.rubberWoodBlock, 1);
+            }
+        }
 
-    @Unique
-    private void generateLeaves(World world, Random rand, int x, int y, int z, int treeHeight) {
         for (int yOffset = y - 3 + treeHeight; yOffset <= y + treeHeight; ++yOffset) {
             int var12 = yOffset - (y + treeHeight);
             int center = 1 - var12 / 2;
@@ -77,15 +76,8 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
                 }
             }
         }
-    }
 
-    @Unique
-    private void generateTrunk(World world, int x, int y, int z, int treeHeight) {
-        for (int yOffset = 0; yOffset < treeHeight; ++yOffset) {
-            if (isReplaceableOrLeaves(world, x, y + yOffset, z)) {
-                setBlockAndNotifyAdequately(world, x, y + yOffset, z, MFRThings.rubberWoodBlock, 1);
-            }
-        }
+        return true;
     }
 
     @Unique
@@ -104,24 +96,6 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             return true;
         }
         return false;
-    }
-
-    @Unique
-    private boolean isSpaceAvailable(World world, int x, int y, int z, int height) {
-        for (int yOffset = 0; yOffset < height + 3; ++yOffset) {
-            for (int xOffset = -1; xOffset <= 1; ++xOffset) {
-                for (int zOffset = -1; zOffset <= 1; ++zOffset) {
-                    Block block = world.getBlock(x + xOffset, y + yOffset, z + zOffset);
-
-                    if (!(block instanceof IPlantable || block.isLeaves(world, x + xOffset, y + yOffset, z + zOffset)
-                        || block.isAir(world, x + xOffset, y + yOffset, z + zOffset)
-                        || block.isReplaceable(world, x + xOffset, y + yOffset, z + zOffset))) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     @Override
