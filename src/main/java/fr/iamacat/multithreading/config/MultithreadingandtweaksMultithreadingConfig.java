@@ -132,6 +132,10 @@ public class MultithreadingandtweaksMultithreadingConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix;
+    @Config.Comment("Fix Some Cascading Worldgen caused by MineFactoryReloadedWorldGen from minefactory reloaded Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixCascadingforMineFactoryReloadedWorldGen;
     @Config.Comment("Fix Some Cascading Worldgen caused by Lakes from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

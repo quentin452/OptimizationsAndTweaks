@@ -101,24 +101,19 @@ public class MixinFixWorldGenPamFruitTree extends WorldGenAbstractTree {
                                 for (int k2 = par5 - l1; k2 <= par5 + l1; ++k2) {
                                     int l2 = k2 - par5;
                                     Block block1 = par1World.getBlock(i2, k1, k2);
-                                    if (block1 != null && (Math.abs(j2) != l1 || Math.abs(l2) != l1
-                                        || par2Random.nextInt(2) != 0 && i3 != 0)
-                                        && (block1.isAir(par1World, i2, k1, k2) || block1.isLeaves(par1World, i2, k1, k2))) {
+                                    if (block1 != null
+                                        && (Math.abs(j2) != l1 || Math.abs(l2) != l1
+                                            || par2Random.nextInt(2) != 0 && i3 != 0)
+                                        && (block1.isAir(par1World, i2, k1, k2)
+                                            || block1.isLeaves(par1World, i2, k1, k2))) {
 
-                                        par1World.setBlock(
-                                            i2,
-                                            k1,
-                                            k2,
-                                            Blocks.leaves,
-                                            this.metaLeaves,
-                                            2);
+                                        par1World.setBlock(i2, k1, k2, Blocks.leaves, this.metaLeaves, 2);
 
                                         if (par1World.getBlock(i2, k1 - 1, k2) == Blocks.air
                                             && par1World.getBlock(i2, k1 - 2, k2) == Blocks.air
                                             && k1 > 2
                                             && par2Random.nextInt(4) == 0) {
-                                            par1World
-                                                .setBlock(i2, k1 - 1, k2, this.fruitType, 0, 2);
+                                            par1World.setBlock(i2, k1 - 1, k2, this.fruitType, 0, 2);
                                         }
                                     }
                                 }
@@ -130,13 +125,7 @@ public class MixinFixWorldGenPamFruitTree extends WorldGenAbstractTree {
                             if (block.isAir(par1World, par3, par4 + k1, par5)
                                 || block.isLeaves(par1World, par3, par4 + k1, par5)
                                 || block == this.fruitType) {
-                                par1World.setBlock(
-                                    par3,
-                                    par4 + k1,
-                                    par5,
-                                    Blocks.log,
-                                    this.metaWood,
-                                    2);
+                                par1World.setBlock(par3, par4 + k1, par5, Blocks.log, this.metaWood, 2);
 
                             }
                         }

@@ -14,6 +14,10 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // BUGFIX MIXINS
+
+    common_minefactoryreloaded_MixinFixCascadingforMineFactoryReloadedWorldGen(Side.COMMON,
+        m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingforMineFactoryReloadedWorldGen,
+        "minefactoryreloaded.MixinFixCascadingforMineFactoryReloadedWorldGen"),
     common_pamsharvestcraft_MixinFixWorldGenPamFruitTree(Side.COMMON,
         m -> MultithreadingandtweaksMultithreadingConfig.enableMixinFixWorldGenPamFruitTree,
         "pamsharvestcraft.MixinFixWorldGenPamFruitTree"),
