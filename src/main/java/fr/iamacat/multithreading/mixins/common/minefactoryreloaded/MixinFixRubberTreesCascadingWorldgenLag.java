@@ -2,8 +2,6 @@ package fr.iamacat.multithreading.mixins.common.minefactoryreloaded;
 
 import java.util.Random;
 
-import cofh.lib.util.helpers.BlockHelper;
-import com.falsepattern.lib.compat.BlockPos;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -12,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
+import cofh.lib.util.helpers.BlockHelper;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
@@ -33,8 +32,9 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             return false;
         }
 
-        return this.multithreadingandtweaks$growTree(var1, var2, var3, var6 + 1, var5);
+        return this.growTree(var1, var2, var3, var6 + 1, var5);
     }
+
     @Override
     public boolean generate(World world, Random rand, int x, int retries, int z) {
         if (!MultithreadingandtweaksMultithreadingConfig.enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix) {
@@ -47,7 +47,7 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
             return true;
         }
 
-        return multithreadingandtweaks$growTree(world, rand, x, y + 1, z);
+        return growTree(world, rand, x, y + 1, z);
     }
 
     @Unique
@@ -56,19 +56,28 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
         return y > 0 ? y - 1 : -1;
     }
 
-    @Unique
-    public boolean multithreadingandtweaks$growTree(World world, Random rand, int x, int y, int z) {
+    /**
+     * @author f
+     * @reason f
+     */
+    @Overwrite(remap = false)
+    public boolean growTree(World world, Random rand, int x, int y, int z) {
+        // Add a random chance for the tree not to grow (50% chance)
+        if (rand.nextInt(2) == 0) {
+            return false;
+        }
+
         int treeHeight = rand.nextInt(3) + 5;
         int worldHeight = world.getHeight();
 
         if (y < 1 || y + treeHeight + 1 > worldHeight || !multithreadingandtweaks$placeSapling(world, x, y, z)) {
             return false;
         }
-
         for (int yOffset = 0; yOffset < treeHeight; ++yOffset) {
 
-                world.setBlock(x, y + yOffset, z, MFRThings.rubberWoodBlock, 1, 2);
+            world.setBlock(x, y + yOffset, z, MFRThings.rubberWoodBlock);
 
+            this.multithreadingandtweaks$notifyBlockUpdate(world, x, y + yOffset, z, 0);
         }
 
         // Generate leaves without triggering updates
@@ -81,12 +90,15 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
                     int xPos = xOffset - x;
                     int zPos = zOffset - z;
 
-                    if ((xPos != center || zPos != center || rand.nextInt(2) != 0 && var12 != 0)
-                       ) {
+                    if ((xPos != center || zPos != center || rand.nextInt(2) != 0 && var12 != 0)) {
 
                         // Place leaves without block updates
                         // make cascading when enabled todo fixme
-                        world.setBlock(xOffset, yOffset, zOffset, MFRThings.rubberLeavesBlock, 0, 2);
+                        if (multithreadingandtweaks$canPlaceLeaf(world, xOffset, yOffset, zOffset)) {
+                            world.setBlock(xOffset, yOffset, zOffset, MFRThings.rubberLeavesBlock);
+                        }
+
+                        this.multithreadingandtweaks$notifyBlockUpdate(world, xOffset, yOffset, zOffset, 0);
                     }
                 }
             }
@@ -94,13 +106,11 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 
         return true;
     }
-    // make cascading when enabled todo fixme
+
     @Unique
-    private boolean multithreadingandtweaks$isReplaceableOrLeaves(World world, int x, int y, int z) {
+    boolean multithreadingandtweaks$canPlaceLeaf(World world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
-        return block == null || block.isAir(world, x, y, z)
-            || block.isLeaves(world, x, y, z)
-            || block.isReplaceable(world, x, y, z);
+        return block != MFRThings.rubberWoodBlock;
     }
 
     @Unique
@@ -113,11 +123,15 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
         return false;
     }
 
-    @Override
-    protected void setBlockAndNotifyAdequately(World world, int x, int y, int z, Block block, int meta) {
-        int flag = this.multithreadingandtweaks$doBlockNotify ? 3 : 2;
-        if (world.setBlock(x, y, z, block, meta, flag)) {
-            world.setBlockMetadataWithNotify(x, y, z, meta, 2);
+    @Unique
+    protected void multithreadingandtweaks$notifyBlockUpdate(World world, int x, int y, int z, int meta) {
+
+        world.markBlockForUpdate(x, y, z);
+
+        if (!world.isRemote) {
+            world.notifyBlockChange(x, y, z, Block.getBlockById(meta));
         }
+
     }
+
 }

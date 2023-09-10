@@ -42,7 +42,7 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                     for (k1 = z - b0; k1 <= z + b0 && flag; ++k1) {
                         if (i1 >= 0 && i1 < 256) {
                             world.getBlock(j1, i1, k1);
-                            if (!this.isReplaceable(world, j1, i1, k1)) {
+                            if (!this.multithreadingandtweaks$isReplaceable(world, j1, i1, k1)) {
                                 flag = false;
                             }
                         } else {
@@ -59,10 +59,10 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                 boolean isSoil = block2
                     .canSustainPlant(world, x, y - 1, z, ForgeDirection.UP, (BlockSapling) Blocks.sapling);
                 if (isSoil && y < 256 - l - 1) {
-                    this.onPlantGrow(world, x, y - 1, z, x, y, z);
-                    this.onPlantGrow(world, x + 1, y - 1, z, x, y, z);
-                    this.onPlantGrow(world, x + 1, y - 1, z + 1, x, y, z);
-                    this.onPlantGrow(world, x, y - 1, z + 1, x, y, z);
+                    this.multithreadingandtweaks$onPlantGrow(world, x, y - 1, z, x, y, z);
+                    this.multithreadingandtweaks$onPlantGrow(world, x + 1, y - 1, z, x, y, z);
+                    this.multithreadingandtweaks$onPlantGrow(world, x + 1, y - 1, z + 1, x, y, z);
+                    this.multithreadingandtweaks$onPlantGrow(world, x, y - 1, z + 1, x, y, z);
                     int j3 = rand.nextInt(4);
                     j1 = l - rand.nextInt(4);
                     k1 = 2 - rand.nextInt(3);
@@ -82,10 +82,34 @@ public class MixinFixCascadingFromWorldGenBrassTree {
 
                         Block block1 = world.getBlock(k3, k2, l1);
                         if (block1.isAir(world, k3, k2, l1) || block1.isLeaves(world, k3, k2, l1)) {
-                            this.setBlockAndNotifyAdequately(world, k3, k2, l1, InitBlocks.blockBrassLog, 0);
-                            this.setBlockAndNotifyAdequately(world, k3 + 1, k2, l1, InitBlocks.blockBrassLog, 0);
-                            this.setBlockAndNotifyAdequately(world, k3, k2, l1 + 1, InitBlocks.blockBrassLog, 0);
-                            this.setBlockAndNotifyAdequately(world, k3 + 1, k2, l1 + 1, InitBlocks.blockBrassLog, 0);
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                                world,
+                                k3,
+                                k2,
+                                l1,
+                                InitBlocks.blockBrassLog,
+                                0);
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                                world,
+                                k3 + 1,
+                                k2,
+                                l1,
+                                InitBlocks.blockBrassLog,
+                                0);
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                                world,
+                                k3,
+                                k2,
+                                l1 + 1,
+                                InitBlocks.blockBrassLog,
+                                0);
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                                world,
+                                k3 + 1,
+                                k2,
+                                l1 + 1,
+                                InitBlocks.blockBrassLog,
+                                0);
                             i2 = k2;
                         }
                     }
@@ -95,28 +119,28 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                     for (j2 = -2; j2 <= 0; ++j2) {
                         for (k2 = -2; k2 <= 0; ++k2) {
                             l3 = -1;
-                            this.setBlockAndNotifyAdequately(
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                 world,
                                 k3 + j2,
                                 i2 + l3,
                                 l1 + k2,
                                 InitBlocks.blockBrassLeaves,
                                 0);
-                            this.setBlockAndNotifyAdequately(
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                 world,
                                 1 + k3 - j2,
                                 i2 + l3,
                                 l1 + k2,
                                 InitBlocks.blockBrassLeaves,
                                 0);
-                            this.setBlockAndNotifyAdequately(
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                 world,
                                 k3 + j2,
                                 i2 + l3,
                                 1 + l1 - k2,
                                 InitBlocks.blockBrassLeaves,
                                 0);
-                            this.setBlockAndNotifyAdequately(
+                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                 world,
                                 1 + k3 - j2,
                                 i2 + l3,
@@ -125,28 +149,28 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                                 0);
                             if ((j2 > -2 || k2 > -1) && (j2 != -1 || k2 != -2)) {
                                 l2 = 1;
-                                this.setBlockAndNotifyAdequately(
+                                this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                     world,
                                     k3 + j2,
                                     i2 + l2,
                                     l1 + k2,
                                     InitBlocks.blockBrassLeaves,
                                     0);
-                                this.setBlockAndNotifyAdequately(
+                                this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                     world,
                                     1 + k3 - j2,
                                     i2 + l2,
                                     l1 + k2,
                                     InitBlocks.blockBrassLeaves,
                                     0);
-                                this.setBlockAndNotifyAdequately(
+                                this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                     world,
                                     k3 + j2,
                                     i2 + l2,
                                     1 + l1 - k2,
                                     InitBlocks.blockBrassLeaves,
                                     0);
-                                this.setBlockAndNotifyAdequately(
+                                this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                     world,
                                     1 + k3 - j2,
                                     i2 + l2,
@@ -158,10 +182,34 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                     }
 
                     if (rand.nextBoolean()) {
-                        this.setBlockAndNotifyAdequately(world, k3, i2 + 2, l1, InitBlocks.blockBrassLeaves, 0);
-                        this.setBlockAndNotifyAdequately(world, k3 + 1, i2 + 2, l1, InitBlocks.blockBrassLeaves, 0);
-                        this.setBlockAndNotifyAdequately(world, k3 + 1, i2 + 2, l1 + 1, InitBlocks.blockBrassLeaves, 0);
-                        this.setBlockAndNotifyAdequately(world, k3, i2 + 2, l1 + 1, InitBlocks.blockBrassLeaves, 0);
+                        this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                            world,
+                            k3,
+                            i2 + 2,
+                            l1,
+                            InitBlocks.blockBrassLeaves,
+                            0);
+                        this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                            world,
+                            k3 + 1,
+                            i2 + 2,
+                            l1,
+                            InitBlocks.blockBrassLeaves,
+                            0);
+                        this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                            world,
+                            k3 + 1,
+                            i2 + 2,
+                            l1 + 1,
+                            InitBlocks.blockBrassLeaves,
+                            0);
+                        this.multithreadingandtweaks$setBlockAndNotifyAdequately(
+                            world,
+                            k3,
+                            i2 + 2,
+                            l1 + 1,
+                            InitBlocks.blockBrassLeaves,
+                            0);
                     }
 
                     for (j2 = -3; j2 <= 4; ++j2) {
@@ -170,7 +218,7 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                                 && (j2 != 4 || k2 != -3)
                                 && (j2 != 4 || k2 != 4)
                                 && (Math.abs(j2) < 3 || Math.abs(k2) < 3)) {
-                                this.setBlockAndNotifyAdequately(
+                                this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                     world,
                                     k3 + j2,
                                     i2,
@@ -187,7 +235,7 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                                 l3 = rand.nextInt(3) + 2;
 
                                 for (l2 = 0; l2 < l3; ++l2) {
-                                    this.setBlockAndNotifyAdequately(
+                                    this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                         world,
                                         x + j2,
                                         i2 - l2 - 1,
@@ -199,7 +247,7 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                                 int i3;
                                 for (l2 = -1; l2 <= 1; ++l2) {
                                     for (i3 = -1; i3 <= 1; ++i3) {
-                                        this.setBlockAndNotifyAdequately(
+                                        this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                             world,
                                             k3 + j2 + l2,
                                             i2 - 0,
@@ -212,7 +260,7 @@ public class MixinFixCascadingFromWorldGenBrassTree {
                                 for (l2 = -2; l2 <= 2; ++l2) {
                                     for (i3 = -2; i3 <= 2; ++i3) {
                                         if (Math.abs(l2) != 2 || Math.abs(i3) != 2) {
-                                            this.setBlockAndNotifyAdequately(
+                                            this.multithreadingandtweaks$setBlockAndNotifyAdequately(
                                                 world,
                                                 k3 + j2 + l2,
                                                 i2 - 1,
@@ -237,19 +285,21 @@ public class MixinFixCascadingFromWorldGenBrassTree {
     }
 
     @Unique
-    private void setBlockAndNotifyAdequately(World world, int x, int y, int z, Block block, int metadata) {
+    private void multithreadingandtweaks$setBlockAndNotifyAdequately(World world, int x, int y, int z, Block block,
+        int metadata) {
         world.setBlock(x, y, z, block, metadata, 3);
         world.notifyBlockChange(x, y, z, block);
     }
 
     @Unique
-    private void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ) {
+    private void multithreadingandtweaks$onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY,
+        int sourceZ) {
         world.getBlock(x, y, z)
             .onPlantGrow(world, x, y, z, sourceX, sourceY, sourceZ);
     }
 
     @Unique
-    private boolean isReplaceable(World world, int x, int y, int z) {
+    private boolean multithreadingandtweaks$isReplaceable(World world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         return block.isReplaceable(world, x, y, z);
     }

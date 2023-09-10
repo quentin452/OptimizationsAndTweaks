@@ -12,7 +12,7 @@ import fr.iamacat.multithreading.mixins.common.core.MixinEntityLivingUpdate;
 public class MixinEntityLivingUpdateSubClass extends MixinEntityLivingUpdate {
 
     @Override
-    public float getHealth() {
+    public float multithreadingandtweaks$getHealth() {
         return 0;
     }
 

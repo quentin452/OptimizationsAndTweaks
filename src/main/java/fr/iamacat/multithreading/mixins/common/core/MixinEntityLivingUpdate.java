@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,8 +23,8 @@ public abstract class MixinEntityLivingUpdate {
     @Unique
     private EntityLivingBase entityObject;
 
-    @Shadow
-    public abstract float getHealth();
+    @Unique
+    public abstract float multithreadingandtweaks$getHealth();
 
     @Unique
     private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
@@ -232,7 +231,8 @@ public abstract class MixinEntityLivingUpdate {
 
     @Inject(method = "doUpdate", at = @At("HEAD"), cancellable = true)
     private void doUpdateInject(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate && getHealth() > 0) {
+        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate
+            && multithreadingandtweaks$getHealth() > 0) {
             ci.cancel();
         }
     }
