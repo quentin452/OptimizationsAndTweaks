@@ -106,7 +106,9 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
         String var9 = var8.biomeName;
 
         // Generate rubber trees
-        if (_rubberTreesEnabled && (var5 || _regenTrees) && _rubberTreeBiomeList.contains(var9) && var1.nextInt(100) < 40) {
+        if (_rubberTreesEnabled && (var5 || _regenTrees)
+            && _rubberTreeBiomeList.contains(var9)
+            && var1.nextInt(100) < 40) {
             if (var1.nextInt(30) == 0) {
                 String var10 = var9.toLowerCase(Locale.US);
                 if (var10.contains("mega")) {
@@ -131,12 +133,15 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
         }
 
         // Generate lakes
-        if (_lakesEnabled && var4.getWorldInfo().isMapFeaturesEnabled()) {
+        if (_lakesEnabled && var4.getWorldInfo()
+            .isMapFeaturesEnabled()) {
             int var15;
 
             // Sludge lakes
             var15 = _sludgeLakeRarity;
-            if (var15 > 0 && (var5 || _regenSludge) && _sludgeBiomeList.contains(var9) == _sludgeLakeMode && var1.nextInt(var15) == 0) {
+            if (var15 > 0 && (var5 || _regenSludge)
+                && _sludgeBiomeList.contains(var9) == _sludgeLakeMode
+                && var1.nextInt(var15) == 0) {
                 int var11 = var6 - 8 + var1.nextInt(16);
                 int var12 = var1.nextInt(var4.getHeight());
                 int var13 = var7 - 8 + var1.nextInt(16);
@@ -145,13 +150,16 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
 
             // Sewage lakes
             var15 = _sewageLakeRarity;
-            if (var15 > 0 && (var5 || _regenSewage) && _sewageBiomeList.contains(var9) == _sewageLakeMode && var1.nextInt(var15) == 0) {
+            if (var15 > 0 && (var5 || _regenSewage)
+                && _sewageBiomeList.contains(var9) == _sewageLakeMode
+                && var1.nextInt(var15) == 0) {
                 int var11 = var6 - 8 + var1.nextInt(16);
                 int var12 = var1.nextInt(var4.getHeight());
                 int var13 = var7 - 8 + var1.nextInt(16);
                 String var14 = var9.toLowerCase(Locale.US);
                 if (var14.contains("mushroom")) {
-                    (new WorldGenLakesMeta(MFRThings.mushroomSoupLiquid, 0)).func_76484_a(var4, var1, var11, var12, var13);
+                    (new WorldGenLakesMeta(MFRThings.mushroomSoupLiquid, 0))
+                        .func_76484_a(var4, var1, var11, var12, var13);
                 } else {
                     (new WorldGenLakesMeta(MFRThings.sewageLiquid, 0)).func_76484_a(var4, var1, var11, var12, var13);
                 }
