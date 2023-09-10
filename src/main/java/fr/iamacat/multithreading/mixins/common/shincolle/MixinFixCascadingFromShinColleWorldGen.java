@@ -18,7 +18,7 @@ import com.lulan.shincolle.worldgen.ShinColleWorldGen;
 import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(ShinColleWorldGen.class)
 public class MixinFixCascadingFromShinColleWorldGen implements IWorldGenerator {
@@ -27,7 +27,7 @@ public class MixinFixCascadingFromShinColleWorldGen implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
         int dimension = world.provider.dimensionId;
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShinColleWorldGen) {
+        if (MultithreadingandtweaksConfig.enableMixinFixCascadingFromShinColleWorldGen) {
 
             switch (dimension) {
                 case -1:

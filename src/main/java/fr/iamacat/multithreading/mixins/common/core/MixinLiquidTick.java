@@ -18,15 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidTick {
 
     @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
@@ -35,14 +35,14 @@ public abstract class MixinLiquidTick {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick) {
+        if (MultithreadingandtweaksConfig.enableMixinliquidTick) {
             batchQueue = new LinkedBlockingQueue<>();
             blockMaterialMap = new ConcurrentHashMap<>();
         }
     }
 
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;;
     @Unique
     private LinkedBlockingQueue<List<ChunkCoordinates>> batchQueue;
     @Unique
@@ -101,7 +101,7 @@ public abstract class MixinLiquidTick {
 
     @Inject(method = "liquidTick", at = @At("RETURN"))
     private void onLiquidTick(World world, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinliquidTick) {
+        if (MultithreadingandtweaksConfig.enableMixinliquidTick) {
             int batchSize = BATCH_SIZE;
             int numThreads = Math.max(
                 1,

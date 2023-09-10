@@ -19,14 +19,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(TileEntity.class)
 public abstract class MixinTileEntities {
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     private static final ExecutorService THREAD_POOL = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
     private World world;
     private List<TileEntity> tileEntities;
@@ -42,7 +42,7 @@ public abstract class MixinTileEntities {
     }
 
     public void processTileEntities() {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinTileEntities) {
+        if (MultithreadingandtweaksConfig.enableMixinTileEntities) {
             // Split the tile entities into batches
             List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
 

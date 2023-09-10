@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate {
@@ -27,7 +27,7 @@ public abstract class MixinEntityLivingUpdate {
     public abstract float multithreadingandtweaks$getHealth();
 
     @Unique
-    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final int batchSize = MultithreadingandtweaksConfig.batchsize;
     @Unique
     private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
     @Unique
@@ -42,8 +42,8 @@ public abstract class MixinEntityLivingUpdate {
 
     @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -60,7 +60,7 @@ public abstract class MixinEntityLivingUpdate {
         });
     @Unique
     private final Map<net.minecraft.world.chunk.Chunk, List<EntityLiving>> entityLivingMap = new ConcurrentHashMap<>();
-    // private static final int batchsize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    // private static final int batchsize = MultithreadingandtweaksConfig.batchsize;
     @Unique
     private final CopyOnWriteArrayList<MixinEntityLivingUpdate> entitiesToUpdate = new CopyOnWriteArrayList<MixinEntityLivingUpdate>();
     @Unique
@@ -74,7 +74,7 @@ public abstract class MixinEntityLivingUpdate {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(World worldIn, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate) {
             this.entityObject = (EntityLivingBase) (Object) this;
             processedEntities = new HashSet<>();
         }
@@ -105,7 +105,7 @@ public abstract class MixinEntityLivingUpdate {
 
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate) {
             try {
                 processEntityUpdates(world.getTotalWorldTime());
             } catch (Exception e) {
@@ -167,7 +167,7 @@ public abstract class MixinEntityLivingUpdate {
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate) {
             // System.out.println("Cancelling vanilla onLivingUpdate()");
             boolean needsUpdate = strafe != 0 || forward != 0 || friction != 0;
 
@@ -231,8 +231,7 @@ public abstract class MixinEntityLivingUpdate {
 
     @Inject(method = "doUpdate", at = @At("HEAD"), cancellable = true)
     private void doUpdateInject(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntityLivingUpdate
-            && multithreadingandtweaks$getHealth() > 0) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate && multithreadingandtweaks$getHealth() > 0) {
             ci.cancel();
         }
     }

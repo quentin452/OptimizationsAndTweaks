@@ -20,15 +20,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinEntitiesUpdateTimeandLight {
 
     @Unique
     ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
@@ -39,9 +39,9 @@ public abstract class MixinEntitiesUpdateTimeandLight {
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void updateTimeLightAndEntitiesBatched(boolean p_147456_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesUpdateTimeandLight) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesUpdateTimeandLight) {
             WorldServer worldServer = (WorldServer) (Object) this;
-            int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize * 3;
+            int batchSize = MultithreadingandtweaksConfig.batchsize * 3;
 
             List<Entity> entities = new ArrayList<>(worldServer.loadedEntityList); // Create a copy of the entity list
 
@@ -86,7 +86,7 @@ public abstract class MixinEntitiesUpdateTimeandLight {
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
     private void updateTimeLightAndEntitiesCleanup(boolean p_147456_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesCollision) {
             // shut down the thread pool when done
             if (this.executorService != null) {
                 this.executorService.shutdown();
@@ -97,9 +97,9 @@ public abstract class MixinEntitiesUpdateTimeandLight {
 
     @Inject(method = "updateEntities", at = @At("HEAD"))
     private void updateEntitiesBatched(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesUpdateTimeandLight) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesUpdateTimeandLight) {
             World world = (World) (Object) this;
-            int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+            int batchSize = MultithreadingandtweaksConfig.batchsize;
 
             List<Entity> entities = new ArrayList<>(world.loadedEntityList); // Create a copy of the entity list
 

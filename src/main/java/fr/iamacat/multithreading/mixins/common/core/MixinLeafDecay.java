@@ -16,24 +16,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.BlockPos;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLeavesBase.class)
 public abstract class MixinLeafDecay {
 
     private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>());
 
-    private final int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final int batchSize = MultithreadingandtweaksConfig.batchsize;
 
     @Inject(method = "removeLeaves", at = @At("RETURN"))
     private void onRemoveLeaves(World world, int x, int y, int z, CallbackInfo ci) {
         Chunk chunk = world.getChunkFromBlockCoords(x, z);
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinLeafDecay) {
+        if (MultithreadingandtweaksConfig.enableMixinLeafDecay) {
             int numLeaves = 0;
             for (int i = 0; i < 16; i++) {
                 for (int k = 0; k < 16; k++) {
@@ -70,8 +70,8 @@ public abstract class MixinLeafDecay {
             e.printStackTrace();
         }
         executorService = new ThreadPoolExecutor(
-            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-            MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+            MultithreadingandtweaksConfig.numberofcpus,
+            MultithreadingandtweaksConfig.numberofcpus,
             60L,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>());

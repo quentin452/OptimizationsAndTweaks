@@ -17,20 +17,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockFire.class)
 public abstract class MixinFireTick {
 
     // Use a shared thread pool with a fixed number of threads
     private static final ExecutorService executorService = Executors.newFixedThreadPool(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Fire-Tick-%d")
             .build());
 
     @Inject(method = "updateTick", at = @At("HEAD"))
     public void updateTick(World world, int x, int y, int z, Random random, CallbackInfo info) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFireTick) {
+        if (MultithreadingandtweaksConfig.enableMixinFireTick) {
 
             // Process fire ticks using breadth-first search
             boolean[][][] visited = new boolean[3][3][3]; // 3x3x3 grid centered at (x, y, z)

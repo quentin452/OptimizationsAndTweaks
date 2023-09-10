@@ -5,7 +5,7 @@ import com.falsepattern.lib.config.Config;
 import fr.iamacat.multithreading.Tags;
 
 @Config(modid = Tags.MODID)
-public class MultithreadingandtweaksMultithreadingConfig {
+public class MultithreadingandtweaksConfig {
 
     // Make inconfig ingame Fixme todo
     // make categories Fixme todo

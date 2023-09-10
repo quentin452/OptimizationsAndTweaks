@@ -19,19 +19,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.BlockPos;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinGrassSpread {
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     private static final ExecutorService EXECUTOR_SERVICE = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
     private final Queue<BlockPos> spreadQueue = new ConcurrentLinkedQueue<>();
 
     @Inject(method = "updateTick", at = @At("RETURN"))
     private void onUpdateTick(World world, int x, int y, int z, Random random, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGrassSpread) {
+        if (MultithreadingandtweaksConfig.enableMixinGrassSpread) {
 
             // Calculate the distance threshold (in chunks) from the player's position
             EntityPlayer player = world.getClosestPlayer(x, y, z, -1);
@@ -71,8 +71,7 @@ public abstract class MixinGrassSpread {
             }
 
             int queueSize = spreadQueue.size();
-            int numThreads = Math
-                .min(queueSize / BATCH_SIZE + 1, MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+            int numThreads = Math.min(queueSize / BATCH_SIZE + 1, MultithreadingandtweaksConfig.numberofcpus);
             List<List<BlockPos>> batches = new ArrayList<>(numThreads);
             Iterator<BlockPos> iterator = spreadQueue.iterator();
             for (int i = 0; i < numThreads; i++) {

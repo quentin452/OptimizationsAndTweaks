@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.libraries.com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinChunkPopulating {
@@ -35,8 +35,8 @@ public abstract class MixinChunkPopulating {
 
     @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -45,8 +45,8 @@ public abstract class MixinChunkPopulating {
 
     @Inject(method = "populate", at = @At("TAIL"))
     private void onPopulate(IChunkProvider chunkProvider, IChunkProvider chunkProvider1, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
-            int maxChunksPerTick = MultithreadingandtweaksMultithreadingConfig.batchsize; // Change this value to limit
+        if (MultithreadingandtweaksConfig.enableMixinChunkPopulating) {
+            int maxChunksPerTick = MultithreadingandtweaksConfig.batchsize; // Change this value to limit
             // the number of chunks to be
             // processed per tick
             int numChunksProcessed = 0;
@@ -68,7 +68,7 @@ public abstract class MixinChunkPopulating {
         at = @At("RETURN"))
     private void onInitialize(MinecraftServer server, ExecutorService executorService, ISaveHandler saveHandler,
         WorldInfo info, WorldProvider provider, Profiler profiler, CrashReport report, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkPopulating) {
+        if (MultithreadingandtweaksConfig.enableMixinChunkPopulating) {
             ServerConfigurationManager playerList = server.getConfigurationManager();
             EntityPlayerMP player = (EntityPlayerMP) playerList.playerEntityList.get(0);
             int viewDistance = playerList.getViewDistance() * 16; // Distance in blocks

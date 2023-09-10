@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.FMLLog;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntitiesRendering {
@@ -29,11 +29,11 @@ public abstract class MixinEntitiesRendering {
     private final ConcurrentLinkedQueue<Entity> entityQueue = new ConcurrentLinkedQueue<>();
     @Unique
     private final ExecutorService executorService = Executors.newFixedThreadPool(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Entity-Rendering-%d")
             .build());
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     @Unique
     private long lastRenderTime = System.nanoTime();
 
@@ -42,7 +42,7 @@ public abstract class MixinEntitiesRendering {
 
     @Inject(method = "doRender", at = @At("HEAD"))
     public void onDoRender(Entity entity, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesRendering) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesRendering) {
             // Skip rendering if entity is not visible or if rendering is already in progress
             if (!entity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())
                 || MinecraftForgeClient.getRenderPass() == -1

@@ -17,17 +17,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.batching.BatchedText;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(GuiIngame.class)
 public abstract class MixinGUIHUD {
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     private final ConcurrentLinkedQueue<BatchedText> renderQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean scissorTestEnabled = false;
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -56,7 +56,7 @@ public abstract class MixinGUIHUD {
 
     @Inject(method = "renderGameOverlay", at = @At("TAIL"))
     private void onRenderGameOverlayPost(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
+        if (MultithreadingandtweaksConfig.enableMixinGUIHUD) {
             // draw cached strings
             ScaledResolution sr = new ScaledResolution(
                 Minecraft.getMinecraft(),
@@ -126,7 +126,7 @@ public abstract class MixinGUIHUD {
     }
 
     private void drawBatch(BatchedText[] batch, int count) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGUIHUD) {
+        if (MultithreadingandtweaksConfig.enableMixinGUIHUD) {
             Minecraft mc = Minecraft.getMinecraft();
             FontRenderer fontRenderer = mc.fontRenderer;
             int scaleFactor = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();

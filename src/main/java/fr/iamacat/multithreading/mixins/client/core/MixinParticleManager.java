@@ -15,21 +15,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.iamacat.multithreading.batching.BatchedParticles;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(RenderGlobal.class)
 public abstract class MixinParticleManager {
 
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
         new ThreadFactoryBuilder().setNameFormat("Particle-Manager-%d")
             .build());
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
 
     private final Queue<EntityFX> particleQueue = new ArrayDeque<>();
 
@@ -39,7 +39,7 @@ public abstract class MixinParticleManager {
     }
 
     private void drawLoop() {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinParticle) {
+        if (MultithreadingandtweaksConfig.enableMixinParticle) {
             while (!Thread.currentThread()
                 .isInterrupted()) {
                 EntityFX[] particles = new EntityFX[BATCH_SIZE];

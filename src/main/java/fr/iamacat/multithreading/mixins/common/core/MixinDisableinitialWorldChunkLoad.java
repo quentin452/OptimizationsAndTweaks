@@ -5,7 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(MinecraftServer.class)
 public class MixinDisableinitialWorldChunkLoad {
@@ -19,6 +19,6 @@ public class MixinDisableinitialWorldChunkLoad {
      */
     @Overwrite
     public void initialWorldChunkLoad() {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinDisableinitialWorldChunkLoad) {}
+        if (MultithreadingandtweaksConfig.enableMixinDisableinitialWorldChunkLoad) {}
     }
 }

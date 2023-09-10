@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.falsepattern.lib.compat.ChunkPos;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(WorldClient.class)
 public abstract class MixinWorldgen {
@@ -28,7 +28,7 @@ public abstract class MixinWorldgen {
 
     @Inject(method = "doPreChunk", at = @At("HEAD"))
     private void onDoPreChunk(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldgen) {
+        if (MultithreadingandtweaksConfig.enableMixinWorldgen) {
             EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
             int x = Math.floorDiv((int) player.posX, 16);
             int z = Math.floorDiv((int) player.posZ, 16);

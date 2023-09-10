@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer {
@@ -33,8 +33,8 @@ public abstract class MixinChunkProviderServer {
 
     @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
@@ -43,9 +43,9 @@ public abstract class MixinChunkProviderServer {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void tick(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinChunkProviderServer) {
+        if (MultithreadingandtweaksConfig.enableMixinChunkProviderServer) {
             try {
-                int batchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+                int batchSize = MultithreadingandtweaksConfig.batchsize;
 
                 List<Chunk> chunksToProcess = new ArrayList<>();
                 WorldServer world = MinecraftServer.getServer().worldServers[0];

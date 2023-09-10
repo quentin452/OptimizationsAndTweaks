@@ -15,7 +15,7 @@ import com.winslow.shipwreckworldgen.ShipwreckGen;
 import com.winslow.shipwreckworldgen.shipwrecks.*;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(ShipwreckGen.class)
 public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
@@ -30,8 +30,7 @@ public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
-        if (world.provider.dimensionId == 0
-            && MultithreadingandtweaksMultithreadingConfig.enableMixinFixCascadingFromShipwreckGen) {
+        if (world.provider.dimensionId == 0 && MultithreadingandtweaksConfig.enableMixinFixCascadingFromShipwreckGen) {
             generateSurface(world, chunkX * 16, chunkZ * 16, random);
         }
     }

@@ -15,21 +15,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinFallBlocksTick {
 
     // Fixme todo
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     @Unique
     private static final ExecutorService THREAD_POOL = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
     @Inject(method = "updateFallBlocks", at = @At("HEAD"))
     private void updateFallBlocks(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinFallBlocksTick) {
+        if (MultithreadingandtweaksConfig.enableMixinFallBlocksTick) {
             List<Entity> entities = ((World) (Object) this).loadedEntityList;
             List<Entity> fallingBlocks = new ArrayList<>();
 

@@ -22,19 +22,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.falsepattern.lib.compat.BlockPos;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidRendering {
 
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     private static final ExecutorService THREAD_POOL = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
     @Inject(method = "tesselate", at = @At("HEAD"), cancellable = true)
     private void onTesselate(IBlockAccess world, BlockPos pos, Tessellator tessellator, int metadata,
         CallbackInfoReturnable<Boolean> ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinLiquidRendering) {
+        if (MultithreadingandtweaksConfig.enableMixinLiquidRendering) {
             ci.cancel();
             tesselateFluid(world, pos, tessellator, metadata);
         }

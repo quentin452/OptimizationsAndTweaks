@@ -15,19 +15,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinEntitiesCollision {
 
     // Fixme todo
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     private AxisAlignedBB boundingBox;
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void batchCollisions(World world, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesCollision) {
             // Cancel vanilla method
             ci.cancel();
 
@@ -43,7 +43,7 @@ public abstract class MixinEntitiesCollision {
 
     @Unique
     private final ExecutorService collisionExecutor = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
     @Unique
     private void batchCollisionsAsync() throws InterruptedException {
@@ -114,7 +114,7 @@ public abstract class MixinEntitiesCollision {
 
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void cancelVanillaCollision(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitiesCollision) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitiesCollision) {
 
             // Cancel vanilla collision logic
             ci.cancel();

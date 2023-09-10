@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinWorldTick {
@@ -27,7 +27,7 @@ public abstract class MixinWorldTick {
     private final Set<ChunkCoordIntPair> loadedChunkCoordinates;
     @Unique
     private final ExecutorService executorService = Executors
-        .newFixedThreadPool(MultithreadingandtweaksMultithreadingConfig.numberofcpus);
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
     @Unique
     private final List<Chunk> chunksToUpdate = new CopyOnWriteArrayList<>();
     @Unique
@@ -36,7 +36,7 @@ public abstract class MixinWorldTick {
     @Unique
     private final Queue<CompletableFuture<Chunk>> loadingQueue;
     @Unique
-    private final int loadingBatchSize = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private final int loadingBatchSize = MultithreadingandtweaksConfig.batchsize;
 
     @Unique
     private final List<CompletableFuture<Chunk>> futures;
@@ -49,7 +49,7 @@ public abstract class MixinWorldTick {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinWorldTick) {
+        if (MultithreadingandtweaksConfig.enableMixinWorldTick) {
             updateChunksAsync((World) (Object) this);
         }
     }

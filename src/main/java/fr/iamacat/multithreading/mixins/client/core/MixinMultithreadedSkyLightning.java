@@ -23,7 +23,7 @@ import com.falsepattern.lib.compat.BlockPos;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(WorldRenderer.class)
 public class MixinMultithreadedSkyLightning {
@@ -36,7 +36,7 @@ public class MixinMultithreadedSkyLightning {
 
     @Inject(method = "func_147436_a", at = @At("HEAD"), cancellable = true)
     private void preUpdateLightByType(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinMultithreadedSkyLightning) {
+        if (MultithreadingandtweaksConfig.enableMixinMultithreadedSkyLightning) {
             ci.cancel();
         }
     }
@@ -55,7 +55,7 @@ public class MixinMultithreadedSkyLightning {
 
     @Inject(method = "func_147436_a", at = @At("RETURN"))
     private void onPostUpdateLightByType(CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinMultithreadedSkyLightning) {
+        if (MultithreadingandtweaksConfig.enableMixinMultithreadedSkyLightning) {
             // Call the batched sky lighting update method on a separate thread
             new Thread(() -> batchUpdateSkyLighting()).start();
         }

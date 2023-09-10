@@ -19,18 +19,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinUpdateBlocks {
 
     @Unique
     private final ExecutorService executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         0L,
         TimeUnit.MILLISECONDS,
-        new LinkedBlockingQueue<>(MultithreadingandtweaksMultithreadingConfig.batchsize),
+        new LinkedBlockingQueue<>(MultithreadingandtweaksConfig.batchsize),
         new ThreadFactoryBuilder().setNameFormat("MixinUpdateBlocks-worker-%d")
             .build());
 
@@ -46,7 +46,7 @@ public abstract class MixinUpdateBlocks {
     @Inject(method = "updateBlocks", at = @At("HEAD"))
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END && event.world == world
-            && MultithreadingandtweaksMultithreadingConfig.enableMixinUpdateBlocks) {
+            && MultithreadingandtweaksConfig.enableMixinUpdateBlocks) {
             int minX = -30000000;
             int minY = 0;
             int minZ = -30000000;
@@ -68,7 +68,7 @@ public abstract class MixinUpdateBlocks {
                             final Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
                             if (chunk != null) {
                                 updateQueue.add(chunk);
-                                if (updateQueue.size() >= MultithreadingandtweaksMultithreadingConfig.batchsize) {
+                                if (updateQueue.size() >= MultithreadingandtweaksConfig.batchsize) {
                                     processChunkBatch();
                                 }
                             }
@@ -81,11 +81,11 @@ public abstract class MixinUpdateBlocks {
     @Unique
     private void processChunkBatch() {
         executorService.submit(() -> {
-            List<Chunk> chunks = new ArrayList<>(MultithreadingandtweaksMultithreadingConfig.batchsize);
+            List<Chunk> chunks = new ArrayList<>(MultithreadingandtweaksConfig.batchsize);
             Chunk chunk;
             while ((chunk = updateQueue.poll()) != null) {
                 chunks.add(chunk);
-                if (chunks.size() >= MultithreadingandtweaksMultithreadingConfig.batchsize) {
+                if (chunks.size() >= MultithreadingandtweaksConfig.batchsize) {
                     break;
                 }
             }

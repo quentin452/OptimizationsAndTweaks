@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.tasking.ExplosionTask;
 
 @Mixin(World.class)
@@ -29,7 +29,7 @@ public abstract class MixinExplosions {
     private final ThreadPoolExecutor executorService;
 
     public MixinExplosions() {
-        int numThreads = MultithreadingandtweaksMultithreadingConfig.numberofcpus;
+        int numThreads = MultithreadingandtweaksConfig.numberofcpus;
         executorService = new ThreadPoolExecutor(
             numThreads,
             numThreads,
@@ -43,7 +43,7 @@ public abstract class MixinExplosions {
     @Inject(method = "newExplosion", at = @At("RETURN"))
     private void onNewExplosion(Entity entityIn, double x, double y, double z, float strength, boolean isFlaming,
         boolean isSmoking, CallbackInfoReturnable<Explosion> ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinExplosions) {
+        if (MultithreadingandtweaksConfig.enableMixinExplosions) {
             ExplosionTask task = new ExplosionTask(ci.getReturnValue(), entityIn.worldObj);
             explosionsToProcess.add(task);
             if (explosionsToProcess.size() == 1) {

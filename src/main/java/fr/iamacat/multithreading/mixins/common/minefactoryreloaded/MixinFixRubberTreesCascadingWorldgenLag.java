@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
 import cofh.lib.util.helpers.BlockHelper;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
 
@@ -37,7 +37,7 @@ public class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 
     @Override
     public boolean generate(World world, Random rand, int x, int retries, int z) {
-        if (!MultithreadingandtweaksMultithreadingConfig.enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix) {
+        if (!MultithreadingandtweaksConfig.enableMixinFixRubberTreesMinefactoryReloadedCascadingWorldgenFix) {
             return true;
         }
 

@@ -17,20 +17,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.falsepattern.lib.compat.BlockPos;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(World.class)
 public abstract class MixinGrowthSpreading {
 
     @Unique
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         new ThreadFactoryBuilder().setNameFormat("Growth-Spreading-%d")
             .build());
     @Unique
     private World world;
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
 
     @Unique
     private final Queue<BlockPos> growthQueue = new ConcurrentLinkedQueue<>();
@@ -41,7 +41,7 @@ public abstract class MixinGrowthSpreading {
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
         this.world = world; // assign world parameter to instance variable
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinGrowthSpreading) {
+        if (MultithreadingandtweaksConfig.enableMixinGrowthSpreading) {
             growthQueue.clear();
         } else {
             addBlocksToGrowthQueue();

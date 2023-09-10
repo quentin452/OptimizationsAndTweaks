@@ -20,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksMultithreadingConfig;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntitySpawnHandler.class)
 public abstract class MixinEntitySpawning {
 
     @Unique
-    private static final int BATCH_SIZE = MultithreadingandtweaksMultithreadingConfig.batchsize;
+    private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
     @Unique
     private final List<Entity> spawnQueue = new ArrayList<>();
 
@@ -34,8 +34,8 @@ public abstract class MixinEntitySpawning {
     private final AtomicInteger batchSize = new AtomicInteger(BATCH_SIZE);
     @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
-        MultithreadingandtweaksMultithreadingConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
+        MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -47,7 +47,7 @@ public abstract class MixinEntitySpawning {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(World world, CallbackInfo ci) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning && !spawnQueue.isEmpty()) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitySpawning && !spawnQueue.isEmpty()) {
             executorService.submit(() -> spawnEntitiesInQueue(world));
         }
     }
@@ -63,7 +63,7 @@ public abstract class MixinEntitySpawning {
                 numEntities--;
             }
         }
-        int numThreads = Math.min(MultithreadingandtweaksMultithreadingConfig.numberofcpus, entities.size());
+        int numThreads = Math.min(MultithreadingandtweaksConfig.numberofcpus, entities.size());
         if (numThreads > 1) {
             List<List<Entity>> partitions = Lists.partition(entities, entities.size() / numThreads + 1);
             List<Future<?>> futures = new ArrayList<>(numThreads);
@@ -101,7 +101,7 @@ public abstract class MixinEntitySpawning {
             target = "Lnet/minecraft/client/renderer/entity/Render;doRender(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private void redirectDoRenderEntities(Render render, Entity entity, double x, double y, double z, float yaw,
         float partialTicks) {
-        if (MultithreadingandtweaksMultithreadingConfig.enableMixinEntitySpawning) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitySpawning) {
             render.doRender(entity, x, y, z, yaw, partialTicks);
         }
     }
