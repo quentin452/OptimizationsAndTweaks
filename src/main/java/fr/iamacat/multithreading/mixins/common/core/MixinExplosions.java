@@ -1,72 +1,59 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.tasking.ExplosionTask;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.World;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import fr.iamacat.multithreading.tasking.ExplosionTask;
-
 @Mixin(World.class)
 public abstract class MixinExplosions {
-
     @Unique
-    private final ConcurrentLinkedDeque<ExplosionTask> explosionsToProcess = new ConcurrentLinkedDeque<>();
+    private final Object explosionsLock = new Object();
     @Unique
-    private final ThreadPoolExecutor executorService;
+    private final ConcurrentLinkedDeque<ExplosionTask> multithreadingandtweaks$explosionsToProcess = new ConcurrentLinkedDeque<>();
+    @Unique
+    private final ThreadPoolExecutor multithreadingandtweaks$executorService;
 
     public MixinExplosions() {
         int numThreads = MultithreadingandtweaksConfig.numberofcpus;
-        executorService = new ThreadPoolExecutor(
+        multithreadingandtweaks$executorService = new ThreadPoolExecutor(
             numThreads,
             numThreads,
             60L,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
-            new ThreadFactoryBuilder().setNameFormat("Explosion-Rendering-%d")
+            new ThreadFactoryBuilder().setNameFormat("Explosion-Thread-%d")
                 .build());
     }
 
-    @Inject(method = "newExplosion", at = @At("RETURN"))
-    private void onNewExplosion(Entity entityIn, double x, double y, double z, float strength, boolean isFlaming,
-        boolean isSmoking, CallbackInfoReturnable<Explosion> ci) {
-        if (MultithreadingandtweaksConfig.enableMixinExplosions) {
-            ExplosionTask task = new ExplosionTask(ci.getReturnValue(), entityIn.worldObj);
-            explosionsToProcess.add(task);
-            if (explosionsToProcess.size() == 1) {
-                executorService.submit(this::processExplosions);
+    @Inject(method = "tick", at = @At("RETURN"))
+    private void onTick(CallbackInfo ci) {
+        // Traitez les explosions de manière asynchrone pendant le tick
+        synchronized (explosionsLock) {
+            while (!multithreadingandtweaks$explosionsToProcess.isEmpty()) {
+                List<ExplosionTask> batch = new ArrayList<>();
+                ExplosionTask task = multithreadingandtweaks$explosionsToProcess.poll();
+                while (task != null) {
+                    batch.add(task);
+                    task = multithreadingandtweaks$explosionsToProcess.poll();
+                }
+                List<CompletableFuture<Void>> futures = batch.stream()
+                    .map(t -> CompletableFuture.runAsync(t::tickExplosion, multithreadingandtweaks$executorService))
+                    .collect(Collectors.toList());
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .join();
             }
+
         }
     }
-
-    @Unique
-    private void processExplosions() {
-        while (!explosionsToProcess.isEmpty()) {
-            List<ExplosionTask> batch = new ArrayList<>();
-            ExplosionTask task = explosionsToProcess.poll();
-            while (task != null) {
-                batch.add(task);
-                task = explosionsToProcess.poll();
-            }
-            List<CompletableFuture<Void>> futures = batch.stream()
-                .map(t -> CompletableFuture.runAsync(t::renderExplosion, executorService))
-                .collect(Collectors.toList());
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .join();
-        }
-    }
-
 }

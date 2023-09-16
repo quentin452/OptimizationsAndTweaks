@@ -14,7 +14,7 @@ public class ExplosionTask {
         this.world = world;
     }
 
-    public void renderExplosion() {
+    public void tickExplosion() {
         // Get the explosion position and strength
         int x = (int) Math.floor(explosion.explosionX);
         int y = (int) Math.floor(explosion.explosionY);
