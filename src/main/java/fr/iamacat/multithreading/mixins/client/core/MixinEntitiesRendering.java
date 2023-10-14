@@ -40,7 +40,7 @@ public abstract class MixinEntitiesRendering {
     @Unique
     private int tickCounter;
 
-    @Inject(method = "doRender", at = @At("HEAD"))
+    @Inject(method = "doRender", at = @At("HEAD") ,remap = false)
     public void onDoRender(Entity entity, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntitiesRendering) {
             // Skip rendering if entity is not visible or if rendering is already in progress

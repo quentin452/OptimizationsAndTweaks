@@ -75,6 +75,8 @@ dependencies {
     implementation "curse.maven:thermal-foundation-222880:2388752-deobf-sources-api"
     implementation "curse.maven:thermal-expansion-69163:2388758-deobf-sources-api"
     implementation "curse.maven:steamcraft2-224017:2307117-deobf-sources-api"
+    implementation "curse.maven:thaumcraft-223628:2227552-deobf-sources-api"
+
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

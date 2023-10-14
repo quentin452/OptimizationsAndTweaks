@@ -8,6 +8,7 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.RenderGlobal;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,6 +21,7 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(RenderGlobal.class)
 public abstract class MixinParticleManager {
 
+    @Unique
     private final ThreadPoolExecutor executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksConfig.numberofcpus,
         MultithreadingandtweaksConfig.numberofcpus,
@@ -29,16 +31,19 @@ public abstract class MixinParticleManager {
         new ThreadFactoryBuilder().setNameFormat("Particle-Manager-%d")
             .build());
 
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
 
+    @Unique
     private final Queue<EntityFX> particleQueue = new ArrayDeque<>();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        executorService.execute(this::drawLoop);
+        executorService.execute(this::multithreadingandtweaks$drawLoop);
     }
 
-    private void drawLoop() {
+    @Unique
+    private void multithreadingandtweaks$drawLoop() {
         if (MultithreadingandtweaksConfig.enableMixinParticle) {
             while (!Thread.currentThread()
                 .isInterrupted()) {

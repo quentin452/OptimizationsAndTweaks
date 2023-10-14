@@ -28,6 +28,8 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
+    THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
+
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),

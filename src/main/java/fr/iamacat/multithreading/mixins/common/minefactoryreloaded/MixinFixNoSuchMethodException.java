@@ -110,7 +110,7 @@ import powercrystals.minefactoryreloaded.api.FactoryRegistry;
  * org.prismlauncher.EntryPoint.main(EntryPoint.java:71)
  */
 
-@Mixin(targets = "powercrystals/minefactoryreloaded/api/FactoryRegistry", priority = 1)
+@Mixin(FactoryRegistry.class)
 public class MixinFixNoSuchMethodException {
 
     /**
@@ -130,7 +130,6 @@ public class MixinFixNoSuchMethodException {
                 .activeModContainer() == null) {
                 return;
             }
-
             try {
                 Method m = FMLInterModComms.class
                     .getDeclaredMethod("enqueueMessage", Object.class, String.class, FMLInterModComms.IMCMessage.class);

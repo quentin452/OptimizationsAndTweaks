@@ -54,10 +54,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldgen;
-    @Config.Comment("Enable multithreaded Worldgen Tick")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinWorldTick;
     @Config.Comment("Enable multithreaded Entities Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -70,10 +66,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinExplosions;
-    @Config.Comment("Enable Sky Lightning Multithreaded update when break or place a block for better fps")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinMultithreadedSkyLightning;
     @Config.Comment("Enable Multithreaded Fall Blocks Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -177,6 +169,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOreDictCofhFix;
+    @Config.Comment("Fix tps lags caused by leaves from Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
+
     @Config.Comment("Disable Intial World Chunk Load to make world load Faster,but player will see void area for some sec")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

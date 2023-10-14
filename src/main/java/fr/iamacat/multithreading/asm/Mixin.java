@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // BUGFIX MIXINS
+    common_thaumcraft_MixinPatchBlockMagicalLeavesPerformances(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances,
+        "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     common_minefactoryreloaded_MixinFixCascadingforMineFactoryReloadedWorldGen(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinFixCascadingforMineFactoryReloadedWorldGen,
@@ -79,8 +82,6 @@ public enum Mixin implements IMixin {
     common_core_MixinTileEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinTileEntitiesTick,
         "core.MixinTileEntitiesTick"),
 
-    common_core_MixinWorldTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinWorldTick,
-        "core.MixinWorldTick"),
     common_core_MixinExplosions(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinExplosions,
         "core.MixinExplosions"),
     common_core_MixinFallBlocksTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinFallBlocksTick,
@@ -107,8 +108,6 @@ public enum Mixin implements IMixin {
     client_core_MixinTileEntities(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinTileEntities,
         "core.MixinTileEntities"),
     client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinGUIHUD, "core.MixinGUIHUD"),
-    client_core_MixinMultithreadedSkyLightning(Side.CLIENT,
-        m -> MultithreadingandtweaksConfig.enableMixinMultithreadedSkyLightning, "core.MixinMultithreadedSkyLightning"),
     client_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinWorldgen,
         "core.MixinWorldgen"),
     client_core_MixinLiquidRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinLiquidRendering,

@@ -15,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -27,20 +28,23 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(BlockLiquid.class)
 public abstract class MixinLiquidRendering {
 
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
+    @Unique
     private static final ExecutorService THREAD_POOL = Executors
         .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
-    @Inject(method = "tesselate", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "tesselate", at = @At("HEAD"))
     private void onTesselate(IBlockAccess world, BlockPos pos, Tessellator tessellator, int metadata,
         CallbackInfoReturnable<Boolean> ci) {
         if (MultithreadingandtweaksConfig.enableMixinLiquidRendering) {
             ci.cancel();
-            tesselateFluid(world, pos, tessellator, metadata);
+            multithreadingandtweaks$tesselateFluid(world, pos, tessellator, metadata);
         }
     }
 
-    private void tesselateFluid(IBlockAccess world, BlockPos pos, Tessellator tessellator, int state) {
+    @Unique
+    private void multithreadingandtweaks$tesselateFluid(IBlockAccess world, BlockPos pos, Tessellator tessellator, int state) {
         Queue<BlockPos> fluidBlocks = new ArrayDeque<>();
         Set<BlockPos> visitedBlocks = new HashSet<>();
         fluidBlocks.add(pos);
@@ -51,12 +55,13 @@ public abstract class MixinLiquidRendering {
             for (int i = 0; i < BATCH_SIZE && !fluidBlocks.isEmpty(); i++) {
                 batchedPositions.add(fluidBlocks.remove());
             }
-            tesselateBatch((World) world, batchedPositions, tessellator, visitedBlocks, state, fluidBlocks);
+            multithreadingandtweaks$tesselateBatch((World) world, batchedPositions, tessellator, visitedBlocks, state, fluidBlocks);
         }
     }
 
-    private void tesselateBatch(World world, List<BlockPos> positions, Tessellator tessellator,
-        Set<BlockPos> visitedBlocks, int state, Queue<BlockPos> fluidBlocks) {
+    @Unique
+    private void multithreadingandtweaks$tesselateBatch(World world, List<BlockPos> positions, Tessellator tessellator,
+                                                        Set<BlockPos> visitedBlocks, int state, Queue<BlockPos> fluidBlocks) {
         Block block = world.getBlock(
             positions.get(0)
                 .getX(),
@@ -87,7 +92,7 @@ public abstract class MixinLiquidRendering {
                         || (offsetBlock.getMaterial()
                             .isLiquid() && offsetBlock == block
                             && offsetMetadata == state)) {
-                        putFluidVertex(
+                        multithreadingandtweaks$putFluidVertex(
                             tessellator,
                             blockPos.getX(),
                             blockPos.getY(),
@@ -109,8 +114,9 @@ public abstract class MixinLiquidRendering {
         }
     }
 
-    private void putFluidVertex(Tessellator renderer, double x, double y, double z, TextureAtlasSprite sprite,
-        EnumFacing facing) {
+    @Unique
+    private void multithreadingandtweaks$putFluidVertex(Tessellator renderer, double x, double y, double z, TextureAtlasSprite sprite,
+                                                        EnumFacing facing) {
         float minU, maxU, minV, maxV;
         if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
             minU = sprite.getInterpolatedU(x * 8);
@@ -128,10 +134,6 @@ public abstract class MixinLiquidRendering {
             minV = sprite.getInterpolatedU((16 - y) * 8);
             maxV = sprite.getInterpolatedV((y + 1) * 8);
         }
-        float r = 1.0F;
-        float g = 1.0F;
-        float b = 1.0F;
-        float a = 1.0F;
 
         renderer.addVertexWithUV(x, y, z, minU, minV);
         renderer.addVertexWithUV(x, y, z + 1, minU, maxV);

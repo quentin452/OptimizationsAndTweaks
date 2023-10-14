@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,32 +25,35 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(TileEntity.class)
 public abstract class MixinTileEntities {
 
+    @Unique
     private static final int BATCH_SIZE = MultithreadingandtweaksConfig.batchsize;
+    @Unique
     private static final ExecutorService THREAD_POOL = Executors
         .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
-    private World world;
-    private List<TileEntity> tileEntities;
+    @Unique
+    private World multithreadingandtweaks$world;
+    @Unique
+    private List<TileEntity> multithreadingandtweaks$tileEntities;
 
     @Inject(method = "init", at = @At("RETURN"))
     public void init(CallbackInfo ci) {
-        this.world = world;
-        this.tileEntities = new ArrayList<>();
+        this.multithreadingandtweaks$tileEntities = new ArrayList<>();
     }
 
     public void addTileEntity(TileEntity tileEntity) {
-        this.tileEntities.add(tileEntity);
+        this.multithreadingandtweaks$tileEntities.add(tileEntity);
     }
 
     public void processTileEntities() {
         if (MultithreadingandtweaksConfig.enableMixinTileEntities) {
             // Split the tile entities into batches
-            List<List<TileEntity>> batches = splitIntoBatches(this.tileEntities);
+            List<List<TileEntity>> batches = multithreadingandtweaks$splitIntoBatches(this.multithreadingandtweaks$tileEntities);
 
             // Process each batch using a thread pool
             List<Future<?>> futures = new ArrayList<>();
             for (List<TileEntity> batch : batches) {
-                futures.add(THREAD_POOL.submit(() -> processBatch(batch)));
+                futures.add(THREAD_POOL.submit(() -> multithreadingandtweaks$processBatch(batch)));
             }
 
             // Wait for all tasks to complete
@@ -63,13 +67,14 @@ public abstract class MixinTileEntities {
         }
     }
 
-    private void processBatch(List<TileEntity> batch) {
+    @Unique
+    private void multithreadingandtweaks$processBatch(List<TileEntity> batch) {
         for (TileEntity tileEntity : batch) {
             // Process each tile entity
             tileEntity.updateEntity();
             NBTTagCompound tag = new NBTTagCompound();
             tileEntity.writeToNBT(tag);
-            this.world.setTileEntity(
+            this.multithreadingandtweaks$world.setTileEntity(
                 tileEntity.xCoord,
                 tileEntity.yCoord,
                 tileEntity.zCoord,
@@ -77,7 +82,8 @@ public abstract class MixinTileEntities {
         }
     }
 
-    private static <T> List<List<T>> splitIntoBatches(List<T> list) {
+    @Unique
+    private static <T> List<List<T>> multithreadingandtweaks$splitIntoBatches(List<T> list) {
         int numBatches = (int) Math.ceil((double) list.size() / BATCH_SIZE);
         return IntStream.range(0, numBatches)
             .mapToObj(i -> list.subList(i * BATCH_SIZE, Math.min(list.size(), (i + 1) * BATCH_SIZE)))
@@ -90,7 +96,7 @@ public abstract class MixinTileEntities {
         List<Future<?>> futures = new ArrayList<>();
         for (TileEntity tileEntity : tileEntities) {
             if (tileEntity != null) {
-                futures.add(THREAD_POOL.submit(() -> renderTileEntity(tileEntity)));
+                futures.add(THREAD_POOL.submit(() -> multithreadingandtweaks$renderTileEntity(tileEntity)));
             }
         }
 
@@ -104,7 +110,8 @@ public abstract class MixinTileEntities {
         }
     }
 
-    private void renderTileEntity(TileEntity tileentity) {
+    @Unique
+    private void multithreadingandtweaks$renderTileEntity(TileEntity tileentity) {
         GL11.glPushMatrix();
         GL11.glTranslated(
             tileentity.xCoord + 0.5 - RenderManager.renderPosX,
