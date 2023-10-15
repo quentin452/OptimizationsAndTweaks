@@ -18,8 +18,7 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances,
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
-    common_core_MixinPatchSpawnerAnimals(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals,
+    common_core_MixinPatchSpawnerAnimals(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals,
         "core.MixinPatchSpawnerAnimals"),
 
     // BUGFIX MIXINS

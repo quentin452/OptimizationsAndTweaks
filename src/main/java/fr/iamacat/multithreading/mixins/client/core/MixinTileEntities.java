@@ -48,7 +48,8 @@ public abstract class MixinTileEntities {
     public void processTileEntities() {
         if (MultithreadingandtweaksConfig.enableMixinTileEntities) {
             // Split the tile entities into batches
-            List<List<TileEntity>> batches = multithreadingandtweaks$splitIntoBatches(this.multithreadingandtweaks$tileEntities);
+            List<List<TileEntity>> batches = multithreadingandtweaks$splitIntoBatches(
+                this.multithreadingandtweaks$tileEntities);
 
             // Process each batch using a thread pool
             List<Future<?>> futures = new ArrayList<>();

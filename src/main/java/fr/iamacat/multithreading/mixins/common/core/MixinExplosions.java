@@ -1,22 +1,26 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import fr.iamacat.multithreading.tasking.ExplosionTask;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
+
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.tasking.ExplosionTask;
 
 @Mixin(World.class)
 public abstract class MixinExplosions {
+
     @Unique
     private final Object explosionsLock = new Object();
     @Unique

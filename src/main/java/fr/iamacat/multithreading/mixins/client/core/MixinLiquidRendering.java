@@ -44,7 +44,8 @@ public abstract class MixinLiquidRendering {
     }
 
     @Unique
-    private void multithreadingandtweaks$tesselateFluid(IBlockAccess world, BlockPos pos, Tessellator tessellator, int state) {
+    private void multithreadingandtweaks$tesselateFluid(IBlockAccess world, BlockPos pos, Tessellator tessellator,
+        int state) {
         Queue<BlockPos> fluidBlocks = new ArrayDeque<>();
         Set<BlockPos> visitedBlocks = new HashSet<>();
         fluidBlocks.add(pos);
@@ -55,13 +56,19 @@ public abstract class MixinLiquidRendering {
             for (int i = 0; i < BATCH_SIZE && !fluidBlocks.isEmpty(); i++) {
                 batchedPositions.add(fluidBlocks.remove());
             }
-            multithreadingandtweaks$tesselateBatch((World) world, batchedPositions, tessellator, visitedBlocks, state, fluidBlocks);
+            multithreadingandtweaks$tesselateBatch(
+                (World) world,
+                batchedPositions,
+                tessellator,
+                visitedBlocks,
+                state,
+                fluidBlocks);
         }
     }
 
     @Unique
     private void multithreadingandtweaks$tesselateBatch(World world, List<BlockPos> positions, Tessellator tessellator,
-                                                        Set<BlockPos> visitedBlocks, int state, Queue<BlockPos> fluidBlocks) {
+        Set<BlockPos> visitedBlocks, int state, Queue<BlockPos> fluidBlocks) {
         Block block = world.getBlock(
             positions.get(0)
                 .getX(),
@@ -115,8 +122,8 @@ public abstract class MixinLiquidRendering {
     }
 
     @Unique
-    private void multithreadingandtweaks$putFluidVertex(Tessellator renderer, double x, double y, double z, TextureAtlasSprite sprite,
-                                                        EnumFacing facing) {
+    private void multithreadingandtweaks$putFluidVertex(Tessellator renderer, double x, double y, double z,
+        TextureAtlasSprite sprite, EnumFacing facing) {
         float minU, maxU, minV, maxV;
         if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
             minU = sprite.getInterpolatedU(x * 8);

@@ -1,18 +1,22 @@
 package fr.iamacat.multithreading.mixins.common.thaumcraft;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
-import thaumcraft.common.blocks.BlockMagicalLeaves;
 
-import java.util.Random;
+import thaumcraft.common.blocks.BlockMagicalLeaves;
 
 @Mixin(BlockMagicalLeaves.class)
 public class MixinPatchBlockMagicalLeavesPerformances {
+
     @Unique
     int[] multithreadingandtweaks$adjacentTreeBlocks;
+
     /**
      * @author imacatfr
      * @reason fix tps lags caused by updateTick method from BlockMagicalLeaves class
@@ -38,17 +42,25 @@ public class MixinPatchBlockMagicalLeavesPerformances {
                         for (offZ = -radius; offZ <= radius; ++offZ) {
                             Block block = world.getBlock(x + offX, y + offY, z + offZ);
                             if (block != null && block.canSustainLeaves(world, x + offX, y + offY, z + offZ)) {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter + (offY + center) * diameter + (offZ + center)] = 0;
+                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
+                                    + (offY + center) * diameter
+                                    + (offZ + center)] = 0;
                             } else if (block != null && block.isLeaves(world, x + offX, y + offY, z + offZ)) {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter + (offY + center) * diameter + (offZ + center)] = -2;
+                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
+                                    + (offY + center) * diameter
+                                    + (offZ + center)] = -2;
                             } else {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter + (offY + center) * diameter + (offZ + center)] = -1;
+                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
+                                    + (offY + center) * diameter
+                                    + (offZ + center)] = -1;
                             }
                         }
                     }
                 }
 
-                int centerBlockValue = this.multithreadingandtweaks$adjacentTreeBlocks[center * diameter * diameter + center * diameter + center];
+                int centerBlockValue = this.multithreadingandtweaks$adjacentTreeBlocks[center * diameter * diameter
+                    + center * diameter
+                    + center];
 
                 int delay = 20;
 
