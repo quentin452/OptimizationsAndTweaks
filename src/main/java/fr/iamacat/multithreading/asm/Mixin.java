@@ -12,11 +12,17 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
+    // OPTIMIZATIONS MIXINS
 
-    // BUGFIX MIXINS
     common_thaumcraft_MixinPatchBlockMagicalLeavesPerformances(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances,
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
+
+    common_core_MixinPatchSpawnerAnimals(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals,
+        "core.MixinPatchSpawnerAnimals"),
+
+    // BUGFIX MIXINS
 
     common_minefactoryreloaded_MixinFixCascadingforMineFactoryReloadedWorldGen(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinFixCascadingforMineFactoryReloadedWorldGen,
