@@ -47,12 +47,6 @@ public class MixinPatchSpawnerAnimals {
             .doesBlockHaveSolidTopSurface(p_77190_1_, p_77190_2_, p_77190_3_ - 1, p_77190_4_);
 
         try {
-            boolean isChunkEmpty = isEmptyFuture.get();
-
-            if (isChunkEmpty) {
-                return false;
-            }
-
             if (isCreatureMaterialWater) {
                 return p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_)
                     .getMaterial()
