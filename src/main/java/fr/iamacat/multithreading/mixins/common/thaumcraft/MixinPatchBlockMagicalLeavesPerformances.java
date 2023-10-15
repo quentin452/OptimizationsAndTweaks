@@ -23,7 +23,7 @@ public class MixinPatchBlockMagicalLeavesPerformances {
         if (!world.isRemote) {
             int metadata = world.getBlockMetadata(x, y, z);
             if ((metadata & 8) != 0 && (metadata & 4) == 0) {
-                int radius = 4;
+                int radius = 6;
                 int diameter = radius * 2 + 1;
                 int center = diameter / 2;
                 int volume = diameter * diameter * diameter;
@@ -49,9 +49,12 @@ public class MixinPatchBlockMagicalLeavesPerformances {
                 }
 
                 int centerBlockValue = this.multithreadingandtweaks$adjacentTreeBlocks[center * diameter * diameter + center * diameter + center];
-                if (centerBlockValue >= 0) {
+
+                int delay = 20;
+
+                if (centerBlockValue >= 0 && world.getTotalWorldTime() % delay == 0) {
                     world.setBlockMetadataWithNotify(x, y, z, metadata & -9, 3);
-                } else {
+                } else if (centerBlockValue < 0) {
                     this.multithreadingandtweaks$removeLeaves(world, x, y, z);
                 }
             }
