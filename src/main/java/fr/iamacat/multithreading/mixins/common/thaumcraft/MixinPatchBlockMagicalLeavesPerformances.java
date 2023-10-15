@@ -1,80 +1,63 @@
 package fr.iamacat.multithreading.mixins.common.thaumcraft;
 
-import java.util.Random;
-
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
-
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import thaumcraft.common.blocks.BlockMagicalLeaves;
+import thaumcraft.common.config.ConfigBlocks;
+
+import java.util.Random;
 
 @Mixin(BlockMagicalLeaves.class)
 public class MixinPatchBlockMagicalLeavesPerformances {
 
-    @Unique
-    int[] multithreadingandtweaks$adjacentTreeBlocks;
-
     /**
      * @author imacatfr
-     * @reason fix tps lags caused by updateTick method from BlockMagicalLeaves class
+     * @reason Reduce tps lags caused by updateTick method from BlockMagicalLeaves class
      */
 
-    @Overwrite
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (!world.isRemote) {
-            int metadata = world.getBlockMetadata(x, y, z);
-            if ((metadata & 8) != 0 && (metadata & 4) == 0) {
-                int radius = 6;
-                int diameter = radius * 2 + 1;
-                int center = diameter / 2;
-                int volume = diameter * diameter * diameter;
+    @Inject(method = "func_149674_a", at = @At("HEAD"), remap = false, cancellable = true)
+    public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random, CallbackInfo ci) {
+        int radius = 30;
+        int delay = 20;
 
-                if (this.multithreadingandtweaks$adjacentTreeBlocks == null) {
-                    this.multithreadingandtweaks$adjacentTreeBlocks = new int[volume];
-                }
-
-                int offX, offY, offZ;
-                for (offX = -radius; offX <= radius; ++offX) {
-                    for (offY = -radius; offY <= radius; ++offY) {
-                        for (offZ = -radius; offZ <= radius; ++offZ) {
-                            Block block = world.getBlock(x + offX, y + offY, z + offZ);
-                            if (block != null && block.canSustainLeaves(world, x + offX, y + offY, z + offZ)) {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
-                                    + (offY + center) * diameter
-                                    + (offZ + center)] = 0;
-                            } else if (block != null && block.isLeaves(world, x + offX, y + offY, z + offZ)) {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
-                                    + (offY + center) * diameter
-                                    + (offZ + center)] = -2;
-                            } else {
-                                this.multithreadingandtweaks$adjacentTreeBlocks[(offX + center) * diameter * diameter
-                                    + (offY + center) * diameter
-                                    + (offZ + center)] = -1;
+        if (!par1World.isRemote) {
+            if (par1World.getTotalWorldTime() % delay == 0) {
+                for (int offX = -radius; offX <= radius; ++offX) {
+                    for (int offY = -radius; offY <= radius; ++offY) {
+                        for (int offZ = -radius; offZ <= radius; ++offZ) {
+                            int totaldist = Math.max(Math.max(Math.abs(offX), Math.abs(offY)), Math.abs(offZ));
+                            if (totaldist <= 5) {
+                                Block adjacentBlock = par1World.getBlock(par2 + offX, par3 + offY, par4 + offZ);
+                                if (adjacentBlock != null && canSustainLeaves(par1World, par2 + offX, par3 + offY, par4 + offZ)) {
+                                    return;
+                                }
                             }
                         }
                     }
                 }
-
-                int centerBlockValue = this.multithreadingandtweaks$adjacentTreeBlocks[center * diameter * diameter
-                    + center * diameter
-                    + center];
-
-                int delay = 20;
-
-                if (centerBlockValue >= 0 && world.getTotalWorldTime() % delay == 0) {
-                    world.setBlockMetadataWithNotify(x, y, z, metadata & -9, 3);
-                } else if (centerBlockValue < 0) {
-                    this.multithreadingandtweaks$removeLeaves(world, x, y, z);
-                }
+                this.multithreadingandtweaks$removeLeaves(par1World, par2, par3, par4);
             }
         }
+        ci.cancel();
     }
 
     @Unique
-    public void multithreadingandtweaks$removeLeaves(World world, int x, int y, int z) {
-        world.setBlockToAir(x, y, z);
+    private void multithreadingandtweaks$removeLeaves(final World par1World, final int par2, final int par3, final int par4) {
+        par1World.setBlock(par2, par3, par4, Blocks.air, 0, 2);
+    }
+
+    @Unique
+    private static boolean canSustainLeaves(IBlockAccess world, int x, int y, int z)
+    {
+        Block block = world.getBlock(x, y, z);
+        return block == ConfigBlocks.blockMagicalLog;
     }
 }

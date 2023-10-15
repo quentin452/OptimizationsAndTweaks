@@ -1,30 +1,22 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.*;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.SpawnerAnimals;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.event.ForgeEventFactory;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Mixin(SpawnerAnimals.class)
 public class MixinPatchSpawnerAnimals {
