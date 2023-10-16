@@ -169,14 +169,20 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
-    @Config.Comment("Fix tps lags caused by SpawnerAnimals on VoidWorld")
+    @Config.Comment("Reduce tps lags caused by SpawnerAnimals on VoidWorld")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;
-    @Config.Comment("Fix tps lags caused by BiomeGenMagicalForest from Thaumcraft")
+    @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBiomeGenMagicalForest;
+
+    @Config.Comment("Reduce tps lags caused by WorldGenCloudNine from Kingdom of the Overworld")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPatchWorldGenCloudNine;
+
     @Config.Comment("Disable Intial World Chunk Load to make world load Faster,but player will see void area for some sec")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
