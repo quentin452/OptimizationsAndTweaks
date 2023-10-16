@@ -47,10 +47,6 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinParticle;
 
-    @Config.Comment("(WIP)Enable Optimized RenderBlock to reduce fps stutters")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinRenderBlock;
     @Config.Comment("Enable multithreaded TileEntities rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

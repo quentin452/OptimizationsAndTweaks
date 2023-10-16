@@ -108,8 +108,6 @@ public enum Mixin implements IMixin {
     common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
-    client_core_MixinRenderBlock(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinRenderBlock,
-        "core.MixinRenderBlock"),
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
         "core.MixinParticleManager"),
     client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,
