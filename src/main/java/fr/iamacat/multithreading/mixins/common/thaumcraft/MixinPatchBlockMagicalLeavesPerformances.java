@@ -5,7 +5,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,7 +35,7 @@ public class MixinPatchBlockMagicalLeavesPerformances {
                             int totaldist = Math.max(Math.max(Math.abs(offX), Math.abs(offY)), Math.abs(offZ));
                             if (totaldist <= 5) {
                                 Block adjacentBlock = par1World.getBlock(par2 + offX, par3 + offY, par4 + offZ);
-                                if (adjacentBlock != null && canSustainLeaves(par1World, par2 + offX, par3 + offY, par4 + offZ)) {
+                                if (adjacentBlock != null && multithreadingandtweaks$canSustainLeaves(par1World, par2 + offX, par3 + offY, par4 + offZ)) {
                                     return;
                                 }
                             }
@@ -55,7 +54,7 @@ public class MixinPatchBlockMagicalLeavesPerformances {
     }
 
     @Unique
-    private static boolean canSustainLeaves(IBlockAccess world, int x, int y, int z)
+    private static boolean multithreadingandtweaks$canSustainLeaves(IBlockAccess world, int x, int y, int z)
     {
         Block block = world.getBlock(x, y, z);
         return block == ConfigBlocks.blockMagicalLog;

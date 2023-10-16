@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
     // OPTIMIZATIONS MIXINS
 
+    common_thaumcraft_MixinPatchBiomeGenMagicalForest(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinPatchBiomeGenMagicalForest,
+        "thaumcraft.MixinPatchBiomeGenMagicalForest"),
     common_thaumcraft_MixinPatchBlockMagicalLeavesPerformances(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances,
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),

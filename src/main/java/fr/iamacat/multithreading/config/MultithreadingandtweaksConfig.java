@@ -66,15 +66,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinExplosions;
-    @Config.Comment("Enable Multithreaded Fall Blocks Tick")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinBlockFallingTick;
-
-    @Config.Comment("Enable Multithreaded Entity Fall Blocks Tick")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityFallBlocksTick;
     @Config.Comment("Enable Multithreaded Liquid Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -182,8 +173,7 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;
-
-    @Config.Comment("Fix tps lags caused by BiomeGenmagicalForest")
+    @Config.Comment("Fix tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBiomeGenMagicalForest;
