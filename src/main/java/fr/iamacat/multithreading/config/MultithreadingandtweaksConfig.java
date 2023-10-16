@@ -26,7 +26,7 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGrowthSpreading;
-    @Config.Comment("Enable multithreaded for Liquid Tick.")
+    @Config.Comment("(WIP)Enable multithreaded for Liquid Tick.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinliquidTick;
@@ -46,6 +46,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinParticle;
+
+    @Config.Comment("(WIP)Enable Optimized RenderBlock to reduce fps stutters")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRenderBlock;
     @Config.Comment("Enable multithreaded TileEntities rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
