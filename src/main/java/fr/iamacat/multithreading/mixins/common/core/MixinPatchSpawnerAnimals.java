@@ -18,11 +18,12 @@ import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -40,7 +41,8 @@ public class MixinPatchSpawnerAnimals {
         }
     }
 
-    @Shadow private HashMap eligibleChunksForSpawning;
+    @Unique
+    private ConcurrentHashMap multithreadingandtweaks$eligibleChunksForSpawning = new ConcurrentHashMap();
 
     /**
      * @author iamacatfr
@@ -68,7 +70,7 @@ public class MixinPatchSpawnerAnimals {
 
     /**
      * @author iamacatfr
-     * @reason
+     * @reason optimize findChunksForSpawning
      */
     @Overwrite
     public int findChunksForSpawning(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_, boolean p_77192_4_)
@@ -80,7 +82,7 @@ public class MixinPatchSpawnerAnimals {
         }
         else
         {
-            this.eligibleChunksForSpawning.clear();
+            this.multithreadingandtweaks$eligibleChunksForSpawning.clear();
             int i;
             int k;
 
@@ -100,11 +102,11 @@ public class MixinPatchSpawnerAnimals {
 
                         if (!flag3)
                         {
-                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.FALSE);
+                            this.multithreadingandtweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.FALSE);
                         }
-                        else if (!this.eligibleChunksForSpawning.containsKey(chunkcoordintpair))
+                        else if (!this.multithreadingandtweaks$eligibleChunksForSpawning.containsKey(chunkcoordintpair))
                         {
-                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.TRUE);
+                            this.multithreadingandtweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.TRUE);
                         }
                     }
                 }
@@ -119,10 +121,10 @@ public class MixinPatchSpawnerAnimals {
             {
                 EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
 
-                if ((!enumcreaturetype.getPeacefulCreature() || p_77192_3_) && (enumcreaturetype.getPeacefulCreature() || p_77192_2_) && (!enumcreaturetype.getAnimal() || p_77192_4_) && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
+                if ((!enumcreaturetype.getPeacefulCreature() || p_77192_3_) && (enumcreaturetype.getPeacefulCreature() || p_77192_2_) && (!enumcreaturetype.getAnimal() || p_77192_4_) && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.multithreadingandtweaks$eligibleChunksForSpawning.size() / 256)
                 {
-                    Iterator<ChunkCoordIntPair> iterator = this.eligibleChunksForSpawning.keySet().iterator();
-                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList<>(eligibleChunksForSpawning.keySet());
+                    Iterator<ChunkCoordIntPair> iterator = this.multithreadingandtweaks$eligibleChunksForSpawning.keySet().iterator();
+                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList<>(multithreadingandtweaks$eligibleChunksForSpawning.keySet());
                     Collections.shuffle(tmp);
                     iterator = tmp.iterator();
                     label110:
@@ -131,7 +133,7 @@ public class MixinPatchSpawnerAnimals {
                     {
                         ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
 
-                        if (!(Boolean) this.eligibleChunksForSpawning.get(chunkcoordintpair1))
+                        if (!(Boolean) this.multithreadingandtweaks$eligibleChunksForSpawning.get(chunkcoordintpair1))
                         {
                             ChunkPosition chunkposition = func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
                             int j1 = chunkposition.chunkPosX;
