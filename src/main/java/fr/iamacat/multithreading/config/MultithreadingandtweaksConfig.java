@@ -165,7 +165,7 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOreDictCofhFix;
-    @Config.Comment("Fix tps lags caused by leaves from Thaumcraft")
+    @Config.Comment("Fix tps lags + reduce fps stutters caused by leaves from Thaumcraft  + add Leaf culling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
