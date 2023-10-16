@@ -23,7 +23,6 @@ import java.util.Random;
 
 @Mixin(BiomeGenMagicalForest.class)
 public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
-
     @Shadow
     private static final WorldGenBlockBlob blobs;
 
@@ -31,58 +30,54 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
         super(p_i1971_1_);
     }
 
+    /**
+     * @author iamacatfr
+     * @reason reduce tps lags caused by func_76728_a
+     */
     @Inject(method = "func_76728_a", at = @At("HEAD"), remap = false, cancellable = true)
     public void decorate(World world, Random random, int x, int z, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinPatchBiomeGenMagicalForest) {
+            for (int i = 0; i < 3; ++i) {
+                int posX = x + random.nextInt(16) + 8;
+                int posZ = z + random.nextInt(16) + 8;
+                int posY = world.getHeightValue(posX, posZ);
+                blobs.generate(world, random, posX, posY, posZ);
+            }
 
-        int k = random.nextInt(3);
-
-        int l, i1, j1, k1;
-        int a;
-
-        for (l = 0; l < k; ++l) {
-            i1 = x + random.nextInt(16) + 8;
-            j1 = z + random.nextInt(16) + 8;
-            k1 = world.getHeightValue(i1, j1);
-            blobs.generate(world, random, i1, k1, j1);
-        }
-
-        for (k = 0; k < 4; ++k) {
-            for (l = 0; l < 4; ++l) {
-                i1 = x + k * 4 + 1 + 8 + random.nextInt(3);
-                j1 = z + l * 4 + 1 + 8 + random.nextInt(3);
-                k1 = world.getHeightValue(i1, j1);
-
-                if (random.nextInt(40) == 0) {
-                    new WorldGenBigMushroom().generate(world, random, i1, k1, j1);
+            for (int k = 0; k < 4; ++k) {
+                for (int l = 0; l < 4; ++l) {
+                    int posX = x + k * 4 + 1 + 8 + random.nextInt(3);
+                    int posZ = z + l * 4 + 1 + 8 + random.nextInt(3);
+                    int posY = world.getHeightValue(posX, posZ);
+                    if (random.nextInt(40) == 0) {
+                        WorldGenBigMushroom worldgenbigmushroom = new WorldGenBigMushroom();
+                        worldgenbigmushroom.generate(world, random, posX, posY, posZ);
+                    }
                 }
             }
-        }
 
-        WorldGenManaPods worldgenpods = new WorldGenManaPods();
-
-        for (k = 0; k < 10; ++k) {
-            l = x + random.nextInt(16) + 8;
-            a = 64;
-            i1 = z + random.nextInt(16) + 8;
-            worldgenpods.func_76484_a(world, random, l, a, i1);
-        }
-
-        for (a = 0; a < 8; ++a) {
-            int xx = x + random.nextInt(16);
-            int zz = z + random.nextInt(16);
-
-            int yy = world.getHeightValue(xx, zz);
-
-            for (; yy > 50 && world.getBlock(xx, yy, zz) != Blocks.grass; --yy) {
+            WorldGenManaPods worldgenpods = new WorldGenManaPods();
+            for (int i = 0; i < 10; ++i) {
+                int posX = x + random.nextInt(16) + 8;
+                int posY = 64;
+                int posZ = z + random.nextInt(16) + 8;
+                worldgenpods.func_76484_a(world, random, posX, posY, posZ);
             }
 
-            Block l1 = world.getBlock(xx, yy, zz);
+            for (int i = 0; i < 8; ++i) {
+                int posX = x + random.nextInt(16);
+                int posZ = z + random.nextInt(16);
+                int posY = world.getHeightValue(posX, posZ);
+                for (; posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass; --posY) {
+                }
 
-            if (l1 == Blocks.grass && world.getBlock(xx, yy + 1, zz).isReplaceable(world, xx, yy + 1, zz) && multithreadingandtweaks$isBlockAdjacentToWood(world, xx, yy + 1, zz)) {
-                world.setBlock(xx, yy + 1, zz, ConfigBlocks.blockCustomPlant, 5, 2);
+                Block block = world.getBlock(posX, posY, posZ);
+                if (block == Blocks.grass && world.getBlock(posX, posY + 1, posZ).isReplaceable(world, posX, posY + 1, posZ) && multithreadingandtweaks$isBlockAdjacentToWood(world, posX, posY + 1, posZ)) {
+                    world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
+                }
             }
-        }
+
+            super.decorate(world, random, x, z);
         }
         ci.cancel();
     }
