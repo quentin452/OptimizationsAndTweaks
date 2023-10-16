@@ -22,6 +22,7 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFireTick;
+
     @Config.Comment("Enable multithreaded for Growth Spreading.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -103,7 +104,10 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static int batchsize;
     // BugFix Mixins
-
+    @Config.Comment("Optimize EntityLookHelper performances")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityLookHelper;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
