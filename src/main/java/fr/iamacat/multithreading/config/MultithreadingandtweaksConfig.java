@@ -69,7 +69,12 @@ public class MultithreadingandtweaksConfig {
     @Config.Comment("Enable Multithreaded Fall Blocks Tick")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinFallBlocksTick;
+    public static boolean enableMixinBlockFallingTick;
+
+    @Config.Comment("Enable Multithreaded Entity Fall Blocks Tick")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityFallBlocksTick;
     @Config.Comment("Enable Multithreaded Liquid Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -173,10 +178,15 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
-    @Config.Comment("Fix tps lags caused by SpawnerAnimals on VoidWorld + Add Multithreading")
+    @Config.Comment("Fix tps lags caused by SpawnerAnimals on VoidWorld")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;
+
+    @Config.Comment("Fix tps lags caused by BiomeGenmagicalForest")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPatchBiomeGenMagicalForest;
     @Config.Comment("Disable Intial World Chunk Load to make world load Faster,but player will see void area for some sec")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

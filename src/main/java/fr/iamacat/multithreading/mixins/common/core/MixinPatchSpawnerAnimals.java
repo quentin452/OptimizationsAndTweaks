@@ -5,7 +5,6 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,27 +18,28 @@ import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
     @Shadow
-    protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_)
-    {
+    protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_) {
         Chunk chunk = p_151350_0_.getChunkFromChunkCoords(p_151350_1_, p_151350_2_);
         int k = p_151350_1_ * 16 + p_151350_0_.rand.nextInt(16);
         int l = p_151350_2_ * 16 + p_151350_0_.rand.nextInt(16);
-        int i1 = p_151350_0_.rand.nextInt(chunk == null ? p_151350_0_.getActualHeight() : chunk.getTopFilledSegment() + 16 - 1);
-        return new ChunkPosition(k, i1, l);
+
+        if (chunk != null) {
+            int i1 = p_151350_0_.rand.nextInt(chunk.getTopFilledSegment() + 16 - 1);
+            return new ChunkPosition(k, i1, l);
+        } else {
+            return new ChunkPosition(k, p_151350_0_.rand.nextInt(p_151350_0_.getActualHeight()), l);
+        }
     }
+
     @Shadow private HashMap eligibleChunksForSpawning;
 
     /**
@@ -48,6 +48,7 @@ public class MixinPatchSpawnerAnimals {
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType p_77190_0_, World p_77190_1_, int p_77190_2_, int p_77190_3_, int p_77190_4_) {
+        if(MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals){
         if (p_77190_0_.getCreatureMaterial() == Material.water) {
             return p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_).getMaterial().isLiquid()
                 && p_77190_1_.getBlock(p_77190_2_, p_77190_3_ - 1, p_77190_4_).getMaterial().isLiquid()
@@ -61,7 +62,8 @@ public class MixinPatchSpawnerAnimals {
                 && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_).isNormalCube()
                 && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_).getMaterial().isLiquid()
                 && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_ + 1, p_77190_4_).isNormalCube();
-        }
+        }  }
+        return false;
     }
 
     /**
@@ -71,6 +73,7 @@ public class MixinPatchSpawnerAnimals {
     @Overwrite
     public int findChunksForSpawning(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_, boolean p_77192_4_)
     {
+        if(MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals){
         if (!p_77192_2_ && !p_77192_3_)
         {
             return 0;
@@ -237,5 +240,8 @@ public class MixinPatchSpawnerAnimals {
 
             return i;
         }
+        }
+
+        return 0;
     }
 }
