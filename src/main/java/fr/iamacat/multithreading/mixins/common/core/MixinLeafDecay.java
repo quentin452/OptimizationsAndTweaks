@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,14 +22,16 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(BlockLeavesBase.class)
 public abstract class MixinLeafDecay {
 
-    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+    @Unique
+    private ThreadPoolExecutor multithreadingandtweaks$executorService = new ThreadPoolExecutor(
         MultithreadingandtweaksConfig.numberofcpus,
         MultithreadingandtweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>());
 
-    private final int batchSize = MultithreadingandtweaksConfig.batchsize;
+    @Unique
+    private final int multithreadingandtweaks$batchSize = MultithreadingandtweaksConfig.batchsize;
 
     @Inject(method = "removeLeaves", at = @At("RETURN"))
     private void onRemoveLeaves(World world, int x, int y, int z, CallbackInfo ci) {
@@ -42,14 +45,14 @@ public abstract class MixinLeafDecay {
                         Block block = chunk.getBlock(i, j, k);
                         if (block != null && block.isLeaves(world, i, j, k)) {
                             numLeaves++;
-                            if (numLeaves % batchSize == 0) {
+                            if (numLeaves % multithreadingandtweaks$batchSize == 0) {
                                 processLeavesBatch(world);
                             }
                             int finalI = i;
                             int finalJ = j;
                             int finalK = k;
-                            executorService.execute(
-                                () -> processLeafBlock(
+                            multithreadingandtweaks$executorService.execute(
+                                () -> multithreadingandtweaks$processLeafBlock(
                                     new BlockPos(chunk.xPosition * 16 + finalI, finalJ, chunk.zPosition * 16 + finalK),
                                     world,
                                     true));
@@ -63,13 +66,13 @@ public abstract class MixinLeafDecay {
     }
 
     private void processLeavesBatch(World world) {
-        executorService.shutdown();
+        multithreadingandtweaks$executorService.shutdown();
         try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            multithreadingandtweaks$executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        executorService = new ThreadPoolExecutor(
+        multithreadingandtweaks$executorService = new ThreadPoolExecutor(
             MultithreadingandtweaksConfig.numberofcpus,
             MultithreadingandtweaksConfig.numberofcpus,
             60L,
@@ -77,28 +80,30 @@ public abstract class MixinLeafDecay {
             new LinkedBlockingQueue<>());
     }
 
-    private void processLeafBlock(BlockPos pos, World world, boolean isInitial) {
-        if (shouldDecay(world, pos)) {
+    @Unique
+    private void multithreadingandtweaks$processLeafBlock(BlockPos pos, World world, boolean isInitial) {
+        if (multithreadingandtweaks$shouldDecay(world, pos)) {
             world.setBlockToAir(pos.getX(), pos.getY(), pos.getZ());
             if (isInitial) {
-                getNeighborPositions(pos, new ArrayList<>()).forEach(neighbor -> {
+                multithreadingandtweaks$getNeighborPositions(pos, new ArrayList<>()).forEach(neighbor -> {
                     Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
                     if (neighborBlock instanceof BlockLeaves) {
-                        executorService.execute(() -> processLeafBlock(neighbor, world, false));
+                        multithreadingandtweaks$executorService.execute(() -> multithreadingandtweaks$processLeafBlock(neighbor, world, false));
                     }
                 });
             } else {
-                getNeighborPositions(pos, new ArrayList<>()).forEach(neighbor -> {
+                multithreadingandtweaks$getNeighborPositions(pos, new ArrayList<>()).forEach(neighbor -> {
                     Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
                     if (neighborBlock instanceof BlockLeaves) {
-                        processLeafBlock(neighbor, world, false);
+                        multithreadingandtweaks$processLeafBlock(neighbor, world, false);
                     }
                 });
             }
         }
     }
 
-    public List<BlockPos> getNeighborPositions(BlockPos pos, List<BlockPos> neighborPositions) {
+    @Unique
+    public List<BlockPos> multithreadingandtweaks$getNeighborPositions(BlockPos pos, List<BlockPos> neighborPositions) {
         for (BlockPos neighbor : BlockPos.getAllInBoxMutable(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
             if (!neighbor.equals(pos)) {
                 neighborPositions.add(new BlockPos(neighbor));
@@ -107,7 +112,8 @@ public abstract class MixinLeafDecay {
         return neighborPositions;
     }
 
-    private boolean shouldDecay(World world, BlockPos pos) {
+    @Unique
+    private boolean multithreadingandtweaks$shouldDecay(World world, BlockPos pos) {
         Block block = world.getBlock(pos.getX(), pos.getY(), pos.getZ());
         if (block == null || !(block instanceof BlockLeaves)) {
             return false;
