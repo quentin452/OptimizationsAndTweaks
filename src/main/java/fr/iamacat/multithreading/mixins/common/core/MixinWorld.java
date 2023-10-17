@@ -263,110 +263,88 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
  * @author
  * @reason
  */
-    @Overwrite
-    public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_)
-    {
-        if (MultithreadingandtweaksConfig.enableMixinWorld){
+@Overwrite
+public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_) {
+    if (MultithreadingandtweaksConfig.enableMixinWorld) {
         int i = MathHelper.floor_double(p_72866_1_.posX);
         int j = MathHelper.floor_double(p_72866_1_.posZ);
-        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
-        byte b0 = isForced ? (byte)0 : 32;
-        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
 
-        if (!canUpdate)
-        {
+        int k = MathHelper.floor_double(p_72866_1_.posX / 16.0D);
+        int i1 = MathHelper.floor_double(p_72866_1_.posZ / 16.0D);
+
+        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+        byte b0 = isForced ? (byte) 0 : 32;
+        boolean canUpdate = !p_72866_2_ || checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
+
+        if (!canUpdate) {
             EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(p_72866_1_);
             MinecraftForge.EVENT_BUS.post(event);
             canUpdate = event.canUpdate;
         }
 
-        if (canUpdate)
-        {
-            p_72866_1_.lastTickPosX = p_72866_1_.posX;
-            p_72866_1_.lastTickPosY = p_72866_1_.posY;
-            p_72866_1_.lastTickPosZ = p_72866_1_.posZ;
-            p_72866_1_.prevRotationYaw = p_72866_1_.rotationYaw;
-            p_72866_1_.prevRotationPitch = p_72866_1_.rotationPitch;
+        if (canUpdate) {
+            double posX = p_72866_1_.posX;
+            double posY = p_72866_1_.posY;
+            double posZ = p_72866_1_.posZ;
 
-            if (p_72866_2_ && p_72866_1_.addedToChunk)
-            {
+            double rotationPitch = p_72866_1_.rotationPitch;
+            double rotationYaw = p_72866_1_.rotationYaw;
+
+            boolean addedToChunk = p_72866_1_.addedToChunk;
+            int oldChunkX = p_72866_1_.chunkCoordX;
+            int oldChunkY = p_72866_1_.chunkCoordY;
+            int oldChunkZ = p_72866_1_.chunkCoordZ;
+
+            p_72866_1_.lastTickPosX = posX;
+            p_72866_1_.lastTickPosY = posY;
+            p_72866_1_.lastTickPosZ = posZ;
+            p_72866_1_.prevRotationYaw = (float) rotationYaw;
+            p_72866_1_.prevRotationPitch = (float) rotationPitch;
+
+            if (p_72866_2_ && addedToChunk) {
                 ++p_72866_1_.ticksExisted;
 
-                if (p_72866_1_.ridingEntity != null)
-                {
+                if (p_72866_1_.ridingEntity != null) {
                     p_72866_1_.updateRidden();
-                }
-                else
-                {
+                } else {
                     p_72866_1_.onUpdate();
                 }
             }
 
-            this.theProfiler.startSection("chunkCheck");
+            multithreadingandtweaks$handleChunkChange(p_72866_1_, k, i1, addedToChunk, oldChunkX, oldChunkZ);
 
-            if (Double.isNaN(p_72866_1_.posX) || Double.isInfinite(p_72866_1_.posX))
-            {
-                p_72866_1_.posX = p_72866_1_.lastTickPosX;
-            }
-
-            if (Double.isNaN(p_72866_1_.posY) || Double.isInfinite(p_72866_1_.posY))
-            {
-                p_72866_1_.posY = p_72866_1_.lastTickPosY;
-            }
-
-            if (Double.isNaN(p_72866_1_.posZ) || Double.isInfinite(p_72866_1_.posZ))
-            {
-                p_72866_1_.posZ = p_72866_1_.lastTickPosZ;
-            }
-
-            if (Double.isNaN(p_72866_1_.rotationPitch) || Double.isInfinite((double)p_72866_1_.rotationPitch))
-            {
-                p_72866_1_.rotationPitch = p_72866_1_.prevRotationPitch;
-            }
-
-            if (Double.isNaN(p_72866_1_.rotationYaw) || Double.isInfinite((double)p_72866_1_.rotationYaw))
-            {
-                p_72866_1_.rotationYaw = p_72866_1_.prevRotationYaw;
-            }
-
-            int k = MathHelper.floor_double(p_72866_1_.posX / 16.0D);
-            int l = MathHelper.floor_double(p_72866_1_.posY / 16.0D);
-            int i1 = MathHelper.floor_double(p_72866_1_.posZ / 16.0D);
-
-            if (!p_72866_1_.addedToChunk || p_72866_1_.chunkCoordX != k || p_72866_1_.chunkCoordY != l || p_72866_1_.chunkCoordZ != i1)
-            {
-                if (p_72866_1_.addedToChunk && this.multithreadingandtweaks$chunkExists(p_72866_1_.chunkCoordX, p_72866_1_.chunkCoordZ))
-                {
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(p_72866_1_.chunkCoordX, p_72866_1_.chunkCoordZ).removeEntityAtIndex(p_72866_1_, p_72866_1_.chunkCoordY);
-                }
-
-                if (this.multithreadingandtweaks$chunkExists(k, i1))
-                {
-                    p_72866_1_.addedToChunk = true;
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(k, i1).addEntity(p_72866_1_);
-                }
-                else
-                {
-                    p_72866_1_.addedToChunk = false;
-                }
-            }
-
-            this.theProfiler.endSection();
-
-            if (p_72866_2_ && p_72866_1_.addedToChunk && p_72866_1_.riddenByEntity != null)
-            {
-                if (!p_72866_1_.riddenByEntity.isDead && p_72866_1_.riddenByEntity.ridingEntity == p_72866_1_)
-                {
-                    this.multithreadingandtweaks$updateEntity(p_72866_1_.riddenByEntity);
-                }
-                else
-                {
+            if (p_72866_2_ && addedToChunk && p_72866_1_.riddenByEntity != null) {
+                if (!p_72866_1_.riddenByEntity.isDead && p_72866_1_.riddenByEntity.ridingEntity == p_72866_1_) {
+                    multithreadingandtweaks$updateEntity(p_72866_1_.riddenByEntity);
+                } else {
                     p_72866_1_.riddenByEntity.ridingEntity = null;
                     p_72866_1_.riddenByEntity = null;
                 }
             }
         }
-    } }
+    }
+}
+
+    @Unique
+    private void multithreadingandtweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ, boolean addedToChunk, int oldChunkX, int oldChunkZ) {
+        if (addedToChunk && (newChunkX != oldChunkX || newChunkZ != oldChunkZ)) {
+            int oldChunkY = MathHelper.floor_double(entity.posY / 16.0D);
+            Chunk oldChunk = multithreadingandtweaks$getChunkFromChunkCoords(oldChunkX, oldChunkZ);
+            Chunk newChunk = multithreadingandtweaks$getChunkFromChunkCoords(newChunkX, newChunkZ);
+
+            if (oldChunk != null) {
+                oldChunk.removeEntityAtIndex(entity, oldChunkY);
+            }
+
+            if (newChunk != null) {
+                entity.addedToChunk = true;
+                newChunk.addEntity(entity);
+            } else {
+                entity.addedToChunk = false;
+            }
+        }
+    }
+
     /**
      * Get the persistent chunks for this world
      *
