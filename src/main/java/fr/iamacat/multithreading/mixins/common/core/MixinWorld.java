@@ -259,71 +259,6 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
 
         return arraylist;
     }
-/**
- * @author
- * @reason
- */
-@Overwrite
-public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_) {
-    if (MultithreadingandtweaksConfig.enableMixinWorld) {
-        int i = MathHelper.floor_double(p_72866_1_.posX);
-        int j = MathHelper.floor_double(p_72866_1_.posZ);
-
-        int k = MathHelper.floor_double(p_72866_1_.posX / 16.0D);
-        int i1 = MathHelper.floor_double(p_72866_1_.posZ / 16.0D);
-
-        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
-        byte b0 = isForced ? (byte) 0 : 32;
-        boolean canUpdate = !p_72866_2_ || checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
-
-        if (!canUpdate) {
-            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(p_72866_1_);
-            MinecraftForge.EVENT_BUS.post(event);
-            canUpdate = event.canUpdate;
-        }
-
-        if (canUpdate) {
-            double posX = p_72866_1_.posX;
-            double posY = p_72866_1_.posY;
-            double posZ = p_72866_1_.posZ;
-
-            double rotationPitch = p_72866_1_.rotationPitch;
-            double rotationYaw = p_72866_1_.rotationYaw;
-
-            boolean addedToChunk = p_72866_1_.addedToChunk;
-            int oldChunkX = p_72866_1_.chunkCoordX;
-            int oldChunkY = p_72866_1_.chunkCoordY;
-            int oldChunkZ = p_72866_1_.chunkCoordZ;
-
-            p_72866_1_.lastTickPosX = posX;
-            p_72866_1_.lastTickPosY = posY;
-            p_72866_1_.lastTickPosZ = posZ;
-            p_72866_1_.prevRotationYaw = (float) rotationYaw;
-            p_72866_1_.prevRotationPitch = (float) rotationPitch;
-
-            if (p_72866_2_ && addedToChunk) {
-                ++p_72866_1_.ticksExisted;
-
-                if (p_72866_1_.ridingEntity != null) {
-                    p_72866_1_.updateRidden();
-                } else {
-                    p_72866_1_.onUpdate();
-                }
-            }
-
-            multithreadingandtweaks$handleChunkChange(p_72866_1_, k, i1, addedToChunk, oldChunkX, oldChunkZ);
-
-            if (p_72866_2_ && addedToChunk && p_72866_1_.riddenByEntity != null) {
-                if (!p_72866_1_.riddenByEntity.isDead && p_72866_1_.riddenByEntity.ridingEntity == p_72866_1_) {
-                    multithreadingandtweaks$updateEntity(p_72866_1_.riddenByEntity);
-                } else {
-                    p_72866_1_.riddenByEntity.ridingEntity = null;
-                    p_72866_1_.riddenByEntity = null;
-                }
-            }
-        }
-    }
-}
 
     @Unique
     private void multithreadingandtweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ, boolean addedToChunk, int oldChunkX, int oldChunkZ) {
@@ -389,13 +324,5 @@ public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_)
         }
     }
         return false;
-    }
-    /**
-     * Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
-     */
-    @Unique
-    public void multithreadingandtweaks$updateEntity(Entity p_72870_1_)
-    {
-        this.updateEntityWithOptionalForce(p_72870_1_, true);
     }
 }
