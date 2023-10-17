@@ -18,6 +18,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -331,7 +332,9 @@ public abstract class MixinWorld implements IBlockAccess {
      */
     @Overwrite
     public int getSavedLightValue(EnumSkyBlock lightType, int x, int y, int z) {
-        // Ensure y is within the valid range [0, 255]
+        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+
+            // Ensure y is within the valid range [0, 255]
         y = Math.min(255, Math.max(0, y));
 
         // Check if the coordinates are within a valid range
@@ -348,5 +351,81 @@ public abstract class MixinWorld implements IBlockAccess {
         }
 
         return lightType.defaultLightValue;
+        }
+        return x;
+    }
+
+
+    /**
+     * Will update the entity in the world if the chunk the entity is in is currently loaded or its forced to update.
+     * Args: entity, forceUpdate
+     */ // todo
+    @Overwrite
+    public void updateEntityWithOptionalForce(Entity entity, boolean forceUpdate) {
+        if (!MultithreadingandtweaksConfig.enableMixinWorld) {
+            return;
+        }
+
+        int x = MathHelper.floor_double(entity.posX);
+        int z = MathHelper.floor_double(entity.posZ);
+        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(x >> 4, z >> 4));
+        byte chunkCheckRadius = isForced ? (byte) 0 : 32;
+        boolean canUpdate = !forceUpdate || this.checkChunksExist(x - chunkCheckRadius, 0, z - chunkCheckRadius, x + chunkCheckRadius, 0, z + chunkCheckRadius);
+
+        if (!canUpdate) {
+            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
+            MinecraftForge.EVENT_BUS.post(event);
+            canUpdate = event.canUpdate;
+        }
+
+        if (canUpdate) {
+            entity.lastTickPosX = entity.posX;
+            entity.lastTickPosY = entity.posY;
+            entity.lastTickPosZ = entity.posZ;
+            entity.prevRotationYaw = entity.rotationYaw;
+            entity.prevRotationPitch = entity.rotationPitch;
+
+            if (forceUpdate && entity.addedToChunk) {
+                ++entity.ticksExisted;
+                if (entity.ridingEntity != null) {
+                    entity.updateRidden();
+                } else {
+                    entity.onUpdate();
+                }
+            }
+
+            int chunkX = MathHelper.floor_double(entity.posX / 16.0D);
+            int chunkZ = MathHelper.floor_double(entity.posZ / 16.0D);
+
+            if (!entity.addedToChunk || entity.chunkCoordX != chunkX || entity.chunkCoordZ != chunkZ) {
+                if (entity.addedToChunk && this.multithreadingandtweaks$chunkExists(entity.chunkCoordX, entity.chunkCoordZ)) {
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(entity.chunkCoordX, entity.chunkCoordZ).removeEntityAtIndex(entity, entity.chunkCoordY);
+                }
+
+                if (this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
+                    entity.addedToChunk = true;
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ).addEntity(entity);
+                } else {
+                    entity.addedToChunk = false;
+                }
+            }
+
+            if (forceUpdate && entity.addedToChunk && entity.riddenByEntity != null) {
+                if (!entity.riddenByEntity.isDead && entity.riddenByEntity.ridingEntity == entity) {
+                    this.updateEntity(entity.riddenByEntity);
+                } else {
+                    entity.riddenByEntity.ridingEntity = null;
+                    entity.riddenByEntity = null;
+                }
+            }
+        }
+    }
+
+    /**
+     * Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
+     */
+    public void updateEntity(Entity p_72870_1_)
+    {
+        this.updateEntityWithOptionalForce(p_72870_1_, true);
     }
 }
