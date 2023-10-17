@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import com.google.common.collect.ImmutableSetMultimap;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
@@ -7,14 +8,19 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -25,7 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(World.class)
-public class MixinWorld {
+public abstract class MixinWorld implements IBlockAccess {
+
+    @Unique
+    private World multithreadingandtweaks$world;
+    @Shadow
+    public final Profiler theProfiler;
     @Shadow
     protected List worldAccesses = new ArrayList();
     @Shadow
@@ -35,6 +46,12 @@ public class MixinWorld {
 
     @Shadow
     public static double MAX_ENTITY_RADIUS = 2.0D;
+
+    protected MixinWorld(World world, Profiler theProfiler) {
+        this.multithreadingandtweaks$world = world;
+        this.theProfiler = theProfiler;
+    }
+
     /**
      * @author iamacatfr
      * @reason optimize selectEntitiesWithinAABB
@@ -89,6 +106,7 @@ public class MixinWorld {
     @Overwrite
     public void playSoundAtEntity(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
     {
+        if (MultithreadingandtweaksConfig.enableMixinWorld){
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
@@ -98,6 +116,7 @@ public class MixinWorld {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).playSound(p_72956_2_, p_72956_1_.posX, p_72956_1_.posY - (double) p_72956_1_.yOffset, p_72956_1_.posZ, p_72956_3_, p_72956_4_);
         }
+        }
     }
 /**
  * @author
@@ -106,6 +125,7 @@ public class MixinWorld {
 @Overwrite
 public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2_)
 {
+    if (MultithreadingandtweaksConfig.enableMixinWorld){
     this.collidingBoundingBoxes.clear();
     int i = MathHelper.floor_double(p_72945_2_.minX);
     int j = MathHelper.floor_double(p_72945_2_.maxX + 1.0D);
@@ -160,6 +180,8 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
         }
     }
     return this.collidingBoundingBoxes;
+    }
+    return null;
 }
 
     /**
@@ -179,6 +201,7 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
     @Overwrite
     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_)
     {
+        if (MultithreadingandtweaksConfig.enableMixinWorld) {
         if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256)
         {
             Chunk chunk = null;
@@ -201,6 +224,8 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
         {
             return Blocks.air;
         }
+        }
+        return null;
     }
 
     /**
@@ -233,5 +258,166 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
         }
 
         return arraylist;
+    }
+/**
+ * @author
+ * @reason
+ */
+    @Overwrite
+    public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_)
+    {
+        if (MultithreadingandtweaksConfig.enableMixinWorld){
+        int i = MathHelper.floor_double(p_72866_1_.posX);
+        int j = MathHelper.floor_double(p_72866_1_.posZ);
+        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+        byte b0 = isForced ? (byte)0 : 32;
+        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
+
+        if (!canUpdate)
+        {
+            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(p_72866_1_);
+            MinecraftForge.EVENT_BUS.post(event);
+            canUpdate = event.canUpdate;
+        }
+
+        if (canUpdate)
+        {
+            p_72866_1_.lastTickPosX = p_72866_1_.posX;
+            p_72866_1_.lastTickPosY = p_72866_1_.posY;
+            p_72866_1_.lastTickPosZ = p_72866_1_.posZ;
+            p_72866_1_.prevRotationYaw = p_72866_1_.rotationYaw;
+            p_72866_1_.prevRotationPitch = p_72866_1_.rotationPitch;
+
+            if (p_72866_2_ && p_72866_1_.addedToChunk)
+            {
+                ++p_72866_1_.ticksExisted;
+
+                if (p_72866_1_.ridingEntity != null)
+                {
+                    p_72866_1_.updateRidden();
+                }
+                else
+                {
+                    p_72866_1_.onUpdate();
+                }
+            }
+
+            this.theProfiler.startSection("chunkCheck");
+
+            if (Double.isNaN(p_72866_1_.posX) || Double.isInfinite(p_72866_1_.posX))
+            {
+                p_72866_1_.posX = p_72866_1_.lastTickPosX;
+            }
+
+            if (Double.isNaN(p_72866_1_.posY) || Double.isInfinite(p_72866_1_.posY))
+            {
+                p_72866_1_.posY = p_72866_1_.lastTickPosY;
+            }
+
+            if (Double.isNaN(p_72866_1_.posZ) || Double.isInfinite(p_72866_1_.posZ))
+            {
+                p_72866_1_.posZ = p_72866_1_.lastTickPosZ;
+            }
+
+            if (Double.isNaN((double)p_72866_1_.rotationPitch) || Double.isInfinite((double)p_72866_1_.rotationPitch))
+            {
+                p_72866_1_.rotationPitch = p_72866_1_.prevRotationPitch;
+            }
+
+            if (Double.isNaN((double)p_72866_1_.rotationYaw) || Double.isInfinite((double)p_72866_1_.rotationYaw))
+            {
+                p_72866_1_.rotationYaw = p_72866_1_.prevRotationYaw;
+            }
+
+            int k = MathHelper.floor_double(p_72866_1_.posX / 16.0D);
+            int l = MathHelper.floor_double(p_72866_1_.posY / 16.0D);
+            int i1 = MathHelper.floor_double(p_72866_1_.posZ / 16.0D);
+
+            if (!p_72866_1_.addedToChunk || p_72866_1_.chunkCoordX != k || p_72866_1_.chunkCoordY != l || p_72866_1_.chunkCoordZ != i1)
+            {
+                if (p_72866_1_.addedToChunk && this.multithreadingandtweaks$chunkExists(p_72866_1_.chunkCoordX, p_72866_1_.chunkCoordZ))
+                {
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(p_72866_1_.chunkCoordX, p_72866_1_.chunkCoordZ).removeEntityAtIndex(p_72866_1_, p_72866_1_.chunkCoordY);
+                }
+
+                if (this.multithreadingandtweaks$chunkExists(k, i1))
+                {
+                    p_72866_1_.addedToChunk = true;
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(k, i1).addEntity(p_72866_1_);
+                }
+                else
+                {
+                    p_72866_1_.addedToChunk = false;
+                }
+            }
+
+            this.theProfiler.endSection();
+
+            if (p_72866_2_ && p_72866_1_.addedToChunk && p_72866_1_.riddenByEntity != null)
+            {
+                if (!p_72866_1_.riddenByEntity.isDead && p_72866_1_.riddenByEntity.ridingEntity == p_72866_1_)
+                {
+                    this.multithreadingandtweaks$updateEntity(p_72866_1_.riddenByEntity);
+                }
+                else
+                {
+                    p_72866_1_.riddenByEntity.ridingEntity = null;
+                    p_72866_1_.riddenByEntity = null;
+                }
+            }
+        }
+    } }
+    /**
+     * Get the persistent chunks for this world
+     *
+     * @return
+     */
+    @Unique
+    public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> multithreadingandtweaks$getPersistentChunks()
+    {
+        return ForgeChunkManager.getPersistentChunksFor(multithreadingandtweaks$world);
+    }
+
+    /**
+     * Checks between a min and max all the chunks inbetween actually exist. Args: minX, minY, minZ, maxX, maxY, maxZ
+     */
+    @Overwrite
+    public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_, int p_72904_6_)
+    {
+        if (MultithreadingandtweaksConfig.enableMixinWorld){
+        if (p_72904_5_ >= 0 && p_72904_2_ < 256)
+        {
+            p_72904_1_ >>= 4;
+            p_72904_3_ >>= 4;
+            p_72904_4_ >>= 4;
+            p_72904_6_ >>= 4;
+
+            for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
+            {
+                for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
+                {
+                    if (!this.multithreadingandtweaks$chunkExists(k1, l1))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+        return false;
+    }
+    /**
+     * Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
+     */
+    @Unique
+    public void multithreadingandtweaks$updateEntity(Entity p_72870_1_)
+    {
+        this.updateEntityWithOptionalForce(p_72870_1_, true);
     }
 }
