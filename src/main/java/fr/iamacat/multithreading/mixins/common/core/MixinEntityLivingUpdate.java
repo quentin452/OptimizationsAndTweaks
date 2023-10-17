@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -250,6 +251,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
      * Takes in the distance the entity has fallen this tick and whether its on the ground to update the fall distance
      * and deal fall damage if landing on the ground.  Args: distanceFallenThisTick, onGround
      */
+    @Overwrite
     protected void updateFallState(double distanceFallenThisTick, boolean isOnGround)
     {
         if (!this.isInWater())
