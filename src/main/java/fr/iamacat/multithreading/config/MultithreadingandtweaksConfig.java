@@ -121,10 +121,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMoveHelper;
-    @Config.Comment("Optimize EntityLiving")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityLiving;
 
     @Config.Comment("Optimize EntityAITasks")
     @Config.DefaultBoolean(true)
