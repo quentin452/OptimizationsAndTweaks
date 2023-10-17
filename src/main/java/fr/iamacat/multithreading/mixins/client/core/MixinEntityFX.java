@@ -170,40 +170,37 @@ public class MixinEntityFX extends Entity {
      * @author
      * @reason
      */
-
     @Overwrite
-    public void renderParticle(Tessellator p_70539_1_, float p_70539_2_, float p_70539_3_, float p_70539_4_,
-        float p_70539_5_, float p_70539_6_, float p_70539_7_) {
-        float uMin = this.particleIcon != null ? this.particleIcon.getMinU() : this.particleTextureIndexX / 16.0F;
-        float uMax = this.particleIcon != null ? this.particleIcon.getMaxU() : uMin + 0.0624375F;
-        float vMin = this.particleIcon != null ? this.particleIcon.getMinV() : this.particleTextureIndexY / 16.0F;
-        float vMax = this.particleIcon != null ? this.particleIcon.getMaxV() : vMin + 0.0624375F;
+    public void renderParticle(Tessellator p_70539_1_, float p_70539_2_, float p_70539_3_, float p_70539_4_, float p_70539_5_, float p_70539_6_, float p_70539_7_) {
+        p_70539_1_.setColorRGBA_F(particleRed, particleGreen, particleBlue, particleAlpha);
 
-        float scale = 0.1F * this.particleScale;
+        float minU = particleIcon != null ? particleIcon.getMinU() : (float) particleTextureIndexX / 16.0F;
+        float maxU = particleIcon != null ? particleIcon.getMaxU() : minU + 0.0624375F;
+        float minV = particleIcon != null ? particleIcon.getMinV() : (float) particleTextureIndexY / 16.0F;
+        float maxV = particleIcon != null ? particleIcon.getMaxV() : minV + 0.0624375F;
 
-        float x = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) p_70539_2_ - interpPosX);
-        float y = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) p_70539_2_ - interpPosY);
-        float z = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) p_70539_2_ - interpPosZ);
+        float scale = 0.1F * particleScale;
+        float x = (float) (prevPosX + (posX - prevPosX) * p_70539_2_ - interpPosX);
+        float y = (float) (prevPosY + (posY - prevPosY) * p_70539_2_ - interpPosY);
+        float z = (float) (prevPosZ + (posZ - prevPosZ) * p_70539_2_ - interpPosZ);
 
-        p_70539_1_.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
+        float x1 = -p_70539_3_ * scale - p_70539_6_ * scale;
+        float x2 = -p_70539_3_ * scale + p_70539_6_ * scale;
+        float x3 = p_70539_3_ * scale + p_70539_6_ * scale;
+        float x4 = p_70539_3_ * scale - p_70539_6_ * scale;
 
-        float x1 = x - p_70539_3_ * scale - p_70539_6_ * scale;
-        float x2 = x - p_70539_3_ * scale + p_70539_6_ * scale;
-        float x3 = x + p_70539_3_ * scale + p_70539_6_ * scale;
-        float x4 = x + p_70539_3_ * scale - p_70539_6_ * scale;
+        float y1 = -p_70539_4_ * scale;
+        float y2 = p_70539_4_ * scale;
 
-        float y1 = y - p_70539_4_ * scale;
-        float y2 = y + p_70539_4_ * scale;
+        float z1 = -p_70539_5_ * scale - p_70539_7_ * scale;
+        float z2 = -p_70539_5_ * scale + p_70539_7_ * scale;
+        float z3 = p_70539_5_ * scale + p_70539_7_ * scale;
+        float z4 = p_70539_5_ * scale - p_70539_7_ * scale;
 
-        float z1 = z - p_70539_5_ * scale - p_70539_7_ * scale;
-        float z2 = z - p_70539_5_ * scale + p_70539_7_ * scale;
-        float z3 = z + p_70539_5_ * scale + p_70539_7_ * scale;
-        float z4 = z + p_70539_5_ * scale - p_70539_7_ * scale;
-
-        p_70539_1_.addVertexWithUV(x1, y1, z1, uMax, vMax);
-        p_70539_1_.addVertexWithUV(x2, y2, z2, uMax, vMin);
-        p_70539_1_.addVertexWithUV(x3, y2, z3, uMin, vMin);
-        p_70539_1_.addVertexWithUV(x4, y1, z4, uMin, vMax);
+        p_70539_1_.addVertexWithUV(x + x1, y + y1, z + z1, maxU, maxV);
+        p_70539_1_.addVertexWithUV(x + x2, y + y2, z + z2, maxU, minV);
+        p_70539_1_.addVertexWithUV(x + x3, y + y2, z + z3, minU, minV);
+        p_70539_1_.addVertexWithUV(x + x4, y + y1, z + z4, minU, maxV);
     }
 
     public int getFXLayer() {
