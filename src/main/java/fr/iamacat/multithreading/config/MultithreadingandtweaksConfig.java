@@ -102,11 +102,11 @@ public class MultithreadingandtweaksConfig {
     // BugFix Mixins
 
     @Config.Comment("Optimize MixinEntitySquid class")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitySquid;
     @Config.Comment("Optimize EntityLookHelper performances")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLookHelper;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
@@ -114,24 +114,24 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
     @Config.Comment("Optimize Xaero's Minimap Renderer")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableXaerosMapOptimizations;
     @Config.Comment("Optimize EntityMoveHelper Performances")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMoveHelper;
     @Config.Comment("Optimize EntityLiving")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLiving;
 
     @Config.Comment("Optimize EntityAITasks")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
     @Config.Comment("Optimize selectEntitiesWithinAABB")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
     @Config.Comment("Print stats ids to help to fix duplicated stats i" +
