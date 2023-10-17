@@ -138,10 +138,6 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEffectRenderer;
 
-    @Config.Comment("Optimize EntityFX")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityFX;
     @Config.Comment("Optimize OpenGlHelper")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

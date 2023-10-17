@@ -149,8 +149,7 @@ public enum Mixin implements IMixin {
         "core.MixinLiquidRendering"),
     client_core_MixinEffectRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEffectRenderer,
         "core.MixinEffectRenderer"),
-    client_core_MixinEntityFX(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntityFX,
-        "core.MixinEntityFX"),
+
     // MOD-FILTERED MIXINS
 
     // The modFilter argument is a predicate, so you can also use the .and(), .or(), and .negate() methods to mix and
