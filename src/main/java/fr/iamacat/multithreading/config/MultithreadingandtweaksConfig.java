@@ -84,10 +84,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitiesCollision;
-    @Config.Comment("Enable Multithreaded Update Time and Light")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntitiesUpdateTimeandLight;
 
     @Config.Comment("Enable Multithreaded Chunk Provider Server")
     @Config.DefaultBoolean(true)

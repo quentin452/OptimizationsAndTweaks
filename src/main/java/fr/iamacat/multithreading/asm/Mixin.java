@@ -120,10 +120,6 @@ public enum Mixin implements IMixin {
     common_core_MixinEntitiesCollision(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitiesCollision,
         "core.MixinEntitiesCollision"),
 
-    common_core_MixinEntitiesUpdateTimeandLight(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinEntitiesUpdateTimeandLight,
-        "core.MixinEntitiesUpdateTimeandLight"),
-
     common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
