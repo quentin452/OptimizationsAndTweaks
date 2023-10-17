@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.mixins.common.core.MixinEntityLivingUpdate;
 
-public class MixinEntityLivingUpdateSubClass extends MixinEntityLivingUpdate {
+public abstract class MixinEntityLivingUpdateSubClass extends MixinEntityLivingUpdate {
 
     @Override
     public float multithreadingandtweaks$getHealth() {

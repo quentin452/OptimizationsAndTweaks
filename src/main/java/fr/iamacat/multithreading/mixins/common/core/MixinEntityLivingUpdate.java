@@ -3,8 +3,12 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.*;
 import java.util.concurrent.*;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkProviderServer;
 
@@ -17,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
-public abstract class MixinEntityLivingUpdate {
+public abstract class MixinEntityLivingUpdate extends Entity {
 
     // Fixme todo
     @Unique
@@ -81,6 +85,7 @@ public abstract class MixinEntityLivingUpdate {
     }
 
     public MixinEntityLivingUpdate(EntityLivingBase entity, World world, ChunkProviderServer chunkProvider) {
+        super(world);
         this.entityObject = entity;
         this.chunkProvider = chunkProvider;
         this.world = world;
@@ -239,5 +244,46 @@ public abstract class MixinEntityLivingUpdate {
     @Unique
     private void doUpdate() {
         entityObject.moveEntity(this.strafe, this.forward, this.friction);
+    }
+
+    /**
+     * Takes in the distance the entity has fallen this tick and whether its on the ground to update the fall distance
+     * and deal fall damage if landing on the ground.  Args: distanceFallenThisTick, onGround
+     */
+    protected void updateFallState(double distanceFallenThisTick, boolean isOnGround)
+    {
+        if (!this.isInWater())
+        {
+            this.handleWaterMovement();
+        }
+
+        if (isOnGround && this.fallDistance > 0.0F)
+        {
+            double posX = this.posX;
+            double posY = this.posY - 0.20000000298023224D - (double)this.yOffset;
+            double posZ = this.posZ;
+            int i = MathHelper.floor_double(posX);
+            int j = MathHelper.floor_double(posY);
+            int k = MathHelper.floor_double(posZ);
+            Block block = this.worldObj.getBlock(i, j, k);
+
+            if (block.getMaterial() == Material.air)
+            {
+                int l = this.worldObj.getBlock(i, j - 1, k).getRenderType();
+
+                if (l == 11 || l == 32 || l == 21)
+                {
+                    block = this.worldObj.getBlock(i, j - 1, k);
+                }
+            }
+            else if (!this.worldObj.isRemote && this.fallDistance > 3.0F)
+            {
+                this.worldObj.playAuxSFX(2006, i, j, k, MathHelper.ceiling_float_int(this.fallDistance - 3.0F));
+            }
+
+            block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
+        }
+
+        super.updateFallState(distanceFallenThisTick, isOnGround);
     }
 }
