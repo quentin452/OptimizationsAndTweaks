@@ -32,30 +32,26 @@ public class MixinEntityMoveHelper {
      */
     @Overwrite
     public void onUpdateMoveHelper() {
-        if(MultithreadingandtweaksConfig.enableMixinEntityMoveHelper){
-
         this.entity.setMoveForward(0.0F);
 
         if (this.update) {
             this.update = false;
-            int i = MathHelper.floor_double(this.entity.boundingBox.minY + 0.5D);
-            double dX = this.posX - this.entity.posX;
-            double dZ = this.posZ - this.entity.posZ;
-            double dY = this.posY - (double) i;
-            double squaredDistance = dX * dX + dY * dY + dZ * dZ;
+            double posXDelta = this.posX - this.entity.posX;
+            double posZDelta = this.posZ - this.entity.posZ;
+            double posYDelta = this.posY - this.entity.boundingBox.minY;
+            double squaredDistance = posXDelta * posXDelta + posYDelta * posYDelta + posZDelta * posZDelta;
 
             if (squaredDistance >= 2.500000277905201E-7D) {
-                float newRotationYaw = (float) (Math.toDegrees(Math.atan2(dZ, dX)) - 90.0);
-                this.entity.rotationYaw = this.multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newRotationYaw, 30.0F);
+                float newYaw = (float) Math.toDegrees(Math.atan2(posZDelta, posXDelta)) - 90.0F;
+                this.entity.rotationYaw = this.multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
 
                 double movementSpeed = this.speed * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
                 this.entity.setAIMoveSpeed((float) movementSpeed);
 
-                if (dY > 0.0 && squaredDistance < 1.0) {
+                if (posYDelta > 0.0 && posXDelta * posXDelta + posZDelta * posZDelta < 1.0) {
                     this.entity.getJumpHelper().setJumping();
                 }
             }
-        }
         }
     }
 
