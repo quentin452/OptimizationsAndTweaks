@@ -319,12 +319,12 @@ public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2
                 p_72866_1_.posZ = p_72866_1_.lastTickPosZ;
             }
 
-            if (Double.isNaN((double)p_72866_1_.rotationPitch) || Double.isInfinite((double)p_72866_1_.rotationPitch))
+            if (Double.isNaN(p_72866_1_.rotationPitch) || Double.isInfinite((double)p_72866_1_.rotationPitch))
             {
                 p_72866_1_.rotationPitch = p_72866_1_.prevRotationPitch;
             }
 
-            if (Double.isNaN((double)p_72866_1_.rotationYaw) || Double.isInfinite((double)p_72866_1_.rotationYaw))
+            if (Double.isNaN(p_72866_1_.rotationYaw) || Double.isInfinite((double)p_72866_1_.rotationYaw))
             {
                 p_72866_1_.rotationYaw = p_72866_1_.prevRotationYaw;
             }
