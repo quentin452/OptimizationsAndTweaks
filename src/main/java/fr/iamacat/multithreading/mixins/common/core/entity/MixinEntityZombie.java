@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core.entity;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntityZombie;
@@ -25,6 +26,7 @@ public class MixinEntityZombie extends EntityMob {
      */
     @Overwrite
     public void onLivingUpdate() {
+        if (MultithreadingandtweaksConfig.enableMixinEntityZombie)
         // Add a check for the conditions where the entity can catch fire
         if (multithreadingandtweaks$shouldCatchFire()) {
             multithreadingandtweaks$catchFire();
