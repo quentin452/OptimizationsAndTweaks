@@ -75,7 +75,7 @@ public class MixinEffectRenderer {
                 for (EntityFX particle : particles) {
                     if (particle == null) continue;
 
-                    tessellator.setBrightness(particle.getBrightnessForRender(partialTicks));
+                    //tessellator.setBrightness(particle.getBrightnessForRender(partialTicks));
 
                     try {
                         particle.renderParticle(

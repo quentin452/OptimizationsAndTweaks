@@ -120,6 +120,14 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRenderManager;
+    @Config.Comment("Optimize Entity")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntity;
+    @Config.Comment("Optimize EntitySpellParticleFX")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitySpellParticleFX;
     @Config.Comment("Optimize Tesselator")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

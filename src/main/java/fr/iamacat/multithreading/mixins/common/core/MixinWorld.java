@@ -326,45 +326,6 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     /**
-     * @author
-     * @reason
-     */
-    @SideOnly(Side.CLIENT)
-    @Overwrite
-    public int getSkyBlockTypeBrightness(EnumSkyBlock skyBlock, int x, int y, int z) {
-        if (this.provider.hasNoSky && skyBlock == EnumSkyBlock.Sky) {
-            return 0;
-        }
-
-        y = Math.min(255, Math.max(0, y));
-
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
-            int chunkX = x >> 4;
-            int chunkZ = z >> 4;
-
-            if (!this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
-                return skyBlock.defaultLightValue;
-            }
-
-            if (this.getBlock(x, y, z)
-                .getUseNeighborBrightness()) {
-                int maxLight = 0;
-                maxLight = Math.max(maxLight, this.getSavedLightValue(skyBlock, x, y + 1, z));
-                maxLight = Math.max(maxLight, this.getSavedLightValue(skyBlock, x + 1, y, z));
-                maxLight = Math.max(maxLight, this.getSavedLightValue(skyBlock, x - 1, y, z));
-                maxLight = Math.max(maxLight, this.getSavedLightValue(skyBlock, x, y, z + 1));
-                maxLight = Math.max(maxLight, this.getSavedLightValue(skyBlock, x, y, z - 1));
-                return maxLight;
-            } else {
-                Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ);
-                return chunk.getSavedLightValue(skyBlock, x & 15, y, z & 15);
-            }
-        }
-
-        return skyBlock.defaultLightValue;
-    }
-
-    /**
      * Returns saved light value without taking into account the time of day. Either looks in the sky light map or
      * block light map based on the enumSkyBlock arg.
      */
@@ -388,5 +349,4 @@ public abstract class MixinWorld implements IBlockAccess {
 
         return lightType.defaultLightValue;
     }
-
 }

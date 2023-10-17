@@ -59,6 +59,8 @@ public enum Mixin implements IMixin {
     common_core_MixinDisableinitialWorldChunkLoad(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinDisableinitialWorldChunkLoad,
         "core.MixinDisableinitialWorldChunkLoad"),
+
+    common_core_MixinEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntity, "core.MixinEntity"),
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinOreDictCofhFix,
         "cofhcore.fixoredictcrash.MixinOreDictionaryArbiter"),
@@ -123,6 +125,9 @@ public enum Mixin implements IMixin {
     common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
+
+    client_core_MixinEntitySpellParticleFX(Side.CLIENT,
+        m -> MultithreadingandtweaksConfig.enableMixinEntitySpellParticleFX, "core.MixinEntitySpellParticleFX"),
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
         "core.MixinParticleManager"),
     client_core_MixinModelRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinModelRenderer,
