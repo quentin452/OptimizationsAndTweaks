@@ -120,6 +120,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMoveHelper;
+
+    @Config.Comment("Optimize selectEntitiesWithinAABB")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorld;
     @Config.Comment("Print stats ids to help to fix duplicated stats i" +
         "ds crash")
     @Config.DefaultBoolean(true)

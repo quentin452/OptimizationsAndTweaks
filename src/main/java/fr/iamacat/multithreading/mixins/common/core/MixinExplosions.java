@@ -3,6 +3,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import net.minecraft.world.World;
 
@@ -52,7 +53,7 @@ public abstract class MixinExplosions {
                 }
                 List<CompletableFuture<Void>> futures = batch.stream()
                     .map(t -> CompletableFuture.runAsync(t::tickExplosion, multithreadingandtweaks$executorService))
-                    .toList();
+                    .collect(Collectors.toList());
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .join();
             }
