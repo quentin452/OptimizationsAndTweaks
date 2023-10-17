@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import net.minecraft.world.World;
 
@@ -22,7 +21,7 @@ import fr.iamacat.multithreading.tasking.ExplosionTask;
 public abstract class MixinExplosions {
 
     @Unique
-    private final Object explosionsLock = new Object();
+    private final Object multithreadingandtweaks$explosionsLock = new Object();
     @Unique
     private final ConcurrentLinkedDeque<ExplosionTask> multithreadingandtweaks$explosionsToProcess = new ConcurrentLinkedDeque<>();
     @Unique
@@ -43,7 +42,7 @@ public abstract class MixinExplosions {
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTick(CallbackInfo ci) {
         // Traitez les explosions de manière asynchrone pendant le tick
-        synchronized (explosionsLock) {
+        synchronized (multithreadingandtweaks$explosionsLock) {
             while (!multithreadingandtweaks$explosionsToProcess.isEmpty()) {
                 List<ExplosionTask> batch = new ArrayList<>();
                 ExplosionTask task = multithreadingandtweaks$explosionsToProcess.poll();
@@ -53,7 +52,7 @@ public abstract class MixinExplosions {
                 }
                 List<CompletableFuture<Void>> futures = batch.stream()
                     .map(t -> CompletableFuture.runAsync(t::tickExplosion, multithreadingandtweaks$executorService))
-                    .collect(Collectors.toList());
+                    .toList();
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .join();
             }
