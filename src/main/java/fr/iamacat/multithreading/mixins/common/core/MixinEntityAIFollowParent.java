@@ -1,16 +1,17 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.pathfinding.PathNavigate;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
+
     @Shadow
     EntityAnimal childAnimal;
     @Shadow
@@ -19,6 +20,7 @@ public class MixinEntityAIFollowParent {
     EntityAnimal parentAnimal;
     @Shadow
     private int field_75345_d;
+
     /**
      * Updates the task
      */
@@ -32,7 +34,8 @@ public class MixinEntityAIFollowParent {
                     double distance = this.childAnimal.getDistanceSqToEntity(this.parentAnimal);
 
                     if (distance > 2.0) {
-                        this.childAnimal.getNavigator().tryMoveToEntityLiving(this.parentAnimal, this.field_75347_c);
+                        this.childAnimal.getNavigator()
+                            .tryMoveToEntityLiving(this.parentAnimal, this.field_75347_c);
                     }
                 }
             }

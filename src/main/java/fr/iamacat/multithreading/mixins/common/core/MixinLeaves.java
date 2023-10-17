@@ -1,18 +1,20 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
-
 @Mixin(BlockLeaves.class)
 public class MixinLeaves extends Block {
+
     @Shadow
     int[] field_150128_a;
 
@@ -68,14 +70,12 @@ public class MixinLeaves extends Block {
                                 int index = (i2 + k1) * j1 + (j2 + k1) * b1 + k2 + k1;
 
                                 if (this.field_150128_a[index] == l1 - 1) {
-                                    int[] nearbyIndices = new int[]{
-                                        (i2 + k1 - 1) * j1 + (j2 + k1) * b1 + k2 + k1,
+                                    int[] nearbyIndices = new int[] { (i2 + k1 - 1) * j1 + (j2 + k1) * b1 + k2 + k1,
                                         (i2 + k1 + 1) * j1 + (j2 + k1) * b1 + k2 + k1,
                                         (i2 + k1) * j1 + (j2 + k1 - 1) * b1 + k2 + k1,
                                         (i2 + k1) * j1 + (j2 + k1 + 1) * b1 + k2 + k1,
                                         (i2 + k1) * j1 + (j2 + k1) * b1 + (k2 + k1 - 1),
-                                        (i2 + k1) * j1 + (j2 + k1) * b1 + k2 + k1 + 1
-                                    };
+                                        (i2 + k1) * j1 + (j2 + k1) * b1 + k2 + k1 + 1 };
 
                                     for (int nearbyIndex : nearbyIndices) {
                                         if (this.field_150128_a[nearbyIndex] == -2) {
@@ -100,9 +100,15 @@ public class MixinLeaves extends Block {
     }
 
     @Unique
-    private void multithreadingandtweaks$removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_, int p_150126_4_)
-    {
-        this.dropBlockAsItem(p_150126_1_, p_150126_2_, p_150126_3_, p_150126_4_, p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_), 0);
+    private void multithreadingandtweaks$removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_,
+        int p_150126_4_) {
+        this.dropBlockAsItem(
+            p_150126_1_,
+            p_150126_2_,
+            p_150126_3_,
+            p_150126_4_,
+            p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_),
+            0);
         p_150126_1_.setBlockToAir(p_150126_2_, p_150126_3_, p_150126_4_);
     }
 }

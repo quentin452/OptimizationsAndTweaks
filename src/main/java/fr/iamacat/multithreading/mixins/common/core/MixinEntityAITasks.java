@@ -1,18 +1,21 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.profiler.Profiler;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.List;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntityAITasks.class)
 public class MixinEntityAITasks {
+
     @Shadow
     private final Profiler theProfiler;
     @Shadow
@@ -30,28 +33,29 @@ public class MixinEntityAITasks {
      */
     @Overwrite
     private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
-        if(MultithreadingandtweaksConfig.enableMixinEntityAITasks){
-        this.theProfiler.startSection("canUse");
+        if (MultithreadingandtweaksConfig.enableMixinEntityAITasks) {
+            this.theProfiler.startSection("canUse");
 
-        for (EntityAITasks.EntityAITaskEntry entityaitaskentry : this.taskEntries) {
-            if (entityaitaskentry != p_75775_1_) {
-                if (p_75775_1_.priority >= entityaitaskentry.priority) {
-                    boolean isExecuting = this.executingTaskEntries.contains(entityaitaskentry);
-                    if (isExecuting && !multithreadingandtweaks$areTasksCompatible(p_75775_1_, entityaitaskentry)) {
-                        this.theProfiler.endSection();
-                        return false;
-                    }
-                } else {
-                    if (this.executingTaskEntries.contains(entityaitaskentry) && !entityaitaskentry.action.isInterruptible()) {
-                        this.theProfiler.endSection();
-                        return false;
+            for (EntityAITasks.EntityAITaskEntry entityaitaskentry : this.taskEntries) {
+                if (entityaitaskentry != p_75775_1_) {
+                    if (p_75775_1_.priority >= entityaitaskentry.priority) {
+                        boolean isExecuting = this.executingTaskEntries.contains(entityaitaskentry);
+                        if (isExecuting && !multithreadingandtweaks$areTasksCompatible(p_75775_1_, entityaitaskentry)) {
+                            this.theProfiler.endSection();
+                            return false;
+                        }
+                    } else {
+                        if (this.executingTaskEntries.contains(entityaitaskentry)
+                            && !entityaitaskentry.action.isInterruptible()) {
+                            this.theProfiler.endSection();
+                            return false;
+                        }
                     }
                 }
             }
-        }
 
-        this.theProfiler.endSection();
-        return true;
+            this.theProfiler.endSection();
+            return true;
         }
         return false;
     }
@@ -60,7 +64,8 @@ public class MixinEntityAITasks {
      * Returns whether two EntityAITaskEntries can be executed concurrently
      */
     @Unique
-    private boolean multithreadingandtweaks$areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_, EntityAITasks.EntityAITaskEntry p_75777_2_) {
+    private boolean multithreadingandtweaks$areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_,
+        EntityAITasks.EntityAITaskEntry p_75777_2_) {
         return (p_75777_1_.action.getMutexBits() & p_75777_2_.action.getMutexBits()) == 0;
     }
 }

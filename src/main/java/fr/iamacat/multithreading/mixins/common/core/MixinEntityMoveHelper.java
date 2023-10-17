@@ -1,10 +1,10 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.util.MathHelper;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityMoveHelper.class)
 public class MixinEntityMoveHelper {
+
     /** The EntityLiving that is being moved */
     @Shadow
     private EntityLiving entity;
@@ -26,6 +27,7 @@ public class MixinEntityMoveHelper {
     private double speed;
     @Shadow
     private boolean update;
+
     /**
      * @author iamacatfr
      * @reason optimize tps
@@ -43,13 +45,17 @@ public class MixinEntityMoveHelper {
 
             if (squaredDistance >= 2.500000277905201E-7D) {
                 float newYaw = (float) Math.toDegrees(Math.atan2(posZDelta, posXDelta)) - 90.0F;
-                this.entity.rotationYaw = this.multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
+                this.entity.rotationYaw = this
+                    .multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
 
-                double movementSpeed = this.speed * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+                double movementSpeed = this.speed
+                    * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
+                        .getAttributeValue();
                 this.entity.setAIMoveSpeed((float) movementSpeed);
 
                 if (posYDelta > 0.0 && posXDelta * posXDelta + posZDelta * posZDelta < 1.0) {
-                    this.entity.getJumpHelper().setJumping();
+                    this.entity.getJumpHelper()
+                        .setJumping();
                 }
             }
         }
@@ -60,18 +66,15 @@ public class MixinEntityMoveHelper {
      */
 
     @Unique
-    private float multithreadingandtweaks$limitAngle(float p_75639_1_, float p_75639_2_, float p_75639_3_)
-    {
+    private float multithreadingandtweaks$limitAngle(float p_75639_1_, float p_75639_2_, float p_75639_3_) {
 
         float f3 = MathHelper.wrapAngleTo180_float(p_75639_2_ - p_75639_1_);
 
-        if (f3 > p_75639_3_)
-        {
+        if (f3 > p_75639_3_) {
             f3 = p_75639_3_;
         }
 
-        if (f3 < -p_75639_3_)
-        {
+        if (f3 < -p_75639_3_) {
             f3 = -p_75639_3_;
         }
 

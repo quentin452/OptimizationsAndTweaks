@@ -16,32 +16,36 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(BlockGrass.class)
 public abstract class MixinGrassSpread {
+
     @Unique
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
+    private static final ExecutorService EXECUTOR_SERVICE = Executors
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
 
-     /**
-      * @author
-      * @reason
-      */
-     @Overwrite
-     public void updateTick(World worldIn, int x, int y, int z, Random random) {
-         if (!worldIn.isRemote) {
-             if (worldIn.getBlockLightValue(x, y + 1, z) < 4 && worldIn.getBlockLightOpacity(x, y + 1, z) > 2) {
-                 worldIn.setBlock(x, y, z, Blocks.dirt);
-             } else if (worldIn.getBlockLightValue(x, y + 1, z) >= 9) {
-                 for (int l = 0; l < 4; ++l) {
-                     int i1 = x + random.nextInt(3) - 1;
-                     int j1 = y + random.nextInt(5) - 3;
-                     int k1 = z + random.nextInt(3) - 1;
-                     Block block = worldIn.getBlock(i1, j1 + 1, k1);
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void updateTick(World worldIn, int x, int y, int z, Random random) {
+        if (!worldIn.isRemote) {
+            if (worldIn.getBlockLightValue(x, y + 1, z) < 4 && worldIn.getBlockLightOpacity(x, y + 1, z) > 2) {
+                worldIn.setBlock(x, y, z, Blocks.dirt);
+            } else if (worldIn.getBlockLightValue(x, y + 1, z) >= 9) {
+                for (int l = 0; l < 4; ++l) {
+                    int i1 = x + random.nextInt(3) - 1;
+                    int j1 = y + random.nextInt(5) - 3;
+                    int k1 = z + random.nextInt(3) - 1;
+                    Block block = worldIn.getBlock(i1, j1 + 1, k1);
 
-                     if (worldIn.getBlock(i1, j1, k1) == Blocks.dirt && worldIn.getBlockMetadata(i1, j1, k1) == 0 && worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4 && worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
-                         EXECUTOR_SERVICE.submit(() -> multithreadingandtweaks$processGrassBlock(worldIn, i1, j1, k1));
-                     }
-                 }
-             }
-         }
-     }
+                    if (worldIn.getBlock(i1, j1, k1) == Blocks.dirt && worldIn.getBlockMetadata(i1, j1, k1) == 0
+                        && worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4
+                        && worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
+                        EXECUTOR_SERVICE.submit(() -> multithreadingandtweaks$processGrassBlock(worldIn, i1, j1, k1));
+                    }
+                }
+            }
+        }
+    }
 
     @Unique
     private void multithreadingandtweaks$processGrassBlock(World worldIn, int x, int y, int z) {

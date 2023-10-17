@@ -88,7 +88,8 @@ public abstract class MixinLeafDecay {
                 multithreadingandtweaks$getNeighborPositions(pos, new ArrayList<>()).forEach(neighbor -> {
                     Block neighborBlock = world.getBlock(neighbor.getX(), neighbor.getY(), neighbor.getZ());
                     if (neighborBlock instanceof BlockLeaves) {
-                        multithreadingandtweaks$executorService.execute(() -> multithreadingandtweaks$processLeafBlock(neighbor, world, false));
+                        multithreadingandtweaks$executorService
+                            .execute(() -> multithreadingandtweaks$processLeafBlock(neighbor, world, false));
                     }
                 });
             } else {

@@ -1,6 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.thaumcraft;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
@@ -8,21 +9,23 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenBigMushroom;
 import net.minecraft.world.gen.feature.WorldGenBlockBlob;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.utils.Utils;
 import thaumcraft.common.lib.world.WorldGenManaPods;
 import thaumcraft.common.lib.world.biomes.BiomeGenMagicalForest;
 
-import java.util.Random;
-
 @Mixin(BiomeGenMagicalForest.class)
 public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
+
     @Shadow
     private static final WorldGenBlockBlob blobs;
 
@@ -68,11 +71,12 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
                 int posX = x + random.nextInt(16);
                 int posZ = z + random.nextInt(16);
                 int posY = world.getHeightValue(posX, posZ);
-                for (; posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass; --posY) {
-                }
+                for (; posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass; --posY) {}
 
                 Block block = world.getBlock(posX, posY, posZ);
-                if (block == Blocks.grass && world.getBlock(posX, posY + 1, posZ).isReplaceable(world, posX, posY + 1, posZ) && multithreadingandtweaks$isBlockAdjacentToWood(world, posX, posY + 1, posZ)) {
+                if (block == Blocks.grass && world.getBlock(posX, posY + 1, posZ)
+                    .isReplaceable(world, posX, posY + 1, posZ)
+                    && multithreadingandtweaks$isBlockAdjacentToWood(world, posX, posY + 1, posZ)) {
                     world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
                 }
             }

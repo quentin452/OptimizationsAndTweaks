@@ -112,6 +112,32 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLookHelper;
+    @Config.Comment("Optimize ModelRenderer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinModelRenderer;
+    @Config.Comment("Optimize RenderManager")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRenderManager;
+    @Config.Comment("Optimize Tesselator")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTesselator;
+
+    @Config.Comment("Optimize EffectRenderer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEffectRenderer;
+
+    @Config.Comment("Optimize EntityFX")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityFX;
+    @Config.Comment("Optimize OpenGlHelper")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinOpenGlHelper;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -142,8 +168,7 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
-    @Config.Comment("Print stats ids to help to fix duplicated stats i" +
-        "ds crash")
+    @Config.Comment("Print stats ids to help to fix duplicated stats i" + "ds crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStatList;
