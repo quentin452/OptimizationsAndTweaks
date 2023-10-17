@@ -1,3 +1,5 @@
+## DON'T FORGET RESSETING THE CONFIG FILE WHEN UPDATING THE MOD
+
 # Known Incompat 
 
 AiImprovement : To make sure that Multithreadingandtweaks is compatible with aiimprovement disable MixinEntityLookHelper in MultithreadingandTweaks config or delete AiImprovement
