@@ -100,6 +100,11 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static int batchsize;
     // BugFix Mixins
+
+    @Config.Comment("Optimize MixinEntitySquid class")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitySquid;
     @Config.Comment("Optimize EntityLookHelper performances")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

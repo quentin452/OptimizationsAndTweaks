@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(World.class)
+@Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld implements IBlockAccess {
 
     @Unique
