@@ -5,9 +5,12 @@ import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Mixin(World.class)
 public class MixinWorld {
+    @Shadow
+    protected List worldAccesses = new ArrayList();
     @Shadow
     protected IChunkProvider chunkProvider;
     @Shadow
@@ -66,6 +71,25 @@ public class MixinWorld {
     public Chunk multithreadingandtweaks$getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_)
     {
         return this.chunkProvider.provideChunk(p_72964_1_, p_72964_2_);
+    }
+
+
+    /**
+     * Plays a sound at the entity's position. Args: entity, sound, volume (relative to 1.0), and frequency (or pitch,
+     * also relative to 1.0).
+     */
+    @Overwrite
+    public void playSoundAtEntity(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
+    {
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return;
+        }
+        p_72956_2_ = event.name;
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).playSound(p_72956_2_, p_72956_1_.posX, p_72956_1_.posY - (double) p_72956_1_.yOffset, p_72956_1_.posZ, p_72956_3_, p_72956_4_);
+        }
     }
 
 }
