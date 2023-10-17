@@ -124,6 +124,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLiving;
+
+    @Config.Comment("Optimize EntityAITasks")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAITasks;
     @Config.Comment("Optimize selectEntitiesWithinAABB")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
