@@ -126,7 +126,7 @@ public enum Mixin implements IMixin {
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
     client_xaerominimap_MixinGuiMap(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableXaerosMapOptimizations,
-        "client.MixinGuiMap"),
+        "xaerominimap.MixinGuiMap"),
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
         "core.MixinParticleManager"),
     client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,
