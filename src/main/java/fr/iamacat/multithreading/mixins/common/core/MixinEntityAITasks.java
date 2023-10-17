@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,6 +30,7 @@ public class MixinEntityAITasks {
      */
     @Overwrite
     private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
+        if(MultithreadingandtweaksConfig.enableMixinEntityAITasks){
         this.theProfiler.startSection("canUse");
 
         for (EntityAITasks.EntityAITaskEntry entityaitaskentry : this.taskEntries) {
@@ -50,6 +52,8 @@ public class MixinEntityAITasks {
 
         this.theProfiler.endSection();
         return true;
+        }
+        return false;
     }
 
     /**
