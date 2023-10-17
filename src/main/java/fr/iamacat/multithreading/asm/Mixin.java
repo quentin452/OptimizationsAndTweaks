@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
     // OPTIMIZATIONS MIXINS
+
+
     common_core_MixinLeaves(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinLeaves,
         "core.MixinLeaves"),
@@ -113,6 +115,8 @@ public enum Mixin implements IMixin {
     common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
+    client_xaerominimap_MixinGuiMap(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableXaerosMapOptimizations,
+        "client.MixinGuiMap"),
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
         "core.MixinParticleManager"),
     client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,

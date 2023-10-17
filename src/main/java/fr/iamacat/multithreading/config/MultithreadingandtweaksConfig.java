@@ -112,7 +112,12 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
-    @Config.Comment("Print stats ids to help to fix duplicated stats ids crash")
+    @Config.Comment("Optimize Xaero's Minimap Renderer")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableXaerosMapOptimizations;
+    @Config.Comment("Print stats ids to help to fix duplicated stats i" +
+        "ds crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStatList;
