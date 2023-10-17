@@ -1,3 +1,7 @@
+# Known Incompat 
+
+AiImprovement : To make sure that Multithreadingandtweaks is compatible with aiimprovement disable MixinEntityLookHelper in MultithreadingandTweaks config or delete AiImprovement
+
 # Description
 
 This mod add multithreading for some features in 1.7.10. that can improve tps and fps in some situations.
