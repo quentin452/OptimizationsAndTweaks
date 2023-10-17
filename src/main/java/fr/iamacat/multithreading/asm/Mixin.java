@@ -13,6 +13,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
     // OPTIMIZATIONS MIXINS
+
+    common_core__entity_MixinEntityAnimal(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinEntityAnimal,
+        "core.entity.MixinEntityAnimal"),
     common_core_entity_MixinEntitySquid(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEntitySquid,
         "core.entity.MixinEntitySquid"),
@@ -29,6 +33,9 @@ public enum Mixin implements IMixin {
     common_core_MixinLeaves(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinLeaves,
         "core.MixinLeaves"),
+    common_core_MixinEntityAIFollowParent(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent,
+        "core.MixinEntityAIFollowParent"),
     common_core_MixinEntityLookHelper(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEntityLookHelper,
         "core.MixinEntityLookHelper"),

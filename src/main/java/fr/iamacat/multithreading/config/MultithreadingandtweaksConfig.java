@@ -121,7 +121,15 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMoveHelper;
+    @Config.Comment("Optimize EntityAnimal")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAnimal;
 
+    @Config.Comment("Optimize EntityAIFollowParent")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIFollowParent;
     @Config.Comment("Optimize EntityAITasks")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
