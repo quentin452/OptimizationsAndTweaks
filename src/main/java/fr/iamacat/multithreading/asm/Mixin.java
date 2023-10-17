@@ -33,9 +33,13 @@ public enum Mixin implements IMixin {
     common_core_MixinLeaves(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinLeaves,
         "core.MixinLeaves"),
+
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent,
         "core.MixinEntityAIFollowParent"),
+    common_core_MixinPathFinder(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinPathFinder,
+        "core.MixinPathFinder"),
     common_core_MixinEntityLookHelper(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEntityLookHelper,
         "core.MixinEntityLookHelper"),
@@ -129,8 +133,6 @@ public enum Mixin implements IMixin {
     common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
-    client_xaerominimap_MixinGuiMap(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableXaerosMapOptimizations,
-        "xaerominimap.MixinGuiMap"),
     client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
         "core.MixinParticleManager"),
     client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,

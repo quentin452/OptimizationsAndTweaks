@@ -113,10 +113,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
-    @Config.Comment("Optimize Xaero's Minimap Renderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableXaerosMapOptimizations;
     @Config.Comment("Optimize EntityMoveHelper Performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -134,6 +130,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
+
+    @Config.Comment("Optimize PathFinder")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPathFinder;
     @Config.Comment("Optimize selectEntitiesWithinAABB")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
