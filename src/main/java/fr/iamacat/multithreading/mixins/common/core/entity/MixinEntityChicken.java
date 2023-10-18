@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core.entity;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.ai.EntityAIFollowParent2;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -22,6 +23,7 @@ public abstract class MixinEntityChicken extends EntityAnimal {
 
     @Inject(at = @At(value = "RETURN"), method = "<init>(Lnet/minecraft/world/World;)V")
     private void modifyTasks(World worldIn, CallbackInfo ci) {
+        if(MultithreadingandtweaksConfig.enableMixinEntityChicken){
         Iterator<EntityAITasks.EntityAITaskEntry> iterator = ((EntityChicken) (Object) this).tasks.taskEntries.iterator();
         while (iterator.hasNext()) {
             EntityAITasks.EntityAITaskEntry entry = iterator.next();
@@ -33,5 +35,5 @@ public abstract class MixinEntityChicken extends EntityAnimal {
 
         ((EntityChicken) (Object) this).tasks.addTask(4, new EntityAIFollowParent2((EntityChicken) (Object) this, 1.1D));
     }
-
+    }
 }
