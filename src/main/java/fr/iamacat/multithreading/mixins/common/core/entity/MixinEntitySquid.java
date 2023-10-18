@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core.entity;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.util.MathHelper;
@@ -8,6 +9,9 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntitySquid.class, priority = 999)
 public class MixinEntitySquid extends EntityWaterMob {
@@ -54,25 +58,27 @@ public class MixinEntitySquid extends EntityWaterMob {
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    @Overwrite
-    public void onLivingUpdate() {
-        super.onLivingUpdate();
-        this.prevSquidPitch = this.squidPitch;
-        this.prevSquidYaw = this.squidYaw;
-        this.prevSquidRotation = this.squidRotation;
-        this.lastTentacleAngle = this.tentacleAngle;
-        this.squidRotation += this.rotationVelocity;
+    @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
+    public void modifiedonLivingUpdate(CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinEntitySquid) {
+            super.onLivingUpdate();
+            this.prevSquidPitch = this.squidPitch;
+            this.prevSquidYaw = this.squidYaw;
+            this.prevSquidRotation = this.squidRotation;
+            this.lastTentacleAngle = this.tentacleAngle;
+            this.squidRotation += this.rotationVelocity;
 
-        if (this.squidRotation > ((float) Math.PI * 2F)) {
-            this.squidRotation -= ((float) Math.PI * 2F);
+            if (this.squidRotation > ((float) Math.PI * 2F)) {
+                this.squidRotation -= ((float) Math.PI * 2F);
 
-            if (this.rand.nextInt(10) == 0) {
-                this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
+                if (this.rand.nextInt(10) == 0) {
+                    this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
+                }
             }
         }
 
         if (this.isInWater()) {
-            float f;
+            float f = 0;
 
             if (this.squidRotation < (float) Math.PI) {
                 f = this.squidRotation / (float) Math.PI;
@@ -91,29 +97,17 @@ public class MixinEntitySquid extends EntityWaterMob {
             }
 
             if (!this.worldObj.isRemote) {
+                double atan2MotionX = Math.atan2(this.motionX, this.motionZ);
+                double atan2MotionY = Math.atan2(f, this.motionY);
                 this.motionX = this.randomMotionVecX * this.randomMotionSpeed;
                 this.motionY = this.randomMotionVecY * this.randomMotionSpeed;
                 this.motionZ = this.randomMotionVecZ * this.randomMotionSpeed;
+                this.renderYawOffset += (-((float) atan2MotionX) * 180.0F / (float) Math.PI - this.renderYawOffset) * 0.1F;
+                this.rotationYaw = this.renderYawOffset;
+                this.squidYaw += (float) Math.PI * this.field_70871_bB * 1.5F;
+                this.squidPitch += (-((float) atan2MotionY) * 180.0F / (float) Math.PI - this.squidPitch) * 0.1F;
             }
-
-            f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
-            this.renderYawOffset += (-((float) Math.atan2(this.motionX, this.motionZ)) * 180.0F / (float) Math.PI
-                - this.renderYawOffset) * 0.1F;
-            this.rotationYaw = this.renderYawOffset;
-            this.squidYaw += (float) Math.PI * this.field_70871_bB * 1.5F;
-            this.squidPitch += (-((float) Math.atan2(f, this.motionY)) * 180.0F / (float) Math.PI - this.squidPitch)
-                * 0.1F;
-        } else {
-            this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.squidRotation)) * (float) Math.PI * 0.25F;
-
-            if (!this.worldObj.isRemote) {
-                this.motionX = 0.0D;
-                this.motionY -= 0.08D;
-                this.motionY *= 0.9800000190734863D;
-                this.motionZ = 0.0D;
-            }
-
-            this.squidPitch = (float) ((double) this.squidPitch + (double) (-90.0F - this.squidPitch) * 0.02D);
         }
+        ci.cancel();
     }
 }
