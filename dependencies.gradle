@@ -79,9 +79,13 @@ dependencies {
     implementation "curse.maven:xaeros-minimap-263420:4716681-deobf-sources-api"
     implementation "curse.maven:xaeros-world-map-317780:4716737-deobf-sources-api"
     implementation "curse.maven:industrial-craft-242638:2353971-deobf-sources-api"
+    implementation "curse.maven:notenoughitems-gtnh-358228:4799391-deobf-sources-api"
+    implementation "curse.maven:codechickencore-unofficial-746279:4378043-deobf-sources-api"
+    implementation "curse.maven:codechickenlib-unofficial-746280:4388255-deobf-sources-api"
 
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
+
 }
 

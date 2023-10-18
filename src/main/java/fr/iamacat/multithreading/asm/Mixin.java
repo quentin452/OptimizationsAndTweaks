@@ -14,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
-    common_ic2_MixinConfig(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinConfig,
+
+    common_nei_MixinNEIServerUtils(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinNEIServerUtils,
+        "nei.MixinNEIServerUtils"),
+    common_nei_MixinConfig(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinConfig,
         "ic2.MixinConfig"),
     common_core_MixinBlockLiquid(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinBlockLiquid,
         "core.MixinBlockLiquid"),

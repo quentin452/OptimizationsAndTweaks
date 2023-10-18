@@ -146,7 +146,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTickHandler;
-
+    @Config.Comment("Optimize NEIServerUtils from NotEnoughItems")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNEIServerUtils;
     @Config.Comment("Optimize Config from IC2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
