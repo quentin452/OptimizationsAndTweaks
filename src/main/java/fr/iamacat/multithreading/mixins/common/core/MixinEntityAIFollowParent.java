@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
+import java.util.Iterator;
+import java.util.List;
+
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
 
@@ -41,5 +44,38 @@ public class MixinEntityAIFollowParent {
             }
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean shouldExecute() {
+        if (this.childAnimal.getGrowingAge() >= 0) {
+            return false;
+        }
+
+        List<EntityAnimal> list = this.childAnimal.worldObj.getEntitiesWithinAABB(EntityAnimal.class, this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
+        EntityAnimal entityanimal = null;
+        double minDistanceSquared = 9.0D;
+
+        for (EntityAnimal entityanimal1 : list) {
+            if (entityanimal1.getGrowingAge() >= 0) {
+                double distanceSquared = this.childAnimal.getDistanceSqToEntity(entityanimal1);
+
+                if (distanceSquared < minDistanceSquared) {
+                    minDistanceSquared = distanceSquared;
+                    entityanimal = entityanimal1;
+                }
+            }
+        }
+
+        if (entityanimal == null) {
+            return false;
+        }
+
+        this.parentAnimal = entityanimal;
+        return true;
+    }
+
 
 }
