@@ -1,4 +1,4 @@
-package fr.iamacat.multithreading.math.fastrandom;
+package fr.iamacat.multithreading.utils.fastrandom;
 
 /** Like {@link java.util.Random} but faster! */
 public interface FastRandom {

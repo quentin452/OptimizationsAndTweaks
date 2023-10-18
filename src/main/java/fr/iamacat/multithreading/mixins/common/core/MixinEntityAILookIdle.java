@@ -1,7 +1,8 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import fr.iamacat.multithreading.math.fastrandom.FastRandom;
+import fr.iamacat.multithreading.utils.fastrandom.FastRandom;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import org.spongepowered.asm.mixin.Mixin;
@@ -106,9 +107,9 @@ public class MixinEntityAILookIdle {
     @Inject(method = "startExecuting", at = @At("HEAD"), cancellable = true)
     public void startExecuting(CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntityAILookIdle) {
-            double d0 = (Math.PI * 2D) * multithreadingandtweaks$fastRandom.nextDouble();
-            this.lookX = Math.cos(d0);
-            this.lookZ = Math.sin(d0);
+            double d0 = (FastMath.PI * 2D) * multithreadingandtweaks$fastRandom.nextDouble();
+            this.lookX = FastMath.cos(d0);
+            this.lookZ = FastMath.sin(d0);
             this.idleTime = IDLE_TIME_THRESHOLD + multithreadingandtweaks$fastRandom.nextInt(IDLE_TIME_THRESHOLD);
         }
         ci.cancel();

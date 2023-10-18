@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package fr.iamacat.multithreading.math.fastrandom;
+package fr.iamacat.multithreading.utils.fastrandom;
 
 import java.io.Serializable;
 

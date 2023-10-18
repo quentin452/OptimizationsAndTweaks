@@ -1,4 +1,4 @@
-package fr.iamacat.multithreading.math.fastrandom;
+package fr.iamacat.multithreading.utils.fastrandom;
 
 import java.util.concurrent.atomic.AtomicLong;
 
