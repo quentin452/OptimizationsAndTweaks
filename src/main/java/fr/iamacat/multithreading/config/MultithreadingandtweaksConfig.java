@@ -163,6 +163,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinConfig;
+
+    @Config.Comment("Optimize EntityChicken")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityChicken;
     @Config.Comment("Optimize EffectRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
