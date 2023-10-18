@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -91,9 +92,9 @@ public class MixinEntityLookHelper {
                 double angleToDegrees = 180.0D / Math.PI;
 
                 // Calcul de l'angle
-                double atan2Result = Math.atan2(d2, d0);
+                double atan2Result = FastMath.atan2(d2, d0);
                 float f = (float) (atan2Result * angleToDegrees) - 90.0F;
-                float f1 = (float) (-Math.atan2(d1, Math.sqrt(d0 * d0 + d2 * d2)) * angleToDegrees);
+                float f1 = (float) (-FastMath.atan2(d1, Math.sqrt(d0 * d0 + d2 * d2)) * angleToDegrees);
 
                 this.entity.rotationPitch = this.updateRotation(this.entity.rotationPitch, f1, this.deltaLookPitch);
                 this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, f, this.deltaLookYaw);
