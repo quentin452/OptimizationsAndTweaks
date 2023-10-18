@@ -115,8 +115,6 @@ public enum Mixin implements IMixin {
         "core.MixinFireTick"),
     common_core_MixinGrowthSpreading(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinGrowthSpreading,
         "core.MixinGrowthSpreading"),
-    common_core_MixinLiquidTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinliquidTick,
-        "core.MixinLiquidTick"),
     common_core_MixinEntitySpawning(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitySpawning,
         "core.MixinEntitySpawning"),
     common_core_MixinChunkPopulating(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkPopulating,

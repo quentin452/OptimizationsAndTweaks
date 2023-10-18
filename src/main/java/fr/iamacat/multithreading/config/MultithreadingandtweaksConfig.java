@@ -27,10 +27,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGrowthSpreading;
-    @Config.Comment("(WIP)Enable multithreaded for Liquid Tick.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinliquidTick;
     @Config.Comment("Enable multithreaded for Entity Spawning.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
