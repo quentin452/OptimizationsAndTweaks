@@ -1,10 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-
+import cpw.mods.fml.common.eventhandler.Event;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -18,14 +15,14 @@ import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -45,11 +42,11 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private ConcurrentHashMap multithreadingandtweaks$eligibleChunksForSpawning = new ConcurrentHashMap();
+    private fr.iamacat.multithreading.utils.trove.map.hash.THashMap multithreadingandtweaks$eligibleChunksForSpawning = new fr.iamacat.multithreading.utils.trove.map.hash.THashMap();
 
     /**
      * @author iamacatfr
-     * @reason greatly reduce TPS lags on VoidWorld
+     * @reason greatly reduce TPS lags on VoidWorld and more
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType p_77190_0_, World p_77190_1_, int p_77190_2_,
