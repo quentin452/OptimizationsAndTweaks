@@ -132,6 +132,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTesselator;
+
+    @Config.Comment("Optimize EntityItem")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityItem;
     @Config.Comment("Optimize TickHandler from IC2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -60,5 +60,4 @@ public class MixinEntity {
             return 0;
         }
     }
-
 }

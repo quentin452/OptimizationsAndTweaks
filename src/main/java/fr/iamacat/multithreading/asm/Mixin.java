@@ -17,6 +17,9 @@ public enum Mixin implements IMixin {
 
     common_core_entity_MixinEntityZombie(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityZombie,
         "core.entity.MixinEntityZombie"),
+
+    common_core_entity_MixinEntityItem(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityItem,
+        "core.entity.MixinEntityItem"),
     common_ic2_MixinTickHandler(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinTickHandler,
         "ic2.MixinTickHandler"),
 
