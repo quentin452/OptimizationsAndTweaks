@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_core_MixinEntityTrackerEntry(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityTrackerEntry,
+        "core.MixinEntityTrackerEntry"),
     common_core_MixinWorldServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinWorldServer,
         "core.MixinWorldServer"),
     common_nei_MixinNEIServerUtils(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinNEIServerUtils,
