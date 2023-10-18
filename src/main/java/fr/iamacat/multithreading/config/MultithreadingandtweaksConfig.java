@@ -142,6 +142,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAILookIdle;
+
+    @Config.Comment("Optimize WorldServer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldServer;
     @Config.Comment("Optimize TickHandler from IC2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
