@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityMoveHelper;
@@ -44,7 +45,7 @@ public class MixinEntityMoveHelper {
             double squaredDistance = posXDelta * posXDelta + posYDelta * posYDelta + posZDelta * posZDelta;
 
             if (squaredDistance >= 2.500000277905201E-7D) {
-                float newYaw = (float) Math.toDegrees(Math.atan2(posZDelta, posXDelta)) - 90.0F;
+                float newYaw = (float) Math.toDegrees(FastMath.atan2(posZDelta, posXDelta)) - 90.0F;
                 this.entity.rotationYaw = this
                     .multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
 
