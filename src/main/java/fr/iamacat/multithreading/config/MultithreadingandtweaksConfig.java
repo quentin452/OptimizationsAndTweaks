@@ -147,7 +147,10 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinTickHandler;
 
-
+    @Config.Comment("Optimize Config from IC2")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinConfig;
     @Config.Comment("Optimize EffectRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
