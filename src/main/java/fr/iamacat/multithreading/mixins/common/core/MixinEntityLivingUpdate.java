@@ -3,6 +3,7 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.*;
 import java.util.concurrent.*;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
@@ -631,5 +633,16 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     {
         return this.isAIEnabled() ? this.landMovementFactor : 0.1F;
     }
+    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1))
+    private double redirectAtan2(double x, double y) {
+        double result = FastMath.atan2(y, x);
+        return result * 180.0D / Math.PI;
+    }
 
+    @Redirect(method = "onUpdate",
+        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
+    private double redirectAtan2onUpdate(double x, double y) {
+        double result = FastMath.atan2(y, x);
+        return (float)(result * 180.0F / (float)Math.PI) - 90.0F;
+    }
 }
