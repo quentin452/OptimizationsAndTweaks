@@ -1,7 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.ic2;
 
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import ic2.core.IC2;
@@ -20,7 +19,6 @@ import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,20 +26,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.WeakHashMap;
 
 @Mixin(TickHandler.class)
 public class MixinTickHandler {
     @Shadow
     private static final boolean debugTickCallback = System.getProperty("ic2.debugtickcallback") != null;
-    @Shadow
-    private static final Map<ITickCallback, Throwable> debugTraces;
-    @Shadow
-    private static Throwable lastDebugTrace;
+    @Unique
+    private static WeakHashMap<ITickCallback, Throwable> multithreadingandtweaks$debugTraces;
+
     @Shadow
     private static final Field updateEntityTick;
+
+    @Shadow
+    private static Throwable lastDebugTrace;
     /**
      * @author
      * @reason
@@ -94,7 +92,7 @@ public class MixinTickHandler {
 
         for(ITickCallback tickCallback = worldData.singleTickCallbacks.poll(); tickCallback != null; tickCallback = (ITickCallback)worldData.singleTickCallbacks.poll()) {
             if (debugTickCallback) {
-                lastDebugTrace = debugTraces.remove(tickCallback);
+                lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
             }
 
             IC2.platform.profilerStartSection(tickCallback.getClass().getName());
@@ -107,7 +105,7 @@ public class MixinTickHandler {
 
         for (ITickCallback tickCallback : worldData.continuousTickCallbacks) {
             if (debugTickCallback) {
-                lastDebugTrace = debugTraces.remove(tickCallback);
+                lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
             }
 
             IC2.platform.profilerStartSection(tickCallback.getClass().getName());
@@ -128,7 +126,10 @@ public class MixinTickHandler {
     }
 
     static {
-        debugTraces = debugTickCallback ? new WeakHashMap<>() : null;
+        if(debugTickCallback) {
+            multithreadingandtweaks$debugTraces = new WeakHashMap<>();
+        }
+
         updateEntityTick = ReflectionUtil.getField(WorldServer.class, "field_80004_Q", "updateEntityTick");
     }
 }
