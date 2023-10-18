@@ -38,11 +38,11 @@ public abstract class MixinEntityAgeable extends EntityCreature {
 
     @Unique
     public void multithreadingandtweaks$setScaleForAge(boolean isChild) {
-        this.setScale(isChild ? CHILD_SCALE : ADULT_SCALE);
+        this.multithreadingandtweaks$setScale(isChild ? CHILD_SCALE : ADULT_SCALE);
     }
 
     @Unique
-    protected final void setScale(float scale) {
+    protected final void multithreadingandtweaks$setScale(float scale) {
         super.setSize(this.field_98056_d * scale, this.field_98057_e * scale);
     }
 

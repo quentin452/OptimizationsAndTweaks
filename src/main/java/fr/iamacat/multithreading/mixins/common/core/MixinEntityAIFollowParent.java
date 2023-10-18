@@ -50,7 +50,10 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public boolean shouldExecute() {
-        if (this.childAnimal.getGrowingAge() >= 0) {
+        if(MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent){
+        int childGrowingAge = this.childAnimal.getGrowingAge();
+
+        if (childGrowingAge >= 0) {
             return false;
         }
 
@@ -59,7 +62,9 @@ public class MixinEntityAIFollowParent {
         double minDistanceSquared = 9.0D;
 
         for (EntityAnimal entityanimal1 : list) {
-            if (entityanimal1.getGrowingAge() >= 0) {
+            int parentGrowingAge = entityanimal1.getGrowingAge();
+
+            if (parentGrowingAge >= 0) {
                 double distanceSquared = this.childAnimal.getDistanceSqToEntity(entityanimal1);
 
                 if (distanceSquared < minDistanceSquared) {
@@ -76,6 +81,6 @@ public class MixinEntityAIFollowParent {
         this.parentAnimal = entityanimal;
         return true;
     }
-
-
+        return false;
+    }
 }
