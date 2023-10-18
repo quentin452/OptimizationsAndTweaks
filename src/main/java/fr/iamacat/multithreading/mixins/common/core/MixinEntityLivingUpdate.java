@@ -388,14 +388,14 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
         if (this.isPotionActive(Potion.jump))
         {
-            this.motionY += (double)((float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F);
+            this.motionY += (float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
         }
 
         if (this.isSprinting())
         {
             float f = this.rotationYaw * 0.017453292F;
-            this.motionX -= (double)(MathHelper.sin(f) * 0.2F);
-            this.motionZ += (double)(MathHelper.cos(f) * 0.2F);
+            this.motionX -= MathHelper.sin(f) * 0.2F;
+            this.motionZ += MathHelper.cos(f) * 0.2F;
         }
 
         this.isAirBorne = true;
@@ -428,23 +428,28 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     public void modifiedmoveEntityWithHeading(float p_70612_1_, float p_70612_2_,CallbackInfo ci)
     {
         if(MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate){
-        double d0;
+            double d0 = this.posY;
+            boolean isPlayerFlying = entityLivingBase instanceof EntityPlayer && ((EntityPlayer) entityLivingBase).capabilities.isFlying;
 
-        if (this.isInWater() && (!(entityLivingBase instanceof EntityPlayer) || !((EntityPlayer)entityLivingBase).capabilities.isFlying))
-        {
-            d0 = this.posY;
-            this.moveFlying(p_70612_1_, p_70612_2_, this.isAIEnabled() ? 0.04F : 0.02F);
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= 0.800000011920929D;
-            this.motionY *= 0.800000011920929D;
-            this.motionZ *= 0.800000011920929D;
-            this.motionY -= 0.02D;
+            if (this.isInWater() && !isPlayerFlying) {
+                double motionX = this.motionX;
+                double motionY = this.motionY;
+                double motionZ = this.motionZ;
+                double speed = this.isAIEnabled() ? 0.04F : 0.02F;
 
-            if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(this.motionX, this.motionY + 0.6000000238418579D - this.posY + d0, this.motionZ))
-            {
-                this.motionY = 0.30000001192092896D;
+                this.moveFlying(p_70612_1_, p_70612_2_, (float) speed);
+                this.moveEntity(motionX, motionY, motionZ);
+
+                motionX *= 0.800000011920929D;
+                motionY *= 0.800000011920929D;
+                motionZ *= 0.800000011920929D;
+                motionY -= 0.02D;
+
+                if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(motionX, motionY + 0.6000000238418579D - this.posY + d0, motionZ)) {
+                   this.motionY = 0.30000001192092896D;
+                }
             }
-        }
+
         else if (this.handleLavaMovement() && (!(entityLivingBase instanceof EntityPlayer) || !((EntityPlayer)entityLivingBase).capabilities.isFlying))
         {
             d0 = this.posY;
@@ -489,43 +494,20 @@ public abstract class MixinEntityLivingUpdate extends Entity {
                 f2 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.91F;
             }
 
-            if (this.isOnLadder())
-            {
-                float f5 = 0.15F;
+            if (this.isOnLadder()) {
+                float maxSpeed = 0.15F;
+                double maxHorizontalSpeed = maxSpeed;
+                double maxVerticalSpeed = -0.15D;
 
-                if (this.motionX < (double)(-f5))
-                {
-                    this.motionX = (double)(-f5);
-                }
+                this.motionX = MathHelper.clamp_double(this.motionX, -maxHorizontalSpeed, maxHorizontalSpeed);
+                this.motionZ = MathHelper.clamp_double(this.motionZ, -maxHorizontalSpeed, maxHorizontalSpeed);
+                this.motionY = MathHelper.clamp_double(this.motionY, maxVerticalSpeed, maxHorizontalSpeed);
 
-                if (this.motionX > (double)f5)
-                {
-                    this.motionX = (double)f5;
-                }
-
-                if (this.motionZ < (double)(-f5))
-                {
-                    this.motionZ = (double)(-f5);
-                }
-
-                if (this.motionZ > (double)f5)
-                {
-                    this.motionZ = (double)f5;
+                if (this.isSneaking() && entityLivingBase instanceof EntityPlayer && this.motionY < 0.0D) {
+                    this.motionY = 0.0D;
                 }
 
                 this.fallDistance = 0.0F;
-
-                if (this.motionY < -0.15D)
-                {
-                    this.motionY = -0.15D;
-                }
-
-                boolean flag = this.isSneaking() && entityLivingBase instanceof EntityPlayer;
-
-                if (flag && this.motionY < 0.0D)
-                {
-                    this.motionY = 0.0D;
-                }
             }
 
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
@@ -553,7 +535,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
             this.motionY *= 0.9800000190734863D;
             this.motionX *= f2;
-            this.motionZ *= (double)f2;
+            this.motionZ *= f2;
         }
 
         this.prevLimbSwingAmount = this.limbSwingAmount;
@@ -571,6 +553,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     }
         ci.cancel();
     }
+
     @Unique
     public boolean isPotionActive(Potion p_70644_1_)
     {
