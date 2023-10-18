@@ -132,6 +132,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTesselator;
+    @Config.Comment("Optimize BlockLiquid Tick")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockLiquid;
 
     @Config.Comment("Optimize EntityItem")
     @Config.DefaultBoolean(true)
