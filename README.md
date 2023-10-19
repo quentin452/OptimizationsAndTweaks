@@ -1,18 +1,16 @@
 ## DON'T FORGET RESSETING THE CONFIG FILE WHEN UPDATING THE MOD
 
-# Known Incompat 
+# Known Incompat
 
-AiImprovement : To make sure that Multithreadingandtweaks is compatible with aiimprovement disable MixinEntityLookHelper in MultithreadingandTweaks config or delete AiImprovement
+AiImprovement: To ensure that Multithreadingandtweaks is compatible with AiImprovement, disable MixinEntityLookHelper in the MultithreadingandTweaks config or delete AiImprovement.
 
 # Description
 
-This mod add multithreading for some features in 1.7.10. that can improve tps and fps in some situations.
+Description
 
-This mod add some tweaks in the config file to fix bugs.
+This mod adds multithreading for certain features in Minecraft 1.7.10, which can improve TPS (Ticks Per Second) and FPS (Frames Per Second) in some situations.
 
-This mod is in early stages , so he can have somes bugs and unexpected behavior.
-
-this mod isn't a solution to fix magically all tps issues.
+This mod also includes some tweaks in the configuration file to fix bugs. Please note that this mod is in its early stages, so it may have some bugs and exhibit unexpected behavior. It's essential to understand that this mod is not a magical solution to fix all TPS issues.
 
 # What this mod have for now?
 
@@ -28,9 +26,9 @@ Go here : [Wiki](https://github.com/quentin452/Multithreadingandtweaks/wiki)
 
 # Requirement
 
-This mod require [Unimixins](https://legacy.curseforge.com/minecraft/mc-mods/unimixins/files/4600285)
+[Unimixins](https://legacy.curseforge.com/minecraft/mc-mods/unimixins/files/4600285)
 
-This mod require [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mods/fplib/files/4701057)
+[FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mods/fplib/files/4701057)
 
 # Secial Thanks
 
