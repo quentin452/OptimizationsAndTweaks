@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,10 +39,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.UpdateA
  * </code>
  * where
  * <ul>
- *  <li>&alpha; is the current <em>learning rate</em>, </li>
- *  <li>&sigma; is the current <em>neighbourhood size</em>, and</li>
- *  <li>{@code d} is the number of links to traverse in order to reach
- *   the neuron from the winning neuron.</li>
+ * <li>&alpha; is the current <em>learning rate</em>,</li>
+ * <li>&sigma; is the current <em>neighbourhood size</em>, and</li>
+ * <li>{@code d} is the number of links to traverse in order to reach
+ * the neuron from the winning neuron.</li>
  * </ul>
  * <br/>
  * This class is thread-safe as long as the arguments passed to the
@@ -56,8 +54,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.UpdateA
  * will increment the internal counter used to compute the current
  * values for
  * <ul>
- *  <li>the <em>learning rate</em>, and</li>
- *  <li>the <em>neighbourhood size</em>.</li>
+ * <li>the <em>learning rate</em>, and</li>
+ * <li>the <em>neighbourhood size</em>.</li>
  * </ul>
  * Consequently, the function instances that compute those values (passed
  * to the constructor of this class) must take into account whether this
@@ -67,6 +65,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.UpdateA
  * @since 3.3
  */
 public class KohonenUpdateAction implements UpdateAction {
+
     /** Distance function. */
     private final DistanceMeasure distance;
     /** Learning factor update function. */
@@ -77,13 +76,12 @@ public class KohonenUpdateAction implements UpdateAction {
     private final AtomicLong numberOfCalls = new AtomicLong(0);
 
     /**
-     * @param distance Distance function.
-     * @param learningFactor Learning factor update function.
+     * @param distance          Distance function.
+     * @param learningFactor    Learning factor update function.
      * @param neighbourhoodSize Neighbourhood size update function.
      */
-    public KohonenUpdateAction(DistanceMeasure distance,
-                               LearningFactorFunction learningFactor,
-                               NeighbourhoodSizeFunction neighbourhoodSize) {
+    public KohonenUpdateAction(DistanceMeasure distance, LearningFactorFunction learningFactor,
+        NeighbourhoodSizeFunction neighbourhoodSize) {
         this.distance = distance;
         this.learningFactor = learningFactor;
         this.neighbourhoodSize = neighbourhoodSize;
@@ -92,21 +90,15 @@ public class KohonenUpdateAction implements UpdateAction {
     /**
      * {@inheritDoc}
      */
-    public void update(Network net,
-                       double[] features) {
+    public void update(Network net, double[] features) {
         final long numCalls = numberOfCalls.incrementAndGet() - 1;
         final double currentLearning = learningFactor.value(numCalls);
-        final Neuron best = findAndUpdateBestNeuron(net,
-                                                    features,
-                                                    currentLearning);
+        final Neuron best = findAndUpdateBestNeuron(net, features, currentLearning);
 
         final int currentNeighbourhood = neighbourhoodSize.value(numCalls);
         // The farther away the neighbour is from the winning neuron, the
         // smaller the learning rate will become.
-        final Gaussian neighbourhoodDecay
-            = new Gaussian(currentLearning,
-                           0,
-                           currentNeighbourhood);
+        final Gaussian neighbourhoodDecay = new Gaussian(currentLearning, 0, currentNeighbourhood);
 
         if (currentNeighbourhood > 0) {
             // Initial set of neurons only contains the winning neuron.
@@ -147,19 +139,15 @@ public class KohonenUpdateAction implements UpdateAction {
     /**
      * Tries to update a neuron.
      *
-     * @param n Neuron to be updated.
-     * @param features Training data.
+     * @param n            Neuron to be updated.
+     * @param features     Training data.
      * @param learningRate Learning factor.
      * @return {@code true} if the update succeeded, {@code true} if a
-     * concurrent update has been detected.
+     *         concurrent update has been detected.
      */
-    private boolean attemptNeuronUpdate(Neuron n,
-                                        double[] features,
-                                        double learningRate) {
+    private boolean attemptNeuronUpdate(Neuron n, double[] features, double learningRate) {
         final double[] expect = n.getFeatures();
-        final double[] update = computeFeatures(expect,
-                                                features,
-                                                learningRate);
+        final double[] update = computeFeatures(expect, features, learningRate);
 
         return n.compareAndSetFeatures(expect, update);
     }
@@ -167,13 +155,11 @@ public class KohonenUpdateAction implements UpdateAction {
     /**
      * Atomically updates the given neuron.
      *
-     * @param n Neuron to be updated.
-     * @param features Training data.
+     * @param n            Neuron to be updated.
+     * @param features     Training data.
      * @param learningRate Learning factor.
      */
-    private void updateNeighbouringNeuron(Neuron n,
-                                          double[] features,
-                                          double learningRate) {
+    private void updateNeighbouringNeuron(Neuron n, double[] features, double learningRate) {
         while (true) {
             if (attemptNeuronUpdate(n, features, learningRate)) {
                 break;
@@ -185,14 +171,12 @@ public class KohonenUpdateAction implements UpdateAction {
      * Searches for the neuron whose features are closest to the given
      * sample, and atomically updates its features.
      *
-     * @param net Network.
-     * @param features Sample data.
+     * @param net          Network.
+     * @param features     Sample data.
      * @param learningRate Current learning factor.
      * @return the winning neuron.
      */
-    private Neuron findAndUpdateBestNeuron(Network net,
-                                           double[] features,
-                                           double learningRate) {
+    private Neuron findAndUpdateBestNeuron(Network net, double[] features, double learningRate) {
         while (true) {
             final Neuron best = MapUtils.findBest(features, net, distance);
 
@@ -209,17 +193,18 @@ public class KohonenUpdateAction implements UpdateAction {
     /**
      * Computes the new value of the features set.
      *
-     * @param current Current values of the features.
-     * @param sample Training data.
+     * @param current      Current values of the features.
+     * @param sample       Training data.
      * @param learningRate Learning factor.
      * @return the new values for the features.
      */
-    private double[] computeFeatures(double[] current,
-                                     double[] sample,
-                                     double learningRate) {
+    private double[] computeFeatures(double[] current, double[] sample, double learningRate) {
         final ArrayRealVector c = new ArrayRealVector(current, false);
         final ArrayRealVector s = new ArrayRealVector(sample, false);
         // c + learningRate * (s - c)
-        return s.subtract(c).mapMultiplyToSelf(learningRate).add(c).toArray();
+        return s.subtract(c)
+            .mapMultiplyToSelf(learningRate)
+            .add(c)
+            .toArray();
     }
 }

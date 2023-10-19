@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +15,20 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.twod.util;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.distance.DistanceMeasure;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.MapUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Neuron;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.twod.NeuronSquareMesh2D;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.distance.DistanceMeasure;
 
 /**
  * Computes the quantization error histogram.
  * Each bin will contain the average of the distances between samples
  * mapped to the corresponding unit and the weight vector of that unit.
+ * 
  * @since 3.6
  */
 public class QuantizationError implements MapDataVisualization {
+
     /** Distance. */
     private final DistanceMeasure distance;
 
@@ -40,8 +40,7 @@ public class QuantizationError implements MapDataVisualization {
     }
 
     /** {@inheritDoc} */
-    public double[][] computeImage(NeuronSquareMesh2D map,
-                                   Iterable<double[]> data) {
+    public double[][] computeImage(NeuronSquareMesh2D map, Iterable<double[]> data) {
         final int nR = map.getNumberOfRows();
         final int nC = map.getNumberOfColumns();
 

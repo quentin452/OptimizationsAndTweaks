@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,12 +17,14 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.geometry.euclidean.
 
 /**
  * This enumerates is used to differentiate the semantics of a rotation.
+ * 
  * @see Rotation
  * @since 3.6
  */
 public enum RotationConvention {
 
-    /** Constant for rotation that have the semantics of a vector operator.
+    /**
+     * Constant for rotation that have the semantics of a vector operator.
      * <p>
      * According to this convention, the rotation moves vectors with respect
      * to a fixed reference frame.
@@ -50,7 +50,8 @@ public enum RotationConvention {
      */
     VECTOR_OPERATOR,
 
-    /** Constant for rotation that have the semantics of a frame conversion.
+    /**
+     * Constant for rotation that have the semantics of a frame conversion.
      * <p>
      * According to this convention, the rotation considered vectors to be fixed,
      * but their coordinates change as they are converted from an initial frame to

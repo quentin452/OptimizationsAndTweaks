@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +25,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
- * <p>Adapter for mapping bounded {@link MultivariateFunction} to unbounded ones.</p>
+ * <p>
+ * Adapter for mapping bounded {@link MultivariateFunction} to unbounded ones.
+ * </p>
  *
  * <p>
  * This adapter can be used to wrap functions subject to simple bounds on
@@ -56,7 +56,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.BaseMultivariateOptimizer#optimize(int,
  * MultivariateFunction, fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType, double[])}
  * method is unbounded. So to convert this point to bounded, users must call
- * {@link #unboundedToBounded(double[])} by themselves!</p>
+ * {@link #unboundedToBounded(double[])} by themselves!
+ * </p>
  * <p>
  * This adapter is only a poor man solution to simple bounds optimization constraints
  * that can be used with simple optimizers like {@link SimplexOptimizer} with {@link
@@ -84,19 +85,21 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
     /** Mapping functions. */
     private final Mapper[] mappers;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param bounded bounded function
-     * @param lower lower bounds for each element of the input parameters array
-     * (some elements may be set to {@code Double.NEGATIVE_INFINITY} for
-     * unbounded values)
-     * @param upper upper bounds for each element of the input parameters array
-     * (some elements may be set to {@code Double.POSITIVE_INFINITY} for
-     * unbounded values)
+     * @param lower   lower bounds for each element of the input parameters array
+     *                (some elements may be set to {@code Double.NEGATIVE_INFINITY} for
+     *                unbounded values)
+     * @param upper   upper bounds for each element of the input parameters array
+     *                (some elements may be set to {@code Double.POSITIVE_INFINITY} for
+     *                unbounded values)
      * @exception DimensionMismatchException if lower and upper bounds are not
-     * consistent, either according to dimension or to values
+     *                                       consistent, either according to dimension or to values
      */
-    public MultivariateFunctionMappingAdapter(final MultivariateFunction bounded,
-                                                  final double[] lower, final double[] upper) {
+    public MultivariateFunctionMappingAdapter(final MultivariateFunction bounded, final double[] lower,
+        final double[] upper) {
 
         // safety checks
         MathUtils.checkNotNull(lower);
@@ -135,7 +138,9 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
 
     }
 
-    /** Map an array from unbounded to bounded.
+    /**
+     * Map an array from unbounded to bounded.
+     * 
      * @param point unbounded value
      * @return bounded value
      */
@@ -151,7 +156,9 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
 
     }
 
-    /** Map an array from bounded to unbounded.
+    /**
+     * Map an array from bounded to unbounded.
+     * 
      * @param point bounded value
      * @return unbounded value
      */
@@ -167,12 +174,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
 
     }
 
-    /** Compute the underlying function value from an unbounded point.
+    /**
+     * Compute the underlying function value from an unbounded point.
      * <p>
      * This method simply bounds the unbounded point using the mappings
      * set up at construction and calls the underlying function using
      * the bounded point.
      * </p>
+     * 
      * @param point unbounded value
      * @return underlying function value
      * @see #unboundedToBounded(double[])
@@ -184,13 +193,17 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
     /** Mapping interface. */
     private interface Mapper {
 
-        /** Map a value from unbounded to bounded.
+        /**
+         * Map a value from unbounded to bounded.
+         * 
          * @param y unbounded value
          * @return bounded value
          */
         double unboundedToBounded(double y);
 
-        /** Map a value from bounded to unbounded.
+        /**
+         * Map a value from bounded to unbounded.
+         * 
          * @param x bounded value
          * @return unbounded value
          */
@@ -201,10 +214,10 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
     /** Local class for no bounds mapping. */
     private static class NoBoundsMapper implements Mapper {
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
          */
-        NoBoundsMapper() {
-        }
+        NoBoundsMapper() {}
 
         /** {@inheritDoc} */
         public double unboundedToBounded(final double y) {
@@ -224,7 +237,9 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         /** Low bound. */
         private final double lower;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param lower lower bound
          */
         LowerBoundMapper(final double lower) {
@@ -249,7 +264,9 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         /** Upper bound. */
         private final double upper;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param upper upper bound
          */
         UpperBoundMapper(final double upper) {
@@ -277,12 +294,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         /** Function from bounded to unbounded. */
         private final UnivariateFunction unboundingFunction;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param lower lower bound
          * @param upper upper bound
          */
         LowerUpperBoundMapper(final double lower, final double upper) {
-            boundingFunction   = new Sigmoid(lower, upper);
+            boundingFunction = new Sigmoid(lower, upper);
             unboundingFunction = new Logit(lower, upper);
         }
 

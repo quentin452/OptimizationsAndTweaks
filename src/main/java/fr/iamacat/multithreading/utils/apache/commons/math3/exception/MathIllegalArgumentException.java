@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +14,9 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.exception;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Localizable;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.ExceptionContext;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.ExceptionContextProvider;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Localizable;
 
 /**
  * Base class for all preconditions violation exceptions.
@@ -28,8 +26,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Excep
  *
  * @since 2.2
  */
-public class MathIllegalArgumentException extends IllegalArgumentException
-    implements ExceptionContextProvider {
+public class MathIllegalArgumentException extends IllegalArgumentException implements ExceptionContextProvider {
+
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
     /** Context. */
@@ -37,10 +35,9 @@ public class MathIllegalArgumentException extends IllegalArgumentException
 
     /**
      * @param pattern Message pattern explaining the cause of the error.
-     * @param args Arguments.
+     * @param args    Arguments.
      */
-    public MathIllegalArgumentException(Localizable pattern,
-                                        Object ... args) {
+    public MathIllegalArgumentException(Localizable pattern, Object... args) {
         context = new ExceptionContext(this);
         context.addMessage(pattern, args);
     }

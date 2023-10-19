@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,9 +54,9 @@ public class NakagamiDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param mu shape parameter
+     * @param mu    shape parameter
      * @param omega scale parameter (must be positive)
-     * @throws NumberIsTooSmallException if {@code mu < 0.5}
+     * @throws NumberIsTooSmallException    if {@code mu < 0.5}
      * @throws NotStrictlyPositiveException if {@code omega <= 0}
      */
     public NakagamiDistribution(double mu, double omega) {
@@ -75,11 +73,12 @@ public class NakagamiDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param mu shape parameter
-     * @param omega scale parameter (must be positive)
+     * @param mu                      shape parameter
+     * @param omega                   scale parameter (must be positive)
      * @param inverseAbsoluteAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
-     * @throws NumberIsTooSmallException if {@code mu < 0.5}
+     *                                cumulative probability estimates (defaults to
+     *                                {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     * @throws NumberIsTooSmallException    if {@code mu < 0.5}
      * @throws NotStrictlyPositiveException if {@code omega <= 0}
      */
     public NakagamiDistribution(double mu, double omega, double inverseAbsoluteAccuracy) {
@@ -89,12 +88,13 @@ public class NakagamiDistribution extends AbstractRealDistribution {
     /**
      * Build a new instance.
      *
-     * @param rng Random number generator
-     * @param mu shape parameter
-     * @param omega scale parameter (must be positive)
+     * @param rng                     Random number generator
+     * @param mu                      shape parameter
+     * @param omega                   scale parameter (must be positive)
      * @param inverseAbsoluteAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
-     * @throws NumberIsTooSmallException if {@code mu < 0.5}
+     *                                cumulative probability estimates (defaults to
+     *                                {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     * @throws NumberIsTooSmallException    if {@code mu < 0.5}
      * @throws NotStrictlyPositiveException if {@code omega <= 0}
      */
     public NakagamiDistribution(RandomGenerator rng, double mu, double omega, double inverseAbsoluteAccuracy) {
@@ -141,8 +141,10 @@ public class NakagamiDistribution extends AbstractRealDistribution {
         if (x <= 0) {
             return 0.0;
         }
-        return 2.0 * FastMath.pow(mu, mu) / (Gamma.gamma(mu) * FastMath.pow(omega, mu)) *
-                     FastMath.pow(x, 2 * mu - 1) * FastMath.exp(-mu * x * x / omega);
+        return 2.0 * FastMath.pow(mu, mu)
+            / (Gamma.gamma(mu) * FastMath.pow(omega, mu))
+            * FastMath.pow(x, 2 * mu - 1)
+            * FastMath.exp(-mu * x * x / omega);
     }
 
     /** {@inheritDoc} */

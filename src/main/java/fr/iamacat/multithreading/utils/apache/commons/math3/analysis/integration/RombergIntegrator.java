@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +29,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * <p>
  * Romberg integration employs k successive refinements of the trapezoid
  * rule to remove error terms less than order O(N^(-2k)). Simpson's rule
- * is a special case of k = 2.</p>
+ * is a special case of k = 2.
+ * </p>
  *
  * @since 1.2
  */
@@ -42,49 +41,46 @@ public class RombergIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /**
      * Build a Romberg integrator with given accuracies and iterations counts.
-     * @param relativeAccuracy relative accuracy of the result
-     * @param absoluteAccuracy absolute accuracy of the result
+     * 
+     * @param relativeAccuracy      relative accuracy of the result
+     * @param absoluteAccuracy      absolute accuracy of the result
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #ROMBERG_MAX_ITERATIONS_COUNT})
+     *                              (must be less than or equal to {@link #ROMBERG_MAX_ITERATIONS_COUNT})
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #ROMBERG_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #ROMBERG_MAX_ITERATIONS_COUNT}
      */
-    public RombergIntegrator(final double relativeAccuracy,
-                             final double absoluteAccuracy,
-                             final int minimalIterationCount,
-                             final int maximalIterationCount)
+    public RombergIntegrator(final double relativeAccuracy, final double absoluteAccuracy,
+        final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > ROMBERG_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                ROMBERG_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, ROMBERG_MAX_ITERATIONS_COUNT, false);
         }
     }
 
     /**
      * Build a Romberg integrator with given iteration counts.
+     * 
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #ROMBERG_MAX_ITERATIONS_COUNT})
+     *                              (must be less than or equal to {@link #ROMBERG_MAX_ITERATIONS_COUNT})
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #ROMBERG_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #ROMBERG_MAX_ITERATIONS_COUNT}
      */
-    public RombergIntegrator(final int minimalIterationCount,
-                             final int maximalIterationCount)
+    public RombergIntegrator(final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > ROMBERG_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                ROMBERG_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, ROMBERG_MAX_ITERATIONS_COUNT, false);
         }
     }
 
@@ -98,12 +94,11 @@ public class RombergIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /** {@inheritDoc} */
     @Override
-    protected double doIntegrate()
-        throws TooManyEvaluationsException, MaxCountExceededException {
+    protected double doIntegrate() throws TooManyEvaluationsException, MaxCountExceededException {
 
         final int m = getMaximalIterationCount() + 1;
         double previousRow[] = new double[m];
-        double currentRow[]  = new double[m];
+        double currentRow[] = new double[m];
 
         TrapezoidIntegrator qtrap = new TrapezoidIntegrator();
         currentRow[0] = qtrap.stage(this, 0);
@@ -128,7 +123,7 @@ public class RombergIntegrator extends BaseAbstractUnivariateIntegrator {
             }
             final double s = currentRow[i];
             if (i >= getMinimalIterationCount()) {
-                final double delta  = FastMath.abs(s - olds);
+                final double delta = FastMath.abs(s - olds);
                 final double rLimit = getRelativeAccuracy() * (FastMath.abs(olds) + FastMath.abs(s)) * 0.5;
                 if ((delta <= rLimit) || (delta <= getAbsoluteAccuracy())) {
                     return s;

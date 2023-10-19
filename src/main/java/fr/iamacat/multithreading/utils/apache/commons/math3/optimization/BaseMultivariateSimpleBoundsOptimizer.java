@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +22,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.Multivariat
  * Commons-FastMath. Users of the API are advised to base their code on
  * the following interfaces:
  * <ul>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer}</li>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer}</li>
  * </ul>
  *
  * @param <FUNC> Type of the objective function to be optimized.
@@ -36,30 +34,47 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.Multivariat
 @Deprecated
 public interface BaseMultivariateSimpleBoundsOptimizer<FUNC extends MultivariateFunction>
     extends BaseMultivariateOptimizer<FUNC> {
+
     /**
      * Optimize an objective function.
      *
-     * @param f Objective function.
-     * @param goalType Type of optimization goal: either
-     * {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
+     * @param f          Objective function.
+     * @param goalType   Type of optimization goal: either
+     *                   {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
      * @param startPoint Start point for optimization.
-     * @param maxEval Maximum number of function evaluations.
+     * @param maxEval    Maximum number of function evaluations.
      * @param lowerBound Lower bound for each of the parameters.
      * @param upperBound Upper bound for each of the parameters.
      * @return the point/value pair giving the optimal value for objective
-     * function.
+     *         function.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the array sizes are wrong.
+     *                                                                                                    if the array
+     *                                                                                                    sizes are
+     *                                                                                                    wrong.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if
-     * {@code f}, {@code goalType} or {@code startPoint} is {@code null}.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException if any
-     * of the initial values is less than its lower bound.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException if any
-     * of the initial values is greater than its upper bound.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException       if
+     *                                                                                                    {@code f},
+     *                                                                                                    {@code goalType}
+     *                                                                                                    or
+     *                                                                                                    {@code startPoint}
+     *                                                                                                    is
+     *                                                                                                    {@code null}.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException   if any
+     *                                                                                                    of the initial
+     *                                                                                                    values is less
+     *                                                                                                    than its lower
+     *                                                                                                    bound.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException   if any
+     *                                                                                                    of the initial
+     *                                                                                                    values is
+     *                                                                                                    greater than
+     *                                                                                                    its upper
+     *                                                                                                    bound.
      */
-    PointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
-                                double[] startPoint,
-                                double[] lowerBound, double[] upperBound);
+    PointValuePair optimize(int maxEval, FUNC f, GoalType goalType, double[] startPoint, double[] lowerBound,
+        double[] upperBound);
 }

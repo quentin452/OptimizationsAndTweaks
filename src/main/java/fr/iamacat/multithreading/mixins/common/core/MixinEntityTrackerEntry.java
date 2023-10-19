@@ -1,6 +1,10 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S1CPacketEntityMetadata;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,14 +22,11 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntityTrackerEntry.class)
 public class MixinEntityTrackerEntry {
+
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Shadow
@@ -66,7 +68,7 @@ public class MixinEntityTrackerEntry {
     @Shadow
     private boolean sendVelocityUpdates;
     /**
-     * every 400 ticks a  full teleport packet is sent, rather than just a "move me +x" command, so that position
+     * every 400 ticks a full teleport packet is sent, rather than just a "move me +x" command, so that position
      * remains fully synced.
      */
     @Shadow
@@ -81,7 +83,9 @@ public class MixinEntityTrackerEntry {
     @Shadow
     public Set trackingPlayers = new HashSet();
 
-    private final ExecutorService packetExecutor = Executors.newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
+    private final ExecutorService packetExecutor = Executors
+        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
+
     /**
      * @author
      * @reason
@@ -92,15 +96,19 @@ public class MixinEntityTrackerEntry {
             DataWatcher datawatcher = this.myEntity.getDataWatcher();
 
             if (datawatcher.hasChanges()) {
-                this.packetExecutor.submit(() -> this.func_151261_b(new S1CPacketEntityMetadata(this.myEntity.getEntityId(), datawatcher, false)));
+                this.packetExecutor.submit(
+                    () -> this
+                        .func_151261_b(new S1CPacketEntityMetadata(this.myEntity.getEntityId(), datawatcher, false)));
             }
 
             if (this.myEntity instanceof EntityLivingBase) {
-                ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
+                ServersideAttributeMap serversideattributemap = (ServersideAttributeMap) ((EntityLivingBase) this.myEntity)
+                    .getAttributeMap();
                 Set set = serversideattributemap.getAttributeInstanceSet();
 
                 if (!set.isEmpty()) {
-                    this.packetExecutor.submit(() -> this.func_151261_b(new S20PacketEntityProperties(this.myEntity.getEntityId(), set)));
+                    this.packetExecutor.submit(
+                        () -> this.func_151261_b(new S20PacketEntityProperties(this.myEntity.getEntityId(), set)));
                 }
 
                 set.clear();
@@ -109,15 +117,14 @@ public class MixinEntityTrackerEntry {
     }
 
     @Unique
-    public void func_151261_b(Packet p_151261_1_)
-    {
+    public void func_151261_b(Packet p_151261_1_) {
         this.func_151259_a(p_151261_1_);
 
-        if (this.myEntity instanceof EntityPlayerMP)
-        {
-            ((EntityPlayerMP)this.myEntity).playerNetServerHandler.sendPacket(p_151261_1_);
+        if (this.myEntity instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) this.myEntity).playerNetServerHandler.sendPacket(p_151261_1_);
         }
     }
+
     @Unique
     public void func_151259_a(Packet p_151259_1_) {
 

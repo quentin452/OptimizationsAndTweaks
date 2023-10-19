@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +14,9 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.fitting;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Simple container for weighted observed points used
@@ -27,12 +25,12 @@ import java.io.Serializable;
  * @since 3.3
  */
 public class WeightedObservedPoints implements Serializable {
+
     /** Serializable version id. */
     private static final long serialVersionUID = 20130813L;
 
     /** Observed points. */
-    private final List<WeightedObservedPoint> observations
-        = new ArrayList<WeightedObservedPoint>();
+    private final List<WeightedObservedPoint> observations = new ArrayList<WeightedObservedPoint>();
 
     /**
      * Adds a point to the sample.
@@ -40,8 +38,8 @@ public class WeightedObservedPoints implements Serializable {
      * {@code add(1.0, x, y)}.
      *
      * @param x Abscissa of the point.
-     * @param y Observed value  at {@code x}. After fitting we should
-     * have {@code f(x)} as close as possible to this value.
+     * @param y Observed value at {@code x}. After fitting we should
+     *          have {@code f(x)} as close as possible to this value.
      *
      * @see #add(double, double, double)
      * @see #add(WeightedObservedPoint)
@@ -55,9 +53,9 @@ public class WeightedObservedPoints implements Serializable {
      * Adds a point to the sample.
      *
      * @param weight Weight of the observed point.
-     * @param x Abscissa of the point.
-     * @param y Observed value  at {@code x}. After fitting we should
-     * have {@code f(x)} as close as possible to this value.
+     * @param x      Abscissa of the point.
+     * @param y      Observed value at {@code x}. After fitting we should
+     *               have {@code f(x)} as close as possible to this value.
      *
      * @see #add(double, double)
      * @see #add(WeightedObservedPoint)
@@ -90,7 +88,7 @@ public class WeightedObservedPoints implements Serializable {
      * returned list.
      *
      * @return the observed points, in the order they were added to this
-     * container.
+     *         container.
      *
      * @see #add(double, double)
      * @see #add(double, double, double)

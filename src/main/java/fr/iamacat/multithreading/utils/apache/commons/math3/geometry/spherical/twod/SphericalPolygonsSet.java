@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +37,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.spherical.o
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
-/** This class represents a region on the 2-sphere: a set of spherical polygons.
+/**
+ * This class represents a region on the 2-sphere: a set of spherical polygons.
+ * 
  * @since 3.3
  */
 public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
@@ -47,58 +47,73 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
     /** Boundary defined as an array of closed loops start vertices. */
     private List<Vertex> loops;
 
-    /** Build a polygons set representing the whole real 2-sphere.
+    /**
+     * Build a polygons set representing the whole real 2-sphere.
+     * 
      * @param tolerance below which points are consider to be identical
      */
     public SphericalPolygonsSet(final double tolerance) {
         super(tolerance);
     }
 
-    /** Build a polygons set representing a hemisphere.
-     * @param pole pole of the hemisphere (the pole is in the inside half)
+    /**
+     * Build a polygons set representing a hemisphere.
+     * 
+     * @param pole      pole of the hemisphere (the pole is in the inside half)
      * @param tolerance below which points are consider to be identical
      */
     public SphericalPolygonsSet(final Vector3D pole, final double tolerance) {
-        super(new BSPTree<Sphere2D>(new Circle(pole, tolerance).wholeHyperplane(),
-                                    new BSPTree<Sphere2D>(Boolean.FALSE),
-                                    new BSPTree<Sphere2D>(Boolean.TRUE),
-                                    null),
-              tolerance);
+        super(
+            new BSPTree<Sphere2D>(
+                new Circle(pole, tolerance).wholeHyperplane(),
+                new BSPTree<Sphere2D>(Boolean.FALSE),
+                new BSPTree<Sphere2D>(Boolean.TRUE),
+                null),
+            tolerance);
     }
 
-    /** Build a polygons set representing a regular polygon.
-     * @param center center of the polygon (the center is in the inside half)
-     * @param meridian point defining the reference meridian for first polygon vertex
+    /**
+     * Build a polygons set representing a regular polygon.
+     * 
+     * @param center        center of the polygon (the center is in the inside half)
+     * @param meridian      point defining the reference meridian for first polygon vertex
      * @param outsideRadius distance of the vertices to the center
-     * @param n number of sides of the polygon
-     * @param tolerance below which points are consider to be identical
+     * @param n             number of sides of the polygon
+     * @param tolerance     below which points are consider to be identical
      */
-    public SphericalPolygonsSet(final Vector3D center, final Vector3D meridian,
-                                final double outsideRadius, final int n,
-                                final double tolerance) {
+    public SphericalPolygonsSet(final Vector3D center, final Vector3D meridian, final double outsideRadius, final int n,
+        final double tolerance) {
         this(tolerance, createRegularPolygonVertices(center, meridian, outsideRadius, n));
     }
 
-    /** Build a polygons set from a BSP tree.
-     * <p>The leaf nodes of the BSP tree <em>must</em> have a
+    /**
+     * Build a polygons set from a BSP tree.
+     * <p>
+     * The leaf nodes of the BSP tree <em>must</em> have a
      * {@code Boolean} attribute representing the inside status of
      * the corresponding cell (true for inside cells, false for outside
      * cells). In order to avoid building too many small objects, it is
      * recommended to use the predefined constants
-     * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>
-     * @param tree inside/outside BSP tree representing the region
+     * {@code Boolean.TRUE} and {@code Boolean.FALSE}
+     * </p>
+     * 
+     * @param tree      inside/outside BSP tree representing the region
      * @param tolerance below which points are consider to be identical
      */
     public SphericalPolygonsSet(final BSPTree<Sphere2D> tree, final double tolerance) {
         super(tree, tolerance);
     }
 
-    /** Build a polygons set from a Boundary REPresentation (B-rep).
-     * <p>The boundary is provided as a collection of {@link
+    /**
+     * Build a polygons set from a Boundary REPresentation (B-rep).
+     * <p>
+     * The boundary is provided as a collection of {@link
      * SubHyperplane sub-hyperplanes}. Each sub-hyperplane has the
      * interior part of the region on its minus side and the exterior on
-     * its plus side.</p>
-     * <p>The boundary elements can be in any order, and can form
+     * its plus side.
+     * </p>
+     * <p>
+     * The boundary elements can be in any order, and can form
      * several non-connected sets (like for example polygons with holes
      * or a set of disjoint polygons considered as a whole). In
      * fact, the elements do not even need to be connected together
@@ -107,29 +122,42 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
      * fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.Region#checkPoint(fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Point)
-     * checkPoint} method will not be meaningful anymore.</p>
-     * <p>If the boundary is empty, the region will represent the whole
-     * space.</p>
-     * @param boundary collection of boundary elements, as a
-     * collection of {@link SubHyperplane SubHyperplane} objects
+     * checkPoint} method will not be meaningful anymore.
+     * </p>
+     * <p>
+     * If the boundary is empty, the region will represent the whole
+     * space.
+     * </p>
+     * 
+     * @param boundary  collection of boundary elements, as a
+     *                  collection of {@link SubHyperplane SubHyperplane} objects
      * @param tolerance below which points are consider to be identical
      */
     public SphericalPolygonsSet(final Collection<SubHyperplane<Sphere2D>> boundary, final double tolerance) {
         super(boundary, tolerance);
     }
 
-    /** Build a polygon from a simple list of vertices.
-     * <p>The boundary is provided as a list of points considering to
+    /**
+     * Build a polygon from a simple list of vertices.
+     * <p>
+     * The boundary is provided as a list of points considering to
      * represent the vertices of a simple loop. The interior part of the
      * region is on the left side of this path and the exterior is on its
-     * right side.</p>
-     * <p>This constructor does not handle polygons with a boundary
-     * forming several disconnected paths (such as polygons with holes).</p>
-     * <p>For cases where this simple constructor applies, it is expected to
+     * right side.
+     * </p>
+     * <p>
+     * This constructor does not handle polygons with a boundary
+     * forming several disconnected paths (such as polygons with holes).
+     * </p>
+     * <p>
+     * For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #SphericalPolygonsSet(Collection,
-     * double) general constructor} using {@link SubHyperplane subhyperplanes}.</p>
-     * <p>If the list is empty, the region will represent the whole
-     * space.</p>
+     * double) general constructor} using {@link SubHyperplane subhyperplanes}.
+     * </p>
+     * <p>
+     * If the list is empty, the region will represent the whole
+     * space.
+     * </p>
      * <p>
      * Polygons with thin pikes or dents are inherently difficult to handle because
      * they involve circles with almost opposite directions at some vertices. Polygons
@@ -144,26 +172,31 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
      * most accurate detail needed is a good value for the {@code hyperplaneThickness}
      * parameter.
      * </p>
+     * 
      * @param hyperplaneThickness tolerance below which points are considered to
-     * belong to the hyperplane (which is therefore more a slab)
-     * @param vertices vertices of the simple loop boundary
+     *                            belong to the hyperplane (which is therefore more a slab)
+     * @param vertices            vertices of the simple loop boundary
      */
-    public SphericalPolygonsSet(final double hyperplaneThickness, final S2Point ... vertices) {
+    public SphericalPolygonsSet(final double hyperplaneThickness, final S2Point... vertices) {
         super(verticesToTree(hyperplaneThickness, vertices), hyperplaneThickness);
     }
 
-    /** Build the vertices representing a regular polygon.
-     * @param center center of the polygon (the center is in the inside half)
-     * @param meridian point defining the reference meridian for first polygon vertex
+    /**
+     * Build the vertices representing a regular polygon.
+     * 
+     * @param center        center of the polygon (the center is in the inside half)
+     * @param meridian      point defining the reference meridian for first polygon vertex
      * @param outsideRadius distance of the vertices to the center
-     * @param n number of sides of the polygon
+     * @param n             number of sides of the polygon
      * @return vertices array
      */
     private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
-                                                          final double outsideRadius, final int n) {
+        final double outsideRadius, final int n) {
         final S2Point[] array = new S2Point[n];
-        final Rotation r0 = new Rotation(Vector3D.crossProduct(center, meridian),
-                                         outsideRadius, RotationConvention.VECTOR_OPERATOR);
+        final Rotation r0 = new Rotation(
+            Vector3D.crossProduct(center, meridian),
+            outsideRadius,
+            RotationConvention.VECTOR_OPERATOR);
         array[0] = new S2Point(r0.applyTo(center));
 
         final Rotation r = new Rotation(center, MathUtils.TWO_PI / n, RotationConvention.VECTOR_OPERATOR);
@@ -174,26 +207,35 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         return array;
     }
 
-    /** Build the BSP tree of a polygons set from a simple list of vertices.
-     * <p>The boundary is provided as a list of points considering to
+    /**
+     * Build the BSP tree of a polygons set from a simple list of vertices.
+     * <p>
+     * The boundary is provided as a list of points considering to
      * represent the vertices of a simple loop. The interior part of the
      * region is on the left side of this path and the exterior is on its
-     * right side.</p>
-     * <p>This constructor does not handle polygons with a boundary
-     * forming several disconnected paths (such as polygons with holes).</p>
-     * <p>This constructor handles only polygons with edges strictly shorter
+     * right side.
+     * </p>
+     * <p>
+     * This constructor does not handle polygons with a boundary
+     * forming several disconnected paths (such as polygons with holes).
+     * </p>
+     * <p>
+     * This constructor handles only polygons with edges strictly shorter
      * than \( \pi \). If longer edges are needed, they need to be broken up
-     * in smaller sub-edges so this constraint holds.</p>
-     * <p>For cases where this simple constructor applies, it is expected to
+     * in smaller sub-edges so this constraint holds.
+     * </p>
+     * <p>
+     * For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #PolygonsSet(Collection) general
-     * constructor} using {@link SubHyperplane subhyperplanes}.</p>
+     * constructor} using {@link SubHyperplane subhyperplanes}.
+     * </p>
+     * 
      * @param hyperplaneThickness tolerance below which points are consider to
-     * belong to the hyperplane (which is therefore more a slab)
-     * @param vertices vertices of the simple loop boundary
+     *                            belong to the hyperplane (which is therefore more a slab)
+     * @param vertices            vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree<Sphere2D> verticesToTree(final double hyperplaneThickness,
-                                                    final S2Point ... vertices) {
+    private static BSPTree<Sphere2D> verticesToTree(final double hyperplaneThickness, final S2Point... vertices) {
 
         final int n = vertices.length;
         if (n == 0) {
@@ -225,15 +267,21 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
             }
 
             // create the edge and store it
-            edges.add(new Edge(start, end,
-                               Vector3D.angle(start.getLocation().getVector(),
-                                              end.getLocation().getVector()),
-                               circle));
+            edges.add(
+                new Edge(
+                    start,
+                    end,
+                    Vector3D.angle(
+                        start.getLocation()
+                            .getVector(),
+                        end.getLocation()
+                            .getVector()),
+                    circle));
 
             // check if another vertex also happens to be on this circle
             for (final Vertex vertex : vArray) {
-                if (vertex != start && vertex != end &&
-                    FastMath.abs(circle.getOffset(vertex.getLocation())) <= hyperplaneThickness) {
+                if (vertex != start && vertex != end
+                    && FastMath.abs(circle.getOffset(vertex.getLocation())) <= hyperplaneThickness) {
                     vertex.bindWith(circle);
                 }
             }
@@ -248,17 +296,18 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
 
     }
 
-    /** Recursively build a tree by inserting cut sub-hyperplanes.
+    /**
+     * Recursively build a tree by inserting cut sub-hyperplanes.
+     * 
      * @param hyperplaneThickness tolerance below which points are considered to
-     * belong to the hyperplane (which is therefore more a slab)
-     * @param node current tree node (it is a leaf node at the beginning
-     * of the call)
-     * @param edges list of edges to insert in the cell defined by this node
-     * (excluding edges not belonging to the cell defined by this node)
+     *                            belong to the hyperplane (which is therefore more a slab)
+     * @param node                current tree node (it is a leaf node at the beginning
+     *                            of the call)
+     * @param edges               list of edges to insert in the cell defined by this node
+     *                            (excluding edges not belonging to the cell defined by this node)
      */
-    private static void insertEdges(final double hyperplaneThickness,
-                                    final BSPTree<Sphere2D> node,
-                                    final List<Edge> edges) {
+    private static void insertEdges(final double hyperplaneThickness, final BSPTree<Sphere2D> node,
+        final List<Edge> edges) {
 
         // find an edge with an hyperplane that can be inserted in the node
         int index = 0;
@@ -285,7 +334,7 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         // we have split the node by inserting an edge as a cut sub-hyperplane
         // distribute the remaining edges in the two sub-trees
         final List<Edge> outsideList = new ArrayList<Edge>();
-        final List<Edge> insideList  = new ArrayList<Edge>();
+        final List<Edge> insideList = new ArrayList<Edge>();
         for (final Edge edge : edges) {
             if (edge != inserted) {
                 edge.split(inserted.getCircle(), outsideList, insideList);
@@ -296,12 +345,14 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         if (!outsideList.isEmpty()) {
             insertEdges(hyperplaneThickness, node.getPlus(), outsideList);
         } else {
-            node.getPlus().setAttribute(Boolean.FALSE);
+            node.getPlus()
+                .setAttribute(Boolean.FALSE);
         }
         if (!insideList.isEmpty()) {
-            insertEdges(hyperplaneThickness, node.getMinus(),  insideList);
+            insertEdges(hyperplaneThickness, node.getMinus(), insideList);
         } else {
-            node.getMinus().setAttribute(Boolean.TRUE);
+            node.getMinus()
+                .setAttribute(Boolean.TRUE);
         }
 
     }
@@ -312,9 +363,11 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         return new SphericalPolygonsSet(tree, getTolerance());
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @exception MathIllegalStateException if the tolerance setting does not allow to build
-     * a clean non-ambiguous boundary
+     *                                      a clean non-ambiguous boundary
      */
     @Override
     protected void computeGeometricalProperties() throws MathIllegalStateException {
@@ -346,26 +399,35 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
 
     }
 
-    /** Get the boundary loops of the polygon.
-     * <p>The polygon boundary can be represented as a list of closed loops,
+    /**
+     * Get the boundary loops of the polygon.
+     * <p>
+     * The polygon boundary can be represented as a list of closed loops,
      * each loop being given by exactly one of its vertices. From each loop
      * start vertex, one can follow the loop by finding the outgoing edge,
      * then the end vertex, then the next outgoing edge ... until the start
      * vertex of the loop (exactly the same instance) is found again once
-     * the full loop has been visited.</p>
-     * <p>If the polygon has no boundary at all, a zero length loop
-     * array will be returned.</p>
-     * <p>If the polygon is a simple one-piece polygon, then the returned
+     * the full loop has been visited.
+     * </p>
+     * <p>
+     * If the polygon has no boundary at all, a zero length loop
+     * array will be returned.
+     * </p>
+     * <p>
+     * If the polygon is a simple one-piece polygon, then the returned
      * array will contain a single vertex.
      * </p>
-     * <p>All edges in the various loops have the inside of the region on
+     * <p>
+     * All edges in the various loops have the inside of the region on
      * their left side (i.e. toward their pole) and the outside on their
      * right side (i.e. away from their pole) when moving in the underlying
      * circle direction. This means that the closed loops obey the direct
-     * trigonometric orientation.</p>
+     * trigonometric orientation.
+     * </p>
+     * 
      * @return boundary of the polygon, organized as an unmodifiable list of loops start vertices.
      * @exception MathIllegalStateException if the tolerance setting does not allow to build
-     * a clean non-ambiguous boundary
+     *                                      a clean non-ambiguous boundary
      * @see Vertex
      * @see Edge
      */
@@ -381,7 +443,6 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
                 final EdgesBuilder visitor = new EdgesBuilder(root, getTolerance());
                 root.visit(visitor);
                 final List<Edge> edges = visitor.getEdges();
-
 
                 // convert the list of all edges into a list of start vertices
                 loops = new ArrayList<Vertex>();
@@ -404,7 +465,8 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
                         }
 
                         // go to next edge following the boundary loop
-                        edge = edge.getEnd().getOutgoing();
+                        edge = edge.getEnd()
+                            .getOutgoing();
 
                     } while (edge.getStart() != startVertex);
 
@@ -417,7 +479,8 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
 
     }
 
-    /** Get a spherical cap enclosing the polygon.
+    /**
+     * Get a spherical cap enclosing the polygon.
      * <p>
      * This method is intended as a first test to quickly identify points
      * that are guaranteed to be outside of the region, hence performing a full
@@ -429,6 +492,7 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
      * whereas the full check can be more computing intensive. A typical use case is
      * therefore:
      * </p>
+     * 
      * <pre>
      *   // compute region, plus an enclosing spherical cap
      *   SphericalPolygonsSet complexShape = ...;
@@ -462,6 +526,7 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
      * <p>
      * This method is <em>not</em> guaranteed to return the smallest enclosing cap.
      * </p>
+     * 
      * @return a spherical cap enclosing the polygon
      */
     public EnclosingBall<Sphere2D, S2Point> getEnclosingCap() {
@@ -478,15 +543,15 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         final BSPTree<Sphere2D> root = getTree(false);
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
-            final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<Sphere2D, S2Point>(new S2Point(circle.getPole()).negate(),
-                                                        0.5 * FastMath.PI);
+            final Circle circle = (Circle) root.getCut()
+                .getHyperplane();
+            return new EnclosingBall<Sphere2D, S2Point>(new S2Point(circle.getPole()).negate(), 0.5 * FastMath.PI);
         }
         if (isFull(root.getMinus()) && isEmpty(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
-            final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<Sphere2D, S2Point>(new S2Point(circle.getPole()),
-                                                        0.5 * FastMath.PI);
+            final Circle circle = (Circle) root.getCut()
+                .getHyperplane();
+            return new EnclosingBall<Sphere2D, S2Point>(new S2Point(circle.getPole()), 0.5 * FastMath.PI);
         }
 
         // gather some inside points, to be used by the encloser
@@ -496,34 +561,41 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         final List<Vertex> boundary = getBoundaryLoops();
         for (final Vertex loopStart : boundary) {
             int count = 0;
-            for (Vertex v = loopStart; count == 0 || v != loopStart; v = v.getOutgoing().getEnd()) {
+            for (Vertex v = loopStart; count == 0 || v != loopStart; v = v.getOutgoing()
+                .getEnd()) {
                 ++count;
-                points.add(v.getLocation().getVector());
+                points.add(
+                    v.getLocation()
+                        .getVector());
             }
         }
 
         // find the smallest enclosing 3D sphere
         final SphereGenerator generator = new SphereGenerator();
-        final WelzlEncloser<Euclidean3D, Vector3D> encloser =
-                new WelzlEncloser<Euclidean3D, Vector3D>(getTolerance(), generator);
+        final WelzlEncloser<Euclidean3D, Vector3D> encloser = new WelzlEncloser<Euclidean3D, Vector3D>(
+            getTolerance(),
+            generator);
         EnclosingBall<Euclidean3D, Vector3D> enclosing3D = encloser.enclose(points);
         final Vector3D[] support3D = enclosing3D.getSupport();
 
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
-        final double h = enclosing3D.getCenter().getNorm();
+        final double h = enclosing3D.getCenter()
+            .getNorm();
         if (h < getTolerance()) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells
-            EnclosingBall<Sphere2D, S2Point> enclosingS2 =
-                    new EnclosingBall<Sphere2D, S2Point>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
+            EnclosingBall<Sphere2D, S2Point> enclosingS2 = new EnclosingBall<Sphere2D, S2Point>(
+                S2Point.PLUS_K,
+                Double.POSITIVE_INFINITY);
             for (Vector3D outsidePoint : getOutsidePoints()) {
                 final S2Point outsideS2 = new S2Point(outsidePoint);
                 final BoundaryProjection<Sphere2D> projection = projectToBoundary(outsideS2);
                 if (FastMath.PI - projection.getOffset() < enclosingS2.getRadius()) {
-                    enclosingS2 = new EnclosingBall<Sphere2D, S2Point>(outsideS2.negate(),
-                                                                       FastMath.PI - projection.getOffset(),
-                                                                       (S2Point) projection.getProjected());
+                    enclosingS2 = new EnclosingBall<Sphere2D, S2Point>(
+                        outsideS2.negate(),
+                        FastMath.PI - projection.getOffset(),
+                        (S2Point) projection.getProjected());
                 }
             }
             return enclosingS2;
@@ -533,16 +605,18 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
             support[i] = new S2Point(support3D[i]);
         }
 
-        final EnclosingBall<Sphere2D, S2Point> enclosingS2 =
-                new EnclosingBall<Sphere2D, S2Point>(new S2Point(enclosing3D.getCenter()),
-                                                     FastMath.acos((1 + h * h - r * r) / (2 * h)),
-                                                     support);
+        final EnclosingBall<Sphere2D, S2Point> enclosingS2 = new EnclosingBall<Sphere2D, S2Point>(
+            new S2Point(enclosing3D.getCenter()),
+            FastMath.acos((1 + h * h - r * r) / (2 * h)),
+            support);
 
         return enclosingS2;
 
     }
 
-    /** Gather some inside points.
+    /**
+     * Gather some inside points.
+     * 
      * @return list of points known to be strictly in all inside convex cells
      */
     private List<Vector3D> getInsidePoints() {
@@ -551,14 +625,17 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
         return pc.getConvexCellsInsidePoints();
     }
 
-    /** Gather some outside points.
+    /**
+     * Gather some outside points.
+     * 
      * @return list of points known to be strictly in all outside convex cells
      */
     private List<Vector3D> getOutsidePoints() {
-        final SphericalPolygonsSet complement =
-                (SphericalPolygonsSet) new RegionFactory<Sphere2D>().getComplement(this);
+        final SphericalPolygonsSet complement = (SphericalPolygonsSet) new RegionFactory<Sphere2D>()
+            .getComplement(this);
         final PropertiesComputer pc = new PropertiesComputer(getTolerance());
-        complement.getTree(true).visit(pc);
+        complement.getTree(true)
+            .visit(pc);
         return pc.getConvexCellsInsidePoints();
     }
 

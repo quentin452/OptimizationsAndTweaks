@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,6 +11,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntityLookHelper.class)
 public class MixinEntityLookHelper {

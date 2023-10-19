@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +26,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictl
  * @since 3.1
  */
 public interface MultivariateRealDistribution {
+
     /**
      * Returns the probability density function (PDF) of this distribution
      * evaluated at the specified point {@code x}. In general, the PDF is the
@@ -70,7 +69,10 @@ public interface MultivariateRealDistribution {
      * @param sampleSize the number of random vectors to generate.
      * @return an array representing the random samples.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code sampleSize} is not positive.
+     *                                                                                                     if
+     *                                                                                                     {@code sampleSize}
+     *                                                                                                     is not
+     *                                                                                                     positive.
      *
      * @see #sample()
      */

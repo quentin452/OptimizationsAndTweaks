@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +24,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitionin
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
-/** Visitor computing geometrical properties.
+/**
+ * Visitor computing geometrical properties.
+ * 
  * @since 3.3
  */
 class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
@@ -43,13 +43,15 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
     /** List of points strictly inside convex cells. */
     private final List<Vector3D> convexCellsInsidePoints;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param tolerance below which points are consider to be identical
      */
     PropertiesComputer(final double tolerance) {
-        this.tolerance              = tolerance;
-        this.summedArea             = 0;
-        this.summedBarycenter       = Vector3D.ZERO;
+        this.tolerance = tolerance;
+        this.summedArea = 0;
+        this.summedBarycenter = Vector3D.ZERO;
         this.convexCellsInsidePoints = new ArrayList<Vector3D>();
     }
 
@@ -68,11 +70,9 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
         if ((Boolean) node.getAttribute()) {
 
             // transform this inside leaf cell into a simple convex polygon
-            final SphericalPolygonsSet convex =
-                    new SphericalPolygonsSet(node.pruneAroundConvexCell(Boolean.TRUE,
-                                                                        Boolean.FALSE,
-                                                                        null),
-                                             tolerance);
+            final SphericalPolygonsSet convex = new SphericalPolygonsSet(
+                node.pruneAroundConvexCell(Boolean.TRUE, Boolean.FALSE, null),
+                tolerance);
 
             // extract the start of the single loop boundary of the convex cell
             final List<Vertex> boundary = convex.getBoundaryLoops();
@@ -82,18 +82,20 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
             }
 
             // compute the geometrical properties of the convex cell
-            final double area  = convexCellArea(boundary.get(0));
+            final double area = convexCellArea(boundary.get(0));
             final Vector3D barycenter = convexCellBarycenter(boundary.get(0));
             convexCellsInsidePoints.add(barycenter);
 
             // add the cell contribution to the global properties
-            summedArea      += area;
+            summedArea += area;
             summedBarycenter = new Vector3D(1, summedBarycenter, area, barycenter);
 
         }
     }
 
-    /** Compute convex cell area.
+    /**
+     * Compute convex cell area.
+     * 
      * @param start start vertex of the convex cell boundary
      * @return area
      */
@@ -103,14 +105,22 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
         double sum = 0;
 
         // loop around the cell
-        for (Edge e = start.getOutgoing(); n == 0 || e.getStart() != start; e = e.getEnd().getOutgoing()) {
+        for (Edge e = start.getOutgoing(); n == 0 || e.getStart() != start; e = e.getEnd()
+            .getOutgoing()) {
 
             // find path interior angle at vertex
-            final Vector3D previousPole = e.getCircle().getPole();
-            final Vector3D nextPole     = e.getEnd().getOutgoing().getCircle().getPole();
-            final Vector3D point        = e.getEnd().getLocation().getVector();
-            double alpha = FastMath.atan2(Vector3D.dotProduct(nextPole, Vector3D.crossProduct(point, previousPole)),
-                                          -Vector3D.dotProduct(nextPole, previousPole));
+            final Vector3D previousPole = e.getCircle()
+                .getPole();
+            final Vector3D nextPole = e.getEnd()
+                .getOutgoing()
+                .getCircle()
+                .getPole();
+            final Vector3D point = e.getEnd()
+                .getLocation()
+                .getVector();
+            double alpha = FastMath.atan2(
+                Vector3D.dotProduct(nextPole, Vector3D.crossProduct(point, previousPole)),
+                -Vector3D.dotProduct(nextPole, previousPole));
             if (alpha < 0) {
                 alpha += MathUtils.TWO_PI;
             }
@@ -126,7 +136,9 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
 
     }
 
-    /** Compute convex cell barycenter.
+    /**
+     * Compute convex cell barycenter.
+     * 
      * @param start start vertex of the convex cell boundary
      * @return barycenter
      */
@@ -136,8 +148,14 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
         Vector3D sumB = Vector3D.ZERO;
 
         // loop around the cell
-        for (Edge e = start.getOutgoing(); n == 0 || e.getStart() != start; e = e.getEnd().getOutgoing()) {
-            sumB = new Vector3D(1, sumB, e.getLength(), e.getCircle().getPole());
+        for (Edge e = start.getOutgoing(); n == 0 || e.getStart() != start; e = e.getEnd()
+            .getOutgoing()) {
+            sumB = new Vector3D(
+                1,
+                sumB,
+                e.getLength(),
+                e.getCircle()
+                    .getPole());
             n++;
         }
 
@@ -145,14 +163,18 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
 
     }
 
-    /** Get the area.
+    /**
+     * Get the area.
+     * 
      * @return area
      */
     public double getArea() {
         return summedArea;
     }
 
-    /** Get the barycenter.
+    /**
+     * Get the barycenter.
+     * 
      * @return barycenter
      */
     public S2Point getBarycenter() {
@@ -163,7 +185,9 @@ class PropertiesComputer implements BSPTreeVisitor<Sphere2D> {
         }
     }
 
-    /** Get the points strictly inside convex cells.
+    /**
+     * Get the points strictly inside convex cells.
+     * 
      * @return points strictly inside convex cells
      */
     public List<Vector3D> getConvexCellsInsidePoints() {

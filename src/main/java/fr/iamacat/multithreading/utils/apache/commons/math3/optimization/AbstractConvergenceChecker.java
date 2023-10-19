@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,19 +26,21 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
  * @since 3.0
  */
 @Deprecated
-public abstract class AbstractConvergenceChecker<PAIR>
-    implements ConvergenceChecker<PAIR> {
+public abstract class AbstractConvergenceChecker<PAIR> implements ConvergenceChecker<PAIR> {
+
     /**
      * Default relative threshold.
+     * 
      * @deprecated in 3.1 (to be removed in 4.0) because this value is too small
-     * to be useful as a default (cf. MATH-798).
+     *             to be useful as a default (cf. MATH-798).
      */
     @Deprecated
     private static final double DEFAULT_RELATIVE_THRESHOLD = 100 * Precision.EPSILON;
     /**
      * Default absolute threshold.
+     * 
      * @deprecated in 3.1 (to be removed in 4.0) because this value is too small
-     * to be useful as a default (cf. MATH-798).
+     *             to be useful as a default (cf. MATH-798).
      */
     @Deprecated
     private static final double DEFAULT_ABSOLUTE_THRESHOLD = 100 * Precision.SAFE_MIN;
@@ -55,11 +55,12 @@ public abstract class AbstractConvergenceChecker<PAIR>
 
     /**
      * Build an instance with default thresholds.
+     * 
      * @deprecated in 3.1 (to be removed in 4.0). Convergence thresholds are
-     * problem-dependent. As this class is intended for users who want to set
-     * their own convergence criterion instead of relying on an algorithm's
-     * default procedure, they should also set the thresholds appropriately
-     * (cf. MATH-798).
+     *             problem-dependent. As this class is intended for users who want to set
+     *             their own convergence criterion instead of relying on an algorithm's
+     *             default procedure, they should also set the thresholds appropriately
+     *             (cf. MATH-798).
      */
     @Deprecated
     public AbstractConvergenceChecker() {
@@ -73,8 +74,7 @@ public abstract class AbstractConvergenceChecker<PAIR>
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
      */
-    public AbstractConvergenceChecker(final double relativeThreshold,
-                                      final double absoluteThreshold) {
+    public AbstractConvergenceChecker(final double relativeThreshold, final double absoluteThreshold) {
         this.relativeThreshold = relativeThreshold;
         this.absoluteThreshold = absoluteThreshold;
     }
@@ -96,7 +96,5 @@ public abstract class AbstractConvergenceChecker<PAIR>
     /**
      * {@inheritDoc}
      */
-    public abstract boolean converged(int iteration,
-                                      PAIR previous,
-                                      PAIR current);
+    public abstract boolean converged(int iteration, PAIR previous, PAIR current);
 }

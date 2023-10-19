@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +15,9 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.sofm.util;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.Logistic;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.Logistic;
 
 /**
  * Decay function whose shape is similar to a sigmoid.
@@ -29,6 +27,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.Lo
  * @since 3.3
  */
 public class QuasiSigmoidDecayFunction {
+
     /** Sigmoid. */
     private final Logistic sigmoid;
     /** See {@link #value(long)}. */
@@ -38,21 +37,19 @@ public class QuasiSigmoidDecayFunction {
      * Creates an instance.
      * The function {@code f} will have the following properties:
      * <ul>
-     *  <li>{@code f(0) = initValue}</li>
-     *  <li>{@code numCall} is the inflexion point</li>
-     *  <li>{@code slope = f'(numCall)}</li>
+     * <li>{@code f(0) = initValue}</li>
+     * <li>{@code numCall} is the inflexion point</li>
+     * <li>{@code slope = f'(numCall)}</li>
      * </ul>
      *
      * @param initValue Initial value, i.e. {@link #value(long) value(0)}.
-     * @param slope Value of the function derivative at {@code numCall}.
-     * @param numCall Inflexion point.
+     * @param slope     Value of the function derivative at {@code numCall}.
+     * @param numCall   Inflexion point.
      * @throws NotStrictlyPositiveException if {@code initValue <= 0}.
-     * @throws NumberIsTooLargeException if {@code slope >= 0}.
+     * @throws NumberIsTooLargeException    if {@code slope >= 0}.
      * @throws NotStrictlyPositiveException if {@code numCall <= 0}.
      */
-    public QuasiSigmoidDecayFunction(double initValue,
-                                     double slope,
-                                     long numCall) {
+    public QuasiSigmoidDecayFunction(double initValue, double slope, long numCall) {
         if (initValue <= 0) {
             throw new NotStrictlyPositiveException(initValue);
         }

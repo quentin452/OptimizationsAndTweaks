@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +23,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRange
  * @since 3.0
  */
 public interface RealDistribution {
+
     /**
      * For a random variable {@code X} whose values are distributed according
      * to this distribution, this method returns {@code P(X = x)}. In other
@@ -42,7 +41,7 @@ public interface RealDistribution {
      * the derivative of the {@link #cumulativeProbability(double) CDF}.
      * If the derivative does not exist at {@code x}, then an appropriate
      * replacement should be returned, e.g. {@code Double.POSITIVE_INFINITY},
-     * {@code Double.NaN}, or  the limit inferior or limit superior of the
+     * {@code Double.NaN}, or the limit inferior or limit superior of the
      * difference quotient.
      *
      * @param x the point at which the PDF is evaluated
@@ -58,7 +57,7 @@ public interface RealDistribution {
      *
      * @param x the point at which the CDF is evaluated
      * @return the probability that a random variable with this
-     * distribution takes a value less than or equal to {@code x}
+     *         distribution takes a value less than or equal to {@code x}
      */
     double cumulativeProbability(double x);
 
@@ -69,12 +68,12 @@ public interface RealDistribution {
      * @param x0 the exclusive lower bound
      * @param x1 the inclusive upper bound
      * @return the probability that a random variable with this distribution
-     * takes a value between {@code x0} and {@code x1},
-     * excluding the lower and including the upper endpoint
+     *         takes a value between {@code x0} and {@code x1},
+     *         excluding the lower and including the upper endpoint
      * @throws NumberIsTooLargeException if {@code x0 > x1}
      *
      * @deprecated As of 3.1. In 4.0, this method will be renamed
-     * {@code probability(double x0, double x1)}.
+     *             {@code probability(double x0, double x1)}.
      */
     @Deprecated
     double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException;
@@ -90,7 +89,7 @@ public interface RealDistribution {
      *
      * @param p the cumulative probability
      * @return the smallest {@code p}-quantile of this distribution
-     * (largest 0-quantile for {@code p = 0})
+     *         (largest 0-quantile for {@code p = 0})
      * @throws OutOfRangeException if {@code p < 0} or {@code p > 1}
      */
     double inverseCumulativeProbability(double p) throws OutOfRangeException;
@@ -108,8 +107,8 @@ public interface RealDistribution {
      * distribution.
      *
      * @return the variance (possibly {@code Double.POSITIVE_INFINITY} as
-     * for certain cases in {@link TDistribution}) or {@code Double.NaN} if it
-     * is not defined
+     *         for certain cases in {@link TDistribution}) or {@code Double.NaN} if it
+     *         is not defined
      */
     double getNumericalVariance();
 
@@ -117,10 +116,12 @@ public interface RealDistribution {
      * Access the lower bound of the support. This method must return the same
      * value as {@code inverseCumulativeProbability(0)}. In other words, this
      * method must return
-     * <p><code>inf {x in R | P(X <= x) > 0}</code>.</p>
+     * <p>
+     * <code>inf {x in R | P(X <= x) > 0}</code>.
+     * </p>
      *
      * @return lower bound of the support (might be
-     * {@code Double.NEGATIVE_INFINITY})
+     *         {@code Double.NEGATIVE_INFINITY})
      */
     double getSupportLowerBound();
 
@@ -128,21 +129,23 @@ public interface RealDistribution {
      * Access the upper bound of the support. This method must return the same
      * value as {@code inverseCumulativeProbability(1)}. In other words, this
      * method must return
-     * <p><code>inf {x in R | P(X <= x) = 1}</code>.</p>
+     * <p>
+     * <code>inf {x in R | P(X <= x) = 1}</code>.
+     * </p>
      *
      * @return upper bound of the support (might be
-     * {@code Double.POSITIVE_INFINITY})
+     *         {@code Double.POSITIVE_INFINITY})
      */
     double getSupportUpperBound();
 
     /**
      * Whether or not the lower bound of support is in the domain of the density
-     * function.  Returns true iff {@code getSupporLowerBound()} is finite and
+     * function. Returns true iff {@code getSupporLowerBound()} is finite and
      * {@code density(getSupportLowerBound())} returns a non-NaN, non-infinite
      * value.
      *
      * @return true if the lower bound of support is finite and the density
-     * function returns a non-NaN, non-infinite value there
+     *         function returns a non-NaN, non-infinite value there
      * @deprecated to be removed in 4.0
      */
     @Deprecated
@@ -150,12 +153,12 @@ public interface RealDistribution {
 
     /**
      * Whether or not the upper bound of support is in the domain of the density
-     * function.  Returns true iff {@code getSupportUpperBound()} is finite and
+     * function. Returns true iff {@code getSupportUpperBound()} is finite and
      * {@code density(getSupportUpperBound())} returns a non-NaN, non-infinite
      * value.
      *
      * @return true if the upper bound of support is finite and the density
-     * function returns a non-NaN, non-infinite value there
+     *         function returns a non-NaN, non-infinite value there
      * @deprecated to be removed in 4.0
      */
     @Deprecated
@@ -190,7 +193,10 @@ public interface RealDistribution {
      * @param sampleSize the number of random values to generate
      * @return an array representing the random sample
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code sampleSize} is not positive
+     *                                                                                                     if
+     *                                                                                                     {@code sampleSize}
+     *                                                                                                     is not
+     *                                                                                                     positive
      */
     double[] sample(int sampleSize);
 }

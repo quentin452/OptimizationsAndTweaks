@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,11 +51,13 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     /** Stored derivative, each key representing a different independent variable. */
     private final Map<Integer, Double> derivatives;
 
-    /** Internal constructor.
-     * @param value value of the function
+    /**
+     * Internal constructor.
+     * 
+     * @param value       value of the function
      * @param derivatives derivatives map, a deep copy will be performed,
-     * so the map given here will remain safe from changes in the new instance,
-     * may be null to create an empty derivatives map, i.e. a constant value
+     *                    so the map given here will remain safe from changes in the new instance,
+     *                    may be null to create an empty derivatives map, i.e. a constant value
      */
     private SparseGradient(final double value, final Map<Integer, Double> derivatives) {
         this.value = value;
@@ -67,15 +67,16 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         }
     }
 
-    /** Internal constructor.
-     * @param value value of the function
-     * @param scale scaling factor to apply to all derivatives
+    /**
+     * Internal constructor.
+     * 
+     * @param value       value of the function
+     * @param scale       scaling factor to apply to all derivatives
      * @param derivatives derivatives map, a deep copy will be performed,
-     * so the map given here will remain safe from changes in the new instance,
-     * may be null to create an empty derivatives map, i.e. a constant value
+     *                    so the map given here will remain safe from changes in the new instance,
+     *                    may be null to create an empty derivatives map, i.e. a constant value
      */
-    private SparseGradient(final double value, final double scale,
-                             final Map<Integer, Double> derivatives) {
+    private SparseGradient(final double value, final double scale, final Map<Integer, Double> derivatives) {
         this.value = value;
         this.derivatives = new HashMap<Integer, Double>();
         if (derivatives != null) {
@@ -85,16 +86,20 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         }
     }
 
-    /** Factory method creating a constant.
+    /**
+     * Factory method creating a constant.
+     * 
      * @param value value of the constant
      * @return a new instance
      */
     public static SparseGradient createConstant(final double value) {
-        return new SparseGradient(value, Collections.<Integer, Double> emptyMap());
+        return new SparseGradient(value, Collections.<Integer, Double>emptyMap());
     }
 
-    /** Factory method creating an independent variable.
-     * @param idx index of the variable
+    /**
+     * Factory method creating an independent variable.
+     * 
+     * @param idx   index of the variable
      * @param value value of the variable
      * @return a new instance
      */
@@ -104,6 +109,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /**
      * Find the number of variables.
+     * 
      * @return number of variables
      */
     public int numVars() {
@@ -123,6 +129,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /**
      * Get the value of the function.
+     * 
      * @return value of the function.
      */
     public double getValue() {
@@ -160,6 +167,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * instance the {@link #add(SparseGradient)} method should
      * be used.
      * </p>
+     * 
      * @param a instance to add
      */
     public void addInPlace(final SparseGradient a) {
@@ -203,8 +211,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /** {@inheritDoc} */
     public SparseGradient multiply(final SparseGradient a) {
-        final SparseGradient out =
-            new SparseGradient(value * a.value, Collections.<Integer, Double> emptyMap());
+        final SparseGradient out = new SparseGradient(value * a.value, Collections.<Integer, Double>emptyMap());
 
         // Derivatives.
         for (Map.Entry<Integer, Double> entry : derivatives.entrySet()) {
@@ -232,6 +239,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * instance the {@link #add(SparseGradient)} method should
      * be used.
      * </p>
+     * 
      * @param a instance to multiply
      */
     public void multiplyInPlace(final SparseGradient a) {
@@ -263,7 +271,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /** {@inheritDoc} */
     public SparseGradient divide(final SparseGradient a) {
-        final SparseGradient out = new SparseGradient(value / a.value, Collections.<Integer, Double> emptyMap());
+        final SparseGradient out = new SparseGradient(value / a.value, Collections.<Integer, Double>emptyMap());
 
         // Derivatives.
         for (Map.Entry<Integer, Double> entry : derivatives.entrySet()) {
@@ -323,7 +331,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
         // compute k such that lhs % rhs = lhs - k rhs
         final double rem = FastMath.IEEEremainder(value, a.value);
-        final double k   = FastMath.rint((value - rem) / a.value);
+        final double k = FastMath.rint((value - rem) / a.value);
 
         return subtract(a.multiply(k));
 
@@ -386,7 +394,9 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /** {@inheritDoc} */
     public SparseGradient scalb(final int n) {
-        final SparseGradient out = new SparseGradient(FastMath.scalb(value, n), Collections.<Integer, Double> emptyMap());
+        final SparseGradient out = new SparseGradient(
+            FastMath.scalb(value, n),
+            Collections.<Integer, Double>emptyMap());
         for (Map.Entry<Integer, Double> entry : derivatives.entrySet()) {
             out.derivatives.put(entry.getKey(), FastMath.scalb(entry.getValue(), n));
         }
@@ -419,8 +429,9 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
                 final SparseGradient scaledY = y.scalb(-middleExp);
 
                 // compute scaled hypotenuse
-                final SparseGradient scaledH =
-                        scaledX.multiply(scaledX).add(scaledY.multiply(scaledY)).sqrt();
+                final SparseGradient scaledH = scaledX.multiply(scaledX)
+                    .add(scaledY.multiply(scaledY))
+                    .sqrt();
 
                 // remove scaling
                 return scaledH.scalb(middleExp);
@@ -436,8 +447,8 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * avoiding intermediate overflow or underflow.
      *
      * <ul>
-     * <li> If either argument is infinite, then the result is positive infinity.</li>
-     * <li> else, if either argument is NaN then the result is NaN.</li>
+     * <li>If either argument is infinite, then the result is positive infinity.</li>
+     * <li>else, if either argument is NaN then the result is NaN.</li>
      * </ul>
      *
      * @param x a value
@@ -479,7 +490,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /** {@inheritDoc} */
     public SparseGradient pow(final double p) {
-        return new SparseGradient(FastMath.pow(value,  p), p * FastMath.pow(value,  p - 1), derivatives);
+        return new SparseGradient(FastMath.pow(value, p), p * FastMath.pow(value, p - 1), derivatives);
     }
 
     /** {@inheritDoc} */
@@ -487,17 +498,20 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         if (n == 0) {
             return getField().getOne();
         } else {
-            final double valueNm1 = FastMath.pow(value,  n - 1);
+            final double valueNm1 = FastMath.pow(value, n - 1);
             return new SparseGradient(value * valueNm1, n * valueNm1, derivatives);
         }
     }
 
     /** {@inheritDoc} */
     public SparseGradient pow(final SparseGradient e) {
-        return log().multiply(e).exp();
+        return log().multiply(e)
+            .exp();
     }
 
-    /** Compute a<sup>x</sup> where a is a double and x a {@link SparseGradient}
+    /**
+     * Compute a<sup>x</sup> where a is a double and x a {@link SparseGradient}
+     * 
      * @param a number to exponentiate
      * @param x power to apply
      * @return a<sup>x</sup>
@@ -509,7 +523,8 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
             } else if (x.value < 0) {
                 return x.compose(Double.NaN, Double.NaN);
             } else {
-                return x.getField().getZero();
+                return x.getField()
+                    .getZero();
             }
         } else {
             final double ax = FastMath.pow(a, x.value);
@@ -533,7 +548,9 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         return new SparseGradient(FastMath.log(value), 1.0 / value, derivatives);
     }
 
-    /** Base 10 logarithm.
+    /**
+     * Base 10 logarithm.
+     * 
      * @return base 10 logarithm of the instance
      */
     public SparseGradient log10() {
@@ -580,18 +597,21 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     public SparseGradient atan2(final SparseGradient x) {
 
         // compute r = sqrt(x^2+y^2)
-        final SparseGradient r = multiply(this).add(x.multiply(x)).sqrt();
+        final SparseGradient r = multiply(this).add(x.multiply(x))
+            .sqrt();
 
         final SparseGradient a;
         if (x.value >= 0) {
 
             // compute atan2(y, x) = 2 atan(y / (r + x))
-            a = divide(r.add(x)).atan().multiply(2);
+            a = divide(r.add(x)).atan()
+                .multiply(2);
 
         } else {
 
             // compute atan2(y, x) = +/- pi - 2 atan(y / (r - x))
-            final SparseGradient tmp = divide(r.subtract(x)).atan().multiply(-2);
+            final SparseGradient tmp = divide(r.subtract(x)).atan()
+                .multiply(-2);
             a = tmp.add(tmp.value <= 0 ? -FastMath.PI : FastMath.PI);
 
         }
@@ -603,7 +623,9 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     }
 
-    /** Two arguments arc tangent operation.
+    /**
+     * Two arguments arc tangent operation.
+     * 
      * @param y first argument of the arc tangent
      * @param x second argument of the arc tangent
      * @return atan2(y, x)
@@ -643,25 +665,31 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         return new SparseGradient(FastMath.atanh(value), 1.0 / (1.0 - value * value), derivatives);
     }
 
-    /** Convert radians to degrees, with error of less than 0.5 ULP
-     *  @return instance converted into degrees
+    /**
+     * Convert radians to degrees, with error of less than 0.5 ULP
+     * 
+     * @return instance converted into degrees
      */
     public SparseGradient toDegrees() {
         return new SparseGradient(FastMath.toDegrees(value), FastMath.toDegrees(1.0), derivatives);
     }
 
-    /** Convert degrees to radians, with error of less than 0.5 ULP
-     *  @return instance converted into radians
+    /**
+     * Convert degrees to radians, with error of less than 0.5 ULP
+     * 
+     * @return instance converted into radians
      */
     public SparseGradient toRadians() {
         return new SparseGradient(FastMath.toRadians(value), FastMath.toRadians(1.0), derivatives);
     }
 
-    /** Evaluate Taylor expansion of a sparse gradient.
+    /**
+     * Evaluate Taylor expansion of a sparse gradient.
+     * 
      * @param delta parameters offsets (&Delta;x, &Delta;y, ...)
      * @return value of the Taylor expansion at x + &Delta;x, y + &Delta;y, ...
      */
-    public double taylor(final double ... delta) {
+    public double taylor(final double... delta) {
         double y = value;
         for (int i = 0; i < delta.length; ++i) {
             y += delta[i] * getDerivative(i);
@@ -669,23 +697,25 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         return y;
     }
 
-    /** Compute composition of the instance by a univariate function.
+    /**
+     * Compute composition of the instance by a univariate function.
+     * 
      * @param f0 value of the function at (i.e. f({@link #getValue()}))
      * @param f1 first derivative of the function at
-     * the current point (i.e. f'({@link #getValue()}))
+     *           the current point (i.e. f'({@link #getValue()}))
      * @return f(this)
-    */
+     */
     public SparseGradient compose(final double f0, final double f1) {
         return new SparseGradient(f0, f1, derivatives);
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final SparseGradient[] a,
-                                              final SparseGradient[] b)
+    public SparseGradient linearCombination(final SparseGradient[] a, final SparseGradient[] b)
         throws DimensionMismatchException {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = a[0].getField().getZero();
+        SparseGradient out = a[0].getField()
+            .getZero();
         for (int i = 0; i < a.length; ++i) {
             out = out.add(a[i].multiply(b[i]));
         }
@@ -709,7 +739,8 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     public SparseGradient linearCombination(final double[] a, final SparseGradient[] b) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = b[0].getField().getZero();
+        SparseGradient out = b[0].getField()
+            .getZero();
         for (int i = 0; i < a.length; ++i) {
             out = out.add(b[i].multiply(a[i]));
         }
@@ -726,11 +757,12 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1,
-                                              final SparseGradient a2, final SparseGradient b2) {
+    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1, final SparseGradient a2,
+        final SparseGradient b2) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = a1.multiply(b1).add(a2.multiply(b2));
+        SparseGradient out = a1.multiply(b1)
+            .add(a2.multiply(b2));
 
         // recompute an accurate value, taking care of cancellations
         out.value = MathArrays.linearCombination(a1.value, b1.value, a2.value, b2.value);
@@ -740,11 +772,12 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final double a1, final SparseGradient b1,
-                                              final double a2, final SparseGradient b2) {
+    public SparseGradient linearCombination(final double a1, final SparseGradient b1, final double a2,
+        final SparseGradient b2) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = b1.multiply(a1).add(b2.multiply(a2));
+        SparseGradient out = b1.multiply(a1)
+            .add(b2.multiply(a2));
 
         // recompute an accurate value, taking care of cancellations
         out.value = MathArrays.linearCombination(a1, b1.value, a2, b2.value);
@@ -754,72 +787,68 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1,
-                                              final SparseGradient a2, final SparseGradient b2,
-                                              final SparseGradient a3, final SparseGradient b3) {
+    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1, final SparseGradient a2,
+        final SparseGradient b2, final SparseGradient a3, final SparseGradient b3) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = a1.multiply(b1).add(a2.multiply(b2)).add(a3.multiply(b3));
+        SparseGradient out = a1.multiply(b1)
+            .add(a2.multiply(b2))
+            .add(a3.multiply(b3));
 
         // recompute an accurate value, taking care of cancellations
-        out.value = MathArrays.linearCombination(a1.value, b1.value,
-                                                 a2.value, b2.value,
-                                                 a3.value, b3.value);
+        out.value = MathArrays.linearCombination(a1.value, b1.value, a2.value, b2.value, a3.value, b3.value);
 
         return out;
 
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final double a1, final SparseGradient b1,
-                                              final double a2, final SparseGradient b2,
-                                              final double a3, final SparseGradient b3) {
+    public SparseGradient linearCombination(final double a1, final SparseGradient b1, final double a2,
+        final SparseGradient b2, final double a3, final SparseGradient b3) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = b1.multiply(a1).add(b2.multiply(a2)).add(b3.multiply(a3));
+        SparseGradient out = b1.multiply(a1)
+            .add(b2.multiply(a2))
+            .add(b3.multiply(a3));
 
         // recompute an accurate value, taking care of cancellations
-        out.value = MathArrays.linearCombination(a1, b1.value,
-                                                 a2, b2.value,
-                                                 a3, b3.value);
+        out.value = MathArrays.linearCombination(a1, b1.value, a2, b2.value, a3, b3.value);
 
         return out;
 
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1,
-                                              final SparseGradient a2, final SparseGradient b2,
-                                              final SparseGradient a3, final SparseGradient b3,
-                                              final SparseGradient a4, final SparseGradient b4) {
+    public SparseGradient linearCombination(final SparseGradient a1, final SparseGradient b1, final SparseGradient a2,
+        final SparseGradient b2, final SparseGradient a3, final SparseGradient b3, final SparseGradient a4,
+        final SparseGradient b4) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = a1.multiply(b1).add(a2.multiply(b2)).add(a3.multiply(b3)).add(a4.multiply(b4));
+        SparseGradient out = a1.multiply(b1)
+            .add(a2.multiply(b2))
+            .add(a3.multiply(b3))
+            .add(a4.multiply(b4));
 
         // recompute an accurate value, taking care of cancellations
-        out.value = MathArrays.linearCombination(a1.value, b1.value,
-                                                 a2.value, b2.value,
-                                                 a3.value, b3.value,
-                                                 a4.value, b4.value);
+        out.value = MathArrays
+            .linearCombination(a1.value, b1.value, a2.value, b2.value, a3.value, b3.value, a4.value, b4.value);
 
         return out;
 
     }
 
     /** {@inheritDoc} */
-    public SparseGradient linearCombination(final double a1, final SparseGradient b1,
-                                              final double a2, final SparseGradient b2,
-                                              final double a3, final SparseGradient b3,
-                                              final double a4, final SparseGradient b4) {
+    public SparseGradient linearCombination(final double a1, final SparseGradient b1, final double a2,
+        final SparseGradient b2, final double a3, final SparseGradient b3, final double a4, final SparseGradient b4) {
 
         // compute a simple value, with all partial derivatives
-        SparseGradient out = b1.multiply(a1).add(b2.multiply(a2)).add(b3.multiply(a3)).add(b4.multiply(a4));
+        SparseGradient out = b1.multiply(a1)
+            .add(b2.multiply(a2))
+            .add(b3.multiply(a3))
+            .add(b4.multiply(a4));
 
         // recompute an accurate value, taking care of cancellations
-        out.value = MathArrays.linearCombination(a1, b1.value,
-                                                 a2, b2.value,
-                                                 a3, b3.value,
-                                                 a4, b4.value);
+        out.value = MathArrays.linearCombination(a1, b1.value, a2, b2.value, a3, b3.value, a4, b4.value);
 
         return out;
 
@@ -831,6 +860,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * Sparse gradients are considered equal if they have the same value
      * and the same derivatives.
      * </p>
+     * 
      * @param other Object to test for equality to this
      * @return true if two sparse gradients are equal
      */
@@ -842,7 +872,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
         }
 
         if (other instanceof SparseGradient) {
-            final SparseGradient rhs = (SparseGradient)other;
+            final SparseGradient rhs = (SparseGradient) other;
             if (!Precision.equals(value, rhs.value, 1)) {
                 return false;
             }
@@ -866,6 +896,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
 
     /**
      * Get a hashCode for the derivative structure.
+     * 
      * @return a hash code value for this object
      * @since 3.2
      */

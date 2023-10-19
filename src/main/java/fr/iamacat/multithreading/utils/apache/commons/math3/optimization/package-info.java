@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +15,10 @@
 /**
  * <h2>All classes and sub-packages of this package are deprecated.</h2>
  * <h3>Please use their replacements, to be found under
- *  <ul>
- *   <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optim}</li>
- *   <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.fitting}</li>
- *  </ul>
+ * <ul>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optim}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.fitting}</li>
+ * </ul>
  * </h3>
  *
  * <p>
@@ -39,20 +37,20 @@
  * interfaces defining the common behavior of optimizers, one for each supported type of objective
  * function:
  * <ul>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.UnivariateOptimizer
- *      UnivariateOptimizer} for {@link fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction
- *      univariate real functions}</li>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer
- *      MultivariateOptimizer} for {@link fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateFunction
- *      multivariate real functions}</li>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer
- *      MultivariateDifferentiableOptimizer} for {@link
- *      fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableFunction
- *      multivariate differentiable real functions}</li>
- *  <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableVectorOptimizer
- *      MultivariateDifferentiableVectorOptimizer} for {@link
- *      fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableVectorFunction
- *      multivariate differentiable vectorial functions}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.UnivariateOptimizer
+ * UnivariateOptimizer} for {@link fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction
+ * univariate real functions}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer
+ * MultivariateOptimizer} for {@link fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateFunction
+ * multivariate real functions}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer
+ * MultivariateDifferentiableOptimizer} for {@link
+ * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableFunction
+ * multivariate differentiable real functions}</li>
+ * <li>{@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableVectorOptimizer
+ * MultivariateDifferentiableVectorOptimizer} for {@link
+ * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableVectorFunction
+ * multivariate differentiable vectorial functions}</li>
  * </ul>
  * </p>
  *
@@ -62,9 +60,11 @@
  * non-differentiable multivariate vectorial function} by converting it to a {@link
  * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateFunction non-differentiable multivariate
  * real function} thanks to the {@link
- * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.LeastSquaresConverter LeastSquaresConverter} helper class.
+ * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.LeastSquaresConverter LeastSquaresConverter} helper
+ * class.
  * The transformed function can be optimized using any implementation of the {@link
- * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer MultivariateOptimizer} interface.
+ * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer MultivariateOptimizer}
+ * interface.
  * </p>
  *
  * <p>

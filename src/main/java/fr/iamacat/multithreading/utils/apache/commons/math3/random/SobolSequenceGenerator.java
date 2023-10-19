@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,8 +42,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * <p>
  * The generator supports two modes:
  * <ul>
- *   <li>sequential generation of points: {@link #nextVector()}</li>
- *   <li>random access to the i-th point in the sequence: {@link #skipTo(int)}</li>
+ * <li>sequential generation of points: {@link #nextVector()}</li>
+ * <li>random access to the i-th point in the sequence: {@link #skipTo(int)}</li>
  * </ul>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Sobol_sequence">Sobol sequence (Wikipedia)</a>
@@ -131,12 +129,13 @@ public class SobolSequenceGenerator implements RandomVectorGenerator {
      * The first line will be ignored as it is assumed to contain only the column headers.
      * The columns are:
      * <ul>
-     *  <li>d: the dimension</li>
-     *  <li>s: the degree of the primitive polynomial</li>
-     *  <li>a: the number representing the coefficients</li>
-     *  <li>m: the list of initial direction numbers</li>
+     * <li>d: the dimension</li>
+     * <li>s: the degree of the primitive polynomial</li>
+     * <li>a: the number representing the coefficients</li>
+     * <li>m: the list of initial direction numbers</li>
      * </ul>
      * Example:
+     * 
      * <pre>
      * d       s       a       m_i
      * 2       1       0       1
@@ -146,15 +145,15 @@ public class SobolSequenceGenerator implements RandomVectorGenerator {
      * The input stream <i>must</i> be an ASCII text containing one valid direction vector per line.
      *
      * @param dimension the space dimension
-     * @param is the stream to read the direction vectors from
+     * @param is        the stream to read the direction vectors from
      * @throws NotStrictlyPositiveException if the space dimension is &lt; 1
-     * @throws OutOfRangeException if the space dimension is outside the range [1, max], where
-     *   max refers to the maximum dimension found in the input stream
-     * @throws MathParseException if the content in the stream could not be parsed successfully
-     * @throws IOException if an error occurs while reading from the input stream
+     * @throws OutOfRangeException          if the space dimension is outside the range [1, max], where
+     *                                      max refers to the maximum dimension found in the input stream
+     * @throws MathParseException           if the content in the stream could not be parsed successfully
+     * @throws IOException                  if an error occurs while reading from the input stream
      */
     public SobolSequenceGenerator(final int dimension, final InputStream is)
-            throws NotStrictlyPositiveException, MathParseException, IOException {
+        throws NotStrictlyPositiveException, MathParseException, IOException {
 
         if (dimension < 1) {
             throw new NotStrictlyPositiveException(dimension);
@@ -181,7 +180,7 @@ public class SobolSequenceGenerator implements RandomVectorGenerator {
      *
      * @param is the input stream to read the direction vector from
      * @return the last dimension that has been read from the input stream
-     * @throws IOException if the stream could not be read
+     * @throws IOException        if the stream could not be read
      * @throws MathParseException if the content could not be parsed successfully
      */
     private int initFromStream(final InputStream is) throws MathParseException, IOException {
@@ -202,7 +201,7 @@ public class SobolSequenceGenerator implements RandomVectorGenerator {
             int lineNumber = 2;
             int index = 1;
             String line = null;
-            while ( (line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 StringTokenizer st = new StringTokenizer(line, " ");
                 try {
                     dim = Integer.parseInt(st.nextToken());

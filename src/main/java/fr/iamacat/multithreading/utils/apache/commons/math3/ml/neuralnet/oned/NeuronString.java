@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +15,13 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.oned;
 
-import java.io.Serializable;
 import java.io.ObjectInputStream;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Network;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.FeatureInitializer;
+import java.io.Serializable;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.FeatureInitializer;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Network;
 
 /**
  * Neural network with the topology of a one-dimensional line.
@@ -31,6 +30,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRange
  * @since 3.3
  */
 public class NeuronString implements Serializable {
+
     /** Serial version ID */
     private static final long serialVersionUID = 1L;
     /** Underlying network. */
@@ -49,14 +49,13 @@ public class NeuronString implements Serializable {
     /**
      * Constructor with restricted access, solely used for deserialization.
      *
-     * @param wrap Whether to wrap the dimension (i.e the first and last
-     * neurons will be linked together).
+     * @param wrap         Whether to wrap the dimension (i.e the first and last
+     *                     neurons will be linked together).
      * @param featuresList Arrays that will initialize the features sets of
-     * the network's neurons.
+     *                     the network's neurons.
      * @throws NumberIsTooSmallException if {@code num < 2}.
      */
-    NeuronString(boolean wrap,
-                 double[][] featuresList) {
+    NeuronString(boolean wrap, double[][] featuresList) {
         size = featuresList.length;
 
         if (size < 2) {
@@ -90,16 +89,14 @@ public class NeuronString implements Serializable {
      * The topology of the network can also be a circle (if the
      * dimension is wrapped).
      *
-     * @param num Number of neurons.
-     * @param wrap Whether to wrap the dimension (i.e the first and last
-     * neurons will be linked together).
+     * @param num         Number of neurons.
+     * @param wrap        Whether to wrap the dimension (i.e the first and last
+     *                    neurons will be linked together).
      * @param featureInit Arrays that will initialize the features sets of
-     * the network's neurons.
+     *                    the network's neurons.
      * @throws NumberIsTooSmallException if {@code num < 2}.
      */
-    public NeuronString(int num,
-                        boolean wrap,
-                        FeatureInitializer[] featureInit) {
+    public NeuronString(int num, boolean wrap, FeatureInitializer[] featureInit) {
         if (num < 2) {
             throw new NumberIsTooSmallException(num, 2, true);
         }
@@ -155,12 +152,12 @@ public class NeuronString implements Serializable {
      * @throws OutOfRangeException if {@code i} is out of range.
      */
     public double[] getFeatures(int i) {
-        if (i < 0 ||
-            i >= size) {
+        if (i < 0 || i >= size) {
             throw new OutOfRangeException(i, 0, size - 1);
         }
 
-        return network.getNeuron(identifiers[i]).getFeatures();
+        return network.getNeuron(identifiers[i])
+            .getFeatures();
     }
 
     /**
@@ -199,14 +196,14 @@ public class NeuronString implements Serializable {
             featuresList[i] = getFeatures(i);
         }
 
-        return new SerializationProxy(wrap,
-                                      featuresList);
+        return new SerializationProxy(wrap, featuresList);
     }
 
     /**
      * Serialization.
      */
     private static class SerializationProxy implements Serializable {
+
         /** Serializable. */
         private static final long serialVersionUID = 20130226L;
         /** Wrap. */
@@ -215,12 +212,11 @@ public class NeuronString implements Serializable {
         private final double[][] featuresList;
 
         /**
-         * @param wrap Whether the dimension is wrapped.
+         * @param wrap         Whether the dimension is wrapped.
          * @param featuresList List of neurons features.
-         * {@code neuronList}.
+         *                     {@code neuronList}.
          */
-        SerializationProxy(boolean wrap,
-                           double[][] featuresList) {
+        SerializationProxy(boolean wrap, double[][] featuresList) {
             this.wrap = wrap;
             this.featuresList = featuresList;
         }
@@ -231,8 +227,7 @@ public class NeuronString implements Serializable {
          * @return the {@link Neuron} for which this instance is the proxy.
          */
         private Object readResolve() {
-            return new NeuronString(wrap,
-                                    featuresList);
+            return new NeuronString(wrap, featuresList);
         }
     }
 }

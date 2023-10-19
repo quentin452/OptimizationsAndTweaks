@@ -1,7 +1,14 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,20 +21,15 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate extends Entity {
@@ -37,7 +39,11 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     @Shadow
     private static final UUID sprintingSpeedBoostModifierUUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     @Shadow
-    private static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(sprintingSpeedBoostModifierUUID, "Sprinting speed boost", 0.30000001192092896D, 2)).setSaved(false);
+    private static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(
+        sprintingSpeedBoostModifierUUID,
+        "Sprinting speed boost",
+        0.30000001192092896D,
+        2)).setSaved(false);
     @Shadow
     private BaseAttributeMap attributeMap;
     @Shadow
@@ -133,7 +139,9 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     /** The score value of the Mob, the amount of points the mob is worth. */
     @Shadow
     protected int scoreValue;
-    /** Damage taken in the last hit. Mobs are resistant to damage less than this for a short time after taking damage. */
+    /**
+     * Damage taken in the last hit. Mobs are resistant to damage less than this for a short time after taking damage.
+     */
     @Shadow
     protected float lastDamage;
     /** used to check whether entity is jumping. */
@@ -229,17 +237,15 @@ public abstract class MixinEntityLivingUpdate extends Entity {
      * Causes this entity to do an upwards motion (jumping).
      */
     @Unique
-    protected void jump()
-    {
+    protected void jump() {
         this.motionY = 0.41999998688697815D;
 
-        if (this.isPotionActive(Potion.jump))
-        {
-            this.motionY += (float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
+        if (this.isPotionActive(Potion.jump)) {
+            this.motionY += (float) (this.getActivePotionEffect(Potion.jump)
+                .getAmplifier() + 1) * 0.1F;
         }
 
-        if (this.isSprinting())
-        {
+        if (this.isSprinting()) {
             float f = this.rotationYaw * 0.017453292F;
             this.motionX -= MathHelper.sin(f) * 0.2F;
             this.motionZ += MathHelper.cos(f) * 0.2F;
@@ -250,18 +256,16 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     }
 
     @Unique
-    protected void collideWithNearbyEntities()
-    {
-        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
+    protected void collideWithNearbyEntities() {
+        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(
+            this,
+            this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 
-        if (list != null && !list.isEmpty())
-        {
-            for (int i = 0; i < list.size(); ++i)
-            {
-                Entity entity = (Entity)list.get(i);
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); ++i) {
+                Entity entity = (Entity) list.get(i);
 
-                if (entity.canBePushed())
-                {
+                if (entity.canBePushed()) {
                     this.collideWithEntity(entity);
                 }
             }
@@ -269,8 +273,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     }
 
     @Unique
-    public boolean isPotionActive(Potion p_70644_1_)
-    {
+    public boolean isPotionActive(Potion p_70644_1_) {
         return this.activePotionsMap.containsKey(p_70644_1_.id);
     }
 
@@ -278,83 +281,83 @@ public abstract class MixinEntityLivingUpdate extends Entity {
      * returns the PotionEffect for the supplied Potion if it is active, null otherwise.
      */
     @Unique
-    public PotionEffect getActivePotionEffect(Potion p_70660_1_)
-    {
-        return (PotionEffect)this.activePotionsMap.get(Integer.valueOf(p_70660_1_.id));
+    public PotionEffect getActivePotionEffect(Potion p_70660_1_) {
+        return (PotionEffect) this.activePotionsMap.get(Integer.valueOf(p_70660_1_.id));
     }
+
     /**
      * Dead and sleeping entities cannot move
      */
     @Unique
-    protected boolean isMovementBlocked()
-    {
+    protected boolean isMovementBlocked() {
         return this.getHealth() <= 0.0F;
     }
 
     @Unique
-    public final float getHealth()
-    {
+    public final float getHealth() {
         return this.dataWatcher.getWatchableObjectFloat(6);
     }
+
     @Unique
-    protected void collideWithEntity(Entity p_82167_1_)
-    {
+    protected void collideWithEntity(Entity p_82167_1_) {
         p_82167_1_.applyEntityCollision(this);
     }
+
     /**
      * Returns whether the entity is in a local (client) world
      */
     @Unique
-    public boolean isClientWorld()
-    {
+    public boolean isClientWorld() {
         return !this.worldObj.isRemote;
     }
 
     @Unique
     protected void updateAITasks() {}
+
     @Unique
-    protected void updateEntityActionState()
-    {
+    protected void updateEntityActionState() {
         ++this.entityAge;
     }
+
     /**
      * Returns true if the newer Entity AI code should be run
      */
     @Unique
-    protected boolean isAIEnabled()
-    {
+    protected boolean isAIEnabled() {
         return false;
     }
+
     /**
      * returns true if this entity is by a ladder, false otherwise
      */
     @Unique
-    public boolean isOnLadder()
-    {
+    public boolean isOnLadder() {
         int i = MathHelper.floor_double(this.posX);
         int j = MathHelper.floor_double(this.boundingBox.minY);
         int k = MathHelper.floor_double(this.posZ);
         Block block = this.worldObj.getBlock(i, j, k);
         return ForgeHooks.isLivingOnLadder(block, worldObj, i, j, k, entityLivingBase);
     }
+
     /**
      * the movespeed used for the new AI system
      */
     @Unique
-    public float getAIMoveSpeed()
-    {
+    public float getAIMoveSpeed() {
         return this.isAIEnabled() ? this.landMovementFactor : 0.1F;
     }
-    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1))
+
+    @Redirect(
+        method = "attackEntityFrom",
+        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1))
     private double redirectAtan2(double x, double y) {
         double result = FastMath.atan2(y, x);
         return result * 180.0D / Math.PI;
     }
 
-    @Redirect(method = "onUpdate",
-        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
+    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
     private double redirectAtan2onUpdate(double x, double y) {
         double result = FastMath.atan2(y, x);
-        return (float)(result * 180.0F / (float)Math.PI) - 90.0F;
+        return (float) (result * 180.0F / (float) Math.PI) - 90.0F;
     }
 }

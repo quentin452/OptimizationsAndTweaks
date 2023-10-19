@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +27,11 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * Implementation of the hypergeometric distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Hypergeometric_distribution">Hypergeometric distribution (Wikipedia)</a>
- * @see <a href="http://mathworld.wolfram.com/HypergeometricDistribution.html">Hypergeometric distribution (MathWorld)</a>
+ * @see <a href="http://mathworld.wolfram.com/HypergeometricDistribution.html">Hypergeometric distribution
+ *      (MathWorld)</a>
  */
 public class HypergeometricDistribution extends AbstractIntegerDistribution {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = -436928820673516179L;
     /** The number of successes in the population. */
@@ -56,59 +56,59 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param populationSize Population size.
+     * @param populationSize    Population size.
      * @param numberOfSuccesses Number of successes in the population.
-     * @param sampleSize Sample size.
-     * @throws NotPositiveException if {@code numberOfSuccesses < 0}.
+     * @param sampleSize        Sample size.
+     * @throws NotPositiveException         if {@code numberOfSuccesses < 0}.
      * @throws NotStrictlyPositiveException if {@code populationSize <= 0}.
-     * @throws NumberIsTooLargeException if {@code numberOfSuccesses > populationSize},
-     * or {@code sampleSize > populationSize}.
+     * @throws NumberIsTooLargeException    if {@code numberOfSuccesses > populationSize},
+     *                                      or {@code sampleSize > populationSize}.
      */
     public HypergeometricDistribution(int populationSize, int numberOfSuccesses, int sampleSize)
-    throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
+        throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
         this(new Well19937c(), populationSize, numberOfSuccesses, sampleSize);
     }
 
     /**
      * Creates a new hypergeometric distribution.
      *
-     * @param rng Random number generator.
-     * @param populationSize Population size.
+     * @param rng               Random number generator.
+     * @param populationSize    Population size.
      * @param numberOfSuccesses Number of successes in the population.
-     * @param sampleSize Sample size.
-     * @throws NotPositiveException if {@code numberOfSuccesses < 0}.
+     * @param sampleSize        Sample size.
+     * @throws NotPositiveException         if {@code numberOfSuccesses < 0}.
      * @throws NotStrictlyPositiveException if {@code populationSize <= 0}.
-     * @throws NumberIsTooLargeException if {@code numberOfSuccesses > populationSize},
-     * or {@code sampleSize > populationSize}.
+     * @throws NumberIsTooLargeException    if {@code numberOfSuccesses > populationSize},
+     *                                      or {@code sampleSize > populationSize}.
      * @since 3.1
      */
-    public HypergeometricDistribution(RandomGenerator rng,
-                                      int populationSize,
-                                      int numberOfSuccesses,
-                                      int sampleSize)
-    throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
+    public HypergeometricDistribution(RandomGenerator rng, int populationSize, int numberOfSuccesses, int sampleSize)
+        throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
         super(rng);
 
         if (populationSize <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.POPULATION_SIZE,
-                                                   populationSize);
+            throw new NotStrictlyPositiveException(LocalizedFormats.POPULATION_SIZE, populationSize);
         }
         if (numberOfSuccesses < 0) {
-            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SUCCESSES,
-                                           numberOfSuccesses);
+            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SUCCESSES, numberOfSuccesses);
         }
         if (sampleSize < 0) {
-            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
-                                           sampleSize);
+            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES, sampleSize);
         }
 
         if (numberOfSuccesses > populationSize) {
-            throw new NumberIsTooLargeException(LocalizedFormats.NUMBER_OF_SUCCESS_LARGER_THAN_POPULATION_SIZE,
-                                                numberOfSuccesses, populationSize, true);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.NUMBER_OF_SUCCESS_LARGER_THAN_POPULATION_SIZE,
+                numberOfSuccesses,
+                populationSize,
+                true);
         }
         if (sampleSize > populationSize) {
-            throw new NumberIsTooLargeException(LocalizedFormats.SAMPLE_SIZE_LARGER_THAN_POPULATION_SIZE,
-                                                sampleSize, populationSize, true);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.SAMPLE_SIZE_LARGER_THAN_POPULATION_SIZE,
+                sampleSize,
+                populationSize,
+                true);
         }
 
         this.numberOfSuccesses = numberOfSuccesses;
@@ -139,7 +139,7 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * @param m Number of successes in the population.
      * @param k Sample size.
      * @return a two element array containing the lower and upper bounds of the
-     * hypergeometric distribution.
+     *         hypergeometric distribution.
      */
     private int[] getDomain(int n, int m, int k) {
         return new int[] { getLowerDomain(n, m, k), getUpperDomain(m, k) };
@@ -214,13 +214,10 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
         } else {
             double p = (double) sampleSize / (double) populationSize;
             double q = (double) (populationSize - sampleSize) / (double) populationSize;
-            double p1 = SaddlePointExpansion.logBinomialProbability(x,
-                    numberOfSuccesses, p, q);
-            double p2 =
-                    SaddlePointExpansion.logBinomialProbability(sampleSize - x,
-                            populationSize - numberOfSuccesses, p, q);
-            double p3 =
-                    SaddlePointExpansion.logBinomialProbability(sampleSize, populationSize, p, q);
+            double p1 = SaddlePointExpansion.logBinomialProbability(x, numberOfSuccesses, p, q);
+            double p2 = SaddlePointExpansion
+                .logBinomialProbability(sampleSize - x, populationSize - numberOfSuccesses, p, q);
+            double p3 = SaddlePointExpansion.logBinomialProbability(sampleSize, populationSize, p, q);
             ret = p1 + p2 - p3;
         }
 
@@ -259,7 +256,7 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * @param x0 Inclusive lower bound.
      * @param x1 Inclusive upper bound.
      * @param dx Direction of summation (1 indicates summing from x0 to x1, and
-     * 0 indicates summing from x1 to x0).
+     *           0 indicates summing from x1 to x0).
      * @return {@code P(x0 <= X <= x1)}.
      */
     private double innerCumulativeProbability(int x0, int x1, int dx) {
@@ -318,8 +315,7 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * @return lower bound of the support
      */
     public int getSupportLowerBound() {
-        return FastMath.max(0,
-                            getSampleSize() + getNumberOfSuccesses() - getPopulationSize());
+        return FastMath.max(0, getSampleSize() + getNumberOfSuccesses() - getPopulationSize());
     }
 
     /**

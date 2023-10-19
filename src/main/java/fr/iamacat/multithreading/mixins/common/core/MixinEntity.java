@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -9,13 +8,14 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(Entity.class)
 public class MixinEntity {
@@ -56,20 +56,21 @@ public class MixinEntity {
     @Overwrite
     @SideOnly(Side.CLIENT)
     public int getBrightnessForRender(float p_70070_1_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntity){
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.posZ);
+        if (MultithreadingandtweaksConfig.enableMixinEntity) {
+            int i = MathHelper.floor_double(this.posX);
+            int j = MathHelper.floor_double(this.posZ);
 
-        if (this.worldObj.blockExists(i, 0, j)) {
-            double d0 = (this.boundingBox.maxY - this.boundingBox.minY) * 0.66D;
-            int k = MathHelper.floor_double(this.posY - (double) this.yOffset + d0);
-            return this.worldObj.getLightBrightnessForSkyBlocks(i, k, j, 0);
-        } else {
-            return 0;
-        }
+            if (this.worldObj.blockExists(i, 0, j)) {
+                double d0 = (this.boundingBox.maxY - this.boundingBox.minY) * 0.66D;
+                int k = MathHelper.floor_double(this.posY - (double) this.yOffset + d0);
+                return this.worldObj.getLightBrightnessForSkyBlocks(i, k, j, 0);
+            } else {
+                return 0;
+            }
         }
         return 0;
     }
+
     @Unique
     private boolean cachedIsInWater = false;
     @Unique

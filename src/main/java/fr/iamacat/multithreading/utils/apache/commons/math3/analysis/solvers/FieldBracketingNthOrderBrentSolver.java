@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +13,6 @@
  * limitations under the License.
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers;
-
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.Field;
 import fr.iamacat.multithreading.utils.apache.commons.math3.RealFieldElement;
@@ -35,12 +32,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
  * <p>
  * The changes with respect to the original Brent algorithm are:
  * <ul>
- *   <li>the returned value is chosen in the current interval according
- *   to user specified {@link AllowedSolution}</li>
- *   <li>the maximal order for the invert polynomial root search is
- *   user-specified instead of being invert quadratic only</li>
- * </ul><p>
- * The given interval must bracket the root.</p>
+ * <li>the returned value is chosen in the current interval according
+ * to user specified {@link AllowedSolution}</li>
+ * <li>the maximal order for the invert polynomial root search is
+ * user-specified instead of being invert quadratic only</li>
+ * </ul>
+ * <p>
+ * The given interval must bracket the root.
+ * </p>
  *
  * @param <T> the type of the field elements
  * @since 3.6
@@ -48,7 +47,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
 public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
     implements BracketedRealFieldUnivariateSolver<T> {
 
-   /** Maximal aging triggering an attempt to balance the bracketing interval. */
+    /** Maximal aging triggering an attempt to balance the bracketing interval. */
     private static final int MAXIMAL_AGING = 2;
 
     /** Field to which the elements belong. */
@@ -72,29 +71,28 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
     /**
      * Construct a solver.
      *
-     * @param relativeAccuracy Relative accuracy.
-     * @param absoluteAccuracy Absolute accuracy.
+     * @param relativeAccuracy      Relative accuracy.
+     * @param absoluteAccuracy      Absolute accuracy.
      * @param functionValueAccuracy Function value accuracy.
-     * @param maximalOrder maximal order.
+     * @param maximalOrder          maximal order.
      * @exception NumberIsTooSmallException if maximal order is lower than 2
      */
-    public FieldBracketingNthOrderBrentSolver(final T relativeAccuracy,
-                                              final T absoluteAccuracy,
-                                              final T functionValueAccuracy,
-                                              final int maximalOrder)
-        throws NumberIsTooSmallException {
+    public FieldBracketingNthOrderBrentSolver(final T relativeAccuracy, final T absoluteAccuracy,
+        final T functionValueAccuracy, final int maximalOrder) throws NumberIsTooSmallException {
         if (maximalOrder < 2) {
             throw new NumberIsTooSmallException(maximalOrder, 2, true);
         }
-        this.field                 = relativeAccuracy.getField();
-        this.maximalOrder          = maximalOrder;
-        this.absoluteAccuracy      = absoluteAccuracy;
-        this.relativeAccuracy      = relativeAccuracy;
+        this.field = relativeAccuracy.getField();
+        this.maximalOrder = maximalOrder;
+        this.absoluteAccuracy = absoluteAccuracy;
+        this.relativeAccuracy = relativeAccuracy;
         this.functionValueAccuracy = functionValueAccuracy;
-        this.evaluations           = IntegerSequence.Incrementor.create();
+        this.evaluations = IntegerSequence.Incrementor.create();
     }
 
-    /** Get the maximal order.
+    /**
+     * Get the maximal order.
+     * 
      * @return maximal order
      */
     public int getMaximalOrder() {
@@ -124,6 +122,7 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
     /**
      * Get the absolute accuracy.
+     * 
      * @return absolute accuracy
      */
     public T getAbsoluteAccuracy() {
@@ -132,6 +131,7 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
     /**
      * Get the relative accuracy.
+     * 
      * @return relative accuracy
      */
     public T getRelativeAccuracy() {
@@ -140,6 +140,7 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
     /**
      * Get the function accuracy.
+     * 
      * @return function accuracy
      */
     public T getFunctionValueAccuracy() {
@@ -152,20 +153,26 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
      * Solvers that do require bracketing should be able to handle the case
      * where one of the endpoints is itself a root.
      *
-     * @param maxEval Maximum number of evaluations.
-     * @param f Function to solve.
-     * @param min Lower bound for the interval.
-     * @param max Upper bound for the interval.
+     * @param maxEval         Maximum number of evaluations.
+     * @param f               Function to solve.
+     * @param min             Lower bound for the interval.
+     * @param max             Upper bound for the interval.
      * @param allowedSolution The kind of solutions that the root-finding algorithm may
-     * accept as solutions.
+     *                        accept as solutions.
      * @return a value where the function is zero.
      * @exception NullArgumentException if f is null.
      * @exception NoBracketingException if root cannot be bracketed
      */
-    public T solve(final int maxEval, final RealFieldUnivariateFunction<T> f,
-                   final T min, final T max, final AllowedSolution allowedSolution)
-        throws NullArgumentException, NoBracketingException {
-        return solve(maxEval, f, min, max, min.add(max).divide(2), allowedSolution);
+    public T solve(final int maxEval, final RealFieldUnivariateFunction<T> f, final T min, final T max,
+        final AllowedSolution allowedSolution) throws NullArgumentException, NoBracketingException {
+        return solve(
+            maxEval,
+            f,
+            min,
+            max,
+            min.add(max)
+                .divide(2),
+            allowedSolution);
     }
 
     /**
@@ -174,29 +181,28 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
      * Solvers that do require bracketing should be able to handle the case
      * where one of the endpoints is itself a root.
      *
-     * @param maxEval Maximum number of evaluations.
-     * @param f Function to solve.
-     * @param min Lower bound for the interval.
-     * @param max Upper bound for the interval.
-     * @param startValue Start value to use.
+     * @param maxEval         Maximum number of evaluations.
+     * @param f               Function to solve.
+     * @param min             Lower bound for the interval.
+     * @param max             Upper bound for the interval.
+     * @param startValue      Start value to use.
      * @param allowedSolution The kind of solutions that the root-finding algorithm may
-     * accept as solutions.
+     *                        accept as solutions.
      * @return a value where the function is zero.
      * @exception NullArgumentException if f is null.
      * @exception NoBracketingException if root cannot be bracketed
      */
-    public T solve(final int maxEval, final RealFieldUnivariateFunction<T> f,
-                   final T min, final T max, final T startValue,
-                   final AllowedSolution allowedSolution)
-        throws NullArgumentException, NoBracketingException {
+    public T solve(final int maxEval, final RealFieldUnivariateFunction<T> f, final T min, final T max,
+        final T startValue, final AllowedSolution allowedSolution) throws NullArgumentException, NoBracketingException {
 
         // Checks.
         MathUtils.checkNotNull(f);
 
         // Reset.
-        evaluations = evaluations.withMaximalCount(maxEval).withStart(0);
+        evaluations = evaluations.withMaximalCount(maxEval)
+            .withStart(0);
         T zero = field.getZero();
-        T nan  = zero.add(Double.NaN);
+        T nan = zero.add(Double.NaN);
 
         // prepare arrays with the first points
         final T[] x = MathArrays.buildArray(field, maximalOrder + 1);
@@ -223,10 +229,11 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
         int nbPoints;
         int signChangeIndex;
-        if (y[0].multiply(y[1]).getReal() < 0) {
+        if (y[0].multiply(y[1])
+            .getReal() < 0) {
 
             // reduce interval if it brackets the root
-            nbPoints        = 2;
+            nbPoints = 2;
             signChangeIndex = 1;
 
         } else {
@@ -239,13 +246,13 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
                 return x[2];
             }
 
-            if (y[1].multiply(y[2]).getReal() < 0) {
+            if (y[1].multiply(y[2])
+                .getReal() < 0) {
                 // use all computed point as a start sampling array for solving
-                nbPoints        = 3;
+                nbPoints = 3;
                 signChangeIndex = 2;
             } else {
-                throw new NoBracketingException(x[0].getReal(), x[2].getReal(),
-                                                y[0].getReal(), y[2].getReal());
+                throw new NoBracketingException(x[0].getReal(), x[2].getReal(), y[0].getReal(), y[2].getReal());
             }
 
         }
@@ -254,40 +261,46 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
         final T[] tmpX = MathArrays.buildArray(field, x.length);
 
         // current tightest bracketing of the root
-        T xA    = x[signChangeIndex - 1];
-        T yA    = y[signChangeIndex - 1];
+        T xA = x[signChangeIndex - 1];
+        T yA = y[signChangeIndex - 1];
         T absXA = xA.abs();
         T absYA = yA.abs();
-        int agingA   = 0;
-        T xB    = x[signChangeIndex];
-        T yB    = y[signChangeIndex];
+        int agingA = 0;
+        T xB = x[signChangeIndex];
+        T yB = y[signChangeIndex];
         T absXB = xB.abs();
         T absYB = yB.abs();
-        int agingB   = 0;
+        int agingB = 0;
 
         // search loop
         while (true) {
 
             // check convergence of bracketing interval
-            T maxX = absXA.subtract(absXB).getReal() < 0 ? absXB : absXA;
-            T maxY = absYA.subtract(absYB).getReal() < 0 ? absYB : absYA;
+            T maxX = absXA.subtract(absXB)
+                .getReal() < 0 ? absXB : absXA;
+            T maxY = absYA.subtract(absYB)
+                .getReal() < 0 ? absYB : absYA;
             final T xTol = absoluteAccuracy.add(relativeAccuracy.multiply(maxX));
-            if (xB.subtract(xA).subtract(xTol).getReal() <= 0 ||
-                maxY.subtract(functionValueAccuracy).getReal() < 0) {
+            if (xB.subtract(xA)
+                .subtract(xTol)
+                .getReal() <= 0
+                || maxY.subtract(functionValueAccuracy)
+                    .getReal() < 0) {
                 switch (allowedSolution) {
-                case ANY_SIDE :
-                    return absYA.subtract(absYB).getReal() < 0 ? xA : xB;
-                case LEFT_SIDE :
-                    return xA;
-                case RIGHT_SIDE :
-                    return xB;
-                case BELOW_SIDE :
-                    return yA.getReal() <= 0 ? xA : xB;
-                case ABOVE_SIDE :
-                    return yA.getReal() < 0 ? xB : xA;
-                default :
-                    // this should never happen
-                    throw new MathInternalError(null);
+                    case ANY_SIDE:
+                        return absYA.subtract(absYB)
+                            .getReal() < 0 ? xA : xB;
+                    case LEFT_SIDE:
+                        return xA;
+                    case RIGHT_SIDE:
+                        return xB;
+                    case BELOW_SIDE:
+                        return yA.getReal() <= 0 ? xA : xB;
+                    case ABOVE_SIDE:
+                        return yA.getReal() < 0 ? xB : xA;
+                    default:
+                        // this should never happen
+                        throw new MathInternalError(null);
                 }
             }
 
@@ -295,10 +308,12 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
             T targetY;
             if (agingA >= MAXIMAL_AGING) {
                 // we keep updating the high bracket, try to compensate this
-                targetY = yB.divide(16).negate();
+                targetY = yB.divide(16)
+                    .negate();
             } else if (agingB >= MAXIMAL_AGING) {
                 // we keep updating the low bracket, try to compensate this
-                targetY = yA.divide(16).negate();
+                targetY = yA.divide(16)
+                    .negate();
             } else {
                 // bracketing is balanced, try to find the root itself
                 targetY = zero;
@@ -307,14 +322,17 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
             // make a few attempts to guess a root,
             T nextX;
             int start = 0;
-            int end   = nbPoints;
+            int end = nbPoints;
             do {
 
                 // guess a value for current target, using inverse polynomial interpolation
                 System.arraycopy(x, start, tmpX, start, end - start);
                 nextX = guessX(targetY, tmpX, y, start, end);
 
-                if (!((nextX.subtract(xA).getReal() > 0) && (nextX.subtract(xB).getReal() < 0))) {
+                if (!((nextX.subtract(xA)
+                    .getReal() > 0)
+                    && (nextX.subtract(xB)
+                        .getReal() < 0))) {
                     // the guessed root is not strictly inside of the tightest bracketing interval
 
                     // the guessed root is either not strictly inside the interval or it
@@ -337,9 +355,11 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
             if (Double.isNaN(nextX.getReal())) {
                 // fall back to bisection
-                nextX = xA.add(xB.subtract(xA).divide(2));
+                nextX = xA.add(
+                    xB.subtract(xA)
+                        .divide(2));
                 start = signChangeIndex - 1;
-                end   = signChangeIndex;
+                end = signChangeIndex;
             }
 
             // evaluate the function at the guessed root
@@ -360,7 +380,7 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
                 System.arraycopy(y, start, y, 0, nbPoints);
                 signChangeIndex -= start;
 
-            } else  if (nbPoints == x.length) {
+            } else if (nbPoints == x.length) {
 
                 // we have to drop one point in order to insert the new one
                 nbPoints--;
@@ -376,7 +396,7 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
             }
 
             // insert the last computed point
-            //(by construction, we know it lies inside the tightest bracketing interval)
+            // (by construction, we know it lies inside the tightest bracketing interval)
             System.arraycopy(x, signChangeIndex, x, signChangeIndex + 1, nbPoints - signChangeIndex);
             x[signChangeIndex] = nextX;
             System.arraycopy(y, signChangeIndex, y, signChangeIndex + 1, nbPoints - signChangeIndex);
@@ -384,7 +404,8 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
             ++nbPoints;
 
             // update the bracketing interval
-            if (nextY.multiply(yA).getReal() <= 0) {
+            if (nextY.multiply(yA)
+                .getReal() <= 0) {
                 // the sign change occurs before the inserted point
                 xB = nextX;
                 yB = nextY;
@@ -408,28 +429,30 @@ public class FieldBracketingNthOrderBrentSolver<T extends RealFieldElement<T>>
 
     }
 
-    /** Guess an x value by n<sup>th</sup> order inverse polynomial interpolation.
+    /**
+     * Guess an x value by n<sup>th</sup> order inverse polynomial interpolation.
      * <p>
      * The x value is guessed by evaluating polynomial Q(y) at y = targetY, where Q
      * is built such that for all considered points (x<sub>i</sub>, y<sub>i</sub>),
      * Q(y<sub>i</sub>) = x<sub>i</sub>.
      * </p>
+     * 
      * @param targetY target value for y
-     * @param x reference points abscissas for interpolation,
-     * note that this array <em>is</em> modified during computation
-     * @param y reference points ordinates for interpolation
-     * @param start start index of the points to consider (inclusive)
-     * @param end end index of the points to consider (exclusive)
+     * @param x       reference points abscissas for interpolation,
+     *                note that this array <em>is</em> modified during computation
+     * @param y       reference points ordinates for interpolation
+     * @param start   start index of the points to consider (inclusive)
+     * @param end     end index of the points to consider (exclusive)
      * @return guessed root (will be a NaN if two points share the same y)
      */
-    private T guessX(final T targetY, final T[] x, final T[] y,
-                     final int start, final int end) {
+    private T guessX(final T targetY, final T[] x, final T[] y, final int start, final int end) {
 
         // compute Q Newton coefficients by divided differences
         for (int i = start; i < end - 1; ++i) {
             final int delta = i + 1 - start;
             for (int j = end - 1; j > i; --j) {
-                x[j] = x[j].subtract(x[j-1]).divide(y[j].subtract(y[j - delta]));
+                x[j] = x[j].subtract(x[j - 1])
+                    .divide(y[j].subtract(y[j - delta]));
             }
         }
 

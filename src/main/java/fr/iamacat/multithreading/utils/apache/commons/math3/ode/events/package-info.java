@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,9 +34,9 @@
  * When an event is triggered, several different options are available:
  * </p>
  * <ul>
- *  <li>integration can be stopped (this is called a G-stop facility),</li>
- *  <li>the state vector or the derivatives can be changed,</li>
- *  <li>or integration can simply go on.</li>
+ * <li>integration can be stopped (this is called a G-stop facility),</li>
+ * <li>the state vector or the derivatives can be changed,</li>
+ * <li>or integration can simply go on.</li>
  * </ul>
  *
  * <p>
@@ -47,14 +45,16 @@
  * the state but an unknown occurrence time. As an example, if we want to monitor
  * a chemical reaction up to some predefined concentration for the first substance,
  * we can use the following switching function setting:
+ * 
  * <pre>
- *  public double g(double t, double[] y) {
- *    return y[0] - targetConcentration;
- *  }
+ * 
+ * public double g(double t, double[] y) {
+ *     return y[0] - targetConcentration;
+ * }
  *
- *  public int eventOccurred(double t, double[] y) {
- *    return STOP;
- *  }
+ * public int eventOccurred(double t, double[] y) {
+ *     return STOP;
+ * }
  * </pre>
  * </p>
  *
@@ -66,6 +66,7 @@
  * third body attraction, radiation pressure. Firing a thruster introduces a
  * discontinuity that must be handled appropriately by the integrator. In such a case,
  * we would use a switching function setting similar to this:
+ * 
  * <pre>
  *  public double g(double t, double[] y) {
  *    return (t - tManeuverStart) &lowast; (t - tManeuverStop);
@@ -79,15 +80,17 @@
  *
  * <p>
  * The third case is useful mainly for monitoring purposes, a simple example is:
+ * 
  * <pre>
- *  public double g(double t, double[] y) {
- *    return y[0] - y[1];
- *  }
+ * 
+ * public double g(double t, double[] y) {
+ *     return y[0] - y[1];
+ * }
  *
- *  public int eventOccurred(double t, double[] y) {
- *    logger.log("y0(t) and y1(t) curves cross at t = " + t);
- *    return CONTINUE;
- *  }
+ * public int eventOccurred(double t, double[] y) {
+ *     logger.log("y0(t) and y1(t) curves cross at t = " + t);
+ *     return CONTINUE;
+ * }
  * </pre>
  * </p>
  *

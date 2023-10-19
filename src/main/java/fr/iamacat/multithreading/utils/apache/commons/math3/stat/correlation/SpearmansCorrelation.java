@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +45,7 @@ public class SpearmansCorrelation {
     /** Input data */
     private final RealMatrix data;
 
-    /** Ranking algorithm  */
+    /** Ranking algorithm */
     private final RankingAlgorithm rankingAlgorithm;
 
     /** Rank correlation */
@@ -79,7 +77,7 @@ public class SpearmansCorrelation {
      * Create a SpearmansCorrelation from the given data matrix.
      *
      * @param dataMatrix matrix of data with columns representing
-     * variables to correlate
+     *                   variables to correlate
      */
     public SpearmansCorrelation(final RealMatrix dataMatrix) {
         this(dataMatrix, new NaturalRanking());
@@ -92,8 +90,8 @@ public class SpearmansCorrelation {
      * From version 4.0 onwards this constructor will throw an exception
      * if the provided {@link NaturalRanking} uses a {@link NaNStrategy#REMOVED} strategy.
      *
-     * @param dataMatrix matrix of data with columns representing
-     * variables to correlate
+     * @param dataMatrix       matrix of data with columns representing
+     *                         variables to correlate
      * @param rankingAlgorithm ranking algorithm
      */
     public SpearmansCorrelation(final RealMatrix dataMatrix, final RankingAlgorithm rankingAlgorithm) {
@@ -122,7 +120,9 @@ public class SpearmansCorrelation {
      * configured <code>RankingAlgorithm</code> to each of the columns of
      * <code>matrix.</code>
      *
-     * <p>Returns null if this instance was created with no data.</p>
+     * <p>
+     * Returns null if this instance was created with no data.
+     * </p>
      *
      * @return PearsonsCorrelation among ranked column data
      */
@@ -144,14 +144,14 @@ public class SpearmansCorrelation {
 
     /**
      * Computes the Spearman's rank correlation matrix for the columns of the
-     * input rectangular array.  The columns of the array represent values
+     * input rectangular array. The columns of the array represent values
      * of variables to be correlated.
      *
      * @param matrix matrix with columns representing variables to correlate
      * @return correlation matrix
      */
     public RealMatrix computeCorrelationMatrix(final double[][] matrix) {
-       return computeCorrelationMatrix(new BlockRealMatrix(matrix));
+        return computeCorrelationMatrix(new BlockRealMatrix(matrix));
     }
 
     /**
@@ -160,20 +160,19 @@ public class SpearmansCorrelation {
      * @param xArray first data array
      * @param yArray second data array
      * @return Returns Spearman's rank correlation coefficient for the two arrays
-     * @throws DimensionMismatchException if the arrays lengths do not match
+     * @throws DimensionMismatchException   if the arrays lengths do not match
      * @throws MathIllegalArgumentException if the array length is less than 2
      */
     public double correlation(final double[] xArray, final double[] yArray) {
         if (xArray.length != yArray.length) {
             throw new DimensionMismatchException(xArray.length, yArray.length);
         } else if (xArray.length < 2) {
-            throw new MathIllegalArgumentException(LocalizedFormats.INSUFFICIENT_DIMENSION,
-                                                   xArray.length, 2);
+            throw new MathIllegalArgumentException(LocalizedFormats.INSUFFICIENT_DIMENSION, xArray.length, 2);
         } else {
             double[] x = xArray;
             double[] y = yArray;
-            if (rankingAlgorithm instanceof NaturalRanking &&
-                NaNStrategy.REMOVED == ((NaturalRanking) rankingAlgorithm).getNanStrategy()) {
+            if (rankingAlgorithm instanceof NaturalRanking
+                && NaNStrategy.REMOVED == ((NaturalRanking) rankingAlgorithm).getNanStrategy()) {
                 final Set<Integer> nanPositions = new HashSet<Integer>();
 
                 nanPositions.addAll(getNaNPositions(xArray));
@@ -196,8 +195,8 @@ public class SpearmansCorrelation {
     private RealMatrix rankTransform(final RealMatrix matrix) {
         RealMatrix transformed = null;
 
-        if (rankingAlgorithm instanceof NaturalRanking &&
-                ((NaturalRanking) rankingAlgorithm).getNanStrategy() == NaNStrategy.REMOVED) {
+        if (rankingAlgorithm instanceof NaturalRanking
+            && ((NaturalRanking) rankingAlgorithm).getNanStrategy() == NaNStrategy.REMOVED) {
             final Set<Integer> nanPositions = new HashSet<Integer>();
             for (int i = 0; i < matrix.getColumnDimension(); i++) {
                 nanPositions.addAll(getNaNPositions(matrix.getColumn(i)));
@@ -205,8 +204,9 @@ public class SpearmansCorrelation {
 
             // if we have found NaN values, we have to update the matrix size
             if (!nanPositions.isEmpty()) {
-                transformed = new BlockRealMatrix(matrix.getRowDimension() - nanPositions.size(),
-                                                  matrix.getColumnDimension());
+                transformed = new BlockRealMatrix(
+                    matrix.getRowDimension() - nanPositions.size(),
+                    matrix.getColumnDimension());
                 for (int i = 0; i < transformed.getColumnDimension(); i++) {
                     transformed.setColumn(i, removeValues(matrix.getColumn(i), nanPositions));
                 }
@@ -243,7 +243,7 @@ public class SpearmansCorrelation {
     /**
      * Removes all values from the input array at the specified indices.
      *
-     * @param input the input array
+     * @param input   the input array
      * @param indices a set containing the indices to be removed
      * @return the input array without the values at the specified indices
      */

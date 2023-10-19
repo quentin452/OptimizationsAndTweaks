@@ -8,12 +8,12 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 // ////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.impl.sync;
@@ -24,81 +24,120 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 
-
 /**
  *
  */
 class SynchronizedCollection<E> implements Collection<E>, Serializable {
-	private static final long serialVersionUID = 3053995032091335093L;
 
-	final Collection<E> c;  // Backing Collection
-	final Object mutex;     // Object on which to synchronize
+    private static final long serialVersionUID = 3053995032091335093L;
 
-	SynchronizedCollection( Collection<E> c, Object mutex ) {
-		this.c = c;
-		this.mutex = mutex;
-	}
+    final Collection<E> c; // Backing Collection
+    final Object mutex; // Object on which to synchronize
 
-    @Override
-	public int size() {
-		synchronized( mutex ) { return c.size(); }
-	}
-    @Override
-	public boolean isEmpty() {
-		synchronized( mutex ) { return c.isEmpty(); }
-	}
-    @Override
-	public boolean contains( Object o ) {
-		synchronized( mutex ) { return c.contains( o ); }
-	}
-    @Override
-	public Object[] toArray() {
-		synchronized( mutex ) { return c.toArray(); }
-	}
-    @Override
-	public <T> T[] toArray( T[] a ) {
-		synchronized( mutex ) { return c.toArray( a ); }
-	}
+    SynchronizedCollection(Collection<E> c, Object mutex) {
+        this.c = c;
+        this.mutex = mutex;
+    }
 
     @Override
-	public Iterator<E> iterator() {
-		return c.iterator(); // Must be manually synched by user!
-	}
+    public int size() {
+        synchronized (mutex) {
+            return c.size();
+        }
+    }
 
     @Override
-	public boolean add( E e ) {
-		synchronized( mutex ) { return c.add( e ); }
-	}
-    @Override
-	public boolean remove( Object o ) {
-		synchronized( mutex ) { return c.remove( o ); }
-	}
+    public boolean isEmpty() {
+        synchronized (mutex) {
+            return c.isEmpty();
+        }
+    }
 
     @Override
-	public boolean containsAll( Collection<?> coll ) {
-		synchronized( mutex ) { return c.containsAll( coll ); }
-	}
+    public boolean contains(Object o) {
+        synchronized (mutex) {
+            return c.contains(o);
+        }
+    }
+
     @Override
-	public boolean addAll( Collection<? extends E> coll ) {
-		synchronized( mutex ) { return c.addAll( coll ); }
-	}
+    public Object[] toArray() {
+        synchronized (mutex) {
+            return c.toArray();
+        }
+    }
+
     @Override
-	public boolean removeAll( Collection<?> coll ) {
-		synchronized( mutex ) { return c.removeAll( coll ); }
-	}
+    public <T> T[] toArray(T[] a) {
+        synchronized (mutex) {
+            return c.toArray(a);
+        }
+    }
+
     @Override
-	public boolean retainAll( Collection<?> coll ) {
-		synchronized( mutex ) { return c.retainAll( coll ); }
-	}
+    public Iterator<E> iterator() {
+        return c.iterator(); // Must be manually synched by user!
+    }
+
     @Override
-	public void clear() {
-		synchronized( mutex ) { c.clear(); }
-	}
+    public boolean add(E e) {
+        synchronized (mutex) {
+            return c.add(e);
+        }
+    }
+
     @Override
-	public String toString() {
-		synchronized( mutex ) { return c.toString(); }
-	}
-	private void writeObject( ObjectOutputStream s ) throws IOException {
-		synchronized( mutex ) { s.defaultWriteObject(); }
-	}
+    public boolean remove(Object o) {
+        synchronized (mutex) {
+            return c.remove(o);
+        }
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> coll) {
+        synchronized (mutex) {
+            return c.containsAll(coll);
+        }
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> coll) {
+        synchronized (mutex) {
+            return c.addAll(coll);
+        }
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> coll) {
+        synchronized (mutex) {
+            return c.removeAll(coll);
+        }
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> coll) {
+        synchronized (mutex) {
+            return c.retainAll(coll);
+        }
+    }
+
+    @Override
+    public void clear() {
+        synchronized (mutex) {
+            c.clear();
+        }
+    }
+
+    @Override
+    public String toString() {
+        synchronized (mutex) {
+            return c.toString();
+        }
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        synchronized (mutex) {
+            s.defaultWriteObject();
+        }
+    }
 }

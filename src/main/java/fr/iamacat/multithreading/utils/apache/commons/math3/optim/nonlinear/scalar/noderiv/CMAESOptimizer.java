@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +30,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.MatrixUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationData;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
@@ -71,15 +69,15 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
  * <p>
  * For more information, please refer to the following links:
  * <ul>
- *  <li><a href="http://www.lri.fr/~hansen/cmaes.m">Matlab code</a></li>
- *  <li><a href="http://www.lri.fr/~hansen/cmaesintro.html">Introduction to CMA-ES</a></li>
- *  <li><a href="http://en.wikipedia.org/wiki/CMA-ES">Wikipedia</a></li>
+ * <li><a href="http://www.lri.fr/~hansen/cmaes.m">Matlab code</a></li>
+ * <li><a href="http://www.lri.fr/~hansen/cmaesintro.html">Introduction to CMA-ES</a></li>
+ * <li><a href="http://en.wikipedia.org/wiki/CMA-ES">Wikipedia</a></li>
  * </ul>
  *
  * @since 3.0
  */
-public class CMAESOptimizer
-    extends MultivariateOptimizer {
+public class CMAESOptimizer extends MultivariateOptimizer {
+
     // global search parameters
     /**
      * Population size, offspring number. The primary strategy parameter to play
@@ -114,6 +112,7 @@ public class CMAESOptimizer
      * diagonalOnly = 1 means keeping the covariance matrix always diagonal and
      * this setting also exhibits linear space complexity. This can be
      * particularly useful for dimension > 100.
+     * 
      * @see <a href="http://hal.archives-ouvertes.fr/inria-00287367/en">A Simple Modification in CMA-ES</a>
      */
     private int diagonalOnly;
@@ -208,28 +207,23 @@ public class CMAESOptimizer
     private final List<RealMatrix> statisticsDHistory = new ArrayList<RealMatrix>();
 
     /**
-     * @param maxIterations Maximal number of iterations.
-     * @param stopFitness Whether to stop if objective function value is smaller than
-     * {@code stopFitness}.
-     * @param isActiveCMA Chooses the covariance matrix update method.
-     * @param diagonalOnly Number of initial iterations, where the covariance matrix
-     * remains diagonal.
+     * @param maxIterations      Maximal number of iterations.
+     * @param stopFitness        Whether to stop if objective function value is smaller than
+     *                           {@code stopFitness}.
+     * @param isActiveCMA        Chooses the covariance matrix update method.
+     * @param diagonalOnly       Number of initial iterations, where the covariance matrix
+     *                           remains diagonal.
      * @param checkFeasableCount Determines how often new random objective variables are
-     * generated in case they are out of bounds.
-     * @param random Random generator.
+     *                           generated in case they are out of bounds.
+     * @param random             Random generator.
      * @param generateStatistics Whether statistic data is collected.
-     * @param checker Convergence checker.
+     * @param checker            Convergence checker.
      *
      * @since 3.1
      */
-    public CMAESOptimizer(int maxIterations,
-                          double stopFitness,
-                          boolean isActiveCMA,
-                          int diagonalOnly,
-                          int checkFeasableCount,
-                          RandomGenerator random,
-                          boolean generateStatistics,
-                          ConvergenceChecker<PointValuePair> checker) {
+    public CMAESOptimizer(int maxIterations, double stopFitness, boolean isActiveCMA, int diagonalOnly,
+        int checkFeasableCount, RandomGenerator random, boolean generateStatistics,
+        ConvergenceChecker<PointValuePair> checker) {
         super(checker);
         this.maxIterations = maxIterations;
         this.stopFitness = stopFitness;
@@ -280,16 +274,16 @@ public class CMAESOptimizer
      * Too small values might however lead to early termination.
      */
     public static class Sigma implements OptimizationData {
+
         /** Sigma values. */
         private final double[] sigma;
 
         /**
          * @param s Sigma values.
          * @throws NotPositiveException if any of the array entries is smaller
-         * than zero.
+         *                              than zero.
          */
-        public Sigma(double[] s)
-            throws NotPositiveException {
+        public Sigma(double[] s) throws NotPositiveException {
             for (int i = 0; i < s.length; i++) {
                 if (s[i] < 0) {
                     throw new NotPositiveException(s[i]);
@@ -318,6 +312,7 @@ public class CMAESOptimizer
      * linearly with increasing population size).
      */
     public static class PopulationSize implements OptimizationData {
+
         /** Population size. */
         private final int lambda;
 
@@ -325,8 +320,7 @@ public class CMAESOptimizer
          * @param size Population size.
          * @throws NotStrictlyPositiveException if {@code size <= 0}.
          */
-        public PopulationSize(int size)
-            throws NotStrictlyPositiveException {
+        public PopulationSize(int size) throws NotStrictlyPositiveException {
             if (size <= 0) {
                 throw new NotStrictlyPositiveException(size);
             }
@@ -345,22 +339,21 @@ public class CMAESOptimizer
      * {@inheritDoc}
      *
      * @param optData Optimization data. In addition to those documented in
-     * {@link MultivariateOptimizer#parseOptimizationData(OptimizationData[])
-     * MultivariateOptimizer}, this method will register the following data:
-     * <ul>
-     *  <li>{@link Sigma}</li>
-     *  <li>{@link PopulationSize}</li>
-     * </ul>
+     *                {@link MultivariateOptimizer#parseOptimizationData(OptimizationData[])
+     *                MultivariateOptimizer}, this method will register the following data:
+     *                <ul>
+     *                <li>{@link Sigma}</li>
+     *                <li>{@link PopulationSize}</li>
+     *                </ul>
      * @return {@inheritDoc}
      * @throws TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
-     * @throws DimensionMismatchException if the initial guess, target, and weight
-     * arguments have inconsistent dimensions.
+     *                                     evaluations is exceeded.
+     * @throws DimensionMismatchException  if the initial guess, target, and weight
+     *                                     arguments have inconsistent dimensions.
      */
     @Override
     public PointValuePair optimize(OptimizationData... optData)
-        throws TooManyEvaluationsException,
-               DimensionMismatchException {
+        throws TooManyEvaluationsException, DimensionMismatchException {
         // Set up base class and perform computation.
         return super.optimize(optData);
     }
@@ -368,7 +361,7 @@ public class CMAESOptimizer
     /** {@inheritDoc} */
     @Override
     protected PointValuePair doOptimize() {
-         // -------------------- Initialization --------------------------------
+        // -------------------- Initialization --------------------------------
         isMinimize = getGoalType().equals(GoalType.MINIMIZE);
         final FitnessFunction fitfun = new FitnessFunction();
         final double[] guess = getStartPoint();
@@ -377,17 +370,14 @@ public class CMAESOptimizer
         initializeCMA(guess);
         iterations = 0;
         ValuePenaltyPair valuePenalty = fitfun.value(guess);
-        double bestValue = valuePenalty.value+valuePenalty.penalty;
+        double bestValue = valuePenalty.value + valuePenalty.penalty;
         push(fitnessHistory, bestValue);
-        PointValuePair optimum
-            = new PointValuePair(getStartPoint(),
-                                 isMinimize ? bestValue : -bestValue);
+        PointValuePair optimum = new PointValuePair(getStartPoint(), isMinimize ? bestValue : -bestValue);
         PointValuePair lastResult = null;
 
         // -------------------- Generation Loop --------------------------------
 
-        generationLoop:
-        for (iterations = 1; iterations <= maxIterations; iterations++) {
+        generationLoop: for (iterations = 1; iterations <= maxIterations; iterations++) {
             incrementIterationCount();
 
             // Generate and evaluate lambda offspring
@@ -400,14 +390,13 @@ public class CMAESOptimizer
                 RealMatrix arxk = null;
                 for (int i = 0; i < checkFeasableCount + 1; i++) {
                     if (diagonalOnly <= 0) {
-                        arxk = xmean.add(BD.multiply(arz.getColumnMatrix(k))
-                                         .scalarMultiply(sigma)); // m + sig * Normal(0,C)
+                        arxk = xmean.add(
+                            BD.multiply(arz.getColumnMatrix(k))
+                                .scalarMultiply(sigma)); // m + sig * Normal(0,C)
                     } else {
-                        arxk = xmean.add(times(diagD,arz.getColumnMatrix(k))
-                                         .scalarMultiply(sigma));
+                        arxk = xmean.add(times(diagD, arz.getColumnMatrix(k)).scalarMultiply(sigma));
                     }
-                    if (i >= checkFeasableCount ||
-                        fitfun.isFeasible(arxk.getColumn(0))) {
+                    if (i >= checkFeasableCount || fitfun.isFeasible(arxk.getColumn(0))) {
                         break;
                     }
                     // regenerate random arguments for row
@@ -423,8 +412,8 @@ public class CMAESOptimizer
 
             // Compute fitnesses by adding value and penalty after scaling by value range.
             double valueRange = valueRange(valuePenaltyPairs);
-            for (int iValue=0;iValue<valuePenaltyPairs.length;iValue++) {
-                 fitness[iValue] = valuePenaltyPairs[iValue].value + valuePenaltyPairs[iValue].penalty*valueRange;
+            for (int iValue = 0; iValue < valuePenaltyPairs.length; iValue++) {
+                fitness[iValue] = valuePenaltyPairs[iValue].value + valuePenaltyPairs[iValue].penalty * valueRange;
             }
 
             // Sort by fitness and compute weighted mean into xmean
@@ -442,16 +431,17 @@ public class CMAESOptimizer
                 updateCovarianceDiagonalOnly(hsig, bestArz);
             }
             // Adapt step size sigma - Eq. (5)
-            sigma *= FastMath.exp(FastMath.min(1, (normps/chiN - 1) * cs / damps));
+            sigma *= FastMath.exp(FastMath.min(1, (normps / chiN - 1) * cs / damps));
             final double bestFitness = fitness[arindex[0]];
             final double worstFitness = fitness[arindex[arindex.length - 1]];
             if (bestValue > bestFitness) {
                 bestValue = bestFitness;
                 lastResult = optimum;
-                optimum = new PointValuePair(fitfun.repair(bestArx.getColumn(0)),
-                                             isMinimize ? bestFitness : -bestFitness);
-                if (getConvergenceChecker() != null && lastResult != null &&
-                    getConvergenceChecker().converged(iterations, optimum, lastResult)) {
+                optimum = new PointValuePair(
+                    fitfun.repair(bestArx.getColumn(0)),
+                    isMinimize ? bestFitness : -bestFitness);
+                if (getConvergenceChecker() != null && lastResult != null
+                    && getConvergenceChecker().converged(iterations, optimum, lastResult)) {
                     break generationLoop;
                 }
             }
@@ -477,13 +467,11 @@ public class CMAESOptimizer
             }
             final double historyBest = min(fitnessHistory);
             final double historyWorst = max(fitnessHistory);
-            if (iterations > 2 &&
-                FastMath.max(historyWorst, worstFitness) -
-                FastMath.min(historyBest, bestFitness) < stopTolFun) {
+            if (iterations > 2
+                && FastMath.max(historyWorst, worstFitness) - FastMath.min(historyBest, bestFitness) < stopTolFun) {
                 break generationLoop;
             }
-            if (iterations > fitnessHistory.length &&
-                historyWorst - historyBest < stopTolHistFun) {
+            if (iterations > fitnessHistory.length && historyWorst - historyBest < stopTolHistFun) {
                 break generationLoop;
             }
             // condition number of the covariance matrix exceeds 1e14
@@ -492,30 +480,31 @@ public class CMAESOptimizer
             }
             // user defined termination
             if (getConvergenceChecker() != null) {
-                final PointValuePair current
-                    = new PointValuePair(bestArx.getColumn(0),
-                                         isMinimize ? bestFitness : -bestFitness);
-                if (lastResult != null &&
-                    getConvergenceChecker().converged(iterations, current, lastResult)) {
+                final PointValuePair current = new PointValuePair(
+                    bestArx.getColumn(0),
+                    isMinimize ? bestFitness : -bestFitness);
+                if (lastResult != null && getConvergenceChecker().converged(iterations, current, lastResult)) {
                     break generationLoop;
-                    }
+                }
                 lastResult = current;
             }
             // Adjust step size in case of equal function values (flat fitness)
-            if (bestValue == fitness[arindex[(int)(0.1+lambda/4.)]]) {
+            if (bestValue == fitness[arindex[(int) (0.1 + lambda / 4.)]]) {
                 sigma *= FastMath.exp(0.2 + cs / damps);
             }
-            if (iterations > 2 && FastMath.max(historyWorst, bestFitness) -
-                FastMath.min(historyBest, bestFitness) == 0) {
+            if (iterations > 2
+                && FastMath.max(historyWorst, bestFitness) - FastMath.min(historyBest, bestFitness) == 0) {
                 sigma *= FastMath.exp(0.2 + cs / damps);
             }
             // store best in history
-            push(fitnessHistory,bestFitness);
+            push(fitnessHistory, bestFitness);
             if (generateStatistics) {
                 statisticsSigmaHistory.add(sigma);
                 statisticsFitnessHistory.add(bestFitness);
                 statisticsMeanHistory.add(xmean.transpose());
-                statisticsDHistory.add(diagD.transpose().scalarMultiply(1E5));
+                statisticsDHistory.add(
+                    diagD.transpose()
+                        .scalarMultiply(1E5));
             }
         }
         return optimum;
@@ -526,10 +515,10 @@ public class CMAESOptimizer
      * characterize the problem.
      *
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link Sigma}</li>
-     *  <li>{@link PopulationSize}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link Sigma}</li>
+     *                <li>{@link PopulationSize}</li>
+     *                </ul>
      */
     @Override
     protected void parseOptimizationData(OptimizationData... optData) {
@@ -598,7 +587,8 @@ public class CMAESOptimizer
         // initialize selection strategy parameters
         mu = lambda / 2; // number of parents/points for recombination
         logMu2 = FastMath.log(mu + 0.5);
-        weights = log(sequence(1, mu, 1)).scalarMultiply(-1).scalarAdd(logMu2);
+        weights = log(sequence(1, mu, 1)).scalarMultiply(-1)
+            .scalarAdd(logMu2);
         double sumw = 0;
         double sumwq = 0;
         for (int i = 0; i < mu; i++) {
@@ -610,20 +600,16 @@ public class CMAESOptimizer
         mueff = sumw * sumw / sumwq; // variance-effectiveness of sum w_i x_i
 
         // initialize dynamic strategy parameters and constants
-        cc = (4 + mueff / dimension) /
-                (dimension + 4 + 2 * mueff / dimension);
+        cc = (4 + mueff / dimension) / (dimension + 4 + 2 * mueff / dimension);
         cs = (mueff + 2) / (dimension + mueff + 3.);
-        damps = (1 + 2 * FastMath.max(0, FastMath.sqrt((mueff - 1) /
-                                                       (dimension + 1)) - 1)) *
-            FastMath.max(0.3,
-                         1 - dimension / (1e-6 + maxIterations)) + cs; // minor increment
+        damps = (1 + 2 * FastMath.max(0, FastMath.sqrt((mueff - 1) / (dimension + 1)) - 1))
+            * FastMath.max(0.3, 1 - dimension / (1e-6 + maxIterations)) + cs; // minor increment
         ccov1 = 2 / ((dimension + 1.3) * (dimension + 1.3) + mueff);
-        ccovmu = FastMath.min(1 - ccov1, 2 * (mueff - 2 + 1 / mueff) /
-                              ((dimension + 2) * (dimension + 2) + mueff));
+        ccovmu = FastMath.min(1 - ccov1, 2 * (mueff - 2 + 1 / mueff) / ((dimension + 2) * (dimension + 2) + mueff));
         ccov1Sep = FastMath.min(1, ccov1 * (dimension + 1.5) / 3);
         ccovmuSep = FastMath.min(1 - ccov1, ccovmu * (dimension + 1.5) / 3);
-        chiN = FastMath.sqrt(dimension) *
-                (1 - 1 / ((double) 4 * dimension) + 1 / ((double) 21 * dimension * dimension));
+        chiN = FastMath.sqrt(dimension)
+            * (1 - 1 / ((double) 4 * dimension) + 1 / ((double) 21 * dimension * dimension));
         // intialize CMA internal values - updated each generation
         xmean = MatrixUtils.createColumnRealMatrix(guess); // objective variables
         diagD = insigma.scalarMultiply(1 / sigma);
@@ -647,21 +633,23 @@ public class CMAESOptimizer
      * Update of the evolution paths ps and pc.
      *
      * @param zmean Weighted row matrix of the gaussian random numbers generating
-     * the current offspring.
-     * @param xold xmean matrix of the previous generation.
+     *              the current offspring.
+     * @param xold  xmean matrix of the previous generation.
      * @return hsig flag indicating a small correction.
      */
     private boolean updateEvolutionPaths(RealMatrix zmean, RealMatrix xold) {
-        ps = ps.scalarMultiply(1 - cs).add(
-                B.multiply(zmean).scalarMultiply(
-                        FastMath.sqrt(cs * (2 - cs) * mueff)));
+        ps = ps.scalarMultiply(1 - cs)
+            .add(
+                B.multiply(zmean)
+                    .scalarMultiply(FastMath.sqrt(cs * (2 - cs) * mueff)));
         normps = ps.getFrobeniusNorm();
-        final boolean hsig = normps /
-            FastMath.sqrt(1 - FastMath.pow(1 - cs, 2 * iterations)) /
-            chiN < 1.4 + 2 / ((double) dimension + 1);
+        final boolean hsig = normps / FastMath.sqrt(1 - FastMath.pow(1 - cs, 2 * iterations)) / chiN
+            < 1.4 + 2 / ((double) dimension + 1);
         pc = pc.scalarMultiply(1 - cc);
         if (hsig) {
-            pc = pc.add(xmean.subtract(xold).scalarMultiply(FastMath.sqrt(cc * (2 - cc) * mueff) / sigma));
+            pc = pc.add(
+                xmean.subtract(xold)
+                    .scalarMultiply(FastMath.sqrt(cc * (2 - cc) * mueff) / sigma));
         }
         return hsig;
     }
@@ -669,22 +657,21 @@ public class CMAESOptimizer
     /**
      * Update of the covariance matrix C for diagonalOnly > 0
      *
-     * @param hsig Flag indicating a small correction.
+     * @param hsig    Flag indicating a small correction.
      * @param bestArz Fitness-sorted matrix of the gaussian random values of the
-     * current offspring.
+     *                current offspring.
      */
-    private void updateCovarianceDiagonalOnly(boolean hsig,
-                                              final RealMatrix bestArz) {
+    private void updateCovarianceDiagonalOnly(boolean hsig, final RealMatrix bestArz) {
         // minor correction if hsig==false
         double oldFac = hsig ? 0 : ccov1Sep * cc * (2 - cc);
         oldFac += 1 - ccov1Sep - ccovmuSep;
         diagC = diagC.scalarMultiply(oldFac) // regard old matrix
             .add(square(pc).scalarMultiply(ccov1Sep)) // plus rank one update
-            .add((times(diagC, square(bestArz).multiply(weights))) // plus rank mu update
-                 .scalarMultiply(ccovmuSep));
+            .add(
+                (times(diagC, square(bestArz).multiply(weights))) // plus rank mu update
+                    .scalarMultiply(ccovmuSep));
         diagD = sqrt(diagC); // replaces eig(C)
-        if (diagonalOnly > 1 &&
-            iterations > diagonalOnly) {
+        if (diagonalOnly > 1 && iterations > diagonalOnly) {
             // full covariance matrix from now on
             diagonalOnly = 0;
             B = eye(dimension, dimension);
@@ -696,17 +683,16 @@ public class CMAESOptimizer
     /**
      * Update of the covariance matrix C.
      *
-     * @param hsig Flag indicating a small correction.
+     * @param hsig    Flag indicating a small correction.
      * @param bestArx Fitness-sorted matrix of the argument vectors producing the
-     * current offspring.
-     * @param arz Unsorted matrix containing the gaussian random values of the
-     * current offspring.
+     *                current offspring.
+     * @param arz     Unsorted matrix containing the gaussian random values of the
+     *                current offspring.
      * @param arindex Indices indicating the fitness-order of the current offspring.
-     * @param xold xmean matrix of the previous generation.
+     * @param xold    xmean matrix of the previous generation.
      */
-    private void updateCovariance(boolean hsig, final RealMatrix bestArx,
-                                  final RealMatrix arz, final int[] arindex,
-                                  final RealMatrix xold) {
+    private void updateCovariance(boolean hsig, final RealMatrix bestArx, final RealMatrix arz, final int[] arindex,
+        final RealMatrix xold) {
         double negccov = 0;
         if (ccov1 + ccovmu > 0) {
             final RealMatrix arpos = bestArx.subtract(repmat(xold, 1, mu))
@@ -718,8 +704,7 @@ public class CMAESOptimizer
             oldFac += 1 - ccov1 - ccovmu;
             if (isActiveCMA) {
                 // Adapt covariance matrix C active CMA
-                negccov = (1 - ccovmu) * 0.25 * mueff /
-                    (FastMath.pow(dimension + 2, 1.5) + 2 * mueff);
+                negccov = (1 - ccovmu) * 0.25 * mueff / (FastMath.pow(dimension + 2, 1.5) + 2 * mueff);
                 // keep at least 0.66 in all directions, small popsize are most
                 // critical
                 final double negminresidualvariance = 0.66;
@@ -737,29 +722,30 @@ public class CMAESOptimizer
                 final int[] idxInv = inverse(idxnorms);
                 final RealMatrix arnormsInv = selectColumns(arnorms, idxInv);
                 // check and set learning rate negccov
-                final double negcovMax = (1 - negminresidualvariance) /
-                    square(arnormsInv).multiply(weights).getEntry(0, 0);
+                final double negcovMax = (1 - negminresidualvariance) / square(arnormsInv).multiply(weights)
+                    .getEntry(0, 0);
                 if (negccov > negcovMax) {
                     negccov = negcovMax;
                 }
                 arzneg = times(arzneg, repmat(arnormsInv, dimension, 1));
                 final RealMatrix artmp = BD.multiply(arzneg);
-                final RealMatrix Cneg = artmp.multiply(diag(weights)).multiply(artmp.transpose());
+                final RealMatrix Cneg = artmp.multiply(diag(weights))
+                    .multiply(artmp.transpose());
                 oldFac += negalphaold * negccov;
                 C = C.scalarMultiply(oldFac)
                     .add(roneu) // regard old matrix
-                    .add(arpos.scalarMultiply( // plus rank one update
-                                              ccovmu + (1 - negalphaold) * negccov) // plus rank mu update
-                         .multiply(times(repmat(weights, 1, dimension),
-                                         arpos.transpose())))
+                    .add(
+                        arpos.scalarMultiply( // plus rank one update
+                            ccovmu + (1 - negalphaold) * negccov) // plus rank mu update
+                            .multiply(times(repmat(weights, 1, dimension), arpos.transpose())))
                     .subtract(Cneg.scalarMultiply(negccov));
             } else {
                 // Adapt covariance matrix C - nonactive
                 C = C.scalarMultiply(oldFac) // regard old matrix
                     .add(roneu) // plus rank one update
-                    .add(arpos.scalarMultiply(ccovmu) // plus rank mu update
-                         .multiply(times(repmat(weights, 1, dimension),
-                                         arpos.transpose())));
+                    .add(
+                        arpos.scalarMultiply(ccovmu) // plus rank mu update
+                            .multiply(times(repmat(weights, 1, dimension), arpos.transpose())));
             }
         }
         updateBD(negccov);
@@ -771,8 +757,7 @@ public class CMAESOptimizer
      * @param negccov Negative covariance factor.
      */
     private void updateBD(double negccov) {
-        if (ccov1 + ccovmu + negccov > 0 &&
-            (iterations % 1. / (ccov1 + ccovmu + negccov) / dimension / 10.) < 1) {
+        if (ccov1 + ccovmu + negccov > 0 && (iterations % 1. / (ccov1 + ccovmu + negccov) / dimension / 10.) < 1) {
             // to achieve O(N^2)
             C = triu(C, 0).add(triu(C, 1).transpose());
             // enforce symmetry to prevent complex numbers
@@ -805,11 +790,11 @@ public class CMAESOptimizer
      * Pushes the current best fitness value in a history queue.
      *
      * @param vals History queue.
-     * @param val Current best fitness value.
+     * @param val  Current best fitness value.
      */
     private static void push(double[] vals, double val) {
-        for (int i = vals.length-1; i > 0; i--) {
-            vals[i] = vals[i-1];
+        for (int i = vals.length - 1; i > 0; i--) {
+            vals[i] = vals[i - 1];
         }
         vals[0] = val;
     }
@@ -832,7 +817,8 @@ public class CMAESOptimizer
         }
         return indices;
     }
-   /**
+
+    /**
      * Get range of values.
      *
      * @param vpPairs Array of valuePenaltyPairs to get range from.
@@ -841,7 +827,7 @@ public class CMAESOptimizer
     private double valueRange(final ValuePenaltyPair[] vpPairs) {
         double max = Double.NEGATIVE_INFINITY;
         double min = Double.MAX_VALUE;
-        for (ValuePenaltyPair vpPair:vpPairs) {
+        for (ValuePenaltyPair vpPair : vpPairs) {
             if (vpPair.value > max) {
                 max = vpPair.value;
             }
@@ -849,7 +835,7 @@ public class CMAESOptimizer
                 min = vpPair.value;
             }
         }
-        return max-min;
+        return max - min;
     }
 
     /**
@@ -857,6 +843,7 @@ public class CMAESOptimizer
      * order.
      */
     private static class DoubleIndex implements Comparable<DoubleIndex> {
+
         /** Value to compare. */
         private final double value;
         /** Index into sorted array. */
@@ -898,38 +885,41 @@ public class CMAESOptimizer
             return (int) ((1438542 ^ (bits >>> 32) ^ bits) & 0xffffffff);
         }
     }
+
     /**
      * Stores the value and penalty (for repair of out of bounds point).
      */
     private static class ValuePenaltyPair {
+
         /** Objective function value. */
         private double value;
         /** Penalty value for repair of out out of bounds points. */
         private double penalty;
 
         /**
-         * @param value Function value.
+         * @param value   Function value.
          * @param penalty Out-of-bounds penalty.
-        */
+         */
         ValuePenaltyPair(final double value, final double penalty) {
-            this.value   = value;
+            this.value = value;
             this.penalty = penalty;
         }
     }
-
 
     /**
      * Normalizes fitness values to the range [0,1]. Adds a penalty to the
      * fitness value if out of range.
      */
     private class FitnessFunction {
+
         /**
          * Flag indicating whether the objective variables are forced into their
          * bounds if defined
          */
         private final boolean isRepairMode;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
          */
         FitnessFunction() {
             isRepairMode = true;
@@ -941,17 +931,17 @@ public class CMAESOptimizer
          */
         public ValuePenaltyPair value(final double[] point) {
             double value;
-            double penalty=0.0;
+            double penalty = 0.0;
             if (isRepairMode) {
                 double[] repaired = repair(point);
                 value = CMAESOptimizer.this.computeObjectiveValue(repaired);
-                penalty =  penalty(point, repaired);
+                penalty = penalty(point, repaired);
             } else {
                 value = CMAESOptimizer.this.computeObjectiveValue(point);
             }
             value = isMinimize ? value : -value;
             penalty = isMinimize ? penalty : -penalty;
-            return new ValuePenaltyPair(value,penalty);
+            return new ValuePenaltyPair(value, penalty);
         }
 
         /**
@@ -995,7 +985,7 @@ public class CMAESOptimizer
         }
 
         /**
-         * @param x Normalized objective variables.
+         * @param x        Normalized objective variables.
          * @param repaired Repaired objective variables.
          * @return Penalty value according to the violation of the bounds.
          */
@@ -1085,7 +1075,7 @@ public class CMAESOptimizer
     }
 
     /**
-     * @param m Input matrix.
+     * @param m    Input matrix.
      * @param cols Columns to select.
      * @return Matrix representing the selected columns.
      */
@@ -1133,7 +1123,7 @@ public class CMAESOptimizer
     /**
      * @param m Input matrix.
      * @return the diagonal n-by-n matrix if m is a column matrix or the column
-     * matrix representing the diagonal if m is a n-by-n matrix.
+     *         matrix representing the diagonal if m is a n-by-n matrix.
      */
     private static RealMatrix diag(final RealMatrix m) {
         if (m.getColumnDimension() == 1) {
@@ -1154,13 +1144,12 @@ public class CMAESOptimizer
     /**
      * Copies a column from m1 to m2.
      *
-     * @param m1 Source matrix.
+     * @param m1   Source matrix.
      * @param col1 Source column.
-     * @param m2 Target matrix.
+     * @param m2   Target matrix.
      * @param col2 Target column.
      */
-    private static void copyColumn(final RealMatrix m1, int col1,
-                                   RealMatrix m2, int col2) {
+    private static void copyColumn(final RealMatrix m1, int col1, RealMatrix m2, int col2) {
         for (int i = 0; i < m1.getRowDimension(); i++) {
             m2.setEntry(i, col2, m1.getEntry(i, col1));
         }
@@ -1183,7 +1172,7 @@ public class CMAESOptimizer
      * @param n Number of rows.
      * @param m Number of columns.
      * @return n-by-m matrix of 0 values out of diagonal, and 1 values on
-     * the diagonal.
+     *         the diagonal.
      */
     private static RealMatrix eye(int n, int m) {
         final double[][] d = new double[n][m];
@@ -1206,8 +1195,8 @@ public class CMAESOptimizer
 
     /**
      * @param mat Input matrix.
-     * @param n Number of row replicates.
-     * @param m Number of column replicates.
+     * @param n   Number of row replicates.
+     * @param m   Number of column replicates.
      * @return a matrix which replicates the input matrix in both directions.
      */
     private static RealMatrix repmat(final RealMatrix mat, int n, int m) {
@@ -1224,8 +1213,8 @@ public class CMAESOptimizer
 
     /**
      * @param start Start value.
-     * @param end End value.
-     * @param step Step size.
+     * @param end   End value.
+     * @param step  Step size.
      * @return a sequence as column matrix.
      */
     private static RealMatrix sequence(double start, double end, double step) {
@@ -1338,7 +1327,7 @@ public class CMAESOptimizer
     }
 
     /**
-     * @param size Number of rows.
+     * @param size    Number of rows.
      * @param popSize Population size.
      * @return a 2-dimensional matrix of Gaussian random numbers.
      */

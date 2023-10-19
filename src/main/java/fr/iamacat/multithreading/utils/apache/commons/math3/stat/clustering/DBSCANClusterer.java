@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +41,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * <p>
  * The algorithm requires two parameters:
  * <ul>
- *   <li>eps: the distance that defines the &epsilon;-neighborhood of a point
- *   <li>minPoints: the minimum number of density-connected points required to form a cluster
+ * <li>eps: the distance that defines the &epsilon;-neighborhood of a point
+ * <li>minPoints: the minimum number of density-connected points required to form a cluster
  * </ul>
  * <p>
  * <b>Note:</b> as DBSCAN is not a centroid-based clustering algorithm, the resulting
@@ -54,19 +52,19 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * @param <T> type of the points to cluster
  * @see <a href="http://en.wikipedia.org/wiki/DBSCAN">DBSCAN (wikipedia)</a>
  * @see <a href="http://www.dbs.ifi.lmu.de/Publikationen/Papers/KDD-96.final.frame.pdf">
- * A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise</a>
+ *      A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise</a>
  * @since 3.1
  * @deprecated As of 3.2 (to be removed in 4.0),
- * use {@link fr.iamacat.multithreading.utils.apache.commons.math3.ml.clustering.DBSCANClusterer} instead
+ *             use {@link fr.iamacat.multithreading.utils.apache.commons.math3.ml.clustering.DBSCANClusterer} instead
  */
 @Deprecated
 public class DBSCANClusterer<T extends Clusterable<T>> {
 
     /** Maximum radius of the neighborhood to be considered. */
-    private final double              eps;
+    private final double eps;
 
     /** Minimum number of points needed for a cluster. */
-    private final int                 minPts;
+    private final int minPts;
 
     /** Status of a point during the clustering process. */
     private enum PointStatus {
@@ -79,12 +77,11 @@ public class DBSCANClusterer<T extends Clusterable<T>> {
     /**
      * Creates a new instance of a DBSCANClusterer.
      *
-     * @param eps maximum radius of the neighborhood to be considered
+     * @param eps    maximum radius of the neighborhood to be considered
      * @param minPts minimum number of points needed for a cluster
      * @throws NotPositiveException if {@code eps < 0.0} or {@code minPts < 0}
      */
-    public DBSCANClusterer(final double eps, final int minPts)
-        throws NotPositiveException {
+    public DBSCANClusterer(final double eps, final int minPts) throws NotPositiveException {
         if (eps < 0.0d) {
             throw new NotPositiveException(eps);
         }
@@ -152,18 +149,15 @@ public class DBSCANClusterer<T extends Clusterable<T>> {
     /**
      * Expands the cluster to include density-reachable items.
      *
-     * @param cluster Cluster to expand
-     * @param point Point to add to cluster
+     * @param cluster   Cluster to expand
+     * @param point     Point to add to cluster
      * @param neighbors List of neighbors
-     * @param points the data set
-     * @param visited the set of already visited points
+     * @param points    the data set
+     * @param visited   the set of already visited points
      * @return the expanded cluster
      */
-    private Cluster<T> expandCluster(final Cluster<T> cluster,
-                                     final T point,
-                                     final List<T> neighbors,
-                                     final Collection<T> points,
-                                     final Map<Clusterable<T>, PointStatus> visited) {
+    private Cluster<T> expandCluster(final Cluster<T> cluster, final T point, final List<T> neighbors,
+        final Collection<T> points, final Map<Clusterable<T>, PointStatus> visited) {
         cluster.addPoint(point);
         visited.put(point, PointStatus.PART_OF_CLUSTER);
 
@@ -193,7 +187,7 @@ public class DBSCANClusterer<T extends Clusterable<T>> {
     /**
      * Returns a list of density-reachable neighbors of a {@code point}.
      *
-     * @param point the point to look for
+     * @param point  the point to look for
      * @param points possible neighbors
      * @return the List of neighbors
      */

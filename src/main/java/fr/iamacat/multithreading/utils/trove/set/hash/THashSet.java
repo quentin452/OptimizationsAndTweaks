@@ -10,29 +10,28 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.set.hash;
 
-import gnu.trove.impl.hash.TObjectHash;
-import gnu.trove.impl.HashFunctions;
-import gnu.trove.procedure.TObjectProcedure;
-import gnu.trove.procedure.array.ToObjectArrayProceedure;
-import gnu.trove.iterator.hash.TObjectHashIterator;
-
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Arrays;
-import java.lang.reflect.Array;
 
+import gnu.trove.impl.HashFunctions;
+import gnu.trove.impl.hash.TObjectHash;
+import gnu.trove.iterator.hash.TObjectHashIterator;
+import gnu.trove.procedure.TObjectProcedure;
+import gnu.trove.procedure.array.ToObjectArrayProceedure;
 
 /**
  * An implementation of the <tt>Set</tt> interface that uses an
@@ -44,11 +43,9 @@ import java.lang.reflect.Array;
  * @version $Id: THashSet.java,v 1.1.2.8 2010/03/02 04:09:50 robeden Exp $
  */
 
-public class THashSet<E> extends TObjectHash<E>
-        implements Set<E>, Iterable<E>, Externalizable {
+public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>, Externalizable {
 
     static final long serialVersionUID = 1L;
-
 
     /**
      * Creates a new <code>THashSet</code> instance with the default
@@ -57,7 +54,6 @@ public class THashSet<E> extends TObjectHash<E>
     public THashSet() {
         super();
     }
-
 
     /**
      * Creates a new <code>THashSet</code> instance with a prime
@@ -69,7 +65,6 @@ public class THashSet<E> extends TObjectHash<E>
     public THashSet(int initialCapacity) {
         super(initialCapacity);
     }
-
 
     /**
      * Creates a new <code>THashSet</code> instance with a prime
@@ -83,7 +78,6 @@ public class THashSet<E> extends TObjectHash<E>
         super(initialCapacity, loadFactor);
     }
 
-
     /**
      * Creates a new <code>THashSet</code> instance containing the
      * elements of <tt>collection</tt>.
@@ -94,7 +88,6 @@ public class THashSet<E> extends TObjectHash<E>
         this(collection.size());
         addAll(collection);
     }
-
 
     /**
      * Inserts a value into the set.
@@ -107,16 +100,15 @@ public class THashSet<E> extends TObjectHash<E>
         int index = insertKey(obj);
 
         if (index < 0) {
-            return false;       // already present in set, nothing to add
+            return false; // already present in set, nothing to add
         }
 
         postInsertHook(consumeFreeSlot);
-        return true;            // yes, we added something
+        return true; // yes, we added something
     }
 
-
     @Override
-    @SuppressWarnings({"SimplifiableIfStatement"})
+    @SuppressWarnings({ "SimplifiableIfStatement" })
     public boolean equals(Object other) {
         if (!(other instanceof Set)) {
             return false;
@@ -128,7 +120,6 @@ public class THashSet<E> extends TObjectHash<E>
         return containsAll(that);
     }
 
-
     @Override
     public int hashCode() {
         HashProcedure p = new HashProcedure();
@@ -136,8 +127,8 @@ public class THashSet<E> extends TObjectHash<E>
         return p.getHashCode();
     }
 
-
     private final class HashProcedure implements TObjectProcedure<E> {
+
         private int h = 0;
 
         public int getHashCode() {
@@ -151,14 +142,13 @@ public class THashSet<E> extends TObjectHash<E>
         }
     }
 
-
     /**
      * Expands the set to accommodate new values.
      *
      * @param newCapacity an <code>int</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     protected void rehash(int newCapacity) {
         int oldCapacity = _set.length;
 
@@ -190,13 +180,12 @@ public class THashSet<E> extends TObjectHash<E>
      * @return an <code>Object[]</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public Object[] toArray() {
         Object[] result = new Object[size()];
         forEach(new ToObjectArrayProceedure(result));
         return result;
     }
-
 
     /**
      * Returns a typed array of the objects in the set.
@@ -205,11 +194,14 @@ public class THashSet<E> extends TObjectHash<E>
      * @return an <code>Object[]</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T[] toArray(T[] a) {
         int size = size();
         if (a.length < size) {
-            a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
+            a = (T[]) Array.newInstance(
+                a.getClass()
+                    .getComponentType(),
+                size);
         }
 
         forEach(new ToObjectArrayProceedure(a));
@@ -229,7 +221,6 @@ public class THashSet<E> extends TObjectHash<E>
         return a;
     }
 
-
     /**
      * Empties the set.
      */
@@ -240,7 +231,6 @@ public class THashSet<E> extends TObjectHash<E>
         Arrays.fill(_set, 0, _set.length, FREE);
     }
 
-
     /**
      * Removes <tt>obj</tt> from the set.
      *
@@ -248,7 +238,7 @@ public class THashSet<E> extends TObjectHash<E>
      * @return true if the set was modified by the remove operation.
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public boolean remove(Object obj) {
         int index = index(obj);
         if (index >= 0) {
@@ -258,19 +248,17 @@ public class THashSet<E> extends TObjectHash<E>
         return false;
     }
 
-
     /**
-     * Creates an iterator over the values of the set.  The iterator
+     * Creates an iterator over the values of the set. The iterator
      * supports element deletion.
      *
      * @return an <code>Iterator</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public TObjectHashIterator<E> iterator() {
         return new TObjectHashIterator<E>(this);
     }
-
 
     /**
      * Tests the set to determine if all of the elements in
@@ -288,7 +276,6 @@ public class THashSet<E> extends TObjectHash<E>
         }
         return true;
     }
-
 
     /**
      * Adds all of the elements in <tt>collection</tt> to the set.
@@ -311,7 +298,6 @@ public class THashSet<E> extends TObjectHash<E>
         return changed;
     }
 
-
     /**
      * Removes all of the elements in <tt>collection</tt> from the set.
      *
@@ -332,7 +318,6 @@ public class THashSet<E> extends TObjectHash<E>
         }
         return changed;
     }
-
 
     /**
      * Removes any values in the set which are not contained in
@@ -355,13 +340,12 @@ public class THashSet<E> extends TObjectHash<E>
         return changed;
     }
 
-
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder("{");
         forEach(new TObjectProcedure<E>() {
-            private boolean first = true;
 
+            private boolean first = true;
 
             @Override
             public boolean execute(Object value) {
@@ -378,7 +362,6 @@ public class THashSet<E> extends TObjectHash<E>
         buf.append("}");
         return buf.toString();
     }
-
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -404,9 +387,8 @@ public class THashSet<E> extends TObjectHash<E>
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
-    public void readExternal(ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    @SuppressWarnings({ "unchecked" })
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         // VERSION
         byte version = in.readByte();

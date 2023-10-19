@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +27,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Differe
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateDifferentiableVectorOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
 
-/** Fitter for parametric univariate real functions y = f(x).
+/**
+ * Fitter for parametric univariate real functions y = f(x).
  * <br/>
  * When a univariate real function y = f(x) does depend on some
  * unknown parameters p<sub>0</sub>, p<sub>1</sub> ... p<sub>n-1</sub>,
@@ -49,7 +48,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVe
 @Deprecated
 public class CurveFitter<T extends ParametricUnivariateFunction> {
 
-    /** Optimizer to use for the fitting.
+    /**
+     * Optimizer to use for the fitting.
+     * 
      * @deprecated as of 3.1 replaced by {@link #optimizer}
      */
     @Deprecated
@@ -61,33 +62,41 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
     /** Observed points. */
     private final List<WeightedObservedPoint> observations;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param optimizer optimizer to use for the fitting
      * @deprecated as of 3.1 replaced by {@link #CurveFitter(MultivariateDifferentiableVectorOptimizer)}
      */
     @Deprecated
     public CurveFitter(final DifferentiableMultivariateVectorOptimizer optimizer) {
         this.oldOptimizer = optimizer;
-        this.optimizer    = null;
-        observations      = new ArrayList<WeightedObservedPoint>();
+        this.optimizer = null;
+        observations = new ArrayList<WeightedObservedPoint>();
     }
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param optimizer optimizer to use for the fitting
      * @since 3.1
      */
     public CurveFitter(final MultivariateDifferentiableVectorOptimizer optimizer) {
         this.oldOptimizer = null;
-        this.optimizer    = optimizer;
-        observations      = new ArrayList<WeightedObservedPoint>();
+        this.optimizer = optimizer;
+        observations = new ArrayList<WeightedObservedPoint>();
     }
 
-    /** Add an observed (x,y) point to the sample with unit weight.
-     * <p>Calling this method is equivalent to call
-     * {@code addObservedPoint(1.0, x, y)}.</p>
+    /**
+     * Add an observed (x,y) point to the sample with unit weight.
+     * <p>
+     * Calling this method is equivalent to call
+     * {@code addObservedPoint(1.0, x, y)}.
+     * </p>
+     * 
      * @param x abscissa of the point
      * @param y observed value of the point at x, after fitting we should
-     * have f(x) as close as possible to this value
+     *          have f(x) as close as possible to this value
      * @see #addObservedPoint(double, double, double)
      * @see #addObservedPoint(WeightedObservedPoint)
      * @see #getObservations()
@@ -96,11 +105,13 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         addObservedPoint(1.0, x, y);
     }
 
-    /** Add an observed weighted (x,y) point to the sample.
+    /**
+     * Add an observed weighted (x,y) point to the sample.
+     * 
      * @param weight weight of the observed point in the fit
-     * @param x abscissa of the point
-     * @param y observed value of the point at x, after fitting we should
-     * have f(x) as close as possible to this value
+     * @param x      abscissa of the point
+     * @param y      observed value of the point at x, after fitting we should
+     *               have f(x) as close as possible to this value
      * @see #addObservedPoint(double, double)
      * @see #addObservedPoint(WeightedObservedPoint)
      * @see #getObservations()
@@ -109,7 +120,9 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         observations.add(new WeightedObservedPoint(weight, x, y));
     }
 
-    /** Add an observed weighted (x,y) point to the sample.
+    /**
+     * Add an observed weighted (x,y) point to the sample.
+     * 
      * @param observed observed point to add
      * @see #addObservedPoint(double, double)
      * @see #addObservedPoint(double, double, double)
@@ -119,7 +132,9 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         observations.add(observed);
     }
 
-    /** Get the observed points.
+    /**
+     * Get the observed points.
+     * 
      * @return observed points
      * @see #addObservedPoint(double, double)
      * @see #addObservedPoint(double, double, double)
@@ -143,11 +158,13 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
      * to the {@link #addObservedPoint(WeightedObservedPoint)
      * addObservedPoint} method.
      *
-     * @param f parametric function to fit.
+     * @param f            parametric function to fit.
      * @param initialGuess first guess of the function parameters.
      * @return the fitted parameters.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the start point dimension is wrong.
+     *                                                                                                   if the start
+     *                                                                                                   point dimension
+     *                                                                                                   is wrong.
      */
     public double[] fit(T f, final double[] initialGuess) {
         return fit(Integer.MAX_VALUE, f, initialGuess);
@@ -160,24 +177,29 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
      * to the {@link #addObservedPoint(WeightedObservedPoint)
      * addObservedPoint} method.
      *
-     * @param f parametric function to fit.
+     * @param f            parametric function to fit.
      * @param initialGuess first guess of the function parameters.
-     * @param maxEval Maximum number of function evaluations.
+     * @param maxEval      Maximum number of function evaluations.
      * @return the fitted parameters.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the number of allowed evaluations is exceeded.
+     *                                                                                                    if the number
+     *                                                                                                    of allowed
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the start point dimension is wrong.
+     *                                                                                                    if the start
+     *                                                                                                    point
+     *                                                                                                    dimension is
+     *                                                                                                    wrong.
      * @since 3.0
      */
-    public double[] fit(int maxEval, T f,
-                        final double[] initialGuess) {
+    public double[] fit(int maxEval, T f, final double[] initialGuess) {
         // prepare least squares problem
-        double[] target  = new double[observations.size()];
+        double[] target = new double[observations.size()];
         double[] weights = new double[observations.size()];
         int i = 0;
         for (WeightedObservedPoint point : observations) {
-            target[i]  = point.getY();
+            target[i] = point.getY();
             weights[i] = point.getWeight();
             ++i;
         }
@@ -186,11 +208,10 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         final PointVectorValuePair optimum;
         if (optimizer == null) {
             // to be removed in 4.0
-            optimum = oldOptimizer.optimize(maxEval, new OldTheoreticalValuesFunction(f),
-                                            target, weights, initialGuess);
+            optimum = oldOptimizer
+                .optimize(maxEval, new OldTheoreticalValuesFunction(f), target, weights, initialGuess);
         } else {
-            optimum = optimizer.optimize(maxEval, new TheoreticalValuesFunction(f),
-                                         target, weights, initialGuess);
+            optimum = optimizer.optimize(maxEval, new TheoreticalValuesFunction(f), target, weights, initialGuess);
         }
 
         // extract the coefficients
@@ -199,12 +220,14 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
 
     /** Vectorial function computing function theoretical values. */
     @Deprecated
-    private class OldTheoreticalValuesFunction
-        implements DifferentiableMultivariateVectorFunction {
+    private class OldTheoreticalValuesFunction implements DifferentiableMultivariateVectorFunction {
+
         /** Function to fit. */
         private final ParametricUnivariateFunction f;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param f function to fit.
          */
         OldTheoreticalValuesFunction(final ParametricUnivariateFunction f) {
@@ -214,6 +237,7 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         /** {@inheritDoc} */
         public MultivariateMatrixFunction jacobian() {
             return new MultivariateMatrixFunction() {
+
                 /** {@inheritDoc} */
                 public double[][] value(double[] point) {
                     final double[][] jacobian = new double[observations.size()][];
@@ -247,7 +271,9 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
         /** Function to fit. */
         private final ParametricUnivariateFunction f;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param f function to fit.
          */
         TheoreticalValuesFunction(final ParametricUnivariateFunction f) {

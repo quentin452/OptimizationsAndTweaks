@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,8 +29,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @since 1.1 (changed to concrete class in 3.0)
  */
 public class CauchyDistribution extends AbstractRealDistribution {
+
     /**
      * Default inverse cumulative probability accuracy.
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
@@ -64,7 +64,7 @@ public class CauchyDistribution extends AbstractRealDistribution {
      * additional initialisation overhead.
      *
      * @param median Median for this distribution.
-     * @param scale Scale parameter for this distribution.
+     * @param scale  Scale parameter for this distribution.
      */
     public CauchyDistribution(double median, double scale) {
         this(median, scale, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
@@ -80,25 +80,24 @@ public class CauchyDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param median Median for this distribution.
-     * @param scale Scale parameter for this distribution.
+     * @param median             Median for this distribution.
+     * @param scale              Scale parameter for this distribution.
      * @param inverseCumAccuracy Maximum absolute error in inverse
-     * cumulative probability estimates
-     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates
+     *                           (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @throws NotStrictlyPositiveException if {@code scale <= 0}.
      * @since 2.1
      */
-    public CauchyDistribution(double median, double scale,
-                              double inverseCumAccuracy) {
+    public CauchyDistribution(double median, double scale, double inverseCumAccuracy) {
         this(new Well19937c(), median, scale, inverseCumAccuracy);
     }
 
     /**
      * Creates a Cauchy distribution.
      *
-     * @param rng Random number generator.
+     * @param rng    Random number generator.
      * @param median Median for this distribution.
-     * @param scale Scale parameter for this distribution.
+     * @param scale  Scale parameter for this distribution.
      * @throws NotStrictlyPositiveException if {@code scale <= 0}.
      * @since 3.3
      */
@@ -109,19 +108,16 @@ public class CauchyDistribution extends AbstractRealDistribution {
     /**
      * Creates a Cauchy distribution.
      *
-     * @param rng Random number generator.
-     * @param median Median for this distribution.
-     * @param scale Scale parameter for this distribution.
+     * @param rng                Random number generator.
+     * @param median             Median for this distribution.
+     * @param scale              Scale parameter for this distribution.
      * @param inverseCumAccuracy Maximum absolute error in inverse
-     * cumulative probability estimates
-     * (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates
+     *                           (defaults to {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @throws NotStrictlyPositiveException if {@code scale <= 0}.
      * @since 3.1
      */
-    public CauchyDistribution(RandomGenerator rng,
-                              double median,
-                              double scale,
-                              double inverseCumAccuracy) {
+    public CauchyDistribution(RandomGenerator rng, double median, double scale, double inverseCumAccuracy) {
         super(rng);
         if (scale <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.SCALE, scale);
@@ -173,7 +169,7 @@ public class CauchyDistribution extends AbstractRealDistribution {
             throw new OutOfRangeException(p, 0, 1);
         } else if (p == 0) {
             ret = Double.NEGATIVE_INFINITY;
-        } else  if (p == 1) {
+        } else if (p == 1) {
             ret = Double.POSITIVE_INFINITY;
         } else {
             ret = median + scale * FastMath.tan(FastMath.PI * (p - .5));

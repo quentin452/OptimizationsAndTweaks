@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,13 +17,14 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.optim.univariate;
 
 import java.util.Arrays;
 import java.util.Comparator;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
-import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.MaxEval;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationData;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Special implementation of the {@link UnivariateOptimizer} interface
@@ -37,8 +36,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationDa
  *
  * @since 3.0
  */
-public class MultiStartUnivariateOptimizer
-    extends UnivariateOptimizer {
+public class MultiStartUnivariateOptimizer extends UnivariateOptimizer {
+
     /** Underlying classical optimizer. */
     private final UnivariateOptimizer optimizer;
     /** Number of evaluations already performed for all starts. */
@@ -66,15 +65,14 @@ public class MultiStartUnivariateOptimizer
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform. If {@code starts == 1},
-     * the {@code optimize} methods will return the same solution as
-     * {@code optimizer} would.
+     * @param starts    Number of starts to perform. If {@code starts == 1},
+     *                  the {@code optimize} methods will return the same solution as
+     *                  {@code optimizer} would.
      * @param generator Random generator to use for restarts.
      * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
-    public MultiStartUnivariateOptimizer(final UnivariateOptimizer optimizer,
-                                         final int starts,
-                                         final RandomGenerator generator) {
+    public MultiStartUnivariateOptimizer(final UnivariateOptimizer optimizer, final int starts,
+        final RandomGenerator generator) {
         super(optimizer.getConvergenceChecker());
 
         if (starts < 1) {
@@ -112,7 +110,7 @@ public class MultiStartUnivariateOptimizer
      *
      * @return an array containing the optima.
      * @throws MathIllegalStateException if {@link #optimize(OptimizationData[])
-     * optimize} has not been called.
+     *                                   optimize} has not been called.
      */
     public UnivariatePointValuePair[] getOptima() {
         if (optima == null) {
@@ -125,12 +123,12 @@ public class MultiStartUnivariateOptimizer
      * {@inheritDoc}
      *
      * @throws MathIllegalStateException if {@code optData} does not contain an
-     * instance of {@link MaxEval} or {@link SearchInterval}.
+     *                                   instance of {@link MaxEval} or {@link SearchInterval}.
      */
     @Override
     public UnivariatePointValuePair optimize(OptimizationData... optData) {
         // Store arguments in order to pass them to the internal optimizer.
-       optimData = optData;
+        optimData = optData;
         // Set up base class and perform computations.
         return super.optimize(optData);
     }
@@ -178,9 +176,7 @@ public class MultiStartUnivariateOptimizer
                 // Decrease number of allowed evaluations.
                 optimData[maxEvalIndex] = new MaxEval(maxEval - totalEvaluations);
                 // New start value.
-                final double s = (i == 0) ?
-                    startValue :
-                    min + generator.nextDouble() * (max - min);
+                final double s = (i == 0) ? startValue : min + generator.nextDouble() * (max - min);
                 optimData[searchIntervalIndex] = new SearchInterval(min, max, s);
                 // Optimize.
                 optima[i] = optimizer.optimize(optimData);
@@ -210,19 +206,18 @@ public class MultiStartUnivariateOptimizer
      */
     private void sortPairs(final GoalType goal) {
         Arrays.sort(optima, new Comparator<UnivariatePointValuePair>() {
-                /** {@inheritDoc} */
-                public int compare(final UnivariatePointValuePair o1,
-                                   final UnivariatePointValuePair o2) {
-                    if (o1 == null) {
-                        return (o2 == null) ? 0 : 1;
-                    } else if (o2 == null) {
-                        return -1;
-                    }
-                    final double v1 = o1.getValue();
-                    final double v2 = o2.getValue();
-                    return (goal == GoalType.MINIMIZE) ?
-                        Double.compare(v1, v2) : Double.compare(v2, v1);
+
+            /** {@inheritDoc} */
+            public int compare(final UnivariatePointValuePair o1, final UnivariatePointValuePair o2) {
+                if (o1 == null) {
+                    return (o2 == null) ? 0 : 1;
+                } else if (o2 == null) {
+                    return -1;
                 }
-            });
+                final double v1 = o1.getValue();
+                final double v2 = o2.getValue();
+                return (goal == GoalType.MINIMIZE) ? Double.compare(v1, v2) : Double.compare(v2, v1);
+            }
+        });
     }
 }

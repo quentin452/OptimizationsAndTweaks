@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +28,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * reference, see <b>Introduction to Numerical Analysis</b>, ISBN 038795452X,
  * chapter 3.
  * <p>
- * The function should be integrable.</p>
+ * The function should be integrable.
+ * </p>
  *
  * @since 1.2
  */
@@ -44,49 +43,46 @@ public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /**
      * Build a trapezoid integrator with given accuracies and iterations counts.
-     * @param relativeAccuracy relative accuracy of the result
-     * @param absoluteAccuracy absolute accuracy of the result
+     * 
+     * @param relativeAccuracy      relative accuracy of the result
+     * @param absoluteAccuracy      absolute accuracy of the result
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
+     *                              (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      */
-    public TrapezoidIntegrator(final double relativeAccuracy,
-                               final double absoluteAccuracy,
-                               final int minimalIterationCount,
-                               final int maximalIterationCount)
+    public TrapezoidIntegrator(final double relativeAccuracy, final double absoluteAccuracy,
+        final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > TRAPEZOID_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                TRAPEZOID_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, TRAPEZOID_MAX_ITERATIONS_COUNT, false);
         }
     }
 
     /**
      * Build a trapezoid integrator with given iteration counts.
+     * 
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
+     *                              (must be less than or equal to {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #TRAPEZOID_MAX_ITERATIONS_COUNT}
      */
-    public TrapezoidIntegrator(final int minimalIterationCount,
-                               final int maximalIterationCount)
+    public TrapezoidIntegrator(final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > TRAPEZOID_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                TRAPEZOID_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, TRAPEZOID_MAX_ITERATIONS_COUNT, false);
         }
     }
 
@@ -105,13 +101,14 @@ public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
      * <p>
      * The interval is divided equally into 2^n sections rather than an
      * arbitrary m sections because this configuration can best utilize the
-     * already computed values.</p>
+     * already computed values.
+     * </p>
      *
      * @param baseIntegrator integrator holding integration parameters
-     * @param n the stage of 1/2 refinement, n = 0 is no refinement
+     * @param n              the stage of 1/2 refinement, n = 0 is no refinement
      * @return the value of n-th stage integral
      * @throws TooManyEvaluationsException if the maximal number of evaluations
-     * is exceeded.
+     *                                     is exceeded.
      */
     double stage(final BaseAbstractUnivariateIntegrator baseIntegrator, final int n)
         throws TooManyEvaluationsException {
@@ -119,18 +116,17 @@ public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
         if (n == 0) {
             final double max = baseIntegrator.getMax();
             final double min = baseIntegrator.getMin();
-            s = 0.5 * (max - min) *
-                      (baseIntegrator.computeObjectiveValue(min) +
-                       baseIntegrator.computeObjectiveValue(max));
+            s = 0.5 * (max - min)
+                * (baseIntegrator.computeObjectiveValue(min) + baseIntegrator.computeObjectiveValue(max));
             return s;
         } else {
-            final long np = 1L << (n-1);           // number of new points in this stage
+            final long np = 1L << (n - 1); // number of new points in this stage
             double sum = 0;
             final double max = baseIntegrator.getMax();
             final double min = baseIntegrator.getMin();
             // spacing between adjacent new points
             final double spacing = (max - min) / np;
-            double x = min + 0.5 * spacing;    // the first new point
+            double x = min + 0.5 * spacing; // the first new point
             for (long i = 0; i < np; i++) {
                 sum += baseIntegrator.computeObjectiveValue(x);
                 x += spacing;
@@ -153,8 +149,7 @@ public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
             final double t = stage(this, i);
             if (i >= getMinimalIterationCount()) {
                 final double delta = FastMath.abs(t - oldt);
-                final double rLimit =
-                    getRelativeAccuracy() * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5;
+                final double rLimit = getRelativeAccuracy() * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5;
                 if ((delta <= rLimit) || (delta <= getAbsoluteAccuracy())) {
                     return t;
                 }

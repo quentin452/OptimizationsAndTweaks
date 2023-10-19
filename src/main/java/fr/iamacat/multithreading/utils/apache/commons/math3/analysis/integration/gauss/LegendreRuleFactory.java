@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,15 +28,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Pair;
  * @since 3.1
  */
 public class LegendreRuleFactory extends BaseRuleFactory<Double> {
+
     /** {@inheritDoc} */
     @Override
-    protected Pair<Double[], Double[]> computeRule(int numberOfPoints)
-        throws DimensionMismatchException {
+    protected Pair<Double[], Double[]> computeRule(int numberOfPoints) throws DimensionMismatchException {
 
         if (numberOfPoints == 1) {
             // Break recursion.
-            return new Pair<Double[], Double[]>(new Double[] { 0d },
-                                                new Double[] { 2d });
+            return new Pair<Double[], Double[]>(new Double[] { 0d }, new Double[] { 2d });
         }
 
         // Get previous rule.

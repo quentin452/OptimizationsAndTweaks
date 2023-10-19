@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +23,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * @since 2.2
  */
 public class NumberIsTooLargeException extends MathIllegalNumberException {
+
     /** Serializable version Id. */
     private static final long serialVersionUID = 4330003017885151975L;
     /**
@@ -39,30 +38,27 @@ public class NumberIsTooLargeException extends MathIllegalNumberException {
     /**
      * Construct the exception.
      *
-     * @param wrong Value that is larger than the maximum.
-     * @param max Maximum.
+     * @param wrong          Value that is larger than the maximum.
+     * @param max            Maximum.
      * @param boundIsAllowed if true the maximum is included in the allowed range.
      */
-    public NumberIsTooLargeException(Number wrong,
-                                     Number max,
-                                     boolean boundIsAllowed) {
-        this(boundIsAllowed ?
-             LocalizedFormats.NUMBER_TOO_LARGE :
-             LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED,
-             wrong, max, boundIsAllowed);
+    public NumberIsTooLargeException(Number wrong, Number max, boolean boundIsAllowed) {
+        this(
+            boundIsAllowed ? LocalizedFormats.NUMBER_TOO_LARGE : LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED,
+            wrong,
+            max,
+            boundIsAllowed);
     }
+
     /**
      * Construct the exception with a specific context.
      *
-     * @param specific Specific context pattern.
-     * @param wrong Value that is larger than the maximum.
-     * @param max Maximum.
+     * @param specific       Specific context pattern.
+     * @param wrong          Value that is larger than the maximum.
+     * @param max            Maximum.
      * @param boundIsAllowed if true the maximum is included in the allowed range.
      */
-    public NumberIsTooLargeException(Localizable specific,
-                                     Number wrong,
-                                     Number max,
-                                     boolean boundIsAllowed) {
+    public NumberIsTooLargeException(Localizable specific, Number wrong, Number max, boolean boundIsAllowed) {
         super(specific, wrong, max);
 
         this.max = max;

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +32,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
 
     /**
      * Constructor, copying the input representation.
+     * 
      * @param representation inner representation of the chromosome
      * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
@@ -43,6 +42,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
 
     /**
      * Constructor, copying the input representation.
+     * 
      * @param representation inner representation of the chromosome
      * @throws InvalidRepresentationException iff the <code>representation</code> can not represent a valid chromosome
      */
@@ -52,14 +52,15 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
 
     /**
      * Constructor.
+     * 
      * @param representation inner representation of the chromosome
-     * @param copyList if {@code true}, the representation will be copied, otherwise it will be referenced.
+     * @param copyList       if {@code true}, the representation will be copied, otherwise it will be referenced.
      * @since 3.3
      */
     public AbstractListChromosome(final List<T> representation, final boolean copyList) {
         checkValidity(representation);
-        this.representation =
-                Collections.unmodifiableList(copyList ? new ArrayList<T>(representation) : representation);
+        this.representation = Collections
+            .unmodifiableList(copyList ? new ArrayList<T>(representation) : representation);
     }
 
     /**
@@ -72,6 +73,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
 
     /**
      * Returns the (immutable) inner representation of the chromosome.
+     * 
      * @return the representation of the chromosome
      */
     protected List<T> getRepresentation() {
@@ -80,6 +82,7 @@ public abstract class AbstractListChromosome<T> extends Chromosome {
 
     /**
      * Returns the length of the chromosome.
+     * 
      * @return the length of the chromosome
      */
     public int getLength() {

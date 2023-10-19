@@ -8,19 +8,17 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.list;
 
 import java.io.Serializable;
-
-
 
 /**
  * Interface for Objects which can be inserted into a TLinkedList.
@@ -31,7 +29,8 @@ import java.io.Serializable;
  */
 
 public interface TLinkable<T extends TLinkable> extends Serializable {
-	static final long serialVersionUID = 997545054865482562L;
+
+    static final long serialVersionUID = 997545054865482562L;
 
     /**
      * Returns the linked list node after this one.
@@ -40,7 +39,6 @@ public interface TLinkable<T extends TLinkable> extends Serializable {
      */
     public T getNext();
 
-
     /**
      * Returns the linked list node before this one.
      *
@@ -48,19 +46,17 @@ public interface TLinkable<T extends TLinkable> extends Serializable {
      */
     public T getPrevious();
 
-
     /**
      * Sets the linked list node after this one.
      *
      * @param linkable a <code>TLinkable</code> value
      */
-    public void setNext( T linkable );
-
+    public void setNext(T linkable);
 
     /**
      * Sets the linked list node before this one.
      *
      * @param linkable a <code>TLinkable</code> value
      */
-    public void setPrevious( T linkable );
+    public void setPrevious(T linkable);
 }// TLinkable

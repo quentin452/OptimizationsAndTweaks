@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +22,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
- * <p>Adapter extending bounded {@link MultivariateFunction} to an unbouded
- * domain using a penalty function.</p>
+ * <p>
+ * Adapter extending bounded {@link MultivariateFunction} to an unbouded
+ * domain using a penalty function.
+ * </p>
  *
  * <p>
  * This adapter can be used to wrap functions subject to simple bounds on
@@ -80,16 +80,19 @@ public class MultivariateFunctionPenaltyAdapter implements MultivariateFunction 
     /** Penalty scales. */
     private final double[] scale;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * <p>
      * When the optimizer provided points are out of range, the value of the
      * penalty function will be used instead of the value of the underlying
      * function. In order for this penalty to be effective in rejecting this
      * point during the optimization process, the penalty function value should
      * be defined with care. This value is computed as:
+     * 
      * <pre>
      *   penalty(point) = offset + &sum;<sub>i</sub>[scale[i] * &radic;|point[i]-boundary[i]|]
      * </pre>
+     * 
      * where indices i correspond to all the components that violates their boundaries.
      * </p>
      * <p>
@@ -108,22 +111,22 @@ public class MultivariateFunctionPenaltyAdapter implements MultivariateFunction 
      * boundaries violation than for small violations, so the optimizer has an hint
      * about the direction in which it should search for acceptable points.
      * </p>
+     * 
      * @param bounded bounded function
-     * @param lower lower bounds for each element of the input parameters array
-     * (some elements may be set to {@code Double.NEGATIVE_INFINITY} for
-     * unbounded values)
-     * @param upper upper bounds for each element of the input parameters array
-     * (some elements may be set to {@code Double.POSITIVE_INFINITY} for
-     * unbounded values)
-     * @param offset base offset of the penalty function
-     * @param scale scale of the penalty function
+     * @param lower   lower bounds for each element of the input parameters array
+     *                (some elements may be set to {@code Double.NEGATIVE_INFINITY} for
+     *                unbounded values)
+     * @param upper   upper bounds for each element of the input parameters array
+     *                (some elements may be set to {@code Double.POSITIVE_INFINITY} for
+     *                unbounded values)
+     * @param offset  base offset of the penalty function
+     * @param scale   scale of the penalty function
      * @exception DimensionMismatchException if lower bounds, upper bounds and
-     * scales are not consistent, either according to dimension or to bounadary
-     * values
+     *                                       scales are not consistent, either according to dimension or to bounadary
+     *                                       values
      */
-    public MultivariateFunctionPenaltyAdapter(final MultivariateFunction bounded,
-                                                  final double[] lower, final double[] upper,
-                                                  final double offset, final double[] scale) {
+    public MultivariateFunctionPenaltyAdapter(final MultivariateFunction bounded, final double[] lower,
+        final double[] upper, final double offset, final double[] scale) {
 
         // safety checks
         MathUtils.checkNotNull(lower);
@@ -143,20 +146,22 @@ public class MultivariateFunctionPenaltyAdapter implements MultivariateFunction 
         }
 
         this.bounded = bounded;
-        this.lower   = lower.clone();
-        this.upper   = upper.clone();
-        this.offset  = offset;
-        this.scale   = scale.clone();
+        this.lower = lower.clone();
+        this.upper = upper.clone();
+        this.offset = offset;
+        this.scale = scale.clone();
 
     }
 
-    /** Compute the underlying function value from an unbounded point.
+    /**
+     * Compute the underlying function value from an unbounded point.
      * <p>
      * This method simply returns the value of the underlying function
      * if the unbounded point already fulfills the bounds, and compute
      * a replacement value using the offset and scale if bounds are
      * violated, without calling the function at all.
      * </p>
+     * 
      * @param point unbounded point
      * @return either underlying function value or penalty function value
      */

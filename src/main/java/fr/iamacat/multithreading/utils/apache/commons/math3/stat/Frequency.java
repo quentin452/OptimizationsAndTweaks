@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +18,8 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,16 +34,20 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 /**
  * Maintains a frequency distribution.
  * <p>
- * Accepts int, long, char or Comparable values.  New values added must be
+ * Accepts int, long, char or Comparable values. New values added must be
  * comparable to those that have been added, otherwise the add method will
- * throw an IllegalArgumentException.</p>
+ * throw an IllegalArgumentException.
+ * </p>
  * <p>
  * Integer values (int, long, Integer, Long) are not distinguished by type --
  * i.e. <code>addValue(Long.valueOf(2)), addValue(2), addValue(2l)</code> all have
- * the same effect (similarly for arguments to <code>getCount,</code> etc.).</p>
- * <p>NOTE: byte and short values will be implicitly converted to int values
+ * the same effect (similarly for arguments to <code>getCount,</code> etc.).
+ * </p>
+ * <p>
+ * NOTE: byte and short values will be implicitly converted to int values
  * by the compiler, thus there are no explicit overloaded methods for these
- * primitive types.</p>
+ * primitive types.
+ * </p>
  * <p>
  * char values are converted by <code>addValue</code> to Character instances.
  * As such, these values are not comparable to integral values, so attempts
@@ -59,7 +61,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * </b>
  * <p>
  * The values are ordered using the default (natural order), unless a
- * <code>Comparator</code> is supplied in the constructor.</p>
+ * <code>Comparator</code> is supplied in the constructor.
+ * </p>
  *
  */
 public class Frequency implements Serializable {
@@ -97,7 +100,8 @@ public class Frequency implements Serializable {
         NumberFormat nf = NumberFormat.getPercentInstance();
         StringBuilder outBuffer = new StringBuilder();
         outBuffer.append("Value \t Freq. \t Pct. \t Cum Pct. \n");
-        Iterator<Comparable<?>> iter = freqTable.keySet().iterator();
+        Iterator<Comparable<?>> iter = freqTable.keySet()
+            .iterator();
         while (iter.hasNext()) {
             Comparable<?> value = iter.next();
             outBuffer.append(value);
@@ -131,7 +135,7 @@ public class Frequency implements Serializable {
      *
      * @param v the value to add.
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Long
+     *                                      comparable to Long
      */
     public void addValue(int v) throws MathIllegalArgumentException {
         addValue(Long.valueOf(v));
@@ -142,7 +146,7 @@ public class Frequency implements Serializable {
      *
      * @param v the value to add.
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Long
+     *                                      comparable to Long
      */
     public void addValue(long v) throws MathIllegalArgumentException {
         addValue(Long.valueOf(v));
@@ -153,7 +157,7 @@ public class Frequency implements Serializable {
      *
      * @param v the value to add.
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Char
+     *                                      comparable to Char
      */
     public void addValue(char v) throws MathIllegalArgumentException {
         addValue(Character.valueOf(v));
@@ -166,7 +170,7 @@ public class Frequency implements Serializable {
      * be comparable to those that have already been added.
      * </p>
      *
-     * @param v the value to add.
+     * @param v         the value to add.
      * @param increment the amount by which the value should be incremented
      * @throws MathIllegalArgumentException if <code>v</code> is not comparable with previous entries
      * @since 3.1
@@ -184,10 +188,11 @@ public class Frequency implements Serializable {
                 freqTable.put(obj, Long.valueOf(count.longValue() + increment));
             }
         } catch (ClassCastException ex) {
-            //TreeMap will throw ClassCastException if v is not comparable
+            // TreeMap will throw ClassCastException if v is not comparable
             throw new MathIllegalArgumentException(
-                  LocalizedFormats.INSTANCES_NOT_COMPARABLE_TO_EXISTING_VALUES,
-                  v.getClass().getName());
+                LocalizedFormats.INSTANCES_NOT_COMPARABLE_TO_EXISTING_VALUES,
+                v.getClass()
+                    .getName());
         }
     }
 
@@ -198,10 +203,10 @@ public class Frequency implements Serializable {
      * be comparable to those that have already been added.
      * </p>
      *
-     * @param v the value to add.
+     * @param v         the value to add.
      * @param increment the amount by which the value should be incremented
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Long
+     *                                      comparable to Long
      * @since 3.3
      */
     public void incrementValue(int v, long increment) throws MathIllegalArgumentException {
@@ -215,10 +220,10 @@ public class Frequency implements Serializable {
      * be comparable to those that have already been added.
      * </p>
      *
-     * @param v the value to add.
+     * @param v         the value to add.
      * @param increment the amount by which the value should be incremented
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Long
+     *                                      comparable to Long
      * @since 3.3
      */
     public void incrementValue(long v, long increment) throws MathIllegalArgumentException {
@@ -232,10 +237,10 @@ public class Frequency implements Serializable {
      * be comparable to those that have already been added.
      * </p>
      *
-     * @param v the value to add.
+     * @param v         the value to add.
      * @param increment the amount by which the value should be incremented
      * @throws MathIllegalArgumentException if the table contains entries not
-     * comparable to Char
+     *                                      comparable to Char
      * @since 3.3
      */
     public void incrementValue(char v, long increment) throws MathIllegalArgumentException {
@@ -252,12 +257,14 @@ public class Frequency implements Serializable {
      * <p>
      * If added values are integral (i.e., integers, longs, Integers, or Longs),
      * they are converted to Longs when they are added, so the objects returned
-     * by the Iterator will in this case be Longs.</p>
+     * by the Iterator will in this case be Longs.
+     * </p>
      *
      * @return values Iterator
      */
     public Iterator<Comparable<?>> valuesIterator() {
-        return freqTable.keySet().iterator();
+        return freqTable.keySet()
+            .iterator();
     }
 
     /**
@@ -268,16 +275,18 @@ public class Frequency implements Serializable {
      * <p>
      * If added values are integral (i.e., integers, longs, Integers, or Longs),
      * they are converted to Longs when they are added, so the values of the
-     * map entries returned by the Iterator will in this case be Longs.</p>
+     * map entries returned by the Iterator will in this case be Longs.
+     * </p>
      *
      * @return entry set Iterator
      * @since 3.1
      */
     public Iterator<Map.Entry<Comparable<?>, Long>> entrySetIterator() {
-        return freqTable.entrySet().iterator();
+        return freqTable.entrySet()
+            .iterator();
     }
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Returns the sum of all frequencies.
@@ -286,9 +295,11 @@ public class Frequency implements Serializable {
      */
     public long getSumFreq() {
         long result = 0;
-        Iterator<Long> iterator = freqTable.values().iterator();
-        while (iterator.hasNext())  {
-            result += iterator.next().longValue();
+        Iterator<Long> iterator = freqTable.values()
+            .iterator();
+        while (iterator.hasNext()) {
+            result += iterator.next()
+                .longValue();
         }
         return result;
     }
@@ -306,7 +317,7 @@ public class Frequency implements Serializable {
         }
         long result = 0;
         try {
-            Long count =  freqTable.get(v);
+            Long count = freqTable.get(v);
             if (count != null) {
                 result = count.longValue();
             }
@@ -352,8 +363,9 @@ public class Frequency implements Serializable {
      * @return the number of unique values that have been added to the frequency table.
      * @see #valuesIterator()
      */
-    public int getUniqueCount(){
-        return freqTable.keySet().size();
+    public int getUniqueCount() {
+        return freqTable.keySet()
+            .size();
     }
 
     /**
@@ -362,7 +374,8 @@ public class Frequency implements Serializable {
      * <p>
      * Returns <code>Double.NaN</code> if no values have been added.
      * Returns 0 if at least one value has been added, but v is not comparable
-     * to the values set.</p>
+     * to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values equal to v
@@ -408,12 +421,13 @@ public class Frequency implements Serializable {
         return getPct(Character.valueOf(v));
     }
 
-    //-----------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------
 
     /**
      * Returns the cumulative frequency of values less than or equal to v.
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup.
      * @return the proportion of values equal to v
@@ -438,15 +452,15 @@ public class Frequency implements Serializable {
                 result = value.longValue();
             }
         } catch (ClassCastException ex) {
-            return result;   // v is not comparable
+            return result; // v is not comparable
         }
 
         if (c.compare(v, freqTable.firstKey()) < 0) {
-            return 0;  // v is comparable, but less than first value
+            return 0; // v is comparable, but less than first value
         }
 
         if (c.compare(v, freqTable.lastKey()) >= 0) {
-            return getSumFreq();    // v is comparable, but greater than the last value
+            return getSumFreq(); // v is comparable, but greater than the last value
         }
 
         Iterator<Comparable<?>> values = valuesIterator();
@@ -461,10 +475,11 @@ public class Frequency implements Serializable {
         return result;
     }
 
-     /**
+    /**
      * Returns the cumulative frequency of values less than or equal to v.
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values equal to v
@@ -473,10 +488,11 @@ public class Frequency implements Serializable {
         return getCumFreq(Long.valueOf(v));
     }
 
-     /**
+    /**
      * Returns the cumulative frequency of values less than or equal to v.
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values equal to v
@@ -488,7 +504,8 @@ public class Frequency implements Serializable {
     /**
      * Returns the cumulative frequency of values less than or equal to v.
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values equal to v
@@ -497,7 +514,7 @@ public class Frequency implements Serializable {
         return getCumFreq(Character.valueOf(v));
     }
 
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
 
     /**
      * Returns the cumulative percentage of values less than or equal to v
@@ -505,7 +522,8 @@ public class Frequency implements Serializable {
      * <p>
      * Returns <code>Double.NaN</code> if no values have been added.
      * Returns 0 if at least one value has been added, but v is not comparable
-     * to the values set.</p>
+     * to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values less than or equal to v
@@ -522,7 +540,8 @@ public class Frequency implements Serializable {
      * Returns the cumulative percentage of values less than or equal to v
      * (as a proportion between 0 and 1).
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values less than or equal to v
@@ -535,7 +554,8 @@ public class Frequency implements Serializable {
      * Returns the cumulative percentage of values less than or equal to v
      * (as a proportion between 0 and 1).
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values less than or equal to v
@@ -548,7 +568,8 @@ public class Frequency implements Serializable {
      * Returns the cumulative percentage of values less than or equal to v
      * (as a proportion between 0 and 1).
      * <p>
-     * Returns 0 if v is not comparable to the values set.</p>
+     * Returns 0 if v is not comparable to the values set.
+     * </p>
      *
      * @param v the value to lookup
      * @return the proportion of values less than or equal to v
@@ -567,7 +588,7 @@ public class Frequency implements Serializable {
         long mostPopular = 0; // frequencies are always positive
 
         // Get the max count first, so we avoid having to recreate the List each time
-        for(Long l : freqTable.values()) {
+        for (Long l : freqTable.values()) {
             long frequency = l.longValue();
             if (frequency > mostPopular) {
                 mostPopular = frequency;
@@ -576,15 +597,16 @@ public class Frequency implements Serializable {
 
         List<Comparable<?>> modeList = new ArrayList<Comparable<?>>();
         for (Entry<Comparable<?>, Long> ent : freqTable.entrySet()) {
-            long frequency = ent.getValue().longValue();
+            long frequency = ent.getValue()
+                .longValue();
             if (frequency == mostPopular) {
-               modeList.add(ent.getKey());
+                modeList.add(ent.getKey());
             }
         }
         return modeList;
     }
 
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
 
     /**
      * Merge another Frequency object's counts into this instance.
@@ -601,7 +623,10 @@ public class Frequency implements Serializable {
         final Iterator<Map.Entry<Comparable<?>, Long>> iter = other.entrySetIterator();
         while (iter.hasNext()) {
             final Map.Entry<Comparable<?>, Long> entry = iter.next();
-            incrementValue(entry.getKey(), entry.getValue().longValue());
+            incrementValue(
+                entry.getKey(),
+                entry.getValue()
+                    .longValue());
         }
     }
 
@@ -622,11 +647,12 @@ public class Frequency implements Serializable {
         }
     }
 
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
 
     /**
      * A Comparator that compares comparable objects using the
-     * natural order.  Copied from Commons Collections ComparableComparator.
+     * natural order. Copied from Commons Collections ComparableComparator.
+     * 
      * @param <T> the type of the objects compared
      */
     private static class NaturalComparator<T extends Comparable<T>> implements Comparator<Comparable<T>>, Serializable {
@@ -637,15 +663,18 @@ public class Frequency implements Serializable {
         /**
          * Compare the two {@link Comparable Comparable} arguments.
          * This method is equivalent to:
-         * <pre>(({@link Comparable Comparable})o1).{@link Comparable#compareTo compareTo}(o2)</pre>
+         * 
+         * <pre>
+         * (({@link Comparable Comparable})o1).{@link Comparable#compareTo compareTo}(o2)
+         * </pre>
          *
-         * @param  o1 the first object
-         * @param  o2 the second object
-         * @return  result of comparison
+         * @param o1 the first object
+         * @param o2 the second object
+         * @return result of comparison
          * @throws NullPointerException when <i>o1</i> is <code>null</code>,
-         *         or when <code>((Comparable)o1).compareTo(o2)</code> does
-         * @throws ClassCastException when <i>o1</i> is not a {@link Comparable Comparable},
-         *         or when <code>((Comparable)o1).compareTo(o2)</code> does
+         *                              or when <code>((Comparable)o1).compareTo(o2)</code> does
+         * @throws ClassCastException   when <i>o1</i> is not a {@link Comparable Comparable},
+         *                              or when <code>((Comparable)o1).compareTo(o2)</code> does
          */
         @SuppressWarnings("unchecked") // cast to (T) may throw ClassCastException, see Javadoc
         public int compare(Comparable<T> o1, Comparable<T> o2) {
@@ -658,8 +687,7 @@ public class Frequency implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result +
-                 ((freqTable == null) ? 0 : freqTable.hashCode());
+        result = prime * result + ((freqTable == null) ? 0 : freqTable.hashCode());
         return result;
     }
 

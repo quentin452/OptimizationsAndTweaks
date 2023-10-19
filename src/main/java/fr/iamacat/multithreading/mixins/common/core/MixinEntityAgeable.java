@@ -1,16 +1,19 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+
 @Mixin(EntityAgeable.class)
 public abstract class MixinEntityAgeable extends EntityCreature {
+
     @Unique
     public float CHILD_SCALE = 0.5F;
     @Unique
@@ -18,8 +21,10 @@ public abstract class MixinEntityAgeable extends EntityCreature {
     @Unique
     public float ADULT_SCALE = 1.0F;
 
-    @Shadow private float field_98056_d = -1.0F;
-    @Shadow private float field_98057_e;
+    @Shadow
+    private float field_98056_d = -1.0F;
+    @Shadow
+    private float field_98057_e;
 
     public MixinEntityAgeable(World worldIn) {
         super(worldIn);
@@ -51,7 +56,7 @@ public abstract class MixinEntityAgeable extends EntityCreature {
      * @reason r
      */
     @Overwrite
-    public void addGrowth(int p_110195_1_){
+    public void addGrowth(int p_110195_1_) {
         if (MultithreadingandtweaksConfig.enableMixinEntityAgeable) {
             int currentAge = multithreadingandtweaks$getGrowingAge();
             currentAge += p_110195_1_ * 20;

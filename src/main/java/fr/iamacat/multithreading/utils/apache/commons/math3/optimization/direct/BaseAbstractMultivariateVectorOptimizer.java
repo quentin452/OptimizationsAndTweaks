@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +15,21 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.direct;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.OptimizationData;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.InitialGuess;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Target;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Weight;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.BaseMultivariateVectorOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.InitialGuess;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.OptimizationData;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleVectorValueChecker;
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Target;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Weight;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
 
 /**
  * Base class for implementing optimizers for multivariate scalar functions.
@@ -46,6 +44,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 @Deprecated
 public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends MultivariateVectorFunction>
     implements BaseMultivariateVectorOptimizer<FUNC> {
+
     /** Evaluations counter. */
     protected final Incrementor evaluations = new Incrementor();
     /** Convergence checker. */
@@ -54,7 +53,9 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     private double[] target;
     /** Weight matrix. */
     private RealMatrix weightMatrix;
-    /** Weight for the least squares cost computation.
+    /**
+     * Weight for the least squares cost computation.
+     * 
      * @deprecated
      */
     @Deprecated
@@ -67,12 +68,14 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     /**
      * Simple constructor with default settings.
      * The convergence check is set to a {@link SimpleVectorValueChecker}.
+     * 
      * @deprecated See {@link SimpleVectorValueChecker#SimpleVectorValueChecker()}
      */
     @Deprecated
     protected BaseAbstractMultivariateVectorOptimizer() {
         this(new SimpleVectorValueChecker());
     }
+
     /**
      * @param checker Convergence checker.
      */
@@ -101,7 +104,7 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * @param point Point at which the objective function must be evaluated.
      * @return the objective function value at the specified point.
      * @throws TooManyEvaluationsException if the maximal number of evaluations is
-     * exceeded.
+     *                                     exceeded.
      */
     protected double[] computeObjectiveValue(double[] point) {
         try {
@@ -112,15 +115,15 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
         return function.value(point);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * @deprecated As of 3.1. Please use
-     * {@link #optimize(int,MultivariateVectorFunction,OptimizationData[])}
-     * instead.
+     *             {@link #optimize(int,MultivariateVectorFunction,OptimizationData[])}
+     *             instead.
      */
     @Deprecated
-    public PointVectorValuePair optimize(int maxEval, FUNC f, double[] t, double[] w,
-                                         double[] startPoint) {
+    public PointVectorValuePair optimize(int maxEval, FUNC f, double[] t, double[] w, double[] startPoint) {
         return optimizeInternal(maxEval, f, t, w, startPoint);
     }
 
@@ -128,27 +131,24 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * Optimize an objective function.
      *
      * @param maxEval Allowed number of evaluations of the objective function.
-     * @param f Objective function.
+     * @param f       Objective function.
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link Target}</li>
-     *  <li>{@link Weight}</li>
-     *  <li>{@link InitialGuess}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link Target}</li>
+     *                <li>{@link Weight}</li>
+     *                <li>{@link InitialGuess}</li>
+     *                </ul>
      * @return the point/value pair giving the optimal value of the objective
-     * function.
+     *         function.
      * @throws TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
-     * @throws DimensionMismatchException if the initial guess, target, and weight
-     * arguments have inconsistent dimensions.
+     *                                     evaluations is exceeded.
+     * @throws DimensionMismatchException  if the initial guess, target, and weight
+     *                                     arguments have inconsistent dimensions.
      *
      * @since 3.1
      */
-    protected PointVectorValuePair optimize(int maxEval,
-                                            FUNC f,
-                                            OptimizationData... optData)
-        throws TooManyEvaluationsException,
-               DimensionMismatchException {
+    protected PointVectorValuePair optimize(int maxEval, FUNC f, OptimizationData... optData)
+        throws TooManyEvaluationsException, DimensionMismatchException {
         return optimizeInternal(maxEval, f, optData);
     }
 
@@ -158,27 +158,34 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * The cost function to be minimized is
      * <code>&sum;weight<sub>i</sub>(objective<sub>i</sub> - target<sub>i</sub>)<sup>2</sup></code>
      *
-     * @param f Objective function.
-     * @param t Target value for the objective functions at optimum.
-     * @param w Weights for the least squares cost computation.
+     * @param f          Objective function.
+     * @param t          Target value for the objective functions at optimum.
+     * @param w          Weights for the least squares cost computation.
      * @param startPoint Start point for optimization.
      * @return the point/value pair giving the optimal value for objective
-     * function.
+     *         function.
      * @param maxEval Maximum number of function evaluations.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the start point dimension is wrong.
+     *                                                                                                    if the start
+     *                                                                                                    point
+     *                                                                                                    dimension is
+     *                                                                                                    wrong.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if
-     * any argument is {@code null}.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException       if
+     *                                                                                                    any argument
+     *                                                                                                    is
+     *                                                                                                    {@code null}.
      * @deprecated As of 3.1. Please use
-     * {@link #optimizeInternal(int,MultivariateVectorFunction,OptimizationData[])}
-     * instead.
+     *             {@link #optimizeInternal(int,MultivariateVectorFunction,OptimizationData[])}
+     *             instead.
      */
     @Deprecated
-    protected PointVectorValuePair optimizeInternal(final int maxEval, final FUNC f,
-                                                    final double[] t, final double[] w,
-                                                    final double[] startPoint) {
+    protected PointVectorValuePair optimizeInternal(final int maxEval, final FUNC f, final double[] t, final double[] w,
+        final double[] startPoint) {
         // Checks.
         if (f == null) {
             throw new NullArgumentException();
@@ -196,37 +203,31 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
             throw new DimensionMismatchException(t.length, w.length);
         }
 
-        return optimizeInternal(maxEval, f,
-                                new Target(t),
-                                new Weight(w),
-                                new InitialGuess(startPoint));
+        return optimizeInternal(maxEval, f, new Target(t), new Weight(w), new InitialGuess(startPoint));
     }
 
     /**
      * Optimize an objective function.
      *
      * @param maxEval Allowed number of evaluations of the objective function.
-     * @param f Objective function.
+     * @param f       Objective function.
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link Target}</li>
-     *  <li>{@link Weight}</li>
-     *  <li>{@link InitialGuess}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link Target}</li>
+     *                <li>{@link Weight}</li>
+     *                <li>{@link InitialGuess}</li>
+     *                </ul>
      * @return the point/value pair giving the optimal value of the objective
-     * function.
+     *         function.
      * @throws TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
-     * @throws DimensionMismatchException if the initial guess, target, and weight
-     * arguments have inconsistent dimensions.
+     *                                     evaluations is exceeded.
+     * @throws DimensionMismatchException  if the initial guess, target, and weight
+     *                                     arguments have inconsistent dimensions.
      *
      * @since 3.1
      */
-    protected PointVectorValuePair optimizeInternal(int maxEval,
-                                                    FUNC f,
-                                                    OptimizationData... optData)
-        throws TooManyEvaluationsException,
-               DimensionMismatchException {
+    protected PointVectorValuePair optimizeInternal(int maxEval, FUNC f, OptimizationData... optData)
+        throws TooManyEvaluationsException, DimensionMismatchException {
         // Set internal state.
         evaluations.setMaximalCount(maxEval);
         evaluations.resetCount();
@@ -259,6 +260,7 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     public RealMatrix getWeight() {
         return weightMatrix.copy();
     }
+
     /**
      * Gets the observed values to be matched by the objective vector
      * function.
@@ -285,7 +287,7 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * Perform the bulk of the optimization algorithm.
      *
      * @return the point/value pair giving the optimal value for the
-     * objective function.
+     *         objective function.
      */
     protected abstract PointVectorValuePair doOptimize();
 
@@ -297,6 +299,7 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     protected double[] getTargetRef() {
         return target;
     }
+
     /**
      * @return a reference to the {@link #weight array}.
      * @deprecated As of 3.1.
@@ -330,11 +333,11 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * characterize the problem.
      *
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link Target}</li>
-     *  <li>{@link Weight}</li>
-     *  <li>{@link InitialGuess}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link Target}</li>
+     *                <li>{@link Weight}</li>
+     *                <li>{@link InitialGuess}</li>
+     *                </ul>
      */
     private void parseOptimizationData(OptimizationData... optData) {
         // The existing values (as set by the previous call) are reused if
@@ -359,12 +362,11 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      * Check parameters consistency.
      *
      * @throws DimensionMismatchException if {@link #target} and
-     * {@link #weightMatrix} have inconsistent dimensions.
+     *                                    {@link #weightMatrix} have inconsistent dimensions.
      */
     private void checkParameters() {
         if (target.length != weightMatrix.getColumnDimension()) {
-            throw new DimensionMismatchException(target.length,
-                                                 weightMatrix.getColumnDimension());
+            throw new DimensionMismatchException(target.length, weightMatrix.getColumnDimension());
         }
     }
 }

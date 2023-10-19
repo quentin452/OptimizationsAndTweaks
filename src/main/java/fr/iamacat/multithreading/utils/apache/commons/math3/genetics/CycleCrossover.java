@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +30,11 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * <p>
  * To form a cycle the following procedure is applied:
  * <ol>
- *   <li>start with the first gene of parent 1</li>
- *   <li>look at the gene at the same position of parent 2</li>
- *   <li>go to the position with the same gene in parent 1</li>
- *   <li>add this gene index to the cycle</li>
- *   <li>repeat the steps 2-5 until we arrive at the starting gene of this cycle</li>
+ * <li>start with the first gene of parent 1</li>
+ * <li>look at the gene at the same position of parent 2</li>
+ * <li>go to the position with the same gene in parent 1</li>
+ * <li>add this gene index to the cycle</li>
+ * <li>repeat the steps 2-5 until we arrive at the starting gene of this cycle</li>
  * </ol>
  * The indices that form a cycle are then used to form the children in alternating order, i.e.
  * in cycle 1, the genes of parent 1 are copied to child 1, while in cycle 2 the genes of parent 1
@@ -44,6 +42,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * </p>
  *
  * Example (zero-start cycle):
+ * 
  * <pre>
  * p1 = (8 4 7 3 6 2 5 1 9 0)    X   c1 = (8 1 2 3 4 5 6 7 9 0)
  * p2 = (0 1 2 3 4 5 6 7 8 9)    X   c2 = (0 4 7 3 6 2 5 1 8 9)
@@ -57,7 +56,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * is parameterized by T. Moreover, the chromosomes must have same lengths.
  *
  * @see <a href="http://www.rubicite.com/Tutorials/GeneticAlgorithms/CrossoverOperators/CycleCrossoverOperator.aspx">
- * Cycle Crossover Operator</a>
+ *      Cycle Crossover Operator</a>
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 3.1
@@ -96,7 +95,7 @@ public class CycleCrossover<T> implements CrossoverPolicy {
      * {@inheritDoc}
      *
      * @throws MathIllegalArgumentException if the chromosomes are not an instance of {@link AbstractListChromosome}
-     * @throws DimensionMismatchException if the length of the two chromosomes is different
+     * @throws DimensionMismatchException   if the length of the two chromosomes is different
      */
     @SuppressWarnings("unchecked")
     public ChromosomePair crossover(final Chromosome first, final Chromosome second)
@@ -111,7 +110,7 @@ public class CycleCrossover<T> implements CrossoverPolicy {
     /**
      * Helper for {@link #crossover(Chromosome, Chromosome)}. Performs the actual crossover.
      *
-     * @param first the first chromosome
+     * @param first  the first chromosome
      * @param second the second chromosome
      * @return the pair of new chromosomes that resulted from the crossover
      * @throws DimensionMismatchException if the length of the two chromosomes is different
@@ -137,7 +136,8 @@ public class CycleCrossover<T> implements CrossoverPolicy {
         final List<Integer> indices = new ArrayList<Integer>(length);
 
         // determine the starting index
-        int idx = randomStart ? GeneticAlgorithm.getRandomGenerator().nextInt(length) : 0;
+        int idx = randomStart ? GeneticAlgorithm.getRandomGenerator()
+            .nextInt(length) : 0;
         int cycle = 1;
 
         while (visitedIndices.size() < length) {
@@ -176,7 +176,8 @@ public class CycleCrossover<T> implements CrossoverPolicy {
             indices.clear();
         }
 
-        return new ChromosomePair(first.newFixedLengthChromosome(child1Rep),
-                                  second.newFixedLengthChromosome(child2Rep));
+        return new ChromosomePair(
+            first.newFixedLengthChromosome(child1Rep),
+            second.newFixedLengthChromosome(child2Rep));
     }
 }

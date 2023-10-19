@@ -1,5 +1,20 @@
 package fr.iamacat.multithreading.mixins.common.ic2;
 
+import java.lang.reflect.Field;
+import java.util.WeakHashMap;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityEnderChest;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
@@ -13,23 +28,10 @@ import ic2.core.util.ConfigUtil;
 import ic2.core.util.LogCategory;
 import ic2.core.util.ReflectionUtil;
 import ic2.core.util.Util;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityEnderChest;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.lang.reflect.Field;
-import java.util.WeakHashMap;
 
 @Mixin(TickHandler.class)
 public class MixinTickHandler {
+
     @Shadow
     private static final boolean debugTickCallback = System.getProperty("ic2.debugtickcallback") != null;
     @Unique
@@ -40,36 +42,40 @@ public class MixinTickHandler {
 
     @Shadow
     private static Throwable lastDebugTrace;
+
     /**
      * @author
      * @reason
      */
     @Inject(method = "onWorldTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onWorldTickmultiandtweaks(TickEvent.WorldTickEvent event, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinTickHandler){
-        World world = event.world;
-        if (!IC2.platform.isSimulating() || Minecraft.getMinecraft().isGamePaused()) {
-            return;
-        }
-
-        if (event.phase == TickEvent.Phase.START) {
-            IC2.platform.profilerStartSection("Wind");
-            WorldData.get(world).windSim.updateWind();
-            IC2.platform.profilerEndStartSection("TickCallbacks");
-            multithreadingandtweaks$processTickCallbacks(world);
-
-            if (ConfigUtil.getBool(MainConfig.get(), "balance/disableEnderChest")) {
-                multithreadingandtweaks$removeEnderChests(world);
+        if (MultithreadingandtweaksConfig.enableMixinTickHandler) {
+            World world = event.world;
+            if (!IC2.platform.isSimulating() || Minecraft.getMinecraft()
+                .isGamePaused()) {
+                return;
             }
-            IC2.platform.profilerEndSection();
-        } else {
-            IC2.platform.profilerStartSection("EnergyNet");
-            EnergyNetGlobal.onTickEnd(world);
-            IC2.platform.profilerEndStartSection("Networking");
-            IC2.network.get().onTickEnd(world);
-            IC2.platform.profilerEndSection();
-        }   ci.cancel();
-    }
+
+            if (event.phase == TickEvent.Phase.START) {
+                IC2.platform.profilerStartSection("Wind");
+                WorldData.get(world).windSim.updateWind();
+                IC2.platform.profilerEndStartSection("TickCallbacks");
+                multithreadingandtweaks$processTickCallbacks(world);
+
+                if (ConfigUtil.getBool(MainConfig.get(), "balance/disableEnderChest")) {
+                    multithreadingandtweaks$removeEnderChests(world);
+                }
+                IC2.platform.profilerEndSection();
+            } else {
+                IC2.platform.profilerStartSection("EnergyNet");
+                EnergyNetGlobal.onTickEnd(world);
+                IC2.platform.profilerEndStartSection("Networking");
+                IC2.network.get()
+                    .onTickEnd(world);
+                IC2.platform.profilerEndSection();
+            }
+            ci.cancel();
+        }
 
     }
 
@@ -78,24 +84,29 @@ public class MixinTickHandler {
         for (Object obj : world.loadedTileEntityList) {
             if (obj instanceof TileEntity) {
                 TileEntity te = (TileEntity) obj;
-                if (te instanceof TileEntityEnderChest && !te.isInvalid() && world.blockExists(te.xCoord, te.yCoord, te.zCoord)) {
+                if (te instanceof TileEntityEnderChest && !te.isInvalid()
+                    && world.blockExists(te.xCoord, te.yCoord, te.zCoord)) {
                     world.setBlockToAir(te.xCoord, te.yCoord, te.zCoord);
                     IC2.log.info(LogCategory.General, "Removed vanilla ender chest at %s.", Util.formatPosition(te));
                 }
             }
         }
     }
+
     @Unique
     private static void multithreadingandtweaks$processTickCallbacks(World world) {
         WorldData worldData = WorldData.get(world);
         IC2.platform.profilerStartSection("SingleTickCallback");
 
-        for(ITickCallback tickCallback = worldData.singleTickCallbacks.poll(); tickCallback != null; tickCallback = (ITickCallback)worldData.singleTickCallbacks.poll()) {
+        for (ITickCallback tickCallback = worldData.singleTickCallbacks.poll(); tickCallback
+            != null; tickCallback = (ITickCallback) worldData.singleTickCallbacks.poll()) {
             if (debugTickCallback) {
                 lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
             }
 
-            IC2.platform.profilerStartSection(tickCallback.getClass().getName());
+            IC2.platform.profilerStartSection(
+                tickCallback.getClass()
+                    .getName());
             tickCallback.tickCallback(world);
             IC2.platform.profilerEndSection();
         }
@@ -108,7 +119,9 @@ public class MixinTickHandler {
                 lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
             }
 
-            IC2.platform.profilerStartSection(tickCallback.getClass().getName());
+            IC2.platform.profilerStartSection(
+                tickCallback.getClass()
+                    .getName());
             tickCallback.tickCallback(world);
             IC2.platform.profilerEndSection();
         }
@@ -126,7 +139,7 @@ public class MixinTickHandler {
     }
 
     static {
-        if(debugTickCallback) {
+        if (debugTickCallback) {
             multithreadingandtweaks$debugTraces = new WeakHashMap<>();
         }
 

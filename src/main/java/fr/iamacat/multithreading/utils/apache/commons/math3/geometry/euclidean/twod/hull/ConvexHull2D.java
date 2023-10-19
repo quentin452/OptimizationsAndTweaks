@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,12 +53,12 @@ public class ConvexHull2D implements ConvexHull<Euclidean2D, Vector2D>, Serializ
 
     /**
      * Simple constructor.
-     * @param vertices the vertices of the convex hull, must be ordered
+     * 
+     * @param vertices  the vertices of the convex hull, must be ordered
      * @param tolerance tolerance below which points are considered identical
      * @throws MathIllegalArgumentException if the vertices do not form a convex hull
      */
-    public ConvexHull2D(final Vector2D[] vertices, final double tolerance)
-        throws MathIllegalArgumentException {
+    public ConvexHull2D(final Vector2D[] vertices, final double tolerance) throws MathIllegalArgumentException {
 
         // assign tolerance as it will be used by the isConvex method
         this.tolerance = tolerance;
@@ -74,6 +72,7 @@ public class ConvexHull2D implements ConvexHull<Euclidean2D, Vector2D>, Serializ
 
     /**
      * Checks whether the given hull vertices form a convex hull.
+     * 
      * @param hullVertices the hull vertices
      * @return {@code true} if the vertices form a convex hull, {@code false} otherwise
      */
@@ -112,6 +111,7 @@ public class ConvexHull2D implements ConvexHull<Euclidean2D, Vector2D>, Serializ
 
     /**
      * Get the line segments of the convex hull, ordered.
+     * 
      * @return the line segments of the convex hull
      */
     public Segment[] getLineSegments() {
@@ -144,13 +144,17 @@ public class ConvexHull2D implements ConvexHull<Euclidean2D, Vector2D>, Serializ
                         firstPoint = point;
                         lastPoint = point;
                     } else {
-                        this.lineSegments[index++] =
-                                new Segment(lastPoint, point, new Line(lastPoint, point, tolerance));
+                        this.lineSegments[index++] = new Segment(
+                            lastPoint,
+                            point,
+                            new Line(lastPoint, point, tolerance));
                         lastPoint = point;
                     }
                 }
-                this.lineSegments[index] =
-                        new Segment(lastPoint, firstPoint, new Line(lastPoint, firstPoint, tolerance));
+                this.lineSegments[index] = new Segment(
+                    lastPoint,
+                    firstPoint,
+                    new Line(lastPoint, firstPoint, tolerance));
             }
         }
         return lineSegments;

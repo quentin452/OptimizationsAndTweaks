@@ -10,22 +10,15 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.set.hash;
-
-import gnu.trove.strategy.HashingStrategy;
-import gnu.trove.impl.HashFunctions;
-import gnu.trove.impl.hash.TCustomObjectHash;
-import gnu.trove.iterator.hash.TObjectHashIterator;
-import gnu.trove.procedure.TObjectProcedure;
-import gnu.trove.procedure.array.ToObjectArrayProceedure;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -37,6 +30,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import gnu.trove.impl.HashFunctions;
+import gnu.trove.impl.hash.TCustomObjectHash;
+import gnu.trove.iterator.hash.TObjectHashIterator;
+import gnu.trove.procedure.TObjectProcedure;
+import gnu.trove.procedure.array.ToObjectArrayProceedure;
+import gnu.trove.strategy.HashingStrategy;
 
 /**
  * An implementation of the <tt>Set</tt> interface that uses an
@@ -44,24 +43,20 @@ import java.util.Set;
  *
  * @author Rob Eden
  */
-public class TCustomHashSet<E> extends TCustomObjectHash<E>
-	implements Set<E>, Iterable<E>, Externalizable {
+public class TCustomHashSet<E> extends TCustomObjectHash<E> implements Set<E>, Iterable<E>, Externalizable {
 
     static final long serialVersionUID = 1L;
 
-
-	/** FOR EXTERNALIZATION ONLY!!! */
-	public TCustomHashSet() {}
-
+    /** FOR EXTERNALIZATION ONLY!!! */
+    public TCustomHashSet() {}
 
     /**
      * Creates a new <code>THashSet</code> instance with the default
      * capacity and load factor.
      */
-    public TCustomHashSet( HashingStrategy<? super E> strategy ) {
-        super( strategy );
+    public TCustomHashSet(HashingStrategy<? super E> strategy) {
+        super(strategy);
     }
-
 
     /**
      * Creates a new <code>THashSet</code> instance with a prime
@@ -70,10 +65,9 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      *
      * @param initialCapacity an <code>int</code> value
      */
-    public TCustomHashSet( HashingStrategy<? super E> strategy, int initialCapacity ) {
-        super( strategy, initialCapacity );
+    public TCustomHashSet(HashingStrategy<? super E> strategy, int initialCapacity) {
+        super(strategy, initialCapacity);
     }
-
 
     /**
      * Creates a new <code>THashSet</code> instance with a prime
@@ -83,12 +77,10 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @param initialCapacity an <code>int</code> value
      * @param loadFactor      a <code>float</code> value
      */
-    public TCustomHashSet( HashingStrategy<? super E> strategy, int initialCapacity,
-	    float loadFactor ) {
+    public TCustomHashSet(HashingStrategy<? super E> strategy, int initialCapacity, float loadFactor) {
 
-        super( strategy, initialCapacity, loadFactor );
+        super(strategy, initialCapacity, loadFactor);
     }
-
 
     /**
      * Creates a new <code>THashSet</code> instance containing the
@@ -96,13 +88,11 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      *
      * @param collection a <code>Collection</code> value
      */
-    public TCustomHashSet( HashingStrategy<? super E> strategy,
-	    Collection<? extends E> collection ) {
+    public TCustomHashSet(HashingStrategy<? super E> strategy, Collection<? extends E> collection) {
 
-        this( strategy, collection.size() );
-        addAll( collection );
+        this(strategy, collection.size());
+        addAll(collection);
     }
-
 
     /**
      * Inserts a value into the set.
@@ -111,41 +101,39 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if the set was modified by the add operation
      */
     @Override
-    public boolean add( E obj ) {
-        int index = insertKey( obj );
+    public boolean add(E obj) {
+        int index = insertKey(obj);
 
-        if ( index < 0 ) {
-            return false;       // already present in set, nothing to add
+        if (index < 0) {
+            return false; // already present in set, nothing to add
         }
 
-        postInsertHook( consumeFreeSlot );
-        return true;            // yes, we added something
+        postInsertHook(consumeFreeSlot);
+        return true; // yes, we added something
     }
-
 
     @Override
     @SuppressWarnings("rawtypes")
-    public boolean equals( Object other ) {
-        if ( !( other instanceof Set ) ) {
+    public boolean equals(Object other) {
+        if (!(other instanceof Set)) {
             return false;
         }
         Set that = (Set) other;
-        if ( that.size() != this.size() ) {
+        if (that.size() != this.size()) {
             return false;
         }
-        return containsAll( that );
+        return containsAll(that);
     }
-
 
     @Override
     public int hashCode() {
         HashProcedure p = new HashProcedure();
-        forEach( p );
+        forEach(p);
         return p.getHashCode();
     }
 
-
     private final class HashProcedure implements TObjectProcedure<E> {
+
         private int h = 0;
 
         public int getHashCode() {
@@ -153,39 +141,37 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
         }
 
         @Override
-        public final boolean execute( E key ) {
-            h += HashFunctions.hash( key );
+        public final boolean execute(E key) {
+            h += HashFunctions.hash(key);
             return true;
         }
     }
-
 
     /**
      * Expands the set to accommodate new values.
      *
      * @param newCapacity an <code>int</code> value
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
-    protected void rehash( int newCapacity ) {
+    protected void rehash(int newCapacity) {
         int oldCapacity = _set.length;
         int oldSize = size();
         Object oldSet[] = _set;
 
         _set = new Object[newCapacity];
-        Arrays.fill( _set, FREE );
+        Arrays.fill(_set, FREE);
 
-        for ( int i = oldCapacity; i-- > 0; ) {
+        for (int i = oldCapacity; i-- > 0;) {
             E o = (E) oldSet[i];
-            if ( o != FREE && o != REMOVED ) {
-                int index = insertKey( o );
-                if ( index < 0 ) { // everyone pays for this because some people can't RTFM
-                    throwObjectContractViolation( _set[( -index - 1 )], o, size(), oldSize, oldSet);
+            if (o != FREE && o != REMOVED) {
+                int index = insertKey(o);
+                if (index < 0) { // everyone pays for this because some people can't RTFM
+                    throwObjectContractViolation(_set[(-index - 1)], o, size(), oldSize, oldSet);
                 }
             }
         }
     }
-
 
     /**
      * Returns a new array containing the objects in the set.
@@ -193,13 +179,12 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return an <code>Object[]</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object[] toArray() {
         Object[] result = new Object[size()];
-        forEach( new ToObjectArrayProceedure( result ) );
+        forEach(new ToObjectArrayProceedure(result));
         return result;
     }
-
 
     /**
      * Returns a typed array of the objects in the set.
@@ -208,14 +193,17 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return an <code>Object[]</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T> T[] toArray( T[] a ) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T> T[] toArray(T[] a) {
         int size = size();
-        if ( a.length < size ) {
-            a = (T[]) Array.newInstance( a.getClass().getComponentType(), size );
+        if (a.length < size) {
+            a = (T[]) Array.newInstance(
+                a.getClass()
+                    .getComponentType(),
+                size);
         }
 
-        forEach( new ToObjectArrayProceedure( a ) );
+        forEach(new ToObjectArrayProceedure(a));
 
         // If this collection fits in the specified array with room to
         // spare (i.e., the array has more elements than this
@@ -225,22 +213,20 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
         // caller knows that this collection does not contain any null
         // elements.)
 
-        if ( a.length > size ) {
+        if (a.length > size) {
             a[size] = null;
         }
 
         return a;
     }
 
-
     /** Empties the set. */
     @Override
     public void clear() {
         super.clear();
 
-        Arrays.fill( _set, 0, _set.length, FREE );
+        Arrays.fill(_set, 0, _set.length, FREE);
     }
-
 
     /**
      * Removes <tt>obj</tt> from the set.
@@ -249,27 +235,25 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if the set was modified by the remove operation.
      */
     @Override
-    public boolean remove( Object obj ) {
-        int index = index( obj );
-        if ( index >= 0 ) {
-            removeAt( index );
+    public boolean remove(Object obj) {
+        int index = index(obj);
+        if (index >= 0) {
+            removeAt(index);
             return true;
         }
         return false;
     }
 
-
     /**
-     * Creates an iterator over the values of the set.  The iterator
+     * Creates an iterator over the values of the set. The iterator
      * supports element deletion.
      *
      * @return an <code>Iterator</code> value
      */
     @Override
     public TObjectHashIterator<E> iterator() {
-        return new TObjectHashIterator<E>( this );
+        return new TObjectHashIterator<E>(this);
     }
-
 
     /**
      * Tests the set to determine if all of the elements in
@@ -279,15 +263,14 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if all elements were present in the set.
      */
     @Override
-    public boolean containsAll( Collection<?> collection ) {
-        for ( Iterator<?> i = collection.iterator(); i.hasNext(); ) {
-            if ( !contains( i.next() ) ) {
+    public boolean containsAll(Collection<?> collection) {
+        for (Iterator<?> i = collection.iterator(); i.hasNext();) {
+            if (!contains(i.next())) {
                 return false;
             }
         }
         return true;
     }
-
 
     /**
      * Adds all of the elements in <tt>collection</tt> to the set.
@@ -296,20 +279,19 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if the set was modified by the add all operation.
      */
     @Override
-    public boolean addAll( Collection<? extends E> collection ) {
+    public boolean addAll(Collection<? extends E> collection) {
         boolean changed = false;
         int size = collection.size();
 
-        ensureCapacity( size );
+        ensureCapacity(size);
         Iterator<? extends E> it = collection.iterator();
-        while ( size-- > 0 ) {
-            if ( add( it.next() ) ) {
+        while (size-- > 0) {
+            if (add(it.next())) {
                 changed = true;
             }
         }
         return changed;
     }
-
 
     /**
      * Removes all of the elements in <tt>collection</tt> from the set.
@@ -318,20 +300,19 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if the set was modified by the remove all operation.
      */
     @Override
-    public boolean removeAll( Collection<?> collection ) {
+    public boolean removeAll(Collection<?> collection) {
         boolean changed = false;
         int size = collection.size();
         Iterator<?> it;
 
         it = collection.iterator();
-        while ( size-- > 0 ) {
-            if ( remove( it.next() ) ) {
+        while (size-- > 0) {
+            if (remove(it.next())) {
                 changed = true;
             }
         }
         return changed;
     }
-
 
     /**
      * Removes any values in the set which are not contained in
@@ -341,12 +322,12 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
      * @return true if the set was modified by the retain all operation
      */
     @Override
-    public boolean retainAll( Collection<?> collection ) {
+    public boolean retainAll(Collection<?> collection) {
         boolean changed = false;
         int size = size();
         Iterator<E> it = iterator();
-        while ( size-- > 0 ) {
-            if ( !collection.contains( it.next() ) ) {
+        while (size-- > 0) {
+            if (!collection.contains(it.next())) {
                 it.remove();
                 changed = true;
             }
@@ -354,72 +335,68 @@ public class TCustomHashSet<E> extends TCustomObjectHash<E>
         return changed;
     }
 
-
     @Override
     public String toString() {
-        final StringBuilder buf = new StringBuilder( "{" );
-        forEach( new TObjectProcedure<E>() {
+        final StringBuilder buf = new StringBuilder("{");
+        forEach(new TObjectProcedure<E>() {
+
             private boolean first = true;
 
-
             @Override
-            public boolean execute( Object value ) {
-                if ( first ) {
+            public boolean execute(Object value) {
+                if (first) {
                     first = false;
                 } else {
-                    buf.append( ", " );
+                    buf.append(", ");
                 }
 
-                buf.append( value );
+                buf.append(value);
                 return true;
             }
-        } );
-        buf.append( "}" );
+        });
+        buf.append("}");
         return buf.toString();
     }
 
-
     @Override
-    public void writeExternal( ObjectOutput out ) throws IOException {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // VERSION
-        out.writeByte( 1 );
+        out.writeByte(1);
 
         // NOTE: Super was not written in version 0
-        super.writeExternal( out );
+        super.writeExternal(out);
 
         // NUMBER OF ENTRIES
-        out.writeInt( _size );
+        out.writeInt(_size);
 
         // ENTRIES
-        for ( int i = _set.length; i-- > 0; ) {
-            if ( _set[i] != REMOVED && _set[i] != FREE ) {
-                out.writeObject( _set[i] );
+        for (int i = _set.length; i-- > 0;) {
+            if (_set[i] != REMOVED && _set[i] != FREE) {
+                out.writeObject(_set[i]);
             }
         }
     }
 
-
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
-    public void readExternal( ObjectInput in )
-            throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         // VERSION
         byte version = in.readByte();
 
         // NOTE: super was not written in version 0
-        if ( version != 0 ) {
-            super.readExternal( in );
+        if (version != 0) {
+            super.readExternal(in);
         }
 
         // NUMBER OF ENTRIES
         int size = in.readInt();
-        setUp( size );
+        setUp(size);
 
         // ENTRIES
-        while ( size-- > 0 ) {
+        while (size-- > 0) {
             E val = (E) in.readObject();
-            add( val );
+            add(val);
         }
     }
 }

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,37 +21,41 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.Abs
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
- * Computes the first moment (arithmetic mean).  Uses the definitional formula:
+ * Computes the first moment (arithmetic mean). Uses the definitional formula:
  * <p>
- * mean = sum(x_i) / n </p>
+ * mean = sum(x_i) / n
+ * </p>
  * <p>
- * where <code>n</code> is the number of observations. </p>
+ * where <code>n</code> is the number of observations.
+ * </p>
  * <p>
  * To limit numeric errors, the value of the statistic is computed using the
- * following recursive updating algorithm: </p>
+ * following recursive updating algorithm:
+ * </p>
  * <p>
  * <ol>
  * <li>Initialize <code>m = </code> the first value</li>
  * <li>For each additional value, update using <br>
- *   <code>m = m + (new value - m) / (number of observations)</code></li>
- * </ol></p>
+ * <code>m = m + (new value - m) / (number of observations)</code></li>
+ * </ol>
+ * </p>
  * <p>
- *  Returns <code>Double.NaN</code> if the dataset is empty. Note that
- *  Double.NaN may also be returned if the input includes NaN and / or infinite
- *  values.</p>
+ * Returns <code>Double.NaN</code> if the dataset is empty. Note that
+ * Double.NaN may also be returned if the input includes NaN and / or infinite
+ * values.
+ * </p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
  * one of the threads invokes the <code>increment()</code> or
- * <code>clear()</code> method, it must be synchronized externally.</p>
+ * <code>clear()</code> method, it must be synchronized externally.
+ * </p>
  *
  */
-class FirstMoment extends AbstractStorelessUnivariateStatistic
-    implements Serializable {
+class FirstMoment extends AbstractStorelessUnivariateStatistic implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 6112755307178490473L;
-
 
     /** Count of values that have been added */
     protected long n;
@@ -69,7 +71,7 @@ class FirstMoment extends AbstractStorelessUnivariateStatistic
 
     /**
      * Deviation of most recently added value from previous first moment,
-     * normalized by previous sample size.  Retained to prevent repeated
+     * normalized by previous sample size. Retained to prevent repeated
      * computation in higher order moments
      */
     protected double nDev;
@@ -91,15 +93,15 @@ class FirstMoment extends AbstractStorelessUnivariateStatistic
      * @param original the {@code FirstMoment} instance to copy
      * @throws NullArgumentException if original is null
      */
-     FirstMoment(FirstMoment original) throws NullArgumentException {
-         super();
-         copy(original, this);
-     }
+    FirstMoment(FirstMoment original) throws NullArgumentException {
+        super();
+        copy(original, this);
+    }
 
     /**
      * {@inheritDoc}
      */
-     @Override
+    @Override
     public void increment(final double d) {
         if (n == 0) {
             m1 = 0.0;
@@ -150,14 +152,15 @@ class FirstMoment extends AbstractStorelessUnivariateStatistic
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
      *
      * @param source FirstMoment to copy
-     * @param dest FirstMoment to copy to
+     * @param dest   FirstMoment to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(FirstMoment source, FirstMoment dest)
-        throws NullArgumentException {
+    public static void copy(FirstMoment source, FirstMoment dest) throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         dest.setData(source.getDataRef());

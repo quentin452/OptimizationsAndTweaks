@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,13 +30,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
  * This class implements vectors in a three-dimensional space.
- * <p>Instance of this class are guaranteed to be immutable.</p>
+ * <p>
+ * Instance of this class are guaranteed to be immutable.
+ * </p>
+ * 
  * @since 1.2
  */
 public class Vector3D implements Serializable, Vector<Euclidean3D> {
 
     /** Null vector (coordinates: 0, 0, 0). */
-    public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
+    public static final Vector3D ZERO = new Vector3D(0, 0, 0);
 
     /** First canonical vector (coordinates: 1, 0, 0). */
     public static final Vector3D PLUS_I = new Vector3D(1, 0, 0);
@@ -55,7 +56,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     /** Third canonical vector (coordinates: 0, 0, 1). */
     public static final Vector3D PLUS_K = new Vector3D(0, 0, 1);
 
-    /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
+    /** Opposite of the third canonical vector (coordinates: 0, 0, -1). */
     public static final Vector3D MINUS_K = new Vector3D(0, 0, -1);
 
     // CHECKSTYLE: stop ConstantName
@@ -64,12 +65,16 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
-    public static final Vector3D POSITIVE_INFINITY =
-        new Vector3D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    public static final Vector3D POSITIVE_INFINITY = new Vector3D(
+        Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY);
 
     /** A vector with all coordinates set to negative infinity. */
-    public static final Vector3D NEGATIVE_INFINITY =
-        new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+    public static final Vector3D NEGATIVE_INFINITY = new Vector3D(
+        Double.NEGATIVE_INFINITY,
+        Double.NEGATIVE_INFINITY,
+        Double.NEGATIVE_INFINITY);
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 1313493323784566947L;
@@ -83,8 +88,10 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     /** Height. */
     private final double z;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * Build a vector from its coordinates
+     * 
      * @param x abscissa
      * @param y ordinate
      * @param z height
@@ -98,8 +105,10 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         this.z = z;
     }
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * Build a vector from its coordinates
+     * 
      * @param v coordinates array
      * @exception DimensionMismatchException if array does not have 3 elements
      * @see #toArray()
@@ -113,8 +122,10 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         this.z = v[2];
     }
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * Build a vector from its azimuthal coordinates
+     * 
      * @param alpha azimuth (&alpha;) around Z
      *              (0 is +X, &pi;/2 is +Y, &pi; is -X and 3&pi;/2 is -Y)
      * @param delta elevation (&delta;) above (XY) plane, from -&pi;/2 to +&pi;/2
@@ -128,9 +139,11 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         this.z = FastMath.sin(delta);
     }
 
-    /** Multiplicative constructor
+    /**
+     * Multiplicative constructor
      * Build a vector from another one and a scale factor.
      * The vector built will be a * u
+     * 
      * @param a scale factor
      * @param u base (unscaled) vector
      */
@@ -140,9 +153,11 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         this.z = a * u.z;
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from two other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -154,9 +169,11 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z);
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from three other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2 + a3 * u3
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -164,16 +181,17 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * @param a3 third scale factor
      * @param u3 third base (unscaled) vector
      */
-    public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2,
-                    double a3, Vector3D u3) {
+    public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2, double a3, Vector3D u3) {
         this.x = MathArrays.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x);
         this.y = MathArrays.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y);
         this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z);
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from four other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2 + a3 * u3 + a4 * u4
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -183,14 +201,15 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
      * @param a4 fourth scale factor
      * @param u4 fourth base (unscaled) vector
      */
-    public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2,
-                    double a3, Vector3D u3, double a4, Vector3D u4) {
+    public Vector3D(double a1, Vector3D u1, double a2, Vector3D u2, double a3, Vector3D u3, double a4, Vector3D u4) {
         this.x = MathArrays.linearCombination(a1, u1.x, a2, u2.x, a3, u3.x, a4, u4.x);
         this.y = MathArrays.linearCombination(a1, u1.y, a2, u2.y, a3, u3.y, a4, u4.y);
         this.z = MathArrays.linearCombination(a1, u1.z, a2, u2.z, a3, u3.z, a4, u4.z);
     }
 
-    /** Get the abscissa of the vector.
+    /**
+     * Get the abscissa of the vector.
+     * 
      * @return abscissa of the vector
      * @see #Vector3D(double, double, double)
      */
@@ -198,7 +217,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return x;
     }
 
-    /** Get the ordinate of the vector.
+    /**
+     * Get the ordinate of the vector.
+     * 
      * @return ordinate of the vector
      * @see #Vector3D(double, double, double)
      */
@@ -206,7 +227,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return y;
     }
 
-    /** Get the height of the vector.
+    /**
+     * Get the height of the vector.
+     * 
      * @return height of the vector
      * @see #Vector3D(double, double, double)
      */
@@ -214,7 +237,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return z;
     }
 
-    /** Get the vector coordinates as a dimension 3 array.
+    /**
+     * Get the vector coordinates as a dimension 3 array.
+     * 
      * @return vector coordinates
      * @see #Vector3D(double[])
      */
@@ -240,7 +265,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     /** {@inheritDoc} */
     public double getNorm() {
         // there are no cancellation problems here, so we use the straightforward formula
-        return FastMath.sqrt (x * x + y * y + z * z);
+        return FastMath.sqrt(x * x + y * y + z * z);
     }
 
     /** {@inheritDoc} */
@@ -254,7 +279,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return FastMath.max(FastMath.max(FastMath.abs(x), FastMath.abs(y)), FastMath.abs(z));
     }
 
-    /** Get the azimuth of the vector.
+    /**
+     * Get the azimuth of the vector.
+     * 
      * @return azimuth (&alpha;) of the vector, between -&pi; and +&pi;
      * @see #Vector3D(double, double)
      */
@@ -262,7 +289,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return FastMath.atan2(y, x);
     }
 
-    /** Get the elevation of the vector.
+    /**
+     * Get the elevation of the vector.
+     * 
      * @return elevation (&delta;) of the vector, between -&pi;/2 and +&pi;/2
      * @see #Vector3D(double, double)
      */
@@ -301,18 +330,25 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return scalarMultiply(1 / s);
     }
 
-    /** Get a vector orthogonal to the instance.
-     * <p>There are an infinite number of normalized vectors orthogonal
+    /**
+     * Get a vector orthogonal to the instance.
+     * <p>
+     * There are an infinite number of normalized vectors orthogonal
      * to the instance. This method picks up one of them almost
      * arbitrarily. It is useful when one needs to compute a reference
      * frame with one of the axes in a predefined direction. The
      * following example shows how to build a frame having the k axis
      * aligned with the known vector u :
-     * <pre><code>
+     * 
+     * <pre>
+     * <code>
      *   Vector3D k = u.normalize();
      *   Vector3D i = k.orthogonal();
      *   Vector3D j = Vector3D.crossProduct(k, i);
-     * </code></pre></p>
+     * </code>
+     * </pre>
+     * </p>
+     * 
      * @return a new normalized vector orthogonal to the instance
      * @exception MathArithmeticException if the norm of the instance is null
      */
@@ -324,23 +360,27 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         }
 
         if (FastMath.abs(x) <= threshold) {
-            double inverse  = 1 / FastMath.sqrt(y * y + z * z);
+            double inverse = 1 / FastMath.sqrt(y * y + z * z);
             return new Vector3D(0, inverse * z, -inverse * y);
         } else if (FastMath.abs(y) <= threshold) {
-            double inverse  = 1 / FastMath.sqrt(x * x + z * z);
+            double inverse = 1 / FastMath.sqrt(x * x + z * z);
             return new Vector3D(-inverse * z, 0, inverse * x);
         }
-        double inverse  = 1 / FastMath.sqrt(x * x + y * y);
+        double inverse = 1 / FastMath.sqrt(x * x + y * y);
         return new Vector3D(inverse * y, -inverse * x, 0);
 
     }
 
-    /** Compute the angular separation between two vectors.
-     * <p>This method computes the angular separation between two
+    /**
+     * Compute the angular separation between two vectors.
+     * <p>
+     * This method computes the angular separation between two
      * vectors using the dot product for well separated vectors and the
      * cross product for almost aligned vectors. This allows to have a
      * good accuracy in all cases, even for vectors very close to each
-     * other.</p>
+     * other.
+     * </p>
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return angular separation between v1 and v2
@@ -416,7 +456,7 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         }
 
         if (other instanceof Vector3D) {
-            final Vector3D rhs = (Vector3D)other;
+            final Vector3D rhs = (Vector3D) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
@@ -429,7 +469,8 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
     /**
      * Get a hashCode for the 3D vector.
      * <p>
-     * All NaN values have the same hash code.</p>
+     * All NaN values have the same hash code.
+     * </p>
      *
      * @return a hash code value for this object
      */
@@ -438,15 +479,17 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * MathUtils.hash(x) +  3 * MathUtils.hash(y) +  MathUtils.hash(z));
+        return 643 * (164 * MathUtils.hash(x) + 3 * MathUtils.hash(y) + MathUtils.hash(z));
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      * <p>
      * The implementation uses specific multiplication and addition
      * algorithms to preserve accuracy and reduce cancellation effects.
      * It should be very accurate even for nearly orthogonal vectors.
      * </p>
+     * 
      * @see MathArrays#linearCombination(double, double, double, double, double, double)
      */
     public double dotProduct(final Vector<Euclidean3D> v) {
@@ -454,15 +497,18 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return MathArrays.linearCombination(x, v3.x, y, v3.y, z, v3.z);
     }
 
-    /** Compute the cross-product of the instance with another vector.
+    /**
+     * Compute the cross-product of the instance with another vector.
+     * 
      * @param v other vector
      * @return the cross product this ^ v as a new Vector3D
      */
     public Vector3D crossProduct(final Vector<Euclidean3D> v) {
         final Vector3D v3 = (Vector3D) v;
-        return new Vector3D(MathArrays.linearCombination(y, v3.z, -z, v3.y),
-                            MathArrays.linearCombination(z, v3.x, -x, v3.z),
-                            MathArrays.linearCombination(x, v3.y, -y, v3.x));
+        return new Vector3D(
+            MathArrays.linearCombination(y, v3.z, -z, v3.y),
+            MathArrays.linearCombination(z, v3.x, -x, v3.z),
+            MathArrays.linearCombination(x, v3.y, -y, v3.x));
     }
 
     /** {@inheritDoc} */
@@ -506,7 +552,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    /** Compute the dot-product of two vectors.
+    /**
+     * Compute the dot-product of two vectors.
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the dot product v1.v2
@@ -515,7 +563,9 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.dotProduct(v2);
     }
 
-    /** Compute the cross-product of two vectors.
+    /**
+     * Compute the cross-product of two vectors.
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the cross product v1 ^ v2 as a new Vector
@@ -524,10 +574,14 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.crossProduct(v2);
     }
 
-    /** Compute the distance between two vectors according to the L<sub>1</sub> norm.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the distance between two vectors according to the L<sub>1</sub> norm.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>v1.subtract(v2).getNorm1()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the distance between v1 and v2 according to the L<sub>1</sub> norm
@@ -536,10 +590,14 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.distance1(v2);
     }
 
-    /** Compute the distance between two vectors according to the L<sub>2</sub> norm.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the distance between two vectors according to the L<sub>2</sub> norm.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>v1.subtract(v2).getNorm()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the distance between v1 and v2 according to the L<sub>2</sub> norm
@@ -548,10 +606,14 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.distance(v2);
     }
 
-    /** Compute the distance between two vectors according to the L<sub>&infin;</sub> norm.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the distance between two vectors according to the L<sub>&infin;</sub> norm.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>v1.subtract(v2).getNormInf()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the distance between v1 and v2 according to the L<sub>&infin;</sub> norm
@@ -560,10 +622,14 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.distanceInf(v2);
     }
 
-    /** Compute the square of the distance between two vectors.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the square of the distance between two vectors.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>v1.subtract(v2).getNormSq()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param v1 first vector
      * @param v2 second vector
      * @return the square of the distance between v1 and v2
@@ -572,12 +638,15 @@ public class Vector3D implements Serializable, Vector<Euclidean3D> {
         return v1.distanceSq(v2);
     }
 
-    /** Get a string representation of this vector.
+    /**
+     * Get a string representation of this vector.
+     * 
      * @return a string representation of this vector
      */
     @Override
     public String toString() {
-        return Vector3DFormat.getInstance().format(this);
+        return Vector3DFormat.getInstance()
+            .format(this);
     }
 
     /** {@inheritDoc} */

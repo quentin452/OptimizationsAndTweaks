@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,23 +15,25 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.twod.util;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.distance.DistanceMeasure;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.MapUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Neuron;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.twod.NeuronSquareMesh2D;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.distance.DistanceMeasure;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
  * Visualization of high-dimensional data projection on a 2D-map.
  * The method is described in
  * <quote>
- *  <em>Using Smoothed Data Histograms for Cluster Visualization in Self-Organizing Maps</em>
- *  <br>
- *  by Elias Pampalk, Andreas Rauber and Dieter Merkl.
+ * <em>Using Smoothed Data Histograms for Cluster Visualization in Self-Organizing Maps</em>
+ * <br>
+ * by Elias Pampalk, Andreas Rauber and Dieter Merkl.
  * </quote>
+ * 
  * @since 3.6
  */
 public class SmoothedDataHistogram implements MapDataVisualization {
+
     /** Smoothing parameter. */
     private final int smoothingBins;
     /** Distance. */
@@ -43,10 +43,9 @@ public class SmoothedDataHistogram implements MapDataVisualization {
 
     /**
      * @param smoothingBins Number of bins.
-     * @param distance Distance.
+     * @param distance      Distance.
      */
-    public SmoothedDataHistogram(int smoothingBins,
-                                 DistanceMeasure distance) {
+    public SmoothedDataHistogram(int smoothingBins, DistanceMeasure distance) {
         this.smoothingBins = smoothingBins;
         this.distance = distance;
 
@@ -62,11 +61,11 @@ public class SmoothedDataHistogram implements MapDataVisualization {
      * {@inheritDoc}
      *
      * @throws NumberIsTooSmallException if the size of the {@code map}
-     * is smaller than the number of {@link #SmoothedDataHistogram(int,DistanceMeasure)
-     * smoothing bins}.
+     *                                   is smaller than the number of
+     *                                   {@link #SmoothedDataHistogram(int,DistanceMeasure)
+     *                                   smoothing bins}.
      */
-    public double[][] computeImage(NeuronSquareMesh2D map,
-                                   Iterable<double[]> data) {
+    public double[][] computeImage(NeuronSquareMesh2D map, Iterable<double[]> data) {
         final int nR = map.getNumberOfRows();
         final int nC = map.getNumberOfColumns();
 
@@ -81,9 +80,7 @@ public class SmoothedDataHistogram implements MapDataVisualization {
         final double[][] histo = new double[nR][nC];
 
         for (double[] sample : data) {
-            final Neuron[] sorted = MapUtils.sort(sample,
-                                                  map.getNetwork(),
-                                                  distance);
+            final Neuron[] sorted = MapUtils.sort(sample, map.getNetwork(), distance);
             for (int i = 0; i < smoothingBins; i++) {
                 final LocationFinder.Location loc = finder.getLocation(sorted[i]);
                 final int row = loc.getRow();

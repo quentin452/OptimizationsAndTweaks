@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +16,8 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.general;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathInternalError;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.ArrayRealVector;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.BlockRealMatrix;
@@ -29,8 +27,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.QRDecompositi
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleVectorValueChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleVectorValueChecker;
 
 /**
  * Gauss-Newton least-squares solver.
@@ -47,6 +45,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVe
  */
 @Deprecated
 public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
+
     /** Indicator for using LU decomposition. */
     private final boolean useLU;
 
@@ -55,6 +54,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
      * The normal equations will be solved using LU decomposition and the
      * convergence check is set to a {@link SimpleVectorValueChecker}
      * with default tolerances.
+     * 
      * @deprecated See {@link SimpleVectorValueChecker#SimpleVectorValueChecker()}
      */
     @Deprecated
@@ -78,8 +78,8 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
      * with default tolerances.
      *
      * @param useLU If {@code true}, the normal equations will be solved
-     * using LU decomposition, otherwise they will be solved using QR
-     * decomposition.
+     *              using LU decomposition, otherwise they will be solved using QR
+     *              decomposition.
      * @deprecated See {@link SimpleVectorValueChecker#SimpleVectorValueChecker()}
      */
     @Deprecated
@@ -88,13 +88,12 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     }
 
     /**
-     * @param useLU If {@code true}, the normal equations will be solved
-     * using LU decomposition, otherwise they will be solved using QR
-     * decomposition.
+     * @param useLU   If {@code true}, the normal equations will be solved
+     *                using LU decomposition, otherwise they will be solved using QR
+     *                decomposition.
      * @param checker Convergence checker.
      */
-    public GaussNewtonOptimizer(final boolean useLU,
-                                ConvergenceChecker<PointVectorValuePair> checker) {
+    public GaussNewtonOptimizer(final boolean useLU, ConvergenceChecker<PointVectorValuePair> checker) {
         super(checker);
         this.useLU = useLU;
     }
@@ -102,8 +101,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     /** {@inheritDoc} */
     @Override
     public PointVectorValuePair doOptimize() {
-        final ConvergenceChecker<PointVectorValuePair> checker
-            = getConvergenceChecker();
+        final ConvergenceChecker<PointVectorValuePair> checker = getConvergenceChecker();
 
         // Computation will be useless without a checker (see "for-loop").
         if (checker == null) {
@@ -138,12 +136,12 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             current = new PointVectorValuePair(currentPoint, currentObjective);
 
             // build the linear problem
-            final double[]   b = new double[nC];
+            final double[] b = new double[nC];
             final double[][] a = new double[nC][nC];
             for (int i = 0; i < nR; ++i) {
 
-                final double[] grad   = weightedJacobian.getRow(i);
-                final double weight   = residualsWeights[i];
+                final double[] grad = weightedJacobian.getRow(i);
+                final double weight = residualsWeights[i];
                 final double residual = currentResiduals[i];
 
                 // compute the normal equation
@@ -165,10 +163,10 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             try {
                 // solve the linearized least squares problem
                 RealMatrix mA = new BlockRealMatrix(a);
-                DecompositionSolver solver = useLU ?
-                        new LUDecomposition(mA).getSolver() :
-                        new QRDecomposition(mA).getSolver();
-                final double[] dX = solver.solve(new ArrayRealVector(b, false)).toArray();
+                DecompositionSolver solver = useLU ? new LUDecomposition(mA).getSolver()
+                    : new QRDecomposition(mA).getSolver();
+                final double[] dX = solver.solve(new ArrayRealVector(b, false))
+                    .toArray();
                 // update the estimated parameters
                 for (int i = 0; i < nC; ++i) {
                     currentPoint[i] += dX[i];

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,8 +73,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.IterationManage
  *
  * @since 3.0
  */
-public class ConjugateGradient
-    extends PreconditionedIterativeLinearSolver {
+public class ConjugateGradient extends PreconditionedIterativeLinearSolver {
 
     /** Key for the <a href="#context">exception context</a>. */
     public static final String OPERATOR = "operator";
@@ -98,12 +95,11 @@ public class ConjugateGradient
      * stopping criterion</a>.
      *
      * @param maxIterations the maximum number of iterations
-     * @param delta the &delta; parameter for the default stopping criterion
-     * @param check {@code true} if positive definiteness of both matrix and
-     * preconditioner should be checked
+     * @param delta         the &delta; parameter for the default stopping criterion
+     * @param check         {@code true} if positive definiteness of both matrix and
+     *                      preconditioner should be checked
      */
-    public ConjugateGradient(final int maxIterations, final double delta,
-                             final boolean check) {
+    public ConjugateGradient(final int maxIterations, final double delta, final boolean check) {
         super(maxIterations);
         this.delta = delta;
         this.check = check;
@@ -114,13 +110,12 @@ public class ConjugateGradient
      * stopping criterion</a> and custom iteration manager.
      *
      * @param manager the custom iteration manager
-     * @param delta the &delta; parameter for the default stopping criterion
-     * @param check {@code true} if positive definiteness of both matrix and
-     * preconditioner should be checked
+     * @param delta   the &delta; parameter for the default stopping criterion
+     * @param check   {@code true} if positive definiteness of both matrix and
+     *                preconditioner should be checked
      * @throws NullArgumentException if {@code manager} is {@code null}
      */
-    public ConjugateGradient(final IterationManager manager,
-                             final double delta, final boolean check)
+    public ConjugateGradient(final IterationManager manager, final double delta, final boolean check)
         throws NullArgumentException {
         super(manager);
         this.delta = delta;
@@ -141,16 +136,12 @@ public class ConjugateGradient
      * {@inheritDoc}
      *
      * @throws NonPositiveDefiniteOperatorException if {@code a} or {@code m} is
-     * not positive definite
+     *                                              not positive definite
      */
     @Override
-    public RealVector solveInPlace(final RealLinearOperator a,
-                                   final RealLinearOperator m,
-                                   final RealVector b,
-                                   final RealVector x0)
-        throws NullArgumentException, NonPositiveDefiniteOperatorException,
-        NonSquareOperatorException, DimensionMismatchException,
-        MaxCountExceededException {
+    public RealVector solveInPlace(final RealLinearOperator a, final RealLinearOperator m, final RealVector b,
+        final RealVector x0) throws NullArgumentException, NonPositiveDefiniteOperatorException,
+        NonSquareOperatorException, DimensionMismatchException, MaxCountExceededException {
         checkParameters(a, m, b, x0);
         final IterationManager manager = getIterationManager();
         // Initialization of default stopping criterion
@@ -178,8 +169,7 @@ public class ConjugateGradient
             z = null;
         }
         IterativeLinearSolverEvent evt;
-        evt = new DefaultIterativeLinearSolverEvent(this,
-            manager.getIterations(), xro, bro, rro, rnorm);
+        evt = new DefaultIterativeLinearSolverEvent(this, manager.getIterations(), xro, bro, rro, rnorm);
         manager.fireInitializationEvent(evt);
         if (rnorm <= rmax) {
             manager.fireTerminationEvent(evt);
@@ -188,8 +178,7 @@ public class ConjugateGradient
         double rhoPrev = 0.;
         while (true) {
             manager.incrementIterationCount();
-            evt = new DefaultIterativeLinearSolverEvent(this,
-                manager.getIterations(), xro, bro, rro, rnorm);
+            evt = new DefaultIterativeLinearSolverEvent(this, manager.getIterations(), xro, bro, rro, rnorm);
             manager.fireIterationStartedEvent(evt);
             if (m != null) {
                 z = m.operate(r);
@@ -223,8 +212,7 @@ public class ConjugateGradient
             r.combineToSelf(1., -alpha, q);
             rhoPrev = rhoNext;
             rnorm = r.getNorm();
-            evt = new DefaultIterativeLinearSolverEvent(this,
-                manager.getIterations(), xro, bro, rro, rnorm);
+            evt = new DefaultIterativeLinearSolverEvent(this, manager.getIterations(), xro, bro, rro, rnorm);
             manager.fireIterationPerformedEvent(evt);
             if (rnorm <= rmax) {
                 manager.fireTerminationEvent(evt);

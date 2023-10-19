@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +33,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountEx
  * thanks to the {@link FieldExpandableODE#addSecondaryEquations(FieldSecondaryEquations)}
  * method.
  * </p>
+ * 
  * @see FirstOrderFieldDifferentialEquations
  * @see FieldExpandableODE
  * @param <T> the type of the field elements
@@ -42,31 +41,37 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountEx
  */
 public interface FieldSecondaryEquations<T extends RealFieldElement<T>> {
 
-    /** Get the dimension of the secondary state parameters.
+    /**
+     * Get the dimension of the secondary state parameters.
+     * 
      * @return dimension of the secondary state parameters
      */
     int getDimension();
 
-    /** Initialize equations at the start of an ODE integration.
+    /**
+     * Initialize equations at the start of an ODE integration.
      * <p>
      * This method is called once at the start of the integration. It
      * may be used by the equations to initialize some internal data
      * if needed.
      * </p>
-     * @param t0 value of the independent <I>time</I> variable at integration start
-     * @param primary0 array containing the value of the primary state vector at integration start
+     * 
+     * @param t0         value of the independent <I>time</I> variable at integration start
+     * @param primary0   array containing the value of the primary state vector at integration start
      * @param secondary0 array containing the value of the secondary state vector at integration start
-     * @param finalTime target time for the integration
+     * @param finalTime  target time for the integration
      */
     void init(T t0, T[] primary0, T[] secondary0, T finalTime);
 
-    /** Compute the derivatives related to the secondary state parameters.
-     * @param t current value of the independent <I>time</I> variable
-     * @param primary array containing the current value of the primary state vector
+    /**
+     * Compute the derivatives related to the secondary state parameters.
+     * 
+     * @param t          current value of the independent <I>time</I> variable
+     * @param primary    array containing the current value of the primary state vector
      * @param primaryDot array containing the derivative of the primary state vector
-     * @param secondary array containing the current value of the secondary state vector
+     * @param secondary  array containing the current value of the secondary state vector
      * @return derivative of the secondary state vector
-     * @exception MaxCountExceededException if the number of functions evaluations is exceeded
+     * @exception MaxCountExceededException  if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */
     T[] computeDerivatives(T t, T[] primary, T[] primaryDot, T[] secondary)

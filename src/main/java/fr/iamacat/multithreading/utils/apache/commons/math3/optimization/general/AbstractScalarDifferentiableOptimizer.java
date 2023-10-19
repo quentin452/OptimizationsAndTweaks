@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,12 +16,12 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.general;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.DifferentiableMultivariateFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.FunctionUtils;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.MultivariateDifferentiableFunction;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.DifferentiableMultivariateOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.direct.BaseAbstractMultivariateOptimizer;
 
@@ -39,6 +37,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.direct.
 public abstract class AbstractScalarDifferentiableOptimizer
     extends BaseAbstractMultivariateOptimizer<DifferentiableMultivariateFunction>
     implements DifferentiableMultivariateOptimizer {
+
     /**
      * Objective function gradient.
      */
@@ -49,7 +48,9 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * The convergence check is set to a
      * {@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker
      * SimpleValueChecker}.
-     * @deprecated See {@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
+     * 
+     * @deprecated See
+     *             {@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
      */
     @Deprecated
     protected AbstractScalarDifferentiableOptimizer() {}
@@ -67,7 +68,10 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * @param evaluationPoint Point at which the gradient must be evaluated.
      * @return the gradient at the specified point.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the allowed number of evaluations is exceeded.
+     *                                                                                                    if the allowed
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
      */
     protected double[] computeObjectiveGradient(final double[] evaluationPoint) {
         return gradient.value(evaluationPoint);
@@ -75,10 +79,8 @@ public abstract class AbstractScalarDifferentiableOptimizer
 
     /** {@inheritDoc} */
     @Override
-    protected PointValuePair optimizeInternal(int maxEval,
-                                              final DifferentiableMultivariateFunction f,
-                                              final GoalType goalType,
-                                              final double[] startPoint) {
+    protected PointValuePair optimizeInternal(int maxEval, final DifferentiableMultivariateFunction f,
+        final GoalType goalType, final double[] startPoint) {
         // Store optimization problem characteristics.
         gradient = f.gradient();
 
@@ -88,27 +90,30 @@ public abstract class AbstractScalarDifferentiableOptimizer
     /**
      * Optimize an objective function.
      *
-     * @param f Objective function.
-     * @param goalType Type of optimization goal: either
-     * {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
+     * @param f          Objective function.
+     * @param goalType   Type of optimization goal: either
+     *                   {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
      * @param startPoint Start point for optimization.
-     * @param maxEval Maximum number of function evaluations.
+     * @param maxEval    Maximum number of function evaluations.
      * @return the point/value pair giving the optimal value for objective
-     * function.
+     *         function.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the start point dimension is wrong.
+     *                                                                                                    if the start
+     *                                                                                                    point
+     *                                                                                                    dimension is
+     *                                                                                                    wrong.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if
-     * any argument is {@code null}.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException       if
+     *                                                                                                    any argument
+     *                                                                                                    is
+     *                                                                                                    {@code null}.
      */
-    public PointValuePair optimize(final int maxEval,
-                                   final MultivariateDifferentiableFunction f,
-                                   final GoalType goalType,
-                                   final double[] startPoint) {
-        return optimizeInternal(maxEval,
-                                FunctionUtils.toDifferentiableMultivariateFunction(f),
-                                goalType,
-                                startPoint);
+    public PointValuePair optimize(final int maxEval, final MultivariateDifferentiableFunction f,
+        final GoalType goalType, final double[] startPoint) {
+        return optimizeInternal(maxEval, FunctionUtils.toDifferentiableMultivariateFunction(f), goalType, startPoint);
     }
 }

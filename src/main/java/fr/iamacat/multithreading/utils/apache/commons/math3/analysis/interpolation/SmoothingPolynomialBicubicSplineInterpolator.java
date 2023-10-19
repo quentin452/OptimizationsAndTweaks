@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,17 +14,17 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.interpolation;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoDataException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.PolynomialFitter;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optim.SimpleVectorValueChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer;
-import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.PolynomialFitter;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optim.SimpleVectorValueChecker;
 
 /**
  * Generates a bicubic interpolation function.
@@ -37,8 +35,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.SimpleVectorVa
  * @deprecated To be removed in 4.0 (see MATH-1166).
  */
 @Deprecated
-public class SmoothingPolynomialBicubicSplineInterpolator
-    extends BicubicSplineInterpolator {
+public class SmoothingPolynomialBicubicSplineInterpolator extends BicubicSplineInterpolator {
+
     /** Fitter for x. */
     private final PolynomialFitter xFitter;
     /** Degree of the fitting polynomial. */
@@ -59,20 +57,18 @@ public class SmoothingPolynomialBicubicSplineInterpolator
      * @param degree Degree of the polynomial fitting functions.
      * @exception NotPositiveException if degree is not positive
      */
-    public SmoothingPolynomialBicubicSplineInterpolator(int degree)
-        throws NotPositiveException {
+    public SmoothingPolynomialBicubicSplineInterpolator(int degree) throws NotPositiveException {
         this(degree, degree);
     }
 
     /**
      * @param xDegree Degree of the polynomial fitting functions along the
-     * x-dimension.
+     *                x-dimension.
      * @param yDegree Degree of the polynomial fitting functions along the
-     * y-dimension.
+     *                y-dimension.
      * @exception NotPositiveException if degrees are not positive
      */
-    public SmoothingPolynomialBicubicSplineInterpolator(int xDegree, int yDegree)
-        throws NotPositiveException {
+    public SmoothingPolynomialBicubicSplineInterpolator(int xDegree, int yDegree) throws NotPositiveException {
         if (xDegree < 0) {
             throw new NotPositiveException(xDegree);
         }
@@ -83,9 +79,9 @@ public class SmoothingPolynomialBicubicSplineInterpolator
         this.yDegree = yDegree;
 
         final double safeFactor = 1e2;
-        final SimpleVectorValueChecker checker
-            = new SimpleVectorValueChecker(safeFactor * Precision.EPSILON,
-                                           safeFactor * Precision.SAFE_MIN);
+        final SimpleVectorValueChecker checker = new SimpleVectorValueChecker(
+            safeFactor * Precision.EPSILON,
+            safeFactor * Precision.SAFE_MIN);
         xFitter = new PolynomialFitter(new GaussNewtonOptimizer(false, checker));
         yFitter = new PolynomialFitter(new GaussNewtonOptimizer(false, checker));
     }
@@ -94,11 +90,9 @@ public class SmoothingPolynomialBicubicSplineInterpolator
      * {@inheritDoc}
      */
     @Override
-    public BicubicSplineInterpolatingFunction interpolate(final double[] xval,
-                                                          final double[] yval,
-                                                          final double[][] fval)
-        throws NoDataException, NullArgumentException,
-               DimensionMismatchException, NonMonotonicSequenceException {
+    public BicubicSplineInterpolatingFunction interpolate(final double[] xval, final double[] yval,
+        final double[][] fval)
+        throws NoDataException, NullArgumentException, DimensionMismatchException, NonMonotonicSequenceException {
         if (xval.length == 0 || yval.length == 0 || fval.length == 0) {
             throw new NoDataException();
         }

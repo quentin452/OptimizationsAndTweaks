@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,16 +27,17 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.OpenIntToDouble
  * Sparse matrix implementation based on an open addressed map.
  *
  * <p>
- *  Caveat: This implementation assumes that, for any {@code x},
- *  the equality {@code x * 0d == 0d} holds. But it is is not true for
- *  {@code NaN}. Moreover, zero entries will lose their sign.
- *  Some operations (that involve {@code NaN} and/or infinities) may
- *  thus give incorrect results.
+ * Caveat: This implementation assumes that, for any {@code x},
+ * the equality {@code x * 0d == 0d} holds. But it is is not true for
+ * {@code NaN}. Moreover, zero entries will lose their sign.
+ * Some operations (that involve {@code NaN} and/or infinities) may
+ * thus give incorrect results.
  * </p>
+ * 
  * @since 2.0
  */
-public class OpenMapRealMatrix extends AbstractRealMatrix
-    implements SparseRealMatrix, Serializable {
+public class OpenMapRealMatrix extends AbstractRealMatrix implements SparseRealMatrix, Serializable {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = -5962461716457143437L;
     /** Number of rows of the matrix. */
@@ -51,12 +50,12 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
     /**
      * Build a sparse matrix with the supplied row and column dimensions.
      *
-     * @param rowDimension Number of rows of the matrix.
+     * @param rowDimension    Number of rows of the matrix.
      * @param columnDimension Number of columns of the matrix.
      * @throws NotStrictlyPositiveException if row or column dimension is not
-     * positive.
-     * @throws NumberIsTooLargeException if the total number of entries of the
-     * matrix is larger than {@code Integer.MAX_VALUE}.
+     *                                      positive.
+     * @throws NumberIsTooLargeException    if the total number of entries of the
+     *                                      matrix is larger than {@code Integer.MAX_VALUE}.
      */
     public OpenMapRealMatrix(int rowDimension, int columnDimension)
         throws NotStrictlyPositiveException, NumberIsTooLargeException {
@@ -92,7 +91,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      * {@inheritDoc}
      *
      * @throws NumberIsTooLargeException if the total number of entries of the
-     * matrix is larger than {@code Integer.MAX_VALUE}.
+     *                                   matrix is larger than {@code Integer.MAX_VALUE}.
      */
     @Override
     public OpenMapRealMatrix createMatrix(int rowDimension, int columnDimension)
@@ -112,10 +111,9 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      * @param m Matrix to be added.
      * @return {@code this} + {@code m}.
      * @throws MatrixDimensionMismatchException if {@code m} is not the same
-     * size as {@code this}.
+     *                                          size as {@code this}.
      */
-    public OpenMapRealMatrix add(OpenMapRealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public OpenMapRealMatrix add(OpenMapRealMatrix m) throws MatrixDimensionMismatchException {
 
         MatrixUtils.checkAdditionCompatible(this, m);
 
@@ -133,8 +131,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
 
     /** {@inheritDoc} */
     @Override
-    public OpenMapRealMatrix subtract(final RealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public OpenMapRealMatrix subtract(final RealMatrix m) throws MatrixDimensionMismatchException {
         try {
             return subtract((OpenMapRealMatrix) m);
         } catch (ClassCastException cce) {
@@ -148,10 +145,9 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      * @param m Matrix to be subtracted.
      * @return {@code this} - {@code m}.
      * @throws MatrixDimensionMismatchException if {@code m} is not the same
-     * size as {@code this}.
+     *                                          size as {@code this}.
      */
-    public OpenMapRealMatrix subtract(OpenMapRealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public OpenMapRealMatrix subtract(OpenMapRealMatrix m) throws MatrixDimensionMismatchException {
         MatrixUtils.checkAdditionCompatible(this, m);
 
         final OpenMapRealMatrix out = new OpenMapRealMatrix(this);
@@ -169,12 +165,11 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      * {@inheritDoc}
      *
      * @throws NumberIsTooLargeException if {@code m} is an
-     * {@code OpenMapRealMatrix}, and the total number of entries of the product
-     * is larger than {@code Integer.MAX_VALUE}.
+     *                                   {@code OpenMapRealMatrix}, and the total number of entries of the product
+     *                                   is larger than {@code Integer.MAX_VALUE}.
      */
     @Override
-    public RealMatrix multiply(final RealMatrix m)
-        throws DimensionMismatchException, NumberIsTooLargeException {
+    public RealMatrix multiply(final RealMatrix m) throws DimensionMismatchException, NumberIsTooLargeException {
         try {
             return multiply((OpenMapRealMatrix) m);
         } catch (ClassCastException cce) {
@@ -186,9 +181,9 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
             for (OpenIntToDoubleHashMap.Iterator iterator = entries.iterator(); iterator.hasNext();) {
                 iterator.advance();
                 final double value = iterator.value();
-                final int key      = iterator.key();
-                final int i        = key / columns;
-                final int k        = key % columns;
+                final int key = iterator.key();
+                final int i = key / columns;
+                final int k = key % columns;
                 for (int j = 0; j < outCols; ++j) {
                     out.addToEntry(i, j, value * m.getEntry(k, j));
                 }
@@ -204,9 +199,9 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
      * @param m Matrix to postmultiply by.
      * @return {@code this} * {@code m}.
      * @throws DimensionMismatchException if the number of rows of {@code m}
-     * differ from the number of columns of {@code this} matrix.
-     * @throws NumberIsTooLargeException if the total number of entries of the
-     * product is larger than {@code Integer.MAX_VALUE}.
+     *                                    differ from the number of columns of {@code this} matrix.
+     * @throws NumberIsTooLargeException  if the total number of entries of the
+     *                                    product is larger than {@code Integer.MAX_VALUE}.
      */
     public OpenMapRealMatrix multiply(OpenMapRealMatrix m)
         throws DimensionMismatchException, NumberIsTooLargeException {
@@ -218,15 +213,14 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
         for (OpenIntToDoubleHashMap.Iterator iterator = entries.iterator(); iterator.hasNext();) {
             iterator.advance();
             final double value = iterator.value();
-            final int key      = iterator.key();
-            final int i        = key / columns;
-            final int k        = key % columns;
+            final int key = iterator.key();
+            final int i = key / columns;
+            final int k = key % columns;
             for (int j = 0; j < outCols; ++j) {
                 final int rightKey = m.computeKey(k, j);
                 if (m.entries.containsKey(rightKey)) {
                     final int outKey = out.computeKey(i, j);
-                    final double outValue =
-                        out.entries.get(outKey) + value * m.entries.get(rightKey);
+                    final double outValue = out.entries.get(outKey) + value * m.entries.get(rightKey);
                     if (outValue == 0.0) {
                         out.entries.remove(outKey);
                     } else {
@@ -255,8 +249,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
 
     /** {@inheritDoc} */
     @Override
-    public void setEntry(int row, int column, double value)
-        throws OutOfRangeException {
+    public void setEntry(int row, int column, double value) throws OutOfRangeException {
         MatrixUtils.checkRowIndex(this, row);
         MatrixUtils.checkColumnIndex(this, column);
         if (value == 0.0) {
@@ -268,8 +261,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
 
     /** {@inheritDoc} */
     @Override
-    public void addToEntry(int row, int column, double increment)
-        throws OutOfRangeException {
+    public void addToEntry(int row, int column, double increment) throws OutOfRangeException {
         MatrixUtils.checkRowIndex(this, row);
         MatrixUtils.checkColumnIndex(this, column);
         final int key = computeKey(row, column);
@@ -283,8 +275,7 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
 
     /** {@inheritDoc} */
     @Override
-    public void multiplyEntry(int row, int column, double factor)
-        throws OutOfRangeException {
+    public void multiplyEntry(int row, int column, double factor) throws OutOfRangeException {
         MatrixUtils.checkRowIndex(this, row);
         MatrixUtils.checkColumnIndex(this, column);
         final int key = computeKey(row, column);
@@ -298,13 +289,13 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
 
     /**
      * Compute the key to access a matrix element
-     * @param row row index of the matrix element
+     * 
+     * @param row    row index of the matrix element
      * @param column column index of the matrix element
      * @return key within the map to access the matrix element
      */
     private int computeKey(int row, int column) {
         return row * columns + column;
     }
-
 
 }

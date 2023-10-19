@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,28 +20,34 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgume
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
- * Computes a statistic related to the Second Central Moment.  Specifically,
+ * Computes a statistic related to the Second Central Moment. Specifically,
  * what is computed is the sum of squared deviations from the sample mean.
  * <p>
- * The following recursive updating formula is used:</p>
+ * The following recursive updating formula is used:
+ * </p>
  * <p>
- * Let <ul>
- * <li> dev = (current obs - previous mean) </li>
- * <li> n = number of observations (including current obs) </li>
+ * Let
+ * <ul>
+ * <li>dev = (current obs - previous mean)</li>
+ * <li>n = number of observations (including current obs)</li>
  * </ul>
- * Then</p>
+ * Then
+ * </p>
  * <p>
- * new value = old value + dev^2 * (n -1) / n.</p>
+ * new value = old value + dev^2 * (n -1) / n.
+ * </p>
  * <p>
  * Returns <code>Double.NaN</code> if no data values have been added and
  * returns <code>0</code> if there is just one value in the data set.
  * Note that Double.NaN may also be returned if the input includes NaN
- * and / or infinite values.</p>
+ * and / or infinite values.
+ * </p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
  * one of the threads invokes the <code>increment()</code> or
- * <code>clear()</code> method, it must be synchronized externally.</p>
+ * <code>clear()</code> method, it must be synchronized externally.
+ * </p>
  *
  */
 public class SecondMoment extends FirstMoment implements Serializable {
@@ -69,8 +73,7 @@ public class SecondMoment extends FirstMoment implements Serializable {
      * @param original the {@code SecondMoment} instance to copy
      * @throws NullArgumentException if original is null
      */
-    public SecondMoment(SecondMoment original)
-    throws NullArgumentException {
+    public SecondMoment(SecondMoment original) throws NullArgumentException {
         super(original);
         this.m2 = original.m2;
     }
@@ -117,14 +120,15 @@ public class SecondMoment extends FirstMoment implements Serializable {
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
      *
      * @param source SecondMoment to copy
-     * @param dest SecondMoment to copy to
+     * @param dest   SecondMoment to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(SecondMoment source, SecondMoment dest)
-        throws NullArgumentException {
+    public static void copy(SecondMoment source, SecondMoment dest) throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         FirstMoment.copy(source, dest);

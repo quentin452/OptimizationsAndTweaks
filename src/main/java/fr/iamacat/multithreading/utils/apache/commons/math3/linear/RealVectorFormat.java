@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +27,18 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.CompositeFormat
 
 /**
  * Formats a vector in components list format "{v0; v1; ...; vk-1}".
- * <p>The prefix and suffix "{" and "}" and the separator "; " can be replaced by
- * any user-defined strings. The number format for components can be configured.</p>
- * <p>White space is ignored at parse time, even if it is in the prefix, suffix
+ * <p>
+ * The prefix and suffix "{" and "}" and the separator "; " can be replaced by
+ * any user-defined strings. The number format for components can be configured.
+ * </p>
+ * <p>
+ * White space is ignored at parse time, even if it is in the prefix, suffix
  * or separator specifications. So even if the default separator does include a space
  * character that is used at format time, both input string "{1;1;1}" and
  * " { 1 ; 1 ; 1 } " will be parsed without error and the same vector will be
  * returned. In the second case, however, the parse position after parsing will be
- * just after the closing curly brace, i.e. just before the trailing space.</p>
+ * just after the closing curly brace, i.e. just before the trailing space.
+ * </p>
  *
  * @since 2.0
  */
@@ -65,16 +67,18 @@ public class RealVectorFormat {
 
     /**
      * Create an instance with default settings.
-     * <p>The instance uses the default prefix, suffix and separator:
-     * "{", "}", and "; " and the default number format for components.</p>
+     * <p>
+     * The instance uses the default prefix, suffix and separator:
+     * "{", "}", and "; " and the default number format for components.
+     * </p>
      */
     public RealVectorFormat() {
-        this(DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_SEPARATOR,
-             CompositeFormat.getDefaultNumberFormat());
+        this(DEFAULT_PREFIX, DEFAULT_SUFFIX, DEFAULT_SEPARATOR, CompositeFormat.getDefaultNumberFormat());
     }
 
     /**
      * Create an instance with a custom number format for components.
+     * 
      * @param format the custom format for components.
      */
     public RealVectorFormat(final NumberFormat format) {
@@ -83,38 +87,41 @@ public class RealVectorFormat {
 
     /**
      * Create an instance with custom prefix, suffix and separator.
-     * @param prefix prefix to use instead of the default "{"
-     * @param suffix suffix to use instead of the default "}"
+     * 
+     * @param prefix    prefix to use instead of the default "{"
+     * @param suffix    suffix to use instead of the default "}"
      * @param separator separator to use instead of the default "; "
      */
-    public RealVectorFormat(final String prefix, final String suffix,
-                            final String separator) {
-        this(prefix, suffix, separator,
-             CompositeFormat.getDefaultNumberFormat());
+    public RealVectorFormat(final String prefix, final String suffix, final String separator) {
+        this(prefix, suffix, separator, CompositeFormat.getDefaultNumberFormat());
     }
 
     /**
      * Create an instance with custom prefix, suffix, separator and format
      * for components.
-     * @param prefix prefix to use instead of the default "{"
-     * @param suffix suffix to use instead of the default "}"
+     * 
+     * @param prefix    prefix to use instead of the default "{"
+     * @param suffix    suffix to use instead of the default "}"
      * @param separator separator to use instead of the default "; "
-     * @param format the custom format for components.
+     * @param format    the custom format for components.
      */
-    public RealVectorFormat(final String prefix, final String suffix,
-                            final String separator, final NumberFormat format) {
-        this.prefix      = prefix;
-        this.suffix      = suffix;
-        this.separator   = separator;
-        trimmedPrefix    = prefix.trim();
-        trimmedSuffix    = suffix.trim();
+    public RealVectorFormat(final String prefix, final String suffix, final String separator,
+        final NumberFormat format) {
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.separator = separator;
+        trimmedPrefix = prefix.trim();
+        trimmedSuffix = suffix.trim();
         trimmedSeparator = separator.trim();
-        this.format      = format;
+        this.format = format;
     }
 
     /**
      * Get the set of locales for which real vectors formats are available.
-     * <p>This is the same set as the {@link NumberFormat} set.</p>
+     * <p>
+     * This is the same set as the {@link NumberFormat} set.
+     * </p>
+     * 
      * @return available real vector format locales.
      */
     public static Locale[] getAvailableLocales() {
@@ -123,6 +130,7 @@ public class RealVectorFormat {
 
     /**
      * Get the format prefix.
+     * 
      * @return format prefix.
      */
     public String getPrefix() {
@@ -131,6 +139,7 @@ public class RealVectorFormat {
 
     /**
      * Get the format suffix.
+     * 
      * @return format suffix.
      */
     public String getSuffix() {
@@ -139,6 +148,7 @@ public class RealVectorFormat {
 
     /**
      * Get the format separator between components.
+     * 
      * @return format separator.
      */
     public String getSeparator() {
@@ -147,6 +157,7 @@ public class RealVectorFormat {
 
     /**
      * Get the components format.
+     * 
      * @return components format.
      */
     public NumberFormat getFormat() {
@@ -155,6 +166,7 @@ public class RealVectorFormat {
 
     /**
      * Returns the default real vector format for the current locale.
+     * 
      * @return the default real vector format.
      */
     public static RealVectorFormat getInstance() {
@@ -163,6 +175,7 @@ public class RealVectorFormat {
 
     /**
      * Returns the default real vector format for the given locale.
+     * 
      * @param locale the specific locale used by the format.
      * @return the real vector format specific to the given locale.
      */
@@ -182,14 +195,14 @@ public class RealVectorFormat {
 
     /**
      * Formats a {@link RealVector} object to produce a string.
-     * @param vector the object to format.
+     * 
+     * @param vector     the object to format.
      * @param toAppendTo where the text is to be appended
-     * @param pos On input: an alignment field, if desired. On output: the
-     *            offsets of the alignment field
+     * @param pos        On input: an alignment field, if desired. On output: the
+     *                   offsets of the alignment field
      * @return the value passed in as toAppendTo.
      */
-    public StringBuffer format(RealVector vector, StringBuffer toAppendTo,
-                               FieldPosition pos) {
+    public StringBuffer format(RealVector vector, StringBuffer toAppendTo, FieldPosition pos) {
 
         pos.setBeginIndex(0);
         pos.setEndIndex(0);
@@ -217,15 +230,13 @@ public class RealVectorFormat {
      * @param source String to parse.
      * @return the parsed {@link RealVector} object.
      * @throws MathParseException if the beginning of the specified string
-     * cannot be parsed.
+     *                            cannot be parsed.
      */
     public ArrayRealVector parse(String source) {
         final ParsePosition parsePosition = new ParsePosition(0);
         final ArrayRealVector result = parse(source, parsePosition);
         if (parsePosition.getIndex() == 0) {
-            throw new MathParseException(source,
-                                         parsePosition.getErrorIndex(),
-                                         ArrayRealVector.class);
+            throw new MathParseException(source, parsePosition.getErrorIndex(), ArrayRealVector.class);
         }
         return result;
     }
@@ -234,7 +245,7 @@ public class RealVectorFormat {
      * Parse a string to produce a {@link RealVector} object.
      *
      * @param source String to parse.
-     * @param pos input/ouput parsing parameter.
+     * @param pos    input/ouput parsing parameter.
      * @return the parsed {@link RealVector} object.
      */
     public ArrayRealVector parse(String source, ParsePosition pos) {
@@ -248,7 +259,7 @@ public class RealVectorFormat {
 
         // parse components
         List<Number> components = new ArrayList<Number>();
-        for (boolean loop = true; loop;){
+        for (boolean loop = true; loop;) {
 
             if (!components.isEmpty()) {
                 CompositeFormat.parseAndIgnoreWhitespace(source, pos);
@@ -281,7 +292,8 @@ public class RealVectorFormat {
         // build vector
         double[] data = new double[components.size()];
         for (int i = 0; i < data.length; ++i) {
-            data[i] = components.get(i).doubleValue();
+            data[i] = components.get(i)
+                .doubleValue();
         }
         return new ArrayRealVector(data, false);
     }

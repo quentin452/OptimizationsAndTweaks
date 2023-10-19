@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +15,12 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.fitting;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.DifferentiableMultivariateVectorOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.HarmonicOscillator;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.DifferentiableMultivariateVectorOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
@@ -39,8 +37,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  */
 @Deprecated
 public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
+
     /**
      * Simple constructor.
+     * 
      * @param optimizer Optimizer to use for the fitting.
      */
     public HarmonicFitter(final DifferentiableMultivariateVectorOptimizer optimizer) {
@@ -51,13 +51,13 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
      * Fit an harmonic function to the observed points.
      *
      * @param initialGuess First guess values in the following order:
-     * <ul>
-     *  <li>Amplitude</li>
-     *  <li>Angular frequency</li>
-     *  <li>Phase</li>
-     * </ul>
+     *                     <ul>
+     *                     <li>Amplitude</li>
+     *                     <li>Angular frequency</li>
+     *                     <li>Phase</li>
+     *                     </ul>
      * @return the parameters of the harmonic function that best fits the
-     * observed points (in the same order as above).
+     *         observed points (in the same order as above).
      */
     public double[] fit(double[] initialGuess) {
         return fit(new HarmonicOscillator.Parametric(), initialGuess);
@@ -68,11 +68,11 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
      * An initial guess will be automatically computed.
      *
      * @return the parameters of the harmonic function that best fits the
-     * observed points (see the other {@link #fit(double[]) fit} method.
+     *         observed points (see the other {@link #fit(double[]) fit} method.
      * @throws NumberIsTooSmallException if the sample is too short for the
-     * the first guess to be computed.
-     * @throws ZeroException if the first guess cannot be computed because
-     * the abscissa range is zero.
+     *                                   the first guess to be computed.
+     * @throws ZeroException             if the first guess cannot be computed because
+     *                                   the abscissa range is zero.
      */
     public double[] fit() {
         return fit((new ParameterGuesser(getObservations())).guess());
@@ -80,13 +80,18 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
 
     /**
      * This class guesses harmonic coefficients from a sample.
-     * <p>The algorithm used to guess the coefficients is as follows:</p>
+     * <p>
+     * The algorithm used to guess the coefficients is as follows:
+     * </p>
      *
-     * <p>We know f (t) at some sampling points t<sub>i</sub> and want to find a,
+     * <p>
+     * We know f (t) at some sampling points t<sub>i</sub> and want to find a,
      * &omega; and &phi; such that f (t) = a cos (&omega; t + &phi;).
      * </p>
      *
-     * <p>From the analytical expression, we can compute two primitives :
+     * <p>
+     * From the analytical expression, we can compute two primitives :
+     * 
      * <pre>
      *     If2  (t) = &int; f<sup>2</sup>  = a<sup>2</sup> &times; [t + S (t)] / 2
      *     If'2 (t) = &int; f'<sup>2</sup> = a<sup>2</sup> &omega;<sup>2</sup> &times; [t - S (t)] / 2
@@ -94,31 +99,41 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
      * </pre>
      * </p>
      *
-     * <p>We can remove S between these expressions :
+     * <p>
+     * We can remove S between these expressions :
+     * 
      * <pre>
      *     If'2 (t) = a<sup>2</sup> &omega;<sup>2</sup> t - &omega;<sup>2</sup> If2 (t)
      * </pre>
      * </p>
      *
-     * <p>The preceding expression shows that If'2 (t) is a linear
+     * <p>
+     * The preceding expression shows that If'2 (t) is a linear
      * combination of both t and If2 (t): If'2 (t) = A &times; t + B &times; If2 (t)
      * </p>
      *
-     * <p>From the primitive, we can deduce the same form for definite
+     * <p>
+     * From the primitive, we can deduce the same form for definite
      * integrals between t<sub>1</sub> and t<sub>i</sub> for each t<sub>i</sub> :
+     * 
      * <pre>
      *   If2 (t<sub>i</sub>) - If2 (t<sub>1</sub>) = A &times; (t<sub>i</sub> - t<sub>1</sub>) + B &times; (If2 (t<sub>i</sub>) - If2 (t<sub>1</sub>))
      * </pre>
      * </p>
      *
-     * <p>We can find the coefficients A and B that best fit the sample
+     * <p>
+     * We can find the coefficients A and B that best fit the sample
      * to this linear expression by computing the definite integrals for
      * each sample points.
      * </p>
      *
-     * <p>For a bilinear expression z (x<sub>i</sub>, y<sub>i</sub>) = A &times; x<sub>i</sub> + B &times; y<sub>i</sub>, the
+     * <p>
+     * For a bilinear expression z (x<sub>i</sub>, y<sub>i</sub>) = A &times; x<sub>i</sub> + B &times; y<sub>i</sub>,
+     * the
      * coefficients A and B that minimize a least square criterion
-     * &sum; (z<sub>i</sub> - z (x<sub>i</sub>, y<sub>i</sub>))<sup>2</sup> are given by these expressions:</p>
+     * &sum; (z<sub>i</sub> - z (x<sub>i</sub>, y<sub>i</sub>))<sup>2</sup> are given by these expressions:
+     * </p>
+     * 
      * <pre>
      *
      *         &sum;y<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub>
@@ -132,9 +147,12 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
      * </p>
      *
      *
-     * <p>In fact, we can assume both a and &omega; are positive and
+     * <p>
+     * In fact, we can assume both a and &omega; are positive and
      * compute them directly, knowing that A = a<sup>2</sup> &omega;<sup>2</sup> and that
-     * B = - &omega;<sup>2</sup>. The complete algorithm is therefore:</p>
+     * B = - &omega;<sup>2</sup>. The complete algorithm is therefore:
+     * </p>
+     * 
      * <pre>
      *
      * for each t<sub>i</sub> from t<sub>1</sub> to t<sub>n-1</sub>, compute:
@@ -160,24 +178,30 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
      * </pre>
      * </p>
      *
-     * <p>Once we know &omega;, we can compute:
+     * <p>
+     * Once we know &omega;, we can compute:
+     * 
      * <pre>
      *    fc = &omega; f (t) cos (&omega; t) - f' (t) sin (&omega; t)
      *    fs = &omega; f (t) sin (&omega; t) + f' (t) cos (&omega; t)
      * </pre>
      * </p>
      *
-     * <p>It appears that <code>fc = a &omega; cos (&phi;)</code> and
+     * <p>
+     * It appears that <code>fc = a &omega; cos (&phi;)</code> and
      * <code>fs = -a &omega; sin (&phi;)</code>, so we can use these
      * expressions to compute &phi;. The best estimate over the sample is
      * given by averaging these expressions.
      * </p>
      *
-     * <p>Since integrals and means are involved in the preceding
+     * <p>
+     * Since integrals and means are involved in the preceding
      * estimations, these operations run in O(n) time, where n is the
-     * number of measurements.</p>
+     * number of measurements.
+     * </p>
      */
     public static class ParameterGuesser {
+
         /** Amplitude. */
         private final double a;
         /** Angular frequency. */
@@ -190,14 +214,17 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
          *
          * @param observations Sampled observations.
          * @throws NumberIsTooSmallException if the sample is too short.
-         * @throws ZeroException if the abscissa range is zero.
+         * @throws ZeroException             if the abscissa range is zero.
          * @throws MathIllegalStateException when the guessing procedure cannot
-         * produce sensible results.
+         *                                   produce sensible results.
          */
         public ParameterGuesser(WeightedObservedPoint[] observations) {
             if (observations.length < 4) {
-                throw new NumberIsTooSmallException(LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
-                                                    observations.length, 4, true);
+                throw new NumberIsTooSmallException(
+                    LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
+                    observations.length,
+                    4,
+                    true);
             }
 
             final WeightedObservedPoint[] sorted = sortObservations(observations);
@@ -213,11 +240,11 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
          * Gets an estimation of the parameters.
          *
          * @return the guessed parameters, in the following order:
-         * <ul>
-         *  <li>Amplitude</li>
-         *  <li>Angular frequency</li>
-         *  <li>Phase</li>
-         * </ul>
+         *         <ul>
+         *         <li>Amplitude</li>
+         *         <li>Angular frequency</li>
+         *         <li>Phase</li>
+         *         </ul>
          */
         public double[] guess() {
             return new double[] { a, omega, phi };
@@ -263,11 +290,11 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
          * has been called previously.
          *
          * @param observations Observations, sorted w.r.t. abscissa.
-         * @throws ZeroException if the abscissa range is zero.
+         * @throws ZeroException             if the abscissa range is zero.
          * @throws MathIllegalStateException when the guessing procedure cannot
-         * produce sensible results.
+         *                                   produce sensible results.
          * @return the guessed amplitude (at index 0) and circular frequency
-         * (at index 1).
+         *         (at index 1).
          */
         private double[] guessAOmega(WeightedObservedPoint[] observations) {
             final double[] aOmega = new double[2];
@@ -295,8 +322,8 @@ public class HarmonicFitter extends CurveFitter<HarmonicOscillator.Parametric> {
                 // considering a linear model for f (and therefore constant f')
                 final double dx = currentX - previousX;
                 final double dy = currentY - previousY;
-                final double f2StepIntegral =
-                    dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+                final double f2StepIntegral = dx * (previousY * previousY + previousY * currentY + currentY * currentY)
+                    / 3;
                 final double fPrime2StepIntegral = dy * dy / dx;
 
                 final double x = currentX - startX;

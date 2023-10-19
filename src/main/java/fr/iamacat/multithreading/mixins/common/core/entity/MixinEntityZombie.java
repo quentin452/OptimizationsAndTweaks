@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(EntityZombie.class)
 public class MixinEntityZombie extends EntityMob {
@@ -29,15 +29,15 @@ public class MixinEntityZombie extends EntityMob {
      */
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityZombie){
+        if (MultithreadingandtweaksConfig.enableMixinEntityZombie) {
             super.onLivingUpdate();
             // Add a check for the conditions where the entity can catch fire
             if (multithreadingandtweaks$shouldCatchFire()) {
                 multithreadingandtweaks$catchFire();
             }
 
-        // Handle riding logic
-        multithreadingandtweaks$handleRiding();
+            // Handle riding logic
+            multithreadingandtweaks$handleRiding();
             ci.cancel();
         }
     }
@@ -104,24 +104,21 @@ public class MixinEntityZombie extends EntityMob {
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
-    {
+    protected String getLivingSound() {
         return "mob.zombie.say";
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
-    {
+    protected String getHurtSound() {
         return "mob.zombie.hurt";
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
-    {
+    protected String getDeathSound() {
         return "mob.zombie.death";
     }
 }

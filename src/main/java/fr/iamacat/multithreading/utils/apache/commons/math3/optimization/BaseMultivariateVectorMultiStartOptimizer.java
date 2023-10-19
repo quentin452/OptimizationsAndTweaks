@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +41,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomVectorG
 @Deprecated
 public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends MultivariateVectorFunction>
     implements BaseMultivariateVectorOptimizer<FUNC> {
+
     /** Underlying classical optimizer. */
     private final BaseMultivariateVectorOptimizer<FUNC> optimizer;
     /** Maximal number of evaluations allowed. */
@@ -60,19 +59,17 @@ public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends Multivariate
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform. If {@code starts == 1},
-     * the {@link #optimize(int,MultivariateVectorFunction,double[],double[],double[])
-     * optimize} will return the same solution as {@code optimizer} would.
+     * @param starts    Number of starts to perform. If {@code starts == 1},
+     *                  the {@link #optimize(int,MultivariateVectorFunction,double[],double[],double[])
+     *                  optimize} will return the same solution as {@code optimizer} would.
      * @param generator Random vector generator to use for restarts.
-     * @throws NullArgumentException if {@code optimizer} or {@code generator}
-     * is {@code null}.
+     * @throws NullArgumentException        if {@code optimizer} or {@code generator}
+     *                                      is {@code null}.
      * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
     protected BaseMultivariateVectorMultiStartOptimizer(final BaseMultivariateVectorOptimizer<FUNC> optimizer,
-                                                           final int starts,
-                                                           final RandomVectorGenerator generator) {
-        if (optimizer == null ||
-            generator == null) {
+        final int starts, final RandomVectorGenerator generator) {
+        if (optimizer == null || generator == null) {
             throw new NullArgumentException();
         }
         if (starts < 1) {
@@ -108,8 +105,9 @@ public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends Multivariate
      *
      * @return array containing the optima
      * @throws MathIllegalStateException if {@link
-     * #optimize(int,MultivariateVectorFunction,double[],double[],double[]) optimize} has not been
-     * called.
+     *                                   #optimize(int,MultivariateVectorFunction,double[],double[],double[]) optimize}
+     *                                   has not been
+     *                                   called.
      */
     public PointVectorValuePair[] getOptima() {
         if (optima == null) {
@@ -136,9 +134,8 @@ public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends Multivariate
     /**
      * {@inheritDoc}
      */
-    public PointVectorValuePair optimize(int maxEval, final FUNC f,
-                                            double[] target, double[] weights,
-                                            double[] startPoint) {
+    public PointVectorValuePair optimize(int maxEval, final FUNC f, double[] target, double[] weights,
+        double[] startPoint) {
         maxEvaluations = maxEval;
         RuntimeException lastException = null;
         optima = new PointVectorValuePair[starts];
@@ -149,8 +146,12 @@ public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends Multivariate
 
             // CHECKSTYLE: stop IllegalCatch
             try {
-                optima[i] = optimizer.optimize(maxEval - totalEvaluations, f, target, weights,
-                                               i == 0 ? startPoint : generator.nextVector());
+                optima[i] = optimizer.optimize(
+                    maxEval - totalEvaluations,
+                    f,
+                    target,
+                    weights,
+                    i == 0 ? startPoint : generator.nextVector());
             } catch (ConvergenceException oe) {
                 optima[i] = null;
             } catch (RuntimeException mue) {
@@ -175,31 +176,31 @@ public class BaseMultivariateVectorMultiStartOptimizer<FUNC extends Multivariate
     /**
      * Sort the optima from best to worst, followed by {@code null} elements.
      *
-     * @param target Target value for the objective functions at optimum.
+     * @param target  Target value for the objective functions at optimum.
      * @param weights Weights for the least-squares cost computation.
      */
-    private void sortPairs(final double[] target,
-                           final double[] weights) {
+    private void sortPairs(final double[] target, final double[] weights) {
         Arrays.sort(optima, new Comparator<PointVectorValuePair>() {
-                /** {@inheritDoc} */
-                public int compare(final PointVectorValuePair o1,
-                                   final PointVectorValuePair o2) {
-                    if (o1 == null) {
-                        return (o2 == null) ? 0 : 1;
-                    } else if (o2 == null) {
-                        return -1;
-                    }
-                    return Double.compare(weightedResidual(o1), weightedResidual(o2));
+
+            /** {@inheritDoc} */
+            public int compare(final PointVectorValuePair o1, final PointVectorValuePair o2) {
+                if (o1 == null) {
+                    return (o2 == null) ? 0 : 1;
+                } else if (o2 == null) {
+                    return -1;
                 }
-                private double weightedResidual(final PointVectorValuePair pv) {
-                    final double[] value = pv.getValueRef();
-                    double sum = 0;
-                    for (int i = 0; i < value.length; ++i) {
-                        final double ri = value[i] - target[i];
-                        sum += weights[i] * ri * ri;
-                    }
-                    return sum;
+                return Double.compare(weightedResidual(o1), weightedResidual(o2));
+            }
+
+            private double weightedResidual(final PointVectorValuePair pv) {
+                final double[] value = pv.getValueRef();
+                double sum = 0;
+                for (int i = 0; i < value.length; ++i) {
+                    final double ri = value[i] - target[i];
+                    sum += weights[i] * ri * ri;
                 }
-            });
+                return sum;
+            }
+        });
     }
 }

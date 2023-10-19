@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +18,8 @@ import java.io.Serializable;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/NevillesAlgorithm.html">
@@ -30,12 +28,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonoton
  * chapter 2.
  * <p>
  * The actual code of Neville's algorithm is in PolynomialFunctionLagrangeForm,
- * this class provides an easy-to-use interface to it.</p>
+ * this class provides an easy-to-use interface to it.
+ * </p>
  *
  * @since 1.2
  */
-public class NevilleInterpolator implements UnivariateInterpolator,
-    Serializable {
+public class NevilleInterpolator implements UnivariateInterpolator, Serializable {
 
     /** serializable version identifier */
     static final long serialVersionUID = 3003707660147873733L;
@@ -46,15 +44,13 @@ public class NevilleInterpolator implements UnivariateInterpolator,
      * @param x Interpolating points.
      * @param y Interpolating values.
      * @return a function which interpolates the data set
-     * @throws DimensionMismatchException if the array lengths are different.
-     * @throws NumberIsTooSmallException if the number of points is less than 2.
+     * @throws DimensionMismatchException    if the array lengths are different.
+     * @throws NumberIsTooSmallException     if the number of points is less than 2.
      * @throws NonMonotonicSequenceException if two abscissae have the same
-     * value.
+     *                                       value.
      */
     public PolynomialFunctionLagrangeForm interpolate(double x[], double y[])
-        throws DimensionMismatchException,
-               NumberIsTooSmallException,
-               NonMonotonicSequenceException {
+        throws DimensionMismatchException, NumberIsTooSmallException, NonMonotonicSequenceException {
         return new PolynomialFunctionLagrangeForm(x, y);
     }
 }

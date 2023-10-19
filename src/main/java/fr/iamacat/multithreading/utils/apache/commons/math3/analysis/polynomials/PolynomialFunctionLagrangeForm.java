@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +15,12 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.polynomials;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 
 /**
  * Implements the representation of a real polynomial function in
@@ -31,11 +29,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * Analysis</b>, ISBN 038795452X, chapter 2.
  * <p>
  * The approximated function should be smooth enough for Lagrange polynomial
- * to work well. Otherwise, consider using splines instead.</p>
+ * to work well. Otherwise, consider using splines instead.
+ * </p>
  *
  * @since 1.2
  */
 public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
+
     /**
      * The coefficients of the polynomial, ordered by degree -- i.e.
      * coefficients[0] is the constant term and coefficients[n] is the
@@ -59,14 +59,15 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * Construct a Lagrange polynomial with the given abscissas and function
      * values. The order of interpolating points are not important.
      * <p>
-     * The constructor makes copy of the input arrays and assigns them.</p>
+     * The constructor makes copy of the input arrays and assigns them.
+     * </p>
      *
      * @param x interpolating points
      * @param y function values at interpolating points
-     * @throws DimensionMismatchException if the array lengths are different.
-     * @throws NumberIsTooSmallException if the number of points is less than 2.
+     * @throws DimensionMismatchException    if the array lengths are different.
+     * @throws NumberIsTooSmallException     if the number of points is less than 2.
      * @throws NonMonotonicSequenceException
-     * if two abscissae have the same value.
+     *                                       if two abscissae have the same value.
      */
     public PolynomialFunctionLagrangeForm(double x[], double y[])
         throws DimensionMismatchException, NumberIsTooSmallException, NonMonotonicSequenceException {
@@ -88,12 +89,23 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      *
      * @param z Point at which the function value is to be computed.
      * @return the function value.
-     * @throws DimensionMismatchException if {@code x} and {@code y} have
-     * different lengths.
+     * @throws DimensionMismatchException                                                                   if {@code x}
+     *                                                                                                      and
+     *                                                                                                      {@code y}
+     *                                                                                                      have
+     *                                                                                                      different
+     *                                                                                                      lengths.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     * if {@code x} is not sorted in strictly increasing order.
-     * @throws NumberIsTooSmallException if the size of {@code x} is less
-     * than 2.
+     *                                                                                                      if {@code x}
+     *                                                                                                      is not
+     *                                                                                                      sorted in
+     *                                                                                                      strictly
+     *                                                                                                      increasing
+     *                                                                                                      order.
+     * @throws NumberIsTooSmallException                                                                    if the size
+     *                                                                                                      of {@code x}
+     *                                                                                                      is less
+     *                                                                                                      than 2.
      */
     public double value(double z) {
         return evaluateInternal(x, y, z);
@@ -111,7 +123,8 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
     /**
      * Returns a copy of the interpolating points array.
      * <p>
-     * Changes made to the returned copy will not affect the polynomial.</p>
+     * Changes made to the returned copy will not affect the polynomial.
+     * </p>
      *
      * @return a fresh copy of the interpolating points array
      */
@@ -124,7 +137,8 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
     /**
      * Returns a copy of the interpolating values array.
      * <p>
-     * Changes made to the returned copy will not affect the polynomial.</p>
+     * Changes made to the returned copy will not affect the polynomial.
+     * </p>
      *
      * @return a fresh copy of the interpolating values array
      */
@@ -137,10 +151,12 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
     /**
      * Returns a copy of the coefficients array.
      * <p>
-     * Changes made to the returned copy will not affect the polynomial.</p>
+     * Changes made to the returned copy will not affect the polynomial.
+     * </p>
      * <p>
      * Note that coefficients computation can be ill-conditioned. Use with caution
-     * and only when it is necessary.</p>
+     * and only when it is necessary.
+     * </p>
      *
      * @return a fresh copy of the coefficients array
      */
@@ -162,12 +178,12 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * @param y Interpolating values array.
      * @param z Point at which the function value is to be computed.
      * @return the function value.
-     * @throws DimensionMismatchException if {@code x} and {@code y} have
-     * different lengths.
+     * @throws DimensionMismatchException    if {@code x} and {@code y} have
+     *                                       different lengths.
      * @throws NonMonotonicSequenceException
-     * if {@code x} is not sorted in strictly increasing order.
-     * @throws NumberIsTooSmallException if the size of {@code x} is less
-     * than 2.
+     *                                       if {@code x} is not sorted in strictly increasing order.
+     * @throws NumberIsTooSmallException     if the size of {@code x} is less
+     *                                       than 2.
      */
     public static double evaluate(double x[], double y[], double z)
         throws DimensionMismatchException, NumberIsTooSmallException, NonMonotonicSequenceException {
@@ -196,12 +212,23 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * @param y Interpolating values array.
      * @param z Point at which the function value is to be computed.
      * @return the function value.
-     * @throws DimensionMismatchException if {@code x} and {@code y} have
-     * different lengths.
+     * @throws DimensionMismatchException                                                                   if {@code x}
+     *                                                                                                      and
+     *                                                                                                      {@code y}
+     *                                                                                                      have
+     *                                                                                                      different
+     *                                                                                                      lengths.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     * if {@code x} is not sorted in strictly increasing order.
-     * @throws NumberIsTooSmallException if the size of {@code x} is less
-     * than 2.
+     *                                                                                                      if {@code x}
+     *                                                                                                      is not
+     *                                                                                                      sorted in
+     *                                                                                                      strictly
+     *                                                                                                      increasing
+     *                                                                                                      order.
+     * @throws NumberIsTooSmallException                                                                    if the size
+     *                                                                                                      of {@code x}
+     *                                                                                                      is less
+     *                                                                                                      than 2.
      */
     private static double evaluateInternal(double x[], double y[], double z) {
         int nearest = 0;
@@ -225,21 +252,21 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
         double value = y[nearest];
 
         for (int i = 1; i < n; i++) {
-            for (int j = 0; j < n-i; j++) {
+            for (int j = 0; j < n - i; j++) {
                 final double tc = x[j] - z;
-                final double td = x[i+j] - z;
-                final double divider = x[j] - x[i+j];
+                final double td = x[i + j] - z;
+                final double divider = x[j] - x[i + j];
                 // update the difference arrays
-                final double w = (c[j+1] - d[j]) / divider;
+                final double w = (c[j + 1] - d[j]) / divider;
                 c[j] = tc * w;
                 d[j] = td * w;
             }
             // sum up the difference terms to get the final value
-            if (nearest < 0.5*(n-i+1)) {
-                value += c[nearest];    // fork down
+            if (nearest < 0.5 * (n - i + 1)) {
+                value += c[nearest]; // fork down
             } else {
                 nearest--;
-                value += d[nearest];    // fork up
+                value += d[nearest]; // fork up
             }
         }
 
@@ -260,14 +287,14 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
         }
 
         // c[] are the coefficients of P(x) = (x-x[0])(x-x[1])...(x-x[n-1])
-        final double[] c = new double[n+1];
+        final double[] c = new double[n + 1];
         c[0] = 1.0;
         for (int i = 0; i < n; i++) {
             for (int j = i; j > 0; j--) {
-                c[j] = c[j-1] - c[j] * x[i];
+                c[j] = c[j - 1] - c[j] * x[i];
             }
             c[0] *= -x[i];
-            c[i+1] = 1;
+            c[i + 1] = 1;
         }
 
         final double[] tc = new double[n];
@@ -283,10 +310,10 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
             // Lagrange polynomial is the sum of n terms, each of which is a
             // polynomial of degree n-1. tc[] are the coefficients of the i-th
             // numerator Pi(x) = (x-x[0])...(x-x[i-1])(x-x[i+1])...(x-x[n-1]).
-            tc[n-1] = c[n];     // actually c[n] = 1
-            coefficients[n-1] += t * tc[n-1];
-            for (int j = n-2; j >= 0; j--) {
-                tc[j] = c[j+1] + tc[j+1] * x[i];
+            tc[n - 1] = c[n]; // actually c[n] = 1
+            coefficients[n - 1] += t * tc[n - 1];
+            for (int j = n - 2; j >= 0; j--) {
+                tc[j] = c[j + 1] + tc[j + 1] * x[i];
                 coefficients[j] += t * tc[j];
             }
         }
@@ -299,16 +326,28 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * The arrays features checked by this method are that both arrays have the
      * same length and this length is at least 2.
      *
-     * @param x Interpolating points array.
-     * @param y Interpolating values array.
+     * @param x     Interpolating points array.
+     * @param y     Interpolating values array.
      * @param abort Whether to throw an exception if {@code x} is not sorted.
-     * @throws DimensionMismatchException if the array lengths are different.
-     * @throws NumberIsTooSmallException if the number of points is less than 2.
+     * @throws DimensionMismatchException                                                                   if the array
+     *                                                                                                      lengths are
+     *                                                                                                      different.
+     * @throws NumberIsTooSmallException                                                                    if the
+     *                                                                                                      number of
+     *                                                                                                      points is
+     *                                                                                                      less than 2.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     * if {@code x} is not sorted in strictly increasing order and {@code abort}
-     * is {@code true}.
+     *                                                                                                      if {@code x}
+     *                                                                                                      is not
+     *                                                                                                      sorted in
+     *                                                                                                      strictly
+     *                                                                                                      increasing
+     *                                                                                                      order and
+     *                                                                                                      {@code abort}
+     *                                                                                                      is
+     *                                                                                                      {@code true}.
      * @return {@code false} if the {@code x} is not sorted in increasing order,
-     * {@code true} otherwise.
+     *         {@code true} otherwise.
      * @see #evaluate(double[], double[], double)
      * @see #computeCoefficients()
      */

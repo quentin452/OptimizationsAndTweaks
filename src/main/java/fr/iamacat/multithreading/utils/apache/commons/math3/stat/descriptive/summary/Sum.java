@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,18 +21,19 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgume
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
-
 /**
-  * Returns the sum of the available values.
+ * Returns the sum of the available values.
  * <p>
  * If there are no values in the dataset, then 0 is returned.
  * If any of the values are
- * <code>NaN</code>, then <code>NaN</code> is returned.</p>
+ * <code>NaN</code>, then <code>NaN</code> is returned.
+ * </p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
  * one of the threads invokes the <code>increment()</code> or
- * <code>clear()</code> method, it must be synchronized externally.</p>
+ * <code>clear()</code> method, it must be synchronized externally.
+ * </p>
  *
  */
 public class Sum extends AbstractStorelessUnivariateStatistic implements Serializable {
@@ -107,18 +106,19 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      * the input array, or 0 if the designated subarray
      * is empty.
      * <p>
-     * Throws <code>MathIllegalArgumentException</code> if the array is null.</p>
+     * Throws <code>MathIllegalArgumentException</code> if the array is null.
+     * </p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the sum of the values or 0 if length = 0
      * @throws MathIllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                      parameters are not valid
      */
     @Override
     public double evaluate(final double[] values, final int begin, final int length)
-    throws MathIllegalArgumentException {
+        throws MathIllegalArgumentException {
         double sum = Double.NaN;
         if (test(values, begin, length, true)) {
             sum = 0.0;
@@ -135,29 +135,34 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      * is empty.
      * <p>
      * Throws <code>MathIllegalArgumentException</code> if any of the following are true:
-     * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
-     *     <li>the start and length arguments do not determine a valid array</li>
-     * </ul></p>
+     * <ul>
+     * <li>the values array is null</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
+     * <li>the start and length arguments do not determine a valid array</li>
+     * </ul>
+     * </p>
      * <p>
-     * Uses the formula, <pre>
+     * Uses the formula,
+     * 
+     * <pre>
      *    weighted sum = &Sigma;(values[i] * weights[i])
-     * </pre></p>
+     * </pre>
+     * </p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
-     * @param begin index of the first array element to include
-     * @param length the number of elements to include
+     * @param begin   index of the first array element to include
+     * @param length  the number of elements to include
      * @return the sum of the values or 0 if length = 0
      * @throws MathIllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights,
-        final int begin, final int length) throws MathIllegalArgumentException {
+    public double evaluate(final double[] values, final double[] weights, final int begin, final int length)
+        throws MathIllegalArgumentException {
         double sum = Double.NaN;
         if (test(values, weights, begin, length, true)) {
             sum = 0.0;
@@ -172,26 +177,30 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      * The weighted sum of the entries in the the input array.
      * <p>
      * Throws <code>MathIllegalArgumentException</code> if any of the following are true:
-     * <ul><li>the values array is null</li>
-     *     <li>the weights array is null</li>
-     *     <li>the weights array does not have the same length as the values array</li>
-     *     <li>the weights array contains one or more infinite values</li>
-     *     <li>the weights array contains one or more NaN values</li>
-     *     <li>the weights array contains negative values</li>
-     * </ul></p>
+     * <ul>
+     * <li>the values array is null</li>
+     * <li>the weights array is null</li>
+     * <li>the weights array does not have the same length as the values array</li>
+     * <li>the weights array contains one or more infinite values</li>
+     * <li>the weights array contains one or more NaN values</li>
+     * <li>the weights array contains negative values</li>
+     * </ul>
+     * </p>
      * <p>
-     * Uses the formula, <pre>
+     * Uses the formula,
+     * 
+     * <pre>
      *    weighted sum = &Sigma;(values[i] * weights[i])
-     * </pre></p>
+     * </pre>
+     * </p>
      *
-     * @param values the input array
+     * @param values  the input array
      * @param weights the weights array
      * @return the sum of the values or Double.NaN if length = 0
      * @throws MathIllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights)
-    throws MathIllegalArgumentException {
+    public double evaluate(final double[] values, final double[] weights) throws MathIllegalArgumentException {
         return evaluate(values, weights, 0, values.length);
     }
 
@@ -208,14 +217,15 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
      *
      * @param source Sum to copy
-     * @param dest Sum to copy to
+     * @param dest   Sum to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(Sum source, Sum dest)
-        throws NullArgumentException {
+    public static void copy(Sum source, Sum dest) throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         dest.setData(source.getDataRef());

@@ -1,16 +1,12 @@
 package fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.ai;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.List;
+
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.passive.EntityAnimal;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 public class EntityAIFollowParent2 extends EntityAIBase {
+
     private final EntityAnimal childAnimal;
     private final double followDistanceSq;
     private EntityAnimal parentAnimal;
@@ -25,15 +21,15 @@ public class EntityAIFollowParent2 extends EntityAIBase {
     private List<EntityAnimal> getCachedEntitiesWithinAABB() {
         if (cachedEntitiesWithinAABB == null) {
             cachedEntitiesWithinAABB = this.childAnimal.worldObj.getEntitiesWithinAABB(
-                this.childAnimal.getClass(), this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D)
-            );
+                this.childAnimal.getClass(),
+                this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
         }
         return cachedEntitiesWithinAABB;
     }
 
     public boolean continueExecuting() {
-        return this.parentAnimal != null && this.parentAnimal.isEntityAlive() &&
-            this.childAnimal.getDistanceSqToEntity(this.parentAnimal) >= 9.0D;
+        return this.parentAnimal != null && this.parentAnimal.isEntityAlive()
+            && this.childAnimal.getDistanceSqToEntity(this.parentAnimal) >= 9.0D;
     }
 
     public boolean shouldExecute() {
@@ -56,7 +52,8 @@ public class EntityAIFollowParent2 extends EntityAIBase {
 
         if (hasValidParent && this.childAnimal.getGrowingAge() <= 0) {
             while (continueExecuting()) {
-                this.childAnimal.getNavigator().tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
+                this.childAnimal.getNavigator()
+                    .tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
             }
         }
 

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +30,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgume
  */
 @Deprecated
 public class Incrementor {
+
     /**
      * Upper limit for the counter.
      */
@@ -60,13 +59,13 @@ public class Incrementor {
      * @param max Maximal count.
      */
     public Incrementor(int max) {
-        this(max,
-             new MaxCountExceededCallback() {
-                 /** {@inheritDoc} */
-                 public void trigger(int max) throws MaxCountExceededException {
-                     throw new MaxCountExceededException(max);
-                 }
-             });
+        this(max, new MaxCountExceededCallback() {
+
+            /** {@inheritDoc} */
+            public void trigger(int max) throws MaxCountExceededException {
+                throw new MaxCountExceededException(max);
+            }
+        });
     }
 
     /**
@@ -74,12 +73,11 @@ public class Incrementor {
      * counter exhaustion.
      *
      * @param max Maximal count.
-     * @param cb Function to be called when the maximal count has been reached.
+     * @param cb  Function to be called when the maximal count has been reached.
      * @throws NullArgumentException if {@code cb} is {@code null}
      */
-    public Incrementor(int max, MaxCountExceededCallback cb)
-        throws NullArgumentException {
-        if (cb == null){
+    public Incrementor(int max, MaxCountExceededCallback cb) throws NullArgumentException {
+        if (cb == null) {
             throw new NullArgumentException();
         }
         maximalCount = max;
@@ -119,8 +117,8 @@ public class Incrementor {
      * Checks whether a single increment is allowed.
      *
      * @return {@code false} if the next call to {@link #incrementCount(int)
-     * incrementCount} will trigger a {@code MaxCountExceededException},
-     * {@code true} otherwise.
+     *         incrementCount} will trigger a {@code MaxCountExceededException},
+     *         {@code true} otherwise.
      */
     public boolean canIncrement() {
         return count < maximalCount;
@@ -149,8 +147,8 @@ public class Incrementor {
      * a {@code MaxCountExceededException}.
      *
      * @throws MaxCountExceededException at counter exhaustion, unless a
-     * custom {@link MaxCountExceededCallback callback} has been set at
-     * construction.
+     *                                   custom {@link MaxCountExceededCallback callback} has been set at
+     *                                   construction.
      */
     public void incrementCount() throws MaxCountExceededException {
         if (++count > maximalCount) {
@@ -170,6 +168,7 @@ public class Incrementor {
      * The {@link #trigger(int) trigger} method should usually throw an exception.
      */
     public interface MaxCountExceededCallback {
+
         /**
          * Function called when the maximal count has been reached.
          *
@@ -179,7 +178,8 @@ public class Incrementor {
         void trigger(int maximalCount) throws MaxCountExceededException;
     }
 
-    /** Create an instance that delegates everything to a {@link IntegerSequence.Incrementor}.
+    /**
+     * Create an instance that delegates everything to a {@link IntegerSequence.Incrementor}.
      * <p>
      * This factory method is intended only as a temporary hack for internal use in
      * Apache Commons Math 3.X series, when {@code Incrementor} is required in
@@ -194,6 +194,7 @@ public class Incrementor {
      * of the {@link IntegerSequence.Incrementor} used at creation. The rationale is that
      * {@link IntegerSequence.Incrementor} cannot change their maximal count and cannot be reset.
      * </p>
+     * 
      * @param incrementor wrapped {@link IntegerSequence.Incrementor}
      * @return an incrementor wrapping an {@link IntegerSequence.Incrementor}
      * @since 3.6

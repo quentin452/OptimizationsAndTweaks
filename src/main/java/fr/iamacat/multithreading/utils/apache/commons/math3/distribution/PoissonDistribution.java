@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,13 +30,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * @see <a href="http://mathworld.wolfram.com/PoissonDistribution.html">Poisson distribution (MathWorld)</a>
  */
 public class PoissonDistribution extends AbstractIntegerDistribution {
+
     /**
      * Default maximum number of iterations for cumulative probability calculations.
+     * 
      * @since 2.1
      */
     public static final int DEFAULT_MAX_ITERATIONS = 10000000;
     /**
      * Default convergence criterion.
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_EPSILON = 1e-12;
@@ -91,15 +92,14 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param p Poisson mean.
-     * @param epsilon Convergence criterion for cumulative probabilities.
+     * @param p             Poisson mean.
+     * @param epsilon       Convergence criterion for cumulative probabilities.
      * @param maxIterations the maximum number of iterations for cumulative
-     * probabilities.
+     *                      probabilities.
      * @throws NotStrictlyPositiveException if {@code p <= 0}.
      * @since 2.1
      */
-    public PoissonDistribution(double p, double epsilon, int maxIterations)
-    throws NotStrictlyPositiveException {
+    public PoissonDistribution(double p, double epsilon, int maxIterations) throws NotStrictlyPositiveException {
         this(new Well19937c(), p, epsilon, maxIterations);
     }
 
@@ -107,19 +107,16 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * Creates a new Poisson distribution with specified mean, convergence
      * criterion and maximum number of iterations.
      *
-     * @param rng Random number generator.
-     * @param p Poisson mean.
-     * @param epsilon Convergence criterion for cumulative probabilities.
+     * @param rng           Random number generator.
+     * @param p             Poisson mean.
+     * @param epsilon       Convergence criterion for cumulative probabilities.
      * @param maxIterations the maximum number of iterations for cumulative
-     * probabilities.
+     *                      probabilities.
      * @throws NotStrictlyPositiveException if {@code p <= 0}.
      * @since 3.1
      */
-    public PoissonDistribution(RandomGenerator rng,
-                               double p,
-                               double epsilon,
-                               int maxIterations)
-    throws NotStrictlyPositiveException {
+    public PoissonDistribution(RandomGenerator rng, double p, double epsilon, int maxIterations)
+        throws NotStrictlyPositiveException {
         super(rng);
 
         if (p <= 0) {
@@ -130,23 +127,20 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
         this.maxIterations = maxIterations;
 
         // Use the same RNG instance as the parent class.
-        normal = new NormalDistribution(rng, p, FastMath.sqrt(p),
-                                        NormalDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-        exponential = new ExponentialDistribution(rng, 1,
-                                                  ExponentialDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+        normal = new NormalDistribution(rng, p, FastMath.sqrt(p), NormalDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+        exponential = new ExponentialDistribution(rng, 1, ExponentialDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
      * Creates a new Poisson distribution with the specified mean and
      * convergence criterion.
      *
-     * @param p Poisson mean.
+     * @param p       Poisson mean.
      * @param epsilon Convergence criterion for cumulative probabilities.
      * @throws NotStrictlyPositiveException if {@code p <= 0}.
      * @since 2.1
      */
-    public PoissonDistribution(double p, double epsilon)
-    throws NotStrictlyPositiveException {
+    public PoissonDistribution(double p, double epsilon) throws NotStrictlyPositiveException {
         this(p, epsilon, DEFAULT_MAX_ITERATIONS);
     }
 
@@ -154,9 +148,9 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * Creates a new Poisson distribution with the specified mean and maximum
      * number of iterations.
      *
-     * @param p Poisson mean.
+     * @param p             Poisson mean.
      * @param maxIterations Maximum number of iterations for cumulative
-     * probabilities.
+     *                      probabilities.
      * @since 2.1
      */
     public PoissonDistribution(double p, int maxIterations) {
@@ -187,9 +181,9 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
         } else if (x == 0) {
             ret = -mean;
         } else {
-            ret = -SaddlePointExpansion.getStirlingError(x) -
-                  SaddlePointExpansion.getDeviancePart(x, mean) -
-                  0.5 * FastMath.log(MathUtils.TWO_PI) - 0.5 * FastMath.log(x);
+            ret = -SaddlePointExpansion.getStirlingError(x) - SaddlePointExpansion.getDeviancePart(x, mean)
+                - 0.5 * FastMath.log(MathUtils.TWO_PI)
+                - 0.5 * FastMath.log(x);
         }
         return ret;
     }
@@ -202,8 +196,7 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
         if (x == Integer.MAX_VALUE) {
             return 1;
         }
-        return Gamma.regularizedGammaQ((double) x + 1, mean, epsilon,
-                                       maxIterations);
+        return Gamma.regularizedGammaQ((double) x + 1, mean, epsilon, maxIterations);
     }
 
     /**
@@ -215,9 +208,9 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      *
      * @param x Upper bound, inclusive.
      * @return the distribution function value calculated using a normal
-     * approximation.
+     *         approximation.
      */
-    public double normalApproximateProbability(int x)  {
+    public double normalApproximateProbability(int x) {
         // calculate the probability using half-correction
         return normal.cumulativeProbability(x + 0.5);
     }
@@ -259,7 +252,7 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * so this method returns {@code Integer.MAX_VALUE}.
      *
      * @return upper bound of the support (always {@code Integer.MAX_VALUE} for
-     * positive infinity)
+     *         positive infinity)
      */
     public int getSupportUpperBound() {
         return Integer.MAX_VALUE;
@@ -281,17 +274,17 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * <p>
      * <strong>Algorithm Description</strong>:
      * <ul>
-     *  <li>For small means, uses simulation of a Poisson process
-     *   using Uniform deviates, as described
-     *   <a href="http://mathaa.epfl.ch/cours/PMMI2001/interactive/rng7.htm"> here</a>.
-     *   The Poisson process (and hence value returned) is bounded by 1000 * mean.
-     *  </li>
-     *  <li>For large means, uses the rejection algorithm described in
-     *   <blockquote>
-     *    Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i><br>
-     *    <strong>Computing</strong> vol. 26 pp. 197-207.<br>
-     *   </blockquote>
-     *  </li>
+     * <li>For small means, uses simulation of a Poisson process
+     * using Uniform deviates, as described
+     * <a href="http://mathaa.epfl.ch/cours/PMMI2001/interactive/rng7.htm"> here</a>.
+     * The Poisson process (and hence value returned) is bounded by 1000 * mean.
+     * </li>
+     * <li>For large means, uses the rejection algorithm described in
+     * <blockquote>
+     * Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i><br>
+     * <strong>Computing</strong> vol. 26 pp. 197-207.<br>
+     * </blockquote>
+     * </li>
      * </ul>
      * </p>
      *

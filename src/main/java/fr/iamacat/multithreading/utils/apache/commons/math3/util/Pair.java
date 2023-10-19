@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +27,7 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.util;
  * @since 3.0
  */
 public class Pair<K, V> {
+
     /** Key. */
     private final K key;
     /** Value. */
@@ -98,7 +97,7 @@ public class Pair<K, V> {
      *
      * @param o Object.
      * @return {@code true} if the given object is also a map entry and
-     * the two entries represent the same mapping.
+     *         the two entries represent the same mapping.
      */
     @Override
     public boolean equals(Object o) {
@@ -109,12 +108,8 @@ public class Pair<K, V> {
             return false;
         } else {
             Pair<?, ?> oP = (Pair<?, ?>) o;
-            return (key == null ?
-                    oP.key == null :
-                    key.equals(oP.key)) &&
-                (value == null ?
-                 oP.value == null :
-                 value.equals(oP.value));
+            return (key == null ? oP.key == null : key.equals(oP.key))
+                && (value == null ? oP.value == null : value.equals(oP.value));
         }
     }
 
@@ -145,8 +140,8 @@ public class Pair<K, V> {
      *
      * @param <K> the key type
      * @param <V> the value type
-     * @param k First element of the pair.
-     * @param v Second element of the pair.
+     * @param k   First element of the pair.
+     * @param v   Second element of the pair.
      * @return a new {@code Pair} containing {@code k} and {@code v}.
      * @since 3.3
      */

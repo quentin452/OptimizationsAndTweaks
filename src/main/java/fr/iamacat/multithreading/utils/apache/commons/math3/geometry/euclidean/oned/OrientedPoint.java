@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +18,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Point;
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Vector;
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.Hyperplane;
 
-/** This class represents a 1D oriented hyperplane.
- * <p>An hyperplane in 1D is a simple point, its orientation being a
- * boolean.</p>
- * <p>Instances of this class are guaranteed to be immutable.</p>
+/**
+ * This class represents a 1D oriented hyperplane.
+ * <p>
+ * An hyperplane in 1D is a simple point, its orientation being a
+ * boolean.
+ * </p>
+ * <p>
+ * Instances of this class are guaranteed to be immutable.
+ * </p>
+ * 
  * @since 3.0
  */
 public class OrientedPoint implements Hyperplane<Euclidean1D> {
@@ -40,23 +44,27 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
     /** Tolerance below which points are considered to belong to the hyperplane. */
     private final double tolerance;
 
-    /** Simple constructor.
-     * @param location location of the hyperplane
-     * @param direct if true, the plus side of the hyperplane is towards
-     * abscissas greater than {@code location}
+    /**
+     * Simple constructor.
+     * 
+     * @param location  location of the hyperplane
+     * @param direct    if true, the plus side of the hyperplane is towards
+     *                  abscissas greater than {@code location}
      * @param tolerance tolerance below which points are considered to belong to the hyperplane
      * @since 3.3
      */
     public OrientedPoint(final Vector1D location, final boolean direct, final double tolerance) {
-        this.location  = location;
-        this.direct    = direct;
+        this.location = location;
+        this.direct = direct;
         this.tolerance = tolerance;
     }
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param location location of the hyperplane
-     * @param direct if true, the plus side of the hyperplane is towards
-     * abscissas greater than {@code location}
+     * @param direct   if true, the plus side of the hyperplane is towards
+     *                 abscissas greater than {@code location}
      * @deprecated as of 3.3, replaced with {@link #OrientedPoint(Vector1D, boolean, double)}
      */
     @Deprecated
@@ -64,16 +72,22 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
         this(location, direct, DEFAULT_TOLERANCE);
     }
 
-    /** Copy the instance.
-     * <p>Since instances are immutable, this method directly returns
-     * the instance.</p>
+    /**
+     * Copy the instance.
+     * <p>
+     * Since instances are immutable, this method directly returns
+     * the instance.
+     * </p>
+     * 
      * @return the instance itself
      */
     public OrientedPoint copySelf() {
         return this;
     }
 
-    /** Get the offset (oriented distance) of a vector.
+    /**
+     * Get the offset (oriented distance) of a vector.
+     * 
      * @param vector vector to check
      * @return offset of the vector
      */
@@ -87,24 +101,30 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
         return direct ? delta : -delta;
     }
 
-    /** Build a region covering the whole hyperplane.
-     * <p>Since this class represent zero dimension spaces which does
+    /**
+     * Build a region covering the whole hyperplane.
+     * <p>
+     * Since this class represent zero dimension spaces which does
      * not have lower dimension sub-spaces, this method returns a dummy
      * implementation of a {@link
      * fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.SubHyperplane SubHyperplane}.
      * This implementation is only used to allow the {@link
      * fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.SubHyperplane
      * SubHyperplane} class implementation to work properly, it should
-     * <em>not</em> be used otherwise.</p>
+     * <em>not</em> be used otherwise.
+     * </p>
+     * 
      * @return a dummy sub hyperplane
      */
     public SubOrientedPoint wholeHyperplane() {
         return new SubOrientedPoint(this, null);
     }
 
-    /** Build a region covering the whole space.
+    /**
+     * Build a region covering the whole space.
+     * 
      * @return a region containing the instance (really an {@link
-     * IntervalsSet IntervalsSet} instance)
+     *         IntervalsSet IntervalsSet} instance)
      */
     public IntervalsSet wholeSpace() {
         return new IntervalsSet(tolerance);
@@ -115,36 +135,45 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
         return !(direct ^ ((OrientedPoint) other).direct);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @since 3.3
      */
     public Point<Euclidean1D> project(Point<Euclidean1D> point) {
         return location;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @since 3.3
      */
     public double getTolerance() {
         return tolerance;
     }
 
-    /** Get the hyperplane location on the real line.
+    /**
+     * Get the hyperplane location on the real line.
+     * 
      * @return the hyperplane location
      */
     public Vector1D getLocation() {
         return location;
     }
 
-    /** Check if the hyperplane orientation is direct.
+    /**
+     * Check if the hyperplane orientation is direct.
+     * 
      * @return true if the plus side of the hyperplane is towards
-     * abscissae greater than hyperplane location
+     *         abscissae greater than hyperplane location
      */
     public boolean isDirect() {
         return direct;
     }
 
-    /** Revert the instance.
+    /**
+     * Revert the instance.
      */
     public void revertSelf() {
         direct = !direct;

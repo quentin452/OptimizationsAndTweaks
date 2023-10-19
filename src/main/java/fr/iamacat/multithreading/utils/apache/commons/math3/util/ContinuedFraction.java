@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +19,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountEx
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
- * Provides a generic means to evaluate continued fractions.  Subclasses simply
+ * Provides a generic means to evaluate continued fractions. Subclasses simply
  * provided the a and b coefficients to evaluate the continued fraction.
  *
  * <p>
@@ -34,6 +32,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  *
  */
 public abstract class ContinuedFraction {
+
     /** Maximum allowed numerical error. */
     private static final double DEFAULT_EPSILON = 10e-9;
 
@@ -45,8 +44,9 @@ public abstract class ContinuedFraction {
     }
 
     /**
-     * Access the n-th a coefficient of the continued fraction.  Since a can be
+     * Access the n-th a coefficient of the continued fraction. Since a can be
      * a function of the evaluation point, x, that is passed in as well.
+     * 
      * @param n the coefficient index to retrieve.
      * @param x the evaluation point.
      * @return the n-th a coefficient.
@@ -54,8 +54,9 @@ public abstract class ContinuedFraction {
     protected abstract double getA(int n, double x);
 
     /**
-     * Access the n-th b coefficient of the continued fraction.  Since b can be
+     * Access the n-th b coefficient of the continued fraction. Since b can be
      * a function of the evaluation point, x, that is passed in as well.
+     * 
      * @param n the coefficient index to retrieve.
      * @param x the evaluation point.
      * @return the n-th b coefficient.
@@ -64,6 +65,7 @@ public abstract class ContinuedFraction {
 
     /**
      * Evaluates the continued fraction at the value x.
+     * 
      * @param x the evaluation point.
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
@@ -74,7 +76,8 @@ public abstract class ContinuedFraction {
 
     /**
      * Evaluates the continued fraction at the value x.
-     * @param x the evaluation point.
+     * 
+     * @param x       the evaluation point.
      * @param epsilon maximum error allowed.
      * @return the value of the continued fraction evaluated at x.
      * @throws ConvergenceException if the algorithm fails to converge.
@@ -85,14 +88,14 @@ public abstract class ContinuedFraction {
 
     /**
      * Evaluates the continued fraction at the value x.
-     * @param x the evaluation point.
+     * 
+     * @param x             the evaluation point.
      * @param maxIterations maximum number of convergents
      * @return the value of the continued fraction evaluated at x.
-     * @throws ConvergenceException if the algorithm fails to converge.
+     * @throws ConvergenceException      if the algorithm fails to converge.
      * @throws MaxCountExceededException if maximal number of iterations is reached
      */
-    public double evaluate(double x, int maxIterations)
-        throws ConvergenceException, MaxCountExceededException {
+    public double evaluate(double x, int maxIterations) throws ConvergenceException, MaxCountExceededException {
         return evaluate(x, DEFAULT_EPSILON, maxIterations);
     }
 
@@ -102,21 +105,21 @@ public abstract class ContinuedFraction {
      * The implementation of this method is based on the modified Lentz algorithm as described
      * on page 18 ff. in:
      * <ul>
-     *   <li>
-     *   I. J. Thompson,  A. R. Barnett. "Coulomb and Bessel Functions of Complex Arguments and Order."
-     *   <a target="_blank" href="http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf">
-     *   http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf</a>
-     *   </li>
+     * <li>
+     * I. J. Thompson, A. R. Barnett. "Coulomb and Bessel Functions of Complex Arguments and Order."
+     * <a target="_blank" href="http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf">
+     * http://www.fresco.org.uk/papers/Thompson-JCP64p490.pdf</a>
+     * </li>
      * </ul>
      * <b>Note:</b> the implementation uses the terms a<sub>i</sub> and b<sub>i</sub> as defined in
      * <a href="http://mathworld.wolfram.com/ContinuedFraction.html">Continued Fraction @ MathWorld</a>.
      * </p>
      *
-     * @param x the evaluation point.
-     * @param epsilon maximum error allowed.
+     * @param x             the evaluation point.
+     * @param epsilon       maximum error allowed.
      * @param maxIterations maximum number of convergents
      * @return the value of the continued fraction evaluated at x.
-     * @throws ConvergenceException if the algorithm fails to converge.
+     * @throws ConvergenceException      if the algorithm fails to converge.
      * @throws MaxCountExceededException if maximal number of iterations is reached
      */
     public double evaluate(double x, double epsilon, int maxIterations)
@@ -152,12 +155,10 @@ public abstract class ContinuedFraction {
             hN = hPrev * deltaN;
 
             if (Double.isInfinite(hN)) {
-                throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE,
-                                               x);
+                throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE, x);
             }
             if (Double.isNaN(hN)) {
-                throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_NAN_DIVERGENCE,
-                                               x);
+                throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_NAN_DIVERGENCE, x);
             }
 
             if (FastMath.abs(deltaN - 1.0) < epsilon) {
@@ -171,8 +172,7 @@ public abstract class ContinuedFraction {
         }
 
         if (n >= maxIterations) {
-            throw new MaxCountExceededException(LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION,
-                                                maxIterations, x);
+            throw new MaxCountExceededException(LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION, maxIterations, x);
         }
 
         return hN;

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,18 +28,23 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * Muller's method applies to both real and complex functions, but here we
  * restrict ourselves to real functions.
  * This class differs from {@link MullerSolver} in the way it avoids complex
- * operations.</p><p>
+ * operations.
+ * </p>
+ * <p>
  * Except for the initial [min, max], it does not require bracketing
  * condition, e.g. f(x0), f(x1), f(x2) can have the same sign. If a complex
  * number arises in the computation, we simply use its modulus as a real
- * approximation.</p>
+ * approximation.
+ * </p>
  * <p>
  * Because the interval may not be bracketing, the bisection alternative is
  * not applicable here. However in practice our treatment usually works
  * well, especially near real zeroes where the imaginary part of the complex
- * approximation is often negligible.</p>
+ * approximation is often negligible.
+ * </p>
  * <p>
- * The formulas here do not use divided differences directly.</p>
+ * The formulas here do not use divided differences directly.
+ * </p>
  *
  * @since 1.2
  * @see MullerSolver
@@ -57,6 +60,7 @@ public class MullerSolver2 extends AbstractUnivariateSolver {
     public MullerSolver2() {
         this(DEFAULT_ABSOLUTE_ACCURACY);
     }
+
     /**
      * Construct a solver.
      *
@@ -65,14 +69,14 @@ public class MullerSolver2 extends AbstractUnivariateSolver {
     public MullerSolver2(double absoluteAccuracy) {
         super(absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
      * @param relativeAccuracy Relative accuracy.
      * @param absoluteAccuracy Absolute accuracy.
      */
-    public MullerSolver2(double relativeAccuracy,
-                        double absoluteAccuracy) {
+    public MullerSolver2(double relativeAccuracy, double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
 
@@ -80,10 +84,7 @@ public class MullerSolver2 extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve()
-        throws TooManyEvaluationsException,
-               NumberIsTooLargeException,
-               NoBracketingException {
+    protected double doSolve() throws TooManyEvaluationsException, NumberIsTooLargeException, NoBracketingException {
         final double min = getMin();
         final double max = getMax();
 
@@ -108,7 +109,7 @@ public class MullerSolver2 extends AbstractUnivariateSolver {
             return x1;
         }
 
-        if(y0 * y1 > 0) {
+        if (y0 * y1 > 0) {
             throw new NoBracketingException(x0, x1, y0, y1);
         }
 
@@ -150,8 +151,7 @@ public class MullerSolver2 extends AbstractUnivariateSolver {
 
             // check for convergence
             final double tolerance = FastMath.max(relativeAccuracy * FastMath.abs(x), absoluteAccuracy);
-            if (FastMath.abs(x - oldx) <= tolerance ||
-                FastMath.abs(y) <= functionValueAccuracy) {
+            if (FastMath.abs(x - oldx) <= tolerance || FastMath.abs(y) <= functionValueAccuracy) {
                 return x;
             }
 

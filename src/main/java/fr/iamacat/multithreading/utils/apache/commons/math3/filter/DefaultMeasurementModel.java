@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,18 +43,18 @@ public class DefaultMeasurementModel implements MeasurementModel {
      * respective measurement matrix and noise.
      *
      * @param measMatrix
-     *            the measurement matrix
+     *                   the measurement matrix
      * @param measNoise
-     *            the measurement noise matrix
+     *                   the measurement noise matrix
      * @throws NullArgumentException
-     *             if any of the input matrices is {@code null}
+     *                                    if any of the input matrices is {@code null}
      * @throws NoDataException
-     *             if any row / column dimension of the input matrices is zero
+     *                                    if any row / column dimension of the input matrices is zero
      * @throws DimensionMismatchException
-     *             if any of the input matrices is non-rectangular
+     *                                    if any of the input matrices is non-rectangular
      */
     public DefaultMeasurementModel(final double[][] measMatrix, final double[][] measNoise)
-            throws NullArgumentException, NoDataException, DimensionMismatchException {
+        throws NullArgumentException, NoDataException, DimensionMismatchException {
         this(new Array2DRowRealMatrix(measMatrix), new Array2DRowRealMatrix(measNoise));
     }
 
@@ -65,7 +63,7 @@ public class DefaultMeasurementModel implements MeasurementModel {
      * as input parameters for the respective measurement matrix and noise.
      *
      * @param measMatrix the measurement matrix
-     * @param measNoise the measurement noise matrix
+     * @param measNoise  the measurement noise matrix
      */
     public DefaultMeasurementModel(final RealMatrix measMatrix, final RealMatrix measNoise) {
         this.measurementMatrix = measMatrix;

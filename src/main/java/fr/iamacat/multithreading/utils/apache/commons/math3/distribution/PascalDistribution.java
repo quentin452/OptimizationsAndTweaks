@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,23 +53,28 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * </p>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Negative_binomial_distribution">
- * Negative binomial distribution (Wikipedia)</a>
+ *      Negative binomial distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/NegativeBinomialDistribution.html">
- * Negative binomial distribution (MathWorld)</a>
+ *      Negative binomial distribution (MathWorld)</a>
  * @since 1.2 (changed to concrete class in 3.0)
  */
 public class PascalDistribution extends AbstractIntegerDistribution {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = 6751309484392813623L;
     /** The number of successes. */
     private final int numberOfSuccesses;
     /** The probability of success. */
     private final double probabilityOfSuccess;
-    /** The value of {@code log(p)}, where {@code p} is the probability of success,
-     * stored for faster computation. */
+    /**
+     * The value of {@code log(p)}, where {@code p} is the probability of success,
+     * stored for faster computation.
+     */
     private final double logProbabilityOfSuccess;
-    /** The value of {@code log(1-p)}, where {@code p} is the probability of success,
-     * stored for faster computation. */
+    /**
+     * The value of {@code log(1-p)}, where {@code p} is the probability of success,
+     * stored for faster computation.
+     */
     private final double log1mProbabilityOfSuccess;
 
     /**
@@ -88,11 +91,10 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * @param r Number of successes.
      * @param p Probability of success.
      * @throws NotStrictlyPositiveException if the number of successes is not positive
-     * @throws OutOfRangeException if the probability of success is not in the
-     * range {@code [0, 1]}.
+     * @throws OutOfRangeException          if the probability of success is not in the
+     *                                      range {@code [0, 1]}.
      */
-    public PascalDistribution(int r, double p)
-        throws NotStrictlyPositiveException, OutOfRangeException {
+    public PascalDistribution(int r, double p) throws NotStrictlyPositiveException, OutOfRangeException {
         this(new Well19937c(), r, p);
     }
 
@@ -101,22 +103,19 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * probability of success.
      *
      * @param rng Random number generator.
-     * @param r Number of successes.
-     * @param p Probability of success.
+     * @param r   Number of successes.
+     * @param p   Probability of success.
      * @throws NotStrictlyPositiveException if the number of successes is not positive
-     * @throws OutOfRangeException if the probability of success is not in the
-     * range {@code [0, 1]}.
+     * @throws OutOfRangeException          if the probability of success is not in the
+     *                                      range {@code [0, 1]}.
      * @since 3.1
      */
-    public PascalDistribution(RandomGenerator rng,
-                              int r,
-                              double p)
+    public PascalDistribution(RandomGenerator rng, int r, double p)
         throws NotStrictlyPositiveException, OutOfRangeException {
         super(rng);
 
         if (r <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SUCCESSES,
-                                                   r);
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SUCCESSES, r);
         }
         if (p < 0 || p > 1) {
             throw new OutOfRangeException(p, 0, 1);
@@ -152,10 +151,9 @@ public class PascalDistribution extends AbstractIntegerDistribution {
         if (x < 0) {
             ret = 0.0;
         } else {
-            ret = CombinatoricsUtils.binomialCoefficientDouble(x +
-                  numberOfSuccesses - 1, numberOfSuccesses - 1) *
-                  FastMath.pow(probabilityOfSuccess, numberOfSuccesses) *
-                  FastMath.pow(1.0 - probabilityOfSuccess, x);
+            ret = CombinatoricsUtils.binomialCoefficientDouble(x + numberOfSuccesses - 1, numberOfSuccesses - 1)
+                * FastMath.pow(probabilityOfSuccess, numberOfSuccesses)
+                * FastMath.pow(1.0 - probabilityOfSuccess, x);
         }
         return ret;
     }
@@ -167,10 +165,9 @@ public class PascalDistribution extends AbstractIntegerDistribution {
         if (x < 0) {
             ret = Double.NEGATIVE_INFINITY;
         } else {
-            ret = CombinatoricsUtils.binomialCoefficientLog(x +
-                  numberOfSuccesses - 1, numberOfSuccesses - 1) +
-                  logProbabilityOfSuccess * numberOfSuccesses +
-                  log1mProbabilityOfSuccess * x;
+            ret = CombinatoricsUtils.binomialCoefficientLog(x + numberOfSuccesses - 1, numberOfSuccesses - 1)
+                + logProbabilityOfSuccess * numberOfSuccesses
+                + log1mProbabilityOfSuccess * x;
         }
         return ret;
     }
@@ -181,8 +178,7 @@ public class PascalDistribution extends AbstractIntegerDistribution {
         if (x < 0) {
             ret = 0.0;
         } else {
-            ret = Beta.regularizedBeta(probabilityOfSuccess,
-                    numberOfSuccesses, x + 1.0);
+            ret = Beta.regularizedBeta(probabilityOfSuccess, numberOfSuccesses, x + 1.0);
         }
         return ret;
     }
@@ -229,7 +225,7 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * parameters. Positive infinity is symbolized by {@code Integer.MAX_VALUE}.
      *
      * @return upper bound of the support (always {@code Integer.MAX_VALUE}
-     * for positive infinity)
+     *         for positive infinity)
      */
     public int getSupportUpperBound() {
         return Integer.MAX_VALUE;

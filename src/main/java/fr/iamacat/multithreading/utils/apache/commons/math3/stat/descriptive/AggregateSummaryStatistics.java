@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,33 +24,35 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgume
 /**
  * <p>
  * An aggregator for {@code SummaryStatistics} from several data sets or
- * data set partitions.  In its simplest usage mode, the client creates an
+ * data set partitions. In its simplest usage mode, the client creates an
  * instance via the zero-argument constructor, then uses
  * {@link #createContributingStatistics()} to obtain a {@code SummaryStatistics}
- * for each individual data set / partition.  The per-set statistics objects
+ * for each individual data set / partition. The per-set statistics objects
  * are used as normal, and at any time the aggregate statistics for all the
  * contributors can be obtained from this object.
- * </p><p>
+ * </p>
+ * <p>
  * Clients with specialized requirements can use alternative constructors to
  * control the statistics implementations and initial values used by the
  * contributing and the internal aggregate {@code SummaryStatistics} objects.
- * </p><p>
+ * </p>
+ * <p>
  * A static {@link #aggregate(Collection)} method is also included that computes
  * aggregate statistics directly from a Collection of SummaryStatistics instances.
- * </p><p>
+ * </p>
+ * <p>
  * When {@link #createContributingStatistics()} is used to create SummaryStatistics
  * instances to be aggregated concurrently, the created instances'
  * {@link SummaryStatistics#addValue(double)} methods must synchronize on the aggregating
- * instance maintained by this class.  In multithreaded environments, if the functionality
+ * instance maintained by this class. In multithreaded environments, if the functionality
  * provided by {@link #aggregate(Collection)} is adequate, that method should be used
- * to avoid unnecessary computation and synchronization delays.</p>
+ * to avoid unnecessary computation and synchronization delays.
+ * </p>
  *
  * @since 2.0
  *
  */
-public class AggregateSummaryStatistics implements StatisticalSummary,
-        Serializable {
-
+public class AggregateSummaryStatistics implements StatisticalSummary, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -8207112444016386906L;
@@ -81,55 +81,51 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     /**
      * Initializes a new AggregateSummaryStatistics with the specified statistics
      * object as a prototype for contributing statistics and for the internal
-     * aggregate statistics.  This provides for customized statistics implementations
+     * aggregate statistics. This provides for customized statistics implementations
      * to be used by contributing and aggregate statistics.
      *
      * @param prototypeStatistics a {@code SummaryStatistics} serving as a
-     *      prototype both for the internal aggregate statistics and for
-     *      contributing statistics obtained via the
-     *      {@code createContributingStatistics()} method.  Being a prototype
-     *      means that other objects are initialized by copying this object's state.
-     *      If {@code null}, a new, default statistics object is used.  Any statistic
-     *      values in the prototype are propagated to contributing statistics
-     *      objects and (once) into these aggregate statistics.
+     *                            prototype both for the internal aggregate statistics and for
+     *                            contributing statistics obtained via the
+     *                            {@code createContributingStatistics()} method. Being a prototype
+     *                            means that other objects are initialized by copying this object's state.
+     *                            If {@code null}, a new, default statistics object is used. Any statistic
+     *                            values in the prototype are propagated to contributing statistics
+     *                            objects and (once) into these aggregate statistics.
      * @throws NullArgumentException if prototypeStatistics is null
      * @see #createContributingStatistics()
      */
     public AggregateSummaryStatistics(SummaryStatistics prototypeStatistics) throws NullArgumentException {
-        this(prototypeStatistics,
-             prototypeStatistics == null ? null : new SummaryStatistics(prototypeStatistics));
+        this(prototypeStatistics, prototypeStatistics == null ? null : new SummaryStatistics(prototypeStatistics));
     }
 
     /**
      * Initializes a new AggregateSummaryStatistics with the specified statistics
      * object as a prototype for contributing statistics and for the internal
-     * aggregate statistics.  This provides for different statistics implementations
+     * aggregate statistics. This provides for different statistics implementations
      * to be used by contributing and aggregate statistics and for an initial
      * state to be supplied for the aggregate statistics.
      *
      * @param prototypeStatistics a {@code SummaryStatistics} serving as a
-     *      prototype both for the internal aggregate statistics and for
-     *      contributing statistics obtained via the
-     *      {@code createContributingStatistics()} method.  Being a prototype
-     *      means that other objects are initialized by copying this object's state.
-     *      If {@code null}, a new, default statistics object is used.  Any statistic
-     *      values in the prototype are propagated to contributing statistics
-     *      objects, but not into these aggregate statistics.
-     * @param initialStatistics a {@code SummaryStatistics} to serve as the
-     *      internal aggregate statistics object.  If {@code null}, a new, default
-     *      statistics object is used.
+     *                            prototype both for the internal aggregate statistics and for
+     *                            contributing statistics obtained via the
+     *                            {@code createContributingStatistics()} method. Being a prototype
+     *                            means that other objects are initialized by copying this object's state.
+     *                            If {@code null}, a new, default statistics object is used. Any statistic
+     *                            values in the prototype are propagated to contributing statistics
+     *                            objects, but not into these aggregate statistics.
+     * @param initialStatistics   a {@code SummaryStatistics} to serve as the
+     *                            internal aggregate statistics object. If {@code null}, a new, default
+     *                            statistics object is used.
      * @see #createContributingStatistics()
      */
-    public AggregateSummaryStatistics(SummaryStatistics prototypeStatistics,
-                                      SummaryStatistics initialStatistics) {
-        this.statisticsPrototype =
-            (prototypeStatistics == null) ? new SummaryStatistics() : prototypeStatistics;
-        this.statistics =
-            (initialStatistics == null) ? new SummaryStatistics() : initialStatistics;
+    public AggregateSummaryStatistics(SummaryStatistics prototypeStatistics, SummaryStatistics initialStatistics) {
+        this.statisticsPrototype = (prototypeStatistics == null) ? new SummaryStatistics() : prototypeStatistics;
+        this.statistics = (initialStatistics == null) ? new SummaryStatistics() : initialStatistics;
     }
 
     /**
-     * {@inheritDoc}.  This version returns the maximum over all the aggregated
+     * {@inheritDoc}. This version returns the maximum over all the aggregated
      * data.
      *
      * @see StatisticalSummary#getMax()
@@ -141,7 +137,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns the mean of all the aggregated data.
+     * {@inheritDoc}. This version returns the mean of all the aggregated data.
      *
      * @see StatisticalSummary#getMean()
      */
@@ -152,7 +148,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns the minimum over all the aggregated
+     * {@inheritDoc}. This version returns the minimum over all the aggregated
      * data.
      *
      * @see StatisticalSummary#getMin()
@@ -164,7 +160,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns a count of all the aggregated data.
+     * {@inheritDoc}. This version returns a count of all the aggregated data.
      *
      * @see StatisticalSummary#getN()
      */
@@ -175,7 +171,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns the standard deviation of all the
+     * {@inheritDoc}. This version returns the standard deviation of all the
      * aggregated data.
      *
      * @see StatisticalSummary#getStandardDeviation()
@@ -187,7 +183,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns a sum of all the aggregated data.
+     * {@inheritDoc}. This version returns a sum of all the aggregated data.
      *
      * @see StatisticalSummary#getSum()
      */
@@ -198,7 +194,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * {@inheritDoc}.  This version returns the variance of all the aggregated
+     * {@inheritDoc}. This version returns the variance of all the aggregated
      * data.
      *
      * @see StatisticalSummary#getVariance()
@@ -246,7 +242,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
     }
 
     /**
-     * Returns a statistic related to the Second Central Moment.  Specifically,
+     * Returns a statistic related to the Second Central Moment. Specifically,
      * what is returned is the sum of squared deviations from the sample mean
      * among the all of the aggregated data.
      *
@@ -267,8 +263,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      */
     public StatisticalSummary getSummary() {
         synchronized (statistics) {
-            return new StatisticalSummaryValues(getMean(), getVariance(), getN(),
-                    getMax(), getMin(), getSum());
+            return new StatisticalSummaryValues(getMean(), getVariance(), getN(), getMax(), getMin(), getSum());
         }
     }
 
@@ -277,12 +272,11 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
      * aggregated with those of this {@code AggregateSummaryStatistics}.
      *
      * @return a {@code SummaryStatistics} whose data will be aggregated with
-     *      those of this {@code AggregateSummaryStatistics}.  The initial state
-     *      is a copy of the configured prototype statistics.
+     *         those of this {@code AggregateSummaryStatistics}. The initial state
+     *         is a copy of the configured prototype statistics.
      */
     public SummaryStatistics createContributingStatistics() {
-        SummaryStatistics contributingStatistics
-                = new AggregatingSummaryStatistics(statistics);
+        SummaryStatistics contributingStatistics = new AggregatingSummaryStatistics(statistics);
 
         // No try - catch or advertising NAE because neither argument will ever be null
         SummaryStatistics.copy(statisticsPrototype, contributingStatistics);
@@ -370,14 +364,14 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
          * aggregate statistics object
          *
          * @param aggregateStatistics a {@code SummaryStatistics} into which
-         *      values added to this statistics object should be aggregated
+         *                            values added to this statistics object should be aggregated
          */
         AggregatingSummaryStatistics(SummaryStatistics aggregateStatistics) {
             this.aggregateStatistics = aggregateStatistics;
         }
 
         /**
-         * {@inheritDoc}.  This version adds the provided value to the configured
+         * {@inheritDoc}. This version adds the provided value to the configured
          * aggregate after adding it to these statistics.
          *
          * @see SummaryStatistics#addValue(double)
@@ -394,6 +388,7 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
          * Returns true iff <code>object</code> is a
          * <code>SummaryStatistics</code> instance and all statistics have the
          * same values as this.
+         * 
          * @param object the object to test equality against.
          * @return true if object equals this
          */
@@ -405,13 +400,13 @@ public class AggregateSummaryStatistics implements StatisticalSummary,
             if (object instanceof AggregatingSummaryStatistics == false) {
                 return false;
             }
-            AggregatingSummaryStatistics stat = (AggregatingSummaryStatistics)object;
-            return super.equals(stat) &&
-                   aggregateStatistics.equals(stat.aggregateStatistics);
+            AggregatingSummaryStatistics stat = (AggregatingSummaryStatistics) object;
+            return super.equals(stat) && aggregateStatistics.equals(stat.aggregateStatistics);
         }
 
         /**
          * Returns hash code based on values of statistics
+         * 
          * @return hash code
          */
         @Override

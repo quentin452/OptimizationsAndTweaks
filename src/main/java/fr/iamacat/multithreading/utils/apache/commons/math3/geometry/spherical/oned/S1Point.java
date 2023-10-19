@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +20,17 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.euclidean.t
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
-/** This class represents a point on the 1-sphere.
- * <p>Instances of this class are guaranteed to be immutable.</p>
+/**
+ * This class represents a point on the 1-sphere.
+ * <p>
+ * Instances of this class are guaranteed to be immutable.
+ * </p>
+ * 
  * @since 3.3
  */
 public class S1Point implements Point<Sphere1D> {
 
-   // CHECKSTYLE: stop ConstantName
+    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final S1Point NaN = new S1Point(Double.NaN, Vector2D.NaN);
     // CHECKSTYLE: resume ConstantName
@@ -42,26 +44,31 @@ public class S1Point implements Point<Sphere1D> {
     /** Corresponding 2D normalized vector. */
     private final Vector2D vector;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * Build a vector from its coordinates
+     * 
      * @param alpha azimuthal angle \( \alpha \)
      * @see #getAlpha()
      */
     public S1Point(final double alpha) {
-        this(MathUtils.normalizeAngle(alpha, FastMath.PI),
-             new Vector2D(FastMath.cos(alpha), FastMath.sin(alpha)));
+        this(MathUtils.normalizeAngle(alpha, FastMath.PI), new Vector2D(FastMath.cos(alpha), FastMath.sin(alpha)));
     }
 
-    /** Build a point from its internal components.
-     * @param alpha azimuthal angle \( \alpha \)
+    /**
+     * Build a point from its internal components.
+     * 
+     * @param alpha  azimuthal angle \( \alpha \)
      * @param vector corresponding vector
      */
     private S1Point(final double alpha, final Vector2D vector) {
-        this.alpha  = alpha;
+        this.alpha = alpha;
         this.vector = vector;
     }
 
-    /** Get the azimuthal angle \( \alpha \).
+    /**
+     * Get the azimuthal angle \( \alpha \).
+     * 
      * @return azimuthal angle \( \alpha \)
      * @see #S1Point(double)
      */
@@ -69,7 +76,9 @@ public class S1Point implements Point<Sphere1D> {
         return alpha;
     }
 
-    /** Get the corresponding normalized vector in the 2D euclidean space.
+    /**
+     * Get the corresponding normalized vector in the 2D euclidean space.
+     * 
      * @return normalized vector
      */
     public Vector2D getVector() {
@@ -91,7 +100,9 @@ public class S1Point implements Point<Sphere1D> {
         return distance(this, (S1Point) point);
     }
 
-    /** Compute the distance (angular separation) between two points.
+    /**
+     * Compute the distance (angular separation) between two points.
+     * 
      * @param p1 first vector
      * @param p2 second vector
      * @return the angular separation between p1 and p2
@@ -142,7 +153,8 @@ public class S1Point implements Point<Sphere1D> {
     /**
      * Get a hashCode for the 2D vector.
      * <p>
-     * All NaN values have the same hash code.</p>
+     * All NaN values have the same hash code.
+     * </p>
      *
      * @return a hash code value for this object
      */

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +15,11 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.interpolation;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
 /**
  * Adapter for classes implementing the {@link UnivariateInterpolator}
@@ -32,8 +30,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTo
  * actually computes the interpolation.
  *
  */
-public class UnivariatePeriodicInterpolator
-    implements UnivariateInterpolator {
+public class UnivariatePeriodicInterpolator implements UnivariateInterpolator {
+
     /** Default number of extension points of the samples array. */
     public static final int DEFAULT_EXTEND = 5;
     /** Interpolator. */
@@ -47,16 +45,14 @@ public class UnivariatePeriodicInterpolator
      * Builds an interpolator.
      *
      * @param interpolator Interpolator.
-     * @param period Period.
-     * @param extend Number of points to be appended at the beginning and
-     * end of the sample arrays in order to avoid interpolation failure at
-     * the (periodic) boundaries of the orginal interval. The value is the
-     * number of sample points which the original {@code interpolator} needs
-     * on each side of the interpolated point.
+     * @param period       Period.
+     * @param extend       Number of points to be appended at the beginning and
+     *                     end of the sample arrays in order to avoid interpolation failure at
+     *                     the (periodic) boundaries of the orginal interval. The value is the
+     *                     number of sample points which the original {@code interpolator} needs
+     *                     on each side of the interpolated point.
      */
-    public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator,
-                                          double period,
-                                          int extend) {
+    public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator, double period, int extend) {
         this.interpolator = interpolator;
         this.period = period;
         this.extend = extend;
@@ -68,10 +64,9 @@ public class UnivariatePeriodicInterpolator
      * of the original abscissae range.
      *
      * @param interpolator Interpolator.
-     * @param period Period.
+     * @param period       Period.
      */
-    public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator,
-                                          double period) {
+    public UnivariatePeriodicInterpolator(UnivariateInterpolator interpolator, double period) {
         this(interpolator, period, DEFAULT_EXTEND);
     }
 
@@ -79,10 +74,9 @@ public class UnivariatePeriodicInterpolator
      * {@inheritDoc}
      *
      * @throws NumberIsTooSmallException if the number of extension points
-     * is larger than the size of {@code xval}.
+     *                                   is larger than the size of {@code xval}.
      */
-    public UnivariateFunction interpolate(double[] xval,
-                                          double[] yval)
+    public UnivariateFunction interpolate(double[] xval, double[] yval)
         throws NumberIsTooSmallException, NonMonotonicSequenceException {
         if (xval.length < extend) {
             throw new NumberIsTooSmallException(xval.length, extend, true);
@@ -115,6 +109,7 @@ public class UnivariatePeriodicInterpolator
 
         final UnivariateFunction f = interpolator.interpolate(x, y);
         return new UnivariateFunction() {
+
             /** {@inheritDoc} */
             public double value(final double x) throws MathIllegalArgumentException {
                 return f.value(MathUtils.reduce(x, period, offset));

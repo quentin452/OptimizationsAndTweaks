@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +18,9 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Comparator;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoDataException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ml.distance.DistanceMeasure;
@@ -35,6 +33,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Pair;
  * @since 3.3
  */
 public class MapUtils {
+
     /**
      * Class contains only static methods.
      */
@@ -44,18 +43,21 @@ public class MapUtils {
      * Finds the neuron that best matches the given features.
      *
      * @param features Data.
-     * @param neurons List of neurons to scan. If the list is empty
-     * {@code null} will be returned.
+     * @param neurons  List of neurons to scan. If the list is empty
+     *                 {@code null} will be returned.
      * @param distance Distance function. The neuron's features are
-     * passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
+     *                 passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
      * @return the neuron whose features are closest to the given data.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the size of the input is not compatible with the neurons features
-     * size.
+     *                                                                                                   if the size of
+     *                                                                                                   the input is
+     *                                                                                                   not compatible
+     *                                                                                                   with the
+     *                                                                                                   neurons
+     *                                                                                                   features
+     *                                                                                                   size.
      */
-    public static Neuron findBest(double[] features,
-                                  Iterable<Neuron> neurons,
-                                  DistanceMeasure distance) {
+    public static Neuron findBest(double[] features, Iterable<Neuron> neurons, DistanceMeasure distance) {
         Neuron best = null;
         double min = Double.POSITIVE_INFINITY;
         for (final Neuron n : neurons) {
@@ -73,21 +75,24 @@ public class MapUtils {
      * Finds the two neurons that best match the given features.
      *
      * @param features Data.
-     * @param neurons List of neurons to scan. If the list is empty
-     * {@code null} will be returned.
+     * @param neurons  List of neurons to scan. If the list is empty
+     *                 {@code null} will be returned.
      * @param distance Distance function. The neuron's features are
-     * passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
+     *                 passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
      * @return the two neurons whose features are closest to the given data.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the size of the input is not compatible with the neurons features
-     * size.
+     *                                                                                                   if the size of
+     *                                                                                                   the input is
+     *                                                                                                   not compatible
+     *                                                                                                   with the
+     *                                                                                                   neurons
+     *                                                                                                   features
+     *                                                                                                   size.
      */
-    public static Pair<Neuron, Neuron> findBestAndSecondBest(double[] features,
-                                                             Iterable<Neuron> neurons,
-                                                             DistanceMeasure distance) {
+    public static Pair<Neuron, Neuron> findBestAndSecondBest(double[] features, Iterable<Neuron> neurons,
+        DistanceMeasure distance) {
         Neuron[] best = { null, null };
-        double[] min = { Double.POSITIVE_INFINITY,
-                         Double.POSITIVE_INFINITY };
+        double[] min = { Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY };
         for (final Neuron n : neurons) {
             final double d = distance.compute(n.getFeatures(), features);
             if (d < min[0]) {
@@ -113,23 +118,26 @@ public class MapUtils {
      * to the given {@code features}.
      *
      * @param features Data.
-     * @param neurons List of neurons to scan. If it is empty, an empty array
-     * will be returned.
+     * @param neurons  List of neurons to scan. If it is empty, an empty array
+     *                 will be returned.
      * @param distance Distance function.
      * @return the neurons, sorted in increasing order of distance in data
-     * space.
+     *         space.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the size of the input is not compatible with the neurons features
-     * size.
+     *                                                                                                   if the size of
+     *                                                                                                   the input is
+     *                                                                                                   not compatible
+     *                                                                                                   with the
+     *                                                                                                   neurons
+     *                                                                                                   features
+     *                                                                                                   size.
      *
      * @see #findBest(double[],Iterable,DistanceMeasure)
      * @see #findBestAndSecondBest(double[],Iterable,DistanceMeasure)
      *
      * @since 3.6
      */
-    public static Neuron[] sort(double[] features,
-                                Iterable<Neuron> neurons,
-                                DistanceMeasure distance) {
+    public static Neuron[] sort(double[] features, Iterable<Neuron> neurons, DistanceMeasure distance) {
         final List<PairNeuronDouble> list = new ArrayList<PairNeuronDouble>();
 
         for (final Neuron n : neurons) {
@@ -143,22 +151,22 @@ public class MapUtils {
         final Neuron[] sorted = new Neuron[len];
 
         for (int i = 0; i < len; i++) {
-            sorted[i] = list.get(i).getNeuron();
+            sorted[i] = list.get(i)
+                .getNeuron();
         }
         return sorted;
     }
 
     /**
      * Computes the <a href="http://en.wikipedia.org/wiki/U-Matrix">
-     *  U-matrix</a> of a two-dimensional map.
+     * U-matrix</a> of a two-dimensional map.
      *
-     * @param map Network.
+     * @param map      Network.
      * @param distance Function to use for computing the average
-     * distance from a neuron to its neighbours.
+     *                 distance from a neuron to its neighbours.
      * @return the matrix of average distances.
      */
-    public static double[][] computeU(NeuronSquareMesh2D map,
-                                      DistanceMeasure distance) {
+    public static double[][] computeU(NeuronSquareMesh2D map, DistanceMeasure distance) {
         final int numRows = map.getNumberOfRows();
         final int numCols = map.getNumberOfColumns();
         final double[][] uMatrix = new double[numRows][numCols];
@@ -188,14 +196,13 @@ public class MapUtils {
     /**
      * Computes the "hit" histogram of a two-dimensional map.
      *
-     * @param data Feature vectors.
-     * @param map Network.
+     * @param data     Feature vectors.
+     * @param map      Network.
      * @param distance Function to use for determining the best matching unit.
      * @return the number of hits for each neuron in the map.
      */
-    public static int[][] computeHitHistogram(Iterable<double[]> data,
-                                              NeuronSquareMesh2D map,
-                                              DistanceMeasure distance) {
+    public static int[][] computeHitHistogram(Iterable<double[]> data, NeuronSquareMesh2D map,
+        DistanceMeasure distance) {
         final HashMap<Neuron, Integer> hit = new HashMap<Neuron, Integer>();
         final Network net = map.getNetwork();
 
@@ -234,15 +241,14 @@ public class MapUtils {
      * The quantization error is the average distance between a feature vector
      * and its "best matching unit" (closest neuron).
      *
-     * @param data Feature vectors.
-     * @param neurons List of neurons to scan.
+     * @param data     Feature vectors.
+     * @param neurons  List of neurons to scan.
      * @param distance Distance function.
      * @return the error.
      * @throws NoDataException if {@code data} is empty.
      */
-    public static double computeQuantizationError(Iterable<double[]> data,
-                                                  Iterable<Neuron> neurons,
-                                                  DistanceMeasure distance) {
+    public static double computeQuantizationError(Iterable<double[]> data, Iterable<Neuron> neurons,
+        DistanceMeasure distance) {
         double d = 0;
         int count = 0;
         for (double[] f : data) {
@@ -262,21 +268,20 @@ public class MapUtils {
      * The topographic error is the proportion of data for which first and
      * second best matching units are not adjacent in the map.
      *
-     * @param data Feature vectors.
-     * @param net Network.
+     * @param data     Feature vectors.
+     * @param net      Network.
      * @param distance Distance function.
      * @return the error.
      * @throws NoDataException if {@code data} is empty.
      */
-    public static double computeTopographicError(Iterable<double[]> data,
-                                                 Network net,
-                                                 DistanceMeasure distance) {
+    public static double computeTopographicError(Iterable<double[]> data, Network net, DistanceMeasure distance) {
         int notAdjacentCount = 0;
         int count = 0;
         for (double[] f : data) {
             ++count;
             final Pair<Neuron, Neuron> p = findBestAndSecondBest(f, net, distance);
-            if (!net.getNeighbours(p.getFirst()).contains(p.getSecond())) {
+            if (!net.getNeighbours(p.getFirst())
+                .contains(p.getSecond())) {
                 // Increment count if first and second best matching units
                 // are not neighbours.
                 ++notAdjacentCount;
@@ -294,12 +299,12 @@ public class MapUtils {
      * Helper data structure holding a (Neuron, double) pair.
      */
     private static class PairNeuronDouble {
+
         /** Comparator. */
-        static final Comparator<PairNeuronDouble> COMPARATOR
-            = new Comparator<PairNeuronDouble>() {
+        static final Comparator<PairNeuronDouble> COMPARATOR = new Comparator<PairNeuronDouble>() {
+
             /** {@inheritDoc} */
-            public int compare(PairNeuronDouble o1,
-                               PairNeuronDouble o2) {
+            public int compare(PairNeuronDouble o1, PairNeuronDouble o2) {
                 return Double.compare(o1.value, o2.value);
             }
         };
@@ -310,7 +315,7 @@ public class MapUtils {
 
         /**
          * @param neuron Neuron.
-         * @param value Value.
+         * @param value  Value.
          */
         PairNeuronDouble(Neuron neuron, double value) {
             this.neuron = neuron;

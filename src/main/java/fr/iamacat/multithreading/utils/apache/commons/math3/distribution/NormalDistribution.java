@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,8 +31,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @see <a href="http://mathworld.wolfram.com/NormalDistribution.html">Normal distribution (MathWorld)</a>
  */
 public class NormalDistribution extends AbstractRealDistribution {
+
     /**
      * Default inverse cumulative probability accuracy.
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
@@ -77,11 +77,10 @@ public class NormalDistribution extends AbstractRealDistribution {
      * additional initialisation overhead.
      *
      * @param mean Mean for this distribution.
-     * @param sd Standard deviation for this distribution.
+     * @param sd   Standard deviation for this distribution.
      * @throws NotStrictlyPositiveException if {@code sd <= 0}.
      */
-    public NormalDistribution(double mean, double sd)
-        throws NotStrictlyPositiveException {
+    public NormalDistribution(double mean, double sd) throws NotStrictlyPositiveException {
         this(mean, sd, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
@@ -96,45 +95,40 @@ public class NormalDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param mean Mean for this distribution.
-     * @param sd Standard deviation for this distribution.
+     * @param mean               Mean for this distribution.
+     * @param sd                 Standard deviation for this distribution.
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code sd <= 0}.
      * @since 2.1
      */
-    public NormalDistribution(double mean, double sd, double inverseCumAccuracy)
-        throws NotStrictlyPositiveException {
+    public NormalDistribution(double mean, double sd, double inverseCumAccuracy) throws NotStrictlyPositiveException {
         this(new Well19937c(), mean, sd, inverseCumAccuracy);
     }
 
     /**
      * Creates a normal distribution.
      *
-     * @param rng Random number generator.
+     * @param rng  Random number generator.
      * @param mean Mean for this distribution.
-     * @param sd Standard deviation for this distribution.
+     * @param sd   Standard deviation for this distribution.
      * @throws NotStrictlyPositiveException if {@code sd <= 0}.
      * @since 3.3
      */
-    public NormalDistribution(RandomGenerator rng, double mean, double sd)
-        throws NotStrictlyPositiveException {
+    public NormalDistribution(RandomGenerator rng, double mean, double sd) throws NotStrictlyPositiveException {
         this(rng, mean, sd, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
      * Creates a normal distribution.
      *
-     * @param rng Random number generator.
-     * @param mean Mean for this distribution.
-     * @param sd Standard deviation for this distribution.
+     * @param rng                Random number generator.
+     * @param mean               Mean for this distribution.
+     * @param sd                 Standard deviation for this distribution.
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code sd <= 0}.
      * @since 3.1
      */
-    public NormalDistribution(RandomGenerator rng,
-                              double mean,
-                              double sd,
-                              double inverseCumAccuracy)
+    public NormalDistribution(RandomGenerator rng, double mean, double sd, double inverseCumAccuracy)
         throws NotStrictlyPositiveException {
         super(rng);
 
@@ -186,7 +180,7 @@ public class NormalDistribution extends AbstractRealDistribution {
      * is returned, as in these cases the actual value is within
      * {@code Double.MIN_VALUE} of 0 or 1.
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         final double dev = x - mean;
         if (FastMath.abs(dev) > 40 * standardDeviation) {
             return dev < 0 ? 0.0d : 1.0d;
@@ -194,7 +188,9 @@ public class NormalDistribution extends AbstractRealDistribution {
         return 0.5 * Erf.erfc(-dev / (standardDeviation * SQRT2));
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @since 3.2
      */
     @Override
@@ -210,20 +206,17 @@ public class NormalDistribution extends AbstractRealDistribution {
      *
      * @deprecated See {@link RealDistribution#cumulativeProbability(double,double)}
      */
-    @Override@Deprecated
-    public double cumulativeProbability(double x0, double x1)
-        throws NumberIsTooLargeException {
+    @Override
+    @Deprecated
+    public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
         return probability(x0, x1);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double probability(double x0,
-                              double x1)
-        throws NumberIsTooLargeException {
+    public double probability(double x0, double x1) throws NumberIsTooLargeException {
         if (x0 > x1) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
-                                                x0, x1, true);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, x0, x1, true);
         }
         final double denom = standardDeviation * SQRT2;
         final double v0 = (x0 - mean) / denom;
@@ -263,7 +256,7 @@ public class NormalDistribution extends AbstractRealDistribution {
      * no matter the parameters.
      *
      * @return lower bound of the support (always
-     * {@code Double.NEGATIVE_INFINITY})
+     *         {@code Double.NEGATIVE_INFINITY})
      */
     public double getSupportLowerBound() {
         return Double.NEGATIVE_INFINITY;
@@ -276,7 +269,7 @@ public class NormalDistribution extends AbstractRealDistribution {
      * no matter the parameters.
      *
      * @return upper bound of the support (always
-     * {@code Double.POSITIVE_INFINITY})
+     *         {@code Double.POSITIVE_INFINITY})
      */
     public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
@@ -305,7 +298,7 @@ public class NormalDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     @Override
-    public double sample()  {
+    public double sample() {
         return standardDeviation * random.nextGaussian() + mean;
     }
 }

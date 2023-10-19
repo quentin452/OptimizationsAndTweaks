@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,8 +28,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEva
  */
 @Deprecated
 public abstract class AbstractDifferentiableUnivariateSolver
-    extends BaseAbstractUnivariateSolver<DifferentiableUnivariateFunction>
-    implements DifferentiableUnivariateSolver {
+    extends BaseAbstractUnivariateSolver<DifferentiableUnivariateFunction> implements DifferentiableUnivariateSolver {
+
     /** Derivative of the function to solve. */
     private UnivariateFunction functionDerivative;
 
@@ -47,13 +45,12 @@ public abstract class AbstractDifferentiableUnivariateSolver
     /**
      * Construct a solver with given accuracies.
      *
-     * @param relativeAccuracy Maximum relative error.
-     * @param absoluteAccuracy Maximum absolute error.
+     * @param relativeAccuracy      Maximum relative error.
+     * @param absoluteAccuracy      Maximum absolute error.
      * @param functionValueAccuracy Maximum function value error.
      */
-    protected AbstractDifferentiableUnivariateSolver(final double relativeAccuracy,
-                                                     final double absoluteAccuracy,
-                                                     final double functionValueAccuracy) {
+    protected AbstractDifferentiableUnivariateSolver(final double relativeAccuracy, final double absoluteAccuracy,
+        final double functionValueAccuracy) {
         super(relativeAccuracy, absoluteAccuracy, functionValueAccuracy);
     }
 
@@ -64,8 +61,7 @@ public abstract class AbstractDifferentiableUnivariateSolver
      * @return the objective function value at specified point.
      * @throws TooManyEvaluationsException if the maximal number of evaluations is exceeded.
      */
-    protected double computeDerivativeObjectiveValue(double point)
-        throws TooManyEvaluationsException {
+    protected double computeDerivativeObjectiveValue(double point) throws TooManyEvaluationsException {
         incrementEvaluationCount();
         return functionDerivative.value(point);
     }
@@ -74,8 +70,7 @@ public abstract class AbstractDifferentiableUnivariateSolver
      * {@inheritDoc}
      */
     @Override
-    protected void setup(int maxEval, DifferentiableUnivariateFunction f,
-                         double min, double max, double startValue) {
+    protected void setup(int maxEval, DifferentiableUnivariateFunction f, double min, double max, double startValue) {
         super.setup(maxEval, f, min, max, startValue);
         functionDerivative = f.derivative();
     }

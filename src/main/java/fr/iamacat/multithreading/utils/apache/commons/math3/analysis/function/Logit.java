@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +28,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Logit">
- *  Logit</a> function.
+ * Logit</a> function.
  * It is the inverse of the {@link Sigmoid sigmoid} function.
  *
  * @since 3.0
  */
 public class Logit implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
+
     /** Lower bound. */
     private final double lo;
     /** Higher bound. */
@@ -55,48 +54,48 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
      * @param lo Lower bound of the function domain.
      * @param hi Higher bound of the function domain.
      */
-    public Logit(double lo,
-                 double hi) {
+    public Logit(double lo, double hi) {
         this.lo = lo;
         this.hi = hi;
     }
 
     /** {@inheritDoc} */
-    public double value(double x)
-        throws OutOfRangeException {
+    public double value(double x) throws OutOfRangeException {
         return value(x, lo, hi);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @deprecated as of 3.1, replaced by {@link #value(DerivativeStructure)}
      */
     @Deprecated
     public UnivariateFunction derivative() {
-        return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
+        return FunctionUtils.toDifferentiableUnivariateFunction(this)
+            .derivative();
     }
 
     /**
      * Parametric function where the input array contains the parameters of
      * the logit function, ordered as follows:
      * <ul>
-     *  <li>Lower bound</li>
-     *  <li>Higher bound</li>
+     * <li>Lower bound</li>
+     * <li>Higher bound</li>
      * </ul>
      */
     public static class Parametric implements ParametricUnivariateFunction {
+
         /**
          * Computes the value of the logit at {@code x}.
          *
-         * @param x Value for which the function must be computed.
+         * @param x     Value for which the function must be computed.
          * @param param Values of lower bound and higher bounds.
          * @return the value of the function.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        public double value(double x, double ... param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        public double value(double x, double... param) throws NullArgumentException, DimensionMismatchException {
             validateParameters(param);
             return Logit.value(x, param[0], param[1]);
         }
@@ -107,16 +106,14 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
          * derivatives of the function with respect to each of the
          * <em>parameters</em> (lower bound and higher bound).
          *
-         * @param x Value at which the gradient must be computed.
+         * @param x     Value at which the gradient must be computed.
          * @param param Values for lower and higher bounds.
          * @return the gradient vector at {@code x}.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        public double[] gradient(double x, double ... param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        public double[] gradient(double x, double... param) throws NullArgumentException, DimensionMismatchException {
             validateParameters(param);
 
             final double lo = param[0];
@@ -131,13 +128,11 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
          * methods.
          *
          * @param param Values for lower and higher bounds.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        private void validateParameters(double[] param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        private void validateParameters(double[] param) throws NullArgumentException, DimensionMismatchException {
             if (param == null) {
                 throw new NullArgumentException();
             }
@@ -148,28 +143,26 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
     }
 
     /**
-     * @param x Value at which to compute the logit.
+     * @param x  Value at which to compute the logit.
      * @param lo Lower bound.
      * @param hi Higher bound.
      * @return the value of the logit function at {@code x}.
      * @throws OutOfRangeException if {@code x < lo} or {@code x > hi}.
      */
-    private static double value(double x,
-                                double lo,
-                                double hi)
-        throws OutOfRangeException {
+    private static double value(double x, double lo, double hi) throws OutOfRangeException {
         if (x < lo || x > hi) {
             throw new OutOfRangeException(x, lo, hi);
         }
         return FastMath.log((x - lo) / (hi - x));
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @since 3.1
      * @exception OutOfRangeException if parameter is outside of function domain
      */
-    public DerivativeStructure value(final DerivativeStructure t)
-        throws OutOfRangeException {
+    public DerivativeStructure value(final DerivativeStructure t) throws OutOfRangeException {
         final double x = t.getValue();
         if (x < lo || x > hi) {
             throw new OutOfRangeException(x, lo, hi);
@@ -186,7 +179,7 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
             }
             // fill the array with infinities
             // (for x close to lo the signs will flip between -inf and +inf,
-            //  for x close to hi the signs will always be +inf)
+            // for x close to hi the signs will always be +inf)
             // this is probably overkill, since the call to compose at the end
             // of the method will transform most infinities into NaN ...
             for (int i = 2; i < f.length; ++i) {
@@ -202,8 +195,8 @@ public class Logit implements UnivariateDifferentiableFunction, DifferentiableUn
             double xH = invH;
             for (int i = 1; i < f.length; ++i) {
                 f[i] = xL + xH;
-                xL  *= -i * invL;
-                xH  *=  i * invH;
+                xL *= -i * invL;
+                xH *= i * invH;
             }
         }
 

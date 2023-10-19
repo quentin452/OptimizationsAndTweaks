@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,26 +15,30 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoBracketingException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * Implements the <em>Secant</em> method for root-finding (approximating a
  * zero of a univariate real function). The solution that is maintained is
  * not bracketed, and as such convergence is not guaranteed.
  *
- * <p>Implementation based on the following article: M. Dowell and P. Jarratt,
+ * <p>
+ * Implementation based on the following article: M. Dowell and P. Jarratt,
  * <em>A modified regula falsi method for computing the root of an
  * equation</em>, BIT Numerical Mathematics, volume 11, number 2,
- * pages 168-174, Springer, 1971.</p>
+ * pages 168-174, Springer, 1971.
+ * </p>
  *
- * <p>Note that since release 3.0 this class implements the actual
+ * <p>
+ * Note that since release 3.0 this class implements the actual
  * <em>Secant</em> algorithm, and not a modified one. As such, the 3.0 version
  * is not backwards compatible with previous versions. To use an algorithm
  * similar to the pre-3.0 releases, use the
  * {@link IllinoisSolver <em>Illinois</em>} algorithm or the
- * {@link PegasusSolver <em>Pegasus</em>} algorithm.</p>
+ * {@link PegasusSolver <em>Pegasus</em>} algorithm.
+ * </p>
  *
  */
 public class SecantSolver extends AbstractUnivariateSolver {
@@ -64,16 +66,13 @@ public class SecantSolver extends AbstractUnivariateSolver {
      * @param relativeAccuracy relative accuracy
      * @param absoluteAccuracy absolute accuracy
      */
-    public SecantSolver(final double relativeAccuracy,
-                        final double absoluteAccuracy) {
+    public SecantSolver(final double relativeAccuracy, final double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final double doSolve()
-        throws TooManyEvaluationsException,
-               NoBracketingException {
+    protected final double doSolve() throws TooManyEvaluationsException, NoBracketingException {
         // Get initial solution
         double x0 = getMin();
         double x1 = getMax();

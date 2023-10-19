@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +28,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Differe
  */
 @Deprecated
 public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric> {
-    /** Polynomial degree.
+
+    /**
+     * Polynomial degree.
+     * 
      * @deprecated
      */
     @Deprecated
@@ -38,13 +39,15 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
 
     /**
      * Simple constructor.
-     * <p>The polynomial fitter built this way are complete polynomials,
-     * ie. a n-degree polynomial has n+1 coefficients.</p>
+     * <p>
+     * The polynomial fitter built this way are complete polynomials,
+     * ie. a n-degree polynomial has n+1 coefficients.
+     * </p>
      *
-     * @param degree Maximal degree of the polynomial.
+     * @param degree    Maximal degree of the polynomial.
      * @param optimizer Optimizer to use for the fitting.
      * @deprecated Since 3.1 (to be removed in 4.0). Please use
-     * {@link #PolynomialFitter(DifferentiableMultivariateVectorOptimizer)} instead.
+     *             {@link #PolynomialFitter(DifferentiableMultivariateVectorOptimizer)} instead.
      */
     @Deprecated
     public PolynomialFitter(int degree, final DifferentiableMultivariateVectorOptimizer optimizer) {
@@ -68,7 +71,8 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      *
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException
-     * if the algorithm failed to converge.
+     *                                                                                             if the algorithm
+     *                                                                                             failed to converge.
      * @deprecated Since 3.1 (to be removed in 4.0). Please use {@link #fit(double[])} instead.
      */
     @Deprecated
@@ -80,14 +84,20 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * Get the coefficients of the polynomial fitting the weighted data points.
      * The degree of the fitting polynomial is {@code guess.length - 1}.
      *
-     * @param guess First guess for the coefficients. They must be sorted in
-     * increasing order of the polynomial's degree.
+     * @param guess   First guess for the coefficients. They must be sorted in
+     *                increasing order of the polynomial's degree.
      * @param maxEval Maximum number of evaluations of the polynomial.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException if
-     * the number of evaluations exceeds {@code maxEval}.
+     *                                                                                                    the number of
+     *                                                                                                    evaluations
+     *                                                                                                    exceeds
+     *                                                                                                    {@code maxEval}.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException
-     * if the algorithm failed to converge.
+     *                                                                                                    if the
+     *                                                                                                    algorithm
+     *                                                                                                    failed to
+     *                                                                                                    converge.
      * @since 3.1
      */
     public double[] fit(int maxEval, double[] guess) {
@@ -99,10 +109,11 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * The degree of the fitting polynomial is {@code guess.length - 1}.
      *
      * @param guess First guess for the coefficients. They must be sorted in
-     * increasing order of the polynomial's degree.
+     *              increasing order of the polynomial's degree.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException
-     * if the algorithm failed to converge.
+     *                                                                                             if the algorithm
+     *                                                                                             failed to converge.
      * @since 3.1
      */
     public double[] fit(double[] guess) {

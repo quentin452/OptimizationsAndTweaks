@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,17 +25,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
  *
  * @since 3.4
  */
-public class TricubicInterpolator
-    implements TrivariateGridInterpolator {
+public class TricubicInterpolator implements TrivariateGridInterpolator {
+
     /**
      * {@inheritDoc}
      */
-    public TricubicInterpolatingFunction interpolate(final double[] xval,
-                                                     final double[] yval,
-                                                     final double[] zval,
-                                                     final double[][][] fval)
-        throws NoDataException, NumberIsTooSmallException,
-               DimensionMismatchException, NonMonotonicSequenceException {
+    public TricubicInterpolatingFunction interpolate(final double[] xval, final double[] yval, final double[] zval,
+        final double[][][] fval)
+        throws NoDataException, NumberIsTooSmallException, DimensionMismatchException, NonMonotonicSequenceException {
         if (xval.length == 0 || yval.length == 0 || zval.length == 0 || fval.length == 0) {
             throw new NoDataException();
         }
@@ -105,34 +100,48 @@ public class TricubicInterpolator
                     final double deltaXZ = deltaX * deltaZ;
                     final double deltaYZ = deltaY * deltaZ;
 
-                    d2FdXdY[i][j][k] = (fval[nI][nJ][k] - fval[nI][pJ][k] - fval[pI][nJ][k] + fval[pI][pJ][k]) / deltaXY;
-                    d2FdXdZ[i][j][k] = (fval[nI][j][nK] - fval[nI][j][pK] - fval[pI][j][nK] + fval[pI][j][pK]) / deltaXZ;
-                    d2FdYdZ[i][j][k] = (fval[i][nJ][nK] - fval[i][nJ][pK] - fval[i][pJ][nK] + fval[i][pJ][pK]) / deltaYZ;
+                    d2FdXdY[i][j][k] = (fval[nI][nJ][k] - fval[nI][pJ][k] - fval[pI][nJ][k] + fval[pI][pJ][k])
+                        / deltaXY;
+                    d2FdXdZ[i][j][k] = (fval[nI][j][nK] - fval[nI][j][pK] - fval[pI][j][nK] + fval[pI][j][pK])
+                        / deltaXZ;
+                    d2FdYdZ[i][j][k] = (fval[i][nJ][nK] - fval[i][nJ][pK] - fval[i][pJ][nK] + fval[i][pJ][pK])
+                        / deltaYZ;
 
                     final double deltaXYZ = deltaXY * deltaZ;
 
-                    d3FdXdYdZ[i][j][k] = (fval[nI][nJ][nK] - fval[nI][pJ][nK] -
-                                          fval[pI][nJ][nK] + fval[pI][pJ][nK] -
-                                          fval[nI][nJ][pK] + fval[nI][pJ][pK] +
-                                          fval[pI][nJ][pK] - fval[pI][pJ][pK]) / deltaXYZ;
+                    d3FdXdYdZ[i][j][k] = (fval[nI][nJ][nK] - fval[nI][pJ][nK]
+                        - fval[pI][nJ][nK]
+                        + fval[pI][pJ][nK]
+                        - fval[nI][nJ][pK]
+                        + fval[nI][pJ][pK]
+                        + fval[pI][nJ][pK]
+                        - fval[pI][pJ][pK]) / deltaXYZ;
                 }
             }
         }
 
         // Create the interpolating function.
-        return new TricubicInterpolatingFunction(xval, yval, zval, fval,
-                                                 dFdX, dFdY, dFdZ,
-                                                 d2FdXdY, d2FdXdZ, d2FdYdZ,
-                                                 d3FdXdYdZ) {
+        return new TricubicInterpolatingFunction(
+            xval,
+            yval,
+            zval,
+            fval,
+            dFdX,
+            dFdY,
+            dFdZ,
+            d2FdXdY,
+            d2FdXdZ,
+            d2FdYdZ,
+            d3FdXdYdZ) {
+
             /** {@inheritDoc} */
             @Override
             public boolean isValidPoint(double x, double y, double z) {
-                if (x < xval[1] ||
-                    x > xval[xval.length - 2] ||
-                    y < yval[1] ||
-                    y > yval[yval.length - 2] ||
-                    z < zval[1] ||
-                    z > zval[zval.length - 2]) {
+                if (x < xval[1] || x > xval[xval.length - 2]
+                    || y < yval[1]
+                    || y > yval[yval.length - 2]
+                    || z < zval[1]
+                    || z > zval[zval.length - 2]) {
                     return false;
                 } else {
                     return true;

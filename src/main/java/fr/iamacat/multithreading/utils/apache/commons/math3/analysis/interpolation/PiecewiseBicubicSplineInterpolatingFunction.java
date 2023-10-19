@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,14 +15,15 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.interpolation;
 
 import java.util.Arrays;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.BivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.InsufficientDataException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoDataException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 
 /**
@@ -38,8 +37,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
  *
  * @since 3.4
  */
-public class PiecewiseBicubicSplineInterpolatingFunction
-    implements BivariateFunction {
+public class PiecewiseBicubicSplineInterpolatingFunction implements BivariateFunction {
+
     /** The minimum number of points that are needed to compute the function. */
     private static final int MIN_NUM_POINTS = 5;
     /** Samples x-coordinates */
@@ -53,42 +52,30 @@ public class PiecewiseBicubicSplineInterpolatingFunction
      * @param x Sample values of the x-coordinate, in increasing order.
      * @param y Sample values of the y-coordinate, in increasing order.
      * @param f Values of the function on every grid point. the expected number
-     *        of elements.
+     *          of elements.
      * @throws NonMonotonicSequenceException if {@code x} or {@code y} are not
-     *         strictly increasing.
-     * @throws NullArgumentException if any of the arguments are null
-     * @throws NoDataException if any of the arrays has zero length.
-     * @throws DimensionMismatchException if the length of x and y don't match the row, column
-     *         height of f
+     *                                       strictly increasing.
+     * @throws NullArgumentException         if any of the arguments are null
+     * @throws NoDataException               if any of the arrays has zero length.
+     * @throws DimensionMismatchException    if the length of x and y don't match the row, column
+     *                                       height of f
      */
-    public PiecewiseBicubicSplineInterpolatingFunction(double[] x,
-                                                       double[] y,
-                                                       double[][] f)
-        throws DimensionMismatchException,
-               NullArgumentException,
-               NoDataException,
-               NonMonotonicSequenceException {
-        if (x == null ||
-            y == null ||
-            f == null ||
-            f[0] == null) {
+    public PiecewiseBicubicSplineInterpolatingFunction(double[] x, double[] y, double[][] f)
+        throws DimensionMismatchException, NullArgumentException, NoDataException, NonMonotonicSequenceException {
+        if (x == null || y == null || f == null || f[0] == null) {
             throw new NullArgumentException();
         }
 
         final int xLen = x.length;
         final int yLen = y.length;
 
-        if (xLen == 0 ||
-            yLen == 0 ||
-            f.length == 0 ||
-            f[0].length == 0) {
+        if (xLen == 0 || yLen == 0 || f.length == 0 || f[0].length == 0) {
             throw new NoDataException();
         }
 
-        if (xLen < MIN_NUM_POINTS ||
-            yLen < MIN_NUM_POINTS ||
-            f.length < MIN_NUM_POINTS ||
-            f[0].length < MIN_NUM_POINTS) {
+        if (xLen < MIN_NUM_POINTS || yLen < MIN_NUM_POINTS
+            || f.length < MIN_NUM_POINTS
+            || f[0].length < MIN_NUM_POINTS) {
             throw new InsufficientDataException();
         }
 
@@ -111,9 +98,7 @@ public class PiecewiseBicubicSplineInterpolatingFunction
     /**
      * {@inheritDoc}
      */
-    public double value(double x,
-                        double y)
-        throws OutOfRangeException {
+    public double value(double x, double y) throws OutOfRangeException {
         final AkimaSplineInterpolator interpolator = new AkimaSplineInterpolator();
         final int offset = 2;
         final int count = offset + 3;
@@ -153,12 +138,8 @@ public class PiecewiseBicubicSplineInterpolatingFunction
      * @return {@code true} if (x, y) is a valid point.
      * @since 3.3
      */
-    public boolean isValidPoint(double x,
-                                double y) {
-        if (x < xval[0] ||
-            x > xval[xval.length - 1] ||
-            y < yval[0] ||
-            y > yval[yval.length - 1]) {
+    public boolean isValidPoint(double x, double y) {
+        if (x < xval[0] || x > xval[xval.length - 1] || y < yval[0] || y > yval[yval.length - 1]) {
             return false;
         } else {
             return true;
@@ -166,20 +147,17 @@ public class PiecewiseBicubicSplineInterpolatingFunction
     }
 
     /**
-     * @param c Coordinate.
-     * @param val Coordinate samples.
+     * @param c      Coordinate.
+     * @param val    Coordinate samples.
      * @param offset how far back from found value to offset for querying
-     * @param count total number of elements forward from beginning that will be
-     *        queried
+     * @param count  total number of elements forward from beginning that will be
+     *               queried
      * @return the index in {@code val} corresponding to the interval containing
      *         {@code c}.
      * @throws OutOfRangeException if {@code c} is out of the range defined by
-     *         the boundary values of {@code val}.
+     *                             the boundary values of {@code val}.
      */
-    private int searchIndex(double c,
-                            double[] val,
-                            int offset,
-                            int count) {
+    private int searchIndex(double c, double[] val, int offset, int count) {
         int r = Arrays.binarySearch(val, c);
 
         if (r == -1 || r == -val.length - 1) {

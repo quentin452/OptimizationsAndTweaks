@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,26 +21,27 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 /**
  * Implementation of
  * {@link fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.MultivariateSummaryStatistics} that
- * is safe to use in a multithreaded environment.  Multiple threads can safely
+ * is safe to use in a multithreaded environment. Multiple threads can safely
  * operate on a single instance without causing runtime exceptions due to race
- * conditions.  In effect, this implementation makes modification and access
- * methods atomic operations for a single instance.  That is to say, as one
+ * conditions. In effect, this implementation makes modification and access
+ * methods atomic operations for a single instance. That is to say, as one
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
+ * 
  * @since 1.2
  */
-public class SynchronizedMultivariateSummaryStatistics
-    extends MultivariateSummaryStatistics {
+public class SynchronizedMultivariateSummaryStatistics extends MultivariateSummaryStatistics {
 
     /** Serialization UID */
     private static final long serialVersionUID = 7099834153347155363L;
 
     /**
      * Construct a SynchronizedMultivariateSummaryStatistics instance
-     * @param k dimension of the data
+     * 
+     * @param k                         dimension of the data
      * @param isCovarianceBiasCorrected if true, the unbiased sample
-     * covariance is computed, otherwise the biased population covariance
-     * is computed
+     *                                  covariance is computed, otherwise the biased population covariance
+     *                                  is computed
      */
     public SynchronizedMultivariateSummaryStatistics(int k, boolean isCovarianceBiasCorrected) {
         super(k, isCovarianceBiasCorrected);
@@ -53,7 +52,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void addValue(double[] value) throws DimensionMismatchException {
-      super.addValue(value);
+        super.addValue(value);
     }
 
     /**
@@ -189,7 +188,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setSumImpl(StorelessUnivariateStatistic[] sumImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setSumImpl(sumImpl);
     }
 
@@ -206,7 +205,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setSumsqImpl(StorelessUnivariateStatistic[] sumsqImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setSumsqImpl(sumsqImpl);
     }
 
@@ -223,7 +222,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setMinImpl(StorelessUnivariateStatistic[] minImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setMinImpl(minImpl);
     }
 
@@ -240,7 +239,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setMaxImpl(StorelessUnivariateStatistic[] maxImpl)
-    throws DimensionMismatchException, MathIllegalStateException{
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setMaxImpl(maxImpl);
     }
 
@@ -257,7 +256,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setSumLogImpl(StorelessUnivariateStatistic[] sumLogImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setSumLogImpl(sumLogImpl);
     }
 
@@ -274,7 +273,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic[] geoMeanImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setGeoMeanImpl(geoMeanImpl);
     }
 
@@ -291,7 +290,7 @@ public class SynchronizedMultivariateSummaryStatistics
      */
     @Override
     public synchronized void setMeanImpl(StorelessUnivariateStatistic[] meanImpl)
-    throws DimensionMismatchException, MathIllegalStateException {
+        throws DimensionMismatchException, MathIllegalStateException {
         super.setMeanImpl(meanImpl);
     }
 }

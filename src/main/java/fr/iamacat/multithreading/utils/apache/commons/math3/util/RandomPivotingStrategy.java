@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +19,9 @@ import java.io.Serializable;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 
-
 /**
  * A strategy of selecting random index between begin and end indices.
+ * 
  * @since 3.4
  */
 public class RandomPivotingStrategy implements PivotingStrategyInterface, Serializable {
@@ -34,7 +32,9 @@ public class RandomPivotingStrategy implements PivotingStrategyInterface, Serial
     /** Random generator to use for selecting pivot. */
     private final RandomGenerator random;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param random random generator to use for selecting pivot
      */
     public RandomPivotingStrategy(final RandomGenerator random) {
@@ -44,13 +44,13 @@ public class RandomPivotingStrategy implements PivotingStrategyInterface, Serial
     /**
      * {@inheritDoc}
      * A uniform random pivot selection between begin and end indices
+     * 
      * @return The index corresponding to a random uniformly selected
-     * value between first and the last indices of the array slice
+     *         value between first and the last indices of the array slice
      * @throws MathIllegalArgumentException when indices exceeds range
      */
-    public int pivotIndex(final double[] work, final int begin, final int end)
-        throws MathIllegalArgumentException {
-        MathArrays.verifyValues(work, begin, end-begin);
+    public int pivotIndex(final double[] work, final int begin, final int end) throws MathIllegalArgumentException {
+        MathArrays.verifyValues(work, begin, end - begin);
         return begin + random.nextInt(end - begin - 1);
     }
 

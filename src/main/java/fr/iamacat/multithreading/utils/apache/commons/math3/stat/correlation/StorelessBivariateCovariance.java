@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +21,19 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * Bivariate Covariance implementation that does not require input data to be
  * stored in memory.
  *
- * <p>This class is based on a paper written by Philippe P&eacute;bay:
+ * <p>
+ * This class is based on a paper written by Philippe P&eacute;bay:
  * <a href="http://prod.sandia.gov/techlib/access-control.cgi/2008/086212.pdf">
  * Formulas for Robust, One-Pass Parallel Computation of Covariances and
  * Arbitrary-Order Statistical Moments</a>, 2008, Technical Report SAND2008-6212,
  * Sandia National Laboratories. It computes the covariance for a pair of variables.
- * Use {@link StorelessCovariance} to estimate an entire covariance matrix.</p>
+ * Use {@link StorelessCovariance} to estimate an entire covariance matrix.
+ * </p>
  *
- * <p>Note: This class is package private as it is only used internally in
- * the {@link StorelessCovariance} class.</p>
+ * <p>
+ * Note: This class is package private as it is only used internally in
+ * the {@link StorelessCovariance} class.
+ * </p>
  *
  * @since 3.0
  */
@@ -64,8 +66,8 @@ class StorelessBivariateCovariance {
      * Create an empty {@link StorelessBivariateCovariance} instance.
      *
      * @param biasCorrection if <code>true</code> the covariance estimate is corrected
-     * for bias, i.e. n-1 in the denominator, otherwise there is no bias correction,
-     * i.e. n in the denominator.
+     *                       for bias, i.e. n-1 in the denominator, otherwise there is no bias correction,
+     *                       i.e. n in the denominator.
      */
     StorelessBivariateCovariance(final boolean biasCorrection) {
         meanX = meanY = 0.0;
@@ -121,12 +123,11 @@ class StorelessBivariateCovariance {
      *
      * @return the current covariance
      * @throws NumberIsTooSmallException if the number of observations
-     * is &lt; 2
+     *                                   is &lt; 2
      */
     public double getResult() throws NumberIsTooSmallException {
         if (n < 2) {
-            throw new NumberIsTooSmallException(LocalizedFormats.INSUFFICIENT_DIMENSION,
-                                                n, 2, true);
+            throw new NumberIsTooSmallException(LocalizedFormats.INSUFFICIENT_DIMENSION, n, 2, true);
         }
         if (biasCorrected) {
             return covarianceNumerator / (n - 1d);
@@ -135,4 +136,3 @@ class StorelessBivariateCovariance {
         }
     }
 }
-

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -129,31 +127,94 @@
  *
  * <p>
  * <table border="1" align="center">
- * <tr BGCOLOR="#CCCCFF"><td colspan=2><font size="+2">Fixed Step Integrators</font></td></tr>
- * <tr BGCOLOR="#EEEEFF"><font size="+1"><td>Name</td><td>Order</td></font></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.EulerIntegrator Euler}</td><td>1</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.MidpointIntegrator Midpoint}</td><td>2</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator Classical Runge-Kutta}</td><td>4</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.GillIntegrator Gill}</td><td>4</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegrator 3/8}</td><td>4</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.LutherIntegrator Luther}</td><td>6</td></tr>
+ * <tr BGCOLOR="#CCCCFF">
+ * <td colspan=2><font size="+2">Fixed Step Integrators</font></td>
+ * </tr>
+ * <tr BGCOLOR="#EEEEFF">
+ * <font size="+1">
+ * <td>Name</td>
+ * <td>Order</td></font>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.EulerIntegrator Euler}</td>
+ * <td>1</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.MidpointIntegrator Midpoint}</td>
+ * <td>2</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator Classical
+ * Runge-Kutta}</td>
+ * <td>4</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.GillIntegrator Gill}</td>
+ * <td>4</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegrator 3/8}</td>
+ * <td>4</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.LutherIntegrator Luther}</td>
+ * <td>6</td>
+ * </tr>
  * </table>
  * </p>
  *
  * <table border="1" align="center">
- * <tr BGCOLOR="#CCCCFF"><td colspan=3><font size="+2">Adaptive Stepsize Integrators</font></td></tr>
- * <tr BGCOLOR="#EEEEFF"><font size="+1"><td>Name</td><td>Integration Order</td><td>Error Estimation Order</td></font></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.HighamHall54Integrator Higham and Hall}</td><td>5</td><td>4</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator Dormand-Prince 5(4)}</td><td>5</td><td>4</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator Dormand-Prince 8(5,3)}</td><td>8</td><td>5 and 3</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator Gragg-Bulirsch-Stoer}</td><td>variable (up to 18 by default)</td><td>variable</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator Adams-Bashforth}</td><td>variable</td><td>variable</td></tr>
- * <tr><td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator Adams-Moulton}</td><td>variable</td><td>variable</td></tr>
+ * <tr BGCOLOR="#CCCCFF">
+ * <td colspan=3><font size="+2">Adaptive Stepsize Integrators</font></td>
+ * </tr>
+ * <tr BGCOLOR="#EEEEFF">
+ * <font size="+1">
+ * <td>Name</td>
+ * <td>Integration Order</td>
+ * <td>Error Estimation Order</td></font>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.HighamHall54Integrator Higham and
+ * Hall}</td>
+ * <td>5</td>
+ * <td>4</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator Dormand-Prince
+ * 5(4)}</td>
+ * <td>5</td>
+ * <td>4</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
+ * Dormand-Prince 8(5,3)}</td>
+ * <td>8</td>
+ * <td>5 and 3</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator
+ * Gragg-Bulirsch-Stoer}</td>
+ * <td>variable (up to 18 by default)</td>
+ * <td>variable</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator
+ * Adams-Bashforth}</td>
+ * <td>variable</td>
+ * <td>variable</td>
+ * </tr>
+ * <tr>
+ * <td>{@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator
+ * Adams-Moulton}</td>
+ * <td>variable</td>
+ * <td>variable</td>
+ * </tr>
  * </table>
  * </p>
  *
  * <p>
- * In the table above, the {@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator
+ * In the table above, the
+ * {@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator
  * Adams-Bashforth} and {@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator
  * Adams-Moulton} integrators appear as variable-step ones. This is an experimental extension
  * to the classical algorithms using the Nordsieck vector representation.

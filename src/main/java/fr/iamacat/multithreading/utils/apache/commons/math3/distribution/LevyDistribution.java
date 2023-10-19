@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +35,7 @@ public class LevyDistribution extends AbstractRealDistribution {
     private final double mu;
 
     /** Scale parameter. */
-    private final double c;  // Setting this to 1 returns a cumProb of 1.0
+    private final double c; // Setting this to 1 returns a cumProb of 1.0
 
     /** Half of c (for calculations). */
     private final double halfC;
@@ -53,7 +51,7 @@ public class LevyDistribution extends AbstractRealDistribution {
      * additional initialisation overhead.
      *
      * @param mu location parameter
-     * @param c scale parameter
+     * @param c  scale parameter
      * @since 3.4
      */
     public LevyDistribution(final double mu, final double c) {
@@ -62,42 +60,46 @@ public class LevyDistribution extends AbstractRealDistribution {
 
     /**
      * Creates a LevyDistribution.
+     * 
      * @param rng random generator to be used for sampling
-     * @param mu location
-     * @param c scale parameter
+     * @param mu  location
+     * @param c   scale parameter
      */
     public LevyDistribution(final RandomGenerator rng, final double mu, final double c) {
         super(rng);
-        this.mu    = mu;
-        this.c     = c;
+        this.mu = mu;
+        this.c = c;
         this.halfC = 0.5 * c;
     }
 
-    /** {@inheritDoc}
-    * <p>
-    * From Wikipedia: The probability density function of the L&eacute;vy distribution
-    * over the domain is
-    * </p>
-    * <pre>
-    * f(x; &mu;, c) = &radic;(c / 2&pi;) * e<sup>-c / 2 (x - &mu;)</sup> / (x - &mu;)<sup>3/2</sup>
-    * </pre>
-    * <p>
-    * For this distribution, {@code X}, this method returns {@code P(X < x)}.
-    * If {@code x} is less than location parameter &mu;, {@code Double.NaN} is
-    * returned, as in these cases the distribution is not defined.
-    * </p>
-    */
+    /**
+     * {@inheritDoc}
+     * <p>
+     * From Wikipedia: The probability density function of the L&eacute;vy distribution
+     * over the domain is
+     * </p>
+     * 
+     * <pre>
+     * f(x; &mu;, c) = &radic;(c / 2&pi;) * e<sup>-c / 2 (x - &mu;)</sup> / (x - &mu;)<sup>3/2</sup>
+     * </pre>
+     * <p>
+     * For this distribution, {@code X}, this method returns {@code P(X < x)}.
+     * If {@code x} is less than location parameter &mu;, {@code Double.NaN} is
+     * returned, as in these cases the distribution is not defined.
+     * </p>
+     */
     public double density(final double x) {
         if (x < mu) {
             return Double.NaN;
         }
 
         final double delta = x - mu;
-        final double f     = halfC / delta;
-        return FastMath.sqrt(f / FastMath.PI) * FastMath.exp(-f) /delta;
+        final double f = halfC / delta;
+        return FastMath.sqrt(f / FastMath.PI) * FastMath.exp(-f) / delta;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * See documentation of {@link #density(double)} for computation details.
      */
@@ -108,14 +110,16 @@ public class LevyDistribution extends AbstractRealDistribution {
         }
 
         final double delta = x - mu;
-        final double f     = halfC / delta;
+        final double f = halfC / delta;
         return 0.5 * FastMath.log(f / FastMath.PI) - f - FastMath.log(delta);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      * <p>
      * From Wikipedia: the cumulative distribution function is
      * </p>
+     * 
      * <pre>
      * f(x; u, c) = erfc (&radic; (c / 2 (x - u )))
      * </pre>
@@ -137,14 +141,18 @@ public class LevyDistribution extends AbstractRealDistribution {
         return mu + halfC / (t * t);
     }
 
-    /** Get the scale parameter of the distribution.
+    /**
+     * Get the scale parameter of the distribution.
+     * 
      * @return scale parameter of the distribution
      */
     public double getScale() {
         return c;
     }
 
-    /** Get the location parameter of the distribution.
+    /**
+     * Get the location parameter of the distribution.
+     * 
      * @return location parameter of the distribution
      */
     public double getLocation() {

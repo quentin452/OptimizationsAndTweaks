@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +29,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @see <a href="http://mathworld.wolfram.com/BinomialDistribution.html">Binomial Distribution (MathWorld)</a>
  */
 public class BinomialDistribution extends AbstractIntegerDistribution {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = 6751309484392813623L;
     /** The number of trials. */
@@ -50,9 +49,9 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      * additional initialisation overhead.
      *
      * @param trials Number of trials.
-     * @param p Probability of success.
+     * @param p      Probability of success.
      * @throws NotPositiveException if {@code trials < 0}.
-     * @throws OutOfRangeException if {@code p < 0} or {@code p > 1}.
+     * @throws OutOfRangeException  if {@code p < 0} or {@code p > 1}.
      */
     public BinomialDistribution(int trials, double p) {
         this(new Well19937c(), trials, p);
@@ -61,21 +60,18 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
     /**
      * Creates a binomial distribution.
      *
-     * @param rng Random number generator.
+     * @param rng    Random number generator.
      * @param trials Number of trials.
-     * @param p Probability of success.
+     * @param p      Probability of success.
      * @throws NotPositiveException if {@code trials < 0}.
-     * @throws OutOfRangeException if {@code p < 0} or {@code p > 1}.
+     * @throws OutOfRangeException  if {@code p < 0} or {@code p > 1}.
      * @since 3.1
      */
-    public BinomialDistribution(RandomGenerator rng,
-                                int trials,
-                                double p) {
+    public BinomialDistribution(RandomGenerator rng, int trials, double p) {
         super(rng);
 
         if (trials < 0) {
-            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_TRIALS,
-                                           trials);
+            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_TRIALS, trials);
         }
         if (p < 0 || p > 1) {
             throw new OutOfRangeException(p, 0, 1);
@@ -119,9 +115,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
         if (x < 0 || x > numberOfTrials) {
             ret = Double.NEGATIVE_INFINITY;
         } else {
-            ret = SaddlePointExpansion.logBinomialProbability(x,
-                    numberOfTrials, probabilityOfSuccess,
-                    1.0 - probabilityOfSuccess);
+            ret = SaddlePointExpansion
+                .logBinomialProbability(x, numberOfTrials, probabilityOfSuccess, 1.0 - probabilityOfSuccess);
         }
         return ret;
     }
@@ -134,8 +129,7 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
         } else if (x >= numberOfTrials) {
             ret = 1.0;
         } else {
-            ret = 1.0 - Beta.regularizedBeta(probabilityOfSuccess,
-                    x + 1.0, numberOfTrials - x);
+            ret = 1.0 - Beta.regularizedBeta(probabilityOfSuccess, x + 1.0, numberOfTrials - x);
         }
         return ret;
     }

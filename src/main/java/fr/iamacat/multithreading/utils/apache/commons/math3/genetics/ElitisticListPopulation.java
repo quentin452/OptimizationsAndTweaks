@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,16 +38,16 @@ public class ElitisticListPopulation extends ListPopulation {
     /**
      * Creates a new {@link ElitisticListPopulation} instance.
      *
-     * @param chromosomes list of chromosomes in the population
+     * @param chromosomes     list of chromosomes in the population
      * @param populationLimit maximal size of the population
-     * @param elitismRate how many best chromosomes will be directly transferred to the next generation [in %]
-     * @throws NullArgumentException if the list of chromosomes is {@code null}
-     * @throws NotPositiveException if the population limit is not a positive number (&lt; 1)
+     * @param elitismRate     how many best chromosomes will be directly transferred to the next generation [in %]
+     * @throws NullArgumentException     if the list of chromosomes is {@code null}
+     * @throws NotPositiveException      if the population limit is not a positive number (&lt; 1)
      * @throws NumberIsTooLargeException if the list of chromosomes exceeds the population limit
-     * @throws OutOfRangeException if the elitism rate is outside the [0, 1] range
+     * @throws OutOfRangeException       if the elitism rate is outside the [0, 1] range
      */
     public ElitisticListPopulation(final List<Chromosome> chromosomes, final int populationLimit,
-                                   final double elitismRate)
+        final double elitismRate)
         throws NullArgumentException, NotPositiveException, NumberIsTooLargeException, OutOfRangeException {
 
         super(chromosomes, populationLimit);
@@ -60,9 +58,9 @@ public class ElitisticListPopulation extends ListPopulation {
      * Creates a new {@link ElitisticListPopulation} instance and initializes its inner chromosome list.
      *
      * @param populationLimit maximal size of the population
-     * @param elitismRate how many best chromosomes will be directly transferred to the next generation [in %]
+     * @param elitismRate     how many best chromosomes will be directly transferred to the next generation [in %]
      * @throws NotPositiveException if the population limit is not a positive number (&lt; 1)
-     * @throws OutOfRangeException if the elitism rate is outside the [0, 1] range
+     * @throws OutOfRangeException  if the elitism rate is outside the [0, 1] range
      */
     public ElitisticListPopulation(final int populationLimit, final double elitismRate)
         throws NotPositiveException, OutOfRangeException {
@@ -79,8 +77,7 @@ public class ElitisticListPopulation extends ListPopulation {
      */
     public Population nextGeneration() {
         // initialize a new generation with the same parameters
-        ElitisticListPopulation nextGeneration =
-                new ElitisticListPopulation(getPopulationLimit(), getElitismRate());
+        ElitisticListPopulation nextGeneration = new ElitisticListPopulation(getPopulationLimit(), getElitismRate());
 
         final List<Chromosome> oldChromosomes = getChromosomeList();
         Collections.sort(oldChromosomes);
@@ -108,6 +105,7 @@ public class ElitisticListPopulation extends ListPopulation {
 
     /**
      * Access the elitism rate.
+     * 
      * @return the elitism rate
      */
     public double getElitismRate() {

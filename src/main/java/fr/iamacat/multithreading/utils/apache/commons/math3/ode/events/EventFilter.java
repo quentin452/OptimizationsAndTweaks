@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,9 +17,11 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.ode.events;
 
 import java.util.Arrays;
 
-/** Wrapper used to detect only increasing or decreasing events.
+/**
+ * Wrapper used to detect only increasing or decreasing events.
  *
- * <p>General {@link EventHandler events} are defined implicitly
+ * <p>
+ * General {@link EventHandler events} are defined implicitly
  * by a {@link EventHandler#g(double, double[]) g function} crossing
  * zero. This function needs to be continuous in the event neighborhood,
  * and its sign must remain consistent between events. This implies that
@@ -31,12 +31,15 @@ import java.util.Arrays;
  * negative values.
  * </p>
  *
- * <p>Sometimes, users are only interested in one type of event (say
+ * <p>
+ * Sometimes, users are only interested in one type of event (say
  * increasing events for example) and not in the other type. In these
  * cases, looking precisely for all events location and triggering
- * events that will later be ignored is a waste of computing time.</p>
+ * events that will later be ignored is a waste of computing time.
+ * </p>
  *
- * <p>Users can wrap a regular {@link EventHandler event handler} in
+ * <p>
+ * Users can wrap a regular {@link EventHandler event handler} in
  * an instance of this class and provide this wrapping instance to
  * the {@link fr.iamacat.multithreading.utils.apache.commons.math3.ode.FirstOrderIntegrator ODE solver}
  * in order to avoid wasting time looking for uninteresting events.
@@ -47,7 +50,8 @@ import java.util.Arrays;
  * wrapped regular {@link EventHandler event handler} will the see only
  * the interesting events, i.e. either only {@code increasing} events or
  * {@code decreasing} events. the number of calls to the {@link
- * EventHandler#g(double, double[]) g function} will also be reduced.</p>
+ * EventHandler#g(double, double[]) g function} will also be reduced.
+ * </p>
  *
  * @since 3.2
  */
@@ -75,32 +79,34 @@ public class EventFilter implements EventHandler {
     /** Extreme time encountered so far. */
     private double extremeT;
 
-    /** Wrap an {@link EventHandler event handler}.
+    /**
+     * Wrap an {@link EventHandler event handler}.
+     * 
      * @param rawHandler event handler to wrap
-     * @param filter filter to use
+     * @param filter     filter to use
      */
     public EventFilter(final EventHandler rawHandler, final FilterType filter) {
-        this.rawHandler   = rawHandler;
-        this.filter       = filter;
+        this.rawHandler = rawHandler;
+        this.filter = filter;
         this.transformers = new Transformer[HISTORY_SIZE];
-        this.updates      = new double[HISTORY_SIZE];
+        this.updates = new double[HISTORY_SIZE];
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public void init(double t0, double[] y0, double t) {
 
         // delegate to raw handler
         rawHandler.init(t0, y0, t);
 
         // initialize events triggering logic
-        forward  = t >= t0;
+        forward = t >= t0;
         extremeT = forward ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         Arrays.fill(transformers, Transformer.UNINITIALIZED);
         Arrays.fill(updates, extremeT);
 
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public double g(double t, double[] y) {
 
         final double rawG = rawHandler.g(t, y);
@@ -113,7 +119,7 @@ public class EventFilter implements EventHandler {
 
                 // check if a new rough root has been crossed
                 final Transformer previous = transformers[last];
-                final Transformer next     = filter.selectTransformer(previous, rawG, forward);
+                final Transformer next = filter.selectTransformer(previous, rawG, forward);
                 if (next != previous) {
                     // there is a root somewhere between extremeT and t.
                     // the new transformer is valid for t (this is how we have just computed
@@ -121,9 +127,9 @@ public class EventFilter implements EventHandler {
                     // it was already valid before t and even up to previous time. We store
                     // the switch at extremeT for safety, to ensure the previous transformer
                     // is not applied too close of the root
-                    System.arraycopy(updates,      1, updates,      0, last);
+                    System.arraycopy(updates, 1, updates, 0, last);
                     System.arraycopy(transformers, 1, transformers, 0, last);
-                    updates[last]      = extremeT;
+                    updates[last] = extremeT;
                     transformers[last] = next;
                 }
 
@@ -152,7 +158,7 @@ public class EventFilter implements EventHandler {
 
                 // check if a new rough root has been crossed
                 final Transformer previous = transformers[0];
-                final Transformer next     = filter.selectTransformer(previous, rawG, forward);
+                final Transformer next = filter.selectTransformer(previous, rawG, forward);
                 if (next != previous) {
                     // there is a root somewhere between extremeT and t.
                     // the new transformer is valid for t (this is how we have just computed
@@ -160,9 +166,9 @@ public class EventFilter implements EventHandler {
                     // it was already valid before t and even up to previous time. We store
                     // the switch at extremeT for safety, to ensure the previous transformer
                     // is not applied too close of the root
-                    System.arraycopy(updates,      0, updates,      1, updates.length - 1);
+                    System.arraycopy(updates, 0, updates, 1, updates.length - 1);
                     System.arraycopy(transformers, 0, transformers, 1, transformers.length - 1);
-                    updates[0]      = extremeT;
+                    updates[0] = extremeT;
                     transformers[0] = next;
                 }
 
@@ -185,17 +191,17 @@ public class EventFilter implements EventHandler {
                 return transformers[updates.length - 1].transformed(rawG);
 
             }
-       }
+        }
 
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public Action eventOccurred(double t, double[] y, boolean increasing) {
         // delegate to raw handler, fixing increasing status on the fly
         return rawHandler.eventOccurred(t, y, filter.getTriggeredIncreasing());
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public void resetState(double t, double[] y) {
         // delegate to raw handler
         rawHandler.resetState(t, y);

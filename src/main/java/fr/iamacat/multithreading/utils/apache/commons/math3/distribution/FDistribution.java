@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,8 +29,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @see <a href="http://mathworld.wolfram.com/F-Distribution.html">F-distribution (MathWorld)</a>
  */
 public class FDistribution extends AbstractRealDistribution {
+
     /**
      * Default inverse cumulative probability accuracy.
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
@@ -59,17 +59,15 @@ public class FDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param numeratorDegreesOfFreedom Numerator degrees of freedom.
+     * @param numeratorDegreesOfFreedom   Numerator degrees of freedom.
      * @param denominatorDegreesOfFreedom Denominator degrees of freedom.
      * @throws NotStrictlyPositiveException if
-     * {@code numeratorDegreesOfFreedom <= 0} or
-     * {@code denominatorDegreesOfFreedom <= 0}.
+     *                                      {@code numeratorDegreesOfFreedom <= 0} or
+     *                                      {@code denominatorDegreesOfFreedom <= 0}.
      */
-    public FDistribution(double numeratorDegreesOfFreedom,
-                         double denominatorDegreesOfFreedom)
+    public FDistribution(double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom)
         throws NotStrictlyPositiveException {
-        this(numeratorDegreesOfFreedom, denominatorDegreesOfFreedom,
-             DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+        this(numeratorDegreesOfFreedom, denominatorDegreesOfFreedom, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
@@ -83,36 +81,31 @@ public class FDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param numeratorDegreesOfFreedom Numerator degrees of freedom.
+     * @param numeratorDegreesOfFreedom   Numerator degrees of freedom.
      * @param denominatorDegreesOfFreedom Denominator degrees of freedom.
-     * @param inverseCumAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates.
+     * @param inverseCumAccuracy          the maximum absolute error in inverse
+     *                                    cumulative probability estimates.
      * @throws NotStrictlyPositiveException if
-     * {@code numeratorDegreesOfFreedom <= 0} or
-     * {@code denominatorDegreesOfFreedom <= 0}.
+     *                                      {@code numeratorDegreesOfFreedom <= 0} or
+     *                                      {@code denominatorDegreesOfFreedom <= 0}.
      * @since 2.1
      */
-    public FDistribution(double numeratorDegreesOfFreedom,
-                         double denominatorDegreesOfFreedom,
-                         double inverseCumAccuracy)
-        throws NotStrictlyPositiveException {
-        this(new Well19937c(), numeratorDegreesOfFreedom,
-             denominatorDegreesOfFreedom, inverseCumAccuracy);
+    public FDistribution(double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom,
+        double inverseCumAccuracy) throws NotStrictlyPositiveException {
+        this(new Well19937c(), numeratorDegreesOfFreedom, denominatorDegreesOfFreedom, inverseCumAccuracy);
     }
 
     /**
      * Creates an F distribution.
      *
-     * @param rng Random number generator.
-     * @param numeratorDegreesOfFreedom Numerator degrees of freedom.
+     * @param rng                         Random number generator.
+     * @param numeratorDegreesOfFreedom   Numerator degrees of freedom.
      * @param denominatorDegreesOfFreedom Denominator degrees of freedom.
      * @throws NotStrictlyPositiveException if {@code numeratorDegreesOfFreedom <= 0} or
-     * {@code denominatorDegreesOfFreedom <= 0}.
+     *                                      {@code denominatorDegreesOfFreedom <= 0}.
      * @since 3.3
      */
-    public FDistribution(RandomGenerator rng,
-                         double numeratorDegreesOfFreedom,
-                         double denominatorDegreesOfFreedom)
+    public FDistribution(RandomGenerator rng, double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom)
         throws NotStrictlyPositiveException {
         this(rng, numeratorDegreesOfFreedom, denominatorDegreesOfFreedom, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
@@ -120,29 +113,24 @@ public class FDistribution extends AbstractRealDistribution {
     /**
      * Creates an F distribution.
      *
-     * @param rng Random number generator.
-     * @param numeratorDegreesOfFreedom Numerator degrees of freedom.
+     * @param rng                         Random number generator.
+     * @param numeratorDegreesOfFreedom   Numerator degrees of freedom.
      * @param denominatorDegreesOfFreedom Denominator degrees of freedom.
-     * @param inverseCumAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates.
+     * @param inverseCumAccuracy          the maximum absolute error in inverse
+     *                                    cumulative probability estimates.
      * @throws NotStrictlyPositiveException if {@code numeratorDegreesOfFreedom <= 0} or
-     * {@code denominatorDegreesOfFreedom <= 0}.
+     *                                      {@code denominatorDegreesOfFreedom <= 0}.
      * @since 3.1
      */
-    public FDistribution(RandomGenerator rng,
-                         double numeratorDegreesOfFreedom,
-                         double denominatorDegreesOfFreedom,
-                         double inverseCumAccuracy)
-        throws NotStrictlyPositiveException {
+    public FDistribution(RandomGenerator rng, double numeratorDegreesOfFreedom, double denominatorDegreesOfFreedom,
+        double inverseCumAccuracy) throws NotStrictlyPositiveException {
         super(rng);
 
         if (numeratorDegreesOfFreedom <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.DEGREES_OF_FREEDOM,
-                                                   numeratorDegreesOfFreedom);
+            throw new NotStrictlyPositiveException(LocalizedFormats.DEGREES_OF_FREEDOM, numeratorDegreesOfFreedom);
         }
         if (denominatorDegreesOfFreedom <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.DEGREES_OF_FREEDOM,
-                                                   denominatorDegreesOfFreedom);
+            throw new NotStrictlyPositiveException(LocalizedFormats.DEGREES_OF_FREEDOM, denominatorDegreesOfFreedom);
         }
         this.numeratorDegreesOfFreedom = numeratorDegreesOfFreedom;
         this.denominatorDegreesOfFreedom = denominatorDegreesOfFreedom;
@@ -166,11 +154,13 @@ public class FDistribution extends AbstractRealDistribution {
         final double logx = FastMath.log(x);
         final double logn = FastMath.log(numeratorDegreesOfFreedom);
         final double logm = FastMath.log(denominatorDegreesOfFreedom);
-        final double lognxm = FastMath.log(numeratorDegreesOfFreedom * x +
-                denominatorDegreesOfFreedom);
-        return nhalf * logn + nhalf * logx - logx +
-               mhalf * logm - nhalf * lognxm - mhalf * lognxm -
-               Beta.logBeta(nhalf, mhalf);
+        final double lognxm = FastMath.log(numeratorDegreesOfFreedom * x + denominatorDegreesOfFreedom);
+        return nhalf * logn + nhalf * logx
+            - logx
+            + mhalf * logm
+            - nhalf * lognxm
+            - mhalf * lognxm
+            - Beta.logBeta(nhalf, mhalf);
     }
 
     /**
@@ -178,13 +168,13 @@ public class FDistribution extends AbstractRealDistribution {
      *
      * The implementation of this method is based on
      * <ul>
-     *  <li>
-     *   <a href="http://mathworld.wolfram.com/F-Distribution.html">
-     *   F-Distribution</a>, equation (4).
-     *  </li>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/F-Distribution.html">
+     * F-Distribution</a>, equation (4).
+     * </li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         double ret;
         if (x <= 0) {
             ret = 0;
@@ -192,9 +182,7 @@ public class FDistribution extends AbstractRealDistribution {
             double n = numeratorDegreesOfFreedom;
             double m = denominatorDegreesOfFreedom;
 
-            ret = Beta.regularizedBeta((n * x) / (m + n * x),
-                0.5 * n,
-                0.5 * m);
+            ret = Beta.regularizedBeta((n * x) / (m + n * x), 0.5 * n, 0.5 * m);
         }
         return ret;
     }
@@ -228,8 +216,8 @@ public class FDistribution extends AbstractRealDistribution {
      *
      * For denominator degrees of freedom parameter {@code b}, the mean is
      * <ul>
-     *  <li>if {@code b > 2} then {@code b / (b - 2)},</li>
-     *  <li>else undefined ({@code Double.NaN}).
+     * <li>if {@code b > 2} then {@code b / (b - 2)},</li>
+     * <li>else undefined ({@code Double.NaN}).
      * </ul>
      */
     public double getNumericalMean() {
@@ -248,11 +236,11 @@ public class FDistribution extends AbstractRealDistribution {
      * For numerator degrees of freedom parameter {@code a} and denominator
      * degrees of freedom parameter {@code b}, the variance is
      * <ul>
-     *  <li>
-     *    if {@code b > 4} then
-     *    {@code [2 * b^2 * (a + b - 2)] / [a * (b - 2)^2 * (b - 4)]},
-     *  </li>
-     *  <li>else undefined ({@code Double.NaN}).
+     * <li>
+     * if {@code b > 4} then
+     * {@code [2 * b^2 * (a + b - 2)] / [a * (b - 2)^2 * (b - 4)]},
+     * </li>
+     * <li>else undefined ({@code Double.NaN}).
      * </ul>
      */
     public double getNumericalVariance() {
@@ -275,8 +263,8 @@ public class FDistribution extends AbstractRealDistribution {
             final double numeratorDF = getNumeratorDegreesOfFreedom();
             final double denomDFMinusTwo = denominatorDF - 2;
 
-            return ( 2 * (denominatorDF * denominatorDF) * (numeratorDF + denominatorDF - 2) ) /
-                   ( (numeratorDF * (denomDFMinusTwo * denomDFMinusTwo) * (denominatorDF - 4)) );
+            return (2 * (denominatorDF * denominatorDF) * (numeratorDF + denominatorDF - 2))
+                / ((numeratorDF * (denomDFMinusTwo * denomDFMinusTwo) * (denominatorDF - 4)));
         }
 
         return Double.NaN;

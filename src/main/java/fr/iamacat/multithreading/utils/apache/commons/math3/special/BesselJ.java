@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,28 +31,33 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
  * Stegun</a> (Ch. 9-11), and <a href="http://dlmf.nist.gov/">DLMF</a> (Ch. 10).
  * <p>
  * This implementation is based on the rjbesl Fortran routine at
- * <a href="http://www.netlib.org/specfun/rjbesl">Netlib</a>.</p>
+ * <a href="http://www.netlib.org/specfun/rjbesl">Netlib</a>.
+ * </p>
  * <p>
- * From the Fortran code: </p>
+ * From the Fortran code:
+ * </p>
  * <p>
  * This program is based on a program written by David J. Sookne (2) that
  * computes values of the Bessel functions J or I of real argument and integer
  * order. Modifications include the restriction of the computation to the J
  * Bessel function of non-negative real argument, the extension of the
  * computation to arbitrary positive order, and the elimination of most
- * underflow.</p>
+ * underflow.
+ * </p>
  * <p>
- * References:</p>
+ * References:
+ * </p>
  * <ul>
  * <li>"A Note on Backward Recurrence Algorithms," Olver, F. W. J., and Sookne,
  * D. J., Math. Comp. 26, 1972, pp 941-947.</li>
  * <li>"Bessel Functions of Real Argument and Integer Order," Sookne, D. J., NBS
  * Jour. of Res. B. 77B, 1973, pp 125-132.</li>
- * </ul> </p>
+ * </ul>
+ * </p>
+ * 
  * @since 3.4
  */
-public class BesselJ
-    implements UnivariateFunction {
+public class BesselJ implements UnivariateFunction {
 
     // ---------------------------------------------------------------------
     // Mathematical constants
@@ -108,14 +111,10 @@ public class BesselJ
     private static final double X_MAX = 1.0e4;
 
     /** First 25 factorials as doubles */
-    private static final double[] FACT = {
-        1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0,
-        3628800.0, 39916800.0, 479001600.0, 6227020800.0, 87178291200.0,
-        1.307674368e12, 2.0922789888e13, 3.55687428096e14, 6.402373705728e15,
-        1.21645100408832e17, 2.43290200817664e18, 5.109094217170944e19,
-        1.12400072777760768e21, 2.585201673888497664e22,
-        6.2044840173323943936e23
-    };
+    private static final double[] FACT = { 1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0,
+        39916800.0, 479001600.0, 6227020800.0, 87178291200.0, 1.307674368e12, 2.0922789888e13, 3.55687428096e14,
+        6.402373705728e15, 1.21645100408832e17, 2.43290200817664e18, 5.109094217170944e19, 1.12400072777760768e21,
+        2.585201673888497664e22, 6.2044840173323943936e23 };
 
     /** Order of the function computed when {@link #value(double)} is used */
     private final double order;
@@ -136,10 +135,9 @@ public class BesselJ
      * @param x Argument
      * @return Value of the Bessel function at x
      * @throws MathIllegalArgumentException if {@code x} is too large relative to {@code order}
-     * @throws ConvergenceException if the algorithm fails to converge
+     * @throws ConvergenceException         if the algorithm fails to converge
      */
-    public double value(double x)
-        throws MathIllegalArgumentException, ConvergenceException {
+    public double value(double x) throws MathIllegalArgumentException, ConvergenceException {
         return BesselJ.value(order, x);
     }
 
@@ -147,13 +145,12 @@ public class BesselJ
      * Returns the first Bessel function, \(J_{order}(x)\).
      *
      * @param order Order of the Bessel function
-     * @param x Argument
+     * @param x     Argument
      * @return Value of the Bessel function of the first kind, \(J_{order}(x)\)
      * @throws MathIllegalArgumentException if {@code x} is too large relative to {@code order}
-     * @throws ConvergenceException if the algorithm fails to converge
+     * @throws ConvergenceException         if the algorithm fails to converge
      */
-    public static double value(double order, double x)
-        throws MathIllegalArgumentException, ConvergenceException {
+    public static double value(double order, double x) throws MathIllegalArgumentException, ConvergenceException {
         final int n = (int) order;
         final double alpha = order - n;
         final int nb = n + 1;
@@ -162,7 +159,7 @@ public class BesselJ
         if (res.nVals >= nb) {
             return res.vals[n];
         } else if (res.nVals < 0) {
-            throw new MathIllegalArgumentException(LocalizedFormats.BESSEL_FUNCTION_BAD_ARGUMENT,order, x);
+            throw new MathIllegalArgumentException(LocalizedFormats.BESSEL_FUNCTION_BAD_ARGUMENT, order, x);
         } else if (FastMath.abs(res.vals[res.nVals - 1]) < 1e-100) {
             return res.vals[n]; // underflow; return value (will be zero)
         }
@@ -175,7 +172,8 @@ public class BesselJ
      * {@link #getVals()} returns the computed function values.
      * {@link #getnVals()} is the number of values among those returned by {@link #getnVals()}
      * that can be considered accurate.
-     * </p><p>
+     * </p>
+     * <p>
      * <ul>
      * <li>nVals < 0: An argument is out of range. For example, nb <= 0, alpha
      * < 0 or > 1, or x is too large. In this case, b(0) is set to zero, the
@@ -187,7 +185,9 @@ public class BesselJ
      * precision is lost for nVals < n <= nb. If b(n) does not vanish for n >
      * nVals (because it is too small to be represented), and b(n)/b(nVals) =
      * \(10^{-k}\), then only the first NSIG-k significant figures of b(n) can be
-     * trusted.</li></ul></p>
+     * trusted.</li>
+     * </ul>
+     * </p>
      */
     public static class BesselJResult {
 
@@ -232,15 +232,16 @@ public class BesselJ
      * nVals = nb, i.e., all orders have been calculated to the desired accuracy.
      * See BesselResult class javadoc for details on return values.
      * </p>
-     * @param x non-negative real argument for which J's are to be calculated
+     * 
+     * @param x     non-negative real argument for which J's are to be calculated
      * @param alpha fractional part of order for which J's or exponentially
-     * scaled J's (\(J\cdot e^{x}\)) are to be calculated. 0 <= alpha < 1.0.
-     * @param nb integer number of functions to be calculated, nb > 0. The first
-     * function calculated is of order alpha, and the last is of order
-     * nb - 1 + alpha.
+     *              scaled J's (\(J\cdot e^{x}\)) are to be calculated. 0 <= alpha < 1.0.
+     * @param nb    integer number of functions to be calculated, nb > 0. The first
+     *              function calculated is of order alpha, and the last is of order
+     *              nb - 1 + alpha.
      * @return BesselJResult a vector of the functions
-     * \(J_{alpha}(x)\) through \(J_{nb-1+alpha}(x)\), or the corresponding exponentially
-     * scaled functions and an integer output variable indicating possible errors
+     *         \(J_{alpha}(x)\) through \(J_{nb-1+alpha}(x)\), or the corresponding exponentially
+     *         scaled functions and an integer output variable indicating possible errors
      */
     public static BesselJResult rjBesl(double x, double alpha, int nb) {
         final double[] b = new double[nb];
@@ -253,8 +254,7 @@ public class BesselJ
         // Check for out of range arguments.
         // ---------------------------------------------------------------------
         final int magx = (int) x;
-        if ((nb > 0) && (x >= X_MIN) && (x <= X_MAX) && (alpha >= 0) &&
-            (alpha < 1)) {
+        if ((nb > 0) && (x >= X_MIN) && (x <= X_MAX) && (alpha >= 0) && (alpha < 1)) {
             // ---------------------------------------------------------------------
             // Initialize result array to zero.
             // ---------------------------------------------------------------------
@@ -282,8 +282,7 @@ public class BesselJ
                     halfx = 0.5 * x;
                 }
                 if (alpha != 0) {
-                    tempa = FastMath.pow(halfx, alpha) /
-                            (alpha * Gamma.gamma(alpha));
+                    tempa = FastMath.pow(halfx, alpha) / (alpha * Gamma.gamma(alpha));
                 }
                 tempb = 0;
                 if (x + 1 > 1) {
@@ -303,7 +302,7 @@ public class BesselJ
                         // Calculate higher order functions.
                         // ---------------------------------------------------------------------
                         tempc = halfx;
-                        tover = tempb != 0 ? ENMTEN / tempb :  2 * ENMTEN / x;
+                        tover = tempb != 0 ? ENMTEN / tempb : 2 * ENMTEN / x;
                         for (int n = 1; n < nb; ++n) {
                             tempa /= alpem;
                             alpem += 1;
@@ -372,8 +371,7 @@ public class BesselJ
                     capq = (capq + 1) * ((gnu * gnu) - 1) * (0.125 / x);
                     b[i - 1] = xc * (capp * vcos - capq * vsin);
                     if (nb == 1) {
-                        return new BesselJResult(MathArrays.copyOf(b, b.length),
-                                                 ncalc);
+                        return new BesselJResult(MathArrays.copyOf(b, b.length), ncalc);
                     }
                     t = vsin;
                     vsin = -vcos;
@@ -478,8 +476,7 @@ public class BesselJ
                         // ---------------------------------------------------------------------
                         // Calculate special significance test for NBMX > 2.
                         // ---------------------------------------------------------------------
-                        test = FastMath.max(test, FastMath.sqrt(plast * ENSIG) *
-                                                  FastMath.sqrt(2 * p));
+                        test = FastMath.max(test, FastMath.sqrt(plast * ENSIG) * FastMath.sqrt(2 * p));
                     }
                 }
                 // ---------------------------------------------------------------------

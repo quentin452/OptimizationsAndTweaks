@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,8 +43,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
  * The Akima algorithm requires that {@code n >= 5}.
  * </p>
  */
-public class AkimaSplineInterpolator
-    implements UnivariateInterpolator {
+public class AkimaSplineInterpolator implements UnivariateInterpolator {
+
     /** The minimum number of points that are needed to compute the function. */
     private static final int MINIMUM_NUMBER_POINTS = 5;
 
@@ -56,20 +54,16 @@ public class AkimaSplineInterpolator
      * @param xvals the arguments for the interpolation points
      * @param yvals the values for the interpolation points
      * @return a function which interpolates the data set
-     * @throws DimensionMismatchException if {@code xvals} and {@code yvals} have
-     *         different sizes.
+     * @throws DimensionMismatchException    if {@code xvals} and {@code yvals} have
+     *                                       different sizes.
      * @throws NonMonotonicSequenceException if {@code xvals} is not sorted in
-     *         strict increasing order.
-     * @throws NumberIsTooSmallException if the size of {@code xvals} is smaller
-     *         than 5.
+     *                                       strict increasing order.
+     * @throws NumberIsTooSmallException     if the size of {@code xvals} is smaller
+     *                                       than 5.
      */
-    public PolynomialSplineFunction interpolate(double[] xvals,
-                                                double[] yvals)
-        throws DimensionMismatchException,
-               NumberIsTooSmallException,
-               NonMonotonicSequenceException {
-        if (xvals == null ||
-            yvals == null) {
+    public PolynomialSplineFunction interpolate(double[] xvals, double[] yvals)
+        throws DimensionMismatchException, NumberIsTooSmallException, NonMonotonicSequenceException {
+        if (xvals == null || yvals == null) {
             throw new NullArgumentException();
         }
 
@@ -78,9 +72,11 @@ public class AkimaSplineInterpolator
         }
 
         if (xvals.length < MINIMUM_NUMBER_POINTS) {
-            throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_OF_POINTS,
-                                                xvals.length,
-                                                MINIMUM_NUMBER_POINTS, true);
+            throw new NumberIsTooSmallException(
+                LocalizedFormats.NUMBER_OF_POINTS,
+                xvals.length,
+                MINIMUM_NUMBER_POINTS,
+                true);
         }
 
         MathArrays.checkOrder(xvals);
@@ -104,8 +100,7 @@ public class AkimaSplineInterpolator
         for (int i = 2; i < firstDerivatives.length - 2; i++) {
             final double wP = weights[i + 1];
             final double wM = weights[i - 1];
-            if (Precision.equals(wP, 0.0) &&
-                Precision.equals(wM, 0.0)) {
+            if (Precision.equals(wP, 0.0) && Precision.equals(wM, 0.0)) {
                 final double xv = xvals[i];
                 final double xvP = xvals[i + 1];
                 final double xvM = xvals[i - 1];
@@ -117,12 +112,20 @@ public class AkimaSplineInterpolator
 
         firstDerivatives[0] = differentiateThreePoint(xvals, yvals, 0, 0, 1, 2);
         firstDerivatives[1] = differentiateThreePoint(xvals, yvals, 1, 0, 1, 2);
-        firstDerivatives[xvals.length - 2] = differentiateThreePoint(xvals, yvals, xvals.length - 2,
-                                                                     xvals.length - 3, xvals.length - 2,
-                                                                     xvals.length - 1);
-        firstDerivatives[xvals.length - 1] = differentiateThreePoint(xvals, yvals, xvals.length - 1,
-                                                                     xvals.length - 3, xvals.length - 2,
-                                                                     xvals.length - 1);
+        firstDerivatives[xvals.length - 2] = differentiateThreePoint(
+            xvals,
+            yvals,
+            xvals.length - 2,
+            xvals.length - 3,
+            xvals.length - 2,
+            xvals.length - 1);
+        firstDerivatives[xvals.length - 1] = differentiateThreePoint(
+            xvals,
+            yvals,
+            xvals.length - 1,
+            xvals.length - 3,
+            xvals.length - 2,
+            xvals.length - 1);
 
         return interpolateHermiteSorted(xvals, yvals, firstDerivatives);
     }
@@ -132,19 +135,16 @@ public class AkimaSplineInterpolator
      * Math.NET CubicSpline class. This is used by both the Apache Math and the
      * Math.NET Akima Cubic Spline algorithms
      *
-     * @param xvals x values to calculate the numerical derivative with
-     * @param yvals y values to calculate the numerical derivative with
+     * @param xvals                  x values to calculate the numerical derivative with
+     * @param yvals                  y values to calculate the numerical derivative with
      * @param indexOfDifferentiation index of the elemnt we are calculating the derivative around
-     * @param indexOfFirstSample index of the first element to sample for the three point method
-     * @param indexOfSecondsample index of the second element to sample for the three point method
-     * @param indexOfThirdSample index of the third element to sample for the three point method
+     * @param indexOfFirstSample     index of the first element to sample for the three point method
+     * @param indexOfSecondsample    index of the second element to sample for the three point method
+     * @param indexOfThirdSample     index of the third element to sample for the three point method
      * @return the derivative
      */
-    private double differentiateThreePoint(double[] xvals, double[] yvals,
-                                           int indexOfDifferentiation,
-                                           int indexOfFirstSample,
-                                           int indexOfSecondsample,
-                                           int indexOfThirdSample) {
+    private double differentiateThreePoint(double[] xvals, double[] yvals, int indexOfDifferentiation,
+        int indexOfFirstSample, int indexOfSecondsample, int indexOfThirdSample) {
         final double x0 = yvals[indexOfFirstSample];
         final double x1 = yvals[indexOfSecondsample];
         final double x2 = yvals[indexOfThirdSample];
@@ -164,28 +164,24 @@ public class AkimaSplineInterpolator
      * pairs and their derivatives. This is modeled off of the
      * InterpolateHermiteSorted method in the Math.NET CubicSpline class.
      *
-     * @param xvals x values for interpolation
-     * @param yvals y values for interpolation
+     * @param xvals            x values for interpolation
+     * @param yvals            y values for interpolation
      * @param firstDerivatives first derivative values of the function
      * @return polynomial that fits the function
      */
-    private PolynomialSplineFunction interpolateHermiteSorted(double[] xvals,
-                                                              double[] yvals,
-                                                              double[] firstDerivatives) {
+    private PolynomialSplineFunction interpolateHermiteSorted(double[] xvals, double[] yvals,
+        double[] firstDerivatives) {
         if (xvals.length != yvals.length) {
             throw new DimensionMismatchException(xvals.length, yvals.length);
         }
 
         if (xvals.length != firstDerivatives.length) {
-            throw new DimensionMismatchException(xvals.length,
-                                                 firstDerivatives.length);
+            throw new DimensionMismatchException(xvals.length, firstDerivatives.length);
         }
 
         final int minimumLength = 2;
         if (xvals.length < minimumLength) {
-            throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_OF_POINTS,
-                                                xvals.length, minimumLength,
-                                                true);
+            throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_OF_POINTS, xvals.length, minimumLength, true);
         }
 
         final int size = xvals.length - 1;

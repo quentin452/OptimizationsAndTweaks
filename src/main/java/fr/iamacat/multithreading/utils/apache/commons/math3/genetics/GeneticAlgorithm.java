@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +16,8 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.genetics;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
-import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 import fr.iamacat.multithreading.utils.apache.commons.math3.random.JDKRandomGenerator;
+import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Implementation of a genetic algorithm. All factors that govern the operation
@@ -34,7 +32,7 @@ public class GeneticAlgorithm {
      * reproducible results. Use {@link #setRandomGenerator(RandomGenerator)} to supply an alternative to the default
      * JDK-provided PRNG.
      */
-    //@GuardedBy("this")
+    // @GuardedBy("this")
     private static RandomGenerator randomGenerator = new JDKRandomGenerator();
 
     /** the crossover policy used by the algorithm. */
@@ -57,26 +55,23 @@ public class GeneticAlgorithm {
 
     /**
      * Create a new genetic algorithm.
+     * 
      * @param crossoverPolicy The {@link CrossoverPolicy}
-     * @param crossoverRate The crossover rate as a percentage (0-1 inclusive)
-     * @param mutationPolicy The {@link MutationPolicy}
-     * @param mutationRate The mutation rate as a percentage (0-1 inclusive)
+     * @param crossoverRate   The crossover rate as a percentage (0-1 inclusive)
+     * @param mutationPolicy  The {@link MutationPolicy}
+     * @param mutationRate    The mutation rate as a percentage (0-1 inclusive)
      * @param selectionPolicy The {@link SelectionPolicy}
      * @throws OutOfRangeException if the crossover or mutation rate is outside the [0, 1] range
      */
-    public GeneticAlgorithm(final CrossoverPolicy crossoverPolicy,
-                            final double crossoverRate,
-                            final MutationPolicy mutationPolicy,
-                            final double mutationRate,
-                            final SelectionPolicy selectionPolicy) throws OutOfRangeException {
+    public GeneticAlgorithm(final CrossoverPolicy crossoverPolicy, final double crossoverRate,
+        final MutationPolicy mutationPolicy, final double mutationRate, final SelectionPolicy selectionPolicy)
+        throws OutOfRangeException {
 
         if (crossoverRate < 0 || crossoverRate > 1) {
-            throw new OutOfRangeException(LocalizedFormats.CROSSOVER_RATE,
-                                          crossoverRate, 0, 1);
+            throw new OutOfRangeException(LocalizedFormats.CROSSOVER_RATE, crossoverRate, 0, 1);
         }
         if (mutationRate < 0 || mutationRate > 1) {
-            throw new OutOfRangeException(LocalizedFormats.MUTATION_RATE,
-                                          mutationRate, 0, 1);
+            throw new OutOfRangeException(LocalizedFormats.MUTATION_RATE, mutationRate, 0, 1);
         }
         this.crossoverPolicy = crossoverPolicy;
         this.crossoverRate = crossoverRate;
@@ -109,7 +104,7 @@ public class GeneticAlgorithm {
      * property with the number of generations evolved before the StoppingCondition
      * is satisfied.
      *
-     * @param initial the initial, seed population.
+     * @param initial   the initial, seed population.
      * @param condition the stopping condition used to stop evolution.
      * @return the population that satisfies the stopping condition.
      */
@@ -127,19 +122,20 @@ public class GeneticAlgorithm {
      * Evolve the given population into the next generation.
      * <p>
      * <ol>
-     *  <li>Get nextGeneration population to fill from <code>current</code>
-     *      generation, using its nextGeneration method</li>
-     *  <li>Loop until new generation is filled:</li>
-     *  <ul><li>Apply configured SelectionPolicy to select a pair of parents
-     *          from <code>current</code></li>
-     *      <li>With probability = {@link #getCrossoverRate()}, apply
-     *          configured {@link CrossoverPolicy} to parents</li>
-     *      <li>With probability = {@link #getMutationRate()}, apply
-     *          configured {@link MutationPolicy} to each of the offspring</li>
-     *      <li>Add offspring individually to nextGeneration,
-     *          space permitting</li>
-     *  </ul>
-     *  <li>Return nextGeneration</li>
+     * <li>Get nextGeneration population to fill from <code>current</code>
+     * generation, using its nextGeneration method</li>
+     * <li>Loop until new generation is filled:</li>
+     * <ul>
+     * <li>Apply configured SelectionPolicy to select a pair of parents
+     * from <code>current</code></li>
+     * <li>With probability = {@link #getCrossoverRate()}, apply
+     * configured {@link CrossoverPolicy} to parents</li>
+     * <li>With probability = {@link #getMutationRate()}, apply
+     * configured {@link MutationPolicy} to each of the offspring</li>
+     * <li>Add offspring individually to nextGeneration,
+     * space permitting</li>
+     * </ul>
+     * <li>Return nextGeneration</li>
      * </ol>
      *
      * @param current the current population.
@@ -182,6 +178,7 @@ public class GeneticAlgorithm {
 
     /**
      * Returns the crossover policy.
+     * 
      * @return crossover policy
      */
     public CrossoverPolicy getCrossoverPolicy() {
@@ -190,6 +187,7 @@ public class GeneticAlgorithm {
 
     /**
      * Returns the crossover rate.
+     * 
      * @return crossover rate
      */
     public double getCrossoverRate() {
@@ -198,6 +196,7 @@ public class GeneticAlgorithm {
 
     /**
      * Returns the mutation policy.
+     * 
      * @return mutation policy
      */
     public MutationPolicy getMutationPolicy() {
@@ -206,6 +205,7 @@ public class GeneticAlgorithm {
 
     /**
      * Returns the mutation rate.
+     * 
      * @return mutation rate
      */
     public double getMutationRate() {
@@ -214,6 +214,7 @@ public class GeneticAlgorithm {
 
     /**
      * Returns the selection policy.
+     * 
      * @return selection policy
      */
     public SelectionPolicy getSelectionPolicy() {

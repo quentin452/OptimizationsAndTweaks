@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +15,11 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.util;
 
 import java.util.Iterator;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathUnsupportedOperationException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
 
 /**
@@ -29,6 +28,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroExcept
  * @since 3.6
  */
 public class IntegerSequence {
+
     /**
      * Utility class contains only static methods.
      */
@@ -39,11 +39,10 @@ public class IntegerSequence {
      * It calls {@link #range(int,int,int) range(start, end, 1)}.
      *
      * @param start First value of the range.
-     * @param end Last value of the range.
+     * @param end   Last value of the range.
      * @return a range.
      */
-    public static Range range(int start,
-                              int end) {
+    public static Range range(int start, int end) {
         return range(start, end, 1);
     }
 
@@ -53,14 +52,12 @@ public class IntegerSequence {
      * and \( n \) is such that \( a_n <= max \) and \( a_{n+1} > max \).
      *
      * @param start First value of the range.
-     * @param max Last value of the range that satisfies the above
-     * construction rule.
-     * @param step Increment.
+     * @param max   Last value of the range that satisfies the above
+     *              construction rule.
+     * @param step  Increment.
      * @return a range.
      */
-    public static Range range(final int start,
-                              final int max,
-                              final int step) {
+    public static Range range(final int start, final int max, final int step) {
         return new Range(start, max, step);
     }
 
@@ -68,6 +65,7 @@ public class IntegerSequence {
      * Generates a sequence of integers.
      */
     public static class Range implements Iterable<Integer> {
+
         /** Number of integers contained in this range. */
         private final int size;
         /** First value. */
@@ -83,13 +81,11 @@ public class IntegerSequence {
          * and \( n \) is such that \( a_n <= max \) and \( a_{n+1} > max \).
          *
          * @param start First value of the range.
-         * @param max Last value of the range that satisfies the above
-         * construction rule.
-         * @param step Increment.
+         * @param max   Last value of the range that satisfies the above
+         *              construction rule.
+         * @param step  Increment.
          */
-        public Range(int start,
-                     int max,
-                     int step) {
+        public Range(int start, int max, int step) {
             this.start = start;
             this.max = max;
             this.step = step;
@@ -125,14 +121,15 @@ public class IntegerSequence {
      * select which exception must be thrown.
      */
     public static class Incrementor implements Iterator<Integer> {
+
         /** Default callback. */
-        private static final MaxCountExceededCallback CALLBACK
-            = new MaxCountExceededCallback() {
-                    /** {@inheritDoc} */
-                    public void trigger(int max) throws MaxCountExceededException {
-                        throw new MaxCountExceededException(max);
-                    }
-                };
+        private static final MaxCountExceededCallback CALLBACK = new MaxCountExceededCallback() {
+
+            /** {@inheritDoc} */
+            public void trigger(int max) throws MaxCountExceededException {
+                throw new MaxCountExceededException(max);
+            }
+        };
 
         /** Initial value the counter. */
         private final int init;
@@ -150,6 +147,7 @@ public class IntegerSequence {
          * The {@link #trigger(int) trigger} method should usually throw an exception.
          */
         public interface MaxCountExceededCallback {
+
             /**
              * Function called when the maximal count has been reached.
              *
@@ -165,16 +163,12 @@ public class IntegerSequence {
          * or when {@code nTimes} increments have been performed.
          *
          * @param start Initial value.
-         * @param max Maximal count.
-         * @param step Increment.
-         * @param cb Function to be called when the maximal count has been reached.
+         * @param max   Maximal count.
+         * @param step  Increment.
+         * @param cb    Function to be called when the maximal count has been reached.
          * @throws NullArgumentException if {@code cb} is {@code null}.
          */
-        private Incrementor(int start,
-                            int max,
-                            int step,
-                            MaxCountExceededCallback cb)
-            throws NullArgumentException {
+        private Incrementor(int start, int max, int step, MaxCountExceededCallback cb) throws NullArgumentException {
             if (cb == null) {
                 throw new NullArgumentException();
             }
@@ -205,10 +199,7 @@ public class IntegerSequence {
          * @return a new instance.
          */
         public Incrementor withStart(int start) {
-            return new Incrementor(start,
-                                   this.maximalCount,
-                                   this.increment,
-                                   this.maxCountCallback);
+            return new Incrementor(start, this.maximalCount, this.increment, this.maxCountCallback);
         }
 
         /**
@@ -219,10 +210,7 @@ public class IntegerSequence {
          * @return a new instance.
          */
         public Incrementor withMaximalCount(int max) {
-            return new Incrementor(this.init,
-                                   max,
-                                   this.increment,
-                                   this.maxCountCallback);
+            return new Incrementor(this.init, max, this.increment, this.maxCountCallback);
         }
 
         /**
@@ -236,10 +224,7 @@ public class IntegerSequence {
             if (step == 0) {
                 throw new ZeroException();
             }
-            return new Incrementor(this.init,
-                                   this.maximalCount,
-                                   step,
-                                   this.maxCountCallback);
+            return new Incrementor(this.init, this.maximalCount, step, this.maxCountCallback);
         }
 
         /**
@@ -250,10 +235,7 @@ public class IntegerSequence {
          * @return a new instance.
          */
         public Incrementor withCallback(MaxCountExceededCallback cb) {
-            return new Incrementor(this.init,
-                                   this.maximalCount,
-                                   this.increment,
-                                   cb);
+            return new Incrementor(this.init, this.maximalCount, this.increment, cb);
         }
 
         /**
@@ -278,8 +260,8 @@ public class IntegerSequence {
          * Checks whether incrementing the counter {@code nTimes} is allowed.
          *
          * @return {@code false} if calling {@link #increment()}
-         * will trigger a {@code MaxCountExceededException},
-         * {@code true} otherwise.
+         *         will trigger a {@code MaxCountExceededException},
+         *         {@code true} otherwise.
          */
         public boolean canIncrement() {
             return canIncrement(1);
@@ -290,21 +272,19 @@ public class IntegerSequence {
          *
          * @param nTimes Number of increments.
          * @return {@code false} if calling {@link #increment(int)
-         * increment(nTimes)} would call the {@link MaxCountExceededCallback callback}
-         * {@code true} otherwise.
+         *         increment(nTimes)} would call the {@link MaxCountExceededCallback callback}
+         *         {@code true} otherwise.
          */
         public boolean canIncrement(int nTimes) {
             final int finalCount = count + nTimes * increment;
-            return increment < 0 ?
-                finalCount > maximalCount :
-                finalCount < maximalCount;
+            return increment < 0 ? finalCount > maximalCount : finalCount < maximalCount;
         }
 
         /**
          * Performs multiple increments.
          *
          * @param nTimes Number of increments.
-         * @throws MaxCountExceededException at counter exhaustion.
+         * @throws MaxCountExceededException    at counter exhaustion.
          * @throws NotStrictlyPositiveException if {@code nTimes <= 0}.
          *
          * @see #increment()
@@ -330,7 +310,7 @@ public class IntegerSequence {
          * a {@code MaxCountExceededException}.
          *
          * @throws MaxCountExceededException at counter exhaustion, unless a
-         * custom {@link MaxCountExceededCallback callback} has been set.
+         *                                   custom {@link MaxCountExceededCallback callback} has been set.
          *
          * @see #increment(int)
          */

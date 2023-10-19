@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +19,9 @@ import java.io.Serializable;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.Field;
 import fr.iamacat.multithreading.utils.apache.commons.math3.FieldElement;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoDataException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoDataException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -37,14 +35,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * <p>
  * As specified in the {@link FieldMatrix} interface, matrix element indexing
  * is 0-based -- e.g., <code>getEntry(0, 0)</code>
- * returns the element in the first row, first column of the matrix.</li></ul>
+ * returns the element in the first row, first column of the matrix.</li>
+ * </ul>
  * </p>
  *
  * @param <T> the type of the field elements
  */
-public class Array2DRowFieldMatrix<T extends FieldElement<T>>
-    extends AbstractFieldMatrix<T>
-    implements Serializable {
+public class Array2DRowFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMatrix<T> implements Serializable {
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 7260756672015356458L;
     /** Entries of the matrix */
@@ -52,6 +50,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /**
      * Creates a matrix with no data
+     * 
      * @param field field to which the elements belong
      */
     public Array2DRowFieldMatrix(final Field<T> field) {
@@ -61,13 +60,12 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /**
      * Create a new {@code FieldMatrix<T>} with the supplied row and column dimensions.
      *
-     * @param field Field to which the elements belong.
-     * @param rowDimension Number of rows in the new matrix.
+     * @param field           Field to which the elements belong.
+     * @param rowDimension    Number of rows in the new matrix.
      * @param columnDimension Number of columns in the new matrix.
      * @throws NotStrictlyPositiveException if row or column dimension is not positive.
      */
-    public Array2DRowFieldMatrix(final Field<T> field, final int rowDimension,
-                                 final int columnDimension)
+    public Array2DRowFieldMatrix(final Field<T> field, final int rowDimension, final int columnDimension)
         throws NotStrictlyPositiveException {
         super(field, rowDimension, columnDimension);
         data = MathArrays.buildArray(field, rowDimension, columnDimension);
@@ -76,39 +74,41 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /**
      * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
-     * <p>The input array is copied, not referenced. This constructor has
+     * <p>
+     * The input array is copied, not referenced. This constructor has
      * the same effect as calling {@link #Array2DRowFieldMatrix(FieldElement[][], boolean)}
-     * with the second argument set to {@code true}.</p>
+     * with the second argument set to {@code true}.
+     * </p>
      *
      * @param d Data for the new matrix.
      * @throws DimensionMismatchException if {@code d} is not rectangular.
-     * @throws NullArgumentException if {@code d} is {@code null}.
-     * @throws NoDataException if there are not at least one row and one column.
+     * @throws NullArgumentException      if {@code d} is {@code null}.
+     * @throws NoDataException            if there are not at least one row and one column.
      * @see #Array2DRowFieldMatrix(FieldElement[][], boolean)
      */
     public Array2DRowFieldMatrix(final T[][] d)
-        throws DimensionMismatchException, NullArgumentException,
-        NoDataException {
+        throws DimensionMismatchException, NullArgumentException, NoDataException {
         this(extractField(d), d);
     }
 
     /**
      * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
-     * <p>The input array is copied, not referenced. This constructor has
+     * <p>
+     * The input array is copied, not referenced. This constructor has
      * the same effect as calling {@link #Array2DRowFieldMatrix(FieldElement[][], boolean)}
-     * with the second argument set to {@code true}.</p>
+     * with the second argument set to {@code true}.
+     * </p>
      *
      * @param field Field to which the elements belong.
-     * @param d Data for the new matrix.
+     * @param d     Data for the new matrix.
      * @throws DimensionMismatchException if {@code d} is not rectangular.
-     * @throws NullArgumentException if {@code d} is {@code null}.
-     * @throws NoDataException if there are not at least one row and one column.
+     * @throws NullArgumentException      if {@code d} is {@code null}.
+     * @throws NoDataException            if there are not at least one row and one column.
      * @see #Array2DRowFieldMatrix(FieldElement[][], boolean)
      */
     public Array2DRowFieldMatrix(final Field<T> field, final T[][] d)
-        throws DimensionMismatchException, NullArgumentException,
-        NoDataException {
+        throws DimensionMismatchException, NullArgumentException, NoDataException {
         super(field);
         copyIn(d);
     }
@@ -116,38 +116,41 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /**
      * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
-     * <p>If an array is built specially in order to be embedded in a
+     * <p>
+     * If an array is built specially in order to be embedded in a
      * {@code FieldMatrix<T>} and not used directly, the {@code copyArray} may be
      * set to {@code false}. This will prevent the copying and improve
-     * performance as no new array will be built and no data will be copied.</p>
+     * performance as no new array will be built and no data will be copied.
+     * </p>
      *
-     * @param d Data for the new matrix.
+     * @param d         Data for the new matrix.
      * @param copyArray Whether to copy or reference the input array.
      * @throws DimensionMismatchException if {@code d} is not rectangular.
-     * @throws NoDataException if there are not at least one row and one column.
-     * @throws NullArgumentException if {@code d} is {@code null}.
+     * @throws NoDataException            if there are not at least one row and one column.
+     * @throws NullArgumentException      if {@code d} is {@code null}.
      * @see #Array2DRowFieldMatrix(FieldElement[][])
      */
     public Array2DRowFieldMatrix(final T[][] d, final boolean copyArray)
-        throws DimensionMismatchException, NoDataException,
-        NullArgumentException {
+        throws DimensionMismatchException, NoDataException, NullArgumentException {
         this(extractField(d), d, copyArray);
     }
 
     /**
      * Create a new {@code FieldMatrix<T>} using the input array as the underlying
      * data array.
-     * <p>If an array is built specially in order to be embedded in a
+     * <p>
+     * If an array is built specially in order to be embedded in a
      * {@code FieldMatrix<T>} and not used directly, the {@code copyArray} may be
      * set to {@code false}. This will prevent the copying and improve
-     * performance as no new array will be built and no data will be copied.</p>
+     * performance as no new array will be built and no data will be copied.
+     * </p>
      *
-     * @param field Field to which the elements belong.
-     * @param d Data for the new matrix.
+     * @param field     Field to which the elements belong.
+     * @param d         Data for the new matrix.
      * @param copyArray Whether to copy or reference the input array.
      * @throws DimensionMismatchException if {@code d} is not rectangular.
-     * @throws NoDataException if there are not at least one row and one column.
-     * @throws NullArgumentException if {@code d} is {@code null}.
+     * @throws NoDataException            if there are not at least one row and one column.
+     * @throws NullArgumentException      if {@code d} is {@code null}.
      * @see #Array2DRowFieldMatrix(FieldElement[][])
      */
     public Array2DRowFieldMatrix(final Field<T> field, final T[][] d, final boolean copyArray)
@@ -192,7 +195,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * The input array is copied.
      *
      * @param field Field to which the elements belong.
-     * @param v Column vector holding data for new matrix.
+     * @param v     Column vector holding data for new matrix.
      */
     public Array2DRowFieldMatrix(final Field<T> field, final T[] v) {
         super(field);
@@ -205,8 +208,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public FieldMatrix<T> createMatrix(final int rowDimension,
-                                       final int columnDimension)
+    public FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension)
         throws NotStrictlyPositiveException {
         return new Array2DRowFieldMatrix<T>(getField(), rowDimension, columnDimension);
     }
@@ -223,19 +225,18 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @param m Matrix to be added.
      * @return {@code this} + m.
      * @throws MatrixDimensionMismatchException if {@code m} is not the same
-     * size as this matrix.
+     *                                          size as this matrix.
      */
-    public Array2DRowFieldMatrix<T> add(final Array2DRowFieldMatrix<T> m)
-        throws MatrixDimensionMismatchException {
+    public Array2DRowFieldMatrix<T> add(final Array2DRowFieldMatrix<T> m) throws MatrixDimensionMismatchException {
         // safety check
         checkAdditionCompatible(m);
 
-        final int rowCount    = getRowDimension();
+        final int rowCount = getRowDimension();
         final int columnCount = getColumnDimension();
         final T[][] outData = MathArrays.buildArray(getField(), rowCount, columnCount);
         for (int row = 0; row < rowCount; row++) {
-            final T[] dataRow    = data[row];
-            final T[] mRow       = m.data[row];
+            final T[] dataRow = data[row];
+            final T[] mRow = m.data[row];
             final T[] outDataRow = outData[row];
             for (int col = 0; col < columnCount; col++) {
                 outDataRow[col] = dataRow[col].add(mRow[col]);
@@ -251,19 +252,18 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @param m Matrix to be subtracted.
      * @return {@code this} + m.
      * @throws MatrixDimensionMismatchException if {@code m} is not the same
-     * size as this matrix.
+     *                                          size as this matrix.
      */
-    public Array2DRowFieldMatrix<T> subtract(final Array2DRowFieldMatrix<T> m)
-        throws MatrixDimensionMismatchException {
+    public Array2DRowFieldMatrix<T> subtract(final Array2DRowFieldMatrix<T> m) throws MatrixDimensionMismatchException {
         // safety check
         checkSubtractionCompatible(m);
 
-        final int rowCount    = getRowDimension();
+        final int rowCount = getRowDimension();
         final int columnCount = getColumnDimension();
         final T[][] outData = MathArrays.buildArray(getField(), rowCount, columnCount);
         for (int row = 0; row < rowCount; row++) {
-            final T[] dataRow    = data[row];
-            final T[] mRow       = m.data[row];
+            final T[] dataRow = data[row];
+            final T[] mRow = m.data[row];
             final T[] outDataRow = outData[row];
             for (int col = 0; col < columnCount; col++) {
                 outDataRow[col] = dataRow[col].subtract(mRow[col]);
@@ -280,10 +280,9 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * @param m Matrix to postmultiply by.
      * @return {@code this} * m.
      * @throws DimensionMismatchException if the number of columns of this
-     * matrix is not equal to the number of rows of {@code m}.
+     *                                    matrix is not equal to the number of rows of {@code m}.
      */
-    public Array2DRowFieldMatrix<T> multiply(final Array2DRowFieldMatrix<T> m)
-        throws DimensionMismatchException {
+    public Array2DRowFieldMatrix<T> multiply(final Array2DRowFieldMatrix<T> m) throws DimensionMismatchException {
         // safety check
         checkMultiplicationCompatible(m);
 
@@ -292,7 +291,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
         final int nSum = this.getColumnDimension();
         final T[][] outData = MathArrays.buildArray(getField(), nRows, nCols);
         for (int row = 0; row < nRows; row++) {
-            final T[] dataRow    = data[row];
+            final T[] dataRow = data[row];
             final T[] outDataRow = outData[row];
             for (int col = 0; col < nCols; col++) {
                 T sum = getField().getZero();
@@ -325,10 +324,8 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public void setSubMatrix(final T[][] subMatrix, final int row,
-                             final int column)
-        throws OutOfRangeException, NullArgumentException, NoDataException,
-        DimensionMismatchException {
+    public void setSubMatrix(final T[][] subMatrix, final int row, final int column)
+        throws OutOfRangeException, NullArgumentException, NoDataException, DimensionMismatchException {
         if (data == null) {
             if (row > 0) {
                 throw new MathIllegalStateException(LocalizedFormats.FIRST_ROWS_NOT_INITIALIZED_YET, row);
@@ -360,8 +357,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public T getEntry(final int row, final int column)
-        throws OutOfRangeException {
+    public T getEntry(final int row, final int column) throws OutOfRangeException {
         checkRowIndex(row);
         checkColumnIndex(column);
 
@@ -370,8 +366,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public void setEntry(final int row, final int column, final T value)
-        throws OutOfRangeException {
+    public void setEntry(final int row, final int column, final T value) throws OutOfRangeException {
         checkRowIndex(row);
         checkColumnIndex(column);
 
@@ -380,8 +375,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public void addToEntry(final int row, final int column, final T increment)
-        throws OutOfRangeException {
+    public void addToEntry(final int row, final int column, final T increment) throws OutOfRangeException {
         checkRowIndex(row);
         checkColumnIndex(column);
 
@@ -390,8 +384,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public void multiplyEntry(final int row, final int column, final T factor)
-        throws OutOfRangeException {
+    public void multiplyEntry(final int row, final int column, final T factor) throws OutOfRangeException {
         checkRowIndex(row);
         checkColumnIndex(column);
 
@@ -454,7 +447,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     @Override
     public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor) {
-        final int rows    = getRowDimension();
+        final int rows = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
         for (int i = 0; i < rows; ++i) {
@@ -469,7 +462,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     @Override
     public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor) {
-        final int rows    = getRowDimension();
+        final int rows = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
         for (int i = 0; i < rows; ++i) {
@@ -483,13 +476,10 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor,
-                            final int startRow, final int endRow,
-                            final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
-        visitor.start(getRowDimension(), getColumnDimension(),
-                      startRow, endRow, startColumn, endColumn);
+        visitor.start(getRowDimension(), getColumnDimension(), startRow, endRow, startColumn, endColumn);
         for (int i = startRow; i <= endRow; ++i) {
             final T[] rowI = data[i];
             for (int j = startColumn; j <= endColumn; ++j) {
@@ -501,13 +491,10 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor,
-                            final int startRow, final int endRow,
-                            final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
-        visitor.start(getRowDimension(), getColumnDimension(),
-                      startRow, endRow, startColumn, endColumn);
+        visitor.start(getRowDimension(), getColumnDimension(), startRow, endRow, startColumn, endColumn);
         for (int i = startRow; i <= endRow; ++i) {
             final T[] rowI = data[i];
             for (int j = startColumn; j <= endColumn; ++j) {
@@ -520,7 +507,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     @Override
     public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor) {
-        final int rows    = getRowDimension();
+        final int rows = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
         for (int j = 0; j < columns; ++j) {
@@ -535,7 +522,7 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
     /** {@inheritDoc} */
     @Override
     public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor) {
-        final int rows    = getRowDimension();
+        final int rows = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
         for (int j = 0; j < columns; ++j) {
@@ -548,13 +535,10 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor,
-                               final int startRow, final int endRow,
-                               final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
-    checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
-        visitor.start(getRowDimension(), getColumnDimension(),
-                      startRow, endRow, startColumn, endColumn);
+    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
+        checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
+        visitor.start(getRowDimension(), getColumnDimension(), startRow, endRow, startColumn, endColumn);
         for (int j = startColumn; j <= endColumn; ++j) {
             for (int i = startRow; i <= endRow; ++i) {
                 final T[] rowI = data[i];
@@ -566,13 +550,10 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
 
     /** {@inheritDoc} */
     @Override
-    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor,
-                               final int startRow, final int endRow,
-                               final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
-        visitor.start(getRowDimension(), getColumnDimension(),
-                      startRow, endRow, startColumn, endColumn);
+        visitor.start(getRowDimension(), getColumnDimension(), startRow, endRow, startColumn, endColumn);
         for (int j = startColumn; j <= endColumn; ++j) {
             for (int i = startRow; i <= endRow; ++i) {
                 visitor.visit(i, j, data[i][j]);
@@ -600,13 +581,11 @@ public class Array2DRowFieldMatrix<T extends FieldElement<T>>
      * Replace data with a fresh copy of the input array.
      *
      * @param in Data to copy.
-     * @throws NoDataException if the input array is empty.
+     * @throws NoDataException            if the input array is empty.
      * @throws DimensionMismatchException if the input array is not rectangular.
-     * @throws NullArgumentException if the input array is {@code null}.
+     * @throws NullArgumentException      if the input array is {@code null}.
      */
-    private void copyIn(final T[][] in)
-        throws NullArgumentException, NoDataException,
-        DimensionMismatchException {
+    private void copyIn(final T[][] in) throws NullArgumentException, NoDataException, DimensionMismatchException {
         setSubMatrix(in, 0, 0);
     }
 }

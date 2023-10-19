@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityMoveHelper;
@@ -10,6 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntityMoveHelper.class)
 public class MixinEntityMoveHelper {

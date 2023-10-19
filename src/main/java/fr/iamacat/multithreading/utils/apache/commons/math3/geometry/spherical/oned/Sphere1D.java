@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +29,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Space;
  * MathWorld), i.e. the 1-sphere is the one-dimensional closed curve
  * defined in 2D as x<sup>2</sup>+y<sup>2</sup>=1.
  * </p>
+ * 
  * @since 3.3
  */
 public class Sphere1D implements Serializable, Space {
@@ -38,12 +37,14 @@ public class Sphere1D implements Serializable, Space {
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20131218L;
 
-    /** Private constructor for the singleton.
+    /**
+     * Private constructor for the singleton.
      */
-    private Sphere1D() {
-    }
+    private Sphere1D() {}
 
-    /** Get the unique instance.
+    /**
+     * Get the unique instance.
+     * 
      * @return the unique instance
      */
     public static Sphere1D getInstance() {
@@ -55,11 +56,13 @@ public class Sphere1D implements Serializable, Space {
         return 1;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      * <p>
      * As the 1-dimension sphere does not have proper sub-spaces,
      * this method always throws a {@link NoSubSpaceException}
      * </p>
+     * 
      * @return nothing
      * @throws NoSubSpaceException in all cases
      */
@@ -68,16 +71,22 @@ public class Sphere1D implements Serializable, Space {
     }
 
     // CHECKSTYLE: stop HideUtilityClassConstructor
-    /** Holder for the instance.
-     * <p>We use here the Initialization On Demand Holder Idiom.</p>
+    /**
+     * Holder for the instance.
+     * <p>
+     * We use here the Initialization On Demand Holder Idiom.
+     * </p>
      */
     private static class LazyHolder {
+
         /** Cached field instance. */
         private static final Sphere1D INSTANCE = new Sphere1D();
     }
     // CHECKSTYLE: resume HideUtilityClassConstructor
 
-    /** Handle deserialization of the singleton.
+    /**
+     * Handle deserialization of the singleton.
+     * 
      * @return the singleton instance
      */
     private Object readResolve() {
@@ -85,7 +94,8 @@ public class Sphere1D implements Serializable, Space {
         return LazyHolder.INSTANCE;
     }
 
-    /** Specialized exception for inexistent sub-space.
+    /**
+     * Specialized exception for inexistent sub-space.
      * <p>
      * This exception is thrown when attempting to get the sub-space of a one-dimensional space
      * </p>
@@ -95,7 +105,8 @@ public class Sphere1D implements Serializable, Space {
         /** Serializable UID. */
         private static final long serialVersionUID = 20140225L;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
          */
         public NoSubSpaceException() {
             super(LocalizedFormats.NOT_SUPPORTED_IN_DIMENSION_N, 1);

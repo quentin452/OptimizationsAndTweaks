@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +22,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Space;
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.Region.Location;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
-/** Local tree visitor to compute projection on boundary.
+/**
+ * Local tree visitor to compute projection on boundary.
+ * 
  * @param <S> Type of the space.
  * @param <T> Type of the sub-space.
  * @since 3.3
@@ -43,21 +43,25 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
     /** Current offset. */
     private double offset;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param original original point
      */
     BoundaryProjector(final Point<S> original) {
-        this.original  = original;
+        this.original = original;
         this.projected = null;
-        this.leaf      = null;
-        this.offset    = Double.POSITIVE_INFINITY;
+        this.leaf = null;
+        this.offset = Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
     public Order visitOrder(final BSPTree<S> node) {
         // we want to visit the tree so that the first encountered
         // leaf is the one closest to the test point
-        if (node.getCut().getHyperplane().getOffset(original) <= 0) {
+        if (node.getCut()
+            .getHyperplane()
+            .getOffset(original) <= 0) {
             return Order.MINUS_SUB_PLUS;
         } else {
             return Order.PLUS_SUB_MINUS;
@@ -68,7 +72,8 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
     public void visitInternalNode(final BSPTree<S> node) {
 
         // project the point on the cut sub-hyperplane
-        final Hyperplane<S> hyperplane = node.getCut().getHyperplane();
+        final Hyperplane<S> hyperplane = node.getCut()
+            .getHyperplane();
         final double signedOffset = hyperplane.getOffset(original);
         if (FastMath.abs(signedOffset) < offset) {
 
@@ -83,8 +88,8 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
             for (final Region<T> part : boundaryParts) {
                 if (!regularFound && belongsToPart(regular, hyperplane, part)) {
                     // the projected point lies in the boundary
-                    projected    = regular;
-                    offset       = FastMath.abs(signedOffset);
+                    projected = regular;
+                    offset = FastMath.abs(signedOffset);
                     regularFound = true;
                 }
             }
@@ -99,7 +104,7 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
                         final double distance = original.distance(spI);
                         if (distance < offset) {
                             projected = spI;
-                            offset    = distance;
+                            offset = distance;
                         }
                     }
                 }
@@ -119,7 +124,9 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
         }
     }
 
-    /** Get the projection.
+    /**
+     * Get the projection.
+     * 
      * @return projection
      */
     public BoundaryProjection<S> getProjection() {
@@ -131,7 +138,9 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
     }
 
-    /** Extract the regions of the boundary on an internal node.
+    /**
+     * Extract the regions of the boundary on an internal node.
+     * 
      * @param node internal node
      * @return regions in the node sub-hyperplane
      */
@@ -141,15 +150,17 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
         @SuppressWarnings("unchecked")
         final BoundaryAttribute<S> ba = (BoundaryAttribute<S>) node.getAttribute();
-        addRegion(ba.getPlusInside(),  regions);
+        addRegion(ba.getPlusInside(), regions);
         addRegion(ba.getPlusOutside(), regions);
 
         return regions;
 
     }
 
-    /** Add a boundary region to a list.
-     * @param sub sub-hyperplane defining the region
+    /**
+     * Add a boundary region to a list.
+     * 
+     * @param sub  sub-hyperplane defining the region
      * @param list to fill up
      */
     private void addRegion(final SubHyperplane<S> sub, final List<Region<T>> list) {
@@ -162,14 +173,15 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
         }
     }
 
-    /** Check if a projected point lies on a boundary part.
-     * @param point projected point to check
+    /**
+     * Check if a projected point lies on a boundary part.
+     * 
+     * @param point      projected point to check
      * @param hyperplane hyperplane into which the point was projected
-     * @param part boundary part
+     * @param part       boundary part
      * @return true if point lies on the boundary part
      */
-    private boolean belongsToPart(final Point<S> point, final Hyperplane<S> hyperplane,
-                                  final Region<T> part) {
+    private boolean belongsToPart(final Point<S> point, final Hyperplane<S> hyperplane, final Region<T> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")
@@ -178,14 +190,15 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
     }
 
-    /** Get the projection to the closest boundary singular point.
-     * @param point projected point to check
+    /**
+     * Get the projection to the closest boundary singular point.
+     * 
+     * @param point      projected point to check
      * @param hyperplane hyperplane into which the point was projected
-     * @param part boundary part
+     * @param part       boundary part
      * @return projection to a singular point of boundary part (may be null)
      */
-    private Point<S> singularProjection(final Point<S> point, final Hyperplane<S> hyperplane,
-                                        final Region<T> part) {
+    private Point<S> singularProjection(final Point<S> point, final Hyperplane<S> hyperplane, final Region<T> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")

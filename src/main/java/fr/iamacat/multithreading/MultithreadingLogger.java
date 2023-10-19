@@ -1,6 +1,5 @@
 package fr.iamacat.multithreading;
 
-import net.minecraft.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

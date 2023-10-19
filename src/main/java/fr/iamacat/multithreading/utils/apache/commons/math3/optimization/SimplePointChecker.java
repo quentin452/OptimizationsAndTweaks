@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +15,9 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization;
 
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.Pair;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 
 /**
  * Simple implementation of the {@link ConvergenceChecker} interface using
@@ -35,7 +33,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictl
  * {@link #SimplePointChecker(double,double,int) this constructor}).
  *
  * @param <PAIR> Type of the (point, value) pair.
- * The type of the "value" part of the pair (not used by this class).
+ *               The type of the "value" part of the pair (not used by this class).
  *
  * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 3.0
@@ -43,6 +41,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictl
 @Deprecated
 public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
     extends AbstractConvergenceChecker<PAIR> {
+
     /**
      * If {@link #maxIterationCount} is set to this value, the number of
      * iterations will never cause {@link #converged(int, Pair, Pair)}
@@ -58,6 +57,7 @@ public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
 
     /**
      * Build an instance with default threshold.
+     * 
      * @deprecated See {@link AbstractConvergenceChecker#AbstractConvergenceChecker()}
      */
     @Deprecated
@@ -74,8 +74,7 @@ public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
      */
-    public SimplePointChecker(final double relativeThreshold,
-                              final double absoluteThreshold) {
+    public SimplePointChecker(final double relativeThreshold, final double absoluteThreshold) {
         super(relativeThreshold, absoluteThreshold);
         maxIterationCount = ITERATION_CHECK_DISABLED;
     }
@@ -88,14 +87,12 @@ public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
      *
      * @param relativeThreshold Relative tolerance threshold.
      * @param absoluteThreshold Absolute tolerance threshold.
-     * @param maxIter Maximum iteration count.
+     * @param maxIter           Maximum iteration count.
      * @throws NotStrictlyPositiveException if {@code maxIter <= 0}.
      *
      * @since 3.1
      */
-    public SimplePointChecker(final double relativeThreshold,
-                              final double absoluteThreshold,
-                              final int maxIter) {
+    public SimplePointChecker(final double relativeThreshold, final double absoluteThreshold, final int maxIter) {
         super(relativeThreshold, absoluteThreshold);
 
         if (maxIter <= 0) {
@@ -116,14 +113,12 @@ public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
      * not only for the best or worst ones.
      *
      * @param iteration Index of current iteration
-     * @param previous Best point in the previous iteration.
-     * @param current Best point in the current iteration.
+     * @param previous  Best point in the previous iteration.
+     * @param current   Best point in the current iteration.
      * @return {@code true} if the arguments satify the convergence criterion.
      */
     @Override
-    public boolean converged(final int iteration,
-                             final PAIR previous,
-                             final PAIR current) {
+    public boolean converged(final int iteration, final PAIR previous, final PAIR current) {
         if (maxIterationCount != ITERATION_CHECK_DISABLED && iteration >= maxIterationCount) {
             return true;
         }
@@ -135,8 +130,7 @@ public class SimplePointChecker<PAIR extends Pair<double[], ? extends Object>>
             final double ci = c[i];
             final double difference = FastMath.abs(pi - ci);
             final double size = FastMath.max(FastMath.abs(pi), FastMath.abs(ci));
-            if (difference > size * getRelativeThreshold() &&
-                difference > getAbsoluteThreshold()) {
+            if (difference > size * getRelativeThreshold() && difference > getAbsoluteThreshold()) {
                 return false;
             }
         }

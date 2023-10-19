@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +41,13 @@ public interface DecompositionSolver {
      * @param b right-hand side of the equation A &times; X = B
      * @return a vector X that minimizes the two norm of A &times; X - B
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the matrices dimensions do not match.
-     * @throws SingularMatrixException if the decomposed matrix is singular.
+     *                                                                                                   if the matrices
+     *                                                                                                   dimensions do
+     *                                                                                                   not match.
+     * @throws SingularMatrixException                                                                   if the
+     *                                                                                                   decomposed
+     *                                                                                                   matrix is
+     *                                                                                                   singular.
      */
     RealVector solve(final RealVector b) throws SingularMatrixException;
 
@@ -57,13 +60,19 @@ public interface DecompositionSolver {
      * @param b right-hand side of the equation A &times; X = B
      * @return a matrix X that minimizes the two norm of A &times; X - B
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the matrices dimensions do not match.
-     * @throws SingularMatrixException if the decomposed matrix is singular.
+     *                                                                                                   if the matrices
+     *                                                                                                   dimensions do
+     *                                                                                                   not match.
+     * @throws SingularMatrixException                                                                   if the
+     *                                                                                                   decomposed
+     *                                                                                                   matrix is
+     *                                                                                                   singular.
      */
     RealMatrix solve(final RealMatrix b) throws SingularMatrixException;
 
     /**
      * Check if the decomposed matrix is non-singular.
+     * 
      * @return true if the decomposed matrix is non-singular.
      */
     boolean isNonSingular();
@@ -72,7 +81,7 @@ public interface DecompositionSolver {
      * Get the <a href="http://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse">pseudo-inverse</a>
      * of the decomposed matrix.
      * <p>
-     * <em>This is equal to the inverse  of the decomposed matrix, if such an inverse exists.</em>
+     * <em>This is equal to the inverse of the decomposed matrix, if such an inverse exists.</em>
      * <p>
      * If no such inverse exists, then the result has properties that resemble that of an inverse.
      * <p>
@@ -89,9 +98,9 @@ public interface DecompositionSolver {
      * of specific decomposition implementations for more details.
      *
      * @return pseudo-inverse matrix (which is the inverse, if it exists),
-     * if the decomposition can pseudo-invert the decomposed matrix
+     *         if the decomposition can pseudo-invert the decomposed matrix
      * @throws SingularMatrixException if the decomposed matrix is singular and the decomposition
-     * can not compute a pseudo-inverse
+     *                                 can not compute a pseudo-inverse
      */
     RealMatrix getInverse() throws SingularMatrixException;
 }

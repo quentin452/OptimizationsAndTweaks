@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,17 +27,22 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.spherical.o
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.spherical.oned.Sphere1D;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
-/** This class represents an oriented great circle on the 2-sphere.
-
- * <p>An oriented circle can be defined by a center point. The circle
- * is the the set of points that are in the normal plan the center.</p>
-
- * <p>Since it is oriented the two spherical caps at its two sides are
+/**
+ * This class represents an oriented great circle on the 2-sphere.
+ * 
+ * <p>
+ * An oriented circle can be defined by a center point. The circle
+ * is the the set of points that are in the normal plan the center.
+ * </p>
+ * 
+ * <p>
+ * Since it is oriented the two spherical caps at its two sides are
  * unambiguously identified as a left cap and a right cap. This can be
  * used to identify the interior and the exterior in a simple way by
  * local properties only when part of a line is used to define part of
- * a spherical polygon boundary.</p>
-
+ * a spherical polygon boundary.
+ * </p>
+ * 
  * @since 3.3
  */
 public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1D> {
@@ -56,9 +59,13 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
     /** Tolerance below which close sub-arcs are merged together. */
     private final double tolerance;
 
-    /** Build a great circle from its pole.
-     * <p>The circle is oriented in the trigonometric direction around pole.</p>
-     * @param pole circle pole
+    /**
+     * Build a great circle from its pole.
+     * <p>
+     * The circle is oriented in the trigonometric direction around pole.
+     * </p>
+     * 
+     * @param pole      circle pole
      * @param tolerance tolerance below which close sub-arcs are merged together
      */
     public Circle(final Vector3D pole, final double tolerance) {
@@ -66,35 +73,48 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         this.tolerance = tolerance;
     }
 
-    /** Build a great circle from two non-aligned points.
-     * <p>The circle is oriented from first to second point using the path smaller than \( \pi \).</p>
-     * @param first first point contained in the great circle
-     * @param second second point contained in the great circle
+    /**
+     * Build a great circle from two non-aligned points.
+     * <p>
+     * The circle is oriented from first to second point using the path smaller than \( \pi \).
+     * </p>
+     * 
+     * @param first     first point contained in the great circle
+     * @param second    second point contained in the great circle
      * @param tolerance tolerance below which close sub-arcs are merged together
      */
     public Circle(final S2Point first, final S2Point second, final double tolerance) {
-        reset(first.getVector().crossProduct(second.getVector()));
+        reset(
+            first.getVector()
+                .crossProduct(second.getVector()));
         this.tolerance = tolerance;
     }
 
-    /** Build a circle from its internal components.
-     * <p>The circle is oriented in the trigonometric direction around center.</p>
-     * @param pole circle pole
-     * @param x first axis in the equator plane
-     * @param y second axis in the equator plane
+    /**
+     * Build a circle from its internal components.
+     * <p>
+     * The circle is oriented in the trigonometric direction around center.
+     * </p>
+     * 
+     * @param pole      circle pole
+     * @param x         first axis in the equator plane
+     * @param y         second axis in the equator plane
      * @param tolerance tolerance below which close sub-arcs are merged together
      */
-    private Circle(final Vector3D pole, final Vector3D x, final Vector3D y,
-                   final double tolerance) {
-        this.pole      = pole;
-        this.x         = x;
-        this.y         = y;
+    private Circle(final Vector3D pole, final Vector3D x, final Vector3D y, final double tolerance) {
+        this.pole = pole;
+        this.x = x;
+        this.y = y;
         this.tolerance = tolerance;
     }
 
-    /** Copy constructor.
-     * <p>The created instance is completely independent from the
-     * original instance, it is a deep copy.</p>
+    /**
+     * Copy constructor.
+     * <p>
+     * The created instance is completely independent from the
+     * original instance, it is a deep copy.
+     * </p>
+     * 
      * @param circle circle to copy
      */
     public Circle(final Circle circle) {
@@ -106,27 +126,37 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return new Circle(this);
     }
 
-    /** Reset the instance as if built from a pole.
-     * <p>The circle is oriented in the trigonometric direction around pole.</p>
+    /**
+     * Reset the instance as if built from a pole.
+     * <p>
+     * The circle is oriented in the trigonometric direction around pole.
+     * </p>
+     * 
      * @param newPole circle pole
      */
     public void reset(final Vector3D newPole) {
         this.pole = newPole.normalize();
-        this.x    = newPole.orthogonal();
-        this.y    = Vector3D.crossProduct(newPole, x).normalize();
+        this.x = newPole.orthogonal();
+        this.y = Vector3D.crossProduct(newPole, x)
+            .normalize();
     }
 
-    /** Revert the instance.
+    /**
+     * Revert the instance.
      */
     public void revertSelf() {
         // x remains the same
-        y    = y.negate();
+        y = y.negate();
         pole = pole.negate();
     }
 
-    /** Get the reverse of the instance.
-     * <p>Get a circle with reversed orientation with respect to the
-     * instance. A new object is built, the instance is untouched.</p>
+    /**
+     * Get the reverse of the instance.
+     * <p>
+     * Get a circle with reversed orientation with respect to the
+     * instance. A new object is built, the instance is untouched.
+     * </p>
+     * 
      * @return a new circle, with orientation opposite to the instance orientation
      */
     public Circle getReverse() {
@@ -143,19 +173,23 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return tolerance;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @see #getPhase(Vector3D)
      */
     public S1Point toSubSpace(final Point<Sphere2D> point) {
         return new S1Point(getPhase(((S2Point) point).getVector()));
     }
 
-    /** Get the phase angle of a direction.
+    /**
+     * Get the phase angle of a direction.
      * <p>
      * The direction may not belong to the circle as the
      * phase is computed for the meridian plane between the circle
      * pole and the direction.
      * </p>
+     * 
      * @param direction direction for which phase is requested
      * @return phase angle of the direction around the circle
      * @see #toSubSpace(Point)
@@ -164,14 +198,18 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return FastMath.PI + FastMath.atan2(-direction.dotProduct(y), -direction.dotProduct(x));
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @see #getPointAt(double)
      */
     public S2Point toSpace(final Point<Sphere1D> point) {
         return new S2Point(getPointAt(((S1Point) point).getAlpha()));
     }
 
-    /** Get a circle point from its phase around the circle.
+    /**
+     * Get a circle point from its phase around the circle.
+     * 
      * @param alpha phase around the circle
      * @return circle point on the sphere
      * @see #toSpace(Point)
@@ -182,12 +220,14 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return new Vector3D(FastMath.cos(alpha), x, FastMath.sin(alpha), y);
     }
 
-    /** Get the X axis of the circle.
+    /**
+     * Get the X axis of the circle.
      * <p>
      * This method returns the same value as {@link #getPointAt(double)
      * getPointAt(0.0)} but it does not do any computation and always
      * return the same instance.
      * </p>
+     * 
      * @return an arbitrary x axis on the circle
      * @see #getPointAt(double)
      * @see #getYAxis()
@@ -197,12 +237,14 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return x;
     }
 
-    /** Get the Y axis of the circle.
+    /**
+     * Get the Y axis of the circle.
      * <p>
      * This method returns the same value as {@link #getPointAt(double)
      * getPointAt(0.5 * FastMath.PI)} but it does not do any computation and always
      * return the same instance.
      * </p>
+     * 
      * @return an arbitrary y axis point on the circle
      * @see #getPointAt(double)
      * @see #getXAxis()
@@ -212,11 +254,13 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return y;
     }
 
-    /** Get the pole of the circle.
+    /**
+     * Get the pole of the circle.
      * <p>
      * As the circle is a great circle, the pole does <em>not</em>
      * belong to it.
      * </p>
+     * 
      * @return pole of the circle
      * @see #getXAxis()
      * @see #getYAxis()
@@ -225,12 +269,14 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return pole;
     }
 
-    /** Get the arc of the instance that lies inside the other circle.
+    /**
+     * Get the arc of the instance that lies inside the other circle.
+     * 
      * @param other other circle
      * @return arc of the instance that lies inside the other circle
      */
     public Arc getInsideArc(final Circle other) {
-        final double alpha  = getPhase(other.pole);
+        final double alpha = getPhase(other.pole);
         final double halfPi = 0.5 * FastMath.PI;
         return new Arc(alpha - halfPi, alpha + halfPi, tolerance);
     }
@@ -240,26 +286,34 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return new SubCircle(this, new ArcsSet(tolerance));
     }
 
-    /** Build a region covering the whole space.
+    /**
+     * Build a region covering the whole space.
+     * 
      * @return a region containing the instance (really a {@link
-     * SphericalPolygonsSet SphericalPolygonsSet} instance)
+     *         SphericalPolygonsSet SphericalPolygonsSet} instance)
      */
     public SphericalPolygonsSet wholeSpace() {
         return new SphericalPolygonsSet(tolerance);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @see #getOffset(Vector3D)
      */
     public double getOffset(final Point<Sphere2D> point) {
         return getOffset(((S2Point) point).getVector());
     }
 
-    /** Get the offset (oriented distance) of a direction.
-     * <p>The offset is defined as the angular distance between the
+    /**
+     * Get the offset (oriented distance) of a direction.
+     * <p>
+     * The offset is defined as the angular distance between the
      * circle center and the direction minus the circle radius. It
      * is therefore 0 on the circle, positive for directions outside of
-     * the cone delimited by the circle, and negative inside the cone.</p>
+     * the cone delimited by the circle, and negative inside the cone.
+     * </p>
+     * 
      * @param direction direction to check
      * @return offset of the direction
      * @see #getOffset(Point)
@@ -274,13 +328,15 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         return Vector3D.dotProduct(pole, otherC.pole) >= 0.0;
     }
 
-    /** Get a {@link fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.Transform
+    /**
+     * Get a {@link fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.Transform
      * Transform} embedding a 3D rotation.
+     * 
      * @param rotation rotation to use
      * @return a new transform that can be applied to either {@link
-     * Point Point}, {@link Circle Line} or {@link
-     * fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.SubHyperplane
-     * SubHyperplane} instances
+     *         Point Point}, {@link Circle Line} or {@link
+     *         fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.SubHyperplane
+     *         SubHyperplane} instances
      */
     public static Transform<Sphere2D, Sphere1D> getTransform(final Rotation rotation) {
         return new CircleTransform(rotation);
@@ -292,7 +348,9 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         /** Underlying rotation. */
         private final Rotation rotation;
 
-        /** Build a transform from a {@code Rotation}.
+        /**
+         * Build a transform from a {@code Rotation}.
+         * 
          * @param rotation rotation to use
          */
         CircleTransform(final Rotation rotation) {
@@ -307,16 +365,16 @@ public class Circle implements Hyperplane<Sphere2D>, Embedding<Sphere2D, Sphere1
         /** {@inheritDoc} */
         public Circle apply(final Hyperplane<Sphere2D> hyperplane) {
             final Circle circle = (Circle) hyperplane;
-            return new Circle(rotation.applyTo(circle.pole),
-                              rotation.applyTo(circle.x),
-                              rotation.applyTo(circle.y),
-                              circle.tolerance);
+            return new Circle(
+                rotation.applyTo(circle.pole),
+                rotation.applyTo(circle.x),
+                rotation.applyTo(circle.y),
+                circle.tolerance);
         }
 
         /** {@inheritDoc} */
-        public SubHyperplane<Sphere1D> apply(final SubHyperplane<Sphere1D> sub,
-                                             final Hyperplane<Sphere2D> original,
-                                             final Hyperplane<Sphere2D> transformed) {
+        public SubHyperplane<Sphere1D> apply(final SubHyperplane<Sphere1D> sub, final Hyperplane<Sphere2D> original,
+            final Hyperplane<Sphere2D> transformed) {
             // as the circle is rotated, the limit angles are rotated too
             return sub;
         }

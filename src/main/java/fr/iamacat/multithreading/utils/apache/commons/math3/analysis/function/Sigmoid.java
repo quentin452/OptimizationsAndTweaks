@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,19 +17,19 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function;
 
 import java.util.Arrays;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.FunctionUtils;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.FunctionUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Sigmoid_function">
- *  Sigmoid</a> function.
+ * Sigmoid</a> function.
  * It is the inverse of the {@link Logit logit} function.
  * A more flexible version, the generalised logistic, is implemented
  * by the {@link Logistic} class.
@@ -39,6 +37,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @since 3.0
  */
 public class Sigmoid implements UnivariateDifferentiableFunction, DifferentiableUnivariateFunction {
+
     /** Lower asymptote. */
     private final double lo;
     /** Higher asymptote. */
@@ -58,18 +57,20 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
      * @param lo Lower asymptote.
      * @param hi Higher asymptote.
      */
-    public Sigmoid(double lo,
-                   double hi) {
+    public Sigmoid(double lo, double hi) {
         this.lo = lo;
         this.hi = hi;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @deprecated as of 3.1, replaced by {@link #value(DerivativeStructure)}
      */
     @Deprecated
     public UnivariateFunction derivative() {
-        return FunctionUtils.toDifferentiableUnivariateFunction(this).derivative();
+        return FunctionUtils.toDifferentiableUnivariateFunction(this)
+            .derivative();
     }
 
     /** {@inheritDoc} */
@@ -82,24 +83,23 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
      * the {@link Sigmoid#Sigmoid(double,double) sigmoid function}, ordered
      * as follows:
      * <ul>
-     *  <li>Lower asymptote</li>
-     *  <li>Higher asymptote</li>
+     * <li>Lower asymptote</li>
+     * <li>Higher asymptote</li>
      * </ul>
      */
     public static class Parametric implements ParametricUnivariateFunction {
+
         /**
          * Computes the value of the sigmoid at {@code x}.
          *
-         * @param x Value for which the function must be computed.
+         * @param x     Value for which the function must be computed.
          * @param param Values of lower asymptote and higher asymptote.
          * @return the value of the function.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        public double value(double x, double ... param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        public double value(double x, double... param) throws NullArgumentException, DimensionMismatchException {
             validateParameters(param);
             return Sigmoid.value(x, param[0], param[1]);
         }
@@ -110,16 +110,14 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
          * derivatives of the function with respect to each of the
          * <em>parameters</em> (lower asymptote and higher asymptote).
          *
-         * @param x Value at which the gradient must be computed.
+         * @param x     Value at which the gradient must be computed.
          * @param param Values for lower asymptote and higher asymptote.
          * @return the gradient vector at {@code x}.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        public double[] gradient(double x, double ... param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        public double[] gradient(double x, double... param) throws NullArgumentException, DimensionMismatchException {
             validateParameters(param);
 
             final double invExp1 = 1 / (1 + FastMath.exp(-x));
@@ -133,13 +131,11 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
          * methods.
          *
          * @param param Values for lower and higher asymptotes.
-         * @throws NullArgumentException if {@code param} is {@code null}.
+         * @throws NullArgumentException      if {@code param} is {@code null}.
          * @throws DimensionMismatchException if the size of {@code param} is
-         * not 2.
+         *                                    not 2.
          */
-        private void validateParameters(double[] param)
-            throws NullArgumentException,
-                   DimensionMismatchException {
+        private void validateParameters(double[] param) throws NullArgumentException, DimensionMismatchException {
             if (param == null) {
                 throw new NullArgumentException();
             }
@@ -150,22 +146,21 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
     }
 
     /**
-     * @param x Value at which to compute the sigmoid.
+     * @param x  Value at which to compute the sigmoid.
      * @param lo Lower asymptote.
      * @param hi Higher asymptote.
      * @return the value of the sigmoid function at {@code x}.
      */
-    private static double value(double x,
-                                double lo,
-                                double hi) {
+    private static double value(double x, double lo, double hi) {
         return lo + (hi - lo) / (1 + FastMath.exp(-x));
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @since 3.1
      */
-    public DerivativeStructure value(final DerivativeStructure t)
-        throws DimensionMismatchException {
+    public DerivativeStructure value(final DerivativeStructure t) throws DimensionMismatchException {
 
         double[] f = new double[t.getOrder() + 1];
         final double exp = FastMath.exp(-t.getValue());
@@ -185,7 +180,7 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
             // P_n(x) = n t P_(n-1)(t) - t (1 + t) P_(n-1)'(t)
             final double[] p = new double[f.length];
 
-            final double inv   = 1 / (1 + exp);
+            final double inv = 1 / (1 + exp);
             double coeff = hi - lo;
             for (int n = 0; n < f.length; ++n) {
 
@@ -202,7 +197,7 @@ public class Sigmoid implements UnivariateDifferentiableFunction, Differentiable
                 }
 
                 coeff *= inv;
-                f[n]   = coeff * v;
+                f[n] = coeff * v;
 
             }
 

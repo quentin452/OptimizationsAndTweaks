@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,9 +24,11 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.mom
 
 /**
  * Computes the sum of intra-cluster distance variances according to the formula:
+ * 
  * <pre>
  * \( score = \sum\limits_{i=1}^n \sigma_i^2 \)
  * </pre>
+ * 
  * where n is the number of clusters and \( \sigma_i^2 \) is the variance of
  * intra-cluster distances of cluster \( c_i \).
  *
@@ -50,7 +50,8 @@ public class SumOfClusterVariances<T extends Clusterable> extends ClusterEvaluat
     public double score(final List<? extends Cluster<T>> clusters) {
         double varianceSum = 0.0;
         for (final Cluster<T> cluster : clusters) {
-            if (!cluster.getPoints().isEmpty()) {
+            if (!cluster.getPoints()
+                .isEmpty()) {
 
                 final Clusterable center = centroidOf(cluster);
 

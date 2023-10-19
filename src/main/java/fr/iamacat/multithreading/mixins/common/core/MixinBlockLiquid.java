@@ -7,12 +7,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(BlockLiquid.class)
 public class MixinBlockLiquid extends Block {
-
 
     protected MixinBlockLiquid(Material materialIn) {
         super(materialIn);
@@ -21,8 +21,7 @@ public class MixinBlockLiquid extends Block {
     /**
      * Can add to the passed in vector for a movement vector to be applied to the entity. Args: x, y, z, entity, vec3d
      */
-    public void velocityToAddToEntity(World worldIn, int x, int y, int z, Entity entityIn, Vec3 velocity)
-    {
+    public void velocityToAddToEntity(World worldIn, int x, int y, int z, Entity entityIn, Vec3 velocity) {
         Vec3 vec31 = this.getFlowVector(worldIn, x, y, z);
         velocity.xCoord += vec31.xCoord;
         velocity.yCoord += vec31.yCoord;
@@ -40,9 +39,9 @@ public class MixinBlockLiquid extends Block {
 
         for (i1 = 0; i1 < 4; ++i1) {
             int j1 = p_149800_2_;
-            int k1 =p_149800_4_;
+            int k1 = p_149800_4_;
 
-            if (i1 == 0) j1 =p_149800_2_ - 1;
+            if (i1 == 0) j1 = p_149800_2_ - 1;
             if (i1 == 1) k1 = p_149800_4_ - 1;
             if (i1 == 2) ++j1;
             if (i1 == 3) ++k1;
@@ -51,12 +50,14 @@ public class MixinBlockLiquid extends Block {
             int i2;
 
             if (l1 < 0) {
-                if (!p_149800_1_.getBlock(j1, p_149800_3_, k1).getMaterial().blocksMovement()) {
+                if (!p_149800_1_.getBlock(j1, p_149800_3_, k1)
+                    .getMaterial()
+                    .blocksMovement()) {
                     l1 = this.getEffectiveFlowDecay(p_149800_1_, j1, p_149800_3_ - 1, k1);
 
                     if (l1 >= 0) {
                         i2 = l1 - (l - 8);
-                        vec3 = vec3.addVector((j1 - p_149800_2_) * i2, 0, (k1 -p_149800_4_) * i2);
+                        vec3 = vec3.addVector((j1 - p_149800_2_) * i2, 0, (k1 - p_149800_4_) * i2);
                     }
                 }
             } else {
@@ -79,25 +80,25 @@ public class MixinBlockLiquid extends Block {
             }
 
             if (flag) {
-                vec3 = vec3.normalize().addVector(0.0D, -6.0D, 0.0D);
+                vec3 = vec3.normalize()
+                    .addVector(0.0D, -6.0D, 0.0D);
             }
         }
 
         return vec3.normalize();
     }
 
-
     /**
      * Returns true if the given side of this block type should be rendered (if it's solid or not), if the adjacent
      * block is at the given coordinates. Args: blockAccess, x, y, z, side
      */
 
-    public boolean isBlockSolid(IBlockAccess worldIn, int x, int y, int z, int side)
-    {
-        Material material = worldIn.getBlock(x, y, z).getMaterial();
-        return material != this.blockMaterial && (side == 1 || (material != Material.ice && super.isBlockSolid(worldIn, x, y, z, side)));
+    public boolean isBlockSolid(IBlockAccess worldIn, int x, int y, int z, int side) {
+        Material material = worldIn.getBlock(x, y, z)
+            .getMaterial();
+        return material != this.blockMaterial
+            && (side == 1 || (material != Material.ice && super.isBlockSolid(worldIn, x, y, z, side)));
     }
-
 
     /**
      * Returns the flow decay but converts values indicating falling liquid (values >=8) to their effective source block

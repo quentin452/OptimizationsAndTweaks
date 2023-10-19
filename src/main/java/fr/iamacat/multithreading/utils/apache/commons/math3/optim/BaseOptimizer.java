@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +14,9 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyIterationsException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
 
 /**
  * Base class for implementing optimizers.
@@ -28,11 +26,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyIte
  * <em>It is not a "user" class.</em>
  *
  * @param <PAIR> Type of the point/value pair returned by the optimization
- * algorithm.
+ *               algorithm.
  *
  * @since 3.1
  */
 public abstract class BaseOptimizer<PAIR> {
+
     /** Evaluations counter. */
     protected final Incrementor evaluations;
     /** Iterations counter. */
@@ -52,9 +51,7 @@ public abstract class BaseOptimizer<PAIR> {
      * @param maxEval Maximum number of objective function evaluations.
      * @param maxIter Maximum number of algorithm iterations.
      */
-    protected BaseOptimizer(ConvergenceChecker<PAIR> checker,
-                            int maxEval,
-                            int maxIter) {
+    protected BaseOptimizer(ConvergenceChecker<PAIR> checker, int maxEval, int maxIter) {
         this.checker = checker;
 
         evaluations = new Incrementor(maxEval, new MaxEvalCallback());
@@ -129,20 +126,18 @@ public abstract class BaseOptimizer<PAIR> {
      * {@code super.parseOptimizationData(optData)} within that method.
      *
      * @param optData Optimization data.
-     * This method will register the following data:
-     * <ul>
-     *  <li>{@link MaxEval}</li>
-     *  <li>{@link MaxIter}</li>
-     * </ul>
+     *                This method will register the following data:
+     *                <ul>
+     *                <li>{@link MaxEval}</li>
+     *                <li>{@link MaxIter}</li>
+     *                </ul>
      * @return a point/value pair that satisfies the convergence criteria.
      * @throws TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
-     * @throws TooManyIterationsException if the maximal number of
-     * iterations is exceeded.
+     *                                     evaluations is exceeded.
+     * @throws TooManyIterationsException  if the maximal number of
+     *                                     iterations is exceeded.
      */
-    public PAIR optimize(OptimizationData... optData)
-        throws TooManyEvaluationsException,
-               TooManyIterationsException {
+    public PAIR optimize(OptimizationData... optData) throws TooManyEvaluationsException, TooManyIterationsException {
         // Parse options.
         parseOptimizationData(optData);
 
@@ -158,13 +153,11 @@ public abstract class BaseOptimizer<PAIR> {
      *
      * @return a point/value pair that satisfies the convergence criteria.
      * @throws TooManyEvaluationsException if the maximal number of
-     * evaluations is exceeded.
-     * @throws TooManyIterationsException if the maximal number of
-     * iterations is exceeded.
+     *                                     evaluations is exceeded.
+     * @throws TooManyIterationsException  if the maximal number of
+     *                                     iterations is exceeded.
      */
-    public PAIR optimize()
-        throws TooManyEvaluationsException,
-               TooManyIterationsException {
+    public PAIR optimize() throws TooManyEvaluationsException, TooManyIterationsException {
         // Reset counters.
         evaluations.resetCount();
         iterations.resetCount();
@@ -176,7 +169,7 @@ public abstract class BaseOptimizer<PAIR> {
      * Performs the bulk of the optimization algorithm.
      *
      * @return the point/value pair giving the optimal value of the
-     * objective function.
+     *         objective function.
      */
     protected abstract PAIR doOptimize();
 
@@ -184,10 +177,9 @@ public abstract class BaseOptimizer<PAIR> {
      * Increment the evaluation count.
      *
      * @throws TooManyEvaluationsException if the allowed evaluations
-     * have been exhausted.
+     *                                     have been exhausted.
      */
-    protected void incrementEvaluationCount()
-        throws TooManyEvaluationsException {
+    protected void incrementEvaluationCount() throws TooManyEvaluationsException {
         evaluations.incrementCount();
     }
 
@@ -195,10 +187,9 @@ public abstract class BaseOptimizer<PAIR> {
      * Increment the iteration count.
      *
      * @throws TooManyIterationsException if the allowed iterations
-     * have been exhausted.
+     *                                    have been exhausted.
      */
-    protected void incrementIterationCount()
-        throws TooManyIterationsException {
+    protected void incrementIterationCount() throws TooManyIterationsException {
         iterations.incrementCount();
     }
 
@@ -207,11 +198,11 @@ public abstract class BaseOptimizer<PAIR> {
      * characterize the problem.
      *
      * @param optData Optimization data.
-     * The following data will be looked for:
-     * <ul>
-     *  <li>{@link MaxEval}</li>
-     *  <li>{@link MaxIter}</li>
-     * </ul>
+     *                The following data will be looked for:
+     *                <ul>
+     *                <li>{@link MaxEval}</li>
+     *                <li>{@link MaxIter}</li>
+     *                </ul>
      */
     protected void parseOptimizationData(OptimizationData... optData) {
         // The existing values (as set by the previous call) are reused if
@@ -232,10 +223,11 @@ public abstract class BaseOptimizer<PAIR> {
      * Defines the action to perform when reaching the maximum number
      * of evaluations.
      */
-    private static class MaxEvalCallback
-        implements  Incrementor.MaxCountExceededCallback {
+    private static class MaxEvalCallback implements Incrementor.MaxCountExceededCallback {
+
         /**
          * {@inheritDoc}
+         * 
          * @throws TooManyEvaluationsException
          */
         public void trigger(int max) {
@@ -247,10 +239,11 @@ public abstract class BaseOptimizer<PAIR> {
      * Defines the action to perform when reaching the maximum number
      * of evaluations.
      */
-    private static class MaxIterCallback
-        implements Incrementor.MaxCountExceededCallback {
+    private static class MaxIterCallback implements Incrementor.MaxCountExceededCallback {
+
         /**
          * {@inheritDoc}
+         * 
          * @throws TooManyIterationsException
          */
         public void trigger(int max) {

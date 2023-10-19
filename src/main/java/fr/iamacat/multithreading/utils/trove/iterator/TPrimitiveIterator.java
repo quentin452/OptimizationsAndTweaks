@@ -10,12 +10,12 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.iterator;
@@ -26,21 +26,26 @@ package fr.iamacat.multithreading.utils.trove.iterator;
  * returned by calls to next() (e.g. for values, and Map.Entry
  * objects).
  * <p/>
- * <p> Note that iteration is fastest if you forego the calls to
+ * <p>
+ * Note that iteration is fastest if you forego the calls to
  * <tt>hasNext</tt> in favor of checking the size of the structure
  * yourself and then call next() that many times:
  * <p/>
+ * 
  * <pre>
  * Iterator i = collection.iterator();
  * for (int size = collection.size(); size-- > 0;) {
- *   Object o = i.next();
+ *     Object o = i.next();
  * }
  * </pre>
  * <p/>
- * <p>You may, of course, use the hasNext(), next() idiom too if
- * you aren't in a performance critical spot.</p>
+ * <p>
+ * You may, of course, use the hasNext(), next() idiom too if
+ * you aren't in a performance critical spot.
+ * </p>
  */
 public interface TPrimitiveIterator extends TIterator {
+
     /**
      * Returns true if the iterator can be advanced past its current
      * location.
@@ -49,7 +54,6 @@ public interface TPrimitiveIterator extends TIterator {
      */
     @Override
     public boolean hasNext();
-
 
     /**
      * Removes the last entry returned by the iterator.

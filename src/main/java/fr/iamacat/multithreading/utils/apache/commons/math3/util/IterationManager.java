@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +40,8 @@ public class IterationManager {
      * @param maxIterations the maximum number of iterations
      */
     public IterationManager(final int maxIterations) {
-        this.iterations = IntegerSequence.Incrementor.create().withMaximalCount(maxIterations);
+        this.iterations = IntegerSequence.Incrementor.create()
+            .withMaximalCount(maxIterations);
         this.listeners = new CopyOnWriteArrayList<IterationListener>();
     }
 
@@ -50,17 +49,18 @@ public class IterationManager {
      * Creates a new instance of this class.
      *
      * @param maxIterations the maximum number of iterations
-     * @param callBack the function to be called when the maximum number of
-     * iterations has been reached
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack} is {@code null}
+     * @param callBack      the function to be called when the maximum number of
+     *                      iterations has been reached
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack}
+     *                                                                                              is {@code null}
      * @since 3.1
      * @deprecated as of 3.6, replaced with {@link #IterationManager(int,
-     * fr.iamacat.multithreading.utils.apache.commons.math3.util.IntegerSequence.Incrementor.MaxCountExceededCallback)}
+     *             fr.iamacat.multithreading.utils.apache.commons.math3.util.IntegerSequence.Incrementor.MaxCountExceededCallback)}
      */
     @Deprecated
-    public IterationManager(final int maxIterations,
-                            final Incrementor.MaxCountExceededCallback callBack) {
+    public IterationManager(final int maxIterations, final Incrementor.MaxCountExceededCallback callBack) {
         this(maxIterations, new IntegerSequence.Incrementor.MaxCountExceededCallback() {
+
             /** {@inheritDoc} */
             public void trigger(final int maximalCount) throws MaxCountExceededException {
                 callBack.trigger(maximalCount);
@@ -72,14 +72,17 @@ public class IterationManager {
      * Creates a new instance of this class.
      *
      * @param maxIterations the maximum number of iterations
-     * @param callBack the function to be called when the maximum number of
-     * iterations has been reached
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack} is {@code null}
+     * @param callBack      the function to be called when the maximum number of
+     *                      iterations has been reached
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack}
+     *                                                                                              is {@code null}
      * @since 3.6
      */
     public IterationManager(final int maxIterations,
-                            final IntegerSequence.Incrementor.MaxCountExceededCallback callBack) {
-        this.iterations = IntegerSequence.Incrementor.create().withMaximalCount(maxIterations).withCallback(callBack);
+        final IntegerSequence.Incrementor.MaxCountExceededCallback callBack) {
+        this.iterations = IntegerSequence.Incrementor.create()
+            .withMaximalCount(maxIterations)
+            .withCallback(callBack);
         this.listeners = new CopyOnWriteArrayList<IterationListener>();
     }
 
@@ -165,10 +168,9 @@ public class IterationManager {
      * the beginning of a new iteration.
      *
      * @throws MaxCountExceededException if the maximum number of iterations is
-     * reached.
+     *                                   reached.
      */
-    public void incrementIterationCount()
-        throws MaxCountExceededException {
+    public void incrementIterationCount() throws MaxCountExceededException {
         iterations.increment();
     }
 

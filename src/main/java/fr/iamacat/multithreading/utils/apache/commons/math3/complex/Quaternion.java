@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,12 +16,13 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.complex;
 
 import java.io.Serializable;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
 
 /**
  * This class implements <a href="http://mathworld.wolfram.com/Quaternion.html">
@@ -34,6 +33,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * @since 3.1
  */
 public final class Quaternion implements Serializable {
+
     /** Identity quaternion. */
     public static final Quaternion IDENTITY = new Quaternion(1, 0, 0, 0);
     /** Zero quaternion. */
@@ -65,10 +65,7 @@ public final class Quaternion implements Serializable {
      * @param c Second vector component.
      * @param d Third vector component.
      */
-    public Quaternion(final double a,
-                      final double b,
-                      final double c,
-                      final double d) {
+    public Quaternion(final double a, final double b, final double c, final double d) {
         this.q0 = a;
         this.q1 = b;
         this.q2 = c;
@@ -79,13 +76,11 @@ public final class Quaternion implements Serializable {
      * Builds a quaternion from scalar and vector parts.
      *
      * @param scalar Scalar part of the quaternion.
-     * @param v Components of the vector part of the quaternion.
+     * @param v      Components of the vector part of the quaternion.
      *
      * @throws DimensionMismatchException if the array length is not 3.
      */
-    public Quaternion(final double scalar,
-                      final double[] v)
-        throws DimensionMismatchException {
+    public Quaternion(final double scalar, final double[] v) throws DimensionMismatchException {
         if (v.length != 3) {
             throw new DimensionMismatchException(v.length, 3);
         }
@@ -160,12 +155,12 @@ public final class Quaternion implements Serializable {
      * @param q2 Quaternion.
      * @return the sum of {@code q1} and {@code q2}.
      */
-    public static Quaternion add(final Quaternion q1,
-                                 final Quaternion q2) {
-        return new Quaternion(q1.getQ0() + q2.getQ0(),
-                              q1.getQ1() + q2.getQ1(),
-                              q1.getQ2() + q2.getQ2(),
-                              q1.getQ3() + q2.getQ3());
+    public static Quaternion add(final Quaternion q1, final Quaternion q2) {
+        return new Quaternion(
+            q1.getQ0() + q2.getQ0(),
+            q1.getQ1() + q2.getQ1(),
+            q1.getQ2() + q2.getQ2(),
+            q1.getQ3() + q2.getQ3());
     }
 
     /**
@@ -185,12 +180,12 @@ public final class Quaternion implements Serializable {
      * @param q2 Second quaternion.
      * @return the difference between {@code q1} and {@code q2}.
      */
-    public static Quaternion subtract(final Quaternion q1,
-                                      final Quaternion q2) {
-        return new Quaternion(q1.getQ0() - q2.getQ0(),
-                              q1.getQ1() - q2.getQ1(),
-                              q1.getQ2() - q2.getQ2(),
-                              q1.getQ3() - q2.getQ3());
+    public static Quaternion subtract(final Quaternion q1, final Quaternion q2) {
+        return new Quaternion(
+            q1.getQ0() - q2.getQ0(),
+            q1.getQ1() - q2.getQ1(),
+            q1.getQ2() - q2.getQ2(),
+            q1.getQ3() - q2.getQ3());
     }
 
     /**
@@ -210,12 +205,8 @@ public final class Quaternion implements Serializable {
      * @param q2 Quaternion.
      * @return the dot product of {@code q1} and {@code q2}.
      */
-    public static double dotProduct(final Quaternion q1,
-                                    final Quaternion q2) {
-        return q1.getQ0() * q2.getQ0() +
-            q1.getQ1() * q2.getQ1() +
-            q1.getQ2() * q2.getQ2() +
-            q1.getQ3() * q2.getQ3();
+    public static double dotProduct(final Quaternion q1, final Quaternion q2) {
+        return q1.getQ0() * q2.getQ0() + q1.getQ1() * q2.getQ1() + q1.getQ2() * q2.getQ2() + q1.getQ3() * q2.getQ3();
     }
 
     /**
@@ -234,10 +225,7 @@ public final class Quaternion implements Serializable {
      * @return the norm.
      */
     public double getNorm() {
-        return FastMath.sqrt(q0 * q0 +
-                             q1 * q1 +
-                             q2 * q2 +
-                             q3 * q3);
+        return FastMath.sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
     }
 
     /**
@@ -254,10 +242,7 @@ public final class Quaternion implements Serializable {
             throw new ZeroException(LocalizedFormats.NORM, norm);
         }
 
-        return new Quaternion(q0 / norm,
-                              q1 / norm,
-                              q2 / norm,
-                              q3 / norm);
+        return new Quaternion(q0 / norm, q1 / norm, q2 / norm, q3 / norm);
     }
 
     /**
@@ -270,10 +255,7 @@ public final class Quaternion implements Serializable {
         }
         if (other instanceof Quaternion) {
             final Quaternion q = (Quaternion) other;
-            return q0 == q.getQ0() &&
-                q1 == q.getQ1() &&
-                q2 == q.getQ2() &&
-                q3 == q.getQ3();
+            return q0 == q.getQ0() && q1 == q.getQ1() && q2 == q.getQ2() && q3 == q.getQ3();
         }
 
         return false;
@@ -297,17 +279,15 @@ public final class Quaternion implements Serializable {
      * Checks whether this instance is equal to another quaternion
      * within a given tolerance.
      *
-     * @param q Quaternion with which to compare the current quaternion.
+     * @param q   Quaternion with which to compare the current quaternion.
      * @param eps Tolerance.
      * @return {@code true} if the each of the components are equal
-     * within the allowed absolute error.
+     *         within the allowed absolute error.
      */
-    public boolean equals(final Quaternion q,
-                          final double eps) {
-        return Precision.equals(q0, q.getQ0(), eps) &&
-            Precision.equals(q1, q.getQ1(), eps) &&
-            Precision.equals(q2, q.getQ2(), eps) &&
-            Precision.equals(q3, q.getQ3(), eps);
+    public boolean equals(final Quaternion q, final double eps) {
+        return Precision.equals(q0, q.getQ0(), eps) && Precision.equals(q1, q.getQ1(), eps)
+            && Precision.equals(q2, q.getQ2(), eps)
+            && Precision.equals(q3, q.getQ3(), eps);
     }
 
     /**
@@ -316,7 +296,7 @@ public final class Quaternion implements Serializable {
      *
      * @param eps Tolerance (absolute error).
      * @return {@code true} if the norm is 1 within the given tolerance,
-     * {@code false} otherwise
+     *         {@code false} otherwise
      */
     public boolean isUnitQuaternion(double eps) {
         return Precision.equals(getNorm(), 1d, eps);
@@ -343,10 +323,7 @@ public final class Quaternion implements Serializable {
             final Quaternion unitQ = normalize();
             // The quaternion of rotation (normalized quaternion) q and -q
             // are equivalent (i.e. represent the same rotation).
-            return new Quaternion(-unitQ.getQ0(),
-                                  -unitQ.getQ1(),
-                                  -unitQ.getQ2(),
-                                  -unitQ.getQ3());
+            return new Quaternion(-unitQ.getQ0(), -unitQ.getQ1(), -unitQ.getQ2(), -unitQ.getQ3());
         } else {
             return this.normalize();
         }
@@ -365,10 +342,7 @@ public final class Quaternion implements Serializable {
             throw new ZeroException(LocalizedFormats.NORM, squareNorm);
         }
 
-        return new Quaternion(q0 / squareNorm,
-                              -q1 / squareNorm,
-                              -q2 / squareNorm,
-                              -q3 / squareNorm);
+        return new Quaternion(q0 / squareNorm, -q1 / squareNorm, -q2 / squareNorm, -q3 / squareNorm);
     }
 
     /**
@@ -439,10 +413,7 @@ public final class Quaternion implements Serializable {
      * @return a scaled quaternion.
      */
     public Quaternion multiply(final double alpha) {
-        return new Quaternion(alpha * q0,
-                              alpha * q1,
-                              alpha * q2,
-                              alpha * q3);
+        return new Quaternion(alpha * q0, alpha * q1, alpha * q2, alpha * q3);
     }
 
     /**
@@ -453,9 +424,12 @@ public final class Quaternion implements Serializable {
         final String sp = " ";
         final StringBuilder s = new StringBuilder();
         s.append("[")
-            .append(q0).append(sp)
-            .append(q1).append(sp)
-            .append(q2).append(sp)
+            .append(q0)
+            .append(sp)
+            .append(q1)
+            .append(sp)
+            .append(q2)
+            .append(sp)
             .append(q3)
             .append("]");
 

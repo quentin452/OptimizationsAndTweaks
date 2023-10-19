@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +28,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * reference, see <b>Numerical Mathematics</b>, ISBN 0387989595,
  * chapter 9.2.
  * <p>
- * The function should be integrable.</p>
+ * The function should be integrable.
+ * </p>
  *
  * @since 3.3
  */
@@ -41,49 +40,46 @@ public class MidPointIntegrator extends BaseAbstractUnivariateIntegrator {
 
     /**
      * Build a midpoint integrator with given accuracies and iterations counts.
-     * @param relativeAccuracy relative accuracy of the result
-     * @param absoluteAccuracy absolute accuracy of the result
+     * 
+     * @param relativeAccuracy      relative accuracy of the result
+     * @param absoluteAccuracy      absolute accuracy of the result
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
+     *                              (must be less than or equal to {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
      */
-    public MidPointIntegrator(final double relativeAccuracy,
-                              final double absoluteAccuracy,
-                              final int minimalIterationCount,
-                              final int maximalIterationCount)
+    public MidPointIntegrator(final double relativeAccuracy, final double absoluteAccuracy,
+        final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > MIDPOINT_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                MIDPOINT_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, MIDPOINT_MAX_ITERATIONS_COUNT, false);
         }
     }
 
     /**
      * Build a midpoint integrator with given iteration counts.
+     * 
      * @param minimalIterationCount minimum number of iterations
      * @param maximalIterationCount maximum number of iterations
-     * (must be less than or equal to {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
+     *                              (must be less than or equal to {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
      * @exception NotStrictlyPositiveException if minimal number of iterations
-     * is not strictly positive
-     * @exception NumberIsTooSmallException if maximal number of iterations
-     * is lesser than or equal to the minimal number of iterations
-     * @exception NumberIsTooLargeException if maximal number of iterations
-     * is greater than {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
+     *                                         is not strictly positive
+     * @exception NumberIsTooSmallException    if maximal number of iterations
+     *                                         is lesser than or equal to the minimal number of iterations
+     * @exception NumberIsTooLargeException    if maximal number of iterations
+     *                                         is greater than {@link #MIDPOINT_MAX_ITERATIONS_COUNT}
      */
-    public MidPointIntegrator(final int minimalIterationCount,
-                              final int maximalIterationCount)
+    public MidPointIntegrator(final int minimalIterationCount, final int maximalIterationCount)
         throws NotStrictlyPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
         super(minimalIterationCount, maximalIterationCount);
         if (maximalIterationCount > MIDPOINT_MAX_ITERATIONS_COUNT) {
-            throw new NumberIsTooLargeException(maximalIterationCount,
-                                                MIDPOINT_MAX_ITERATIONS_COUNT, false);
+            throw new NumberIsTooLargeException(maximalIterationCount, MIDPOINT_MAX_ITERATIONS_COUNT, false);
         }
     }
 
@@ -102,22 +98,20 @@ public class MidPointIntegrator extends BaseAbstractUnivariateIntegrator {
      * <p>
      * The interval is divided equally into 2^n sections rather than an
      * arbitrary m sections because this configuration can best utilize the
-     * already computed values.</p>
+     * already computed values.
+     * </p>
      *
-     * @param n the stage of 1/2 refinement. Must be larger than 0.
+     * @param n                   the stage of 1/2 refinement. Must be larger than 0.
      * @param previousStageResult Result from the previous call to the
-     * {@code stage} method.
-     * @param min Lower bound of the integration interval.
-     * @param diffMaxMin Difference between the lower bound and upper bound
-     * of the integration interval.
+     *                            {@code stage} method.
+     * @param min                 Lower bound of the integration interval.
+     * @param diffMaxMin          Difference between the lower bound and upper bound
+     *                            of the integration interval.
      * @return the value of n-th stage integral
      * @throws TooManyEvaluationsException if the maximal number of evaluations
-     * is exceeded.
+     *                                     is exceeded.
      */
-    private double stage(final int n,
-                         double previousStageResult,
-                         double min,
-                         double diffMaxMin)
+    private double stage(final int n, double previousStageResult, double min, double diffMaxMin)
         throws TooManyEvaluationsException {
 
         // number of new points in this stage
@@ -137,7 +131,6 @@ public class MidPointIntegrator extends BaseAbstractUnivariateIntegrator {
         return 0.5 * (previousStageResult + sum * spacing);
     }
 
-
     /** {@inheritDoc} */
     @Override
     protected double doIntegrate()
@@ -155,8 +148,7 @@ public class MidPointIntegrator extends BaseAbstractUnivariateIntegrator {
             final double t = stage(i, oldt, min, diff);
             if (i >= getMinimalIterationCount()) {
                 final double delta = FastMath.abs(t - oldt);
-                final double rLimit =
-                        getRelativeAccuracy() * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5;
+                final double rLimit = getRelativeAccuracy() * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5;
                 if ((delta <= rLimit) || (delta <= getAbsoluteAccuracy())) {
                     return t;
                 }

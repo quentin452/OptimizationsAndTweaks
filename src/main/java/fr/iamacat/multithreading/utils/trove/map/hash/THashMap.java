@@ -10,15 +10,21 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.map.hash;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.*;
 
 import gnu.trove.function.TObjectFunction;
 import gnu.trove.impl.HashFunctions;
@@ -28,18 +34,11 @@ import gnu.trove.map.TMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.*;
-
-
 /**
  * An implementation of the Map interface which uses an open addressed
  * hash table to store its contents.
  * <p/>
- * Created: Sun Nov  4 08:52:45 2001
+ * Created: Sun Nov 4 08:52:45 2001
  *
  * @author Eric D. Friedman
  * @author Rob Eden
@@ -52,10 +51,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
     static final long serialVersionUID = 1L;
 
     /**
-     * the values of the  map
+     * the values of the map
      */
     protected transient V[] _values;
-
 
     /**
      * Creates a new <code>THashMap</code> instance with the default
@@ -64,7 +62,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
     public THashMap() {
         super();
     }
-
 
     /**
      * Creates a new <code>THashMap</code> instance with a prime
@@ -76,7 +73,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
     public THashMap(int initialCapacity) {
         super(initialCapacity);
     }
-
 
     /**
      * Creates a new <code>THashMap</code> instance with a prime
@@ -90,7 +86,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         super(initialCapacity, loadFactor);
     }
 
-
     /**
      * Creates a new <code>THashMap</code> instance which contains the
      * key/value pairs in <tt>map</tt>.
@@ -101,7 +96,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         this(map.size());
         putAll(map);
     }
-
 
     /**
      * Creates a new <code>THashMap</code> instance which contains the
@@ -114,7 +108,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         putAll(map);
     }
 
-
     /**
      * initialize the value array of the map.
      *
@@ -122,16 +115,15 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
      * @return an <code>int</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public int setUp(int initialCapacity) {
         int capacity;
 
         capacity = super.setUp(initialCapacity);
-        //noinspection unchecked
+        // noinspection unchecked
         _values = (V[]) new Object[capacity];
         return capacity;
     }
-
 
     /**
      * Inserts a key/value pair into the map.
@@ -147,7 +139,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         int index = insertKey(key);
         return doPut(value, index);
     }
-
 
     /**
      * Inserts a key/value pair into the map if the specified key is not already
@@ -168,7 +159,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return doPut(value, index);
     }
 
-
     private V doPut(V value, int index) {
         V previous = null;
         boolean isNewMapping = true;
@@ -185,7 +175,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return previous;
     }
 
-
     /**
      * Compares this map with another map for equality of their stored
      * entries.
@@ -194,7 +183,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
      * @return a <code>boolean</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public boolean equals(Object other) {
         if (!(other instanceof Map)) {
             return false;
@@ -206,7 +195,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return forEachEntry(new EqProcedure(that));
     }
 
-
     @Override
     public int hashCode() {
         HashProcedure p = new HashProcedure();
@@ -214,13 +202,12 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return p.getHashCode();
     }
 
-
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder("{");
         forEachEntry(new TObjectObjectProcedure<K, V>() {
-            private boolean first = true;
 
+            private boolean first = true;
 
             @Override
             public boolean execute(K key, V value) {
@@ -240,8 +227,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return buf.toString();
     }
 
-
     private final class HashProcedure implements TObjectObjectProcedure<K, V> {
+
         private int h = 0;
 
         public int getHashCode() {
@@ -255,14 +242,13 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         }
     }
 
-
     private final class EqProcedure implements TObjectObjectProcedure<K, V> {
+
         private final Map<K, V> _otherMap;
 
         EqProcedure(Map<K, V> otherMap) {
             _otherMap = otherMap;
         }
-
 
         @Override
         public final boolean execute(K key, V value) {
@@ -274,11 +260,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             }
 
             V oValue = _otherMap.get(key);
-            return oValue == value || (oValue != null &&
-                    THashMap.this.equals(oValue, value));
+            return oValue == value || (oValue != null && THashMap.this.equals(oValue, value));
         }
     }
-
 
     /**
      * Executes <tt>procedure</tt> for each key in the map.
@@ -292,7 +276,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return forEach(procedure);
     }
 
-
     /**
      * Executes <tt>procedure</tt> for each value in the map.
      *
@@ -305,15 +288,12 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         V[] values = _values;
         Object[] set = _set;
         for (int i = values.length; i-- > 0;) {
-            if (set[i] != FREE
-                    && set[i] != REMOVED
-                    && !procedure.execute(values[i])) {
+            if (set[i] != FREE && set[i] != REMOVED && !procedure.execute(values[i])) {
                 return false;
             }
         }
         return true;
     }
-
 
     /**
      * Executes <tt>procedure</tt> for each key/value entry in the
@@ -324,20 +304,17 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
      *         the procedure returned false for some entry.
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public boolean forEachEntry(TObjectObjectProcedure<? super K, ? super V> procedure) {
         Object[] keys = _set;
         V[] values = _values;
         for (int i = keys.length; i-- > 0;) {
-            if (keys[i] != FREE
-                    && keys[i] != REMOVED
-                    && !procedure.execute((K) keys[i], values[i])) {
+            if (keys[i] != FREE && keys[i] != REMOVED && !procedure.execute((K) keys[i], values[i])) {
                 return false;
             }
         }
         return true;
     }
-
 
     /**
      * Retains only those entries in the map for which the procedure
@@ -347,7 +324,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
      * @return true if the map was modified.
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public boolean retainEntries(TObjectObjectProcedure<? super K, ? super V> procedure) {
         boolean modified = false;
         Object[] keys = _set;
@@ -357,9 +334,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         tempDisableAutoCompaction();
         try {
             for (int i = keys.length; i-- > 0;) {
-                if (keys[i] != FREE
-                        && keys[i] != REMOVED
-                        && !procedure.execute((K) keys[i], values[i])) {
+                if (keys[i] != FREE && keys[i] != REMOVED && !procedure.execute((K) keys[i], values[i])) {
                     removeAt(i);
                     modified = true;
                 }
@@ -370,7 +345,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
 
         return modified;
     }
-
 
     /**
      * Transform the values in this map using <tt>function</tt>.
@@ -388,14 +362,13 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         }
     }
 
-
     /**
      * rehashes the map to the new capacity.
      *
      * @param newCapacity an <code>int</code> value
      */
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     protected void rehash(int newCapacity) {
         int oldCapacity = _set.length;
         int oldSize = size();
@@ -424,7 +397,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         reportPotentialConcurrentMod(size(), oldSize);
     }
 
-
     /**
      * retrieves the value for <tt>key</tt>
      *
@@ -436,7 +408,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         int index = index(key);
         return index < 0 ? null : _values[index];
     }
-
 
     /**
      * Empties the map.
@@ -453,7 +424,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         Arrays.fill(_values, 0, _values.length, null);
     }
 
-
     /**
      * Deletes a key/value pair from the map.
      *
@@ -466,11 +436,10 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         int index = index(key);
         if (index >= 0) {
             prev = _values[index];
-            removeAt(index);    // clear key,state; adjust size
+            removeAt(index); // clear key,state; adjust size
         }
         return prev;
     }
-
 
     /**
      * removes the mapping at <tt>index</tt> from the map.
@@ -480,9 +449,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
     @Override
     public void removeAt(int index) {
         _values[index] = null;
-        super.removeAt(index);  // clear key, state; adjust size
+        super.removeAt(index); // clear key, state; adjust size
     }
-
 
     /**
      * Returns a view on the values of the map.
@@ -494,7 +462,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return new ValueView();
     }
 
-
     /**
      * returns a Set view on the keys of the map.
      *
@@ -505,7 +472,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         return new KeyView();
     }
 
-
     /**
      * Returns a Set view on the entries of the map.
      *
@@ -515,7 +481,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
     public Set<Map.Entry<K, V>> entrySet() {
         return new EntryView();
     }
-
 
     /**
      * checks for the presence of <tt>val</tt> in the values of the map.
@@ -532,22 +497,19 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         // perform null checks before every call to equals()
         if (null == val) {
             for (int i = vals.length; i-- > 0;) {
-                if ((set[i] != FREE && set[i] != REMOVED) &&
-                        val == vals[i]) {
+                if ((set[i] != FREE && set[i] != REMOVED) && val == vals[i]) {
                     return true;
                 }
             }
         } else {
             for (int i = vals.length; i-- > 0;) {
-                if ((set[i] != FREE && set[i] != REMOVED) &&
-                        (val == vals[i] || equals(val, vals[i]))) {
+                if ((set[i] != FREE && set[i] != REMOVED) && (val == vals[i] || equals(val, vals[i]))) {
                     return true;
                 }
             }
         } // end of else
         return false;
     }
-
 
     /**
      * checks for the present of <tt>key</tt> in the keys of the map.
@@ -557,10 +519,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
      */
     @Override
     public boolean containsKey(Object key) {
-        //noinspection unchecked
+        // noinspection unchecked
         return contains(key);
     }
-
 
     /**
      * copies the key/value mappings in <tt>map</tt> into this map.
@@ -576,16 +537,16 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         }
     }
 
-
     /**
      * a view onto the values of the map.
      */
     protected class ValueView extends MapBackedView<V> {
 
         @Override
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public Iterator<V> iterator() {
             return new TObjectHashIterator(THashMap.this) {
+
                 @Override
                 protected V objectAtIndex(int index) {
                     return _values[index];
@@ -593,12 +554,10 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             };
         }
 
-
         @Override
         public boolean containsElement(V value) {
             return containsValue(value);
         }
-
 
         @Override
         public boolean removeElement(V value) {
@@ -606,9 +565,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             Object[] set = _set;
 
             for (int i = values.length; i-- > 0;) {
-                if ((set[i] != FREE && set[i] != REMOVED) &&
-                        value == values[i] ||
-                        (null != values[i] && THashMap.this.equals(values[i], value))) {
+                if ((set[i] != FREE && set[i] != REMOVED) && value == values[i]
+                    || (null != values[i] && THashMap.this.equals(values[i], value))) {
 
                     removeAt(i);
                     return true;
@@ -632,21 +590,18 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
                 super(map);
             }
 
-
             @Override
-            @SuppressWarnings({"unchecked"})
+            @SuppressWarnings({ "unchecked" })
             public Entry objectAtIndex(final int index) {
                 return new Entry((K) _set[index], _values[index], index);
             }
         }
 
-
         @Override
-        @SuppressWarnings({"unchecked"})
+        @SuppressWarnings({ "unchecked" })
         public Iterator<Map.Entry<K, V>> iterator() {
             return new EntryIterator(THashMap.this);
         }
-
 
         @Override
         public boolean removeElement(Map.Entry<K, V> entry) {
@@ -654,7 +609,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
 
             // have to effectively reimplement Map.remove here
             // because we need to return true/false depending on
-            // whether the removal took place.  Since the Entry's
+            // whether the removal took place. Since the Entry's
             // value can be null, this means that we can't rely
             // on the value of the object returned by Map.remove()
             // to determine whether a deletion actually happened.
@@ -668,57 +623,47 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             index = index(key);
             if (index >= 0) {
                 val = valueForEntry(entry);
-                if (val == _values[index] ||
-                        (null != val && THashMap.this.equals(val, _values[index]))) {
-                    removeAt(index);    // clear key,state; adjust size
+                if (val == _values[index] || (null != val && THashMap.this.equals(val, _values[index]))) {
+                    removeAt(index); // clear key,state; adjust size
                     return true;
                 }
             }
             return false;
         }
 
-
         @Override
         public boolean containsElement(Map.Entry<K, V> entry) {
             V val = get(keyForEntry(entry));
             V entryValue = entry.getValue();
-            return entryValue == val ||
-                    (null != val && THashMap.this.equals(val, entryValue));
+            return entryValue == val || (null != val && THashMap.this.equals(val, entryValue));
         }
-
 
         protected V valueForEntry(Map.Entry<K, V> entry) {
             return entry.getValue();
         }
-
 
         protected K keyForEntry(Map.Entry<K, V> entry) {
             return entry.getKey();
         }
     }
 
-    private abstract class MapBackedView<E> extends AbstractSet<E>
-            implements Set<E>, Iterable<E> {
+    private abstract class MapBackedView<E> extends AbstractSet<E> implements Set<E>, Iterable<E> {
 
         @Override
         public abstract Iterator<E> iterator();
 
-
         public abstract boolean removeElement(E key);
-
 
         public abstract boolean containsElement(E key);
 
-
         @Override
-        @SuppressWarnings({"unchecked"})
+        @SuppressWarnings({ "unchecked" })
         public boolean contains(Object key) {
             return containsElement((E) key);
         }
 
-
         @Override
-        @SuppressWarnings({"unchecked"})
+        @SuppressWarnings({ "unchecked" })
         public boolean remove(Object o) {
             try {
                 return removeElement((E) o);
@@ -727,34 +672,29 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             }
         }
 
-
-//        public boolean containsAll( Collection<?> collection ) {
-//            for ( Object element : collection ) {
-//                if ( !contains( element ) ) {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-
+        // public boolean containsAll( Collection<?> collection ) {
+        // for ( Object element : collection ) {
+        // if ( !contains( element ) ) {
+        // return false;
+        // }
+        // }
+        // return true;
+        // }
 
         @Override
         public void clear() {
             THashMap.this.clear();
         }
 
-
         @Override
         public boolean add(E obj) {
             throw new UnsupportedOperationException();
         }
 
-
         @Override
         public int size() {
             return THashMap.this.size();
         }
-
 
         @Override
         public Object[] toArray() {
@@ -766,13 +706,15 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             return result;
         }
 
-
         @Override
-        @SuppressWarnings({"unchecked"})
+        @SuppressWarnings({ "unchecked" })
         public <T> T[] toArray(T[] a) {
             int size = size();
             if (a.length < size) {
-                a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+                a = (T[]) java.lang.reflect.Array.newInstance(
+                    a.getClass()
+                        .getComponentType(),
+                    size);
             }
 
             Iterator<E> it = iterator();
@@ -788,18 +730,15 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             return a;
         }
 
-
         @Override
         public boolean isEmpty() {
             return THashMap.this.isEmpty();
         }
 
-
         @Override
         public boolean addAll(Collection<? extends E> collection) {
             throw new UnsupportedOperationException();
         }
-
 
         @Override
         public boolean retainAll(Collection<?> collection) {
@@ -821,10 +760,11 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
 
             StringBuilder sb = new StringBuilder();
             sb.append('{');
-            for (; ;) {
+            for (;;) {
                 E e = i.next();
                 sb.append(e == this ? "(this Collection)" : e);
-                if (!i.hasNext()) return sb.append('}').toString();
+                if (!i.hasNext()) return sb.append('}')
+                    .toString();
                 sb.append(", ");
             }
         }
@@ -840,12 +780,10 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             return new TObjectHashIterator<K>(THashMap.this);
         }
 
-
         @Override
         public boolean removeElement(K key) {
             return null != THashMap.this.remove(key);
         }
-
 
         @Override
         public boolean containsElement(K key) {
@@ -859,25 +797,21 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         private V val;
         private final int index;
 
-
         Entry(final K key, V value, final int index) {
             this.key = key;
             this.val = value;
             this.index = index;
         }
 
-
         @Override
         public K getKey() {
             return key;
         }
 
-
         @Override
         public V getValue() {
             return val;
         }
-
 
         @Override
         public V setValue(V o) {
@@ -892,7 +826,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
             return retval;
         }
 
-
         @Override
         @SuppressWarnings("rawtypes")
         public boolean equals(Object o) {
@@ -900,24 +833,21 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
                 Map.Entry<K, V> e1 = this;
                 Map.Entry e2 = (Map.Entry) o;
                 return (THashMap.this.equals(e1.getKey(), e2.getKey()))
-                        && (THashMap.this.equals(e1.getValue(), e1.getValue()));
+                    && (THashMap.this.equals(e1.getValue(), e1.getValue()));
             }
             return false;
         }
-
 
         @Override
         public int hashCode() {
             return (getKey() == null ? 0 : getKey().hashCode()) ^ (getValue() == null ? 0 : getValue().hashCode());
         }
 
-
         @Override
         public String toString() {
             return key + "=" + val;
         }
     }
-
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -939,11 +869,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
         }
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
-    public void readExternal(ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         // VERSION
         byte version = in.readByte();
@@ -959,9 +887,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements TMap<K, V>, Extern
 
         // ENTRIES
         while (size-- > 0) {
-            //noinspection unchecked
+            // noinspection unchecked
             K key = (K) in.readObject();
-            //noinspection unchecked
+            // noinspection unchecked
             V val = (V) in.readObject();
             put(key, val);
         }

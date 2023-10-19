@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +15,9 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.AbstractConvergenceChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * Simple implementation of the
@@ -40,8 +38,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Abstrac
  * @since 3.1
  */
 @Deprecated
-public class SimpleUnivariateValueChecker
-    extends AbstractConvergenceChecker<UnivariatePointValuePair> {
+public class SimpleUnivariateValueChecker extends AbstractConvergenceChecker<UnivariatePointValuePair> {
+
     /**
      * If {@link #maxIterationCount} is set to this value, the number of
      * iterations will never cause
@@ -58,6 +56,7 @@ public class SimpleUnivariateValueChecker
 
     /**
      * Build an instance with default thresholds.
+     * 
      * @deprecated See {@link AbstractConvergenceChecker#AbstractConvergenceChecker()}
      */
     @Deprecated
@@ -65,7 +64,8 @@ public class SimpleUnivariateValueChecker
         maxIterationCount = ITERATION_CHECK_DISABLED;
     }
 
-    /** Build an instance with specified thresholds.
+    /**
+     * Build an instance with specified thresholds.
      *
      * In order to perform only relative checks, the absolute tolerance
      * must be set to a negative value. In order to perform only absolute
@@ -74,8 +74,7 @@ public class SimpleUnivariateValueChecker
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
      */
-    public SimpleUnivariateValueChecker(final double relativeThreshold,
-                                        final double absoluteThreshold) {
+    public SimpleUnivariateValueChecker(final double relativeThreshold, final double absoluteThreshold) {
         super(relativeThreshold, absoluteThreshold);
         maxIterationCount = ITERATION_CHECK_DISABLED;
     }
@@ -89,14 +88,13 @@ public class SimpleUnivariateValueChecker
      *
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
-     * @param maxIter Maximum iteration count.
+     * @param maxIter           Maximum iteration count.
      * @throws NotStrictlyPositiveException if {@code maxIter <= 0}.
      *
      * @since 3.1
      */
-    public SimpleUnivariateValueChecker(final double relativeThreshold,
-                                        final double absoluteThreshold,
-                                        final int maxIter) {
+    public SimpleUnivariateValueChecker(final double relativeThreshold, final double absoluteThreshold,
+        final int maxIter) {
         super(relativeThreshold, absoluteThreshold);
 
         if (maxIter <= 0) {
@@ -117,14 +115,13 @@ public class SimpleUnivariateValueChecker
      * not only for the best or worst ones.
      *
      * @param iteration Index of current iteration
-     * @param previous Best point in the previous iteration.
-     * @param current Best point in the current iteration.
+     * @param previous  Best point in the previous iteration.
+     * @param current   Best point in the current iteration.
      * @return {@code true} if the algorithm has converged.
      */
     @Override
-    public boolean converged(final int iteration,
-                             final UnivariatePointValuePair previous,
-                             final UnivariatePointValuePair current) {
+    public boolean converged(final int iteration, final UnivariatePointValuePair previous,
+        final UnivariatePointValuePair current) {
         if (maxIterationCount != ITERATION_CHECK_DISABLED && iteration >= maxIterationCount) {
             return true;
         }
@@ -133,7 +130,6 @@ public class SimpleUnivariateValueChecker
         final double c = current.getValue();
         final double difference = FastMath.abs(p - c);
         final double size = FastMath.max(FastMath.abs(p), FastMath.abs(c));
-        return difference <= size * getRelativeThreshold() ||
-            difference <= getAbsoluteThreshold();
+        return difference <= size * getRelativeThreshold() || difference <= getAbsoluteThreshold();
     }
 }

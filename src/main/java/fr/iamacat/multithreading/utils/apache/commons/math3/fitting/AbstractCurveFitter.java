@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +16,8 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.fitting;
 
 import java.util.Collection;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateMatrixFunction;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
@@ -38,9 +36,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares
  * <br/>
  * An algorithm usually performs the fit by finding the parameter
  * values that minimizes the objective function
- * <pre><code>
+ * 
+ * <pre>
+ * <code>
  *  &sum;y<sub>k</sub> - f(x<sub>k</sub>)<sup>2</sup>,
- * </code></pre>
+ * </code>
+ * </pre>
+ * 
  * which is actually a least-squares problem.
  * This class contains boilerplate code for calling the
  * {@link #fit(Collection)} method for obtaining the parameters.
@@ -50,6 +52,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares
  * @since 3.3
  */
 public abstract class AbstractCurveFitter {
+
     /**
      * Fits a curve.
      * This method computes the coefficients of the curve that best
@@ -60,7 +63,9 @@ public abstract class AbstractCurveFitter {
      */
     public double[] fit(Collection<WeightedObservedPoint> points) {
         // Perform the fit.
-        return getOptimizer().optimize(getProblem(points)).getPoint().toArray();
+        return getOptimizer().optimize(getProblem(points))
+            .getPoint()
+            .toArray();
     }
 
     /**
@@ -69,8 +74,9 @@ public abstract class AbstractCurveFitter {
      * The default implementation uses a {@link LevenbergMarquardtOptimizer
      * Levenberg-Marquardt} optimizer.
      * </p>
+     * 
      * @return the optimizer to use for fitting the curve to the
-     * given {@code points}.
+     *         given {@code points}.
      */
     protected LeastSquaresOptimizer getOptimizer() {
         return new LevenbergMarquardtOptimizer();
@@ -81,7 +87,7 @@ public abstract class AbstractCurveFitter {
      *
      * @param points Sample points.
      * @return the least squares problem to use for fitting the curve to the
-     * given {@code points}.
+     *         given {@code points}.
      */
     protected abstract LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> points);
 
@@ -89,17 +95,18 @@ public abstract class AbstractCurveFitter {
      * Vector function for computing function theoretical values.
      */
     protected static class TheoreticalValuesFunction {
+
         /** Function to fit. */
         private final ParametricUnivariateFunction f;
         /** Observations. */
         private final double[] points;
 
         /**
-         * @param f function to fit.
+         * @param f            function to fit.
          * @param observations Observations.
          */
         public TheoreticalValuesFunction(final ParametricUnivariateFunction f,
-                                         final Collection<WeightedObservedPoint> observations) {
+            final Collection<WeightedObservedPoint> observations) {
             this.f = f;
 
             final int len = observations.size();
@@ -115,6 +122,7 @@ public abstract class AbstractCurveFitter {
          */
         public MultivariateVectorFunction getModelFunction() {
             return new MultivariateVectorFunction() {
+
                 /** {@inheritDoc} */
                 public double[] value(double[] p) {
                     final int len = points.length;
@@ -133,6 +141,7 @@ public abstract class AbstractCurveFitter {
          */
         public MultivariateMatrixFunction getModelFunctionJacobian() {
             return new MultivariateMatrixFunction() {
+
                 /** {@inheritDoc} */
                 public double[][] value(double[] p) {
                     final int len = points.length;

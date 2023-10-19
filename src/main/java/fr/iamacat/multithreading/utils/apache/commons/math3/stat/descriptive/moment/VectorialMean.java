@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +21,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionM
 
 /**
  * Returns the arithmetic mean of the available vectors.
+ * 
  * @since 1.2
  */
 public class VectorialMean implements Serializable {
@@ -33,7 +32,9 @@ public class VectorialMean implements Serializable {
     /** Means for each component. */
     private final Mean[] means;
 
-    /** Constructs a VectorialMean.
+    /**
+     * Constructs a VectorialMean.
+     * 
      * @param dimension vectors dimension
      */
     public VectorialMean(int dimension) {
@@ -45,6 +46,7 @@ public class VectorialMean implements Serializable {
 
     /**
      * Add a new vector to the sample.
+     * 
      * @param v vector to add
      * @throws DimensionMismatchException if the vector does not have the right dimension
      */
@@ -59,6 +61,7 @@ public class VectorialMean implements Serializable {
 
     /**
      * Get the mean vector.
+     * 
      * @return mean vector
      */
     public double[] getResult() {
@@ -71,6 +74,7 @@ public class VectorialMean implements Serializable {
 
     /**
      * Get the number of vectors in the sample.
+     * 
      * @return number of vectors in the sample
      */
     public long getN() {

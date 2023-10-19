@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -90,7 +88,7 @@ public class FastSineTransformer implements RealTransformer, Serializable {
      * The first element of the specified data set is required to be {@code 0}.
      *
      * @throws MathIllegalArgumentException if the length of the data array is
-     *   not a power of two, or the first element of the data array is not zero
+     *                                      not a power of two, or the first element of the data array is not zero
      */
     public double[] transform(final double[] f, final TransformType type) {
         if (normalization == DstNormalization.ORTHOGONAL_DST_I) {
@@ -110,13 +108,26 @@ public class FastSineTransformer implements RealTransformer, Serializable {
      * This implementation enforces {@code f(x) = 0.0} at {@code x = 0.0}.
      *
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     *   if the lower bound is greater than, or equal to the upper bound
+     *                                                                                                      if the lower
+     *                                                                                                      bound is
+     *                                                                                                      greater
+     *                                                                                                      than, or
+     *                                                                                                      equal to the
+     *                                                                                                      upper bound
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *   if the number of sample points is negative
-     * @throws MathIllegalArgumentException if the number of sample points is not a power of two
+     *                                                                                                      if the
+     *                                                                                                      number of
+     *                                                                                                      sample
+     *                                                                                                      points is
+     *                                                                                                      negative
+     * @throws MathIllegalArgumentException                                                                 if the
+     *                                                                                                      number of
+     *                                                                                                      sample
+     *                                                                                                      points is
+     *                                                                                                      not a power
+     *                                                                                                      of two
      */
-    public double[] transform(final UnivariateFunction f,
-        final double min, final double max, final int n,
+    public double[] transform(final UnivariateFunction f, final double min, final double max, final int n,
         final TransformType type) {
 
         final double[] data = FunctionUtils.sample(f, min, max, n);
@@ -131,7 +142,7 @@ public class FastSineTransformer implements RealTransformer, Serializable {
      * @param f the real data array to be transformed
      * @return the real transformed array
      * @throws MathIllegalArgumentException if the length of the data array is
-     *   not a power of two, or the first element of the data array is not zero
+     *                                      not a power of two, or the first element of the data array is not zero
      */
     protected double[] fst(double[] f) throws MathIllegalArgumentException {
 
@@ -139,16 +150,14 @@ public class FastSineTransformer implements RealTransformer, Serializable {
 
         if (!ArithmeticUtils.isPowerOfTwo(f.length)) {
             throw new MathIllegalArgumentException(
-                    LocalizedFormats.NOT_POWER_OF_TWO_CONSIDER_PADDING,
-                    Integer.valueOf(f.length));
+                LocalizedFormats.NOT_POWER_OF_TWO_CONSIDER_PADDING,
+                Integer.valueOf(f.length));
         }
         if (f[0] != 0.0) {
-            throw new MathIllegalArgumentException(
-                    LocalizedFormats.FIRST_ELEMENT_NOT_ZERO,
-                    Double.valueOf(f[0]));
+            throw new MathIllegalArgumentException(LocalizedFormats.FIRST_ELEMENT_NOT_ZERO, Double.valueOf(f[0]));
         }
         final int n = f.length;
-        if (n == 1) {       // trivial case
+        if (n == 1) { // trivial case
             transformed[0] = 0.0;
             return transformed;
         }
@@ -160,7 +169,7 @@ public class FastSineTransformer implements RealTransformer, Serializable {
         for (int i = 1; i < (n >> 1); i++) {
             final double a = FastMath.sin(i * FastMath.PI / n) * (f[i] + f[n - i]);
             final double b = 0.5 * (f[i] - f[n - i]);
-            x[i]     = a + b;
+            x[i] = a + b;
             x[n - i] = a - b;
         }
         FastFourierTransformer transformer;
@@ -171,7 +180,7 @@ public class FastSineTransformer implements RealTransformer, Serializable {
         transformed[0] = 0.0;
         transformed[1] = 0.5 * y[0].getReal();
         for (int i = 1; i < (n >> 1); i++) {
-            transformed[2 * i]     = -y[i].getImaginary();
+            transformed[2 * i] = -y[i].getImaginary();
             transformed[2 * i + 1] = y[i].getReal() + transformed[2 * i - 1];
         }
 

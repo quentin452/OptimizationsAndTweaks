@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,12 +14,12 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim.univariate;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
 
 /**
  * For a function defined on some interval {@code (lo, hi)}, this class
@@ -34,13 +32,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scal
  * This code is an adaptation, partly based on the Python code from SciPy
  * (module "optimize.py" v0.5); the original algorithm is also modified
  * <ul>
- *  <li>to use an initial guess provided by the user,</li>
- *  <li>to ensure that the best point encountered is the one returned.</li>
+ * <li>to use an initial guess provided by the user,</li>
+ * <li>to ensure that the best point encountered is the one returned.</li>
  * </ul>
  *
  * @since 2.0
  */
 public class BrentOptimizer extends UnivariateOptimizer {
+
     /**
      * Golden section.
      */
@@ -67,16 +66,14 @@ public class BrentOptimizer extends UnivariateOptimizer {
      * where <em>macheps</em> is the relative machine precision. {@code abs} must
      * be positive.
      *
-     * @param rel Relative threshold.
-     * @param abs Absolute threshold.
+     * @param rel     Relative threshold.
+     * @param abs     Absolute threshold.
      * @param checker Additional, user-defined, convergence checking
-     * procedure.
+     *                procedure.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      */
-    public BrentOptimizer(double rel,
-                          double abs,
-                          ConvergenceChecker<UnivariatePointValuePair> checker) {
+    public BrentOptimizer(double rel, double abs, ConvergenceChecker<UnivariatePointValuePair> checker) {
         super(checker);
 
         if (rel < MIN_RELATIVE_TOLERANCE) {
@@ -102,10 +99,9 @@ public class BrentOptimizer extends UnivariateOptimizer {
      * @param rel Relative threshold.
      * @param abs Absolute threshold.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      */
-    public BrentOptimizer(double rel,
-                          double abs) {
+    public BrentOptimizer(double rel, double abs) {
         this(rel, abs, null);
     }
 
@@ -118,8 +114,7 @@ public class BrentOptimizer extends UnivariateOptimizer {
         final double hi = getMax();
 
         // Optional additional convergence criteria.
-        final ConvergenceChecker<UnivariatePointValuePair> checker
-            = getConvergenceChecker();
+        final ConvergenceChecker<UnivariatePointValuePair> checker = getConvergenceChecker();
 
         double a;
         double b;
@@ -144,8 +139,7 @@ public class BrentOptimizer extends UnivariateOptimizer {
         double fw = fx;
 
         UnivariatePointValuePair previous = null;
-        UnivariatePointValuePair current
-            = new UnivariatePointValuePair(x, isMinim ? fx : -fx);
+        UnivariatePointValuePair current = new UnivariatePointValuePair(x, isMinim ? fx : -fx);
         // Best point encountered so far (which is the initial guess).
         UnivariatePointValuePair best = current;
 
@@ -177,9 +171,7 @@ public class BrentOptimizer extends UnivariateOptimizer {
                     r = e;
                     e = d;
 
-                    if (p > q * (a - x) &&
-                        p < q * (b - x) &&
-                        FastMath.abs(p) < FastMath.abs(0.5 * q * r)) {
+                    if (p > q * (a - x) && p < q * (b - x) && FastMath.abs(p) < FastMath.abs(0.5 * q * r)) {
                         // Parabolic interpolation step.
                         d = p / q;
                         u = x + d;
@@ -230,11 +222,7 @@ public class BrentOptimizer extends UnivariateOptimizer {
                 // User-defined convergence checker.
                 previous = current;
                 current = new UnivariatePointValuePair(u, isMinim ? fu : -fu);
-                best = best(best,
-                            best(previous,
-                                 current,
-                                 isMinim),
-                            isMinim);
+                best = best(best, best(previous, current, isMinim), isMinim);
 
                 if (checker != null && checker.converged(getIterations(), previous, current)) {
                     return best;
@@ -259,25 +247,18 @@ public class BrentOptimizer extends UnivariateOptimizer {
                     } else {
                         b = u;
                     }
-                    if (fu <= fw ||
-                        Precision.equals(w, x)) {
+                    if (fu <= fw || Precision.equals(w, x)) {
                         v = w;
                         fv = fw;
                         w = u;
                         fw = fu;
-                    } else if (fu <= fv ||
-                               Precision.equals(v, x) ||
-                               Precision.equals(v, w)) {
+                    } else if (fu <= fv || Precision.equals(v, x) || Precision.equals(v, w)) {
                         v = u;
                         fv = fu;
                     }
                 }
             } else { // Default termination (Brent's criterion).
-                return best(best,
-                            best(previous,
-                                 current,
-                                 isMinim),
-                            isMinim);
+                return best(best, best(previous, current, isMinim), isMinim);
             }
 
             incrementIterationCount();
@@ -287,17 +268,15 @@ public class BrentOptimizer extends UnivariateOptimizer {
     /**
      * Selects the best of two points.
      *
-     * @param a Point and value.
-     * @param b Point and value.
+     * @param a       Point and value.
+     * @param b       Point and value.
      * @param isMinim {@code true} if the selected point must be the one with
-     * the lowest value.
+     *                the lowest value.
      * @return the best point, or {@code null} if {@code a} and {@code b} are
-     * both {@code null}. When {@code a} and {@code b} have the same function
-     * value, {@code a} is returned.
+     *         both {@code null}. When {@code a} and {@code b} have the same function
+     *         value, {@code a} is returned.
      */
-    private UnivariatePointValuePair best(UnivariatePointValuePair a,
-                                          UnivariatePointValuePair b,
-                                          boolean isMinim) {
+    private UnivariatePointValuePair best(UnivariatePointValuePair a, UnivariatePointValuePair b, boolean isMinim) {
         if (a == null) {
             return b;
         }

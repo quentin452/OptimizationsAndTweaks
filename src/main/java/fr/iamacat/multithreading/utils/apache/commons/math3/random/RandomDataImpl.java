@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +22,11 @@ import java.util.Collection;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.IntegerDistribution;
 import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.RealDistribution;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotANumberException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotFiniteNumberException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
 
@@ -85,13 +83,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRange
  * <li>
  * This implementation is not synchronized. The underlying <code>RandomGenerator</code>
  * or <code>SecureRandom</code> instances are not protected by synchronization and
- * are not guaranteed to be thread-safe.  Therefore, if an instance of this class
+ * are not guaranteed to be thread-safe. Therefore, if an instance of this class
  * is concurrently utilized by multiple threads, it is the responsibility of
  * client code to synchronize access to seeding and data generation methods.
  * </li>
  * </ul>
  * </p>
- * @deprecated to be removed in 4.0.  Use {@link RandomDataGenerator} instead
+ * 
+ * @deprecated to be removed in 4.0. Use {@link RandomDataGenerator} instead
  */
 @Deprecated
 public class RandomDataImpl implements RandomData, Serializable {
@@ -106,9 +105,11 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Construct a RandomDataImpl, using a default random generator as the source
      * of randomness.
      *
-     * <p>The default generator is a {@link Well19937c} seeded
+     * <p>
+     * The default generator is a {@link Well19937c} seeded
      * with {@code System.currentTimeMillis() + System.identityHashCode(this))}.
-     * The generator is initialized and seeded on first use.</p>
+     * The generator is initialized and seeded on first use.
+     * </p>
      */
     public RandomDataImpl() {
         delegate = new RandomDataGenerator();
@@ -119,7 +120,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * the source of (non-secure) random data.
      *
      * @param rand the source of (non-secure) random data
-     * (may be null, resulting in the default generator)
+     *             (may be null, resulting in the default generator)
      * @since 1.1
      */
     public RandomDataImpl(RandomGenerator rand) {
@@ -157,7 +158,7 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /** {@inheritDoc} */
     public int nextInt(int lower, int upper) throws NumberIsTooLargeException {
-       return delegate.nextInt(lower, upper);
+        return delegate.nextInt(lower, upper);
     }
 
     /** {@inheritDoc} */
@@ -185,28 +186,31 @@ public class RandomDataImpl implements RandomData, Serializable {
         return delegate.nextSecureHexString(len);
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public int nextSecureInt(int lower, int upper) throws NumberIsTooLargeException {
         return delegate.nextSecureInt(lower, upper);
     }
 
     /** {@inheritDoc} */
     public long nextSecureLong(long lower, long upper) throws NumberIsTooLargeException {
-        return delegate.nextSecureLong(lower,upper);
+        return delegate.nextSecureLong(lower, upper);
     }
 
     /**
      * {@inheritDoc}
      * <p>
      * <strong>Algorithm Description</strong>:
-     * <ul><li> For small means, uses simulation of a Poisson process
+     * <ul>
+     * <li>For small means, uses simulation of a Poisson process
      * using Uniform deviates, as described
      * <a href="http://irmi.epfl.ch/cmos/Pmmi/interactive/rng7.htm"> here.</a>
      * The Poisson process (and hence value returned) is bounded by 1000 * mean.</li>
      *
-     * <li> For large means, uses the rejection algorithm described in <br/>
+     * <li>For large means, uses the rejection algorithm described in <br/>
      * Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i>
-     * <strong>Computing</strong> vol. 26 pp. 197-207.</li></ul></p>
+     * <strong>Computing</strong> vol. 26 pp. 197-207.</li>
+     * </ul>
+     * </p>
      */
     public long nextPoisson(double mean) throws NotStrictlyPositiveException {
         return delegate.nextPoisson(mean);
@@ -214,7 +218,7 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /** {@inheritDoc} */
     public double nextGaussian(double mu, double sigma) throws NotStrictlyPositiveException {
-        return delegate.nextGaussian(mu,sigma);
+        return delegate.nextGaussian(mu, sigma);
     }
 
     /**
@@ -257,6 +261,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * This is necessary to provide a symmetric output interval (both
      * endpoints excluded).
      * </p>
+     * 
      * @since 3.0
      */
     public double nextUniform(double lower, double upper, boolean lowerInclusive)
@@ -265,12 +270,13 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.BetaDistribution Beta Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.BetaDistribution Beta Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
      * @param alpha first distribution shape parameter
-     * @param beta second distribution shape parameter
+     * @param beta  second distribution shape parameter
      * @return random value sampled from the beta(alpha, beta) distribution
      * @since 2.2
      */
@@ -279,11 +285,13 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.BinomialDistribution Binomial Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.BinomialDistribution Binomial
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
-     * @param numberOfTrials number of trials of the Binomial distribution
+     * @param numberOfTrials       number of trials of the Binomial distribution
      * @param probabilityOfSuccess probability of success of the Binomial distribution
      * @return random value sampled from the Binomial(numberOfTrials, probabilityOfSuccess) distribution
      * @since 2.2
@@ -293,12 +301,13 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.CauchyDistribution Cauchy Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.CauchyDistribution Cauchy Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
      * @param median the median of the Cauchy distribution
-     * @param scale the scale parameter of the Cauchy distribution
+     * @param scale  the scale parameter of the Cauchy distribution
      * @return random value sampled from the Cauchy(median, scale) distribution
      * @since 2.2
      */
@@ -307,7 +316,9 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.ChiSquaredDistribution ChiSquare Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.ChiSquaredDistribution ChiSquare
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
@@ -316,19 +327,20 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @since 2.2
      */
     public double nextChiSquare(double df) {
-       return delegate.nextChiSquare(df);
+        return delegate.nextChiSquare(df);
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.FDistribution F Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.FDistribution F Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
-     * @param numeratorDf the numerator degrees of freedom of the F distribution
+     * @param numeratorDf   the numerator degrees of freedom of the F distribution
      * @param denominatorDf the denominator degrees of freedom of the F distribution
      * @return random value sampled from the F(numeratorDf, denominatorDf) distribution
      * @throws NotStrictlyPositiveException if
-     * {@code numeratorDf <= 0} or {@code denominatorDf <= 0}.
+     *                                      {@code numeratorDf <= 0} or {@code denominatorDf <= 0}.
      * @since 2.2
      */
     public double nextF(double numeratorDf, double denominatorDf) throws NotStrictlyPositiveException {
@@ -336,26 +348,34 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * <p>Generates a random value from the
-     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.GammaDistribution Gamma Distribution}.</p>
+     * <p>
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.GammaDistribution Gamma Distribution}.
+     * </p>
      *
-     * <p>This implementation uses the following algorithms: </p>
+     * <p>
+     * This implementation uses the following algorithms:
+     * </p>
      *
-     * <p>For 0 < shape < 1: <br/>
+     * <p>
+     * For 0 < shape < 1: <br/>
      * Ahrens, J. H. and Dieter, U., <i>Computer methods for
      * sampling from gamma, beta, Poisson and binomial distributions.</i>
-     * Computing, 12, 223-246, 1974.</p>
+     * Computing, 12, 223-246, 1974.
+     * </p>
      *
-     * <p>For shape >= 1: <br/>
+     * <p>
+     * For shape >= 1: <br/>
      * Marsaglia and Tsang, <i>A Simple Method for Generating
      * Gamma Variables.</i> ACM Transactions on Mathematical Software,
-     * Volume 26 Issue 3, September, 2000.</p>
+     * Volume 26 Issue 3, September, 2000.
+     * </p>
      *
      * @param shape the median of the Gamma distribution
      * @param scale the scale parameter of the Gamma distribution
      * @return random value sampled from the Gamma(shape, scale) distribution
      * @throws NotStrictlyPositiveException if {@code shape <= 0} or
-     * {@code scale <= 0}.
+     *                                      {@code scale <= 0}.
      * @since 2.2
      */
     public double nextGamma(double shape, double scale) throws NotStrictlyPositiveException {
@@ -363,18 +383,20 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.HypergeometricDistribution Hypergeometric Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.HypergeometricDistribution
+     * Hypergeometric Distribution}.
      * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
      * to generate random values.
      *
-     * @param populationSize the population size of the Hypergeometric distribution
+     * @param populationSize    the population size of the Hypergeometric distribution
      * @param numberOfSuccesses number of successes in the population of the Hypergeometric distribution
-     * @param sampleSize the sample size of the Hypergeometric distribution
+     * @param sampleSize        the sample size of the Hypergeometric distribution
      * @return random value sampled from the Hypergeometric(numberOfSuccesses, sampleSize) distribution
-     * @throws NumberIsTooLargeException  if {@code numberOfSuccesses > populationSize},
-     * or {@code sampleSize > populationSize}.
+     * @throws NumberIsTooLargeException    if {@code numberOfSuccesses > populationSize},
+     *                                      or {@code sampleSize > populationSize}.
      * @throws NotStrictlyPositiveException if {@code populationSize <= 0}.
-     * @throws NotPositiveException  if {@code numberOfSuccesses < 0}.
+     * @throws NotPositiveException         if {@code numberOfSuccesses < 0}.
      * @since 2.2
      */
     public int nextHypergeometric(int populationSize, int numberOfSuccesses, int sampleSize)
@@ -383,7 +405,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.PascalDistribution Pascal Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.PascalDistribution Pascal Distribution}.
      * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
      * to generate random values.
      *
@@ -392,16 +415,16 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @return random value sampled from the Pascal(r, p) distribution
      * @since 2.2
      * @throws NotStrictlyPositiveException if the number of successes is not positive
-     * @throws OutOfRangeException if the probability of success is not in the
-     * range {@code [0, 1]}.
+     * @throws OutOfRangeException          if the probability of success is not in the
+     *                                      range {@code [0, 1]}.
      */
-    public int nextPascal(int r, double p)
-        throws NotStrictlyPositiveException, OutOfRangeException {
+    public int nextPascal(int r, double p) throws NotStrictlyPositiveException, OutOfRangeException {
         return delegate.nextPascal(r, p);
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.TDistribution T Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.TDistribution T Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
@@ -415,7 +438,9 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.WeibullDistribution Weibull Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.WeibullDistribution Weibull
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
@@ -424,28 +449,28 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @return random value sampled from the Weibull(shape, size) distribution
      * @since 2.2
      * @throws NotStrictlyPositiveException if {@code shape <= 0} or
-     * {@code scale <= 0}.
+     *                                      {@code scale <= 0}.
      */
     public double nextWeibull(double shape, double scale) throws NotStrictlyPositiveException {
         return delegate.nextWeibull(shape, scale);
     }
 
     /**
-     * Generates a random value from the {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.ZipfDistribution Zipf Distribution}.
+     * Generates a random value from the
+     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.distribution.ZipfDistribution Zipf Distribution}.
      * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
      * to generate random values.
      *
      * @param numberOfElements the number of elements of the ZipfDistribution
-     * @param exponent the exponent of the ZipfDistribution
+     * @param exponent         the exponent of the ZipfDistribution
      * @return random value sampled from the Zipf(numberOfElements, exponent) distribution
      * @since 2.2
      * @exception NotStrictlyPositiveException if {@code numberOfElements <= 0}
-     * or {@code exponent <= 0}.
+     *                                         or {@code exponent <= 0}.
      */
     public int nextZipf(int numberOfElements, double exponent) throws NotStrictlyPositiveException {
         return delegate.nextZipf(numberOfElements, exponent);
     }
-
 
     /**
      * Reseeds the random number generator with the supplied seed.
@@ -454,7 +479,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * </p>
      *
      * @param seed
-     *            the seed value to use
+     *             the seed value to use
      */
     public void reSeed(long seed) {
         delegate.reSeed(seed);
@@ -478,7 +503,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * </p>
      *
      * @param seed
-     *            the seed value to use
+     *             the seed value to use
      */
     public void reSeedSecure(long seed) {
         delegate.reSeedSecure(seed);
@@ -504,17 +529,17 @@ public class RandomDataImpl implements RandomData, Serializable {
      * </p>
      *
      * @param algorithm
-     *            the name of the PRNG algorithm
+     *                  the name of the PRNG algorithm
      * @param provider
-     *            the name of the provider
+     *                  the name of the provider
      * @throws NoSuchAlgorithmException
-     *             if the specified algorithm is not available
+     *                                  if the specified algorithm is not available
      * @throws NoSuchProviderException
-     *             if the specified provider is not installed
+     *                                  if the specified provider is not installed
      */
     public void setSecureAlgorithm(String algorithm, String provider)
-            throws NoSuchAlgorithmException, NoSuchProviderException {
-       delegate.setSecureAlgorithm(algorithm, provider);
+        throws NoSuchAlgorithmException, NoSuchProviderException {
+        delegate.setSecureAlgorithm(algorithm, provider);
     }
 
     /**
@@ -526,8 +551,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * here</a>.
      * </p>
      */
-    public int[] nextPermutation(int n, int k)
-        throws NotStrictlyPositiveException, NumberIsTooLargeException {
+    public int[] nextPermutation(int n, int k) throws NotStrictlyPositiveException, NumberIsTooLargeException {
         return delegate.nextPermutation(n, k);
     }
 
@@ -544,8 +568,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * here</a>
      * </p>
      */
-    public Object[] nextSample(Collection<?> c, int k)
-        throws NotStrictlyPositiveException, NumberIsTooLargeException {
+    public Object[] nextSample(Collection<?> c, int k) throws NotStrictlyPositiveException, NumberIsTooLargeException {
         return delegate.nextSample(c, k);
     }
 
@@ -560,8 +583,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @deprecated use the distribution's sample() method
      */
     @Deprecated
-    public double nextInversionDeviate(RealDistribution distribution)
-        throws MathIllegalArgumentException {
+    public double nextInversionDeviate(RealDistribution distribution) throws MathIllegalArgumentException {
         return distribution.inverseCumulativeProbability(nextUniform(0, 1));
 
     }
@@ -577,8 +599,7 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @deprecated use the distribution's sample() method
      */
     @Deprecated
-    public int nextInversionDeviate(IntegerDistribution distribution)
-        throws MathIllegalArgumentException {
+    public int nextInversionDeviate(IntegerDistribution distribution) throws MathIllegalArgumentException {
         return distribution.inverseCumulativeProbability(nextUniform(0, 1));
     }
 

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,12 +32,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * Interpolating function that implements the
  * <a href="http://www.dudziak.com/microsphere.php">Microsphere Projection</a>.
  *
- * @deprecated Code will be removed in 4.0.  Use {@link InterpolatingMicrosphere}
- * and {@link MicrosphereProjectionInterpolator} instead.
+ * @deprecated Code will be removed in 4.0. Use {@link InterpolatingMicrosphere}
+ *             and {@link MicrosphereProjectionInterpolator} instead.
  */
 @Deprecated
-public class MicrosphereInterpolatingFunction
-    implements MultivariateFunction {
+public class MicrosphereInterpolatingFunction implements MultivariateFunction {
+
     /**
      * Space dimension.
      */
@@ -65,6 +63,7 @@ public class MicrosphereInterpolatingFunction
      * microsphere projection.
      */
     private static class MicrosphereSurfaceElement {
+
         /** Normal vector characterizing a surface element. */
         private final RealVector normal;
         /** Illumination received from the brightest sample. */
@@ -74,7 +73,7 @@ public class MicrosphereInterpolatingFunction
 
         /**
          * @param n Normal vector characterizing a surface element
-         * of the microsphere.
+         *          of the microsphere.
          */
         MicrosphereSurfaceElement(double[] n) {
             normal = new ArrayRealVector(n);
@@ -82,6 +81,7 @@ public class MicrosphereInterpolatingFunction
 
         /**
          * Return the normal vector.
+         * 
          * @return the normal vector
          */
         RealVector normal() {
@@ -98,11 +98,11 @@ public class MicrosphereInterpolatingFunction
 
         /**
          * Store the illumination and index of the brightest sample.
+         * 
          * @param illuminationFromSample illumination received from sample
-         * @param sample current sample illuminating the element
+         * @param sample                 current sample illuminating the element
          */
-        void store(final double illuminationFromSample,
-                   final Map.Entry<RealVector, Double> sample) {
+        void store(final double illuminationFromSample, final Map.Entry<RealVector, Double> sample) {
             if (illuminationFromSample > this.brightestIllumination) {
                 this.brightestIllumination = illuminationFromSample;
                 this.brightestSample = sample;
@@ -111,6 +111,7 @@ public class MicrosphereInterpolatingFunction
 
         /**
          * Get the illumination of the element.
+         * 
          * @return the illumination.
          */
         double illumination() {
@@ -119,6 +120,7 @@ public class MicrosphereInterpolatingFunction
 
         /**
          * Get the sample illuminating the element the most.
+         * 
          * @return the sample.
          */
         Map.Entry<RealVector, Double> sample() {
@@ -127,34 +129,28 @@ public class MicrosphereInterpolatingFunction
     }
 
     /**
-     * @param xval Arguments for the interpolation points.
-     * {@code xval[i][0]} is the first component of interpolation point
-     * {@code i}, {@code xval[i][1]} is the second component, and so on
-     * until {@code xval[i][d-1]}, the last component of that interpolation
-     * point (where {@code dimension} is thus the dimension of the sampled
-     * space).
-     * @param yval Values for the interpolation points.
-     * @param brightnessExponent Brightness dimming factor.
+     * @param xval                Arguments for the interpolation points.
+     *                            {@code xval[i][0]} is the first component of interpolation point
+     *                            {@code i}, {@code xval[i][1]} is the second component, and so on
+     *                            until {@code xval[i][d-1]}, the last component of that interpolation
+     *                            point (where {@code dimension} is thus the dimension of the sampled
+     *                            space).
+     * @param yval                Values for the interpolation points.
+     * @param brightnessExponent  Brightness dimming factor.
      * @param microsphereElements Number of surface elements of the
-     * microsphere.
-     * @param rand Unit vector generator for creating the microsphere.
+     *                            microsphere.
+     * @param rand                Unit vector generator for creating the microsphere.
      * @throws DimensionMismatchException if the lengths of {@code yval} and
-     * {@code xval} (equal to {@code n}, the number of interpolation points)
-     * do not match, or the the arrays {@code xval[0]} ... {@code xval[n]},
-     * have lengths different from {@code dimension}.
-     * @throws NoDataException if there an array has zero-length.
-     * @throws NullArgumentException if an argument is {@code null}.
+     *                                    {@code xval} (equal to {@code n}, the number of interpolation points)
+     *                                    do not match, or the the arrays {@code xval[0]} ... {@code xval[n]},
+     *                                    have lengths different from {@code dimension}.
+     * @throws NoDataException            if there an array has zero-length.
+     * @throws NullArgumentException      if an argument is {@code null}.
      */
-    public MicrosphereInterpolatingFunction(double[][] xval,
-                                            double[] yval,
-                                            int brightnessExponent,
-                                            int microsphereElements,
-                                            UnitSphereRandomVectorGenerator rand)
-        throws DimensionMismatchException,
-               NoDataException,
-               NullArgumentException {
-        if (xval == null ||
-            yval == null) {
+    public MicrosphereInterpolatingFunction(double[][] xval, double[] yval, int brightnessExponent,
+        int microsphereElements, UnitSphereRandomVectorGenerator rand)
+        throws DimensionMismatchException, NoDataException, NullArgumentException {
+        if (xval == null || yval == null) {
             throw new NullArgumentException();
         }
         if (xval.length == 0) {
@@ -209,7 +205,8 @@ public class MicrosphereInterpolatingFunction
         for (Map.Entry<RealVector, Double> sd : samples.entrySet()) {
 
             // Vector between interpolation point and current sample point.
-            final RealVector diff = sd.getKey().subtract(p);
+            final RealVector diff = sd.getKey()
+                .subtract(p);
             final double diffNorm = diff.getNorm();
 
             if (FastMath.abs(diffNorm) < FastMath.ulp(1d)) {

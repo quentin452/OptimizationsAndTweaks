@@ -1,7 +1,9 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -15,14 +17,14 @@ import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import cpw.mods.fml.common.eventhandler.Event;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {

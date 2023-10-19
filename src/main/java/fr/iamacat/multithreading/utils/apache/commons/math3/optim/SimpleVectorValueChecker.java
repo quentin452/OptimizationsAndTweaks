@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +15,8 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * Simple implementation of the {@link ConvergenceChecker} interface using
@@ -35,8 +33,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictl
  *
  * @since 3.0
  */
-public class SimpleVectorValueChecker
-    extends AbstractConvergenceChecker<PointVectorValuePair> {
+public class SimpleVectorValueChecker extends AbstractConvergenceChecker<PointVectorValuePair> {
+
     /**
      * If {@link #maxIterationCount} is set to this value, the number of
      * iterations will never cause
@@ -61,8 +59,7 @@ public class SimpleVectorValueChecker
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
      */
-    public SimpleVectorValueChecker(final double relativeThreshold,
-                                    final double absoluteThreshold) {
+    public SimpleVectorValueChecker(final double relativeThreshold, final double absoluteThreshold) {
         super(relativeThreshold, absoluteThreshold);
         maxIterationCount = ITERATION_CHECK_DISABLED;
     }
@@ -77,14 +74,12 @@ public class SimpleVectorValueChecker
      *
      * @param relativeThreshold Relative tolerance threshold.
      * @param absoluteThreshold Absolute tolerance threshold.
-     * @param maxIter Maximum iteration count.
+     * @param maxIter           Maximum iteration count.
      * @throws NotStrictlyPositiveException if {@code maxIter <= 0}.
      *
      * @since 3.1
      */
-    public SimpleVectorValueChecker(final double relativeThreshold,
-                                    final double absoluteThreshold,
-                                    final int maxIter) {
+    public SimpleVectorValueChecker(final double relativeThreshold, final double absoluteThreshold, final int maxIter) {
         super(relativeThreshold, absoluteThreshold);
 
         if (maxIter <= 0) {
@@ -105,14 +100,13 @@ public class SimpleVectorValueChecker
      * not only for the best or worst ones.
      *
      * @param iteration Index of current iteration
-     * @param previous Best point in the previous iteration.
-     * @param current Best point in the current iteration.
+     * @param previous  Best point in the previous iteration.
+     * @param current   Best point in the current iteration.
      * @return {@code true} if the arguments satify the convergence criterion.
      */
     @Override
-    public boolean converged(final int iteration,
-                             final PointVectorValuePair previous,
-                             final PointVectorValuePair current) {
+    public boolean converged(final int iteration, final PointVectorValuePair previous,
+        final PointVectorValuePair current) {
         if (maxIterationCount != ITERATION_CHECK_DISABLED && iteration >= maxIterationCount) {
             return true;
         }
@@ -120,12 +114,11 @@ public class SimpleVectorValueChecker
         final double[] p = previous.getValueRef();
         final double[] c = current.getValueRef();
         for (int i = 0; i < p.length; ++i) {
-            final double pi         = p[i];
-            final double ci         = c[i];
+            final double pi = p[i];
+            final double ci = c[i];
             final double difference = FastMath.abs(pi - ci);
-            final double size       = FastMath.max(FastMath.abs(pi), FastMath.abs(ci));
-            if (difference > size * getRelativeThreshold() &&
-                difference > getAbsoluteThreshold()) {
+            final double size = FastMath.max(FastMath.abs(pi), FastMath.abs(ci));
+            if (difference > size * getRelativeThreshold() && difference > getAbsoluteThreshold()) {
                 return false;
             }
         }

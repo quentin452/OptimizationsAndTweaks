@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +30,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerat
  * child, and the second parts are copied crosswise.
  *
  * Example (2-point crossover):
+ * 
  * <pre>
  * -C- denotes a crossover point
  *           -C-       -C-                         -C-        -C-
@@ -85,6 +84,7 @@ public class NPointCrossover<T> implements CrossoverPolicy {
      * order from the two parents to the corresponding child chromosomes.
      *
      * Example (2-point crossover):
+     * 
      * <pre>
      * -C- denotes a crossover point
      *           -C-       -C-                         -C-        -C-
@@ -96,12 +96,12 @@ public class NPointCrossover<T> implements CrossoverPolicy {
      * c1 = (1 0  | 1 0 1 0  | 0 1 1)    X   c2 = (0 1  | 1 0 0 1  | 0 1 1)
      * </pre>
      *
-     * @param first first parent (p1)
+     * @param first  first parent (p1)
      * @param second second parent (p2)
      * @return pair of two children (c1,c2)
      * @throws MathIllegalArgumentException iff one of the chromosomes is
-     *   not an instance of {@link AbstractListChromosome}
-     * @throws DimensionMismatchException if the length of the two chromosomes is different
+     *                                      not an instance of {@link AbstractListChromosome}
+     * @throws DimensionMismatchException   if the length of the two chromosomes is different
      */
     @SuppressWarnings("unchecked") // OK because of instanceof checks
     public ChromosomePair crossover(final Chromosome first, final Chromosome second)
@@ -116,14 +116,13 @@ public class NPointCrossover<T> implements CrossoverPolicy {
     /**
      * Helper for {@link #crossover(Chromosome, Chromosome)}. Performs the actual crossover.
      *
-     * @param first the first chromosome
+     * @param first  the first chromosome
      * @param second the second chromosome
      * @return the pair of new chromosomes that resulted from the crossover
      * @throws DimensionMismatchException if the length of the two chromosomes is different
-     * @throws NumberIsTooLargeException if the number of crossoverPoints is too large for the actual chromosomes
+     * @throws NumberIsTooLargeException  if the number of crossoverPoints is too large for the actual chromosomes
      */
-    private ChromosomePair mate(final AbstractListChromosome<T> first,
-                                final AbstractListChromosome<T> second)
+    private ChromosomePair mate(final AbstractListChromosome<T> first, final AbstractListChromosome<T> second)
         throws DimensionMismatchException, NumberIsTooLargeException {
 
         final int length = first.getLength();
@@ -172,7 +171,8 @@ public class NPointCrossover<T> implements CrossoverPolicy {
             c2.add(parent2Rep.get(j));
         }
 
-        return new ChromosomePair(first.newFixedLengthChromosome(child1Rep),
-                                  second.newFixedLengthChromosome(child2Rep));
+        return new ChromosomePair(
+            first.newFixedLengthChromosome(child1Rep),
+            second.newFixedLengthChromosome(child2Rep));
     }
 }

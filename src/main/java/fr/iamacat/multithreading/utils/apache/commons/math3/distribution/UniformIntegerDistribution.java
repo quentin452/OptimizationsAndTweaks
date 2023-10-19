@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,11 +24,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.Well19937c;
  * Implementation of the uniform integer distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Uniform_distribution_(discrete)"
- * >Uniform distribution (discrete), at Wikipedia</a>
+ *      >Uniform distribution (discrete), at Wikipedia</a>
  *
  * @since 3.0
  */
 public class UniformIntegerDistribution extends AbstractIntegerDistribution {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20120109L;
     /** Lower bound (inclusive) of this distribution. */
@@ -53,8 +52,7 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      * @param upper Upper bound (inclusive) of this distribution.
      * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
-    public UniformIntegerDistribution(int lower, int upper)
-        throws NumberIsTooLargeException {
+    public UniformIntegerDistribution(int lower, int upper) throws NumberIsTooLargeException {
         this(new Well19937c(), lower, upper);
     }
 
@@ -62,22 +60,17 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      * Creates a new uniform integer distribution using the given lower and
      * upper bounds (both inclusive).
      *
-     * @param rng Random number generator.
+     * @param rng   Random number generator.
      * @param lower Lower bound (inclusive) of this distribution.
      * @param upper Upper bound (inclusive) of this distribution.
      * @throws NumberIsTooLargeException if {@code lower > upper}.
      * @since 3.1
      */
-    public UniformIntegerDistribution(RandomGenerator rng,
-                                      int lower,
-                                      int upper)
-        throws NumberIsTooLargeException {
+    public UniformIntegerDistribution(RandomGenerator rng, int lower, int upper) throws NumberIsTooLargeException {
         super(rng);
 
         if (lower > upper) {
-            throw new NumberIsTooLargeException(
-                            LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
-                            lower, upper, true);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND, lower, upper, true);
         }
         this.lower = lower;
         this.upper = upper;
@@ -168,8 +161,7 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
             // we use a simple rejection method.
             while (true) {
                 final int r = random.nextInt();
-                if (r >= lower &&
-                    r <= upper) {
+                if (r >= lower && r <= upper) {
                     return r;
                 }
             }

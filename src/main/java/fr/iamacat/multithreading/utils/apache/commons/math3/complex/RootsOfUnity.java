@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,16 +78,14 @@ public class RootsOfUnity implements Serializable {
      * counter-clockwise ordering of the roots of unity should be used.
      *
      * @return {@code true} if the roots of unity are stored in
-     * counter-clockwise order
+     *         counter-clockwise order
      * @throws MathIllegalStateException if no roots of unity have been computed
-     * yet
+     *                                   yet
      */
-    public synchronized boolean isCounterClockWise()
-            throws MathIllegalStateException {
+    public synchronized boolean isCounterClockWise() throws MathIllegalStateException {
 
         if (omegaCount == 0) {
-            throw new MathIllegalStateException(
-                    LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
+            throw new MathIllegalStateException(LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
         }
         return isCounterClockWise;
     }
@@ -107,7 +103,8 @@ public class RootsOfUnity implements Serializable {
      * <ul>
      * <li>{@code abs(n)} is always the number of roots of unity.</li>
      * <li>If {@code n > 0}, then the roots are stored in counter-clockwise order.</li>
-     * <li>If {@code n < 0}, then the roots are stored in clockwise order.</p>
+     * <li>If {@code n < 0}, then the roots are stored in clockwise order.
+     * </p>
      * </ul>
      *
      * @param n the (signed) number of roots of unity to be computed
@@ -116,8 +113,7 @@ public class RootsOfUnity implements Serializable {
     public synchronized void computeRoots(int n) throws ZeroException {
 
         if (n == 0) {
-            throw new ZeroException(
-                    LocalizedFormats.CANNOT_COMPUTE_0TH_ROOT_OF_UNITY);
+            throw new ZeroException(LocalizedFormats.CANNOT_COMPUTE_0TH_ROOT_OF_UNITY);
         }
 
         isCounterClockWise = n > 0;
@@ -140,10 +136,8 @@ public class RootsOfUnity implements Serializable {
         omegaImaginaryCounterClockwise[0] = 0.0;
         omegaImaginaryClockwise[0] = 0.0;
         for (int i = 1; i < absN; i++) {
-            omegaReal[i] = omegaReal[i - 1] * cosT -
-                    omegaImaginaryCounterClockwise[i - 1] * sinT;
-            omegaImaginaryCounterClockwise[i] = omegaReal[i - 1] * sinT +
-                    omegaImaginaryCounterClockwise[i - 1] * cosT;
+            omegaReal[i] = omegaReal[i - 1] * cosT - omegaImaginaryCounterClockwise[i - 1] * sinT;
+            omegaImaginaryCounterClockwise[i] = omegaReal[i - 1] * sinT + omegaImaginaryCounterClockwise[i - 1] * cosT;
             omegaImaginaryClockwise[i] = -omegaImaginaryCounterClockwise[i];
         }
         omegaCount = absN;
@@ -154,23 +148,21 @@ public class RootsOfUnity implements Serializable {
      *
      * @param k index of the {@code n}-th root of unity
      * @return real part of the {@code k}-th {@code n}-th root of unity
-     * @throws MathIllegalStateException if no roots of unity have been
-     * computed yet
+     * @throws MathIllegalStateException    if no roots of unity have been
+     *                                      computed yet
      * @throws MathIllegalArgumentException if {@code k} is out of range
      */
-    public synchronized double getReal(int k)
-            throws MathIllegalStateException, MathIllegalArgumentException {
+    public synchronized double getReal(int k) throws MathIllegalStateException, MathIllegalArgumentException {
 
         if (omegaCount == 0) {
-            throw new MathIllegalStateException(
-                    LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
+            throw new MathIllegalStateException(LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
         }
         if ((k < 0) || (k >= omegaCount)) {
             throw new OutOfRangeException(
-                    LocalizedFormats.OUT_OF_RANGE_ROOT_OF_UNITY_INDEX,
-                    Integer.valueOf(k),
-                    Integer.valueOf(0),
-                    Integer.valueOf(omegaCount - 1));
+                LocalizedFormats.OUT_OF_RANGE_ROOT_OF_UNITY_INDEX,
+                Integer.valueOf(k),
+                Integer.valueOf(0),
+                Integer.valueOf(omegaCount - 1));
         }
 
         return omegaReal[k];
@@ -182,26 +174,23 @@ public class RootsOfUnity implements Serializable {
      * @param k index of the {@code n}-th root of unity
      * @return imaginary part of the {@code k}-th {@code n}-th root of unity
      * @throws MathIllegalStateException if no roots of unity have been
-     * computed yet
-     * @throws OutOfRangeException if {@code k} is out of range
+     *                                   computed yet
+     * @throws OutOfRangeException       if {@code k} is out of range
      */
-    public synchronized double getImaginary(int k)
-            throws MathIllegalStateException, OutOfRangeException {
+    public synchronized double getImaginary(int k) throws MathIllegalStateException, OutOfRangeException {
 
         if (omegaCount == 0) {
-            throw new MathIllegalStateException(
-                    LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
+            throw new MathIllegalStateException(LocalizedFormats.ROOTS_OF_UNITY_NOT_COMPUTED_YET);
         }
         if ((k < 0) || (k >= omegaCount)) {
             throw new OutOfRangeException(
-                    LocalizedFormats.OUT_OF_RANGE_ROOT_OF_UNITY_INDEX,
-                    Integer.valueOf(k),
-                    Integer.valueOf(0),
-                    Integer.valueOf(omegaCount - 1));
+                LocalizedFormats.OUT_OF_RANGE_ROOT_OF_UNITY_INDEX,
+                Integer.valueOf(k),
+                Integer.valueOf(0),
+                Integer.valueOf(omegaCount - 1));
         }
 
-        return isCounterClockWise ? omegaImaginaryCounterClockwise[k] :
-            omegaImaginaryClockwise[k];
+        return isCounterClockWise ? omegaImaginaryCounterClockwise[k] : omegaImaginaryClockwise[k];
     }
 
     /**

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +14,15 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.stat.correlation;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.BlockRealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.MatrixUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.Pair;
-
-import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Implementation of Kendall's Tau-b rank correlation</a>.
@@ -35,24 +33,25 @@ import java.util.Comparator;
  * or x<sub>2</sub> &lt; x<sub>1</sub> and y<sub>2</sub> &lt; y<sub>1</sub>.
  * The pair is <i>discordant</i> if x<sub>1</sub> &lt; x<sub>2</sub> and
  * y<sub>2</sub> &lt; y<sub>1</sub> or x<sub>2</sub> &lt; x<sub>1</sub> and
- * y<sub>1</sub> &lt; y<sub>2</sub>.  If either x<sub>1</sub> = x<sub>2</sub>
+ * y<sub>1</sub> &lt; y<sub>2</sub>. If either x<sub>1</sub> = x<sub>2</sub>
  * or y<sub>1</sub> = y<sub>2</sub>, the pair is neither concordant nor
  * discordant.
  * <p>
  * Kendall's Tau-b is defined as:
+ * 
  * <pre>
  * tau<sub>b</sub> = (n<sub>c</sub> - n<sub>d</sub>) / sqrt((n<sub>0</sub> - n<sub>1</sub>) * (n<sub>0</sub> - n<sub>2</sub>))
  * </pre>
  * <p>
  * where:
  * <ul>
- *     <li>n<sub>0</sub> = n * (n - 1) / 2</li>
- *     <li>n<sub>c</sub> = Number of concordant pairs</li>
- *     <li>n<sub>d</sub> = Number of discordant pairs</li>
- *     <li>n<sub>1</sub> = sum of t<sub>i</sub> * (t<sub>i</sub> - 1) / 2 for all i</li>
- *     <li>n<sub>2</sub> = sum of u<sub>j</sub> * (u<sub>j</sub> - 1) / 2 for all j</li>
- *     <li>t<sub>i</sub> = Number of tied values in the i<sup>th</sup> group of ties in x</li>
- *     <li>u<sub>j</sub> = Number of tied values in the j<sup>th</sup> group of ties in y</li>
+ * <li>n<sub>0</sub> = n * (n - 1) / 2</li>
+ * <li>n<sub>c</sub> = Number of concordant pairs</li>
+ * <li>n<sub>d</sub> = Number of discordant pairs</li>
+ * <li>n<sub>1</sub> = sum of t<sub>i</sub> * (t<sub>i</sub> - 1) / 2 for all i</li>
+ * <li>n<sub>2</sub> = sum of u<sub>j</sub> * (u<sub>j</sub> - 1) / 2 for all j</li>
+ * <li>t<sub>i</sub> = Number of tied values in the i<sup>th</sup> group of ties in x</li>
+ * <li>u<sub>j</sub> = Number of tied values in the j<sup>th</sup> group of ties in y</li>
  * </ul>
  * <p>
  * This implementation uses the O(n log n) algorithm described in
@@ -61,9 +60,9 @@ import java.util.Comparator;
  * Statistical Association.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Kendall_tau_rank_correlation_coefficient">
- * Kendall tau rank correlation coefficient (Wikipedia)</a>
+ *      Kendall tau rank correlation coefficient (Wikipedia)</a>
  * @see <a href="http://www.jstor.org/stable/2282833">A Computer
- * Method for Calculating Kendall's Tau with Ungrouped Data</a>
+ *      Method for Calculating Kendall's Tau with Ungrouped Data</a>
  *
  * @since 3.3
  */
@@ -85,7 +84,7 @@ public class KendallsCorrelation {
      *
      * @param data rectangular array with columns representing variables
      * @throws IllegalArgumentException if the input data array is not
-     * rectangular with at least two rows and two columns.
+     *                                  rectangular with at least two rows and two columns.
      */
     public KendallsCorrelation(double[][] data) {
         this(MatrixUtils.createRealMatrix(data));
@@ -133,14 +132,14 @@ public class KendallsCorrelation {
 
     /**
      * Computes the Kendall's Tau rank correlation matrix for the columns of
-     * the input rectangular array.  The columns of the array represent values
+     * the input rectangular array. The columns of the array represent values
      * of variables to be correlated.
      *
      * @param matrix matrix with columns representing variables to correlate
      * @return correlation matrix
      */
     public RealMatrix computeCorrelationMatrix(final double[][] matrix) {
-       return computeCorrelationMatrix(new BlockRealMatrix(matrix));
+        return computeCorrelationMatrix(new BlockRealMatrix(matrix));
     }
 
     /**
@@ -151,8 +150,7 @@ public class KendallsCorrelation {
      * @return Returns Kendall's Tau rank correlation coefficient for the two arrays
      * @throws DimensionMismatchException if the arrays lengths do not match
      */
-    public double correlation(final double[] xArray, final double[] yArray)
-            throws DimensionMismatchException {
+    public double correlation(final double[] xArray, final double[] yArray) throws DimensionMismatchException {
 
         if (xArray.length != yArray.length) {
             throw new DimensionMismatchException(xArray.length, yArray.length);
@@ -168,10 +166,14 @@ public class KendallsCorrelation {
         }
 
         Arrays.sort(pairs, new Comparator<Pair<Double, Double>>() {
+
             /** {@inheritDoc} */
             public int compare(Pair<Double, Double> pair1, Pair<Double, Double> pair2) {
-                int compareFirst = pair1.getFirst().compareTo(pair2.getFirst());
-                return compareFirst != 0 ? compareFirst : pair1.getSecond().compareTo(pair2.getSecond());
+                int compareFirst = pair1.getFirst()
+                    .compareTo(pair2.getFirst());
+                return compareFirst != 0 ? compareFirst
+                    : pair1.getSecond()
+                        .compareTo(pair2.getSecond());
             }
         });
 
@@ -182,9 +184,11 @@ public class KendallsCorrelation {
         Pair<Double, Double> prev = pairs[0];
         for (int i = 1; i < n; i++) {
             final Pair<Double, Double> curr = pairs[i];
-            if (curr.getFirst().equals(prev.getFirst())) {
+            if (curr.getFirst()
+                .equals(prev.getFirst())) {
                 consecutiveXTies++;
-                if (curr.getSecond().equals(prev.getSecond())) {
+                if (curr.getSecond()
+                    .equals(prev.getSecond())) {
                     consecutiveXYTies++;
                 } else {
                     tiedXYPairs += sum(consecutiveXYTies - 1);
@@ -215,7 +219,8 @@ public class KendallsCorrelation {
                 while (i < iEnd || j < jEnd) {
                     if (i < iEnd) {
                         if (j < jEnd) {
-                            if (pairs[i].getSecond().compareTo(pairs[j].getSecond()) <= 0) {
+                            if (pairs[i].getSecond()
+                                .compareTo(pairs[j].getSecond()) <= 0) {
                                 pairsDestination[copyLocation] = pairs[i];
                                 i++;
                             } else {
@@ -244,7 +249,8 @@ public class KendallsCorrelation {
         prev = pairs[0];
         for (int i = 1; i < n; i++) {
             final Pair<Double, Double> curr = pairs[i];
-            if (curr.getSecond().equals(prev.getSecond())) {
+            if (curr.getSecond()
+                .equals(prev.getSecond())) {
                 consecutiveYTies++;
             } else {
                 tiedYPairs += sum(consecutiveYTies - 1);

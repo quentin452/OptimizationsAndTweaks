@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +15,9 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.vector.jacobian;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathInternalError;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathUnsupportedOperationException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.ArrayRealVector;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.BlockRealMatrix;
@@ -47,12 +45,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointVectorVal
  *
  * @since 2.0
  * @deprecated All classes and interfaces in this package are deprecated.
- * The optimizers that were provided here were moved to the
- * {@link fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares} package
- * (cf. MATH-1008).
+ *             The optimizers that were provided here were moved to the
+ *             {@link fr.iamacat.multithreading.utils.apache.commons.math3.fitting.leastsquares} package
+ *             (cf. MATH-1008).
  */
 @Deprecated
 public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
+
     /** Indicator for using LU decomposition. */
     private final boolean useLU;
 
@@ -67,13 +66,12 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     }
 
     /**
-     * @param useLU If {@code true}, the normal equations will be solved
-     * using LU decomposition, otherwise they will be solved using QR
-     * decomposition.
+     * @param useLU   If {@code true}, the normal equations will be solved
+     *                using LU decomposition, otherwise they will be solved using QR
+     *                decomposition.
      * @param checker Convergence checker.
      */
-    public GaussNewtonOptimizer(final boolean useLU,
-                                ConvergenceChecker<PointVectorValuePair> checker) {
+    public GaussNewtonOptimizer(final boolean useLU, ConvergenceChecker<PointVectorValuePair> checker) {
         super(checker);
         this.useLU = useLU;
     }
@@ -83,8 +81,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
     public PointVectorValuePair doOptimize() {
         checkParameters();
 
-        final ConvergenceChecker<PointVectorValuePair> checker
-            = getConvergenceChecker();
+        final ConvergenceChecker<PointVectorValuePair> checker = getConvergenceChecker();
 
         // Computation will be useless without a checker (see "for-loop").
         if (checker == null) {
@@ -118,12 +115,12 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             current = new PointVectorValuePair(currentPoint, currentObjective);
 
             // build the linear problem
-            final double[]   b = new double[nC];
+            final double[] b = new double[nC];
             final double[][] a = new double[nC][nC];
             for (int i = 0; i < nR; ++i) {
 
-                final double[] grad   = weightedJacobian.getRow(i);
-                final double weight   = residualsWeights[i];
+                final double[] grad = weightedJacobian.getRow(i);
+                final double weight = residualsWeights[i];
                 final double residual = currentResiduals[i];
 
                 // compute the normal equation
@@ -154,10 +151,10 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
             try {
                 // solve the linearized least squares problem
                 RealMatrix mA = new BlockRealMatrix(a);
-                DecompositionSolver solver = useLU ?
-                        new LUDecomposition(mA).getSolver() :
-                        new QRDecomposition(mA).getSolver();
-                final double[] dX = solver.solve(new ArrayRealVector(b, false)).toArray();
+                DecompositionSolver solver = useLU ? new LUDecomposition(mA).getSolver()
+                    : new QRDecomposition(mA).getSolver();
+                final double[] dX = solver.solve(new ArrayRealVector(b, false))
+                    .toArray();
                 // update the estimated parameters
                 for (int i = 0; i < nC; ++i) {
                     currentPoint[i] += dX[i];
@@ -172,11 +169,10 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
 
     /**
      * @throws MathUnsupportedOperationException if bounds were passed to the
-     * {@link #optimize(OptimizationData[]) optimize} method.
+     *                                           {@link #optimize(OptimizationData[]) optimize} method.
      */
     private void checkParameters() {
-        if (getLowerBound() != null ||
-            getUpperBound() != null) {
+        if (getLowerBound() != null || getUpperBound() != null) {
             throw new MathUnsupportedOperationException(LocalizedFormats.CONSTRAINT);
         }
     }

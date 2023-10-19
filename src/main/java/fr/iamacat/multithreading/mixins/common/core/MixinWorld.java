@@ -23,17 +23,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld implements IBlockAccess {
+
     @Shadow
     public int skylightSubtracted;
     @Shadow
@@ -218,8 +218,10 @@ public abstract class MixinWorld implements IBlockAccess {
     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> cir) {
         if (MultithreadingandtweaksConfig.enableMixinWorld) {
             if (p_147439_1_ < -30000000 || p_147439_3_ < -30000000
-                || p_147439_1_ >= 30000000 || p_147439_3_ >= 30000000
-                || p_147439_2_ < 0 || p_147439_2_ >= 256) {
+                || p_147439_1_ >= 30000000
+                || p_147439_3_ >= 30000000
+                || p_147439_2_ < 0
+                || p_147439_2_ >= 256) {
                 cir.setReturnValue(Blocks.air);
                 cir.cancel();
             } else {
@@ -233,13 +235,12 @@ public abstract class MixinWorld implements IBlockAccess {
         return null;
     }
 
-
     /**
      * Will get all entities within the specified AABB excluding the one passed into it. Args: entityToExclude, aabb
      */
     @Unique
     public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_,
-                                                                                     AxisAlignedBB p_72839_2_) {
+        AxisAlignedBB p_72839_2_) {
         return this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
             p_72839_1_,
             p_72839_2_,
@@ -248,7 +249,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
     @Unique
     public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_,
-                                                                                     AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
+        AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
         ArrayList<Entity> arraylist = new ArrayList<>();
         int i = MathHelper.floor_double((p_94576_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
         int j = MathHelper.floor_double((p_94576_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
@@ -336,26 +337,25 @@ public abstract class MixinWorld implements IBlockAccess {
         if (MultithreadingandtweaksConfig.enableMixinWorld) {
 
             // Ensure y is within the valid range [0, 255]
-        y = Math.min(255, Math.max(0, y));
+            y = Math.min(255, Math.max(0, y));
 
-        // Check if the coordinates are within a valid range
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
-            int chunkX = x >> 4;
-            int chunkZ = z >> 4;
+            // Check if the coordinates are within a valid range
+            if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
+                int chunkX = x >> 4;
+                int chunkZ = z >> 4;
 
-            if (!this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
-                return lightType.defaultLightValue;
-            } else {
-                Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ);
-                return chunk.getSavedLightValue(lightType, x & 15, y, z & 15);
+                if (!this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
+                    return lightType.defaultLightValue;
+                } else {
+                    Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ);
+                    return chunk.getSavedLightValue(lightType, x & 15, y, z & 15);
+                }
             }
-        }
 
-        return lightType.defaultLightValue;
+            return lightType.defaultLightValue;
         }
         return x;
     }
-
 
     /**
      * Will update the entity in the world if the chunk the entity is in is currently loaded or its forced to update.
@@ -369,9 +369,16 @@ public abstract class MixinWorld implements IBlockAccess {
 
         int x = MathHelper.floor_double(entity.posX);
         int z = MathHelper.floor_double(entity.posZ);
-        boolean isForced = multithreadingandtweaks$getPersistentChunks().containsKey(new ChunkCoordIntPair(x >> 4, z >> 4));
+        boolean isForced = multithreadingandtweaks$getPersistentChunks()
+            .containsKey(new ChunkCoordIntPair(x >> 4, z >> 4));
         byte chunkCheckRadius = isForced ? (byte) 0 : 32;
-        boolean canUpdate = !forceUpdate || this.checkChunksExist(x - chunkCheckRadius, 0, z - chunkCheckRadius, x + chunkCheckRadius, 0, z + chunkCheckRadius);
+        boolean canUpdate = !forceUpdate || this.checkChunksExist(
+            x - chunkCheckRadius,
+            0,
+            z - chunkCheckRadius,
+            x + chunkCheckRadius,
+            0,
+            z + chunkCheckRadius);
 
         if (!canUpdate) {
             EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
@@ -399,13 +406,16 @@ public abstract class MixinWorld implements IBlockAccess {
             int chunkZ = MathHelper.floor_double(entity.posZ / 16.0D);
 
             if (!entity.addedToChunk || entity.chunkCoordX != chunkX || entity.chunkCoordZ != chunkZ) {
-                if (entity.addedToChunk && this.multithreadingandtweaks$chunkExists(entity.chunkCoordX, entity.chunkCoordZ)) {
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(entity.chunkCoordX, entity.chunkCoordZ).removeEntityAtIndex(entity, entity.chunkCoordY);
+                if (entity.addedToChunk
+                    && this.multithreadingandtweaks$chunkExists(entity.chunkCoordX, entity.chunkCoordZ)) {
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(entity.chunkCoordX, entity.chunkCoordZ)
+                        .removeEntityAtIndex(entity, entity.chunkCoordY);
                 }
 
                 if (this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
                     entity.addedToChunk = true;
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ).addEntity(entity);
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ)
+                        .addEntity(entity);
                 } else {
                     entity.addedToChunk = false;
                 }
@@ -425,10 +435,10 @@ public abstract class MixinWorld implements IBlockAccess {
     /**
      * Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
      */
-    public void updateEntity(Entity p_72870_1_)
-    {
+    public void updateEntity(Entity p_72870_1_) {
         this.updateEntityWithOptionalForce(p_72870_1_, true);
     }
+
     /**
      * @author
      * @reason
@@ -468,33 +478,29 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> getPersistentChunks()
-    {
+    public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> getPersistentChunks() {
         return ForgeChunkManager.getPersistentChunksFor(multithreadingandtweaks$world);
     }
+
     @Shadow
     protected abstract int func_152379_p();
+
     @Unique
-    public boolean func_147451_t(int x, int y, int z)
-    {
+    public boolean func_147451_t(int x, int y, int z) {
         boolean flag = false;
 
-        if (!this.provider.hasNoSky)
-        {
+        if (!this.provider.hasNoSky) {
             flag |= this.updateLightByType(EnumSkyBlock.Sky, x, y, z);
         }
 
         flag |= this.updateLightByType(EnumSkyBlock.Block, x, y, z);
         return flag;
     }
-    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_)
-    {
-        if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17))
-        {
+
+    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_) {
+        if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17)) {
             return false;
-        }
-        else
-        {
+        } else {
             int l = 0;
             int i1 = 0;
             this.theProfiler.startSection("getBrightness");
@@ -510,16 +516,12 @@ public abstract class MixinWorld implements IBlockAccess {
             int k3;
             int l3;
 
-            if (k1 > j1)
-            {
+            if (k1 > j1) {
                 this.lightUpdateBlockList[i1++] = 133152;
-            }
-            else if (k1 < j1)
-            {
+            } else if (k1 < j1) {
                 this.lightUpdateBlockList[i1++] = 133152 | j1 << 18;
 
-                while (l < i1)
-                {
+                while (l < i1) {
                     l1 = this.lightUpdateBlockList[l++];
                     i2 = (l1 & 63) - 32 + p_147463_2_;
                     j2 = (l1 >> 6 & 63) - 32 + p_147463_3_;
@@ -527,29 +529,30 @@ public abstract class MixinWorld implements IBlockAccess {
                     l2 = l1 >> 18 & 15;
                     i3 = this.getSavedLightValue(p_147463_1_, i2, j2, k2);
 
-                    if (i3 == l2)
-                    {
+                    if (i3 == l2) {
                         this.setLightValue(p_147463_1_, i2, j2, k2, 0);
 
-                        if (l2 > 0)
-                        {
+                        if (l2 > 0) {
                             j3 = MathHelper.abs_int(i2 - p_147463_2_);
                             k3 = MathHelper.abs_int(j2 - p_147463_3_);
                             l3 = MathHelper.abs_int(k2 - p_147463_4_);
 
-                            if (j3 + k3 + l3 < 17)
-                            {
-                                for (int i4 = 0; i4 < 6; ++i4)
-                                {
+                            if (j3 + k3 + l3 < 17) {
+                                for (int i4 = 0; i4 < 6; ++i4) {
                                     int j4 = i2 + Facing.offsetsXForSide[i4];
                                     int k4 = j2 + Facing.offsetsYForSide[i4];
                                     int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    int i5 = Math.max(1, this.getBlock(j4, k4, l4).getLightOpacity(this, j4, k4, l4));
+                                    int i5 = Math.max(
+                                        1,
+                                        this.getBlock(j4, k4, l4)
+                                            .getLightOpacity(this, j4, k4, l4));
                                     i3 = this.getSavedLightValue(p_147463_1_, j4, k4, l4);
 
-                                    if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-                                    {
-                                        this.lightUpdateBlockList[i1++] = j4 - p_147463_2_ + 32 | k4 - p_147463_3_ + 32 << 6 | l4 - p_147463_4_ + 32 << 12 | l2 - i5 << 18;
+                                    if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length) {
+                                        this.lightUpdateBlockList[i1++] = j4 - p_147463_2_ + 32
+                                            | k4 - p_147463_3_ + 32 << 6
+                                            | l4 - p_147463_4_ + 32 << 12
+                                            | l2 - i5 << 18;
                                     }
                                 }
                             }
@@ -563,8 +566,7 @@ public abstract class MixinWorld implements IBlockAccess {
             this.theProfiler.endSection();
             this.theProfiler.startSection("checkedPosition < toCheckCount");
 
-            while (l < i1)
-            {
+            while (l < i1) {
                 l1 = this.lightUpdateBlockList[l++];
                 i2 = (l1 & 63) - 32 + p_147463_2_;
                 j2 = (l1 >> 6 & 63) - 32 + p_147463_3_;
@@ -572,47 +574,58 @@ public abstract class MixinWorld implements IBlockAccess {
                 l2 = this.getSavedLightValue(p_147463_1_, i2, j2, k2);
                 i3 = this.computeLightValue(i2, j2, k2, p_147463_1_);
 
-                if (i3 != l2)
-                {
+                if (i3 != l2) {
                     this.setLightValue(p_147463_1_, i2, j2, k2, i3);
 
-                    if (i3 > l2)
-                    {
+                    if (i3 > l2) {
                         j3 = Math.abs(i2 - p_147463_2_);
                         k3 = Math.abs(j2 - p_147463_3_);
                         l3 = Math.abs(k2 - p_147463_4_);
                         boolean flag = i1 < this.lightUpdateBlockList.length - 6;
 
-                        if (j3 + k3 + l3 < 17 && flag)
-                        {
-                            if (this.getSavedLightValue(p_147463_1_, i2 - 1, j2, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - 1 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
+                        if (j3 + k3 + l3 < 17 && flag) {
+                            if (this.getSavedLightValue(p_147463_1_, i2 - 1, j2, k2) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 - 1
+                                    - p_147463_2_
+                                    + 32
+                                    + (j2 - p_147463_3_ + 32 << 6)
+                                    + (k2 - p_147463_4_ + 32 << 12);
                             }
 
-                            if (this.getSavedLightValue(p_147463_1_, i2 + 1, j2, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 + 1 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
+                            if (this.getSavedLightValue(p_147463_1_, i2 + 1, j2, k2) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 + 1
+                                    - p_147463_2_
+                                    + 32
+                                    + (j2 - p_147463_3_ + 32 << 6)
+                                    + (k2 - p_147463_4_ + 32 << 12);
                             }
 
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2 - 1, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - 1 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
+                            if (this.getSavedLightValue(p_147463_1_, i2, j2 - 1, k2) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_
+                                    + 32
+                                    + (j2 - 1 - p_147463_3_ + 32 << 6)
+                                    + (k2 - p_147463_4_ + 32 << 12);
                             }
 
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2 + 1, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 + 1 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
+                            if (this.getSavedLightValue(p_147463_1_, i2, j2 + 1, k2) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_
+                                    + 32
+                                    + (j2 + 1 - p_147463_3_ + 32 << 6)
+                                    + (k2 - p_147463_4_ + 32 << 12);
                             }
 
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 - 1) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - 1 - p_147463_4_ + 32 << 12);
+                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 - 1) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_
+                                    + 32
+                                    + (j2 - p_147463_3_ + 32 << 6)
+                                    + (k2 - 1 - p_147463_4_ + 32 << 12);
                             }
 
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 + 1) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 + 1 - p_147463_4_ + 32 << 12);
+                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 + 1) < i3) {
+                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_
+                                    + 32
+                                    + (j2 - p_147463_3_ + 32 << 6)
+                                    + (k2 + 1 - p_147463_4_ + 32 << 12);
                             }
                         }
                     }
@@ -623,58 +636,51 @@ public abstract class MixinWorld implements IBlockAccess {
             return true;
         }
     }
+
     @Unique
-    public boolean doChunksNearChunkExist(int p_72873_1_, int p_72873_2_, int p_72873_3_, int p_72873_4_)
-    {
-        return this.checkChunksExist(p_72873_1_ - p_72873_4_, p_72873_2_ - p_72873_4_, p_72873_3_ - p_72873_4_, p_72873_1_ + p_72873_4_, p_72873_2_ + p_72873_4_, p_72873_3_ + p_72873_4_);
+    public boolean doChunksNearChunkExist(int p_72873_1_, int p_72873_2_, int p_72873_3_, int p_72873_4_) {
+        return this.checkChunksExist(
+            p_72873_1_ - p_72873_4_,
+            p_72873_2_ - p_72873_4_,
+            p_72873_3_ - p_72873_4_,
+            p_72873_1_ + p_72873_4_,
+            p_72873_2_ + p_72873_4_,
+            p_72873_3_ + p_72873_4_);
     }
-    private int computeLightValue(int x, int y, int z, EnumSkyBlock p_98179_4_)
-    {
-        if (p_98179_4_ == EnumSkyBlock.Sky && this.canBlockSeeTheSky(x, y, z))
-        {
+
+    private int computeLightValue(int x, int y, int z, EnumSkyBlock p_98179_4_) {
+        if (p_98179_4_ == EnumSkyBlock.Sky && this.canBlockSeeTheSky(x, y, z)) {
             return 15;
-        }
-        else
-        {
+        } else {
             Block block = this.getBlock(x, y, z);
             int blockLight = block.getLightValue(this, x, y, z);
             int l = p_98179_4_ == EnumSkyBlock.Sky ? 0 : blockLight;
             int i1 = block.getLightOpacity(this, x, y, z);
 
-            if (i1 >= 15 && blockLight > 0)
-            {
+            if (i1 >= 15 && blockLight > 0) {
                 i1 = 1;
             }
 
-            if (i1 < 1)
-            {
+            if (i1 < 1) {
                 i1 = 1;
             }
 
-            if (i1 >= 15)
-            {
+            if (i1 >= 15) {
                 return 0;
-            }
-            else if (l >= 14)
-            {
+            } else if (l >= 14) {
                 return l;
-            }
-            else
-            {
-                for (int j1 = 0; j1 < 6; ++j1)
-                {
+            } else {
+                for (int j1 = 0; j1 < 6; ++j1) {
                     int k1 = x + Facing.offsetsXForSide[j1];
                     int l1 = y + Facing.offsetsYForSide[j1];
                     int i2 = z + Facing.offsetsZForSide[j1];
                     int j2 = this.getSavedLightValue(p_98179_4_, k1, l1, i2) - i1;
 
-                    if (j2 > l)
-                    {
+                    if (j2 > l) {
                         l = j2;
                     }
 
-                    if (l >= 14)
-                    {
+                    if (l >= 14) {
                         return l;
                     }
                 }
@@ -684,21 +690,15 @@ public abstract class MixinWorld implements IBlockAccess {
         }
     }
 
-    public void setLightValue(EnumSkyBlock p_72915_1_, int p_72915_2_, int p_72915_3_, int p_72915_4_, int p_72915_5_)
-    {
-        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000)
-        {
-            if (p_72915_3_ >= 0)
-            {
-                if (p_72915_3_ < 256)
-                {
-                    if (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4))
-                    {
+    public void setLightValue(EnumSkyBlock p_72915_1_, int p_72915_2_, int p_72915_3_, int p_72915_4_, int p_72915_5_) {
+        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000) {
+            if (p_72915_3_ >= 0) {
+                if (p_72915_3_ < 256) {
+                    if (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4)) {
                         Chunk chunk = this.getChunkFromChunkCoords(p_72915_2_ >> 4, p_72915_4_ >> 4);
                         chunk.setLightValue(p_72915_1_, p_72915_2_ & 15, p_72915_3_, p_72915_4_ & 15, p_72915_5_);
 
-                        for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1)
-                        {
+                        for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1) {
                             (this.worldAccesses.get(i1)).markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
                         }
                     }
@@ -708,55 +708,56 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    protected boolean chunkExists(int p_72916_1_, int p_72916_2_)
-    {
+    protected boolean chunkExists(int p_72916_1_, int p_72916_2_) {
         return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
     }
 
     @Unique
-    public Chunk getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_)
-    {
+    public Chunk getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_) {
         return this.chunkProvider.provideChunk(p_72964_1_, p_72964_2_);
     }
+
     @Unique
-    public boolean canBlockSeeTheSky(int p_72937_1_, int p_72937_2_, int p_72937_3_)
-    {
-        return this.getChunkFromChunkCoords(p_72937_1_ >> 4, p_72937_3_ >> 4).canBlockSeeTheSky(p_72937_1_ & 15, p_72937_2_, p_72937_3_ & 15);
+    public boolean canBlockSeeTheSky(int p_72937_1_, int p_72937_2_, int p_72937_3_) {
+        return this.getChunkFromChunkCoords(p_72937_1_ >> 4, p_72937_3_ >> 4)
+            .canBlockSeeTheSky(p_72937_1_ & 15, p_72937_2_, p_72937_3_ & 15);
     }
+
     @Inject(method = "getBlockLightValue_do", cancellable = true, at = @At(value = "HEAD"))
-    public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness, CallbackInfoReturnable<Integer> cir) {
+    public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness,
+        CallbackInfoReturnable<Integer> cir) {
         if (MultithreadingandtweaksConfig.enableMixinWorld) {
 
-
-        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
-            return 15;
-        }
-
-        if (useNeighborBrightness && this.getBlock(x, y, z).getUseNeighborBrightness()) {
-            int maxLight = 0;
-
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        int neighborLight = this.getBlockLightValue_do(x + dx, y + dy, z + dz, false, cir);
-                        maxLight = Math.max(maxLight, neighborLight);
-                    }
-                }
+            if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
+                return 15;
             }
 
-            return maxLight;
-        } else if (y < 0) {
-            return 0;
-        } else if (y >= 256) {
-            y = 255;
-        }
+            if (useNeighborBrightness && this.getBlock(x, y, z)
+                .getUseNeighborBrightness()) {
+                int maxLight = 0;
 
-        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-        x &= 15;
-        z &= 15;
-        int blockLight = chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            int neighborLight = this.getBlockLightValue_do(x + dx, y + dy, z + dz, false, cir);
+                            maxLight = Math.max(maxLight, neighborLight);
+                        }
+                    }
+                }
 
-        return blockLight;
+                return maxLight;
+            } else if (y < 0) {
+                return 0;
+            } else if (y >= 256) {
+                y = 255;
+            }
+
+            Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+            x &= 15;
+            z &= 15;
+            int blockLight = chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
+
+            return blockLight;
         }
         return x;
     }

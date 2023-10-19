@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +20,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictl
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
-/** Base class for random number generators that generates bits streams.
+/**
+ * Base class for random number generators that generates bits streams.
  *
  * @since 2.0
  */
-public abstract class BitsStreamGenerator
-    implements RandomGenerator,
-               Serializable {
+public abstract class BitsStreamGenerator implements RandomGenerator, Serializable {
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 20130104L;
     /** Next gaussian. */
@@ -50,12 +48,16 @@ public abstract class BitsStreamGenerator
     /** {@inheritDoc} */
     public abstract void setSeed(long seed);
 
-    /** Generate next pseudorandom number.
-     * <p>This method is the core generation algorithm. It is used by all the
+    /**
+     * Generate next pseudorandom number.
+     * <p>
+     * This method is the core generation algorithm. It is used by all the
      * public generation methods for the various primitive types {@link
      * #nextBoolean()}, {@link #nextBytes(byte[])}, {@link #nextDouble()},
      * {@link #nextFloat()}, {@link #nextGaussian()}, {@link #nextInt()},
-     * {@link #next(int)} and {@link #nextLong()}.</p>
+     * {@link #next(int)} and {@link #nextLong()}.
+     * </p>
+     * 
      * @param bits number of random bits to produce
      * @return random bits generated
      */
@@ -69,7 +71,7 @@ public abstract class BitsStreamGenerator
     /** {@inheritDoc} */
     public double nextDouble() {
         final long high = ((long) next(26)) << 26;
-        final int  low  = next(26);
+        final int low = next(26);
         return (high | low) * 0x1.0p-52d;
     }
 
@@ -87,8 +89,8 @@ public abstract class BitsStreamGenerator
             final double x = nextDouble();
             final double y = nextDouble();
             final double alpha = 2 * FastMath.PI * x;
-            final double r      = FastMath.sqrt(-2 * FastMath.log(y));
-            random       = r * FastMath.cos(alpha);
+            final double r = FastMath.sqrt(-2 * FastMath.log(y));
+            random = r * FastMath.cos(alpha);
             nextGaussian = r * FastMath.sin(alpha);
         } else {
             // use the second element of the pair already generated
@@ -107,10 +109,14 @@ public abstract class BitsStreamGenerator
 
     /**
      * {@inheritDoc}
-     * <p>This default implementation is copied from Apache Harmony
-     * java.util.Random (r929253).</p>
+     * <p>
+     * This default implementation is copied from Apache Harmony
+     * java.util.Random (r929253).
+     * </p>
      *
-     * <p>Implementation notes: <ul>
+     * <p>
+     * Implementation notes:
+     * <ul>
      * <li>If n is a power of 2, this method returns
      * {@code (int) ((n * (long) next(31)) >> 31)}.</li>
      *
@@ -118,7 +124,9 @@ public abstract class BitsStreamGenerator
      * with {@code next(31)} values rejected (i.e. regenerated) until a
      * value that is larger than the remainder of {@code Integer.MAX_VALUE / n}
      * is generated. Rejection of this initial segment is necessary to ensure
-     * a uniform distribution.</li></ul></p>
+     * a uniform distribution.</li>
+     * </ul>
+     * </p>
      */
     public int nextInt(int n) throws IllegalArgumentException {
         if (n > 0) {
@@ -138,8 +146,8 @@ public abstract class BitsStreamGenerator
 
     /** {@inheritDoc} */
     public long nextLong() {
-        final long high  = ((long) next(32)) << 32;
-        final long  low  = ((long) next(32)) & 0xffffffffL;
+        final long high = ((long) next(32)) << 32;
+        final long low = ((long) next(32)) & 0xffffffffL;
         return high | low;
     }
 
@@ -148,11 +156,11 @@ public abstract class BitsStreamGenerator
      * between 0 (inclusive) and the specified value (exclusive), drawn from
      * this random number generator's sequence.
      *
-     * @param n the bound on the random number to be returned.  Must be
-     * positive.
-     * @return  a pseudorandom, uniformly distributed {@code long}
-     * value between 0 (inclusive) and n (exclusive).
-     * @throws IllegalArgumentException  if n is not positive.
+     * @param n the bound on the random number to be returned. Must be
+     *          positive.
+     * @return a pseudorandom, uniformly distributed {@code long}
+     *         value between 0 (inclusive) and n (exclusive).
+     * @throws IllegalArgumentException if n is not positive.
      */
     public long nextLong(long n) throws IllegalArgumentException {
         if (n > 0) {
@@ -161,7 +169,7 @@ public abstract class BitsStreamGenerator
             do {
                 bits = ((long) next(31)) << 32;
                 bits |= ((long) next(32)) & 0xffffffffL;
-                val  = bits % n;
+                val = bits % n;
             } while (bits - val + (n - 1) < 0);
             return val;
         }
@@ -202,19 +210,15 @@ public abstract class BitsStreamGenerator
      *
      * @param bytes Array in which to put the generated bytes. Cannot be {@code null}.
      * @param start Index at which to start inserting the generated bytes.
-     * @param len Number of bytes to insert.
+     * @param len   Number of bytes to insert.
      * @throws OutOfRangeException if {@code start < 0} or {@code start >= bytes.length}.
      * @throws OutOfRangeException if {@code len < 0} or {@code len > bytes.length - start}.
      */
-    public void nextBytes(byte[] bytes,
-                          int start,
-                          int len) {
-        if (start < 0 ||
-            start >= bytes.length) {
+    public void nextBytes(byte[] bytes, int start, int len) {
+        if (start < 0 || start >= bytes.length) {
             throw new OutOfRangeException(start, 0, bytes.length);
         }
-        if (len < 0 ||
-            len > bytes.length - start) {
+        if (len < 0 || len > bytes.length - start) {
             throw new OutOfRangeException(len, 0, bytes.length - start);
         }
 
@@ -232,11 +236,9 @@ public abstract class BitsStreamGenerator
      *
      * @param bytes Array in which to put the generated bytes. Cannot be {@code null}.
      * @param start Index at which to start inserting the generated bytes.
-     * @param len Number of bytes to insert.
+     * @param len   Number of bytes to insert.
      */
-    private void nextBytesFill(byte[] bytes,
-                               int start,
-                               int len) {
+    private void nextBytesFill(byte[] bytes, int start, int len) {
         int index = start; // Index of first insertion.
 
         // Index of first insertion plus multiple 4 part of length (i.e. length

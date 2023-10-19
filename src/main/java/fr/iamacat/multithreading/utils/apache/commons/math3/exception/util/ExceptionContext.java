@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,17 +14,17 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.exception.util;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.Map;
 import java.io.IOException;
-import java.io.Serializable;
-import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
-import java.util.HashMap;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that contains the actual implementation of the functionality mandated
@@ -36,6 +34,7 @@ import java.util.Locale;
  * @since 3.0
  */
 public class ExceptionContext implements Serializable {
+
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
     /**
@@ -57,17 +56,21 @@ public class ExceptionContext implements Serializable {
      */
     private Map<String, Object> context;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param throwable the exception this context refers too
      */
     public ExceptionContext(final Throwable throwable) {
         this.throwable = throwable;
-        msgPatterns    = new ArrayList<Localizable>();
-        msgArguments   = new ArrayList<Object[]>();
-        context        = new HashMap<String, Object>();
+        msgPatterns = new ArrayList<Localizable>();
+        msgArguments = new ArrayList<Object[]>();
+        context = new HashMap<String, Object>();
     }
 
-    /** Get a reference to the exception to which the context relates.
+    /**
+     * Get a reference to the exception to which the context relates.
+     * 
      * @return a reference to the exception to which the context relates
      */
     public Throwable getThrowable() {
@@ -77,12 +80,11 @@ public class ExceptionContext implements Serializable {
     /**
      * Adds a message.
      *
-     * @param pattern Message pattern.
+     * @param pattern   Message pattern.
      * @param arguments Values for replacing the placeholders in the message
-     * pattern.
+     *                  pattern.
      */
-    public void addMessage(Localizable pattern,
-                           Object ... arguments) {
+    public void addMessage(Localizable pattern, Object... arguments) {
         msgPatterns.add(pattern);
         msgArguments.add(ArgUtils.flatten(arguments));
     }
@@ -92,7 +94,7 @@ public class ExceptionContext implements Serializable {
      * Keys are assumed to be unique within an instance. If the same key is
      * assigned a new value, the previous one will be lost.
      *
-     * @param key Context key (not null).
+     * @param key   Context key (not null).
      * @param value Context value.
      */
     public void setValue(String key, Object value) {
@@ -149,32 +151,29 @@ public class ExceptionContext implements Serializable {
     /**
      * Gets the message in a specified locale.
      *
-     * @param locale Locale in which the message should be translated.
+     * @param locale    Locale in which the message should be translated.
      * @param separator Separator inserted between the message parts.
      * @return the localized message.
      */
-    public String getMessage(final Locale locale,
-                             final String separator) {
+    public String getMessage(final Locale locale, final String separator) {
         return buildMessage(locale, separator);
     }
 
     /**
      * Builds a message string.
      *
-     * @param locale Locale in which the message should be translated.
+     * @param locale    Locale in which the message should be translated.
      * @param separator Message separator.
      * @return a localized message string.
      */
-    private String buildMessage(Locale locale,
-                                String separator) {
+    private String buildMessage(Locale locale, String separator) {
         final StringBuilder sb = new StringBuilder();
         int count = 0;
         final int len = msgPatterns.size();
         for (int i = 0; i < len; i++) {
             final Localizable pat = msgPatterns.get(i);
             final Object[] args = msgArguments.get(i);
-            final MessageFormat fmt = new MessageFormat(pat.getLocalizedString(locale),
-                                                        locale);
+            final MessageFormat fmt = new MessageFormat(pat.getLocalizedString(locale), locale);
             sb.append(fmt.format(args));
             if (++count < len) {
                 // Add a separator if there are other messages.
@@ -191,35 +190,32 @@ public class ExceptionContext implements Serializable {
      * @param out Stream.
      * @throws IOException This should never happen.
      */
-    private void writeObject(ObjectOutputStream out)
-        throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(throwable);
         serializeMessages(out);
         serializeContext(out);
     }
+
     /**
      * Deserialize this object from the given stream.
      *
      * @param in Stream.
-     * @throws IOException This should never happen.
+     * @throws IOException            This should never happen.
      * @throws ClassNotFoundException This should never happen.
      */
-    private void readObject(ObjectInputStream in)
-        throws IOException,
-               ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         throwable = (Throwable) in.readObject();
         deSerializeMessages(in);
         deSerializeContext(in);
     }
 
     /**
-     * Serialize  {@link #msgPatterns} and {@link #msgArguments}.
+     * Serialize {@link #msgPatterns} and {@link #msgArguments}.
      *
      * @param out Stream.
      * @throws IOException This should never happen.
      */
-    private void serializeMessages(ObjectOutputStream out)
-        throws IOException {
+    private void serializeMessages(ObjectOutputStream out) throws IOException {
         // Step 1.
         final int len = msgPatterns.size();
         out.writeInt(len);
@@ -248,12 +244,10 @@ public class ExceptionContext implements Serializable {
      * Deserialize {@link #msgPatterns} and {@link #msgArguments}.
      *
      * @param in Stream.
-     * @throws IOException This should never happen.
+     * @throws IOException            This should never happen.
      * @throws ClassNotFoundException This should never happen.
      */
-    private void deSerializeMessages(ObjectInputStream in)
-        throws IOException,
-               ClassNotFoundException {
+    private void deSerializeMessages(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Step 1.
         final int len = in.readInt();
         msgPatterns = new ArrayList<Localizable>(len);
@@ -280,8 +274,7 @@ public class ExceptionContext implements Serializable {
      * @param out Stream.
      * @throws IOException This should never happen.
      */
-    private void serializeContext(ObjectOutputStream out)
-        throws IOException {
+    private void serializeContext(ObjectOutputStream out) throws IOException {
         // Step 1.
         final int len = context.size();
         out.writeInt(len);
@@ -303,12 +296,10 @@ public class ExceptionContext implements Serializable {
      * Deserialize {@link #context}.
      *
      * @param in Stream.
-     * @throws IOException This should never happen.
+     * @throws IOException            This should never happen.
      * @throws ClassNotFoundException This should never happen.
      */
-    private void deSerializeContext(ObjectInputStream in)
-        throws IOException,
-               ClassNotFoundException {
+    private void deSerializeContext(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Step 1.
         final int len = in.readInt();
         context = new HashMap<String, Object>();
@@ -325,10 +316,11 @@ public class ExceptionContext implements Serializable {
      * Replaces a non-serializable object with an error message string.
      *
      * @param obj Object that does not implement the {@code Serializable}
-     * interface.
+     *            interface.
      * @return a string that mentions which class could not be serialized.
      */
     private String nonSerializableReplacement(Object obj) {
-        return "[Object could not be serialized: " + obj.getClass().getName() + "]";
+        return "[Object could not be serialized: " + obj.getClass()
+            .getName() + "]";
     }
 }

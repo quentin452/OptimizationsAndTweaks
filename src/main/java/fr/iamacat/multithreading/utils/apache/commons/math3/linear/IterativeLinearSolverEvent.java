@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +14,8 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.linear;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.IterationEvent;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathUnsupportedOperationException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.IterationEvent;
 
 /**
  * This is the base class for all events occurring during the iterations of a
@@ -25,18 +23,18 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathUnsupp
  *
  * @since 3.0
  */
-public abstract class IterativeLinearSolverEvent
-    extends IterationEvent {
+public abstract class IterativeLinearSolverEvent extends IterationEvent {
+
     /** Serialization identifier. */
     private static final long serialVersionUID = 20120129L;
 
     /**
      * Creates a new instance of this class.
      *
-     * @param source the iterative algorithm on which the event initially
-     * occurred
+     * @param source     the iterative algorithm on which the event initially
+     *                   occurred
      * @param iterations the number of iterations performed at the time
-     * {@code this} event is created
+     *                   {@code this} event is created
      */
     public IterativeLinearSolverEvent(final Object source, final int iterations) {
         super(source, iterations);
@@ -107,7 +105,7 @@ public abstract class IterativeLinearSolverEvent
      * implementation returns {@code false}.
      *
      * @return {@code false} if {@link #getResidual()} throws a
-     * {@link MathUnsupportedOperationException}
+     *         {@link MathUnsupportedOperationException}
      */
     public boolean providesResidual() {
         return false;

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,14 +32,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.euclidean.t
  * construct the convex hull afterwards, depending on the point distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Convex_hull_algorithms#Akl-Toussaint_heuristic">
- * Akl-Toussaint heuristic (Wikipedia)</a>
+ *      Akl-Toussaint heuristic (Wikipedia)</a>
  * @since 3.3
  */
 public final class AklToussaintHeuristic {
 
     /** Hide utility constructor. */
-    private AklToussaintHeuristic() {
-    }
+    private AklToussaintHeuristic() {}
 
     /**
      * Returns a point set that is reduced by all points for which it is safe to assume
@@ -114,12 +111,12 @@ public final class AklToussaintHeuristic {
 
     /**
      * Checks if the given point is located within the convex quadrilateral.
-     * @param point the point to check
+     * 
+     * @param point               the point to check
      * @param quadrilateralPoints the convex quadrilateral, represented by 4 points
      * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
      */
-    private static boolean insideQuadrilateral(final Vector2D point,
-                                               final List<Vector2D> quadrilateralPoints) {
+    private static boolean insideQuadrilateral(final Vector2D point, final List<Vector2D> quadrilateralPoints) {
 
         Vector2D p1 = quadrilateralPoints.get(0);
         Vector2D p2 = quadrilateralPoints.get(1);

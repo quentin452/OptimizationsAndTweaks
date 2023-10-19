@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,11 +16,13 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioni
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Space;
 
-/** Visitor building boundary shell tree.
+/**
+ * Visitor building boundary shell tree.
  * <p>
  * The boundary shell is represented as {@link BoundaryAttribute boundary attributes}
  * at each internal node.
  * </p>
+ * 
  * @param <S> Type of the space.
  * @since 3.4
  */
@@ -37,12 +37,15 @@ class BoundaryBuilder<S extends Space> implements BSPTreeVisitor<S> {
     public void visitInternalNode(BSPTree<S> node) {
 
         SubHyperplane<S> plusOutside = null;
-        SubHyperplane<S> plusInside  = null;
-        NodesSet<S>      splitters   = null;
+        SubHyperplane<S> plusInside = null;
+        NodesSet<S> splitters = null;
 
         // characterize the cut sub-hyperplane,
         // first with respect to the plus sub-tree
-        final Characterization<S> plusChar = new Characterization<S>(node.getPlus(), node.getCut().copySelf());
+        final Characterization<S> plusChar = new Characterization<S>(
+            node.getPlus(),
+            node.getCut()
+                .copySelf());
 
         if (plusChar.touchOutside()) {
             // plusChar.outsideTouching() corresponds to a subset of the cut sub-hyperplane
@@ -89,7 +92,6 @@ class BoundaryBuilder<S extends Space> implements BSPTreeVisitor<S> {
     }
 
     /** {@inheritDoc} */
-    public void visitLeafNode(BSPTree<S> node) {
-    }
+    public void visitLeafNode(BSPTree<S> node) {}
 
 }

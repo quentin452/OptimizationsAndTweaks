@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +20,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountEx
 import fr.iamacat.multithreading.utils.apache.commons.math3.ode.FieldEquationsMapper;
 import fr.iamacat.multithreading.utils.apache.commons.math3.ode.FieldODEStateAndDerivative;
 
-/** This abstract class represents an interpolator over the last step
+/**
+ * This abstract class represents an interpolator over the last step
  * during an ODE integration.
  *
- * <p>The various ODE integrators provide objects extending this class
+ * <p>
+ * The various ODE integrators provide objects extending this class
  * to the step handlers. The handlers can use these objects to
  * retrieve the state vector at intermediate times between the
- * previous and the current grid points (dense output).</p>
+ * previous and the current grid points (dense output).
+ * </p>
  *
  * @see fr.iamacat.multithreading.utils.apache.commons.math3.ode.FirstOrderFieldIntegrator
  * @see StepHandler
@@ -37,8 +38,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.ode.FieldODEStateAnd
  * @since 3.6
  */
 
-public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T>>
-    implements FieldStepInterpolator<T> {
+public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T>> implements FieldStepInterpolator<T> {
 
     /** Global previous state. */
     private final FieldODEStateAndDerivative<T> globalPreviousState;
@@ -58,61 +58,64 @@ public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T
     /** Mapper for ODE equations primary and secondary components. */
     private FieldEquationsMapper<T> mapper;
 
-    /** Simple constructor.
-     * @param isForward integration direction indicator
+    /**
+     * Simple constructor.
+     * 
+     * @param isForward           integration direction indicator
      * @param globalPreviousState start of the global step
-     * @param globalCurrentState end of the global step
-     * @param softPreviousState start of the restricted step
-     * @param softCurrentState end of the restricted step
-     * @param equationsMapper mapper for ODE equations primary and secondary components
+     * @param globalCurrentState  end of the global step
+     * @param softPreviousState   start of the restricted step
+     * @param softCurrentState    end of the restricted step
+     * @param equationsMapper     mapper for ODE equations primary and secondary components
      */
     protected AbstractFieldStepInterpolator(final boolean isForward,
-                                            final FieldODEStateAndDerivative<T> globalPreviousState,
-                                            final FieldODEStateAndDerivative<T> globalCurrentState,
-                                            final FieldODEStateAndDerivative<T> softPreviousState,
-                                            final FieldODEStateAndDerivative<T> softCurrentState,
-                                            final FieldEquationsMapper<T> equationsMapper) {
-        this.forward             = isForward;
+        final FieldODEStateAndDerivative<T> globalPreviousState, final FieldODEStateAndDerivative<T> globalCurrentState,
+        final FieldODEStateAndDerivative<T> softPreviousState, final FieldODEStateAndDerivative<T> softCurrentState,
+        final FieldEquationsMapper<T> equationsMapper) {
+        this.forward = isForward;
         this.globalPreviousState = globalPreviousState;
-        this.globalCurrentState  = globalCurrentState;
-        this.softPreviousState   = softPreviousState;
-        this.softCurrentState    = softCurrentState;
-        this.mapper              = equationsMapper;
+        this.globalCurrentState = globalCurrentState;
+        this.softPreviousState = softPreviousState;
+        this.softCurrentState = softCurrentState;
+        this.mapper = equationsMapper;
     }
 
-    /** Create a new restricted version of the instance.
+    /**
+     * Create a new restricted version of the instance.
      * <p>
      * The instance is not changed at all.
      * </p>
+     * 
      * @param previousState start of the restricted step
-     * @param currentState end of the restricted step
+     * @param currentState  end of the restricted step
      * @return restricted version of the instance
      * @see #getPreviousState()
      * @see #getCurrentState()
      */
     public AbstractFieldStepInterpolator<T> restrictStep(final FieldODEStateAndDerivative<T> previousState,
-                                                         final FieldODEStateAndDerivative<T> currentState) {
+        final FieldODEStateAndDerivative<T> currentState) {
         return create(forward, globalPreviousState, globalCurrentState, previousState, currentState, mapper);
     }
 
-    /** Create a new instance.
-     * @param newForward integration direction indicator
+    /**
+     * Create a new instance.
+     * 
+     * @param newForward             integration direction indicator
      * @param newGlobalPreviousState start of the global step
-     * @param newGlobalCurrentState end of the global step
-     * @param newSoftPreviousState start of the restricted step
-     * @param newSoftCurrentState end of the restricted step
-     * @param newMapper equations mapper for the all equations
+     * @param newGlobalCurrentState  end of the global step
+     * @param newSoftPreviousState   start of the restricted step
+     * @param newSoftCurrentState    end of the restricted step
+     * @param newMapper              equations mapper for the all equations
      * @return a new instance
      */
     protected abstract AbstractFieldStepInterpolator<T> create(boolean newForward,
-                                                               FieldODEStateAndDerivative<T> newGlobalPreviousState,
-                                                               FieldODEStateAndDerivative<T> newGlobalCurrentState,
-                                                               FieldODEStateAndDerivative<T> newSoftPreviousState,
-                                                               FieldODEStateAndDerivative<T> newSoftCurrentState,
-                                                               FieldEquationsMapper<T> newMapper);
+        FieldODEStateAndDerivative<T> newGlobalPreviousState, FieldODEStateAndDerivative<T> newGlobalCurrentState,
+        FieldODEStateAndDerivative<T> newSoftPreviousState, FieldODEStateAndDerivative<T> newSoftCurrentState,
+        FieldEquationsMapper<T> newMapper);
 
     /**
      * Get the previous global grid point state.
+     * 
      * @return previous global grid point state
      */
     public FieldODEStateAndDerivative<T> getGlobalPreviousState() {
@@ -121,6 +124,7 @@ public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T
 
     /**
      * Get the current global grid point state.
+     * 
      * @return current global grid point state
      */
     public FieldODEStateAndDerivative<T> getGlobalCurrentState() {
@@ -139,9 +143,12 @@ public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T
 
     /** {@inheritDoc} */
     public FieldODEStateAndDerivative<T> getInterpolatedState(final T time) {
-        final T thetaH         = time.subtract(globalPreviousState.getTime());
-        final T oneMinusThetaH = globalCurrentState.getTime().subtract(time);
-        final T theta          = thetaH.divide(globalCurrentState.getTime().subtract(globalPreviousState.getTime()));
+        final T thetaH = time.subtract(globalPreviousState.getTime());
+        final T oneMinusThetaH = globalCurrentState.getTime()
+            .subtract(time);
+        final T theta = thetaH.divide(
+            globalCurrentState.getTime()
+                .subtract(globalPreviousState.getTime()));
         return computeInterpolatedStateAndDerivatives(mapper, time, theta, thetaH, oneMinusThetaH);
     }
 
@@ -150,22 +157,23 @@ public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T
         return forward;
     }
 
-    /** Compute the state and derivatives at the interpolated time.
+    /**
+     * Compute the state and derivatives at the interpolated time.
      * This is the main processing method that should be implemented by
      * the derived classes to perform the interpolation.
+     * 
      * @param equationsMapper mapper for ODE equations primary and secondary components
-     * @param time interpolation time
-     * @param theta normalized interpolation abscissa within the step
-     * (theta is zero at the previous time step and one at the current time step)
-     * @param thetaH time gap between the previous time and the interpolated time
-     * @param oneMinusThetaH time gap between the interpolated time and
-     * the current time
+     * @param time            interpolation time
+     * @param theta           normalized interpolation abscissa within the step
+     *                        (theta is zero at the previous time step and one at the current time step)
+     * @param thetaH          time gap between the previous time and the interpolated time
+     * @param oneMinusThetaH  time gap between the interpolated time and
+     *                        the current time
      * @return interpolated state and derivatives
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      */
-    protected abstract FieldODEStateAndDerivative<T> computeInterpolatedStateAndDerivatives(FieldEquationsMapper<T> equationsMapper,
-                                                                                            T time, T theta,
-                                                                                            T thetaH, T oneMinusThetaH)
+    protected abstract FieldODEStateAndDerivative<T> computeInterpolatedStateAndDerivatives(
+        FieldEquationsMapper<T> equationsMapper, T time, T theta, T thetaH, T oneMinusThetaH)
         throws MaxCountExceededException;
 
 }

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,8 +39,7 @@ public class MannWhitneyUTest {
      * what you are doing.
      */
     public MannWhitneyUTest() {
-        naturalRanking = new NaturalRanking(NaNStrategy.FIXED,
-                TiesStrategy.AVERAGE);
+        naturalRanking = new NaturalRanking(NaNStrategy.FIXED, TiesStrategy.AVERAGE);
     }
 
     /**
@@ -50,12 +47,11 @@ public class MannWhitneyUTest {
      * Only use this if you are sure of what you are doing.
      *
      * @param nanStrategy
-     *            specifies the strategy that should be used for Double.NaN's
+     *                     specifies the strategy that should be used for Double.NaN's
      * @param tiesStrategy
-     *            specifies the strategy that should be used for ties
+     *                     specifies the strategy that should be used for ties
      */
-    public MannWhitneyUTest(final NaNStrategy nanStrategy,
-                            final TiesStrategy tiesStrategy) {
+    public MannWhitneyUTest(final NaNStrategy nanStrategy, final TiesStrategy tiesStrategy) {
         naturalRanking = new NaturalRanking(nanStrategy, tiesStrategy);
     }
 
@@ -65,22 +61,22 @@ public class MannWhitneyUTest {
      * @param x first sample
      * @param y second sample
      * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws NoDataException       if {@code x} or {@code y} are zero-length.
      */
     private void ensureDataConformance(final double[] x, final double[] y)
         throws NullArgumentException, NoDataException {
 
-        if (x == null ||
-            y == null) {
+        if (x == null || y == null) {
             throw new NullArgumentException();
         }
-        if (x.length == 0 ||
-            y.length == 0) {
+        if (x.length == 0 || y.length == 0) {
             throw new NoDataException();
         }
     }
 
-    /** Concatenate the samples into one array.
+    /**
+     * Concatenate the samples into one array.
+     * 
      * @param x first sample
      * @param y second sample
      * @return concatenated array
@@ -120,10 +116,9 @@ public class MannWhitneyUTest {
      * @param y the second sample
      * @return Mann-Whitney U statistic (maximum of U<sup>x</sup> and U<sup>y</sup>)
      * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws NoDataException       if {@code x} or {@code y} are zero-length.
      */
-    public double mannWhitneyU(final double[] x, final double[] y)
-        throws NullArgumentException, NoDataException {
+    public double mannWhitneyU(final double[] x, final double[] y) throws NullArgumentException, NoDataException {
 
         ensureDataConformance(x, y);
 
@@ -156,20 +151,19 @@ public class MannWhitneyUTest {
 
     /**
      * @param Umin smallest Mann-Whitney U value
-     * @param n1 number of subjects in first sample
-     * @param n2 number of subjects in second sample
+     * @param n1   number of subjects in first sample
+     * @param n2   number of subjects in second sample
      * @return two-sided asymptotic p-value
-     * @throws ConvergenceException if the p-value can not be computed
-     * due to a convergence error
+     * @throws ConvergenceException      if the p-value can not be computed
+     *                                   due to a convergence error
      * @throws MaxCountExceededException if the maximum number of
-     * iterations is exceeded
+     *                                   iterations is exceeded
      */
-    private double calculateAsymptoticPValue(final double Umin,
-                                             final int n1,
-                                             final int n2)
+    private double calculateAsymptoticPValue(final double Umin, final int n1, final int n2)
         throws ConvergenceException, MaxCountExceededException {
 
-        /* long multiplication to avoid overflow (double not used due to efficiency
+        /*
+         * long multiplication to avoid overflow (double not used due to efficiency
          * and to avoid precision loss)
          */
         final long n1n2prod = (long) n1 * n2;
@@ -204,24 +198,25 @@ public class MannWhitneyUTest {
      * <li>All observations in the two samples are independent.</li>
      * <li>The observations are at least ordinal (continuous are also ordinal).</li>
      * </ul>
-     * </p><p>
+     * </p>
+     * <p>
      * Ties give rise to biased variance at the moment. See e.g. <a
      * href="http://mlsc.lboro.ac.uk/resources/statistics/Mannwhitney.pdf"
-     * >http://mlsc.lboro.ac.uk/resources/statistics/Mannwhitney.pdf</a>.</p>
+     * >http://mlsc.lboro.ac.uk/resources/statistics/Mannwhitney.pdf</a>.
+     * </p>
      *
      * @param x the first sample
      * @param y the second sample
      * @return asymptotic p-value
-     * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
-     * @throws ConvergenceException if the p-value can not be computed due to a
-     * convergence error
+     * @throws NullArgumentException     if {@code x} or {@code y} are {@code null}.
+     * @throws NoDataException           if {@code x} or {@code y} are zero-length.
+     * @throws ConvergenceException      if the p-value can not be computed due to a
+     *                                   convergence error
      * @throws MaxCountExceededException if the maximum number of iterations
-     * is exceeded
+     *                                   is exceeded
      */
     public double mannWhitneyUTest(final double[] x, final double[] y)
-        throws NullArgumentException, NoDataException,
-        ConvergenceException, MaxCountExceededException {
+        throws NullArgumentException, NoDataException, ConvergenceException, MaxCountExceededException {
 
         ensureDataConformance(x, y);
 

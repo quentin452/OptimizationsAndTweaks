@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,27 +17,36 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.linear;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
-
 /**
  * Calculates the rank-revealing QR-decomposition of a matrix, with column pivoting.
- * <p>The rank-revealing QR-decomposition of a matrix A consists of three matrices Q,
- * R and P such that AP=QR.  Q is orthogonal (Q<sup>T</sup>Q = I), and R is upper triangular.
- * If A is m&times;n, Q is m&times;m and R is m&times;n and P is n&times;n.</p>
- * <p>QR decomposition with column pivoting produces a rank-revealing QR
+ * <p>
+ * The rank-revealing QR-decomposition of a matrix A consists of three matrices Q,
+ * R and P such that AP=QR. Q is orthogonal (Q<sup>T</sup>Q = I), and R is upper triangular.
+ * If A is m&times;n, Q is m&times;m and R is m&times;n and P is n&times;n.
+ * </p>
+ * <p>
+ * QR decomposition with column pivoting produces a rank-revealing QR
  * decomposition and the {@link #getRank(double)} method may be used to return the rank of the
- * input matrix A.</p>
- * <p>This class compute the decomposition using Householder reflectors.</p>
- * <p>For efficiency purposes, the decomposition in packed form is transposed.
+ * input matrix A.
+ * </p>
+ * <p>
+ * This class compute the decomposition using Householder reflectors.
+ * </p>
+ * <p>
+ * For efficiency purposes, the decomposition in packed form is transposed.
  * This allows inner loop to iterate inside rows, which is much more cache-efficient
- * in Java.</p>
- * <p>This class is based on the class with similar name from the
+ * in Java.
+ * </p>
+ * <p>
+ * This class is based on the class with similar name from the
  * <a href="http://math.nist.gov/javanumerics/jama/">JAMA</a> library, with the
- * following changes:</p>
+ * following changes:
+ * </p>
  * <ul>
- *   <li>a {@link #getQT() getQT} method has been added,</li>
- *   <li>the {@code solve} and {@code isFullRank} methods have been replaced
- *   by a {@link #getSolver() getSolver} method and the equivalent methods
- *   provided by the returned {@link DecompositionSolver}.</li>
+ * <li>a {@link #getQT() getQT} method has been added,</li>
+ * <li>the {@code solve} and {@code isFullRank} methods have been replaced
+ * by a {@link #getSolver() getSolver} method and the equivalent methods
+ * provided by the returned {@link DecompositionSolver}.</li>
  * </ul>
  *
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
@@ -55,7 +62,6 @@ public class RRQRDecomposition extends QRDecomposition {
     /** Cached value of P. */
     private RealMatrix cachedP;
 
-
     /**
      * Calculates the QR-decomposition of the given matrix.
      * The singularity threshold defaults to zero.
@@ -68,18 +74,20 @@ public class RRQRDecomposition extends QRDecomposition {
         this(matrix, 0d);
     }
 
-   /**
+    /**
      * Calculates the QR-decomposition of the given matrix.
      *
-     * @param matrix The matrix to decompose.
+     * @param matrix    The matrix to decompose.
      * @param threshold Singularity threshold.
      * @see #RRQRDecomposition(RealMatrix)
      */
-    public RRQRDecomposition(RealMatrix matrix,  double threshold) {
+    public RRQRDecomposition(RealMatrix matrix, double threshold) {
         super(matrix, threshold);
     }
 
-    /** Decompose matrix.
+    /**
+     * Decompose matrix.
+     * 
      * @param qrt transposed matrix
      */
     @Override
@@ -91,9 +99,11 @@ public class RRQRDecomposition extends QRDecomposition {
         super.decompose(qrt);
     }
 
-    /** Perform Householder reflection for a minor A(minor, minor) of A.
+    /**
+     * Perform Householder reflection for a minor A(minor, minor) of A.
+     * 
      * @param minor minor index
-     * @param qrt transposed matrix
+     * @param qrt   transposed matrix
      */
     @Override
     protected void performHouseholderReflection(int minor, double[][] qrt) {
@@ -125,7 +135,6 @@ public class RRQRDecomposition extends QRDecomposition {
 
     }
 
-
     /**
      * Returns the pivot matrix, P, used in the QR Decomposition of matrix A such that AP = QR.
      *
@@ -136,23 +145,28 @@ public class RRQRDecomposition extends QRDecomposition {
     public RealMatrix getP() {
         if (cachedP == null) {
             int n = p.length;
-            cachedP = MatrixUtils.createRealMatrix(n,n);
+            cachedP = MatrixUtils.createRealMatrix(n, n);
             for (int i = 0; i < n; i++) {
                 cachedP.setEntry(p[i], i, 1);
             }
         }
-        return cachedP ;
+        return cachedP;
     }
 
     /**
      * Return the effective numerical matrix rank.
-     * <p>The effective numerical rank is the number of non-negligible
-     * singular values.</p>
-     * <p>This implementation looks at Frobenius norms of the sequence of
-     * bottom right submatrices.  When a large fall in norm is seen,
-     * the rank is returned. The drop is computed as:</p>
+     * <p>
+     * The effective numerical rank is the number of non-negligible
+     * singular values.
+     * </p>
+     * <p>
+     * This implementation looks at Frobenius norms of the sequence of
+     * bottom right submatrices. When a large fall in norm is seen,
+     * the rank is returned. The drop is computed as:
+     * </p>
+     * 
      * <pre>
-     *   (thisNorm/lastNorm) * rNorm < dropThreshold
+     * (thisNorm / lastNorm) * rNorm < dropThreshold
      * </pre>
      * <p>
      * where thisNorm is the Frobenius norm of the current submatrix,
@@ -164,14 +178,15 @@ public class RRQRDecomposition extends QRDecomposition {
      * @return effective numerical matrix rank
      */
     public int getRank(final double dropThreshold) {
-        RealMatrix r    = getR();
-        int rows        = r.getRowDimension();
-        int columns     = r.getColumnDimension();
-        int rank        = 1;
+        RealMatrix r = getR();
+        int rows = r.getRowDimension();
+        int columns = r.getColumnDimension();
+        int rank = 1;
         double lastNorm = r.getFrobeniusNorm();
-        double rNorm    = lastNorm;
+        double rNorm = lastNorm;
         while (rank < FastMath.min(rows, columns)) {
-            double thisNorm = r.getSubMatrix(rank, rows - 1, rank, columns - 1).getFrobeniusNorm();
+            double thisNorm = r.getSubMatrix(rank, rows - 1, rank, columns - 1)
+                .getFrobeniusNorm();
             if (thisNorm == 0 || (thisNorm / lastNorm) * rNorm < dropThreshold) {
                 break;
             }
@@ -191,6 +206,7 @@ public class RRQRDecomposition extends QRDecomposition {
      * double) construction}, an error will be triggered when
      * the {@link DecompositionSolver#solve(RealVector) solve} method will be called.
      * </p>
+     * 
      * @return a solver
      */
     @Override
@@ -211,11 +227,11 @@ public class RRQRDecomposition extends QRDecomposition {
          * Build a solver from decomposed matrix.
          *
          * @param upper upper level solver.
-         * @param p permutation matrix
+         * @param p     permutation matrix
          */
         private Solver(final DecompositionSolver upper, final RealMatrix p) {
             this.upper = upper;
-            this.p     = p;
+            this.p = p;
         }
 
         /** {@inheritDoc} */
@@ -235,6 +251,7 @@ public class RRQRDecomposition extends QRDecomposition {
 
         /**
          * {@inheritDoc}
+         * 
          * @throws SingularMatrixException if the decomposed matrix is singular.
          */
         public RealMatrix getInverse() {

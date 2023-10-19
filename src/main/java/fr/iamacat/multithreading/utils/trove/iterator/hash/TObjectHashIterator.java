@@ -10,20 +10,18 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
-
 
 package fr.iamacat.multithreading.utils.trove.iterator.hash;
 
-import gnu.trove.impl.hash.TObjectHash;
 import gnu.trove.impl.hash.THashIterator;
-
+import gnu.trove.impl.hash.TObjectHash;
 
 /**
  * Iterator for hashtables that use open addressing to resolve collisions.
@@ -38,18 +36,16 @@ public class TObjectHashIterator<E> extends THashIterator<E> {
 
     protected final TObjectHash<E> _objectHash;
 
-
-    public TObjectHashIterator( TObjectHash<E> hash ) {
-        super( hash );
+    public TObjectHashIterator(TObjectHash<E> hash) {
+        super(hash);
         _objectHash = hash;
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
-    protected E objectAtIndex( int index ) {
+    protected E objectAtIndex(int index) {
         Object obj = _objectHash._set[index];
-        if ( obj == TObjectHash.FREE || obj == TObjectHash.REMOVED ) {
+        if (obj == TObjectHash.FREE || obj == TObjectHash.REMOVED) {
             return null;
         }
         return (E) obj;

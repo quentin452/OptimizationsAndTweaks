@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,30 +18,34 @@ import java.util.Arrays;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ConvergenceException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
 
 /**
  * This class solves a least squares problem using the Levenberg-Marquardt algorithm.
  *
- * <p>This implementation <em>should</em> work even for over-determined systems
+ * <p>
+ * This implementation <em>should</em> work even for over-determined systems
  * (i.e. systems having more point than equations). Over-determined systems
  * are solved by ignoring the point which have the smallest impact according
  * to their jacobian column norm. Only the rank of the matrix and some loop bounds
- * are changed to implement this.</p>
+ * are changed to implement this.
+ * </p>
  *
- * <p>The resolution engine is a simple translation of the MINPACK <a
+ * <p>
+ * The resolution engine is a simple translation of the MINPACK <a
  * href="http://www.netlib.org/minpack/lmder.f">lmder</a> routine with minor
  * changes. The changes include the over-determined resolution, the use of
  * inherited convergence checker and the Q.R. decomposition which has been
  * rewritten following the algorithm described in the
  * P. Lascaux and R. Theodor book <i>Analyse num&eacute;rique matricielle
- * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986.</p>
- * <p>The authors of the original fortran version are:
+ * appliqu&eacute;e &agrave; l'art de l'ing&eacute;nieur</i>, Masson 1986.
+ * </p>
+ * <p>
+ * The authors of the original fortran version are:
  * <ul>
  * <li>Argonne National Laboratory. MINPACK project. March 1980</li>
  * <li>Burton S. Garbow</li>
@@ -52,61 +54,69 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * </ul>
  * The redistribution policy for MINPACK is available <a
  * href="http://www.netlib.org/minpack/disclaimer">here</a>, for convenience, it
- * is reproduced below.</p>
+ * is reproduced below.
+ * </p>
  *
  * <table border="0" width="80%" cellpadding="10" align="center" bgcolor="#E0E0E0">
- * <tr><td>
- *    Minpack Copyright Notice (1999) University of Chicago.
- *    All rights reserved
- * </td></tr>
- * <tr><td>
+ * <tr>
+ * <td>
+ * Minpack Copyright Notice (1999) University of Chicago.
+ * All rights reserved
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  * <ol>
- *  <li>Redistributions of source code must retain the above copyright
- *      notice, this list of conditions and the following disclaimer.</li>
+ * <li>Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.</li>
  * <li>Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.</li>
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.</li>
  * <li>The end-user documentation included with the redistribution, if any,
- *     must include the following acknowledgment:
- *     <code>This product includes software developed by the University of
+ * must include the following acknowledgment:
+ * <code>This product includes software developed by the University of
  *           Chicago, as Operator of Argonne National Laboratory.</code>
- *     Alternately, this acknowledgment may appear in the software itself,
- *     if and wherever such third-party acknowledgments normally appear.</li>
+ * Alternately, this acknowledgment may appear in the software itself,
+ * if and wherever such third-party acknowledgments normally appear.</li>
  * <li><strong>WARRANTY DISCLAIMER. THE SOFTWARE IS SUPPLIED "AS IS"
- *     WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT HOLDER, THE
- *     UNITED STATES, THE UNITED STATES DEPARTMENT OF ENERGY, AND
- *     THEIR EMPLOYEES: (1) DISCLAIM ANY WARRANTIES, EXPRESS OR
- *     IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES
- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE
- *     OR NON-INFRINGEMENT, (2) DO NOT ASSUME ANY LEGAL LIABILITY
- *     OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR
- *     USEFULNESS OF THE SOFTWARE, (3) DO NOT REPRESENT THAT USE OF
- *     THE SOFTWARE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS, (4)
- *     DO NOT WARRANT THAT THE SOFTWARE WILL FUNCTION
- *     UNINTERRUPTED, THAT IT IS ERROR-FREE OR THAT ANY ERRORS WILL
- *     BE CORRECTED.</strong></li>
+ * WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT HOLDER, THE
+ * UNITED STATES, THE UNITED STATES DEPARTMENT OF ENERGY, AND
+ * THEIR EMPLOYEES: (1) DISCLAIM ANY WARRANTIES, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE
+ * OR NON-INFRINGEMENT, (2) DO NOT ASSUME ANY LEGAL LIABILITY
+ * OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR
+ * USEFULNESS OF THE SOFTWARE, (3) DO NOT REPRESENT THAT USE OF
+ * THE SOFTWARE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS, (4)
+ * DO NOT WARRANT THAT THE SOFTWARE WILL FUNCTION
+ * UNINTERRUPTED, THAT IT IS ERROR-FREE OR THAT ANY ERRORS WILL
+ * BE CORRECTED.</strong></li>
  * <li><strong>LIMITATION OF LIABILITY. IN NO EVENT WILL THE COPYRIGHT
- *     HOLDER, THE UNITED STATES, THE UNITED STATES DEPARTMENT OF
- *     ENERGY, OR THEIR EMPLOYEES: BE LIABLE FOR ANY INDIRECT,
- *     INCIDENTAL, CONSEQUENTIAL, SPECIAL OR PUNITIVE DAMAGES OF
- *     ANY KIND OR NATURE, INCLUDING BUT NOT LIMITED TO LOSS OF
- *     PROFITS OR LOSS OF DATA, FOR ANY REASON WHATSOEVER, WHETHER
- *     SUCH LIABILITY IS ASSERTED ON THE BASIS OF CONTRACT, TORT
- *     (INCLUDING NEGLIGENCE OR STRICT LIABILITY), OR OTHERWISE,
- *     EVEN IF ANY OF SAID PARTIES HAS BEEN WARNED OF THE
- *     POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
- * <ol></td></tr>
+ * HOLDER, THE UNITED STATES, THE UNITED STATES DEPARTMENT OF
+ * ENERGY, OR THEIR EMPLOYEES: BE LIABLE FOR ANY INDIRECT,
+ * INCIDENTAL, CONSEQUENTIAL, SPECIAL OR PUNITIVE DAMAGES OF
+ * ANY KIND OR NATURE, INCLUDING BUT NOT LIMITED TO LOSS OF
+ * PROFITS OR LOSS OF DATA, FOR ANY REASON WHATSOEVER, WHETHER
+ * SUCH LIABILITY IS ASSERTED ON THE BASIS OF CONTRACT, TORT
+ * (INCLUDING NEGLIGENCE OR STRICT LIABILITY), OR OTHERWISE,
+ * EVEN IF ANY OF SAID PARTIES HAS BEEN WARNED OF THE
+ * POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
+ * <ol>
+ * </td>
+ * </tr>
  * </table>
+ * 
  * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 2.0
  *
  */
 @Deprecated
 public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
+
     /** Number of solved point. */
     private int solvedCols;
     /** Diagonal elements of the R matrix in the Q.R. decomposition. */
@@ -127,10 +137,12 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
     private final double initialStepBoundFactor;
     /** Desired relative error in the sum of squares. */
     private final double costRelativeTolerance;
-    /**  Desired relative error in the approximate solution parameters. */
+    /** Desired relative error in the approximate solution parameters. */
     private final double parRelativeTolerance;
-    /** Desired max cosine on the orthogonality between the function vector
-     * and the columns of the jacobian. */
+    /**
+     * Desired max cosine on the orthogonality between the function vector
+     * and the columns of the jacobian.
+     */
     private final double orthoTolerance;
     /** Threshold for QR ranking. */
     private final double qrRankingThreshold;
@@ -146,11 +158,11 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * other contructor}.
      * The default values for the algorithm settings are:
      * <ul>
-     *  <li>Initial step bound factor: 100</li>
-     *  <li>Cost relative tolerance: 1e-10</li>
-     *  <li>Parameters relative tolerance: 1e-10</li>
-     *  <li>Orthogonality tolerance: 1e-10</li>
-     *  <li>QR ranking threshold: {@link Precision#SAFE_MIN}</li>
+     * <li>Initial step bound factor: 100</li>
+     * <li>Cost relative tolerance: 1e-10</li>
+     * <li>Parameters relative tolerance: 1e-10</li>
+     * <li>Orthogonality tolerance: 1e-10</li>
+     * <li>QR ranking threshold: {@link Precision#SAFE_MIN}</li>
      * </ul>
      */
     public LevenbergMarquardtOptimizer() {
@@ -163,11 +175,11 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * Note that all the usual convergence checks will be <em>disabled</em>.
      * The default values for the algorithm settings are:
      * <ul>
-     *  <li>Initial step bound factor: 100</li>
-     *  <li>Cost relative tolerance: 1e-10</li>
-     *  <li>Parameters relative tolerance: 1e-10</li>
-     *  <li>Orthogonality tolerance: 1e-10</li>
-     *  <li>QR ranking threshold: {@link Precision#SAFE_MIN}</li>
+     * <li>Initial step bound factor: 100</li>
+     * <li>Cost relative tolerance: 1e-10</li>
+     * <li>Parameters relative tolerance: 1e-10</li>
+     * <li>Orthogonality tolerance: 1e-10</li>
+     * <li>QR ranking threshold: {@link Precision#SAFE_MIN}</li>
      * </ul>
      *
      * @param checker Convergence checker.
@@ -181,29 +193,25 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * checker, in addition to the standard ones.
      *
      * @param initialStepBoundFactor Positive input variable used in
-     * determining the initial step bound. This bound is set to the
-     * product of initialStepBoundFactor and the euclidean norm of
-     * {@code diag * x} if non-zero, or else to {@code initialStepBoundFactor}
-     * itself. In most cases factor should lie in the interval
-     * {@code (0.1, 100.0)}. {@code 100} is a generally recommended value.
-     * @param checker Convergence checker.
-     * @param costRelativeTolerance Desired relative error in the sum of
-     * squares.
-     * @param parRelativeTolerance Desired relative error in the approximate
-     * solution parameters.
-     * @param orthoTolerance Desired max cosine on the orthogonality between
-     * the function vector and the columns of the Jacobian.
-     * @param threshold Desired threshold for QR ranking. If the squared norm
-     * of a column vector is smaller or equal to this threshold during QR
-     * decomposition, it is considered to be a zero vector and hence the rank
-     * of the matrix is reduced.
+     *                               determining the initial step bound. This bound is set to the
+     *                               product of initialStepBoundFactor and the euclidean norm of
+     *                               {@code diag * x} if non-zero, or else to {@code initialStepBoundFactor}
+     *                               itself. In most cases factor should lie in the interval
+     *                               {@code (0.1, 100.0)}. {@code 100} is a generally recommended value.
+     * @param checker                Convergence checker.
+     * @param costRelativeTolerance  Desired relative error in the sum of
+     *                               squares.
+     * @param parRelativeTolerance   Desired relative error in the approximate
+     *                               solution parameters.
+     * @param orthoTolerance         Desired max cosine on the orthogonality between
+     *                               the function vector and the columns of the Jacobian.
+     * @param threshold              Desired threshold for QR ranking. If the squared norm
+     *                               of a column vector is smaller or equal to this threshold during QR
+     *                               decomposition, it is considered to be a zero vector and hence the rank
+     *                               of the matrix is reduced.
      */
-    public LevenbergMarquardtOptimizer(double initialStepBoundFactor,
-                                       ConvergenceChecker<PointVectorValuePair> checker,
-                                       double costRelativeTolerance,
-                                       double parRelativeTolerance,
-                                       double orthoTolerance,
-                                       double threshold) {
+    public LevenbergMarquardtOptimizer(double initialStepBoundFactor, ConvergenceChecker<PointVectorValuePair> checker,
+        double costRelativeTolerance, double parRelativeTolerance, double orthoTolerance, double threshold) {
         super(checker);
         this.initialStepBoundFactor = initialStepBoundFactor;
         this.costRelativeTolerance = costRelativeTolerance;
@@ -219,23 +227,20 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * other contructor}.
      * The default values for the algorithm settings are:
      * <ul>
-     *  <li>Initial step bound factor}: 100</li>
-     *  <li>QR ranking threshold}: {@link Precision#SAFE_MIN}</li>
+     * <li>Initial step bound factor}: 100</li>
+     * <li>QR ranking threshold}: {@link Precision#SAFE_MIN}</li>
      * </ul>
      *
      * @param costRelativeTolerance Desired relative error in the sum of
-     * squares.
-     * @param parRelativeTolerance Desired relative error in the approximate
-     * solution parameters.
-     * @param orthoTolerance Desired max cosine on the orthogonality between
-     * the function vector and the columns of the Jacobian.
+     *                              squares.
+     * @param parRelativeTolerance  Desired relative error in the approximate
+     *                              solution parameters.
+     * @param orthoTolerance        Desired max cosine on the orthogonality between
+     *                              the function vector and the columns of the Jacobian.
      */
-    public LevenbergMarquardtOptimizer(double costRelativeTolerance,
-                                       double parRelativeTolerance,
-                                       double orthoTolerance) {
-        this(100,
-             costRelativeTolerance, parRelativeTolerance, orthoTolerance,
-             Precision.SAFE_MIN);
+    public LevenbergMarquardtOptimizer(double costRelativeTolerance, double parRelativeTolerance,
+        double orthoTolerance) {
+        this(100, costRelativeTolerance, parRelativeTolerance, orthoTolerance, Precision.SAFE_MIN);
     }
 
     /**
@@ -245,27 +250,24 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
      * ConvergenceChecker}.
      *
      * @param initialStepBoundFactor Positive input variable used in
-     * determining the initial step bound. This bound is set to the
-     * product of initialStepBoundFactor and the euclidean norm of
-     * {@code diag * x} if non-zero, or else to {@code initialStepBoundFactor}
-     * itself. In most cases factor should lie in the interval
-     * {@code (0.1, 100.0)}. {@code 100} is a generally recommended value.
-     * @param costRelativeTolerance Desired relative error in the sum of
-     * squares.
-     * @param parRelativeTolerance Desired relative error in the approximate
-     * solution parameters.
-     * @param orthoTolerance Desired max cosine on the orthogonality between
-     * the function vector and the columns of the Jacobian.
-     * @param threshold Desired threshold for QR ranking. If the squared norm
-     * of a column vector is smaller or equal to this threshold during QR
-     * decomposition, it is considered to be a zero vector and hence the rank
-     * of the matrix is reduced.
+     *                               determining the initial step bound. This bound is set to the
+     *                               product of initialStepBoundFactor and the euclidean norm of
+     *                               {@code diag * x} if non-zero, or else to {@code initialStepBoundFactor}
+     *                               itself. In most cases factor should lie in the interval
+     *                               {@code (0.1, 100.0)}. {@code 100} is a generally recommended value.
+     * @param costRelativeTolerance  Desired relative error in the sum of
+     *                               squares.
+     * @param parRelativeTolerance   Desired relative error in the approximate
+     *                               solution parameters.
+     * @param orthoTolerance         Desired max cosine on the orthogonality between
+     *                               the function vector and the columns of the Jacobian.
+     * @param threshold              Desired threshold for QR ranking. If the squared norm
+     *                               of a column vector is smaller or equal to this threshold during QR
+     *                               decomposition, it is considered to be a zero vector and hence the rank
+     *                               of the matrix is reduced.
      */
-    public LevenbergMarquardtOptimizer(double initialStepBoundFactor,
-                                       double costRelativeTolerance,
-                                       double parRelativeTolerance,
-                                       double orthoTolerance,
-                                       double threshold) {
+    public LevenbergMarquardtOptimizer(double initialStepBoundFactor, double costRelativeTolerance,
+        double parRelativeTolerance, double orthoTolerance, double threshold) {
         super(null); // No custom convergence criterion.
         this.initialStepBoundFactor = initialStepBoundFactor;
         this.costRelativeTolerance = costRelativeTolerance;
@@ -282,24 +284,24 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
         final int nC = currentPoint.length; // Number of parameters.
 
         // arrays shared with the other private methods
-        solvedCols  = FastMath.min(nR, nC);
-        diagR       = new double[nC];
-        jacNorm     = new double[nC];
-        beta        = new double[nC];
+        solvedCols = FastMath.min(nR, nC);
+        diagR = new double[nC];
+        jacNorm = new double[nC];
+        beta = new double[nC];
         permutation = new int[nC];
-        lmDir       = new double[nC];
+        lmDir = new double[nC];
 
         // local point
-        double   delta   = 0;
-        double   xNorm   = 0;
-        double[] diag    = new double[nC];
-        double[] oldX    = new double[nC];
-        double[] oldRes  = new double[nR];
-        double[] oldObj  = new double[nR];
-        double[] qtf     = new double[nR];
-        double[] work1   = new double[nC];
-        double[] work2   = new double[nC];
-        double[] work3   = new double[nC];
+        double delta = 0;
+        double xNorm = 0;
+        double[] diag = new double[nC];
+        double[] oldX = new double[nC];
+        double[] oldRes = new double[nR];
+        double[] oldObj = new double[nR];
+        double[] qtf = new double[nR];
+        double[] work1 = new double[nC];
+        double[] work2 = new double[nC];
+        double[] work3 = new double[nC];
 
         final RealMatrix weightMatrixSqrt = getWeightSquareRoot();
 
@@ -346,7 +348,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                         dk = 1.0;
                     }
                     double xk = dk * currentPoint[k];
-                    xNorm  += xk * xk;
+                    xNorm += xk * xk;
                     diag[k] = dk;
                 }
                 xNorm = FastMath.sqrt(xNorm);
@@ -359,8 +361,8 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
             double maxCosine = 0;
             if (currentCost != 0) {
                 for (int j = 0; j < solvedCols; ++j) {
-                    int    pj = permutation[j];
-                    double s  = jacNorm[pj];
+                    int pj = permutation[j];
+                    double s = jacNorm[pj];
                     if (s != 0) {
                         double sum = 0;
                         for (int i = 0; i <= j; ++i) {
@@ -394,10 +396,10 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                 final double previousCost = currentCost;
                 double[] tmpVec = weightedResidual;
                 weightedResidual = oldRes;
-                oldRes    = tmpVec;
-                tmpVec    = currentObjective;
+                oldRes = tmpVec;
+                tmpVec = currentObjective;
                 currentObjective = oldObj;
-                oldObj    = tmpVec;
+                oldObj = tmpVec;
 
                 // determine the Levenberg-Marquardt parameter
                 determineLMParameter(qtf, delta, diag, work1, work2, work3);
@@ -409,7 +411,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                     lmDir[pj] = -lmDir[pj];
                     currentPoint[pj] = oldX[pj] + lmDir[pj];
                     double s = diag[pj] * lmDir[pj];
-                    lmNorm  += s * s;
+                    lmNorm += s * s;
                 }
                 lmNorm = FastMath.sqrt(lmNorm);
                 // on the first iteration, adjust the initial step bound.
@@ -455,13 +457,12 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
                 // update the step bound
                 if (ratio <= 0.25) {
-                    double tmp =
-                        (actRed < 0) ? (0.5 * dirDer / (dirDer + 0.5 * actRed)) : 0.5;
-                        if ((0.1 * currentCost >= previousCost) || (tmp < 0.1)) {
-                            tmp = 0.1;
-                        }
-                        delta = tmp * FastMath.min(delta, 10.0 * lmNorm);
-                        lmPar /= tmp;
+                    double tmp = (actRed < 0) ? (0.5 * dirDer / (dirDer + 0.5 * actRed)) : 0.5;
+                    if ((0.1 * currentCost >= previousCost) || (tmp < 0.1)) {
+                        tmp = 0.1;
+                    }
+                    delta = tmp * FastMath.min(delta, 10.0 * lmNorm);
+                    lmPar /= tmp;
                 } else if ((lmPar == 0) || (ratio >= 0.75)) {
                     delta = 2 * lmNorm;
                     lmPar *= 0.5;
@@ -492,21 +493,19 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                         int pj = permutation[j];
                         currentPoint[pj] = oldX[pj];
                     }
-                    tmpVec    = weightedResidual;
+                    tmpVec = weightedResidual;
                     weightedResidual = oldRes;
-                    oldRes    = tmpVec;
-                    tmpVec    = currentObjective;
+                    oldRes = tmpVec;
+                    tmpVec = currentObjective;
                     currentObjective = oldObj;
-                    oldObj    = tmpVec;
+                    oldObj = tmpVec;
                     // Reset "current" to previous values.
                     current = new PointVectorValuePair(currentPoint, currentObjective);
                 }
 
                 // Default convergence criteria.
-                if ((FastMath.abs(actRed) <= costRelativeTolerance &&
-                     preRed <= costRelativeTolerance &&
-                     ratio <= 2.0) ||
-                    delta <= parRelativeTolerance * xNorm) {
+                if ((FastMath.abs(actRed) <= costRelativeTolerance && preRed <= costRelativeTolerance && ratio <= 2.0)
+                    || delta <= parRelativeTolerance * xNorm) {
                     setCost(currentCost);
                     // Update (deprecated) "point" field.
                     point = current.getPoint();
@@ -516,14 +515,15 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                 // tests for termination and stringent tolerances
                 // (2.2204e-16 is the machine epsilon for IEEE754)
                 if ((FastMath.abs(actRed) <= 2.2204e-16) && (preRed <= 2.2204e-16) && (ratio <= 2.0)) {
-                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_COST_RELATIVE_TOLERANCE,
-                                                   costRelativeTolerance);
+                    throw new ConvergenceException(
+                        LocalizedFormats.TOO_SMALL_COST_RELATIVE_TOLERANCE,
+                        costRelativeTolerance);
                 } else if (delta <= 2.2204e-16 * xNorm) {
-                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE,
-                                                   parRelativeTolerance);
-                } else if (maxCosine <= 2.2204e-16)  {
-                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_ORTHOGONALITY_TOLERANCE,
-                                                   orthoTolerance);
+                    throw new ConvergenceException(
+                        LocalizedFormats.TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE,
+                        parRelativeTolerance);
+                } else if (maxCosine <= 2.2204e-16) {
+                    throw new ConvergenceException(LocalizedFormats.TOO_SMALL_ORTHOGONALITY_TOLERANCE, orthoTolerance);
                 }
             }
         }
@@ -531,28 +531,36 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     /**
      * Determine the Levenberg-Marquardt parameter.
-     * <p>This implementation is a translation in Java of the MINPACK
+     * <p>
+     * This implementation is a translation in Java of the MINPACK
      * <a href="http://www.netlib.org/minpack/lmpar.f">lmpar</a>
-     * routine.</p>
-     * <p>This method sets the lmPar and lmDir attributes.</p>
-     * <p>The authors of the original fortran function are:</p>
+     * routine.
+     * </p>
+     * <p>
+     * This method sets the lmPar and lmDir attributes.
+     * </p>
+     * <p>
+     * The authors of the original fortran function are:
+     * </p>
      * <ul>
-     *   <li>Argonne National Laboratory. MINPACK project. March 1980</li>
-     *   <li>Burton  S. Garbow</li>
-     *   <li>Kenneth E. Hillstrom</li>
-     *   <li>Jorge   J. More</li>
+     * <li>Argonne National Laboratory. MINPACK project. March 1980</li>
+     * <li>Burton S. Garbow</li>
+     * <li>Kenneth E. Hillstrom</li>
+     * <li>Jorge J. More</li>
      * </ul>
-     * <p>Luc Maisonobe did the Java translation.</p>
+     * <p>
+     * Luc Maisonobe did the Java translation.
+     * </p>
      *
-     * @param qy array containing qTy
+     * @param qy    array containing qTy
      * @param delta upper bound on the euclidean norm of diagR * lmDir
-     * @param diag diagonal matrix
+     * @param diag  diagonal matrix
      * @param work1 work array
      * @param work2 work array
      * @param work3 work array
      */
-    private void determineLMParameter(double[] qy, double delta, double[] diag,
-                                      double[] work1, double[] work2, double[] work3) {
+    private void determineLMParameter(double[] qy, double delta, double[] diag, double[] work1, double[] work2,
+        double[] work3) {
         final int nC = weightedJacobian[0].length;
 
         // compute and store in x the gauss-newton direction, if the
@@ -663,8 +671,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
             // if the function is small enough, accept the current value
             // of lmPar, also test for the exceptional cases where parl is zero
-            if ((FastMath.abs(fp) <= 0.1 * delta) ||
-                    ((parl == 0) && (fp <= previousFP) && (previousFP < 0))) {
+            if ((FastMath.abs(fp) <= 0.1 * delta) || ((parl == 0) && (fp <= previousFP) && (previousFP < 0))) {
                 return;
             }
 
@@ -703,36 +710,43 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     /**
      * Solve a*x = b and d*x = 0 in the least squares sense.
-     * <p>This implementation is a translation in Java of the MINPACK
+     * <p>
+     * This implementation is a translation in Java of the MINPACK
      * <a href="http://www.netlib.org/minpack/qrsolv.f">qrsolv</a>
-     * routine.</p>
-     * <p>This method sets the lmDir and lmDiag attributes.</p>
-     * <p>The authors of the original fortran function are:</p>
+     * routine.
+     * </p>
+     * <p>
+     * This method sets the lmDir and lmDiag attributes.
+     * </p>
+     * <p>
+     * The authors of the original fortran function are:
+     * </p>
      * <ul>
-     *   <li>Argonne National Laboratory. MINPACK project. March 1980</li>
-     *   <li>Burton  S. Garbow</li>
-     *   <li>Kenneth E. Hillstrom</li>
-     *   <li>Jorge   J. More</li>
+     * <li>Argonne National Laboratory. MINPACK project. March 1980</li>
+     * <li>Burton S. Garbow</li>
+     * <li>Kenneth E. Hillstrom</li>
+     * <li>Jorge J. More</li>
      * </ul>
-     * <p>Luc Maisonobe did the Java translation.</p>
+     * <p>
+     * Luc Maisonobe did the Java translation.
+     * </p>
      *
-     * @param qy array containing qTy
-     * @param diag diagonal matrix
+     * @param qy     array containing qTy
+     * @param diag   diagonal matrix
      * @param lmDiag diagonal elements associated with lmDir
-     * @param work work array
+     * @param work   work array
      */
-    private void determineLMDirection(double[] qy, double[] diag,
-                                      double[] lmDiag, double[] work) {
+    private void determineLMDirection(double[] qy, double[] diag, double[] lmDiag, double[] work) {
 
         // copy R and Qty to preserve input and initialize s
-        //  in particular, save the diagonal elements of R in lmDir
+        // in particular, save the diagonal elements of R in lmDir
         for (int j = 0; j < solvedCols; ++j) {
             int pj = permutation[j];
             for (int i = j + 1; i < solvedCols; ++i) {
                 weightedJacobian[i][pj] = weightedJacobian[j][permutation[i]];
             }
             lmDir[j] = diagR[pj];
-            work[j]  = qy[j];
+            work[j] = qy[j];
         }
 
         // eliminate the diagonal matrix d using a Givens rotation
@@ -747,7 +761,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
             }
             lmDiag[j] = dpj;
 
-            //  the transformations to eliminate the row of d
+            // the transformations to eliminate the row of d
             // modify only a single element of Qty
             // beyond the first n, which is initially zero.
             double qtbpj = 0;
@@ -763,8 +777,8 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                     double rkk = weightedJacobian[k][pk];
                     if (FastMath.abs(rkk) < FastMath.abs(lmDiag[k])) {
                         final double cotan = rkk / lmDiag[k];
-                        sin   = 1.0 / FastMath.sqrt(1.0 + cotan * cotan);
-                        cos   = sin * cotan;
+                        sin = 1.0 / FastMath.sqrt(1.0 + cotan * cotan);
+                        cos = sin * cotan;
                     } else {
                         final double tan = lmDiag[k] / rkk;
                         cos = 1.0 / FastMath.sqrt(1.0 + tan * tan);
@@ -824,24 +838,32 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
 
     /**
      * Decompose a matrix A as A.P = Q.R using Householder transforms.
-     * <p>As suggested in the P. Lascaux and R. Theodor book
+     * <p>
+     * As suggested in the P. Lascaux and R. Theodor book
      * <i>Analyse num&eacute;rique matricielle appliqu&eacute;e &agrave;
      * l'art de l'ing&eacute;nieur</i> (Masson, 1986), instead of representing
      * the Householder transforms with u<sub>k</sub> unit vectors such that:
+     * 
      * <pre>
      * H<sub>k</sub> = I - 2u<sub>k</sub>.u<sub>k</sub><sup>t</sup>
      * </pre>
+     * 
      * we use <sub>k</sub> non-unit vectors such that:
+     * 
      * <pre>
      * H<sub>k</sub> = I - beta<sub>k</sub>v<sub>k</sub>.v<sub>k</sub><sup>t</sup>
      * </pre>
+     * 
      * where v<sub>k</sub> = a<sub>k</sub> - alpha<sub>k</sub> e<sub>k</sub>.
      * The beta<sub>k</sub> coefficients are provided upon exit as recomputing
-     * them from the v<sub>k</sub> vectors would be costly.</p>
-     * <p>This decomposition handles rank deficient cases since the tranformations
+     * them from the v<sub>k</sub> vectors would be costly.
+     * </p>
+     * <p>
+     * This decomposition handles rank deficient cases since the tranformations
      * are performed in non-increasing columns norms order thanks to columns
      * pivoting. The diagonal elements of the R matrix are therefore also in
-     * non-increasing absolute values order.</p>
+     * non-increasing absolute values order.
+     * </p>
      *
      * @param jacobian Weighted Jacobian matrix at the current point.
      * @exception ConvergenceException if the decomposition cannot be performed
@@ -849,7 +871,8 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
     private void qrDecomposition(RealMatrix jacobian) throws ConvergenceException {
         // Code in this class assumes that the weighted Jacobian is -(W^(1/2) J),
         // hence the multiplication by -1.
-        weightedJacobian = jacobian.scalarMultiply(-1).getData();
+        weightedJacobian = jacobian.scalarMultiply(-1)
+            .getData();
 
         final int nR = weightedJacobian.length;
         final int nC = weightedJacobian[0].length;
@@ -878,30 +901,32 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                     norm2 += aki * aki;
                 }
                 if (Double.isInfinite(norm2) || Double.isNaN(norm2)) {
-                    throw new ConvergenceException(LocalizedFormats.UNABLE_TO_PERFORM_QR_DECOMPOSITION_ON_JACOBIAN,
-                                                   nR, nC);
+                    throw new ConvergenceException(
+                        LocalizedFormats.UNABLE_TO_PERFORM_QR_DECOMPOSITION_ON_JACOBIAN,
+                        nR,
+                        nC);
                 }
                 if (norm2 > ak2) {
                     nextColumn = i;
-                    ak2        = norm2;
+                    ak2 = norm2;
                 }
             }
             if (ak2 <= qrRankingThreshold) {
                 rank = k;
                 return;
             }
-            int pk                  = permutation[nextColumn];
+            int pk = permutation[nextColumn];
             permutation[nextColumn] = permutation[k];
-            permutation[k]          = pk;
+            permutation[k] = pk;
 
             // choose alpha such that Hk.u = alpha ek
-            double akk   = weightedJacobian[k][pk];
+            double akk = weightedJacobian[k][pk];
             double alpha = (akk > 0) ? -FastMath.sqrt(ak2) : FastMath.sqrt(ak2);
             double betak = 1.0 / (ak2 - akk * alpha);
-            beta[pk]     = betak;
+            beta[pk] = betak;
 
             // transform the current column
-            diagR[pk]        = alpha;
+            diagR[pk] = alpha;
             weightedJacobian[k][pk] -= alpha;
 
             // transform the remaining columns

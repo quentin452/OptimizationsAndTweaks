@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,23 +32,24 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  *
  * @since 3.0
  */
-public abstract class AbstractRealDistribution
-implements RealDistribution, Serializable {
+public abstract class AbstractRealDistribution implements RealDistribution, Serializable {
+
     /** Default accuracy. */
     public static final double SOLVER_DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
     /** Serializable version identifier */
     private static final long serialVersionUID = -38038050983108802L;
-     /**
-      * RandomData instance used to generate samples from the distribution.
-      * @deprecated As of 3.1, to be removed in 4.0. Please use the
-      * {@link #random} instance variable instead.
-      */
+    /**
+     * RandomData instance used to generate samples from the distribution.
+     * 
+     * @deprecated As of 3.1, to be removed in 4.0. Please use the
+     *             {@link #random} instance variable instead.
+     */
     @Deprecated
-    protected fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomDataImpl randomData =
-        new fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomDataImpl();
+    protected fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomDataImpl randomData = new fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomDataImpl();
 
     /**
      * RNG instance used to generate samples from the distribution.
+     * 
      * @since 3.1
      */
     protected final RandomGenerator random;
@@ -60,7 +59,7 @@ implements RealDistribution, Serializable {
 
     /**
      * @deprecated As of 3.1, to be removed in 4.0. Please use
-     * {@link #AbstractRealDistribution(RandomGenerator)} instead.
+     *             {@link #AbstractRealDistribution(RandomGenerator)} instead.
      */
     @Deprecated
     protected AbstractRealDistribution() {
@@ -68,6 +67,7 @@ implements RealDistribution, Serializable {
         // New users are forbidden to use this constructor.
         random = null;
     }
+
     /**
      * @param rng Random number generator.
      * @since 3.1
@@ -80,10 +80,12 @@ implements RealDistribution, Serializable {
      * {@inheritDoc}
      *
      * The default implementation uses the identity
-     * <p>{@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}</p>
+     * <p>
+     * {@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}
+     * </p>
      *
      * @deprecated As of 3.1 (to be removed in 4.0). Please use
-     * {@link #probability(double,double)} instead.
+     *             {@link #probability(double,double)} instead.
      */
     @Deprecated
     public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
@@ -97,20 +99,18 @@ implements RealDistribution, Serializable {
      * @param x0 Lower bound (excluded).
      * @param x1 Upper bound (included).
      * @return the probability that a random variable with this distribution
-     * takes a value between {@code x0} and {@code x1}, excluding the lower
-     * and including the upper endpoint.
+     *         takes a value between {@code x0} and {@code x1}, excluding the lower
+     *         and including the upper endpoint.
      * @throws NumberIsTooLargeException if {@code x0 > x1}.
      *
-     * The default implementation uses the identity
-     * {@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}
+     *                                   The default implementation uses the identity
+     *                                   {@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}
      *
      * @since 3.1
      */
-    public double probability(double x0,
-                              double x1) {
+    public double probability(double x0, double x1) {
         if (x0 > x1) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
-                                                x0, x1, true);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, x0, x1, true);
         }
         return cumulativeProbability(x1) - cumulativeProbability(x0);
     }
@@ -134,21 +134,17 @@ implements RealDistribution, Serializable {
          * mu: mean, sig: standard deviation. Equivalently
          * 1 - P(X < mu + k * sig) <= 1 / (1 + k^2),
          * F(mu + k * sig) >= k^2 / (1 + k^2).
-         *
          * For k = sqrt(p / (1 - p)), we find
          * F(mu + k * sig) >= p,
          * and (mu + k * sig) is an upper-bound for the root.
-         *
          * Then, introducing Y = -X, mean(Y) = -mu, sd(Y) = sig, and
          * P(Y >= -mu + k * sig) <= 1 / (1 + k^2),
          * P(-X >= -mu + k * sig) <= 1 / (1 + k^2),
          * P(X <= mu - k * sig) <= 1 / (1 + k^2),
          * F(mu - k * sig) <= 1 / (1 + k^2).
-         *
          * For k = sqrt((1 - p) / p), we find
          * F(mu - k * sig) <= p,
          * and (mu - k * sig) is a lower-bound for the root.
-         *
          * In cases where the Chebyshev inequality does not apply, geometric
          * progressions 1, 2, 4, ... and -1, -2, -4, ... are used to bracket
          * the root.
@@ -170,8 +166,7 @@ implements RealDistribution, Serializable {
         final double mu = getNumericalMean();
         final double sig = FastMath.sqrt(getNumericalVariance());
         final boolean chebyshevApplies;
-        chebyshevApplies = !(Double.isInfinite(mu) || Double.isNaN(mu) ||
-                             Double.isInfinite(sig) || Double.isNaN(sig));
+        chebyshevApplies = !(Double.isInfinite(mu) || Double.isNaN(mu) || Double.isInfinite(sig) || Double.isNaN(sig));
 
         if (lowerBound == Double.NEGATIVE_INFINITY) {
             if (chebyshevApplies) {
@@ -196,16 +191,14 @@ implements RealDistribution, Serializable {
         }
 
         final UnivariateFunction toSolve = new UnivariateFunction() {
+
             /** {@inheritDoc} */
             public double value(final double x) {
                 return cumulativeProbability(x) - p;
             }
         };
 
-        double x = UnivariateSolverUtils.solve(toSolve,
-                                                   lowerBound,
-                                                   upperBound,
-                                                   getSolverAbsoluteAccuracy());
+        double x = UnivariateSolverUtils.solve(toSolve, lowerBound, upperBound, getSolverAbsoluteAccuracy());
 
         if (!isSupportConnected()) {
             /* Test for plateau. */
@@ -266,8 +259,7 @@ implements RealDistribution, Serializable {
      */
     public double[] sample(int sampleSize) {
         if (sampleSize <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
-                    sampleSize);
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES, sampleSize);
         }
         double[] out = new double[sampleSize];
         for (int i = 0; i < sampleSize; i++) {
@@ -304,4 +296,3 @@ implements RealDistribution, Serializable {
         return FastMath.log(density(x));
     }
 }
-

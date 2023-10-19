@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +42,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
  * identical and collinear points.
  *
  * @see <a href="http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain">
- * Andrew's monotone chain algorithm (Wikibooks)</a>
+ *      Andrew's monotone chain algorithm (Wikibooks)</a>
  * @since 3.3
  */
 public class MonotoneChain extends AbstractConvexHullGenerator2D {
@@ -58,6 +56,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
     /**
      * Create a new MonotoneChain instance.
+     * 
      * @param includeCollinearPoints whether collinear points shall be added as hull vertices
      */
     public MonotoneChain(final boolean includeCollinearPoints) {
@@ -66,8 +65,9 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
     /**
      * Create a new MonotoneChain instance.
+     * 
      * @param includeCollinearPoints whether collinear points shall be added as hull vertices
-     * @param tolerance tolerance below which points are considered identical
+     * @param tolerance              tolerance below which points are considered identical
      */
     public MonotoneChain(final boolean includeCollinearPoints, final double tolerance) {
         super(includeCollinearPoints, tolerance);
@@ -81,6 +81,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
         // sort the points in increasing order on the x-axis
         Collections.sort(pointsSortedByXAxis, new Comparator<Vector2D>() {
+
             /** {@inheritDoc} */
             public int compare(final Vector2D o1, final Vector2D o2) {
                 final double tolerance = getTolerance();
@@ -119,7 +120,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         }
 
         // special case: if the lower and upper hull may contain only 1 point if all are identical
-        if (hullVertices.isEmpty() && ! lowerHull.isEmpty()) {
+        if (hullVertices.isEmpty() && !lowerHull.isEmpty()) {
             hullVertices.add(lowerHull.get(0));
         }
 
@@ -130,7 +131,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
      * Update the partial hull with the current point.
      *
      * @param point the current point
-     * @param hull the partial hull
+     * @param hull  the partial hull
      */
     private void updateHull(final Vector2D point, final List<Vector2D> hull) {
         final double tolerance = getTolerance();

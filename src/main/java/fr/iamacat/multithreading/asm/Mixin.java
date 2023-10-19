@@ -14,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
-    common_pneumaticraft_MixinHackTickHandler(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinHackTickHandler,
-        "pneumaticraft.MixinHackTickHandler"),
+
+    common_notenoughpets_MixinEventHandlerNEP(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinEventHandlerNEP, "notenoughpets.MixinEventHandlerNEP"),
+    common_pneumaticraft_MixinHackTickHandler(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinHackTickHandler, "pneumaticraft.MixinHackTickHandler"),
     common_ic2_MixinPriorityExecutor(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPriorityExecutor,
         "ic2.MixinPriorityExecutor"),
     common_core_MixinBlockGrass(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinBlockGrass,
@@ -34,8 +37,7 @@ public enum Mixin implements IMixin {
         "core.MixinWorldServer"),
     common_nei_MixinNEIServerUtils(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinNEIServerUtils,
         "nei.MixinNEIServerUtils"),
-    common_nei_MixinConfig(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinConfig,
-        "ic2.MixinConfig"),
+    common_nei_MixinConfig(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinConfig, "ic2.MixinConfig"),
     common_core_MixinBlockLiquid(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinBlockLiquid,
         "core.MixinBlockLiquid"),
     common_core_entity_MixinEntityZombie(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityZombie,
@@ -65,8 +67,9 @@ public enum Mixin implements IMixin {
     common_core_pathfinding_MixinPath(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
         "core.pathfinding.MixinPath"),
     // todo WIP
-    /*common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
-        "core.pathfinding.MixinPathEntity"),
+    /*
+     * common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
+     * "core.pathfinding.MixinPathEntity"),
      */
     common_core_pathfinding_MixinPathNavigate(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
         "core.pathfinding.MixinPathNavigate"),

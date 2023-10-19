@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,11 +19,11 @@ import java.util.Arrays;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 
-
 /**
  * A Simple K<sup>th</sup> selector implementation to pick up the
  * K<sup>th</sup> ordered element from a work array containing the input
  * numbers.
+ * 
  * @since 3.4
  */
 public class KthSelector implements Serializable {
@@ -36,7 +34,7 @@ public class KthSelector implements Serializable {
     /** Minimum selection size for insertion sort rather than selection. */
     private static final int MIN_SELECT_SIZE = 15;
 
-    /** A {@link PivotingStrategyInterface} used for pivoting  */
+    /** A {@link PivotingStrategyInterface} used for pivoting */
     private final PivotingStrategyInterface pivotingStrategy;
 
     /**
@@ -55,13 +53,14 @@ public class KthSelector implements Serializable {
      * @see RandomPivotingStrategy
      * @see CentralPivotingStrategy
      */
-    public KthSelector(final PivotingStrategyInterface pivotingStrategy)
-        throws NullArgumentException {
+    public KthSelector(final PivotingStrategyInterface pivotingStrategy) throws NullArgumentException {
         MathUtils.checkNotNull(pivotingStrategy);
         this.pivotingStrategy = pivotingStrategy;
     }
 
-    /** Get the pivotin strategy.
+    /**
+     * Get the pivotin strategy.
+     * 
      * @return pivoting strategy
      */
     public PivotingStrategyInterface getPivotingStrategy() {
@@ -71,9 +70,9 @@ public class KthSelector implements Serializable {
     /**
      * Select K<sup>th</sup> value in the array.
      *
-     * @param work work array to use to find out the K<sup>th</sup> value
+     * @param work       work array to use to find out the K<sup>th</sup> value
      * @param pivotsHeap cached pivots heap that can be used for efficient estimation
-     * @param k the index whose value in the array is of interest
+     * @param k          the index whose value in the array is of interest
      * @return K<sup>th</sup> value
      */
     public double select(final double[] work, final int[] pivotsHeap, final int k) {
@@ -84,8 +83,7 @@ public class KthSelector implements Serializable {
         while (end - begin > MIN_SELECT_SIZE) {
             final int pivot;
 
-            if (usePivotsHeap && node < pivotsHeap.length &&
-                    pivotsHeap[node] >= 0) {
+            if (usePivotsHeap && node < pivotsHeap.length && pivotsHeap[node] >= 0) {
                 // the pivot has already been found in a previous call
                 // and the array has already been partitioned around it
                 pivot = pivotsHeap[node];
@@ -102,12 +100,12 @@ public class KthSelector implements Serializable {
                 return work[k];
             } else if (k < pivot) {
                 // the element is in the left partition
-                end  = pivot;
+                end = pivot;
                 node = FastMath.min(2 * node + 1, usePivotsHeap ? pivotsHeap.length : end);
             } else {
                 // the element is in the right partition
                 begin = pivot + 1;
-                node  = FastMath.min(2 * node + 2, usePivotsHeap ? pivotsHeap.length : end);
+                node = FastMath.min(2 * node + 2, usePivotsHeap ? pivotsHeap.length : end);
             }
         }
         Arrays.sort(work, begin, end);
@@ -119,9 +117,9 @@ public class KthSelector implements Serializable {
      * elements such that all elements smaller than pivot are before it and
      * all elements larger than pivot are after it.
      *
-     * @param work work array
+     * @param work  work array
      * @param begin index of the first element of the slice of work array
-     * @param end index after the last element of the slice of work array
+     * @param end   index after the last element of the slice of work array
      * @param pivot initial index of the pivot
      * @return index of the pivot after partition
      */

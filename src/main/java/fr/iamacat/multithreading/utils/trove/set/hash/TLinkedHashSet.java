@@ -1,5 +1,11 @@
 package fr.iamacat.multithreading.utils.trove.set.hash;
 
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.list.TIntList;
@@ -7,12 +13,6 @@ import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.linked.TIntLinkedList;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.procedure.TObjectProcedure;
-
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,14 +22,14 @@ import java.util.Iterator;
  * To change this template use File | Settings | File Templates.
  */
 public class TLinkedHashSet<E> extends THashSet<E> {
+
     TIntList order;
 
     /**
      * Creates a new <code>THashSet</code> instance with the default
      * capacity and load factor.
      */
-    public TLinkedHashSet() {
-    }
+    public TLinkedHashSet() {}
 
     /**
      * Creates a new <code>THashSet</code> instance with a prime
@@ -73,6 +73,7 @@ public class TLinkedHashSet<E> extends THashSet<E> {
     @Override
     public int setUp(int initialCapacity) {
         order = new TIntArrayList(initialCapacity) {
+
             /**
              * Grow the internal array as needed to accommodate the specified number of elements.
              * The size of the array bytes on each resize unless capacity requires more than twice
@@ -88,9 +89,9 @@ public class TLinkedHashSet<E> extends THashSet<E> {
                 }
             }
         };
-        return super.setUp(initialCapacity);    //To change body of overridden methods use File | Settings | File Templates.
+        return super.setUp(initialCapacity); // To change body of overridden methods use File | Settings | File
+                                             // Templates.
     }
-
 
     /**
      * Empties the set.
@@ -131,14 +132,13 @@ public class TLinkedHashSet<E> extends THashSet<E> {
         int index = insertKey(obj);
 
         if (index < 0) {
-            return false;       // already present in set, nothing to add
+            return false; // already present in set, nothing to add
         }
 
-        if (!order.add(index))
-            throw new IllegalStateException("Order not changed after insert");
+        if (!order.add(index)) throw new IllegalStateException("Order not changed after insert");
 
         postInsertHook(consumeFreeSlot);
-        return true;            // yes, we added something
+        return true; // yes, we added something
     }
 
     @Override
@@ -148,7 +148,6 @@ public class TLinkedHashSet<E> extends THashSet<E> {
         order.remove(index);
         super.removeAt(index);
     }
-
 
     /**
      * Expands the set to accommodate new values.
@@ -180,14 +179,14 @@ public class TLinkedHashSet<E> extends THashSet<E> {
                     throwObjectContractViolation(_set[(-index - 1)], o, size(), oldSize, oldSet);
                 }
 
-                if (!order.add(index))
-                    throw new IllegalStateException("Order not changed after insert");
+                if (!order.add(index)) throw new IllegalStateException("Order not changed after insert");
             }
         }
 
     }
 
     class WriteProcedure implements TIntProcedure {
+
         final ObjectOutput output;
         IOException ioException;
 
@@ -216,12 +215,11 @@ public class TLinkedHashSet<E> extends THashSet<E> {
     protected void writeEntries(ObjectOutput out) throws IOException {
         // ENTRIES
         WriteProcedure writeProcedure = new WriteProcedure(out);
-        if (!order.forEach(writeProcedure))
-            throw writeProcedure.getIoException();
+        if (!order.forEach(writeProcedure)) throw writeProcedure.getIoException();
     }
 
     /**
-     * Creates an iterator over the values of the set.  The iterator
+     * Creates an iterator over the values of the set. The iterator
      * supports element deletion.
      *
      * @return an <code>Iterator</code> value
@@ -229,6 +227,7 @@ public class TLinkedHashSet<E> extends THashSet<E> {
     @Override
     public TObjectHashIterator<E> iterator() {
         return new TObjectHashIterator<E>(this) {
+
             TIntIterator localIterator = order.iterator();
             int lastIndex;
 
@@ -237,11 +236,11 @@ public class TLinkedHashSet<E> extends THashSet<E> {
              *
              * @return an <code>Object</code> value
              * @throws java.util.ConcurrentModificationException
-             *          if the structure
-             *          was changed using a method that isn't on this iterator.
+             *                                                   if the structure
+             *                                                   was changed using a method that isn't on this iterator.
              * @throws java.util.NoSuchElementException
-             *          if this is called on an
-             *          exhausted iterator.
+             *                                                   if this is called on an
+             *                                                   exhausted iterator.
              */
             @Override
             public E next() {
@@ -257,7 +256,8 @@ public class TLinkedHashSet<E> extends THashSet<E> {
              */
             @Override
             public boolean hasNext() {
-                return localIterator.hasNext();    //To change body of overridden methods use File | Settings | File Templates.
+                return localIterator.hasNext(); // To change body of overridden methods use File | Settings | File
+                                                // Templates.
             }
 
             /**
@@ -279,10 +279,11 @@ public class TLinkedHashSet<E> extends THashSet<E> {
                     _hash.reenableAutoCompaction(false);
                 }
             }
-        };    //To change body of overridden methods use File | Settings | File Templates.
+        }; // To change body of overridden methods use File | Settings | File Templates.
     }
 
     class ForEachProcedure implements TIntProcedure {
+
         boolean changed = false;
         final Object[] set;
         final TObjectProcedure<? super E> procedure;

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,15 +15,15 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.general;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers.BrentSolver;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
@@ -41,8 +39,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  *
  */
 @Deprecated
-public class NonLinearConjugateGradientOptimizer
-    extends AbstractScalarDifferentiableOptimizer {
+public class NonLinearConjugateGradientOptimizer extends AbstractScalarDifferentiableOptimizer {
+
     /** Update formula for the beta parameter. */
     private final ConjugateGradientFormula updateFormula;
     /** Preconditioner (may be null). */
@@ -60,14 +58,13 @@ public class NonLinearConjugateGradientOptimizer
      * {@link IdentityPreconditioner preconditioner}.
      *
      * @param updateFormula formula to use for updating the &beta; parameter,
-     * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
-     * ConjugateGradientFormula#POLAK_RIBIERE}.
+     *                      must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
+     *                      ConjugateGradientFormula#POLAK_RIBIERE}.
      * @deprecated See {@link SimpleValueChecker#SimpleValueChecker()}
      */
     @Deprecated
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula) {
-        this(updateFormula,
-             new SimpleValueChecker());
+        this(updateFormula, new SimpleValueChecker());
     }
 
     /**
@@ -75,49 +72,40 @@ public class NonLinearConjugateGradientOptimizer
      * {@link IdentityPreconditioner preconditioner}.
      *
      * @param updateFormula formula to use for updating the &beta; parameter,
-     * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
-     * ConjugateGradientFormula#POLAK_RIBIERE}.
-     * @param checker Convergence checker.
+     *                      must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
+     *                      ConjugateGradientFormula#POLAK_RIBIERE}.
+     * @param checker       Convergence checker.
      */
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula,
-                                               ConvergenceChecker<PointValuePair> checker) {
-        this(updateFormula,
-             checker,
-             new BrentSolver(),
-             new IdentityPreconditioner());
+        ConvergenceChecker<PointValuePair> checker) {
+        this(updateFormula, checker, new BrentSolver(), new IdentityPreconditioner());
     }
-
 
     /**
      * Constructor with default {@link IdentityPreconditioner preconditioner}.
      *
-     * @param updateFormula formula to use for updating the &beta; parameter,
-     * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
-     * ConjugateGradientFormula#POLAK_RIBIERE}.
-     * @param checker Convergence checker.
+     * @param updateFormula    formula to use for updating the &beta; parameter,
+     *                         must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
+     *                         ConjugateGradientFormula#POLAK_RIBIERE}.
+     * @param checker          Convergence checker.
      * @param lineSearchSolver Solver to use during line search.
      */
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula,
-                                               ConvergenceChecker<PointValuePair> checker,
-                                               final UnivariateSolver lineSearchSolver) {
-        this(updateFormula,
-             checker,
-             lineSearchSolver,
-             new IdentityPreconditioner());
+        ConvergenceChecker<PointValuePair> checker, final UnivariateSolver lineSearchSolver) {
+        this(updateFormula, checker, lineSearchSolver, new IdentityPreconditioner());
     }
 
     /**
-     * @param updateFormula formula to use for updating the &beta; parameter,
-     * must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
-     * ConjugateGradientFormula#POLAK_RIBIERE}.
-     * @param checker Convergence checker.
+     * @param updateFormula    formula to use for updating the &beta; parameter,
+     *                         must be one of {@link ConjugateGradientFormula#FLETCHER_REEVES} or {@link
+     *                         ConjugateGradientFormula#POLAK_RIBIERE}.
+     * @param checker          Convergence checker.
      * @param lineSearchSolver Solver to use during line search.
-     * @param preconditioner Preconditioner.
+     * @param preconditioner   Preconditioner.
      */
     public NonLinearConjugateGradientOptimizer(final ConjugateGradientFormula updateFormula,
-                                               ConvergenceChecker<PointValuePair> checker,
-                                               final UnivariateSolver lineSearchSolver,
-                                               final Preconditioner preconditioner) {
+        ConvergenceChecker<PointValuePair> checker, final UnivariateSolver lineSearchSolver,
+        final Preconditioner preconditioner) {
         super(checker);
 
         this.updateFormula = updateFormula;
@@ -132,9 +120,10 @@ public class NonLinearConjugateGradientOptimizer
      * The initial step is a factor with respect to the search direction,
      * which itself is roughly related to the gradient of the function
      * </p>
+     * 
      * @param initialStep initial step used to bracket the optimum in line search,
-     * if a non-positive value is used, the initial step is reset to its
-     * default value of 1.0
+     *                    if a non-positive value is used, the initial step is reset to its
+     *                    default value of 1.0
      */
     public void setInitialStep(final double initialStep) {
         if (initialStep <= 0) {
@@ -223,8 +212,7 @@ public class NonLinearConjugateGradientOptimizer
             steepestDescent = newSteepestDescent;
 
             // Compute conjugate search direction.
-            if (iter % n == 0 ||
-                beta < 0) {
+            if (iter % n == 0 || beta < 0) {
                 // Break conjugation: reset search direction.
                 searchDirection = steepestDescent.clone();
             } else {
@@ -245,8 +233,7 @@ public class NonLinearConjugateGradientOptimizer
      * @return b such that f(a) and f(b) have opposite signs.
      * @throws MathIllegalStateException if no bracket can be found.
      */
-    private double findUpperBound(final UnivariateFunction f,
-                                  final double a, final double h) {
+    private double findUpperBound(final UnivariateFunction f, final double a, final double h) {
         final double yA = f.value(a);
         double yB = yA;
         for (double step = h; step < Double.MAX_VALUE; step *= FastMath.max(2, yA / yB)) {
@@ -268,7 +255,8 @@ public class NonLinearConjugateGradientOptimizer
         }
     }
 
-    /** Internal class for line search.
+    /**
+     * Internal class for line search.
      * <p>
      * The function represented by this class is the dot product of
      * the objective function gradient and the search direction. Its
@@ -278,10 +266,13 @@ public class NonLinearConjugateGradientOptimizer
      * </p>
      */
     private class LineSearchFunction implements UnivariateFunction {
+
         /** Search direction. */
         private final double[] searchDirection;
 
-        /** Simple constructor.
+        /**
+         * Simple constructor.
+         * 
          * @param searchDirection search direction
          */
         LineSearchFunction(final double[] searchDirection) {

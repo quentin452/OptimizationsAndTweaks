@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +13,6 @@
  * limitations under the License.
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers;
-
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoBracketingException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException;
@@ -31,14 +28,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
  * in the given interval {@code [a, b]} to within a tolerance
  * {@code 2 eps abs(x) + t} where {@code eps} is the relative accuracy and
  * {@code t} is the absolute accuracy.
- * <p>The given interval must bracket the root.</p>
  * <p>
- *  The reference implementation is given in chapter 4 of
- *  <blockquote>
- *   <b>Algorithms for Minimization Without Derivatives</b>,
- *   <em>Richard P. Brent</em>,
- *   Dover, 2002
- *  </blockquote>
+ * The given interval must bracket the root.
+ * </p>
+ * <p>
+ * The reference implementation is given in chapter 4 of
+ * <blockquote>
+ * <b>Algorithms for Minimization Without Derivatives</b>,
+ * <em>Richard P. Brent</em>,
+ * Dover, 2002
+ * </blockquote>
  *
  * @see BaseAbstractUnivariateSolver
  */
@@ -53,6 +52,7 @@ public class BrentSolver extends AbstractUnivariateSolver {
     public BrentSolver() {
         this(DEFAULT_ABSOLUTE_ACCURACY);
     }
+
     /**
      * Construct a solver.
      *
@@ -61,28 +61,27 @@ public class BrentSolver extends AbstractUnivariateSolver {
     public BrentSolver(double absoluteAccuracy) {
         super(absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
      * @param relativeAccuracy Relative accuracy.
      * @param absoluteAccuracy Absolute accuracy.
      */
-    public BrentSolver(double relativeAccuracy,
-                       double absoluteAccuracy) {
+    public BrentSolver(double relativeAccuracy, double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
-     * @param relativeAccuracy Relative accuracy.
-     * @param absoluteAccuracy Absolute accuracy.
+     * @param relativeAccuracy      Relative accuracy.
+     * @param absoluteAccuracy      Absolute accuracy.
      * @param functionValueAccuracy Function value accuracy.
      *
      * @see BaseAbstractUnivariateSolver#BaseAbstractUnivariateSolver(double,double,double)
      */
-    public BrentSolver(double relativeAccuracy,
-                       double absoluteAccuracy,
-                       double functionValueAccuracy) {
+    public BrentSolver(double relativeAccuracy, double absoluteAccuracy, double functionValueAccuracy) {
         super(relativeAccuracy, absoluteAccuracy, functionValueAccuracy);
     }
 
@@ -90,10 +89,7 @@ public class BrentSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve()
-        throws NoBracketingException,
-               TooManyEvaluationsException,
-               NumberIsTooLargeException {
+    protected double doSolve() throws NoBracketingException, TooManyEvaluationsException, NumberIsTooLargeException {
         double min = getMin();
         double max = getMax();
         final double initial = getStartValue();
@@ -137,19 +133,18 @@ public class BrentSolver extends AbstractUnivariateSolver {
      * This implementation is based on the algorithm described at page 58 of
      * the book
      * <blockquote>
-     *  <b>Algorithms for Minimization Without Derivatives</b>,
-     *  <it>Richard P. Brent</it>,
-     *  Dover 0-486-41998-3
+     * <b>Algorithms for Minimization Without Derivatives</b>,
+     * <it>Richard P. Brent</it>,
+     * Dover 0-486-41998-3
      * </blockquote>
      *
-     * @param lo Lower bound of the search interval.
-     * @param hi Higher bound of the search interval.
+     * @param lo  Lower bound of the search interval.
+     * @param hi  Higher bound of the search interval.
      * @param fLo Function value at the lower bound of the search interval.
      * @param fHi Function value at the higher bound of the search interval.
      * @return the value where the function is zero.
      */
-    private double brent(double lo, double hi,
-                         double fLo, double fHi) {
+    private double brent(double lo, double hi, double fLo, double fHi) {
         double a = lo;
         double fa = fLo;
         double b = hi;
@@ -175,12 +170,10 @@ public class BrentSolver extends AbstractUnivariateSolver {
             final double tol = 2 * eps * FastMath.abs(b) + t;
             final double m = 0.5 * (c - b);
 
-            if (FastMath.abs(m) <= tol ||
-                Precision.equals(fb, 0))  {
+            if (FastMath.abs(m) <= tol || Precision.equals(fb, 0)) {
                 return b;
             }
-            if (FastMath.abs(e) < tol ||
-                FastMath.abs(fa) <= FastMath.abs(fb)) {
+            if (FastMath.abs(e) < tol || FastMath.abs(fa) <= FastMath.abs(fb)) {
                 // Force bisection.
                 d = m;
                 e = d;
@@ -209,8 +202,7 @@ public class BrentSolver extends AbstractUnivariateSolver {
                 }
                 s = e;
                 e = d;
-                if (p >= 1.5 * m * q - FastMath.abs(tol * q) ||
-                    p >= FastMath.abs(0.5 * s * q)) {
+                if (p >= 1.5 * m * q - FastMath.abs(tol * q) || p >= FastMath.abs(0.5 * s * q)) {
                     // Inverse quadratic interpolation gives a value
                     // in the wrong direction, or progress is slow.
                     // Fall back to bisection.
@@ -231,8 +223,7 @@ public class BrentSolver extends AbstractUnivariateSolver {
                 b -= tol;
             }
             fb = computeObjectiveValue(b);
-            if ((fb > 0 && fc > 0) ||
-                (fb <= 0 && fc <= 0)) {
+            if ((fb > 0 && fc > 0) || (fb <= 0 && fc <= 0)) {
                 c = a;
                 fc = fa;
                 d = b - a;

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,41 +26,42 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * @since 3.6
  */
 public class InterpolatingMicrosphere2D extends InterpolatingMicrosphere {
+
     /** Space dimension. */
     private static final int DIMENSION = 2;
 
     /**
      * Create a sphere from vectors regularly sampled around a circle.
      *
-     * @param size Number of surface elements of the sphere.
+     * @param size            Number of surface elements of the sphere.
      * @param maxDarkFraction Maximum fraction of the facets that can be dark.
-     * If the fraction of "non-illuminated" facets is larger, no estimation
-     * of the value will be performed, and the {@code background} value will
-     * be returned instead.
-     * @param darkThreshold Value of the illumination below which a facet is
-     * considered dark.
-     * @param background Value returned when the {@code maxDarkFraction}
-     * threshold is exceeded.
+     *                        If the fraction of "non-illuminated" facets is larger, no estimation
+     *                        of the value will be performed, and the {@code background} value will
+     *                        be returned instead.
+     * @param darkThreshold   Value of the illumination below which a facet is
+     *                        considered dark.
+     * @param background      Value returned when the {@code maxDarkFraction}
+     *                        threshold is exceeded.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code size <= 0}.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotPositiveException if
-     * {@code darkThreshold < 0}.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException if
-     * {@code maxDarkFraction} does not belong to the interval {@code [0, 1]}.
+     *                                                                                                     if
+     *                                                                                                     {@code size <= 0}.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotPositiveException         if
+     *                                                                                                     {@code darkThreshold < 0}.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException          if
+     *                                                                                                     {@code maxDarkFraction}
+     *                                                                                                     does not
+     *                                                                                                     belong to the
+     *                                                                                                     interval
+     *                                                                                                     {@code [0, 1]}.
      */
-    public InterpolatingMicrosphere2D(int size,
-                                      double maxDarkFraction,
-                                      double darkThreshold,
-                                      double background) {
+    public InterpolatingMicrosphere2D(int size, double maxDarkFraction, double darkThreshold, double background) {
         super(DIMENSION, size, maxDarkFraction, darkThreshold, background);
 
         // Generate the microsphere normals.
         for (int i = 0; i < size; i++) {
             final double angle = i * MathUtils.TWO_PI / size;
 
-            add(new double[] { FastMath.cos(angle),
-                               FastMath.sin(angle) },
-                false);
+            add(new double[] { FastMath.cos(angle), FastMath.sin(angle) }, false);
         }
     }
 

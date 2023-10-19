@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +36,7 @@ public class ConstantRealDistribution extends AbstractRealDistribution {
      * @param value the constant value of this distribution
      */
     public ConstantRealDistribution(double value) {
-        super(null);  // Avoid creating RandomGenerator
+        super(null); // Avoid creating RandomGenerator
         this.value = value;
     }
 
@@ -48,14 +46,13 @@ public class ConstantRealDistribution extends AbstractRealDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         return x < value ? 0 : 1;
     }
 
     /** {@inheritDoc} */
     @Override
-    public double inverseCumulativeProbability(final double p)
-            throws OutOfRangeException {
+    public double inverseCumulativeProbability(final double p) throws OutOfRangeException {
         if (p < 0.0 || p > 1.0) {
             throw new OutOfRangeException(p, 0, 1);
         }
@@ -109,12 +106,13 @@ public class ConstantRealDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     @Override
-    public double sample()  {
+    public double sample() {
         return value;
     }
 
     /**
      * Override with no-op (there is no generator).
+     * 
      * @param seed (ignored)
      */
     @Override

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,21 +30,23 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * Fits points to a {@link
- * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.HarmonicOscillator.Parametric harmonic oscillator}
+ * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.HarmonicOscillator.Parametric harmonic
+ * oscillator}
  * function.
  * <br/>
  * The {@link #withStartPoint(double[]) initial guess values} must be passed
  * in the following order:
  * <ul>
- *  <li>Amplitude</li>
- *  <li>Angular frequency</li>
- *  <li>phase</li>
+ * <li>Amplitude</li>
+ * <li>Angular frequency</li>
+ * <li>phase</li>
  * </ul>
  * The optimal values will be returned in the same order.
  *
  * @since 3.3
  */
 public class HarmonicCurveFitter extends AbstractCurveFitter {
+
     /** Parametric function to be fitted. */
     private static final HarmonicOscillator.Parametric FUNCTION = new HarmonicOscillator.Parametric();
     /** Initial guess. */
@@ -58,11 +58,10 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
      * Contructor used by the factory methods.
      *
      * @param initialGuess Initial guess. If set to {@code null}, the initial guess
-     * will be estimated using the {@link ParameterGuesser}.
-     * @param maxIter Maximum number of iterations of the optimization algorithm.
+     *                     will be estimated using the {@link ParameterGuesser}.
+     * @param maxIter      Maximum number of iterations of the optimization algorithm.
      */
-    private HarmonicCurveFitter(double[] initialGuess,
-                                int maxIter) {
+    private HarmonicCurveFitter(double[] initialGuess, int maxIter) {
         this.initialGuess = initialGuess;
         this.maxIter = maxIter;
     }
@@ -84,22 +83,22 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
 
     /**
      * Configure the start point (initial guess).
+     * 
      * @param newStart new start point (initial guess)
      * @return a new instance.
      */
     public HarmonicCurveFitter withStartPoint(double[] newStart) {
-        return new HarmonicCurveFitter(newStart.clone(),
-                                       maxIter);
+        return new HarmonicCurveFitter(newStart.clone(), maxIter);
     }
 
     /**
      * Configure the maximum number of iterations.
+     * 
      * @param newMaxIter maximum number of iterations
      * @return a new instance.
      */
     public HarmonicCurveFitter withMaxIterations(int newMaxIter) {
-        return new HarmonicCurveFitter(initialGuess,
-                                       newMaxIter);
+        return new HarmonicCurveFitter(initialGuess, newMaxIter);
     }
 
     /** {@inheritDoc} */
@@ -107,103 +106,113 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
     protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> observations) {
         // Prepare least-squares problem.
         final int len = observations.size();
-        final double[] target  = new double[len];
+        final double[] target = new double[len];
         final double[] weights = new double[len];
 
         int i = 0;
         for (WeightedObservedPoint obs : observations) {
-            target[i]  = obs.getY();
+            target[i] = obs.getY();
             weights[i] = obs.getWeight();
             ++i;
         }
 
-        final AbstractCurveFitter.TheoreticalValuesFunction model
-            = new AbstractCurveFitter.TheoreticalValuesFunction(FUNCTION,
-                                                                observations);
+        final AbstractCurveFitter.TheoreticalValuesFunction model = new AbstractCurveFitter.TheoreticalValuesFunction(
+            FUNCTION,
+            observations);
 
-        final double[] startPoint = initialGuess != null ?
-            initialGuess :
-            // Compute estimation.
+        final double[] startPoint = initialGuess != null ? initialGuess :
+        // Compute estimation.
             new ParameterGuesser(observations).guess();
 
         // Return a new optimizer set up to fit a Gaussian curve to the
         // observed points.
-        return new LeastSquaresBuilder().
-                maxEvaluations(Integer.MAX_VALUE).
-                maxIterations(maxIter).
-                start(startPoint).
-                target(target).
-                weight(new DiagonalMatrix(weights)).
-                model(model.getModelFunction(), model.getModelFunctionJacobian()).
-                build();
+        return new LeastSquaresBuilder().maxEvaluations(Integer.MAX_VALUE)
+            .maxIterations(maxIter)
+            .start(startPoint)
+            .target(target)
+            .weight(new DiagonalMatrix(weights))
+            .model(model.getModelFunction(), model.getModelFunctionJacobian())
+            .build();
 
     }
 
     /**
      * This class guesses harmonic coefficients from a sample.
-     * <p>The algorithm used to guess the coefficients is as follows:</p>
+     * <p>
+     * The algorithm used to guess the coefficients is as follows:
+     * </p>
      *
-     * <p>We know \( f(t) \) at some sampling points \( t_i \) and want
+     * <p>
+     * We know \( f(t) \) at some sampling points \( t_i \) and want
      * to find \( a \), \( \omega \) and \( \phi \) such that
      * \( f(t) = a \cos (\omega t + \phi) \).
      * </p>
      *
-     * <p>From the analytical expression, we can compute two primitives :
+     * <p>
+     * From the analytical expression, we can compute two primitives :
      * \[
-     *     If2(t) = \int f^2 dt  = a^2 (t + S(t)) / 2
+     * If2(t) = \int f^2 dt = a^2 (t + S(t)) / 2
      * \]
      * \[
-     *     If'2(t) = \int f'^2 dt = a^2 \omega^2 (t - S(t)) / 2
+     * If'2(t) = \int f'^2 dt = a^2 \omega^2 (t - S(t)) / 2
      * \]
      * where \(S(t) = \frac{\sin(2 (\omega t + \phi))}{2\omega}\)
      * </p>
      *
-     * <p>We can remove \(S\) between these expressions :
+     * <p>
+     * We can remove \(S\) between these expressions :
      * \[
-     *     If'2(t) = a^2 \omega^2 t - \omega^2 If2(t)
+     * If'2(t) = a^2 \omega^2 t - \omega^2 If2(t)
      * \]
      * </p>
      *
-     * <p>The preceding expression shows that \(If'2 (t)\) is a linear
+     * <p>
+     * The preceding expression shows that \(If'2 (t)\) is a linear
      * combination of both \(t\) and \(If2(t)\):
      * \[
-     *   If'2(t) = A t + B If2(t)
+     * If'2(t) = A t + B If2(t)
      * \]
      * </p>
      *
-     * <p>From the primitive, we can deduce the same form for definite
+     * <p>
+     * From the primitive, we can deduce the same form for definite
      * integrals between \(t_1\) and \(t_i\) for each \(t_i\) :
      * \[
-     *   If2(t_i) - If2(t_1) = A (t_i - t_1) + B (If2 (t_i) - If2(t_1))
+     * If2(t_i) - If2(t_1) = A (t_i - t_1) + B (If2 (t_i) - If2(t_1))
      * \]
      * </p>
      *
-     * <p>We can find the coefficients \(A\) and \(B\) that best fit the sample
+     * <p>
+     * We can find the coefficients \(A\) and \(B\) that best fit the sample
      * to this linear expression by computing the definite integrals for
      * each sample points.
      * </p>
      *
-     * <p>For a bilinear expression \(z(x_i, y_i) = A x_i + B y_i\), the
+     * <p>
+     * For a bilinear expression \(z(x_i, y_i) = A x_i + B y_i\), the
      * coefficients \(A\) and \(B\) that minimize a least-squares criterion
-     * \(\sum (z_i - z(x_i, y_i))^2\) are given by these expressions:</p>
+     * \(\sum (z_i - z(x_i, y_i))^2\) are given by these expressions:
+     * </p>
      * \[
-     *   A = \frac{\sum y_i y_i \sum x_i z_i - \sum x_i y_i \sum y_i z_i}
-     *            {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}
+     * A = \frac{\sum y_i y_i \sum x_i z_i - \sum x_i y_i \sum y_i z_i}
+     * {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}
      * \]
      * \[
-     *   B = \frac{\sum x_i x_i \sum y_i z_i - \sum x_i y_i \sum x_i z_i}
-     *            {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}
+     * B = \frac{\sum x_i x_i \sum y_i z_i - \sum x_i y_i \sum x_i z_i}
+     * {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}
      *
      * \]
      *
-     * <p>In fact, we can assume that both \(a\) and \(\omega\) are positive and
+     * <p>
+     * In fact, we can assume that both \(a\) and \(\omega\) are positive and
      * compute them directly, knowing that \(A = a^2 \omega^2\) and that
-     * \(B = -\omega^2\). The complete algorithm is therefore:</p>
+     * \(B = -\omega^2\). The complete algorithm is therefore:
+     * </p>
      *
      * For each \(t_i\) from \(t_1\) to \(t_{n-1}\), compute:
      * \[ f(t_i) \]
      * \[ f'(t_i) = \frac{f (t_{i+1}) - f(t_{i-1})}{t_{i+1} - t_{i-1}} \]
-     * \[ x_i = t_i  - t_1 \]
+     * \[ x_i = t_i - t_1 \]
      * \[ y_i = \int_{t_1}^{t_i} f^2(t) dt \]
      * \[ z_i = \int_{t_1}^{t_i} f'^2(t) dt \]
      * and update the sums:
@@ -211,34 +220,39 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
      *
      * Then:
      * \[
-     *  a = \sqrt{\frac{\sum y_i y_i  \sum x_i z_i - \sum x_i y_i \sum y_i z_i }
-     *                 {\sum x_i y_i  \sum x_i z_i - \sum x_i x_i \sum y_i z_i }}
+     * a = \sqrt{\frac{\sum y_i y_i \sum x_i z_i - \sum x_i y_i \sum y_i z_i }
+     * {\sum x_i y_i \sum x_i z_i - \sum x_i x_i \sum y_i z_i }}
      * \]
      * \[
-     *  \omega = \sqrt{\frac{\sum x_i y_i \sum x_i z_i - \sum x_i x_i \sum y_i z_i}
-     *                      {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}}
+     * \omega = \sqrt{\frac{\sum x_i y_i \sum x_i z_i - \sum x_i x_i \sum y_i z_i}
+     * {\sum x_i x_i \sum y_i y_i - \sum x_i y_i \sum x_i y_i}}
      * \]
      *
-     * <p>Once we know \(\omega\) we can compute:
+     * <p>
+     * Once we know \(\omega\) we can compute:
      * \[
-     *    fc = \omega f(t) \cos(\omega t) - f'(t) \sin(\omega t)
+     * fc = \omega f(t) \cos(\omega t) - f'(t) \sin(\omega t)
      * \]
      * \[
-     *    fs = \omega f(t) \sin(\omega t) + f'(t) \cos(\omega t)
+     * fs = \omega f(t) \sin(\omega t) + f'(t) \cos(\omega t)
      * \]
      * </p>
      *
-     * <p>It appears that \(fc = a \omega \cos(\phi)\) and
+     * <p>
+     * It appears that \(fc = a \omega \cos(\phi)\) and
      * \(fs = -a \omega \sin(\phi)\), so we can use these
      * expressions to compute \(\phi\). The best estimate over the sample is
      * given by averaging these expressions.
      * </p>
      *
-     * <p>Since integrals and means are involved in the preceding
+     * <p>
+     * Since integrals and means are involved in the preceding
      * estimations, these operations run in \(O(n)\) time, where \(n\) is the
-     * number of measurements.</p>
+     * number of measurements.
+     * </p>
      */
     public static class ParameterGuesser {
+
         /** Amplitude. */
         private final double a;
         /** Angular frequency. */
@@ -251,18 +265,20 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
          *
          * @param observations Sampled observations.
          * @throws NumberIsTooSmallException if the sample is too short.
-         * @throws ZeroException if the abscissa range is zero.
+         * @throws ZeroException             if the abscissa range is zero.
          * @throws MathIllegalStateException when the guessing procedure cannot
-         * produce sensible results.
+         *                                   produce sensible results.
          */
         public ParameterGuesser(Collection<WeightedObservedPoint> observations) {
             if (observations.size() < 4) {
-                throw new NumberIsTooSmallException(LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
-                                                    observations.size(), 4, true);
+                throw new NumberIsTooSmallException(
+                    LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
+                    observations.size(),
+                    4,
+                    true);
             }
 
-            final WeightedObservedPoint[] sorted
-                = sortObservations(observations).toArray(new WeightedObservedPoint[0]);
+            final WeightedObservedPoint[] sorted = sortObservations(observations).toArray(new WeightedObservedPoint[0]);
 
             final double aOmega[] = guessAOmega(sorted);
             a = aOmega[0];
@@ -275,11 +291,11 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
          * Gets an estimation of the parameters.
          *
          * @return the guessed parameters, in the following order:
-         * <ul>
-         *  <li>Amplitude</li>
-         *  <li>Angular frequency</li>
-         *  <li>Phase</li>
-         * </ul>
+         *         <ul>
+         *         <li>Amplitude</li>
+         *         <li>Angular frequency</li>
+         *         <li>Phase</li>
+         *         </ul>
          */
         public double[] guess() {
             return new double[] { a, omega, phi };
@@ -324,11 +340,11 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
          * Estimate a first guess of the amplitude and angular frequency.
          *
          * @param observations Observations, sorted w.r.t. abscissa.
-         * @throws ZeroException if the abscissa range is zero.
+         * @throws ZeroException             if the abscissa range is zero.
          * @throws MathIllegalStateException when the guessing procedure cannot
-         * produce sensible results.
+         *                                   produce sensible results.
          * @return the guessed amplitude (at index 0) and circular frequency
-         * (at index 1).
+         *         (at index 1).
          */
         private double[] guessAOmega(WeightedObservedPoint[] observations) {
             final double[] aOmega = new double[2];
@@ -356,8 +372,8 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
                 // considering a linear model for f (and therefore constant f')
                 final double dx = currentX - previousX;
                 final double dy = currentY - previousY;
-                final double f2StepIntegral =
-                    dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+                final double f2StepIntegral = dx * (previousY * previousY + previousY * currentY + currentY * currentY)
+                    / 3;
                 final double fPrime2StepIntegral = dy * dy / dx;
 
                 final double x = currentX - startX;

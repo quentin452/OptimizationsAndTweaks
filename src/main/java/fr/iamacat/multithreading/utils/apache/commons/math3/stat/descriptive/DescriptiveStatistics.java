@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.moment.Kurtosis;
@@ -34,33 +32,34 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.ran
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.rank.Percentile;
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.summary.Sum;
 import fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.summary.SumOfSquares;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.ResizableDoubleArray;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-
 
 /**
  * Maintains a dataset of values of a single variable and computes descriptive
  * statistics based on stored data. The {@link #getWindowSize() windowSize}
  * property sets a limit on the number of values that can be stored in the
- * dataset.  The default value, INFINITE_WINDOW, puts no limit on the size of
- * the dataset.  This value should be used with caution, as the backing store
- * will grow without bound in this case.  For very large datasets,
+ * dataset. The default value, INFINITE_WINDOW, puts no limit on the size of
+ * the dataset. This value should be used with caution, as the backing store
+ * will grow without bound in this case. For very large datasets,
  * {@link SummaryStatistics}, which does not store the dataset, should be used
  * instead of this class. If <code>windowSize</code> is not INFINITE_WINDOW and
  * more values are added than can be stored in the dataset, new values are
  * added in a "rolling" manner, with new values replacing the "oldest" values
  * in the dataset.
  *
- * <p>Note: this class is not threadsafe.  Use
+ * <p>
+ * Note: this class is not threadsafe. Use
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
- * threads is required.</p>
+ * threads is required.
+ * </p>
  *
  */
 public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
-     * Represents an infinite window size.  When the {@link #getWindowSize()}
+     * Represents an infinite window size. When the {@link #getWindowSize()}
      * returns this value, there is no limit to the number of data values
      * that can be stored in the dataset.
      */
@@ -76,7 +75,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     protected int windowSize = INFINITE_WINDOW;
 
     /**
-     *  Stored data values
+     * Stored data values
      */
     private ResizableDoubleArray eDA = new ResizableDoubleArray();
 
@@ -113,15 +112,14 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     /**
      * Construct a DescriptiveStatistics instance with an infinite window
      */
-    public DescriptiveStatistics() {
-    }
+    public DescriptiveStatistics() {}
 
     /**
      * Construct a DescriptiveStatistics instance with the specified window
      *
      * @param window the window size.
      * @throws MathIllegalArgumentException if window size is less than 1 but
-     * not equal to {@link #INFINITE_WINDOW}
+     *                                      not equal to {@link #INFINITE_WINDOW}
      */
     public DescriptiveStatistics(int window) throws MathIllegalArgumentException {
         setWindowSize(window);
@@ -142,7 +140,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * Copy constructor.  Construct a new DescriptiveStatistics instance that
+     * Copy constructor. Construct a new DescriptiveStatistics instance that
      * is a copy of original.
      *
      * @param original DescriptiveStatistics instance to copy
@@ -200,6 +198,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     /**
      * Returns the <a href="http://www.xycoon.com/arithmetic_mean.htm">
      * arithmetic mean </a> of the available values
+     * 
      * @return The mean or Double.NaN if no values have been added.
      */
     public double getMean() {
@@ -210,10 +209,11 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the <a href="http://www.xycoon.com/geometric_mean.htm">
      * geometric mean </a> of the available values.
      * <p>
-     * See {@link GeometricMean} for details on the computing algorithm.</p>
+     * See {@link GeometricMean} for details on the computing algorithm.
+     * </p>
      *
      * @return The geometricMean, Double.NaN if no values have been added,
-     * or if any negative values have been added.
+     *         or if any negative values have been added.
      */
     public double getGeometricMean() {
         return apply(geometricMeanImpl);
@@ -222,12 +222,14 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     /**
      * Returns the (sample) variance of the available values.
      *
-     * <p>This method returns the bias-corrected sample variance (using {@code n - 1} in
-     * the denominator).  Use {@link #getPopulationVariance()} for the non-bias-corrected
-     * population variance.</p>
+     * <p>
+     * This method returns the bias-corrected sample variance (using {@code n - 1} in
+     * the denominator). Use {@link #getPopulationVariance()} for the non-bias-corrected
+     * population variance.
+     * </p>
      *
      * @return The variance, Double.NaN if no values have been added
-     * or 0.0 for a single value set.
+     *         or 0.0 for a single value set.
      */
     public double getVariance() {
         return apply(varianceImpl);
@@ -238,7 +240,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * population variance</a> of the available values.
      *
      * @return The population variance, Double.NaN if no values have been added,
-     * or 0.0 for a single value set.
+     *         or 0.0 for a single value set.
      */
     public double getPopulationVariance() {
         return apply(new Variance(false));
@@ -246,8 +248,9 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the standard deviation of the available values.
+     * 
      * @return The standard deviation, Double.NaN if no values have been added
-     * or 0.0 for a single value set.
+     *         or 0.0 for a single value set.
      */
     public double getStandardDeviation() {
         double stdDev = Double.NaN;
@@ -265,8 +268,9 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the quadratic mean, a.k.a.
      * <a href="http://mathworld.wolfram.com/Root-Mean-Square.html">
      * root-mean-square</a> of the available values
+     * 
      * @return The quadratic mean or {@code Double.NaN} if no values
-     * have been added.
+     *         have been added.
      */
     public double getQuadraticMean() {
         final long n = getN();
@@ -295,6 +299,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the maximum of the available values
+     * 
      * @return The max or Double.NaN if no values have been added.
      */
     public double getMax() {
@@ -302,15 +307,17 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-    * Returns the minimum of the available values
-    * @return The min or Double.NaN if no values have been added.
-    */
+     * Returns the minimum of the available values
+     * 
+     * @return The min or Double.NaN if no values have been added.
+     */
     public double getMin() {
         return apply(minImpl);
     }
 
     /**
      * Returns the number of available values
+     * 
      * @return The number of available values
      */
     public long getN() {
@@ -319,6 +326,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the sum of the values that have been added to Univariate.
+     * 
      * @return The sum or Double.NaN if no values have been added
      */
     public double getSum() {
@@ -327,8 +335,9 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the sum of the squares of the available values.
+     * 
      * @return The sum of the squares or Double.NaN if no
-     * values have been added.
+     *         values have been added.
      */
     public double getSumsq() {
         return apply(sumsqImpl);
@@ -340,7 +349,6 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     public void clear() {
         eDA.clear();
     }
-
 
     /**
      * Returns the maximum number of values that can be stored in the
@@ -354,7 +362,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * WindowSize controls the number of values that contribute to the
-     * reported statistics.  For example, if windowSize is set to 3 and the
+     * reported statistics. For example, if windowSize is set to 3 and the
      * values {1,2,3,4,5} have been added <strong> in that order</strong> then
      * the <i>available values</i> are {3,4,5} and all reported statistics will
      * be based on these values. If {@code windowSize} is decreased as a result
@@ -364,18 +372,17 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *
      * @param windowSize sets the size of the window.
      * @throws MathIllegalArgumentException if window size is less than 1 but
-     * not equal to {@link #INFINITE_WINDOW}
+     *                                      not equal to {@link #INFINITE_WINDOW}
      */
     public void setWindowSize(int windowSize) throws MathIllegalArgumentException {
         if (windowSize < 1 && windowSize != INFINITE_WINDOW) {
-            throw new MathIllegalArgumentException(
-                    LocalizedFormats.NOT_POSITIVE_WINDOW_SIZE, windowSize);
+            throw new MathIllegalArgumentException(LocalizedFormats.NOT_POSITIVE_WINDOW_SIZE, windowSize);
         }
 
         this.windowSize = windowSize;
 
         // We need to check to see if we need to discard elements
-        // from the front of the array.  If the windowSize is less than
+        // from the front of the array. If the windowSize is less than
         // the current number of elements.
         if (windowSize != INFINITE_WINDOW && windowSize < eDA.getNumElements()) {
             eDA.discardFrontElements(eDA.getNumElements() - windowSize);
@@ -384,7 +391,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the current set of values in an array of double primitives.
-     * The order of addition is preserved.  The returned array is a fresh
+     * The order of addition is preserved. The returned array is a fresh
      * copy of the underlying data -- i.e., it is not a reference to the
      * stored data.
      *
@@ -397,11 +404,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the current set of values in an array of double primitives,
-     * sorted in ascending order.  The returned array is a fresh
+     * sorted in ascending order. The returned array is a fresh
      * copy of the underlying data -- i.e., it is not a reference to the
      * stored data.
+     * 
      * @return returns the current set of
-     * numbers sorted in ascending order
+     *         numbers sorted in ascending order
      */
     public double[] getSortedValues() {
         double[] sort = getValues();
@@ -411,6 +419,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Returns the element at the specified index
+     * 
      * @param index The Index of the element
      * @return return the element at the specified index
      */
@@ -423,18 +432,21 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * <p>
      * The implementation provided here follows the first estimation procedure presented
      * <a href="http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm">here.</a>
-     * </p><p>
-     * <strong>Preconditions</strong>:<ul>
+     * </p>
+     * <p>
+     * <strong>Preconditions</strong>:
+     * <ul>
      * <li><code>0 &lt; p &le; 100</code> (otherwise an
      * <code>MathIllegalArgumentException</code> is thrown)</li>
      * <li>at least one value must be stored (returns <code>Double.NaN
      *     </code> otherwise)</li>
-     * </ul></p>
+     * </ul>
+     * </p>
      *
      * @param p the requested percentile (scaled from 0 - 100)
      * @return An estimate for the pth percentile of the stored data
-     * @throws MathIllegalStateException if percentile implementation has been
-     *  overridden and the supplied implementation does not support setQuantile
+     * @throws MathIllegalStateException    if percentile implementation has been
+     *                                      overridden and the supplied implementation does not support setQuantile
      * @throws MathIllegalArgumentException if p is not a valid quantile
      */
     public double getPercentile(double p) throws MathIllegalStateException, MathIllegalArgumentException {
@@ -442,17 +454,21 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
             ((Percentile) percentileImpl).setQuantile(p);
         } else {
             try {
-                percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
-                        new Class[] {Double.TYPE}).invoke(percentileImpl,
-                                new Object[] {Double.valueOf(p)});
+                percentileImpl.getClass()
+                    .getMethod(SET_QUANTILE_METHOD_NAME, new Class[] { Double.TYPE })
+                    .invoke(percentileImpl, new Object[] { Double.valueOf(p) });
             } catch (NoSuchMethodException e1) { // Setter guard should prevent
                 throw new MathIllegalStateException(
-                      LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
-                      percentileImpl.getClass().getName(), SET_QUANTILE_METHOD_NAME);
+                    LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
+                    percentileImpl.getClass()
+                        .getName(),
+                    SET_QUANTILE_METHOD_NAME);
             } catch (IllegalAccessException e2) {
                 throw new MathIllegalStateException(
-                      LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
-                      SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
+                    LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
+                    SET_QUANTILE_METHOD_NAME,
+                    percentileImpl.getClass()
+                        .getName());
             } catch (InvocationTargetException e3) {
                 throw new IllegalStateException(e3.getCause());
             }
@@ -462,7 +478,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Generates a text report displaying univariate statistics from values
-     * that have been added.  Each statistic is displayed on a separate
+     * that have been added. Each statistic is displayed on a separate
      * line.
      *
      * @return String with line feeds displaying statistics
@@ -471,26 +487,44 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     public String toString() {
         StringBuilder outBuffer = new StringBuilder();
         String endl = "\n";
-        outBuffer.append("DescriptiveStatistics:").append(endl);
-        outBuffer.append("n: ").append(getN()).append(endl);
-        outBuffer.append("min: ").append(getMin()).append(endl);
-        outBuffer.append("max: ").append(getMax()).append(endl);
-        outBuffer.append("mean: ").append(getMean()).append(endl);
-        outBuffer.append("std dev: ").append(getStandardDeviation())
+        outBuffer.append("DescriptiveStatistics:")
+            .append(endl);
+        outBuffer.append("n: ")
+            .append(getN())
+            .append(endl);
+        outBuffer.append("min: ")
+            .append(getMin())
+            .append(endl);
+        outBuffer.append("max: ")
+            .append(getMax())
+            .append(endl);
+        outBuffer.append("mean: ")
+            .append(getMean())
+            .append(endl);
+        outBuffer.append("std dev: ")
+            .append(getStandardDeviation())
             .append(endl);
         try {
             // No catch for MIAE because actual parameter is valid below
-            outBuffer.append("median: ").append(getPercentile(50)).append(endl);
+            outBuffer.append("median: ")
+                .append(getPercentile(50))
+                .append(endl);
         } catch (MathIllegalStateException ex) {
-            outBuffer.append("median: unavailable").append(endl);
+            outBuffer.append("median: unavailable")
+                .append(endl);
         }
-        outBuffer.append("skewness: ").append(getSkewness()).append(endl);
-        outBuffer.append("kurtosis: ").append(getKurtosis()).append(endl);
+        outBuffer.append("skewness: ")
+            .append(getSkewness())
+            .append(endl);
+        outBuffer.append("kurtosis: ")
+            .append(getKurtosis())
+            .append(endl);
         return outBuffer.toString();
     }
 
     /**
      * Apply the given statistic to the data associated with this set of statistics.
+     * 
      * @param stat the statistic to apply
      * @return the computed value of the statistic.
      */
@@ -512,10 +546,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the mean.</p>
+     * <p>
+     * Sets the implementation for the mean.
+     * </p>
      *
      * @param meanImpl the UnivariateStatistic instance to use
-     * for computing the mean
+     *                 for computing the mean
      * @since 1.2
      */
     public synchronized void setMeanImpl(UnivariateStatistic meanImpl) {
@@ -533,14 +569,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the gemoetric mean.</p>
+     * <p>
+     * Sets the implementation for the gemoetric mean.
+     * </p>
      *
      * @param geometricMeanImpl the UnivariateStatistic instance to use
-     * for computing the geometric mean
+     *                          for computing the geometric mean
      * @since 1.2
      */
-    public synchronized void setGeometricMeanImpl(
-            UnivariateStatistic geometricMeanImpl) {
+    public synchronized void setGeometricMeanImpl(UnivariateStatistic geometricMeanImpl) {
         this.geometricMeanImpl = geometricMeanImpl;
     }
 
@@ -555,10 +592,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the kurtosis.</p>
+     * <p>
+     * Sets the implementation for the kurtosis.
+     * </p>
      *
      * @param kurtosisImpl the UnivariateStatistic instance to use
-     * for computing the kurtosis
+     *                     for computing the kurtosis
      * @since 1.2
      */
     public synchronized void setKurtosisImpl(UnivariateStatistic kurtosisImpl) {
@@ -576,10 +615,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the maximum.</p>
+     * <p>
+     * Sets the implementation for the maximum.
+     * </p>
      *
      * @param maxImpl the UnivariateStatistic instance to use
-     * for computing the maximum
+     *                for computing the maximum
      * @since 1.2
      */
     public synchronized void setMaxImpl(UnivariateStatistic maxImpl) {
@@ -597,10 +638,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the minimum.</p>
+     * <p>
+     * Sets the implementation for the minimum.
+     * </p>
      *
      * @param minImpl the UnivariateStatistic instance to use
-     * for computing the minimum
+     *                for computing the minimum
      * @since 1.2
      */
     public synchronized void setMinImpl(UnivariateStatistic minImpl) {
@@ -625,23 +668,26 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      *
      * @param percentileImpl the percentileImpl to set
      * @throws MathIllegalArgumentException if the supplied implementation does not
-     *  provide a <code>setQuantile</code> method
+     *                                      provide a <code>setQuantile</code> method
      * @since 1.2
      */
-    public synchronized void setPercentileImpl(UnivariateStatistic percentileImpl)
-    throws MathIllegalArgumentException {
+    public synchronized void setPercentileImpl(UnivariateStatistic percentileImpl) throws MathIllegalArgumentException {
         try {
-            percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
-                    new Class[] {Double.TYPE}).invoke(percentileImpl,
-                            new Object[] {Double.valueOf(50.0d)});
+            percentileImpl.getClass()
+                .getMethod(SET_QUANTILE_METHOD_NAME, new Class[] { Double.TYPE })
+                .invoke(percentileImpl, new Object[] { Double.valueOf(50.0d) });
         } catch (NoSuchMethodException e1) {
             throw new MathIllegalArgumentException(
-                  LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
-                  percentileImpl.getClass().getName(), SET_QUANTILE_METHOD_NAME);
+                LocalizedFormats.PERCENTILE_IMPLEMENTATION_UNSUPPORTED_METHOD,
+                percentileImpl.getClass()
+                    .getName(),
+                SET_QUANTILE_METHOD_NAME);
         } catch (IllegalAccessException e2) {
             throw new MathIllegalArgumentException(
-                  LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
-                  SET_QUANTILE_METHOD_NAME, percentileImpl.getClass().getName());
+                LocalizedFormats.PERCENTILE_IMPLEMENTATION_CANNOT_ACCESS_METHOD,
+                SET_QUANTILE_METHOD_NAME,
+                percentileImpl.getClass()
+                    .getName());
         } catch (InvocationTargetException e3) {
             throw new IllegalArgumentException(e3.getCause());
         }
@@ -659,14 +705,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the skewness.</p>
+     * <p>
+     * Sets the implementation for the skewness.
+     * </p>
      *
      * @param skewnessImpl the UnivariateStatistic instance to use
-     * for computing the skewness
+     *                     for computing the skewness
      * @since 1.2
      */
-    public synchronized void setSkewnessImpl(
-            UnivariateStatistic skewnessImpl) {
+    public synchronized void setSkewnessImpl(UnivariateStatistic skewnessImpl) {
         this.skewnessImpl = skewnessImpl;
     }
 
@@ -681,14 +728,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the variance.</p>
+     * <p>
+     * Sets the implementation for the variance.
+     * </p>
      *
      * @param varianceImpl the UnivariateStatistic instance to use
-     * for computing the variance
+     *                     for computing the variance
      * @since 1.2
      */
-    public synchronized void setVarianceImpl(
-            UnivariateStatistic varianceImpl) {
+    public synchronized void setVarianceImpl(UnivariateStatistic varianceImpl) {
         this.varianceImpl = varianceImpl;
     }
 
@@ -703,10 +751,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the sum of squares.</p>
+     * <p>
+     * Sets the implementation for the sum of squares.
+     * </p>
      *
      * @param sumsqImpl the UnivariateStatistic instance to use
-     * for computing the sum of squares
+     *                  for computing the sum of squares
      * @since 1.2
      */
     public synchronized void setSumsqImpl(UnivariateStatistic sumsqImpl) {
@@ -724,10 +774,12 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     }
 
     /**
-     * <p>Sets the implementation for the sum.</p>
+     * <p>
+     * Sets the implementation for the sum.
+     * </p>
      *
      * @param sumImpl the UnivariateStatistic instance to use
-     * for computing the sum
+     *                for computing the sum
      * @since 1.2
      */
     public synchronized void setSumImpl(UnivariateStatistic sumImpl) {
@@ -748,14 +800,15 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
      *
      * @param source DescriptiveStatistics to copy
-     * @param dest DescriptiveStatistics to copy to
+     * @param dest   DescriptiveStatistics to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(DescriptiveStatistics source, DescriptiveStatistics dest)
-        throws NullArgumentException {
+    public static void copy(DescriptiveStatistics source, DescriptiveStatistics dest) throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         // Copy data and window size

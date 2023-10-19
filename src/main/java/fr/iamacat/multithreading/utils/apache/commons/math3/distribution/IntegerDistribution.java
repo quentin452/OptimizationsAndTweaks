@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +22,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRange
  *
  */
 public interface IntegerDistribution {
+
     /**
      * For a random variable {@code X} whose values are distributed according
      * to this distribution, this method returns {@code P(X = x)}. In other
@@ -37,13 +36,13 @@ public interface IntegerDistribution {
 
     /**
      * For a random variable {@code X} whose values are distributed according
-     * to this distribution, this method returns {@code P(X <= x)}.  In other
+     * to this distribution, this method returns {@code P(X <= x)}. In other
      * words, this method represents the (cumulative) distribution function
      * (CDF) for this distribution.
      *
      * @param x the point at which the CDF is evaluated
      * @return the probability that a random variable with this
-     * distribution takes a value less than or equal to {@code x}
+     *         distribution takes a value less than or equal to {@code x}
      */
     double cumulativeProbability(int x);
 
@@ -54,8 +53,8 @@ public interface IntegerDistribution {
      * @param x0 the exclusive lower bound
      * @param x1 the inclusive upper bound
      * @return the probability that a random variable with this distribution
-     * will take a value between {@code x0} and {@code x1},
-     * excluding the lower and including the upper endpoint
+     *         will take a value between {@code x0} and {@code x1},
+     *         excluding the lower and including the upper endpoint
      * @throws NumberIsTooLargeException if {@code x0 > x1}
      */
     double cumulativeProbability(int x0, int x1) throws NumberIsTooLargeException;
@@ -73,7 +72,7 @@ public interface IntegerDistribution {
      *
      * @param p the cumulative probability
      * @return the smallest {@code p}-quantile of this distribution
-     * (largest 0-quantile for {@code p = 0})
+     *         (largest 0-quantile for {@code p = 0})
      * @throws OutOfRangeException if {@code p < 0} or {@code p > 1}
      */
     int inverseCumulativeProbability(double p) throws OutOfRangeException;
@@ -91,7 +90,7 @@ public interface IntegerDistribution {
      * distribution.
      *
      * @return the variance (possibly {@code Double.POSITIVE_INFINITY} or
-     * {@code Double.NaN} if it is not defined)
+     *         {@code Double.NaN} if it is not defined)
      */
     double getNumericalVariance();
 
@@ -99,10 +98,12 @@ public interface IntegerDistribution {
      * Access the lower bound of the support. This method must return the same
      * value as {@code inverseCumulativeProbability(0)}. In other words, this
      * method must return
-     * <p><code>inf {x in Z | P(X <= x) > 0}</code>.</p>
+     * <p>
+     * <code>inf {x in Z | P(X <= x) > 0}</code>.
+     * </p>
      *
      * @return lower bound of the support ({@code Integer.MIN_VALUE}
-     * for negative infinity)
+     *         for negative infinity)
      */
     int getSupportLowerBound();
 
@@ -110,10 +111,12 @@ public interface IntegerDistribution {
      * Access the upper bound of the support. This method must return the same
      * value as {@code inverseCumulativeProbability(1)}. In other words, this
      * method must return
-     * <p><code>inf {x in R | P(X <= x) = 1}</code>.</p>
+     * <p>
+     * <code>inf {x in R | P(X <= x) = 1}</code>.
+     * </p>
      *
      * @return upper bound of the support ({@code Integer.MAX_VALUE}
-     * for positive infinity)
+     *         for positive infinity)
      */
     int getSupportUpperBound();
 
@@ -148,7 +151,10 @@ public interface IntegerDistribution {
      * @param sampleSize the number of random values to generate
      * @return an array representing the random sample
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     * if {@code sampleSize} is not positive
+     *                                                                                                     if
+     *                                                                                                     {@code sampleSize}
+     *                                                                                                     is not
+     *                                                                                                     positive
      * @since 3.0
      */
     int[] sample(int sampleSize);

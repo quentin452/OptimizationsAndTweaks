@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +18,13 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.geometry.euclidean.
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalStateException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 
-/** This class represents exceptions thrown while extractiong Cardan
+/**
+ * This class represents exceptions thrown while extractiong Cardan
  * or Euler angles from a rotation.
-
+ * 
  * @since 1.2
  */
-public class CardanEulerSingularityException
-  extends MathIllegalStateException {
+public class CardanEulerSingularityException extends MathIllegalStateException {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -1360952845582206770L;
@@ -34,8 +32,9 @@ public class CardanEulerSingularityException
     /**
      * Simple constructor.
      * build an exception with a default message.
+     * 
      * @param isCardan if true, the rotation is related to Cardan angles,
-     * if false it is related to EulerAngles
+     *                 if false it is related to EulerAngles
      */
     public CardanEulerSingularityException(boolean isCardan) {
         super(isCardan ? LocalizedFormats.CARDAN_ANGLES_SINGULARITY : LocalizedFormats.EULER_ANGLES_SINGULARITY);

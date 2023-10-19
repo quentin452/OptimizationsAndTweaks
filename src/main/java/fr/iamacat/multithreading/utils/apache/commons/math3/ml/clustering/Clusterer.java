@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,12 +47,12 @@ public abstract class Clusterer<T extends Clusterable> {
      * @param points the set of {@link Clusterable} instances
      * @return a {@link List} of clusters
      * @throws MathIllegalArgumentException if points are null or the number of
-     *   data points is not compatible with this clusterer
-     * @throws ConvergenceException if the algorithm has not yet converged after
-     *   the maximum number of iterations has been exceeded
+     *                                      data points is not compatible with this clusterer
+     * @throws ConvergenceException         if the algorithm has not yet converged after
+     *                                      the maximum number of iterations has been exceeded
      */
     public abstract List<? extends Cluster<T>> cluster(Collection<T> points)
-            throws MathIllegalArgumentException, ConvergenceException;
+        throws MathIllegalArgumentException, ConvergenceException;
 
     /**
      * Returns the {@link DistanceMeasure} instance used by this clusterer.

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +14,8 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.exception;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Localizable;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
  * Exception to be thrown when two dimensions differ.
@@ -25,6 +23,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * @since 2.2
  */
 public class DimensionMismatchException extends MathIllegalNumberException {
+
     /** Serializable version Id. */
     private static final long serialVersionUID = -8415396756375798143L;
     /** Correct dimension. */
@@ -34,12 +33,10 @@ public class DimensionMismatchException extends MathIllegalNumberException {
      * Construct an exception from the mismatched dimensions.
      *
      * @param specific Specific context information pattern.
-     * @param wrong Wrong dimension.
+     * @param wrong    Wrong dimension.
      * @param expected Expected dimension.
      */
-    public DimensionMismatchException(Localizable specific,
-                                      int wrong,
-                                      int expected) {
+    public DimensionMismatchException(Localizable specific, int wrong, int expected) {
         super(specific, Integer.valueOf(wrong), Integer.valueOf(expected));
         dimension = expected;
     }
@@ -47,11 +44,10 @@ public class DimensionMismatchException extends MathIllegalNumberException {
     /**
      * Construct an exception from the mismatched dimensions.
      *
-     * @param wrong Wrong dimension.
+     * @param wrong    Wrong dimension.
      * @param expected Expected dimension.
      */
-    public DimensionMismatchException(int wrong,
-                                      int expected) {
+    public DimensionMismatchException(int wrong, int expected) {
         this(LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, wrong, expected);
     }
 

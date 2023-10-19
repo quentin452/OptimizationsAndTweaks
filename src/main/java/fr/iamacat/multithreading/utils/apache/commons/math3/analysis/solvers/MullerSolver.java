@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,18 +28,23 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * Muller's method applies to both real and complex functions, but here we
  * restrict ourselves to real functions.
  * This class differs from {@link MullerSolver} in the way it avoids complex
- * operations.</p><p>
+ * operations.
+ * </p>
+ * <p>
  * Muller's original method would have function evaluation at complex point.
  * Since our f(x) is real, we have to find ways to avoid that. Bracketing
  * condition is one way to go: by requiring bracketing in every iteration,
- * the newly computed approximation is guaranteed to be real.</p>
+ * the newly computed approximation is guaranteed to be real.
+ * </p>
  * <p>
  * Normally Muller's method converges quadratically in the vicinity of a
  * zero, however it may be very slow in regions far away from zeros. For
  * example, f(x) = exp(x) - 1, min = -50, max = 100. In such case we use
- * bisection as a safety backup if it performs very poorly.</p>
+ * bisection as a safety backup if it performs very poorly.
+ * </p>
  * <p>
- * The formulas here use divided differences directly.</p>
+ * The formulas here use divided differences directly.
+ * </p>
  *
  * @since 1.2
  * @see MullerSolver2
@@ -57,6 +60,7 @@ public class MullerSolver extends AbstractUnivariateSolver {
     public MullerSolver() {
         this(DEFAULT_ABSOLUTE_ACCURACY);
     }
+
     /**
      * Construct a solver.
      *
@@ -65,14 +69,14 @@ public class MullerSolver extends AbstractUnivariateSolver {
     public MullerSolver(double absoluteAccuracy) {
         super(absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
      * @param relativeAccuracy Relative accuracy.
      * @param absoluteAccuracy Absolute accuracy.
      */
-    public MullerSolver(double relativeAccuracy,
-                        double absoluteAccuracy) {
+    public MullerSolver(double relativeAccuracy, double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
 
@@ -80,10 +84,7 @@ public class MullerSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve()
-        throws TooManyEvaluationsException,
-               NumberIsTooLargeException,
-               NoBracketingException {
+    protected double doSolve() throws TooManyEvaluationsException, NumberIsTooLargeException, NoBracketingException {
         final double min = getMin();
         final double max = getMax();
         final double initial = getStartValue();
@@ -102,7 +103,7 @@ public class MullerSolver extends AbstractUnivariateSolver {
             return max;
         }
         final double fInitial = computeObjectiveValue(initial);
-        if (FastMath.abs(fInitial) <  functionValueAccuracy) {
+        if (FastMath.abs(fInitial) < functionValueAccuracy) {
             return initial;
         }
 
@@ -118,17 +119,15 @@ public class MullerSolver extends AbstractUnivariateSolver {
     /**
      * Find a real root in the given interval.
      *
-     * @param min Lower bound for the interval.
-     * @param max Upper bound for the interval.
+     * @param min  Lower bound for the interval.
+     * @param max  Upper bound for the interval.
      * @param fMin function value at the lower bound.
      * @param fMax function value at the upper bound.
      * @return the point at which the function value is zero.
      * @throws TooManyEvaluationsException if the allowed number of calls to
-     * the function to be solved has been exhausted.
+     *                                     the function to be solved has been exhausted.
      */
-    private double solve(double min, double max,
-                         double fMin, double fMax)
-        throws TooManyEvaluationsException {
+    private double solve(double min, double max, double fMin, double fMax) throws TooManyEvaluationsException {
         final double relativeAccuracy = getRelativeAccuracy();
         final double absoluteAccuracy = getAbsoluteAccuracy();
         final double functionValueAccuracy = getFunctionValueAccuracy();
@@ -165,8 +164,7 @@ public class MullerSolver extends AbstractUnivariateSolver {
 
             // check for convergence
             final double tolerance = FastMath.max(relativeAccuracy * FastMath.abs(x), absoluteAccuracy);
-            if (FastMath.abs(x - oldx) <= tolerance ||
-                FastMath.abs(y) <= functionValueAccuracy) {
+            if (FastMath.abs(x - oldx) <= tolerance || FastMath.abs(y) <= functionValueAccuracy) {
                 return x;
             }
 
@@ -174,24 +172,26 @@ public class MullerSolver extends AbstractUnivariateSolver {
             // our calculation of x, hopefully it won't happen often.
             // the real number equality test x == x1 is intentional and
             // completes the proximity tests above it
-            boolean bisect = (x < x1 && (x1 - x0) > 0.95 * (x2 - x0)) ||
-                             (x > x1 && (x2 - x1) > 0.95 * (x2 - x0)) ||
-                             (x == x1);
+            boolean bisect = (x < x1 && (x1 - x0) > 0.95 * (x2 - x0)) || (x > x1 && (x2 - x1) > 0.95 * (x2 - x0))
+                || (x == x1);
             // prepare the new bracketing interval for next iteration
             if (!bisect) {
                 x0 = x < x1 ? x0 : x1;
                 y0 = x < x1 ? y0 : y1;
                 x2 = x > x1 ? x2 : x1;
                 y2 = x > x1 ? y2 : y1;
-                x1 = x; y1 = y;
+                x1 = x;
+                y1 = y;
                 oldx = x;
             } else {
                 double xm = 0.5 * (x0 + x2);
                 double ym = computeObjectiveValue(xm);
                 if (FastMath.signum(y0) + FastMath.signum(ym) == 0.0) {
-                    x2 = xm; y2 = ym;
+                    x2 = xm;
+                    y2 = ym;
                 } else {
-                    x0 = xm; y0 = ym;
+                    x0 = xm;
+                    y0 = ym;
                 }
                 x1 = 0.5 * (x0 + x2);
                 y1 = computeObjectiveValue(x1);

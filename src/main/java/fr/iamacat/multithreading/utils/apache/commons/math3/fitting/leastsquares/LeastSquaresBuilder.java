@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,12 +51,12 @@ public class LeastSquaresBuilder {
      * @since 3.4
      */
     private boolean lazyEvaluation;
-    /** Validator.
+    /**
+     * Validator.
      *
      * @since 3.4
      */
     private ParameterValidator paramValidator;
-
 
     /**
      * Construct a {@link LeastSquaresProblem} from the data in this builder.
@@ -66,15 +64,16 @@ public class LeastSquaresBuilder {
      * @return a new {@link LeastSquaresProblem}.
      */
     public LeastSquaresProblem build() {
-        return LeastSquaresFactory.create(model,
-                                          target,
-                                          start,
-                                          weight,
-                                          checker,
-                                          maxEvaluations,
-                                          maxIterations,
-                                          lazyEvaluation,
-                                          paramValidator);
+        return LeastSquaresFactory.create(
+            model,
+            target,
+            start,
+            weight,
+            checker,
+            maxEvaluations,
+            maxIterations,
+            lazyEvaluation,
+            paramValidator);
     }
 
     /**
@@ -125,12 +124,12 @@ public class LeastSquaresBuilder {
     /**
      * Configure the model function.
      *
-     * @param value the model function value
+     * @param value    the model function value
      * @param jacobian the Jacobian of {@code value}
      * @return this
      */
     public LeastSquaresBuilder model(final MultivariateVectorFunction value,
-                                     final MultivariateMatrixFunction jacobian) {
+        final MultivariateMatrixFunction jacobian) {
         return model(LeastSquaresFactory.model(value, jacobian));
     }
 

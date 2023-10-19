@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +14,9 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.analysis.solvers;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NoBracketingException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/RiddersMethod.html">
@@ -27,11 +25,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEva
  * of a real continuous function </i>, IEEE Transactions on Circuits and
  * Systems, 26 (1979), 979 - 980.
  * <p>
- * The function should be continuous but not necessarily smooth.</p>
+ * The function should be continuous but not necessarily smooth.
+ * </p>
  *
  * @since 1.2
  */
 public class RiddersSolver extends AbstractUnivariateSolver {
+
     /** Default absolute accuracy. */
     private static final double DEFAULT_ABSOLUTE_ACCURACY = 1e-6;
 
@@ -41,6 +41,7 @@ public class RiddersSolver extends AbstractUnivariateSolver {
     public RiddersSolver() {
         this(DEFAULT_ABSOLUTE_ACCURACY);
     }
+
     /**
      * Construct a solver.
      *
@@ -49,14 +50,14 @@ public class RiddersSolver extends AbstractUnivariateSolver {
     public RiddersSolver(double absoluteAccuracy) {
         super(absoluteAccuracy);
     }
+
     /**
      * Construct a solver.
      *
      * @param relativeAccuracy Relative accuracy.
      * @param absoluteAccuracy Absolute accuracy.
      */
-    public RiddersSolver(double relativeAccuracy,
-                         double absoluteAccuracy) {
+    public RiddersSolver(double relativeAccuracy, double absoluteAccuracy) {
         super(relativeAccuracy, absoluteAccuracy);
     }
 
@@ -64,9 +65,7 @@ public class RiddersSolver extends AbstractUnivariateSolver {
      * {@inheritDoc}
      */
     @Override
-    protected double doSolve()
-        throws TooManyEvaluationsException,
-               NoBracketingException {
+    protected double doSolve() throws TooManyEvaluationsException, NoBracketingException {
         double min = getMin();
         double max = getMax();
         // [x1, x2] is the bracketing interval in each iteration
@@ -98,10 +97,9 @@ public class RiddersSolver extends AbstractUnivariateSolver {
             if (FastMath.abs(y3) <= functionValueAccuracy) {
                 return x3;
             }
-            final double delta = 1 - (y1 * y2) / (y3 * y3);  // delta > 1 due to bracketing
-            final double correction = (FastMath.signum(y2) * FastMath.signum(y3)) *
-                                      (x3 - x1) / FastMath.sqrt(delta);
-            final double x = x3 - correction;                // correction != 0
+            final double delta = 1 - (y1 * y2) / (y3 * y3); // delta > 1 due to bracketing
+            final double correction = (FastMath.signum(y2) * FastMath.signum(y3)) * (x3 - x1) / FastMath.sqrt(delta);
+            final double x = x3 - correction; // correction != 0
             final double y = computeObjectiveValue(x);
 
             // check for convergence
@@ -115,7 +113,7 @@ public class RiddersSolver extends AbstractUnivariateSolver {
 
             // prepare the new interval for next iteration
             // Ridders' method guarantees x1 < x < x2
-            if (correction > 0.0) {             // x1 < x < x3
+            if (correction > 0.0) { // x1 < x < x3
                 if (FastMath.signum(y1) + FastMath.signum(y) == 0.0) {
                     x2 = x;
                     y2 = y;
@@ -125,7 +123,7 @@ public class RiddersSolver extends AbstractUnivariateSolver {
                     y1 = y;
                     y2 = y3;
                 }
-            } else {                            // x3 < x < x2
+            } else { // x3 < x < x2
                 if (FastMath.signum(y2) + FastMath.signum(y) == 0.0) {
                     x1 = x;
                     y1 = y;

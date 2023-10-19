@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +30,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.ResizableDouble
  * @see <a href="http://mathworld.wolfram.com/ExponentialDistribution.html">Exponential distribution (MathWorld)</a>
  */
 public class ExponentialDistribution extends AbstractRealDistribution {
+
     /**
      * Default inverse cumulative probability accuracy.
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
@@ -115,10 +115,10 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param mean Mean of this distribution.
+     * @param mean               Mean of this distribution.
      * @param inverseCumAccuracy Maximum absolute error in inverse
-     * cumulative probability estimates (defaults to
-     * {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates (defaults to
+     *                           {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      * @since 2.1
      */
@@ -129,30 +129,27 @@ public class ExponentialDistribution extends AbstractRealDistribution {
     /**
      * Creates an exponential distribution.
      *
-     * @param rng Random number generator.
+     * @param rng  Random number generator.
      * @param mean Mean of this distribution.
      * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      * @since 3.3
      */
-    public ExponentialDistribution(RandomGenerator rng, double mean)
-        throws NotStrictlyPositiveException {
+    public ExponentialDistribution(RandomGenerator rng, double mean) throws NotStrictlyPositiveException {
         this(rng, mean, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
      * Creates an exponential distribution.
      *
-     * @param rng Random number generator.
-     * @param mean Mean of this distribution.
+     * @param rng                Random number generator.
+     * @param mean               Mean of this distribution.
      * @param inverseCumAccuracy Maximum absolute error in inverse
-     * cumulative probability estimates (defaults to
-     * {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates (defaults to
+     *                           {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      * @since 3.1
      */
-    public ExponentialDistribution(RandomGenerator rng,
-                                   double mean,
-                                   double inverseCumAccuracy)
+    public ExponentialDistribution(RandomGenerator rng, double mean, double inverseCumAccuracy)
         throws NotStrictlyPositiveException {
         super(rng);
 
@@ -198,7 +195,7 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      * Exponential Distribution</a>, equation (1).</li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         double ret;
         if (x <= 0.0) {
             ret = 0.0;
@@ -232,10 +229,12 @@ public class ExponentialDistribution extends AbstractRealDistribution {
     /**
      * {@inheritDoc}
      *
-     * <p><strong>Algorithm Description</strong>: this implementation uses the
+     * <p>
+     * <strong>Algorithm Description</strong>: this implementation uses the
      * <a href="http://www.jesus.ox.ac.uk/~clifford/a5/chap1/node5.html">
      * Inversion Method</a> to generate exponentially distributed random values
-     * from uniform deviates.</p>
+     * from uniform deviates.
+     * </p>
      *
      * @return a random value.
      * @since 2.2

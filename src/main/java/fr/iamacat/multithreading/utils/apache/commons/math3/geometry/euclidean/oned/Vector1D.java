@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +24,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Vector;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 
-/** This class represents a 1D vector.
- * <p>Instances of this class are guaranteed to be immutable.</p>
+/**
+ * This class represents a 1D vector.
+ * <p>
+ * Instances of this class are guaranteed to be immutable.
+ * </p>
+ * 
  * @since 3.0
  */
 public class Vector1D implements Vector<Euclidean1D> {
@@ -36,7 +38,7 @@ public class Vector1D implements Vector<Euclidean1D> {
     public static final Vector1D ZERO = new Vector1D(0.0);
 
     /** Unit (coordinates: 1). */
-    public static final Vector1D ONE  = new Vector1D(1.0);
+    public static final Vector1D ONE = new Vector1D(1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -44,12 +46,10 @@ public class Vector1D implements Vector<Euclidean1D> {
     // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
-    public static final Vector1D POSITIVE_INFINITY =
-        new Vector1D(Double.POSITIVE_INFINITY);
+    public static final Vector1D POSITIVE_INFINITY = new Vector1D(Double.POSITIVE_INFINITY);
 
     /** A vector with all coordinates set to negative infinity. */
-    public static final Vector1D NEGATIVE_INFINITY =
-        new Vector1D(Double.NEGATIVE_INFINITY);
+    public static final Vector1D NEGATIVE_INFINITY = new Vector1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
     private static final long serialVersionUID = 7556674948671647925L;
@@ -57,8 +57,10 @@ public class Vector1D implements Vector<Euclidean1D> {
     /** Abscissa. */
     private final double x;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
      * Build a vector from its coordinates
+     * 
      * @param x abscissa
      * @see #getX()
      */
@@ -66,9 +68,11 @@ public class Vector1D implements Vector<Euclidean1D> {
         this.x = x;
     }
 
-    /** Multiplicative constructor
+    /**
+     * Multiplicative constructor
      * Build a vector from another one and a scale factor.
      * The vector built will be a * u
+     * 
      * @param a scale factor
      * @param u base (unscaled) vector
      */
@@ -76,9 +80,11 @@ public class Vector1D implements Vector<Euclidean1D> {
         this.x = a * u.x;
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from two other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -88,9 +94,11 @@ public class Vector1D implements Vector<Euclidean1D> {
         this.x = a1 * u1.x + a2 * u2.x;
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from three other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2 + a3 * u3
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -98,14 +106,15 @@ public class Vector1D implements Vector<Euclidean1D> {
      * @param a3 third scale factor
      * @param u3 third base (unscaled) vector
      */
-    public Vector1D(double a1, Vector1D u1, double a2, Vector1D u2,
-                   double a3, Vector1D u3) {
+    public Vector1D(double a1, Vector1D u1, double a2, Vector1D u2, double a3, Vector1D u3) {
         this.x = a1 * u1.x + a2 * u2.x + a3 * u3.x;
     }
 
-    /** Linear constructor
+    /**
+     * Linear constructor
      * Build a vector from four other ones and corresponding scale factors.
      * The vector built will be a1 * u1 + a2 * u2 + a3 * u3 + a4 * u4
+     * 
      * @param a1 first scale factor
      * @param u1 first base (unscaled) vector
      * @param a2 second scale factor
@@ -115,12 +124,13 @@ public class Vector1D implements Vector<Euclidean1D> {
      * @param a4 fourth scale factor
      * @param u4 fourth base (unscaled) vector
      */
-    public Vector1D(double a1, Vector1D u1, double a2, Vector1D u2,
-                   double a3, Vector1D u3, double a4, Vector1D u4) {
+    public Vector1D(double a1, Vector1D u1, double a2, Vector1D u2, double a3, Vector1D u3, double a4, Vector1D u4) {
         this.x = a1 * u1.x + a2 * u2.x + a3 * u3.x + a4 * u4.x;
     }
 
-    /** Get the abscissa of the vector.
+    /**
+     * Get the abscissa of the vector.
+     * 
      * @return abscissa of the vector
      * @see #Vector1D(double)
      */
@@ -190,6 +200,7 @@ public class Vector1D implements Vector<Euclidean1D> {
         }
         return scalarMultiply(1 / s);
     }
+
     /** {@inheritDoc} */
     public Vector1D negate() {
         return new Vector1D(-x);
@@ -217,7 +228,9 @@ public class Vector1D implements Vector<Euclidean1D> {
         return dx;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @deprecated as of 3.3, replaced with {@link #distance(Point)}
      */
     @Deprecated
@@ -252,10 +265,14 @@ public class Vector1D implements Vector<Euclidean1D> {
         return x * v1.x;
     }
 
-    /** Compute the distance between two vectors according to the L<sub>2</sub> norm.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the distance between two vectors according to the L<sub>2</sub> norm.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>p1.subtract(p2).getNorm()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param p1 first vector
      * @param p2 second vector
      * @return the distance between p1 and p2 according to the L<sub>2</sub> norm
@@ -264,10 +281,14 @@ public class Vector1D implements Vector<Euclidean1D> {
         return p1.distance(p2);
     }
 
-    /** Compute the distance between two vectors according to the L<sub>&infin;</sub> norm.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the distance between two vectors according to the L<sub>&infin;</sub> norm.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>p1.subtract(p2).getNormInf()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param p1 first vector
      * @param p2 second vector
      * @return the distance between p1 and p2 according to the L<sub>&infin;</sub> norm
@@ -276,10 +297,14 @@ public class Vector1D implements Vector<Euclidean1D> {
         return p1.distanceInf(p2);
     }
 
-    /** Compute the square of the distance between two vectors.
-     * <p>Calling this method is equivalent to calling:
+    /**
+     * Compute the square of the distance between two vectors.
+     * <p>
+     * Calling this method is equivalent to calling:
      * <code>p1.subtract(p2).getNormSq()</code> except that no intermediate
-     * vector is built</p>
+     * vector is built
+     * </p>
+     * 
      * @param p1 first vector
      * @param p2 second vector
      * @return the square of the distance between p1 and p2
@@ -315,7 +340,7 @@ public class Vector1D implements Vector<Euclidean1D> {
         }
 
         if (other instanceof Vector1D) {
-            final Vector1D rhs = (Vector1D)other;
+            final Vector1D rhs = (Vector1D) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
@@ -328,7 +353,8 @@ public class Vector1D implements Vector<Euclidean1D> {
     /**
      * Get a hashCode for the 1D vector.
      * <p>
-     * All NaN values have the same hash code.</p>
+     * All NaN values have the same hash code.
+     * </p>
      *
      * @return a hash code value for this object
      */
@@ -340,12 +366,15 @@ public class Vector1D implements Vector<Euclidean1D> {
         return 997 * MathUtils.hash(x);
     }
 
-    /** Get a string representation of this vector.
+    /**
+     * Get a string representation of this vector.
+     * 
      * @return a string representation of this vector
      */
     @Override
     public String toString() {
-        return Vector1DFormat.getInstance().format(this);
+        return Vector1DFormat.getInstance()
+            .format(this);
     }
 
     /** {@inheritDoc} */

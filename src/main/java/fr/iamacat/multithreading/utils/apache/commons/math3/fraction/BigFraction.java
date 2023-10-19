@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,9 +34,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  *
  * @since 2.0
  */
-public class BigFraction
-    extends Number
-    implements FieldElement<BigFraction>, Comparable<BigFraction>, Serializable {
+public class BigFraction extends Number implements FieldElement<BigFraction>, Comparable<BigFraction>, Serializable {
 
     /** A fraction representing "2 / 1". */
     public static final BigFraction TWO = new BigFraction(2);
@@ -113,7 +109,7 @@ public class BigFraction
      *
      * @param num the numerator, must not be {@code null}.
      * @param den the denominator, must not be {@code null}.
-     * @throws ZeroException if the denominator is zero.
+     * @throws ZeroException         if the denominator is zero.
      * @throws NullArgumentException if either of the arguments is null
      */
     public BigFraction(BigInteger num, BigInteger den) {
@@ -123,7 +119,7 @@ public class BigFraction
             throw new ZeroException(LocalizedFormats.ZERO_DENOMINATOR);
         }
         if (num.signum() == 0) {
-            numerator   = BigInteger.ZERO;
+            numerator = BigInteger.ZERO;
             denominator = BigInteger.ONE;
         } else {
 
@@ -141,7 +137,7 @@ public class BigFraction
             }
 
             // store the values in the final fields
-            numerator   = num;
+            numerator = num;
             denominator = den;
 
         }
@@ -164,6 +160,7 @@ public class BigFraction
      * because the double number passed to the constructor is not exactly 1/3
      * (this number cannot be stored exactly in IEEE754).
      * </p>
+     * 
      * @see #BigFraction(double, double, int)
      * @param value the double value to convert to a fraction.
      * @exception MathIllegalArgumentException if value is NaN or infinite
@@ -177,10 +174,10 @@ public class BigFraction
         }
 
         // compute m and k such that value = m * 2^k
-        final long bits     = Double.doubleToLongBits(value);
-        final long sign     = bits & 0x8000000000000000L;
+        final long bits = Double.doubleToLongBits(value);
+        final long sign = bits & 0x8000000000000000L;
         final long exponent = bits & 0x7ff0000000000000L;
-        long m              = bits & 0x000fffffffffffffL;
+        long m = bits & 0x000fffffffffffffL;
         if (exponent != 0) {
             // this was a normalized number, add the implicit most significant bit
             m |= 0x0010000000000000L;
@@ -195,10 +192,11 @@ public class BigFraction
         }
 
         if (k < 0) {
-            numerator   = BigInteger.valueOf(m);
+            numerator = BigInteger.valueOf(m);
             denominator = BigInteger.ZERO.flipBit(-k);
         } else {
-            numerator   = BigInteger.valueOf(m).multiply(BigInteger.ZERO.flipBit(k));
+            numerator = BigInteger.valueOf(m)
+                .multiply(BigInteger.ZERO.flipBit(k));
             denominator = BigInteger.ONE;
         }
 
@@ -215,18 +213,17 @@ public class BigFraction
      * </p>
      *
      * @param value
-     *            the double value to convert to a fraction.
+     *                      the double value to convert to a fraction.
      * @param epsilon
-     *            maximum error allowed. The resulting fraction is within
-     *            <code>epsilon</code> of <code>value</code>, in absolute terms.
+     *                      maximum error allowed. The resulting fraction is within
+     *                      <code>epsilon</code> of <code>value</code>, in absolute terms.
      * @param maxIterations
-     *            maximum number of convergents.
+     *                      maximum number of convergents.
      * @throws FractionConversionException
-     *             if the continued fraction failed to converge.
+     *                                     if the continued fraction failed to converge.
      * @see #BigFraction(double)
      */
-    public BigFraction(final double value, final double epsilon,
-                       final int maxIterations)
+    public BigFraction(final double value, final double epsilon, final int maxIterations)
         throws FractionConversionException {
         this(value, epsilon, Integer.MAX_VALUE, maxIterations);
     }
@@ -254,19 +251,18 @@ public class BigFraction
      * https://issues.apache.org/jira/browse/MATH-181
      *
      * @param value
-     *            the double value to convert to a fraction.
+     *                       the double value to convert to a fraction.
      * @param epsilon
-     *            maximum error allowed. The resulting fraction is within
-     *            <code>epsilon</code> of <code>value</code>, in absolute terms.
+     *                       maximum error allowed. The resulting fraction is within
+     *                       <code>epsilon</code> of <code>value</code>, in absolute terms.
      * @param maxDenominator
-     *            maximum denominator value allowed.
+     *                       maximum denominator value allowed.
      * @param maxIterations
-     *            maximum number of convergents.
+     *                       maximum number of convergents.
      * @throws FractionConversionException
-     *             if the continued fraction failed to converge.
+     *                                     if the continued fraction failed to converge.
      */
-    private BigFraction(final double value, final double epsilon,
-                        final int maxDenominator, int maxIterations)
+    private BigFraction(final double value, final double epsilon, final int maxDenominator, int maxIterations)
         throws FractionConversionException {
         long overflow = Integer.MAX_VALUE;
         double r0 = value;
@@ -310,9 +306,7 @@ public class BigFraction
             }
 
             final double convergent = (double) p2 / (double) q2;
-            if ((n < maxIterations) &&
-                (FastMath.abs(convergent - value) > epsilon) &&
-                (q2 < maxDenominator)) {
+            if ((n < maxIterations) && (FastMath.abs(convergent - value) > epsilon) && (q2 < maxDenominator)) {
                 p0 = p1;
                 p1 = p2;
                 q0 = q1;
@@ -329,10 +323,10 @@ public class BigFraction
         }
 
         if (q2 < maxDenominator) {
-            numerator   = BigInteger.valueOf(p2);
+            numerator = BigInteger.valueOf(p2);
             denominator = BigInteger.valueOf(q2);
         } else {
-            numerator   = BigInteger.valueOf(p1);
+            numerator = BigInteger.valueOf(p1);
             denominator = BigInteger.valueOf(q1);
         }
     }
@@ -348,14 +342,13 @@ public class BigFraction
      * </p>
      *
      * @param value
-     *            the double value to convert to a fraction.
+     *                       the double value to convert to a fraction.
      * @param maxDenominator
-     *            The maximum allowed value for denominator.
+     *                       The maximum allowed value for denominator.
      * @throws FractionConversionException
-     *             if the continued fraction failed to converge.
+     *                                     if the continued fraction failed to converge.
      */
-    public BigFraction(final double value, final int maxDenominator)
-        throws FractionConversionException {
+    public BigFraction(final double value, final int maxDenominator) throws FractionConversionException {
         this(value, 0, maxDenominator, 100);
     }
 
@@ -425,16 +418,15 @@ public class BigFraction
      * </p>
      *
      * @param numerator
-     *            the numerator, for example the three in 'three sevenths'.
+     *                    the numerator, for example the three in 'three sevenths'.
      * @param denominator
-     *            the denominator, for example the seven in 'three sevenths'.
+     *                    the denominator, for example the seven in 'three sevenths'.
      * @return a new fraction instance, with the numerator and denominator
      *         reduced.
      * @throws ArithmeticException
-     *             if the denominator is <code>zero</code>.
+     *                             if the denominator is <code>zero</code>.
      */
-    public static BigFraction getReducedFraction(final int numerator,
-                                                 final int denominator) {
+    public static BigFraction getReducedFraction(final int numerator, final int denominator) {
         if (numerator == 0) {
             return ZERO; // normalize zero.
         }
@@ -460,10 +452,10 @@ public class BigFraction
      * </p>
      *
      * @param bg
-     *            the {@link BigInteger} to add, must'nt be <code>null</code>.
+     *           the {@link BigInteger} to add, must'nt be <code>null</code>.
      * @return a <code>BigFraction</code> instance with the resulting values.
      * @throws NullArgumentException
-     *             if the {@link BigInteger} is <code>null</code>.
+     *                               if the {@link BigInteger} is <code>null</code>.
      */
     public BigFraction add(final BigInteger bg) throws NullArgumentException {
         MathUtils.checkNotNull(bg);
@@ -485,7 +477,7 @@ public class BigFraction
      * </p>
      *
      * @param i
-     *            the {@code integer} to add.
+     *          the {@code integer} to add.
      * @return a <code>BigFraction</code> instance with the resulting values.
      */
     public BigFraction add(final int i) {
@@ -499,7 +491,7 @@ public class BigFraction
      * </p>
      *
      * @param l
-     *            the {@code long} to add.
+     *          the {@code long} to add.
      * @return a <code>BigFraction</code> instance with the resulting values.
      */
     public BigFraction add(final long l) {
@@ -513,7 +505,7 @@ public class BigFraction
      * </p>
      *
      * @param fraction
-     *            the {@link BigFraction} to add, must not be <code>null</code>.
+     *                 the {@link BigFraction} to add, must not be <code>null</code>.
      * @return a {@link BigFraction} instance with the resulting values.
      * @throws NullArgumentException if the {@link BigFraction} is {@code null}.
      */
@@ -555,8 +547,8 @@ public class BigFraction
      *
      * @return the fraction as a <code>BigDecimal</code>.
      * @throws ArithmeticException
-     *             if the exact quotient does not have a terminating decimal
-     *             expansion.
+     *                             if the exact quotient does not have a terminating decimal
+     *                             expansion.
      * @see BigDecimal
      */
     public BigDecimal bigDecimalValue() {
@@ -571,11 +563,11 @@ public class BigFraction
      * </p>
      *
      * @param roundingMode
-     *            rounding mode to apply. see {@link BigDecimal} constants.
+     *                     rounding mode to apply. see {@link BigDecimal} constants.
      * @return the fraction as a <code>BigDecimal</code>.
      * @throws IllegalArgumentException
-     *             if {@code roundingMode} does not represent a valid rounding
-     *             mode.
+     *                                  if {@code roundingMode} does not represent a valid rounding
+     *                                  mode.
      * @see BigDecimal
      */
     public BigDecimal bigDecimalValue(final int roundingMode) {
@@ -590,10 +582,10 @@ public class BigFraction
      * </p>
      *
      * @param scale
-     *            scale of the <code>BigDecimal</code> quotient to be returned.
-     *            see {@link BigDecimal} for more information.
+     *                     scale of the <code>BigDecimal</code> quotient to be returned.
+     *                     see {@link BigDecimal} for more information.
      * @param roundingMode
-     *            rounding mode to apply. see {@link BigDecimal} constants.
+     *                     rounding mode to apply. see {@link BigDecimal} constants.
      * @return the fraction as a <code>BigDecimal</code>.
      * @see BigDecimal
      */
@@ -607,7 +599,7 @@ public class BigFraction
      * </p>
      *
      * @param object
-     *            the object to compare to, must not be <code>null</code>.
+     *               the object to compare to, must not be <code>null</code>.
      * @return -1 if this is less than {@code object}, +1 if this is greater
      *         than {@code object}, 0 if they are equal.
      * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -636,7 +628,7 @@ public class BigFraction
      *
      * @param bg the {@code BigInteger} to divide by, must not be {@code null}
      * @return a {@link BigFraction} instance with the resulting values
-     * @throws NullArgumentException if the {@code BigInteger} is {@code null}
+     * @throws NullArgumentException   if the {@code BigInteger} is {@code null}
      * @throws MathArithmeticException if the fraction to divide by is zero
      */
     public BigFraction divide(final BigInteger bg) {
@@ -688,7 +680,7 @@ public class BigFraction
      *
      * @param fraction Fraction to divide by, must not be {@code null}.
      * @return a {@link BigFraction} instance with the resulting values.
-     * @throws NullArgumentException if the {@code fraction} is {@code null}.
+     * @throws NullArgumentException   if the {@code fraction} is {@code null}.
      * @throws MathArithmeticException if the fraction to divide by is zero
      */
     public BigFraction divide(final BigFraction fraction) {
@@ -720,10 +712,12 @@ public class BigFraction
         if (Double.isNaN(result)) {
             // Numerator and/or denominator must be out of range:
             // Calculate how far to shift them to put them in range.
-            int shift = FastMath.max(numerator.bitLength(),
-                                     denominator.bitLength()) - FastMath.getExponent(Double.MAX_VALUE);
-            result = numerator.shiftRight(shift).doubleValue() /
-                denominator.shiftRight(shift).doubleValue();
+            int shift = FastMath.max(numerator.bitLength(), denominator.bitLength())
+                - FastMath.getExponent(Double.MAX_VALUE);
+            result = numerator.shiftRight(shift)
+                .doubleValue()
+                / denominator.shiftRight(shift)
+                    .doubleValue();
         }
         return result;
     }
@@ -736,8 +730,8 @@ public class BigFraction
      * </p>
      *
      * @param other
-     *            fraction to test for equality to this fraction, can be
-     *            <code>null</code>.
+     *              fraction to test for equality to this fraction, can be
+     *              <code>null</code>.
      * @return true if two fractions are equal, false if object is
      *         <code>null</code>, not an instance of {@link BigFraction}, or not
      *         equal to this fraction instance.
@@ -773,10 +767,12 @@ public class BigFraction
         if (Double.isNaN(result)) {
             // Numerator and/or denominator must be out of range:
             // Calculate how far to shift them to put them in range.
-            int shift = FastMath.max(numerator.bitLength(),
-                                     denominator.bitLength()) - FastMath.getExponent(Float.MAX_VALUE);
-            result = numerator.shiftRight(shift).floatValue() /
-                denominator.shiftRight(shift).floatValue();
+            int shift = FastMath.max(numerator.bitLength(), denominator.bitLength())
+                - FastMath.getExponent(Float.MAX_VALUE);
+            result = numerator.shiftRight(shift)
+                .floatValue()
+                / denominator.shiftRight(shift)
+                    .floatValue();
         }
         return result;
     }
@@ -871,7 +867,8 @@ public class BigFraction
      */
     @Override
     public int intValue() {
-        return numerator.divide(denominator).intValue();
+        return numerator.divide(denominator)
+            .intValue();
     }
 
     /**
@@ -885,7 +882,8 @@ public class BigFraction
      */
     @Override
     public long longValue() {
-        return numerator.divide(denominator).longValue();
+        return numerator.divide(denominator)
+            .longValue();
     }
 
     /**
@@ -915,7 +913,7 @@ public class BigFraction
      * </p>
      *
      * @param i
-     *            the {@code int} to multiply by.
+     *          the {@code int} to multiply by.
      * @return a {@link BigFraction} instance with the resulting values.
      */
     public BigFraction multiply(final int i) {
@@ -933,7 +931,7 @@ public class BigFraction
      * </p>
      *
      * @param l
-     *            the {@code long} to multiply by.
+     *          the {@code long} to multiply by.
      * @return a {@link BigFraction} instance with the resulting values.
      */
     public BigFraction multiply(final long l) {
@@ -958,12 +956,10 @@ public class BigFraction
         if (fraction == null) {
             throw new NullArgumentException(LocalizedFormats.FRACTION);
         }
-        if (numerator.signum() == 0 ||
-            fraction.numerator.signum() == 0) {
+        if (numerator.signum() == 0 || fraction.numerator.signum() == 0) {
             return ZERO;
         }
-        return new BigFraction(numerator.multiply(fraction.numerator),
-                               denominator.multiply(fraction.denominator));
+        return new BigFraction(numerator.multiply(fraction.numerator), denominator.multiply(fraction.denominator));
     }
 
     /**
@@ -997,8 +993,8 @@ public class BigFraction
      * </p>
      *
      * @param exponent
-     *            exponent to which this {@code BigFraction} is to be
-     *            raised.
+     *                 exponent to which this {@code BigFraction} is to be
+     *                 raised.
      * @return <tt>this<sup>exponent</sup></tt>.
      */
     public BigFraction pow(final int exponent) {
@@ -1022,7 +1018,7 @@ public class BigFraction
      * </p>
      *
      * @param exponent
-     *            exponent to which this <code>BigFraction</code> is to be raised.
+     *                 exponent to which this <code>BigFraction</code> is to be raised.
      * @return <tt>this<sup>exponent</sup></tt> as a <code>BigFraction</code>.
      */
     public BigFraction pow(final long exponent) {
@@ -1034,11 +1030,11 @@ public class BigFraction
         }
 
         if (exponent < 0) {
-            return new BigFraction(ArithmeticUtils.pow(denominator, -exponent),
-                                   ArithmeticUtils.pow(numerator,   -exponent));
+            return new BigFraction(
+                ArithmeticUtils.pow(denominator, -exponent),
+                ArithmeticUtils.pow(numerator, -exponent));
         }
-        return new BigFraction(ArithmeticUtils.pow(numerator,   exponent),
-                               ArithmeticUtils.pow(denominator, exponent));
+        return new BigFraction(ArithmeticUtils.pow(numerator, exponent), ArithmeticUtils.pow(denominator, exponent));
     }
 
     /**
@@ -1048,7 +1044,7 @@ public class BigFraction
      * </p>
      *
      * @param exponent
-     *            exponent to which this <code>BigFraction</code> is to be raised.
+     *                 exponent to which this <code>BigFraction</code> is to be raised.
      * @return <tt>this<sup>exponent</sup></tt> as a <code>BigFraction</code>.
      */
     public BigFraction pow(final BigInteger exponent) {
@@ -1061,11 +1057,9 @@ public class BigFraction
 
         if (exponent.signum() == -1) {
             final BigInteger eNeg = exponent.negate();
-            return new BigFraction(ArithmeticUtils.pow(denominator, eNeg),
-                                   ArithmeticUtils.pow(numerator,   eNeg));
+            return new BigFraction(ArithmeticUtils.pow(denominator, eNeg), ArithmeticUtils.pow(numerator, eNeg));
         }
-        return new BigFraction(ArithmeticUtils.pow(numerator,   exponent),
-                               ArithmeticUtils.pow(denominator, exponent));
+        return new BigFraction(ArithmeticUtils.pow(numerator, exponent), ArithmeticUtils.pow(denominator, exponent));
     }
 
     /**
@@ -1075,12 +1069,11 @@ public class BigFraction
      * </p>
      *
      * @param exponent
-     *            exponent to which this <code>BigFraction</code> is to be raised.
+     *                 exponent to which this <code>BigFraction</code> is to be raised.
      * @return <tt>this<sup>exponent</sup></tt>.
      */
     public double pow(final double exponent) {
-        return FastMath.pow(numerator.doubleValue(),   exponent) /
-               FastMath.pow(denominator.doubleValue(), exponent);
+        return FastMath.pow(numerator.doubleValue(), exponent) / FastMath.pow(denominator.doubleValue(), exponent);
     }
 
     /**

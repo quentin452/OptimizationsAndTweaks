@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +16,7 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.optim.linear;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyIterationsException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationData;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointValuePair;
@@ -28,8 +27,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.scal
  *
  * @since 3.1
  */
-public abstract class LinearOptimizer
-    extends MultivariateOptimizer {
+public abstract class LinearOptimizer extends MultivariateOptimizer {
+
     /**
      * Linear objective function.
      */
@@ -76,20 +75,19 @@ public abstract class LinearOptimizer
      * {@inheritDoc}
      *
      * @param optData Optimization data. In addition to those documented in
-     * {@link MultivariateOptimizer#parseOptimizationData(OptimizationData[])
-     * MultivariateOptimizer}, this method will register the following data:
-     * <ul>
-     *  <li>{@link LinearObjectiveFunction}</li>
-     *  <li>{@link LinearConstraintSet}</li>
-     *  <li>{@link NonNegativeConstraint}</li>
-     * </ul>
+     *                {@link MultivariateOptimizer#parseOptimizationData(OptimizationData[])
+     *                MultivariateOptimizer}, this method will register the following data:
+     *                <ul>
+     *                <li>{@link LinearObjectiveFunction}</li>
+     *                <li>{@link LinearConstraintSet}</li>
+     *                <li>{@link NonNegativeConstraint}</li>
+     *                </ul>
      * @return {@inheritDoc}
      * @throws TooManyIterationsException if the maximal number of
-     * iterations is exceeded.
+     *                                    iterations is exceeded.
      */
     @Override
-    public PointValuePair optimize(OptimizationData... optData)
-        throws TooManyIterationsException {
+    public PointValuePair optimize(OptimizationData... optData) throws TooManyIterationsException {
         // Set up base class and perform computation.
         return super.optimize(optData);
     }
@@ -99,12 +97,12 @@ public abstract class LinearOptimizer
      * characterize the problem.
      *
      * @param optData Optimization data.
-     * The following data will be looked for:
-     * <ul>
-     *  <li>{@link LinearObjectiveFunction}</li>
-     *  <li>{@link LinearConstraintSet}</li>
-     *  <li>{@link NonNegativeConstraint}</li>
-     * </ul>
+     *                The following data will be looked for:
+     *                <ul>
+     *                <li>{@link LinearObjectiveFunction}</li>
+     *                <li>{@link LinearConstraintSet}</li>
+     *                <li>{@link NonNegativeConstraint}</li>
+     *                </ul>
      */
     @Override
     protected void parseOptimizationData(OptimizationData... optData) {
@@ -122,7 +120,7 @@ public abstract class LinearOptimizer
                 linearConstraints = ((LinearConstraintSet) data).getConstraints();
                 continue;
             }
-            if  (data instanceof NonNegativeConstraint) {
+            if (data instanceof NonNegativeConstraint) {
                 nonNegative = ((NonNegativeConstraint) data).isRestrictedToNonNegative();
                 continue;
             }

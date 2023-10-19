@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +41,7 @@ public class WilcoxonSignedRankTest {
      * of what you are doing.
      */
     public WilcoxonSignedRankTest() {
-        naturalRanking = new NaturalRanking(NaNStrategy.FIXED,
-                TiesStrategy.AVERAGE);
+        naturalRanking = new NaturalRanking(NaNStrategy.FIXED, TiesStrategy.AVERAGE);
     }
 
     /**
@@ -52,12 +49,11 @@ public class WilcoxonSignedRankTest {
      * Only use this if you are sure of what you are doing.
      *
      * @param nanStrategy
-     *            specifies the strategy that should be used for Double.NaN's
+     *                     specifies the strategy that should be used for Double.NaN's
      * @param tiesStrategy
-     *            specifies the strategy that should be used for ties
+     *                     specifies the strategy that should be used for ties
      */
-    public WilcoxonSignedRankTest(final NaNStrategy nanStrategy,
-                                  final TiesStrategy tiesStrategy) {
+    public WilcoxonSignedRankTest(final NaNStrategy nanStrategy, final TiesStrategy tiesStrategy) {
         naturalRanking = new NaturalRanking(nanStrategy, tiesStrategy);
     }
 
@@ -66,20 +62,18 @@ public class WilcoxonSignedRankTest {
      *
      * @param x first sample
      * @param y second sample
-     * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws NullArgumentException      if {@code x} or {@code y} are {@code null}.
+     * @throws NoDataException            if {@code x} or {@code y} are zero-length.
      * @throws DimensionMismatchException if {@code x} and {@code y} do not
-     * have the same length.
+     *                                    have the same length.
      */
     private void ensureDataConformance(final double[] x, final double[] y)
         throws NullArgumentException, NoDataException, DimensionMismatchException {
 
-        if (x == null ||
-            y == null) {
-                throw new NullArgumentException();
+        if (x == null || y == null) {
+            throw new NullArgumentException();
         }
-        if (x.length == 0 ||
-            y.length == 0) {
+        if (x.length == 0 || y.length == 0) {
             throw new NoDataException();
         }
         if (y.length != x.length) {
@@ -111,10 +105,9 @@ public class WilcoxonSignedRankTest {
      * @param z sample
      * @return |z|
      * @throws NullArgumentException if {@code z} is {@code null}
-     * @throws NoDataException if {@code z} is zero-length.
+     * @throws NoDataException       if {@code z} is zero-length.
      */
-    private double[] calculateAbsoluteDifferences(final double[] z)
-        throws NullArgumentException, NoDataException {
+    private double[] calculateAbsoluteDifferences(final double[] z) throws NullArgumentException, NoDataException {
 
         if (z == null) {
             throw new NullArgumentException();
@@ -163,10 +156,10 @@ public class WilcoxonSignedRankTest {
      * @param x the first sample
      * @param y the second sample
      * @return wilcoxonSignedRank statistic (the larger of W+ and W-)
-     * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws NullArgumentException      if {@code x} or {@code y} are {@code null}.
+     * @throws NoDataException            if {@code x} or {@code y} are zero-length.
      * @throws DimensionMismatchException if {@code x} and {@code y} do not
-     * have the same length.
+     *                                    have the same length.
      */
     public double wilcoxonSignedRank(final double[] x, final double[] y)
         throws NullArgumentException, NoDataException, DimensionMismatchException {
@@ -201,7 +194,7 @@ public class WilcoxonSignedRankTest {
      * University of Amsterdam
      *
      * @param Wmax largest Wilcoxon signed rank value
-     * @param N number of subjects (corresponding to x.length)
+     * @param N    number of subjects (corresponding to x.length)
      * @return two-sided exact p-value
      */
     private double calculateExactPValue(final double Wmax, final int N) {
@@ -237,14 +230,15 @@ public class WilcoxonSignedRankTest {
 
     /**
      * @param Wmin smallest Wilcoxon signed rank value
-     * @param N number of subjects (corresponding to x.length)
+     * @param N    number of subjects (corresponding to x.length)
      * @return two-sided asymptotic p-value
      */
     private double calculateAsymptoticPValue(final double Wmin, final int N) {
 
         final double ES = (double) (N * (N + 1)) / 4.0;
 
-        /* Same as (but saves computations):
+        /*
+         * Same as (but saves computations):
          * final double VarW = ((double) (N * (N + 1) * (2*N + 1))) / 24;
          */
         final double VarS = ES * ((double) (2 * N + 1) / 6.0);
@@ -256,7 +250,7 @@ public class WilcoxonSignedRankTest {
         // pass a null rng to avoid unneeded overhead as we will not sample from this distribution
         final NormalDistribution standardNormal = new NormalDistribution(null, 0, 1);
 
-        return 2*standardNormal.cumulativeProbability(z);
+        return 2 * standardNormal.cumulativeProbability(z);
     }
 
     /**
@@ -283,28 +277,27 @@ public class WilcoxonSignedRankTest {
      * </ul>
      * </p>
      *
-     * @param x the first sample
-     * @param y the second sample
+     * @param x           the first sample
+     * @param y           the second sample
      * @param exactPValue
-     *            if the exact p-value is wanted (only works for x.length <= 30,
-     *            if true and x.length > 30, this is ignored because
-     *            calculations may take too long)
+     *                    if the exact p-value is wanted (only works for x.length <= 30,
+     *                    if true and x.length > 30, this is ignored because
+     *                    calculations may take too long)
      * @return p-value
-     * @throws NullArgumentException if {@code x} or {@code y} are {@code null}.
-     * @throws NoDataException if {@code x} or {@code y} are zero-length.
+     * @throws NullArgumentException      if {@code x} or {@code y} are {@code null}.
+     * @throws NoDataException            if {@code x} or {@code y} are zero-length.
      * @throws DimensionMismatchException if {@code x} and {@code y} do not
-     * have the same length.
-     * @throws NumberIsTooLargeException if {@code exactPValue} is {@code true}
-     * and {@code x.length} > 30
-     * @throws ConvergenceException if the p-value can not be computed due to
-     * a convergence error
-     * @throws MaxCountExceededException if the maximum number of iterations
-     * is exceeded
+     *                                    have the same length.
+     * @throws NumberIsTooLargeException  if {@code exactPValue} is {@code true}
+     *                                    and {@code x.length} > 30
+     * @throws ConvergenceException       if the p-value can not be computed due to
+     *                                    a convergence error
+     * @throws MaxCountExceededException  if the maximum number of iterations
+     *                                    is exceeded
      */
-    public double wilcoxonSignedRankTest(final double[] x, final double[] y,
-                                         final boolean exactPValue)
-        throws NullArgumentException, NoDataException, DimensionMismatchException,
-        NumberIsTooLargeException, ConvergenceException, MaxCountExceededException {
+    public double wilcoxonSignedRankTest(final double[] x, final double[] y, final boolean exactPValue)
+        throws NullArgumentException, NoDataException, DimensionMismatchException, NumberIsTooLargeException,
+        ConvergenceException, MaxCountExceededException {
 
         ensureDataConformance(x, y);
 
@@ -318,7 +311,7 @@ public class WilcoxonSignedRankTest {
         if (exactPValue) {
             return calculateExactPValue(Wmax, N);
         } else {
-            final double Wmin = ( (double)(N*(N+1)) / 2.0 ) - Wmax;
+            final double Wmin = ((double) (N * (N + 1)) / 2.0) - Wmax;
             return calculateAsymptoticPValue(Wmin, N);
         }
     }

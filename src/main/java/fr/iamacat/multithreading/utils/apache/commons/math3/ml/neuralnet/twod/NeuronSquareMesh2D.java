@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +15,19 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.twod;
 
-import java.util.List;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.io.Serializable;
-import java.io.ObjectInputStream;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Neuron;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Network;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.FeatureInitializer;
-import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.SquareNeighbourhood;
+import java.util.List;
+
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathInternalError;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathInternalError;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.FeatureInitializer;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Network;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.Neuron;
+import fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.SquareNeighbourhood;
 
 /**
  * Neural network with the topology of a two-dimensional surface.
@@ -36,14 +35,13 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIntern
  * <br/>
  * This network is primarily intended to represent a
  * <a href="http://en.wikipedia.org/wiki/Kohonen">
- *  Self Organizing Feature Map</a>.
+ * Self Organizing Feature Map</a>.
  *
  * @see fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet.sofm
  * @since 3.3
  */
-public class NeuronSquareMesh2D
-    implements Iterable<Neuron>,
-               Serializable {
+public class NeuronSquareMesh2D implements Iterable<Neuron>, Serializable {
+
     /** Serial version ID */
     private static final long serialVersionUID = 1L;
     /** Underlying network. */
@@ -67,18 +65,21 @@ public class NeuronSquareMesh2D
 
     /**
      * Horizontal (along row) direction.
+     * 
      * @since 3.6
      */
     public enum HorizontalDirection {
         /** Column at the right of the current column. */
-       RIGHT,
-       /** Current column. */
-       CENTER,
-       /** Column at the left of the current column. */
-       LEFT,
+        RIGHT,
+        /** Current column. */
+        CENTER,
+        /** Column at the left of the current column. */
+        LEFT,
     }
+
     /**
      * Vertical (along column) direction.
+     * 
      * @since 3.6
      */
     public enum VerticalDirection {
@@ -93,20 +94,18 @@ public class NeuronSquareMesh2D
     /**
      * Constructor with restricted access, solely used for deserialization.
      *
-     * @param wrapRowDim Whether to wrap the first dimension (i.e the first
-     * and last neurons will be linked together).
-     * @param wrapColDim Whether to wrap the second dimension (i.e the first
-     * and last neurons will be linked together).
+     * @param wrapRowDim        Whether to wrap the first dimension (i.e the first
+     *                          and last neurons will be linked together).
+     * @param wrapColDim        Whether to wrap the second dimension (i.e the first
+     *                          and last neurons will be linked together).
      * @param neighbourhoodType Neighbourhood type.
-     * @param featuresList Arrays that will initialize the features sets of
-     * the network's neurons.
+     * @param featuresList      Arrays that will initialize the features sets of
+     *                          the network's neurons.
      * @throws NumberIsTooSmallException if {@code numRows < 2} or
-     * {@code numCols < 2}.
+     *                                   {@code numCols < 2}.
      */
-    NeuronSquareMesh2D(boolean wrapRowDim,
-                       boolean wrapColDim,
-                       SquareNeighbourhood neighbourhoodType,
-                       double[][][] featuresList) {
+    NeuronSquareMesh2D(boolean wrapRowDim, boolean wrapColDim, SquareNeighbourhood neighbourhoodType,
+        double[][][] featuresList) {
         numberOfRows = featuresList.length;
         numberOfColumns = featuresList[0].length;
 
@@ -147,26 +146,22 @@ public class NeuronSquareMesh2D
      * of the dimensions is wrapped) or a torus (if both dimensions
      * are wrapped).
      *
-     * @param numRows Number of neurons in the first dimension.
-     * @param wrapRowDim Whether to wrap the first dimension (i.e the first
-     * and last neurons will be linked together).
-     * @param numCols Number of neurons in the second dimension.
-     * @param wrapColDim Whether to wrap the second dimension (i.e the first
-     * and last neurons will be linked together).
+     * @param numRows           Number of neurons in the first dimension.
+     * @param wrapRowDim        Whether to wrap the first dimension (i.e the first
+     *                          and last neurons will be linked together).
+     * @param numCols           Number of neurons in the second dimension.
+     * @param wrapColDim        Whether to wrap the second dimension (i.e the first
+     *                          and last neurons will be linked together).
      * @param neighbourhoodType Neighbourhood type.
-     * @param featureInit Array of functions that will initialize the
-     * corresponding element of the features set of each newly created
-     * neuron. In particular, the size of this array defines the size of
-     * feature set.
+     * @param featureInit       Array of functions that will initialize the
+     *                          corresponding element of the features set of each newly created
+     *                          neuron. In particular, the size of this array defines the size of
+     *                          feature set.
      * @throws NumberIsTooSmallException if {@code numRows < 2} or
-     * {@code numCols < 2}.
+     *                                   {@code numCols < 2}.
      */
-    public NeuronSquareMesh2D(int numRows,
-                              boolean wrapRowDim,
-                              int numCols,
-                              boolean wrapColDim,
-                              SquareNeighbourhood neighbourhoodType,
-                              FeatureInitializer[] featureInit) {
+    public NeuronSquareMesh2D(int numRows, boolean wrapRowDim, int numCols, boolean wrapColDim,
+        SquareNeighbourhood neighbourhoodType, FeatureInitializer[] featureInit) {
         if (numRows < 2) {
             throw new NumberIsTooSmallException(numRows, 2, true);
         }
@@ -203,19 +198,16 @@ public class NeuronSquareMesh2D
      * Constructor with restricted access, solely used for making a
      * {@link #copy() deep copy}.
      *
-     * @param wrapRowDim Whether to wrap the first dimension (i.e the first
-     * and last neurons will be linked together).
-     * @param wrapColDim Whether to wrap the second dimension (i.e the first
-     * and last neurons will be linked together).
+     * @param wrapRowDim        Whether to wrap the first dimension (i.e the first
+     *                          and last neurons will be linked together).
+     * @param wrapColDim        Whether to wrap the second dimension (i.e the first
+     *                          and last neurons will be linked together).
      * @param neighbourhoodType Neighbourhood type.
-     * @param net Underlying network.
-     * @param idGrid Neuron identifiers.
+     * @param net               Underlying network.
+     * @param idGrid            Neuron identifiers.
      */
-    private NeuronSquareMesh2D(boolean wrapRowDim,
-                               boolean wrapColDim,
-                               SquareNeighbourhood neighbourhoodType,
-                               Network net,
-                               long[][] idGrid) {
+    private NeuronSquareMesh2D(boolean wrapRowDim, boolean wrapColDim, SquareNeighbourhood neighbourhoodType,
+        Network net, long[][] idGrid) {
         numberOfRows = idGrid.length;
         numberOfColumns = idGrid[0].length;
         wrapRows = wrapRowDim;
@@ -241,16 +233,13 @@ public class NeuronSquareMesh2D
             }
         }
 
-        return new NeuronSquareMesh2D(wrapRows,
-                                      wrapColumns,
-                                      neighbourhood,
-                                      network.copy(),
-                                      idGrid);
+        return new NeuronSquareMesh2D(wrapRows, wrapColumns, neighbourhood, network.copy(), idGrid);
     }
 
     /**
      * {@inheritDoc}
-     *  @since 3.6
+     * 
+     * @since 3.6
      */
     public Iterator<Neuron> iterator() {
         return network.iterator();
@@ -296,18 +285,15 @@ public class NeuronSquareMesh2D
      * @param j Column index.
      * @return the neuron at {@code (i, j)}.
      * @throws OutOfRangeException if {@code i} or {@code j} is
-     * out of range.
+     *                             out of range.
      *
      * @see #getNeuron(int,int,HorizontalDirection,VerticalDirection)
      */
-    public Neuron getNeuron(int i,
-                            int j) {
-        if (i < 0 ||
-            i >= numberOfRows) {
+    public Neuron getNeuron(int i, int j) {
+        if (i < 0 || i >= numberOfRows) {
             throw new OutOfRangeException(i, 0, numberOfRows - 1);
         }
-        if (j < 0 ||
-            j >= numberOfColumns) {
+        if (j < 0 || j >= numberOfColumns) {
             throw new OutOfRangeException(j, 0, numberOfColumns - 1);
         }
 
@@ -319,21 +305,18 @@ public class NeuronSquareMesh2D
      * The neuron at position {@code (0, 0)} is located at the upper-left
      * corner of the map.
      *
-     * @param row Row index.
-     * @param col Column index.
+     * @param row         Row index.
+     * @param col         Column index.
      * @param alongRowDir Direction along the given {@code row} (i.e. an
-     * offset will be added to the given <em>column</em> index.
+     *                    offset will be added to the given <em>column</em> index.
      * @param alongColDir Direction along the given {@code col} (i.e. an
-     * offset will be added to the given <em>row</em> index.
+     *                    offset will be added to the given <em>row</em> index.
      * @return the neuron at the requested location, or {@code null} if
-     * the location is not on the map.
+     *         the location is not on the map.
      *
      * @see #getNeuron(int,int)
      */
-    public Neuron getNeuron(int row,
-                            int col,
-                            HorizontalDirection alongRowDir,
-                            VerticalDirection alongColDir) {
+    public Neuron getNeuron(int row, int col, HorizontalDirection alongRowDir, VerticalDirection alongColDir) {
         final int[] location = getLocation(row, col, alongRowDir, alongColDir);
 
         return location == null ? null : getNeuron(location[0], location[1]);
@@ -345,35 +328,32 @@ public class NeuronSquareMesh2D
      * of the map.
      * Position {@code (0, 0)} is at the upper-left corner of the map.
      *
-     * @param row Row index.
-     * @param col Column index.
+     * @param row         Row index.
+     * @param col         Column index.
      * @param alongRowDir Direction along the given {@code row} (i.e. an
-     * offset will be added to the given <em>column</em> index.
+     *                    offset will be added to the given <em>column</em> index.
      * @param alongColDir Direction along the given {@code col} (i.e. an
-     * offset will be added to the given <em>row</em> index.
+     *                    offset will be added to the given <em>row</em> index.
      * @return an array of length 2 containing the indices of the requested
-     * location, or {@code null} if that location is not part of the map.
+     *         location, or {@code null} if that location is not part of the map.
      *
      * @see #getNeuron(int,int)
      */
-    private int[] getLocation(int row,
-                              int col,
-                              HorizontalDirection alongRowDir,
-                              VerticalDirection alongColDir) {
+    private int[] getLocation(int row, int col, HorizontalDirection alongRowDir, VerticalDirection alongColDir) {
         final int colOffset;
         switch (alongRowDir) {
-        case LEFT:
-            colOffset = -1;
-            break;
-        case RIGHT:
-            colOffset = 1;
-            break;
-        case CENTER:
-            colOffset = 0;
-            break;
-        default:
-            // Should never happen.
-            throw new MathInternalError();
+            case LEFT:
+                colOffset = -1;
+                break;
+            case RIGHT:
+                colOffset = 1;
+                break;
+            case CENTER:
+                colOffset = 0;
+                break;
+            default:
+                // Should never happen.
+                throw new MathInternalError();
         }
         int colIndex = col + colOffset;
         if (wrapColumns) {
@@ -386,18 +366,18 @@ public class NeuronSquareMesh2D
 
         final int rowOffset;
         switch (alongColDir) {
-        case UP:
-            rowOffset = -1;
-            break;
-        case DOWN:
-            rowOffset = 1;
-            break;
-        case CENTER:
-            rowOffset = 0;
-            break;
-        default:
-            // Should never happen.
-            throw new MathInternalError();
+            case UP:
+                rowOffset = -1;
+                break;
+            case DOWN:
+                rowOffset = 1;
+                break;
+            case CENTER:
+                rowOffset = 0;
+                break;
+            default:
+                // Should never happen.
+                throw new MathInternalError();
         }
         int rowIndex = row + rowOffset;
         if (wrapRows) {
@@ -408,10 +388,7 @@ public class NeuronSquareMesh2D
             }
         }
 
-        if (rowIndex < 0 ||
-            rowIndex >= numberOfRows ||
-            colIndex < 0 ||
-            colIndex >= numberOfColumns) {
+        if (rowIndex < 0 || rowIndex >= numberOfRows || colIndex < 0 || colIndex >= numberOfColumns) {
             return null;
         } else {
             return new int[] { rowIndex, colIndex };
@@ -432,114 +409,109 @@ public class NeuronSquareMesh2D
 
                 switch (neighbourhood) {
 
-                case MOORE:
-                    // Add links to "diagonal" neighbours.
-                    if (i > 0) {
-                        if (j > 0) {
-                            linkEnd.add(identifiers[i - 1][j - 1]);
-                        }
-                        if (j < jLast) {
-                            linkEnd.add(identifiers[i - 1][j + 1]);
-                        }
-                    }
-                    if (i < iLast) {
-                        if (j > 0) {
-                            linkEnd.add(identifiers[i + 1][j - 1]);
-                        }
-                        if (j < jLast) {
-                            linkEnd.add(identifiers[i + 1][j + 1]);
-                        }
-                    }
-                    if (wrapRows) {
-                        if (i == 0) {
+                    case MOORE:
+                        // Add links to "diagonal" neighbours.
+                        if (i > 0) {
                             if (j > 0) {
-                                linkEnd.add(identifiers[iLast][j - 1]);
+                                linkEnd.add(identifiers[i - 1][j - 1]);
                             }
                             if (j < jLast) {
-                                linkEnd.add(identifiers[iLast][j + 1]);
+                                linkEnd.add(identifiers[i - 1][j + 1]);
                             }
-                        } else if (i == iLast) {
+                        }
+                        if (i < iLast) {
                             if (j > 0) {
-                                linkEnd.add(identifiers[0][j - 1]);
+                                linkEnd.add(identifiers[i + 1][j - 1]);
                             }
                             if (j < jLast) {
-                                linkEnd.add(identifiers[0][j + 1]);
+                                linkEnd.add(identifiers[i + 1][j + 1]);
                             }
                         }
-                    }
-                    if (wrapColumns) {
-                        if (j == 0) {
-                            if (i > 0) {
-                                linkEnd.add(identifiers[i - 1][jLast]);
+                        if (wrapRows) {
+                            if (i == 0) {
+                                if (j > 0) {
+                                    linkEnd.add(identifiers[iLast][j - 1]);
+                                }
+                                if (j < jLast) {
+                                    linkEnd.add(identifiers[iLast][j + 1]);
+                                }
+                            } else if (i == iLast) {
+                                if (j > 0) {
+                                    linkEnd.add(identifiers[0][j - 1]);
+                                }
+                                if (j < jLast) {
+                                    linkEnd.add(identifiers[0][j + 1]);
+                                }
                             }
-                            if (i < iLast) {
-                                linkEnd.add(identifiers[i + 1][jLast]);
+                        }
+                        if (wrapColumns) {
+                            if (j == 0) {
+                                if (i > 0) {
+                                    linkEnd.add(identifiers[i - 1][jLast]);
+                                }
+                                if (i < iLast) {
+                                    linkEnd.add(identifiers[i + 1][jLast]);
+                                }
+                            } else if (j == jLast) {
+                                if (i > 0) {
+                                    linkEnd.add(identifiers[i - 1][0]);
+                                }
+                                if (i < iLast) {
+                                    linkEnd.add(identifiers[i + 1][0]);
+                                }
                             }
-                        } else if (j == jLast) {
-                             if (i > 0) {
-                                 linkEnd.add(identifiers[i - 1][0]);
-                             }
-                             if (i < iLast) {
-                                 linkEnd.add(identifiers[i + 1][0]);
-                             }
                         }
-                    }
-                    if (wrapRows &&
-                        wrapColumns) {
-                        if (i == 0 &&
-                            j == 0) {
-                            linkEnd.add(identifiers[iLast][jLast]);
-                        } else if (i == 0 &&
-                                   j == jLast) {
-                            linkEnd.add(identifiers[iLast][0]);
-                        } else if (i == iLast &&
-                                   j == 0) {
-                            linkEnd.add(identifiers[0][jLast]);
-                        } else if (i == iLast &&
-                                   j == jLast) {
-                            linkEnd.add(identifiers[0][0]);
+                        if (wrapRows && wrapColumns) {
+                            if (i == 0 && j == 0) {
+                                linkEnd.add(identifiers[iLast][jLast]);
+                            } else if (i == 0 && j == jLast) {
+                                linkEnd.add(identifiers[iLast][0]);
+                            } else if (i == iLast && j == 0) {
+                                linkEnd.add(identifiers[0][jLast]);
+                            } else if (i == iLast && j == jLast) {
+                                linkEnd.add(identifiers[0][0]);
+                            }
                         }
-                    }
 
-                    // Case falls through since the "Moore" neighbourhood
-                    // also contains the neurons that belong to the "Von
-                    // Neumann" neighbourhood.
+                        // Case falls through since the "Moore" neighbourhood
+                        // also contains the neurons that belong to the "Von
+                        // Neumann" neighbourhood.
 
-                    // fallthru (CheckStyle)
-                case VON_NEUMANN:
-                    // Links to preceding and following "row".
-                    if (i > 0) {
-                        linkEnd.add(identifiers[i - 1][j]);
-                    }
-                    if (i < iLast) {
-                        linkEnd.add(identifiers[i + 1][j]);
-                    }
-                    if (wrapRows) {
-                        if (i == 0) {
-                            linkEnd.add(identifiers[iLast][j]);
-                        } else if (i == iLast) {
-                            linkEnd.add(identifiers[0][j]);
+                        // fallthru (CheckStyle)
+                    case VON_NEUMANN:
+                        // Links to preceding and following "row".
+                        if (i > 0) {
+                            linkEnd.add(identifiers[i - 1][j]);
                         }
-                    }
-
-                    // Links to preceding and following "column".
-                    if (j > 0) {
-                        linkEnd.add(identifiers[i][j - 1]);
-                    }
-                    if (j < jLast) {
-                        linkEnd.add(identifiers[i][j + 1]);
-                    }
-                    if (wrapColumns) {
-                        if (j == 0) {
-                            linkEnd.add(identifiers[i][jLast]);
-                        } else if (j == jLast) {
-                            linkEnd.add(identifiers[i][0]);
+                        if (i < iLast) {
+                            linkEnd.add(identifiers[i + 1][j]);
                         }
-                    }
-                    break;
+                        if (wrapRows) {
+                            if (i == 0) {
+                                linkEnd.add(identifiers[iLast][j]);
+                            } else if (i == iLast) {
+                                linkEnd.add(identifiers[0][j]);
+                            }
+                        }
 
-                default:
-                    throw new MathInternalError(); // Cannot happen.
+                        // Links to preceding and following "column".
+                        if (j > 0) {
+                            linkEnd.add(identifiers[i][j - 1]);
+                        }
+                        if (j < jLast) {
+                            linkEnd.add(identifiers[i][j + 1]);
+                        }
+                        if (wrapColumns) {
+                            if (j == 0) {
+                                linkEnd.add(identifiers[i][jLast]);
+                            } else if (j == jLast) {
+                                linkEnd.add(identifiers[i][0]);
+                            }
+                        }
+                        break;
+
+                    default:
+                        throw new MathInternalError(); // Cannot happen.
                 }
 
                 final Neuron aNeuron = network.getNeuron(identifiers[i][j]);
@@ -575,16 +547,14 @@ public class NeuronSquareMesh2D
             }
         }
 
-        return new SerializationProxy(wrapRows,
-                                      wrapColumns,
-                                      neighbourhood,
-                                      featuresList);
+        return new SerializationProxy(wrapRows, wrapColumns, neighbourhood, featuresList);
     }
 
     /**
      * Serialization.
      */
     private static class SerializationProxy implements Serializable {
+
         /** Serializable. */
         private static final long serialVersionUID = 20130226L;
         /** Wrap. */
@@ -597,16 +567,14 @@ public class NeuronSquareMesh2D
         private final double[][][] featuresList;
 
         /**
-         * @param wrapRows Whether the row dimension is wrapped.
-         * @param wrapColumns Whether the column dimension is wrapped.
+         * @param wrapRows      Whether the row dimension is wrapped.
+         * @param wrapColumns   Whether the column dimension is wrapped.
          * @param neighbourhood Neighbourhood type.
-         * @param featuresList List of neurons features.
-         * {@code neuronList}.
+         * @param featuresList  List of neurons features.
+         *                      {@code neuronList}.
          */
-        SerializationProxy(boolean wrapRows,
-                           boolean wrapColumns,
-                           SquareNeighbourhood neighbourhood,
-                           double[][][] featuresList) {
+        SerializationProxy(boolean wrapRows, boolean wrapColumns, SquareNeighbourhood neighbourhood,
+            double[][][] featuresList) {
             this.wrapRows = wrapRows;
             this.wrapColumns = wrapColumns;
             this.neighbourhood = neighbourhood;
@@ -619,10 +587,7 @@ public class NeuronSquareMesh2D
          * @return the {@link Neuron} for which this instance is the proxy.
          */
         private Object readResolve() {
-            return new NeuronSquareMesh2D(wrapRows,
-                                          wrapColumns,
-                                          neighbourhood,
-                                          featuresList);
+            return new NeuronSquareMesh2D(wrapRows, wrapColumns, neighbourhood, featuresList);
         }
     }
 }

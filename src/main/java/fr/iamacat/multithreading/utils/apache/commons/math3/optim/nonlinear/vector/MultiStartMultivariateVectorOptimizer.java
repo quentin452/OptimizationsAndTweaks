@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +14,19 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim.nonlinear.vector;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.ArrayRealVector;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealVector;
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.ArrayRealVector;
-import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomVectorGenerator;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.BaseMultiStartMultivariateOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointVectorValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomVectorGenerator;
 
 /**
  * Multi-start optimizer for a (vector) model function.
@@ -39,8 +38,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointVectorVal
  * @since 3.0
  */
 @Deprecated
-public class MultiStartMultivariateVectorOptimizer
-    extends BaseMultiStartMultivariateOptimizer<PointVectorValuePair> {
+public class MultiStartMultivariateVectorOptimizer extends BaseMultiStartMultivariateOptimizer<PointVectorValuePair> {
+
     /** Underlying optimizer. */
     private final MultivariateVectorOptimizer optimizer;
     /** Found optima. */
@@ -50,19 +49,16 @@ public class MultiStartMultivariateVectorOptimizer
      * Create a multi-start optimizer from a single-start optimizer.
      *
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform.
-     * If {@code starts == 1}, the result will be same as if {@code optimizer}
-     * is called directly.
+     * @param starts    Number of starts to perform.
+     *                  If {@code starts == 1}, the result will be same as if {@code optimizer}
+     *                  is called directly.
      * @param generator Random vector generator to use for restarts.
-     * @throws NullArgumentException if {@code optimizer} or {@code generator}
-     * is {@code null}.
+     * @throws NullArgumentException        if {@code optimizer} or {@code generator}
+     *                                      is {@code null}.
      * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
-    public MultiStartMultivariateVectorOptimizer(final MultivariateVectorOptimizer optimizer,
-                                                 final int starts,
-                                                 final RandomVectorGenerator generator)
-        throws NullArgumentException,
-        NotStrictlyPositiveException {
+    public MultiStartMultivariateVectorOptimizer(final MultivariateVectorOptimizer optimizer, final int starts,
+        final RandomVectorGenerator generator) throws NullArgumentException, NotStrictlyPositiveException {
         super(optimizer, starts, generator);
         this.optimizer = optimizer;
     }
@@ -97,21 +93,20 @@ public class MultiStartMultivariateVectorOptimizer
      */
     private Comparator<PointVectorValuePair> getPairComparator() {
         return new Comparator<PointVectorValuePair>() {
+
             /** Observed value to be matched. */
             private final RealVector target = new ArrayRealVector(optimizer.getTarget(), false);
             /** Observations weights. */
             private final RealMatrix weight = optimizer.getWeight();
 
             /** {@inheritDoc} */
-            public int compare(final PointVectorValuePair o1,
-                               final PointVectorValuePair o2) {
+            public int compare(final PointVectorValuePair o1, final PointVectorValuePair o2) {
                 if (o1 == null) {
                     return (o2 == null) ? 0 : 1;
                 } else if (o2 == null) {
                     return -1;
                 }
-                return Double.compare(weightedResidual(o1),
-                                      weightedResidual(o2));
+                return Double.compare(weightedResidual(o1), weightedResidual(o2));
             }
 
             private double weightedResidual(final PointVectorValuePair pv) {

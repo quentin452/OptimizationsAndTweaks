@@ -8,26 +8,38 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 // ////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.impl.sync;
 
 import java.util.Set;
 
-
 /** Local implementation of SynchronizedSet so we can set the mutex explicitly. */
 class SynchronizedSet<E> extends SynchronizedCollection<E> implements Set<E> {
-	private static final long serialVersionUID = 487447009682186044L;
 
-	SynchronizedSet( Set<E> s, Object mutex ) { super( s, mutex ); }
+    private static final long serialVersionUID = 487447009682186044L;
+
+    SynchronizedSet(Set<E> s, Object mutex) {
+        super(s, mutex);
+    }
+
     @Override
-	public boolean equals( Object o ) { synchronized( mutex ) { return c.equals( o ); } }
+    public boolean equals(Object o) {
+        synchronized (mutex) {
+            return c.equals(o);
+        }
+    }
+
     @Override
-	public int hashCode() { synchronized( mutex ) { return c.hashCode(); } }
+    public int hashCode() {
+        synchronized (mutex) {
+            return c.hashCode();
+        }
+    }
 }

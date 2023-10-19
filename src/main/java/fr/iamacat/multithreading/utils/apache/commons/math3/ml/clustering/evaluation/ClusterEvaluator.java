@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,6 +45,7 @@ public abstract class ClusterEvaluator<T extends Clusterable> {
 
     /**
      * Creates a new cluster evaluator with the given distance measure.
+     * 
      * @param measure the distance measure to use
      */
     public ClusterEvaluator(final DistanceMeasure measure) {
@@ -55,6 +54,7 @@ public abstract class ClusterEvaluator<T extends Clusterable> {
 
     /**
      * Computes the evaluation score for the given list of clusters.
+     * 
      * @param clusters the clusters to evaluate
      * @return the computed score
      */
@@ -92,7 +92,7 @@ public abstract class ClusterEvaluator<T extends Clusterable> {
      *
      * @param cluster the cluster
      * @return the computed centroid for the cluster,
-     * or {@code null} if the cluster does not contain any points
+     *         or {@code null} if the cluster does not contain any points
      */
     protected Clusterable centroidOf(final Cluster<T> cluster) {
         final List<T> points = cluster.getPoints();
@@ -105,7 +105,8 @@ public abstract class ClusterEvaluator<T extends Clusterable> {
             return ((CentroidCluster<T>) cluster).getCenter();
         }
 
-        final int dimension = points.get(0).getPoint().length;
+        final int dimension = points.get(0)
+            .getPoint().length;
         final double[] centroid = new double[dimension];
         for (final T p : points) {
             final double[] point = p.getPoint();

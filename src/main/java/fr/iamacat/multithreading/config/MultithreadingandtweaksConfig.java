@@ -171,7 +171,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityChicken;
-
+    @Config.Comment("Optimize EventHandlerNEP from notenoughpets")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventHandlerNEP;
     @Config.Comment("Optimize HackTickHandler from Pneumaticraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +35,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.DiagonalMatri
  * @since 3.3
  */
 public class PolynomialCurveFitter extends AbstractCurveFitter {
+
     /** Parametric function to be fitted. */
     private static final PolynomialFunction.Parametric FUNCTION = new PolynomialFunction.Parametric();
     /** Initial guess. */
@@ -48,11 +47,10 @@ public class PolynomialCurveFitter extends AbstractCurveFitter {
      * Contructor used by the factory methods.
      *
      * @param initialGuess Initial guess.
-     * @param maxIter Maximum number of iterations of the optimization algorithm.
+     * @param maxIter      Maximum number of iterations of the optimization algorithm.
      * @throws MathInternalError if {@code initialGuess} is {@code null}.
      */
-    private PolynomialCurveFitter(double[] initialGuess,
-                                  int maxIter) {
+    private PolynomialCurveFitter(double[] initialGuess, int maxIter) {
         this.initialGuess = initialGuess;
         this.maxIter = maxIter;
     }
@@ -75,22 +73,22 @@ public class PolynomialCurveFitter extends AbstractCurveFitter {
 
     /**
      * Configure the start point (initial guess).
+     * 
      * @param newStart new start point (initial guess)
      * @return a new instance.
      */
     public PolynomialCurveFitter withStartPoint(double[] newStart) {
-        return new PolynomialCurveFitter(newStart.clone(),
-                                         maxIter);
+        return new PolynomialCurveFitter(newStart.clone(), maxIter);
     }
 
     /**
      * Configure the maximum number of iterations.
+     * 
      * @param newMaxIter maximum number of iterations
      * @return a new instance.
      */
     public PolynomialCurveFitter withMaxIterations(int newMaxIter) {
-        return new PolynomialCurveFitter(initialGuess,
-                                         newMaxIter);
+        return new PolynomialCurveFitter(initialGuess, newMaxIter);
     }
 
     /** {@inheritDoc} */
@@ -98,18 +96,19 @@ public class PolynomialCurveFitter extends AbstractCurveFitter {
     protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> observations) {
         // Prepare least-squares problem.
         final int len = observations.size();
-        final double[] target  = new double[len];
+        final double[] target = new double[len];
         final double[] weights = new double[len];
 
         int i = 0;
         for (WeightedObservedPoint obs : observations) {
-            target[i]  = obs.getY();
+            target[i] = obs.getY();
             weights[i] = obs.getWeight();
             ++i;
         }
 
-        final AbstractCurveFitter.TheoreticalValuesFunction model =
-                new AbstractCurveFitter.TheoreticalValuesFunction(FUNCTION, observations);
+        final AbstractCurveFitter.TheoreticalValuesFunction model = new AbstractCurveFitter.TheoreticalValuesFunction(
+            FUNCTION,
+            observations);
 
         if (initialGuess == null) {
             throw new MathInternalError();
@@ -117,14 +116,13 @@ public class PolynomialCurveFitter extends AbstractCurveFitter {
 
         // Return a new least squares problem set up to fit a polynomial curve to the
         // observed points.
-        return new LeastSquaresBuilder().
-                maxEvaluations(Integer.MAX_VALUE).
-                maxIterations(maxIter).
-                start(initialGuess).
-                target(target).
-                weight(new DiagonalMatrix(weights)).
-                model(model.getModelFunction(), model.getModelFunctionJacobian()).
-                build();
+        return new LeastSquaresBuilder().maxEvaluations(Integer.MAX_VALUE)
+            .maxIterations(maxIter)
+            .start(initialGuess)
+            .target(target)
+            .weight(new DiagonalMatrix(weights))
+            .model(model.getModelFunction(), model.getModelFunctionJacobian())
+            .build();
 
     }
 

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +23,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 
 /**
  * Returns the covariance matrix of the available vectors.
+ * 
  * @since 1.2
  */
 public class VectorialCovariance implements Serializable {
@@ -44,20 +43,23 @@ public class VectorialCovariance implements Serializable {
     /** Number of vectors in the sample. */
     private long n;
 
-    /** Constructs a VectorialCovariance.
-     * @param dimension vectors dimension
+    /**
+     * Constructs a VectorialCovariance.
+     * 
+     * @param dimension       vectors dimension
      * @param isBiasCorrected if true, computed the unbiased sample covariance,
-     * otherwise computes the biased population covariance
+     *                        otherwise computes the biased population covariance
      */
     public VectorialCovariance(int dimension, boolean isBiasCorrected) {
-        sums         = new double[dimension];
+        sums = new double[dimension];
         productsSums = new double[dimension * (dimension + 1) / 2];
-        n            = 0;
+        n = 0;
         this.isBiasCorrected = isBiasCorrected;
     }
 
     /**
      * Add a new vector to the sample.
+     * 
      * @param v vector to add
      * @throws DimensionMismatchException if the vector does not have the right dimension
      */
@@ -77,6 +79,7 @@ public class VectorialCovariance implements Serializable {
 
     /**
      * Get the covariance matrix.
+     * 
      * @return covariance matrix
      */
     public RealMatrix getResult() {
@@ -102,6 +105,7 @@ public class VectorialCovariance implements Serializable {
 
     /**
      * Get the number of vectors in the sample.
+     * 
      * @return number of vectors in the sample
      */
     public long getN() {

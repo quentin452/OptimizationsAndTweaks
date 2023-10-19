@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +24,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.Well19937c;
  * @see <a href="http://mathworld.wolfram.com/Chi-SquaredDistribution.html">Chi-squared Distribution (MathWorld)</a>
  */
 public class ChiSquaredDistribution extends AbstractRealDistribution {
+
     /**
      * Default inverse cumulative probability accuracy
+     * 
      * @since 2.1
      */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
@@ -58,21 +58,20 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param degreesOfFreedom Degrees of freedom.
+     * @param degreesOfFreedom   Degrees of freedom.
      * @param inverseCumAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates (defaults to
-     * {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates (defaults to
+     *                           {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @since 2.1
      */
-    public ChiSquaredDistribution(double degreesOfFreedom,
-                                  double inverseCumAccuracy) {
+    public ChiSquaredDistribution(double degreesOfFreedom, double inverseCumAccuracy) {
         this(new Well19937c(), degreesOfFreedom, inverseCumAccuracy);
     }
 
     /**
      * Create a Chi-Squared distribution with the given degrees of freedom.
      *
-     * @param rng Random number generator.
+     * @param rng              Random number generator.
      * @param degreesOfFreedom Degrees of freedom.
      * @since 3.3
      */
@@ -84,16 +83,14 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      * Create a Chi-Squared distribution with the given degrees of freedom and
      * inverse cumulative probability accuracy.
      *
-     * @param rng Random number generator.
-     * @param degreesOfFreedom Degrees of freedom.
+     * @param rng                Random number generator.
+     * @param degreesOfFreedom   Degrees of freedom.
      * @param inverseCumAccuracy the maximum absolute error in inverse
-     * cumulative probability estimates (defaults to
-     * {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
+     *                           cumulative probability estimates (defaults to
+     *                           {@link #DEFAULT_INVERSE_ABSOLUTE_ACCURACY}).
      * @since 3.1
      */
-    public ChiSquaredDistribution(RandomGenerator rng,
-                                  double degreesOfFreedom,
-                                  double inverseCumAccuracy) {
+    public ChiSquaredDistribution(RandomGenerator rng, double degreesOfFreedom, double inverseCumAccuracy) {
         super(rng);
 
         gamma = new GammaDistribution(degreesOfFreedom / 2, 2);
@@ -121,7 +118,7 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         return gamma.cumulativeProbability(x);
     }
 

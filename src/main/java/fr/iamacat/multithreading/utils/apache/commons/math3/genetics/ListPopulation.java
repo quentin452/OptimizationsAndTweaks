@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,11 +20,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
  * Population of chromosomes represented by a {@link List}.
@@ -48,7 +46,7 @@ public abstract class ListPopulation implements Population {
      * @throws NotPositiveException if the population limit is not a positive number (&lt; 1)
      */
     public ListPopulation(final int populationLimit) throws NotPositiveException {
-        this(Collections.<Chromosome> emptyList(), populationLimit);
+        this(Collections.<Chromosome>emptyList(), populationLimit);
     }
 
     /**
@@ -56,10 +54,10 @@ public abstract class ListPopulation implements Population {
      * <p>
      * Note: the chromosomes of the specified list are added to the population.
      *
-     * @param chromosomes list of chromosomes to be added to the population
+     * @param chromosomes     list of chromosomes to be added to the population
      * @param populationLimit maximal size of the population
-     * @throws NullArgumentException if the list of chromosomes is {@code null}
-     * @throws NotPositiveException if the population limit is not a positive number (&lt; 1)
+     * @throws NullArgumentException     if the list of chromosomes is {@code null}
+     * @throws NotPositiveException      if the population limit is not a positive number (&lt; 1)
      * @throws NumberIsTooLargeException if the list of chromosomes exceeds the population limit
      */
     public ListPopulation(final List<Chromosome> chromosomes, final int populationLimit)
@@ -72,8 +70,11 @@ public abstract class ListPopulation implements Population {
             throw new NotPositiveException(LocalizedFormats.POPULATION_LIMIT_NOT_POSITIVE, populationLimit);
         }
         if (chromosomes.size() > populationLimit) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
-                                                chromosomes.size(), populationLimit, false);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
+                chromosomes.size(),
+                populationLimit,
+                false);
         }
         this.populationLimit = populationLimit;
         this.chromosomes = new ArrayList<Chromosome>(populationLimit);
@@ -87,7 +88,7 @@ public abstract class ListPopulation implements Population {
      * of the specified list to the population.
      *
      * @param chromosomes the list of chromosomes
-     * @throws NullArgumentException if the list of chromosomes is {@code null}
+     * @throws NullArgumentException     if the list of chromosomes is {@code null}
      * @throws NumberIsTooLargeException if the list of chromosomes exceeds the population limit
      * @deprecated use {@link #addChromosomes(Collection)} instead
      */
@@ -99,8 +100,11 @@ public abstract class ListPopulation implements Population {
             throw new NullArgumentException();
         }
         if (chromosomes.size() > populationLimit) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
-                                                chromosomes.size(), populationLimit, false);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
+                chromosomes.size(),
+                populationLimit,
+                false);
         }
         this.chromosomes.clear();
         this.chromosomes.addAll(chromosomes);
@@ -108,21 +112,26 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Add a {@link Collection} of chromosomes to this {@link Population}.
+     * 
      * @param chromosomeColl a {@link Collection} of chromosomes
      * @throws NumberIsTooLargeException if the population would exceed the population limit when
-     * adding this chromosome
+     *                                   adding this chromosome
      * @since 3.1
      */
     public void addChromosomes(final Collection<Chromosome> chromosomeColl) throws NumberIsTooLargeException {
         if (chromosomes.size() + chromosomeColl.size() > populationLimit) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
-                                                chromosomes.size(), populationLimit, false);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
+                chromosomes.size(),
+                populationLimit,
+                false);
         }
         this.chromosomes.addAll(chromosomeColl);
     }
 
     /**
      * Returns an unmodifiable list of the chromosomes in this population.
+     * 
      * @return the unmodifiable list of chromosomes
      */
     public List<Chromosome> getChromosomes() {
@@ -131,6 +140,7 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Access the list of chromosomes.
+     * 
      * @return the list of chromosomes
      * @since 3.1
      */
@@ -143,18 +153,22 @@ public abstract class ListPopulation implements Population {
      *
      * @param chromosome the chromosome to add.
      * @throws NumberIsTooLargeException if the population would exceed the {@code populationLimit} after
-     *   adding this chromosome
+     *                                   adding this chromosome
      */
     public void addChromosome(final Chromosome chromosome) throws NumberIsTooLargeException {
         if (chromosomes.size() >= populationLimit) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
-                                                chromosomes.size(), populationLimit, false);
+            throw new NumberIsTooLargeException(
+                LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
+                chromosomes.size(),
+                populationLimit,
+                false);
         }
         this.chromosomes.add(chromosome);
     }
 
     /**
      * Access the fittest chromosome in this population.
+     * 
      * @return the fittest chromosome.
      */
     public Chromosome getFittestChromosome() {
@@ -171,6 +185,7 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Access the maximum population size.
+     * 
      * @return the maximum population size.
      */
     public int getPopulationLimit() {
@@ -179,10 +194,11 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Sets the maximal population size.
+     * 
      * @param populationLimit maximal population size.
-     * @throws NotPositiveException if the population limit is not a positive number (&lt; 1)
+     * @throws NotPositiveException      if the population limit is not a positive number (&lt; 1)
      * @throws NumberIsTooSmallException if the new population size is smaller than the current number
-     *   of chromosomes in the population
+     *                                   of chromosomes in the population
      */
     public void setPopulationLimit(final int populationLimit) throws NotPositiveException, NumberIsTooSmallException {
         if (populationLimit <= 0) {
@@ -196,6 +212,7 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Access the current population size.
+     * 
      * @return the current population size.
      */
     public int getPopulationSize() {
@@ -212,7 +229,9 @@ public abstract class ListPopulation implements Population {
 
     /**
      * Returns an iterator over the unmodifiable list of chromosomes.
-     * <p>Any call to {@link Iterator#remove()} will result in a {@link UnsupportedOperationException}.</p>
+     * <p>
+     * Any call to {@link Iterator#remove()} will result in a {@link UnsupportedOperationException}.
+     * </p>
      *
      * @return chromosome iterator
      */

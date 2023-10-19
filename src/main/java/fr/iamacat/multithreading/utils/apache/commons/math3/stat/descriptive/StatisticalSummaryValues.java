@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +21,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.Precision;
 
 /**
- *  Value object representing the results of a univariate statistical summary.
+ * Value object representing the results of a univariate statistical summary.
  *
  */
-public class StatisticalSummaryValues implements Serializable,
-    StatisticalSummary {
+public class StatisticalSummaryValues implements Serializable, StatisticalSummary {
 
     /** Serialization id */
     private static final long serialVersionUID = -5108854841843722536L;
@@ -51,17 +48,16 @@ public class StatisticalSummaryValues implements Serializable,
     private final double sum;
 
     /**
-      * Constructor
-      *
-      * @param mean  the sample mean
-      * @param variance  the sample variance
-      * @param n  the number of observations in the sample
-      * @param max  the maximum value
-      * @param min  the minimum value
-      * @param sum  the sum of the values
+     * Constructor
+     *
+     * @param mean     the sample mean
+     * @param variance the sample variance
+     * @param n        the number of observations in the sample
+     * @param max      the maximum value
+     * @param min      the minimum value
+     * @param sum      the sum of the values
      */
-    public StatisticalSummaryValues(double mean, double variance, long n,
-        double max, double min, double sum) {
+    public StatisticalSummaryValues(double mean, double variance, long n, double max, double min, double sum) {
         super();
         this.mean = mean;
         this.variance = variance;
@@ -123,26 +119,26 @@ public class StatisticalSummaryValues implements Serializable,
     /**
      * Returns true iff <code>object</code> is a
      * <code>StatisticalSummaryValues</code> instance and all statistics have
-     *  the same values as this.
+     * the same values as this.
      *
      * @param object the object to test equality against.
      * @return true if object equals this
      */
     @Override
     public boolean equals(Object object) {
-        if (object == this ) {
+        if (object == this) {
             return true;
         }
         if (object instanceof StatisticalSummaryValues == false) {
             return false;
         }
         StatisticalSummaryValues stat = (StatisticalSummaryValues) object;
-        return Precision.equalsIncludingNaN(stat.getMax(),      getMax())  &&
-               Precision.equalsIncludingNaN(stat.getMean(),     getMean()) &&
-               Precision.equalsIncludingNaN(stat.getMin(),      getMin())  &&
-               Precision.equalsIncludingNaN(stat.getN(),        getN())    &&
-               Precision.equalsIncludingNaN(stat.getSum(),      getSum())  &&
-               Precision.equalsIncludingNaN(stat.getVariance(), getVariance());
+        return Precision.equalsIncludingNaN(stat.getMax(), getMax())
+            && Precision.equalsIncludingNaN(stat.getMean(), getMean())
+            && Precision.equalsIncludingNaN(stat.getMin(), getMin())
+            && Precision.equalsIncludingNaN(stat.getN(), getN())
+            && Precision.equalsIncludingNaN(stat.getSum(), getSum())
+            && Precision.equalsIncludingNaN(stat.getVariance(), getVariance());
     }
 
     /**
@@ -171,15 +167,29 @@ public class StatisticalSummaryValues implements Serializable,
     public String toString() {
         StringBuffer outBuffer = new StringBuffer();
         String endl = "\n";
-        outBuffer.append("StatisticalSummaryValues:").append(endl);
-        outBuffer.append("n: ").append(getN()).append(endl);
-        outBuffer.append("min: ").append(getMin()).append(endl);
-        outBuffer.append("max: ").append(getMax()).append(endl);
-        outBuffer.append("mean: ").append(getMean()).append(endl);
-        outBuffer.append("std dev: ").append(getStandardDeviation())
+        outBuffer.append("StatisticalSummaryValues:")
             .append(endl);
-        outBuffer.append("variance: ").append(getVariance()).append(endl);
-        outBuffer.append("sum: ").append(getSum()).append(endl);
+        outBuffer.append("n: ")
+            .append(getN())
+            .append(endl);
+        outBuffer.append("min: ")
+            .append(getMin())
+            .append(endl);
+        outBuffer.append("max: ")
+            .append(getMax())
+            .append(endl);
+        outBuffer.append("mean: ")
+            .append(getMean())
+            .append(endl);
+        outBuffer.append("std dev: ")
+            .append(getStandardDeviation())
+            .append(endl);
+        outBuffer.append("variance: ")
+            .append(getVariance())
+            .append(endl);
+        outBuffer.append("sum: ")
+            .append(getSum())
+            .append(endl);
         return outBuffer.toString();
     }
 

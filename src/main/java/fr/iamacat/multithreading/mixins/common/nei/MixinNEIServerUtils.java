@@ -1,18 +1,20 @@
 package fr.iamacat.multithreading.mixins.common.nei;
 
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.world.World;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
 import codechicken.core.CommonUtils;
 import codechicken.core.ServerUtils;
 import codechicken.nei.NEIActions;
 import codechicken.nei.NEIServerConfig;
 import codechicken.nei.NEIServerUtils;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(NEIServerUtils.class)
 public class MixinNEIServerUtils {
+
     /**
      * @author
      * @reason
@@ -39,8 +41,10 @@ public class MixinNEIServerUtils {
      */
     @Overwrite
     public static long getTime(World world) {
-        return world.getWorldInfo().getWorldTime();
+        return world.getWorldInfo()
+            .getWorldTime();
     }
+
     /**
      * @author
      * @reason
@@ -60,6 +64,7 @@ public class MixinNEIServerUtils {
      */
     @Overwrite
     public static void setTime(long l, World world) {
-        world.getWorldInfo().setWorldTime(l);
+        world.getWorldInfo()
+            .setWorldTime(l);
     }
 }

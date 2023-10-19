@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,11 +41,11 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.Local
  * <p>
  * For details, see:
  * <ul>
- *   <li>Bean, J.C.: Genetic algorithms and random keys for sequencing and
- *       optimization. ORSA Journal on Computing 6 (1994) 154-160</li>
- *   <li>Rothlauf, F.: Representations for Genetic and Evolutionary Algorithms.
- *       Volume 104 of Studies in Fuzziness and Soft Computing. Physica-Verlag,
- *       Heidelberg (2002)</li>
+ * <li>Bean, J.C.: Genetic algorithms and random keys for sequencing and
+ * optimization. ORSA Journal on Computing 6 (1994) 154-160</li>
+ * <li>Rothlauf, F.: Representations for Genetic and Evolutionary Algorithms.
+ * Volume 104 of Studies in Fuzziness and Soft Computing. Physica-Verlag,
+ * Heidelberg (2002)</li>
  * </ul>
  *
  * @param <T> type of the permuted objects
@@ -72,13 +70,12 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
     public RandomKey(final List<Double> representation) throws InvalidRepresentationException {
         super(representation);
         // store the sorted representation
-        List<Double> sortedRepr = new ArrayList<Double> (getRepresentation());
+        List<Double> sortedRepr = new ArrayList<Double>(getRepresentation());
         Collections.sort(sortedRepr);
         sortedRepresentation = Collections.unmodifiableList(sortedRepr);
         // store the permutation of [0,1,...,n-1] list for toString() and isSame() methods
-        baseSeqPermutation = Collections.unmodifiableList(
-            decodeGeneric(baseSequence(getLength()), getRepresentation(), sortedRepresentation)
-        );
+        baseSeqPermutation = Collections
+            .unmodifiableList(decodeGeneric(baseSequence(getLength()), getRepresentation(), sortedRepresentation));
     }
 
     /**
@@ -102,17 +99,16 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      * Decodes a permutation represented by <code>representation</code> and
      * returns a (generic) list with the permuted values.
      *
-     * @param <S> generic type of the sequence values
-     * @param sequence the unpermuted sequence
+     * @param <S>            generic type of the sequence values
+     * @param sequence       the unpermuted sequence
      * @param representation representation of the permutation ([0,1] vector)
-     * @param sortedRepr sorted <code>representation</code>
+     * @param sortedRepr     sorted <code>representation</code>
      * @return list with the sequence values permuted according to the representation
      * @throws DimensionMismatchException iff the length of the <code>sequence</code>,
-     *   <code>representation</code> or <code>sortedRepr</code> lists are not equal
+     *                                    <code>representation</code> or <code>sortedRepr</code> lists are not equal
      */
     private static <S> List<S> decodeGeneric(final List<S> sequence, List<Double> representation,
-                                             final List<Double> sortedRepr)
-        throws DimensionMismatchException {
+        final List<Double> sortedRepr) throws DimensionMismatchException {
 
         int l = sequence.size();
 
@@ -125,11 +121,11 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
         }
 
         // do not modify the original representation
-        List<Double> reprCopy = new ArrayList<Double> (representation);
+        List<Double> reprCopy = new ArrayList<Double>(representation);
 
         // now find the indices in the original repr and use them for permuting
-        List<S> res = new ArrayList<S> (l);
-        for (int i=0; i<l; i++) {
+        List<S> res = new ArrayList<S>(l);
+        for (int i = 0; i < l; i++) {
             int index = reprCopy.indexOf(sortedRepr.get(i));
             res.add(sequence.get(index));
             reprCopy.set(index, null);
@@ -147,7 +143,7 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
     @Override
     protected boolean isSame(final Chromosome another) {
         // type check
-        if (! (another instanceof RandomKey<?>)) {
+        if (!(another instanceof RandomKey<?>)) {
             return false;
         }
         RandomKey<?> anotherRk = (RandomKey<?>) another;
@@ -161,7 +157,7 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
         List<Integer> thisPerm = this.baseSeqPermutation;
         List<Integer> anotherPerm = anotherRk.baseSeqPermutation;
 
-        for (int i=0; i<getLength(); i++) {
+        for (int i = 0; i < getLength(); i++) {
             if (thisPerm.get(i) != anotherPerm.get(i)) {
                 return false;
             }
@@ -174,17 +170,14 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      * {@inheritDoc}
      */
     @Override
-    protected void checkValidity(final List<Double> chromosomeRepresentation)
-        throws InvalidRepresentationException {
+    protected void checkValidity(final List<Double> chromosomeRepresentation) throws InvalidRepresentationException {
 
         for (double val : chromosomeRepresentation) {
             if (val < 0 || val > 1) {
-                throw new InvalidRepresentationException(LocalizedFormats.OUT_OF_RANGE_SIMPLE,
-                                                         val, 0, 1);
+                throw new InvalidRepresentationException(LocalizedFormats.OUT_OF_RANGE_SIMPLE, val, 0, 1);
             }
         }
     }
-
 
     /**
      * Generates a representation corresponding to a random permutation of
@@ -195,8 +188,10 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      */
     public static final List<Double> randomPermutation(final int l) {
         List<Double> repr = new ArrayList<Double>(l);
-        for (int i=0; i<l; i++) {
-            repr.add(GeneticAlgorithm.getRandomGenerator().nextDouble());
+        for (int i = 0; i < l; i++) {
+            repr.add(
+                GeneticAlgorithm.getRandomGenerator()
+                    .nextDouble());
         }
         return repr;
     }
@@ -210,8 +205,8 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      */
     public static final List<Double> identityPermutation(final int l) {
         List<Double> repr = new ArrayList<Double>(l);
-        for (int i=0; i<l; i++) {
-            repr.add((double)i/l);
+        for (int i = 0; i < l; i++) {
+            repr.add((double) i / l);
         }
         return repr;
     }
@@ -224,13 +219,12 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      * This is useful if you want to inject some permutations to the initial
      * population.
      *
-     * @param <S> type of the data
-     * @param data list of data determining the order
+     * @param <S>        type of the data
+     * @param data       list of data determining the order
      * @param comparator how the data will be compared
      * @return list representation of the permutation corresponding to the parameters
      */
-    public static <S> List<Double> comparatorPermutation(final List<S> data,
-                                                         final Comparator<S> comparator) {
+    public static <S> List<Double> comparatorPermutation(final List<S> data, final Comparator<S> comparator) {
         List<S> sortedData = new ArrayList<S>(data);
         Collections.sort(sortedData, comparator);
 
@@ -244,18 +238,17 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      *
      * This method can be viewed as an inverse to {@link #decode(List)}.
      *
-     * @param <S> type of the data
+     * @param <S>          type of the data
      * @param originalData the original, unpermuted data
      * @param permutedData the data, somehow permuted
      * @return representation of a permutation corresponding to the permutation
-     *   <code>originalData -> permutedData</code>
-     * @throws DimensionMismatchException iff the length of <code>originalData</code>
-     *   and <code>permutedData</code> lists are not equal
+     *         <code>originalData -> permutedData</code>
+     * @throws DimensionMismatchException   iff the length of <code>originalData</code>
+     *                                      and <code>permutedData</code> lists are not equal
      * @throws MathIllegalArgumentException iff the <code>permutedData</code> and
-     *   <code>originalData</code> lists contain different data
+     *                                      <code>originalData</code> lists contain different data
      */
-    public static <S> List<Double> inducedPermutation(final List<S> originalData,
-                                                      final List<S> permutedData)
+    public static <S> List<Double> inducedPermutation(final List<S> originalData, final List<S> permutedData)
         throws DimensionMismatchException, MathIllegalArgumentException {
 
         if (originalData.size() != permutedData.size()) {
@@ -263,10 +256,10 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
         }
         int l = originalData.size();
 
-        List<S> origDataCopy = new ArrayList<S> (originalData);
+        List<S> origDataCopy = new ArrayList<S>(originalData);
 
         Double[] res = new Double[l];
-        for (int i=0; i<l; i++) {
+        for (int i = 0; i < l; i++) {
             int index = origDataCopy.indexOf(permutedData.get(i));
             if (index == -1) {
                 throw new MathIllegalArgumentException(LocalizedFormats.DIFFERENT_ORIG_AND_PERMUTED_DATA);
@@ -290,8 +283,8 @@ public abstract class RandomKey<T> extends AbstractListChromosome<Double> implem
      * @return list of integers from 0 to l-1
      */
     private static List<Integer> baseSequence(final int l) {
-        List<Integer> baseSequence = new ArrayList<Integer> (l);
-        for (int i=0; i<l; i++) {
+        List<Integer> baseSequence = new ArrayList<Integer>(l);
+        for (int i = 0; i < l; i++) {
             baseSequence.add(i);
         }
         return baseSequence;

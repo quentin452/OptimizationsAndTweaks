@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +21,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 /**
  * Implementation of
  * {@link fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.SummaryStatistics} that
- * is safe to use in a multithreaded environment.  Multiple threads can safely
+ * is safe to use in a multithreaded environment. Multiple threads can safely
  * operate on a single instance without causing runtime exceptions due to race
- * conditions.  In effect, this implementation makes modification and access
- * methods atomic operations for a single instance.  That is to say, as one
+ * conditions. In effect, this implementation makes modification and access
+ * methods atomic operations for a single instance. That is to say, as one
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  *
@@ -50,8 +48,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * @param original the {@code SynchronizedSummaryStatistics} instance to copy
      * @throws NullArgumentException if original is null
      */
-    public SynchronizedSummaryStatistics(SynchronizedSummaryStatistics original)
-    throws NullArgumentException {
+    public SynchronizedSummaryStatistics(SynchronizedSummaryStatistics original) throws NullArgumentException {
         copy(original, this);
     }
 
@@ -203,8 +200,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumImpl(StorelessUnivariateStatistic sumImpl)
-    throws MathIllegalStateException {
+    public synchronized void setSumImpl(StorelessUnivariateStatistic sumImpl) throws MathIllegalStateException {
         super.setSumImpl(sumImpl);
     }
 
@@ -220,8 +216,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumsqImpl(StorelessUnivariateStatistic sumsqImpl)
-    throws MathIllegalStateException {
+    public synchronized void setSumsqImpl(StorelessUnivariateStatistic sumsqImpl) throws MathIllegalStateException {
         super.setSumsqImpl(sumsqImpl);
     }
 
@@ -237,8 +232,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMinImpl(StorelessUnivariateStatistic minImpl)
-    throws MathIllegalStateException {
+    public synchronized void setMinImpl(StorelessUnivariateStatistic minImpl) throws MathIllegalStateException {
         super.setMinImpl(minImpl);
     }
 
@@ -254,8 +248,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMaxImpl(StorelessUnivariateStatistic maxImpl)
-    throws MathIllegalStateException {
+    public synchronized void setMaxImpl(StorelessUnivariateStatistic maxImpl) throws MathIllegalStateException {
         super.setMaxImpl(maxImpl);
     }
 
@@ -271,8 +264,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setSumLogImpl(StorelessUnivariateStatistic sumLogImpl)
-    throws MathIllegalStateException {
+    public synchronized void setSumLogImpl(StorelessUnivariateStatistic sumLogImpl) throws MathIllegalStateException {
         super.setSumLogImpl(sumLogImpl);
     }
 
@@ -288,8 +280,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic geoMeanImpl)
-    throws MathIllegalStateException {
+    public synchronized void setGeoMeanImpl(StorelessUnivariateStatistic geoMeanImpl) throws MathIllegalStateException {
         super.setGeoMeanImpl(geoMeanImpl);
     }
 
@@ -305,8 +296,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setMeanImpl(StorelessUnivariateStatistic meanImpl)
-    throws MathIllegalStateException {
+    public synchronized void setMeanImpl(StorelessUnivariateStatistic meanImpl) throws MathIllegalStateException {
         super.setMeanImpl(meanImpl);
     }
 
@@ -323,7 +313,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      */
     @Override
     public synchronized void setVarianceImpl(StorelessUnivariateStatistic varianceImpl)
-    throws MathIllegalStateException {
+        throws MathIllegalStateException {
         super.setVarianceImpl(varianceImpl);
     }
 
@@ -335,8 +325,7 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
      */
     @Override
     public synchronized SynchronizedSummaryStatistics copy() {
-        SynchronizedSummaryStatistics result =
-            new SynchronizedSummaryStatistics();
+        SynchronizedSummaryStatistics result = new SynchronizedSummaryStatistics();
         // No try-catch or advertised exception because arguments are guaranteed non-null
         copy(this, result);
         return result;
@@ -344,15 +333,18 @@ public class SynchronizedSummaryStatistics extends SummaryStatistics {
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
-     * <p>Acquires synchronization lock on source, then dest before copying.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
+     * <p>
+     * Acquires synchronization lock on source, then dest before copying.
+     * </p>
      *
      * @param source SynchronizedSummaryStatistics to copy
-     * @param dest SynchronizedSummaryStatistics to copy to
+     * @param dest   SynchronizedSummaryStatistics to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(SynchronizedSummaryStatistics source,
-                            SynchronizedSummaryStatistics dest)
+    public static void copy(SynchronizedSummaryStatistics source, SynchronizedSummaryStatistics dest)
         throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);

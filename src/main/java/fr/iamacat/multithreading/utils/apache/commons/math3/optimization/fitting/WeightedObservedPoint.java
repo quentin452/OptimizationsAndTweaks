@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,9 +17,13 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.fittin
 
 import java.io.Serializable;
 
-/** This class is a simple container for weighted observed point in
+/**
+ * This class is a simple container for weighted observed point in
  * {@link CurveFitter curve fitting}.
- * <p>Instances of this class are guaranteed to be immutable.</p>
+ * <p>
+ * Instances of this class are guaranteed to be immutable.
+ * </p>
+ * 
  * @deprecated As of 3.1 (to be removed in 4.0).
  * @since 2.0
  */
@@ -40,32 +42,40 @@ public class WeightedObservedPoint implements Serializable {
     /** Observed value of the function at x. */
     private final double y;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param weight weight of the measurement in the fitting process
-     * @param x abscissa of the measurement
-     * @param y ordinate of the measurement
+     * @param x      abscissa of the measurement
+     * @param y      ordinate of the measurement
      */
     public WeightedObservedPoint(final double weight, final double x, final double y) {
         this.weight = weight;
-        this.x      = x;
-        this.y      = y;
+        this.x = x;
+        this.y = y;
     }
 
-    /** Get the weight of the measurement in the fitting process.
+    /**
+     * Get the weight of the measurement in the fitting process.
+     * 
      * @return weight of the measurement in the fitting process
      */
     public double getWeight() {
         return weight;
     }
 
-    /** Get the abscissa of the point.
+    /**
+     * Get the abscissa of the point.
+     * 
      * @return abscissa of the point
      */
     public double getX() {
         return x;
     }
 
-    /** Get the observed value of the function at x.
+    /**
+     * Get the observed value of the function at x.
+     * 
      * @return observed value of the function at x
      */
     public double getY() {
@@ -73,4 +83,3 @@ public class WeightedObservedPoint implements Serializable {
     }
 
 }
-

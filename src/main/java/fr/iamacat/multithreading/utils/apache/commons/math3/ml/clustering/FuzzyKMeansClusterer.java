@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,20 +41,22 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * to the cluster j.
  * <p>
  * The algorithm then tries to minimize the objective function:
+ * 
  * <pre>
  * J = &#8721;<sub>i=1..C</sub>&#8721;<sub>k=1..N</sub> u<sub>ik</sub><sup>m</sup>d<sub>ik</sub><sup>2</sup>
  * </pre>
+ * 
  * with d<sub>ik</sub> being the distance between data point i and the cluster center k.
  * <p>
  * The algorithm requires two parameters:
  * <ul>
- *   <li>k: the number of clusters
- *   <li>fuzziness: determines the level of cluster fuzziness, larger values lead to fuzzier clusters
+ * <li>k: the number of clusters
+ * <li>fuzziness: determines the level of cluster fuzziness, larger values lead to fuzzier clusters
  * </ul>
  * Additional, optional parameters:
  * <ul>
- *   <li>maxIterations: the maximum number of iterations
- *   <li>epsilon: the convergence criteria, default is 1e-3
+ * <li>maxIterations: the maximum number of iterations
+ * <li>epsilon: the convergence criteria, default is 1e-3
  * </ul>
  * <p>
  * The fuzzy variant of the K-Means algorithm is more robust with regard to the selection
@@ -99,7 +99,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
      * <p>
      * The euclidean distance will be used as default distance measure.
      *
-     * @param k the number of clusters to split the data into
+     * @param k         the number of clusters to split the data into
      * @param fuzziness the fuzziness factor, must be &gt; 1.0
      * @throws NumberIsTooSmallException if {@code fuzziness <= 1.0}
      */
@@ -110,35 +110,33 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
     /**
      * Creates a new instance of a FuzzyKMeansClusterer.
      *
-     * @param k the number of clusters to split the data into
-     * @param fuzziness the fuzziness factor, must be &gt; 1.0
+     * @param k             the number of clusters to split the data into
+     * @param fuzziness     the fuzziness factor, must be &gt; 1.0
      * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
-     * @param measure the distance measure to use
+     *                      If negative, no maximum will be used.
+     * @param measure       the distance measure to use
      * @throws NumberIsTooSmallException if {@code fuzziness <= 1.0}
      */
-    public FuzzyKMeansClusterer(final int k, final double fuzziness,
-                                final int maxIterations, final DistanceMeasure measure)
-            throws NumberIsTooSmallException {
+    public FuzzyKMeansClusterer(final int k, final double fuzziness, final int maxIterations,
+        final DistanceMeasure measure) throws NumberIsTooSmallException {
         this(k, fuzziness, maxIterations, measure, DEFAULT_EPSILON, new JDKRandomGenerator());
     }
 
     /**
      * Creates a new instance of a FuzzyKMeansClusterer.
      *
-     * @param k the number of clusters to split the data into
-     * @param fuzziness the fuzziness factor, must be &gt; 1.0
+     * @param k             the number of clusters to split the data into
+     * @param fuzziness     the fuzziness factor, must be &gt; 1.0
      * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
-     * @param measure the distance measure to use
-     * @param epsilon the convergence criteria (default is 1e-3)
-     * @param random random generator to use for choosing initial centers
+     *                      If negative, no maximum will be used.
+     * @param measure       the distance measure to use
+     * @param epsilon       the convergence criteria (default is 1e-3)
+     * @param random        random generator to use for choosing initial centers
      * @throws NumberIsTooSmallException if {@code fuzziness <= 1.0}
      */
-    public FuzzyKMeansClusterer(final int k, final double fuzziness,
-                                final int maxIterations, final DistanceMeasure measure,
-                                final double epsilon, final RandomGenerator random)
-            throws NumberIsTooSmallException {
+    public FuzzyKMeansClusterer(final int k, final double fuzziness, final int maxIterations,
+        final DistanceMeasure measure, final double epsilon, final RandomGenerator random)
+        throws NumberIsTooSmallException {
 
         super(measure);
 
@@ -158,6 +156,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Return the number of clusters this instance will use.
+     * 
      * @return the number of clusters
      */
     public int getK() {
@@ -166,6 +165,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Returns the fuzziness factor used by this instance.
+     * 
      * @return the fuzziness factor
      */
     public double getFuzziness() {
@@ -174,6 +174,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Returns the maximum number of iterations this instance will use.
+     * 
      * @return the maximum number of iterations, or -1 if no maximum is set
      */
     public int getMaxIterations() {
@@ -182,6 +183,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Returns the convergence criteria used by this instance.
+     * 
      * @return the convergence criteria
      */
     public double getEpsilon() {
@@ -190,6 +192,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Returns the random generator this instance will use.
+     * 
      * @return the random generator
      */
     public RandomGenerator getRandomGenerator() {
@@ -216,8 +219,9 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
     /**
      * Returns an unmodifiable list of the data points used in the last
      * call to {@link #cluster(Collection)}.
+     * 
      * @return the list of data points, or {@code null} if {@link #cluster(Collection)} has
-     *   not been called before.
+     *         not been called before.
      */
     public List<T> getDataPoints() {
         return points;
@@ -225,8 +229,9 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Returns the list of clusters resulting from the last call to {@link #cluster(Collection)}.
+     * 
      * @return the list of clusters, or {@code null} if {@link #cluster(Collection)} has
-     *   not been called before.
+     *         not been called before.
      */
     public List<CentroidCluster<T>> getClusters() {
         return clusters;
@@ -234,6 +239,7 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
 
     /**
      * Get the value of the objective function.
+     * 
      * @return the objective function evaluation as double value
      * @throws MathIllegalStateException if {@link #cluster(Collection)} has not been called before
      */
@@ -262,11 +268,10 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
      * @param dataPoints the points to cluster
      * @return the list of clusters
      * @throws MathIllegalArgumentException if the data points are null or the number
-     *     of clusters is larger than the number of data points
+     *                                      of clusters is larger than the number of data points
      */
     @Override
-    public List<CentroidCluster<T>> cluster(final Collection<T> dataPoints)
-            throws MathIllegalArgumentException {
+    public List<CentroidCluster<T>> cluster(final Collection<T> dataPoints) throws MathIllegalArgumentException {
 
         // sanity checks
         MathUtils.checkNotNull(dataPoints);
@@ -292,7 +297,8 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
         initializeMembershipMatrix();
 
         // there is at least one point
-        final int pointDimension = points.get(0).getPoint().length;
+        final int pointDimension = points.get(0)
+            .getPoint().length;
         for (int i = 0; i < k; i++) {
             clusters.add(new CentroidCluster<T>(new DoublePoint(new double[pointDimension])));
         }
@@ -350,7 +356,11 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
             int newCluster = -1;
             for (int j = 0; j < clusters.size(); j++) {
                 double sum = 0.0;
-                final double distA = FastMath.abs(distance(point, clusters.get(j).getCenter()));
+                final double distA = FastMath.abs(
+                    distance(
+                        point,
+                        clusters.get(j)
+                            .getCenter()));
 
                 if (distA != 0.0) {
                     for (final CentroidCluster<T> c : clusters) {
@@ -378,7 +388,8 @@ public class FuzzyKMeansClusterer<T extends Clusterable> extends Clusterer<T> {
                     newCluster = j;
                 }
             }
-            clusters.get(newCluster).addPoint(point);
+            clusters.get(newCluster)
+                .addPoint(point);
         }
     }
 

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,19 +23,19 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionM
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.ArrayRealVector;
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.DiagonalMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.DecompositionSolver;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.DiagonalMatrix;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.EigenDecomposition;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.MatrixUtils;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.QRDecomposition;
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.EigenDecomposition;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.OptimizationData;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.InitialGuess;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Target;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Weight;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.DifferentiableMultivariateVectorOptimizer;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.InitialGuess;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.OptimizationData;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointVectorValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Target;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.Weight;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.direct.BaseAbstractMultivariateVectorOptimizer;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
@@ -63,8 +61,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 public abstract class AbstractLeastSquaresOptimizer
     extends BaseAbstractMultivariateVectorOptimizer<DifferentiableMultivariateVectorFunction>
     implements DifferentiableMultivariateVectorOptimizer {
+
     /**
      * Singularity threshold (cf. {@link #getCovariances(double)}).
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
@@ -75,39 +75,52 @@ public abstract class AbstractLeastSquaresOptimizer
      * {@link #updateJacobian()}, but may be modified by the solver
      * in the derived class (the {@link LevenbergMarquardtOptimizer
      * Levenberg-Marquardt optimizer} does this).
+     * 
      * @deprecated As of 3.1. To be removed in 4.0. Please use
-     * {@link #computeWeightedJacobian(double[])} instead.
+     *             {@link #computeWeightedJacobian(double[])} instead.
      */
     @Deprecated
     protected double[][] weightedResidualJacobian;
-    /** Number of columns of the jacobian matrix.
+    /**
+     * Number of columns of the jacobian matrix.
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
     protected int cols;
-    /** Number of rows of the jacobian matrix.
+    /**
+     * Number of rows of the jacobian matrix.
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
     protected int rows;
-    /** Current point.
+    /**
+     * Current point.
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
     protected double[] point;
-    /** Current objective function value.
+    /**
+     * Current objective function value.
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
     protected double[] objective;
-    /** Weighted residuals
+    /**
+     * Weighted residuals
+     * 
      * @deprecated As of 3.1.
      */
     @Deprecated
     protected double[] weightedResiduals;
-    /** Cost value (square root of the sum of the residuals).
+    /**
+     * Cost value (square root of the sum of the residuals).
+     * 
      * @deprecated As of 3.1. Field to become "private" in 4.0.
-     * Please use {@link #setCost(double)}.
+     *             Please use {@link #setCost(double)}.
      */
     @Deprecated
     protected double cost;
@@ -122,7 +135,9 @@ public abstract class AbstractLeastSquaresOptimizer
      * Simple constructor with default settings.
      * The convergence check is set to a {@link
      * fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleVectorValueChecker}.
-     * @deprecated See {@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
+     * 
+     * @deprecated See
+     *             {@link fr.iamacat.multithreading.utils.apache.commons.math3.optimization.SimpleValueChecker#SimpleValueChecker()}
      */
     @Deprecated
     protected AbstractLeastSquaresOptimizer() {}
@@ -145,14 +160,15 @@ public abstract class AbstractLeastSquaresOptimizer
      * Update the jacobian matrix.
      *
      * @throws DimensionMismatchException if the Jacobian dimension does not
-     * match problem dimension.
+     *                                    match problem dimension.
      * @deprecated As of 3.1. Please use {@link #computeWeightedJacobian(double[])}
-     * instead.
+     *             instead.
      */
     @Deprecated
     protected void updateJacobian() {
         final RealMatrix weightedJacobian = computeWeightedJacobian(point);
-        weightedResidualJacobian = weightedJacobian.scalarMultiply(-1).getData();
+        weightedResidualJacobian = weightedJacobian.scalarMultiply(-1)
+            .getData();
     }
 
     /**
@@ -161,7 +177,7 @@ public abstract class AbstractLeastSquaresOptimizer
      * @param params Model parameters at which to compute the Jacobian.
      * @return the weighted Jacobian: W<sup>1/2</sup> J.
      * @throws DimensionMismatchException if the Jacobian dimension does not
-     * match problem dimension.
+     *                                    match problem dimension.
      * @since 3.1
      */
     protected RealMatrix computeWeightedJacobian(double[] params) {
@@ -192,13 +208,20 @@ public abstract class AbstractLeastSquaresOptimizer
 
     /**
      * Update the residuals array and cost function value.
-     * @throws DimensionMismatchException if the dimension does not match the
-     * problem dimension.
+     * 
+     * @throws DimensionMismatchException                                                                 if the
+     *                                                                                                    dimension does
+     *                                                                                                    not match the
+     *                                                                                                    problem
+     *                                                                                                    dimension.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
      * @deprecated As of 3.1. Please use {@link #computeResiduals(double[])},
-     * {@link #computeObjectiveValue(double[])}, {@link #computeCost(double[])}
-     * and {@link #setCost(double)} instead.
+     *             {@link #computeObjectiveValue(double[])}, {@link #computeCost(double[])}
+     *             and {@link #setCost(double)} instead.
      */
     @Deprecated
     protected void updateResidualsAndCost() {
@@ -210,7 +233,8 @@ public abstract class AbstractLeastSquaresOptimizer
 
         // Compute weighted residuals.
         final ArrayRealVector residuals = new ArrayRealVector(res);
-        weightedResiduals = weightMatrixSqrt.operate(residuals).toArray();
+        weightedResiduals = weightMatrixSqrt.operate(residuals)
+            .toArray();
     }
 
     /**
@@ -244,6 +268,7 @@ public abstract class AbstractLeastSquaresOptimizer
      * Get a Chi-Square-like value assuming the N residuals follow N
      * distinct normal distributions centered on 0 and whose variances are
      * the reciprocal of the weights.
+     * 
      * @return chi-square value
      */
     public double getChiSquare() {
@@ -275,10 +300,13 @@ public abstract class AbstractLeastSquaresOptimizer
      *
      * @return the covariance matrix.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException
-     * if the covariance matrix cannot be computed (singular problem).
+     *                                                                                             if the covariance
+     *                                                                                             matrix cannot be
+     *                                                                                             computed (singular
+     *                                                                                             problem).
      * @see #getCovariances(double)
      * @deprecated As of 3.1. Please use {@link #computeCovariances(double[],double)}
-     * instead.
+     *             instead.
      */
     @Deprecated
     public double[][] getCovariances() {
@@ -298,9 +326,12 @@ public abstract class AbstractLeastSquaresOptimizer
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException
-     * if the covariance matrix cannot be computed (singular problem).
+     *                                                                                             if the covariance
+     *                                                                                             matrix cannot be
+     *                                                                                             computed (singular
+     *                                                                                             problem).
      * @deprecated As of 3.1. Please use {@link #computeCovariances(double[],double)}
-     * instead.
+     *             instead.
      */
     @Deprecated
     public double[][] getCovariances(double threshold) {
@@ -317,25 +348,28 @@ public abstract class AbstractLeastSquaresOptimizer
      * that the result of this computation should be considered meaningless,
      * and thus trigger an exception.
      *
-     * @param params Model parameters.
+     * @param params    Model parameters.
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException
-     * if the covariance matrix cannot be computed (singular problem).
+     *                                                                                             if the covariance
+     *                                                                                             matrix cannot be
+     *                                                                                             computed (singular
+     *                                                                                             problem).
      * @since 3.1
      */
-    public double[][] computeCovariances(double[] params,
-                                         double threshold) {
+    public double[][] computeCovariances(double[] params, double threshold) {
         // Set up the Jacobian.
         final RealMatrix j = computeWeightedJacobian(params);
 
         // Compute transpose(J)J.
-        final RealMatrix jTj = j.transpose().multiply(j);
+        final RealMatrix jTj = j.transpose()
+            .multiply(j);
 
         // Compute the covariances matrix.
-        final DecompositionSolver solver
-            = new QRDecomposition(jTj, threshold).getSolver();
-        return solver.getInverse().getData();
+        final DecompositionSolver solver = new QRDecomposition(jTj, threshold).getSolver();
+        return solver.getInverse()
+            .getData();
     }
 
     /**
@@ -359,19 +393,26 @@ public abstract class AbstractLeastSquaresOptimizer
      *
      * @return an estimate of the standard deviation of the optimized parameters
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException
-     * if the covariance matrix cannot be computed.
-     * @throws NumberIsTooSmallException if the number of degrees of freedom is not
-     * positive, i.e. the number of measurements is less or equal to the number of
-     * parameters.
+     *                                                                                             if the covariance
+     *                                                                                             matrix cannot be
+     *                                                                                             computed.
+     * @throws NumberIsTooSmallException                                                           if the number of
+     *                                                                                             degrees of freedom is
+     *                                                                                             not
+     *                                                                                             positive, i.e. the
+     *                                                                                             number of
+     *                                                                                             measurements is less
+     *                                                                                             or equal to the
+     *                                                                                             number of
+     *                                                                                             parameters.
      * @deprecated as of version 3.1, {@link #computeSigma(double[],double)} should be used
-     * instead. It should be emphasized that {@code guessParametersErrors} and
-     * {@code computeSigma} are <em>not</em> strictly equivalent.
+     *             instead. It should be emphasized that {@code guessParametersErrors} and
+     *             {@code computeSigma} are <em>not</em> strictly equivalent.
      */
     @Deprecated
     public double[] guessParametersErrors() {
         if (rows <= cols) {
-            throw new NumberIsTooSmallException(LocalizedFormats.NO_DEGREES_OF_FREEDOM,
-                                                rows, cols, false);
+            throw new NumberIsTooSmallException(LocalizedFormats.NO_DEGREES_OF_FREEDOM, rows, cols, false);
         }
         double[] errors = new double[cols];
         final double c = FastMath.sqrt(getChiSquare() / (rows - cols));
@@ -389,16 +430,17 @@ public abstract class AbstractLeastSquaresOptimizer
      * is the optimized value of the {@code i}-th parameter, and {@code C} is
      * the covariance matrix.
      *
-     * @param params Model parameters.
+     * @param params                         Model parameters.
      * @param covarianceSingularityThreshold Singularity threshold (see
-     * {@link #computeCovariances(double[],double) computeCovariances}).
+     *                                       {@link #computeCovariances(double[],double) computeCovariances}).
      * @return an estimate of the standard deviation of the optimized parameters
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.linear.SingularMatrixException
-     * if the covariance matrix cannot be computed.
+     *                                                                                             if the covariance
+     *                                                                                             matrix cannot be
+     *                                                                                             computed.
      * @since 3.1
      */
-    public double[] computeSigma(double[] params,
-                                 double covarianceSingularityThreshold) {
+    public double[] computeSigma(double[] params, double covarianceSingularityThreshold) {
         final int nC = params.length;
         final double[] sig = new double[nC];
         final double[][] cov = computeCovariances(params, covarianceSingularityThreshold);
@@ -408,24 +450,25 @@ public abstract class AbstractLeastSquaresOptimizer
         return sig;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
      * @deprecated As of 3.1. Please use
-     * {@link BaseAbstractMultivariateVectorOptimizer#optimize(int,
-     * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
-     * optimize(int,MultivariateDifferentiableVectorFunction,OptimizationData...)}
-     * instead.
+     *             {@link BaseAbstractMultivariateVectorOptimizer#optimize(int,
+     *             fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
+     *             optimize(int,MultivariateDifferentiableVectorFunction,OptimizationData...)}
+     *             instead.
      */
     @Override
     @Deprecated
-    public PointVectorValuePair optimize(int maxEval,
-                                         final DifferentiableMultivariateVectorFunction f,
-                                         final double[] target, final double[] weights,
-                                         final double[] startPoint) {
-        return optimizeInternal(maxEval,
-                                FunctionUtils.toMultivariateDifferentiableVectorFunction(f),
-                                new Target(target),
-                                new Weight(weights),
-                                new InitialGuess(startPoint));
+    public PointVectorValuePair optimize(int maxEval, final DifferentiableMultivariateVectorFunction f,
+        final double[] target, final double[] weights, final double[] startPoint) {
+        return optimizeInternal(
+            maxEval,
+            FunctionUtils.toMultivariateDifferentiableVectorFunction(f),
+            new Target(target),
+            new Weight(weights),
+            new InitialGuess(startPoint));
     }
 
     /**
@@ -434,34 +477,37 @@ public abstract class AbstractLeastSquaresOptimizer
      * The cost function to be minimized is
      * <code>&sum;weight<sub>i</sub>(objective<sub>i</sub> - target<sub>i</sub>)<sup>2</sup></code>
      *
-     * @param f Objective function.
-     * @param target Target value for the objective functions at optimum.
-     * @param weights Weights for the least squares cost computation.
+     * @param f          Objective function.
+     * @param target     Target value for the objective functions at optimum.
+     * @param weights    Weights for the least squares cost computation.
      * @param startPoint Start point for optimization.
      * @return the point/value pair giving the optimal value for objective
-     * function.
+     *         function.
      * @param maxEval Maximum number of function evaluations.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException
-     * if the start point dimension is wrong.
+     *                                                                                                    if the start
+     *                                                                                                    point
+     *                                                                                                    dimension is
+     *                                                                                                    wrong.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
-     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException if
-     * any argument is {@code null}.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
+     * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException       if
+     *                                                                                                    any argument
+     *                                                                                                    is
+     *                                                                                                    {@code null}.
      * @deprecated As of 3.1. Please use
-     * {@link BaseAbstractMultivariateVectorOptimizer#optimize(int,
-     * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
-     * optimize(int,MultivariateDifferentiableVectorFunction,OptimizationData...)}
-     * instead.
+     *             {@link BaseAbstractMultivariateVectorOptimizer#optimize(int,
+     *             fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
+     *             optimize(int,MultivariateDifferentiableVectorFunction,OptimizationData...)}
+     *             instead.
      */
     @Deprecated
-    public PointVectorValuePair optimize(final int maxEval,
-                                         final MultivariateDifferentiableVectorFunction f,
-                                         final double[] target, final double[] weights,
-                                         final double[] startPoint) {
-        return optimizeInternal(maxEval, f,
-                                new Target(target),
-                                new Weight(weights),
-                                new InitialGuess(startPoint));
+    public PointVectorValuePair optimize(final int maxEval, final MultivariateDifferentiableVectorFunction f,
+        final double[] target, final double[] weights, final double[] startPoint) {
+        return optimizeInternal(maxEval, f, new Target(target), new Weight(weights), new InitialGuess(startPoint));
     }
 
     /**
@@ -471,29 +517,35 @@ public abstract class AbstractLeastSquaresOptimizer
      * <code>&sum;weight<sub>i</sub>(objective<sub>i</sub> - target<sub>i</sub>)<sup>2</sup></code>
      *
      * @param maxEval Allowed number of evaluations of the objective function.
-     * @param f Objective function.
+     * @param f       Objective function.
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link Target}</li>
-     *  <li>{@link Weight}</li>
-     *  <li>{@link InitialGuess}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link Target}</li>
+     *                <li>{@link Weight}</li>
+     *                <li>{@link InitialGuess}</li>
+     *                </ul>
      * @return the point/value pair giving the optimal value of the objective
-     * function.
+     *         function.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException if
-     * the maximal number of evaluations is exceeded.
-     * @throws DimensionMismatchException if the target, and weight arguments
-     * have inconsistent dimensions.
+     *                                                                                                    the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
+     * @throws DimensionMismatchException                                                                 if the target,
+     *                                                                                                    and weight
+     *                                                                                                    arguments
+     *                                                                                                    have
+     *                                                                                                    inconsistent
+     *                                                                                                    dimensions.
      * @see BaseAbstractMultivariateVectorOptimizer#optimizeInternal(int,
-     * fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
+     *      fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
      * @since 3.1
      * @deprecated As of 3.1. Override is necessary only until this class's generic
-     * argument is changed to {@code MultivariateDifferentiableVectorFunction}.
+     *             argument is changed to {@code MultivariateDifferentiableVectorFunction}.
      */
     @Deprecated
-    protected PointVectorValuePair optimizeInternal(final int maxEval,
-                                                    final MultivariateDifferentiableVectorFunction f,
-                                                    OptimizationData... optData) {
+    protected PointVectorValuePair optimizeInternal(final int maxEval, final MultivariateDifferentiableVectorFunction f,
+        OptimizationData... optData) {
         // XXX Conversion will be removed when the generic argument of the
         // base class becomes "MultivariateDifferentiableVectorFunction".
         return super.optimizeInternal(maxEval, FunctionUtils.toDifferentiableMultivariateVectorFunction(f), optData);
@@ -516,7 +568,8 @@ public abstract class AbstractLeastSquaresOptimizer
         // XXX "jF" is not strictly necessary anymore but is currently more
         // efficient than converting the value returned from "getObjectiveFunction()"
         // every time it is used.
-        jF = FunctionUtils.toMultivariateDifferentiableVectorFunction((DifferentiableMultivariateVectorFunction) getObjectiveFunction());
+        jF = FunctionUtils.toMultivariateDifferentiableVectorFunction(
+            (DifferentiableMultivariateVectorFunction) getObjectiveFunction());
 
         // Arrays shared with "private" and "protected" methods.
         point = getStartPoint();
@@ -532,19 +585,18 @@ public abstract class AbstractLeastSquaresOptimizer
      * function.
      *
      * @param objectiveValue Value of the the objective function. This is
-     * the value returned from a call to
-     * {@link #computeObjectiveValue(double[]) computeObjectiveValue}
-     * (whose array argument contains the model parameters).
+     *                       the value returned from a call to
+     *                       {@link #computeObjectiveValue(double[]) computeObjectiveValue}
+     *                       (whose array argument contains the model parameters).
      * @return the residuals.
      * @throws DimensionMismatchException if {@code params} has a wrong
-     * length.
+     *                                    length.
      * @since 3.1
      */
     protected double[] computeResiduals(double[] objectiveValue) {
         final double[] target = getTarget();
         if (objectiveValue.length != target.length) {
-            throw new DimensionMismatchException(target.length,
-                                                 objectiveValue.length);
+            throw new DimensionMismatchException(target.length, objectiveValue.length);
         }
 
         final double[] residuals = new double[target.length];
@@ -566,7 +618,7 @@ public abstract class AbstractLeastSquaresOptimizer
             final int dim = m.getRowDimension();
             final RealMatrix sqrtM = new DiagonalMatrix(dim);
             for (int i = 0; i < dim; i++) {
-               sqrtM.setEntry(i, i, FastMath.sqrt(m.getEntry(i, i)));
+                sqrtM.setEntry(i, i, FastMath.sqrt(m.getEntry(i, i)));
             }
             return sqrtM;
         } else {

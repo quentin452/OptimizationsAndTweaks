@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,10 +31,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * <ul>
  * <li><a href="http://dx.doi.org/10.1145/22721.23109">Didonato and Morris
  * (1986)</a>, <em>Computation of the Incomplete Gamma Function Ratios and
- *     their Inverse</em>, TOMS 12(4), 377-393,</li>
+ * their Inverse</em>, TOMS 12(4), 377-393,</li>
  * <li><a href="http://dx.doi.org/10.1145/131766.131776">Didonato and Morris
  * (1992)</a>, <em>Algorithm 708: Significant Digit Computation of the
- *     Incomplete Beta Function Ratios</em>, TOMS 18(3), 360-373,</li>
+ * Incomplete Beta Function Ratios</em>, TOMS 18(3), 360-373,</li>
  * </ul>
  * and implemented in the
  * <a href="http://www.dtic.mil/docs/citations/ADA476840">NSWC Library of Mathematical Functions</a>,
@@ -51,8 +49,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  *
  */
 public class Gamma {
+
     /**
      * <a href="http://en.wikipedia.org/wiki/Euler-Mascheroni_constant">Euler-Mascheroni constant</a>
+     * 
      * @since 2.0
      */
     public static final double GAMMA = 0.577215664901532860606512090082;
@@ -60,6 +60,7 @@ public class Gamma {
     /**
      * The value of the {@code g} constant in the Lanczos approximation, see
      * {@link #lanczos(double)}.
+     * 
      * @since 3.1
      */
     public static final double LANCZOS_G = 607.0 / 128.0;
@@ -68,23 +69,10 @@ public class Gamma {
     private static final double DEFAULT_EPSILON = 10e-15;
 
     /** Lanczos coefficients */
-    private static final double[] LANCZOS = {
-        0.99999999999999709182,
-        57.156235665862923517,
-        -59.597960355475491248,
-        14.136097974741747174,
-        -0.49191381609762019978,
-        .33994649984811888699e-4,
-        .46523628927048575665e-4,
-        -.98374475304879564677e-4,
-        .15808870322491248884e-3,
-        -.21026444172410488319e-3,
-        .21743961811521264320e-3,
-        -.16431810653676389022e-3,
-        .84418223983852743293e-4,
-        -.26190838401581408670e-4,
-        .36899182659531622704e-5,
-    };
+    private static final double[] LANCZOS = { 0.99999999999999709182, 57.156235665862923517, -59.597960355475491248,
+        14.136097974741747174, -0.49191381609762019978, .33994649984811888699e-4, .46523628927048575665e-4,
+        -.98374475304879564677e-4, .15808870322491248884e-3, -.21026444172410488319e-3, .21743961811521264320e-3,
+        -.16431810653676389022e-3, .84418223983852743293e-4, -.26190838401581408670e-4, .36899182659531622704e-5, };
 
     /** Avoid repeated computation of log of 2 PI in logGamma */
     private static final double HALF_LOG_2_PI = 0.5 * FastMath.log(2.0 * FastMath.PI);
@@ -213,7 +201,7 @@ public class Gamma {
     private static final double INV_GAMMA1P_M1_C13 = -.205633841697760710345015413002057E-06;
 
     /**
-     * Default constructor.  Prohibit instantiation.
+     * Default constructor. Prohibit instantiation.
      */
     private Gamma() {}
 
@@ -228,17 +216,17 @@ public class Gamma {
      * </p>
      * <ul>
      * <li><a href="http://mathworld.wolfram.com/GammaFunction.html">Gamma
-     *     Function</a>, equation (28).</li>
+     * Function</a>, equation (28).</li>
      * <li><a href="http://mathworld.wolfram.com/LanczosApproximation.html">
-     *     Lanczos Approximation</a>, equations (1) through (5).</li>
+     * Lanczos Approximation</a>, equations (1) through (5).</li>
      * <li><a href="http://my.fit.edu/~gabdo/gamma.txt">Paul Godfrey, A note on
-     *     the computation of the convergent Lanczos complex Gamma
-     *     approximation</a></li>
+     * the computation of the convergent Lanczos complex Gamma
+     * approximation</a></li>
      * </ul>
      *
      * @param x Argument.
      * @return the value of {@code log(Gamma(x))}, {@code Double.NaN} if
-     * {@code x <= 0.0}.
+     *         {@code x <= 0.0}.
      */
     public static double logGamma(double x) {
         double ret;
@@ -259,8 +247,7 @@ public class Gamma {
         } else {
             double sum = lanczos(x);
             double tmp = x + LANCZOS_G + .5;
-            ret = ((x + .5) * FastMath.log(tmp)) - tmp +
-                HALF_LOG_2_PI + FastMath.log(sum / x);
+            ret = ((x + .5) * FastMath.log(tmp)) - tmp + HALF_LOG_2_PI + FastMath.log(sum / x);
         }
 
         return ret;
@@ -283,33 +270,30 @@ public class Gamma {
      *
      * The implementation of this method is based on:
      * <ul>
-     *  <li>
-     *   <a href="http://mathworld.wolfram.com/RegularizedGammaFunction.html">
-     *   Regularized Gamma Function</a>, equation (1)
-     *  </li>
-     *  <li>
-     *   <a href="http://mathworld.wolfram.com/IncompleteGammaFunction.html">
-     *   Incomplete Gamma Function</a>, equation (4).
-     *  </li>
-     *  <li>
-     *   <a href="http://mathworld.wolfram.com/ConfluentHypergeometricFunctionoftheFirstKind.html">
-     *   Confluent Hypergeometric Function of the First Kind</a>, equation (1).
-     *  </li>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/RegularizedGammaFunction.html">
+     * Regularized Gamma Function</a>, equation (1)
+     * </li>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/IncompleteGammaFunction.html">
+     * Incomplete Gamma Function</a>, equation (4).
+     * </li>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/ConfluentHypergeometricFunctionoftheFirstKind.html">
+     * Confluent Hypergeometric Function of the First Kind</a>, equation (1).
+     * </li>
      * </ul>
      *
-     * @param a the a parameter.
-     * @param x the value.
-     * @param epsilon When the absolute value of the nth item in the
-     * series is less than epsilon the approximation ceases to calculate
-     * further elements in the series.
+     * @param a             the a parameter.
+     * @param x             the value.
+     * @param epsilon       When the absolute value of the nth item in the
+     *                      series is less than epsilon the approximation ceases to calculate
+     *                      further elements in the series.
      * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized gamma function P(a, x)
      * @throws MaxCountExceededException if the algorithm fails to converge.
      */
-    public static double regularizedGammaP(double a,
-                                           double x,
-                                           double epsilon,
-                                           int maxIterations) {
+    public static double regularizedGammaP(double a, double x, double epsilon, int maxIterations) {
         double ret;
 
         if (Double.isNaN(a) || Double.isNaN(x) || (a <= 0.0) || (x < 0.0)) {
@@ -325,9 +309,7 @@ public class Gamma {
             double n = 0.0; // current element index
             double an = 1.0 / a; // n-th element in the series
             double sum = an; // partial sum
-            while (FastMath.abs(an/sum) > epsilon &&
-                   n < maxIterations &&
-                   sum < Double.POSITIVE_INFINITY) {
+            while (FastMath.abs(an / sum) > epsilon && n < maxIterations && sum < Double.POSITIVE_INFINITY) {
                 // compute next element in the series
                 n += 1.0;
                 an *= x / (a + n);
@@ -364,30 +346,27 @@ public class Gamma {
      *
      * The implementation of this method is based on:
      * <ul>
-     *  <li>
-     *   <a href="http://mathworld.wolfram.com/RegularizedGammaFunction.html">
-     *   Regularized Gamma Function</a>, equation (1).
-     *  </li>
-     *  <li>
-     *   <a href="http://functions.wolfram.com/GammaBetaErf/GammaRegularized/10/0003/">
-     *   Regularized incomplete gamma function: Continued fraction representations
-     *   (formula 06.08.10.0003)</a>
-     *  </li>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/RegularizedGammaFunction.html">
+     * Regularized Gamma Function</a>, equation (1).
+     * </li>
+     * <li>
+     * <a href="http://functions.wolfram.com/GammaBetaErf/GammaRegularized/10/0003/">
+     * Regularized incomplete gamma function: Continued fraction representations
+     * (formula 06.08.10.0003)</a>
+     * </li>
      * </ul>
      *
-     * @param a the a parameter.
-     * @param x the value.
-     * @param epsilon When the absolute value of the nth item in the
-     * series is less than epsilon the approximation ceases to calculate
-     * further elements in the series.
+     * @param a             the a parameter.
+     * @param x             the value.
+     * @param epsilon       When the absolute value of the nth item in the
+     *                      series is less than epsilon the approximation ceases to calculate
+     *                      further elements in the series.
      * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized gamma function P(a, x)
      * @throws MaxCountExceededException if the algorithm fails to converge.
      */
-    public static double regularizedGammaQ(final double a,
-                                           double x,
-                                           double epsilon,
-                                           int maxIterations) {
+    public static double regularizedGammaQ(final double a, double x, double epsilon, int maxIterations) {
         double ret;
 
         if (Double.isNaN(a) || Double.isNaN(x) || (a <= 0.0) || (x < 0.0)) {
@@ -422,20 +401,27 @@ public class Gamma {
         return ret;
     }
 
-
     /**
-     * <p>Computes the digamma function of x.</p>
+     * <p>
+     * Computes the digamma function of x.
+     * </p>
      *
-     * <p>This is an independently written implementation of the algorithm described in
-     * Jose Bernardo, Algorithm AS 103: Psi (Digamma) Function, Applied Statistics, 1976.</p>
+     * <p>
+     * This is an independently written implementation of the algorithm described in
+     * Jose Bernardo, Algorithm AS 103: Psi (Digamma) Function, Applied Statistics, 1976.
+     * </p>
      *
-     * <p>Some of the constants have been changed to increase accuracy at the moderate expense
-     * of run-time.  The result should be accurate to within 10^-8 absolute tolerance for
-     * x >= 10^-5 and within 10^-8 relative tolerance for x > 0.</p>
+     * <p>
+     * Some of the constants have been changed to increase accuracy at the moderate expense
+     * of run-time. The result should be accurate to within 10^-8 absolute tolerance for
+     * x >= 10^-5 and within 10^-8 relative tolerance for x > 0.
+     * </p>
      *
-     * <p>Performance for large negative values of x will be quite expensive (proportional to
-     * |x|).  Accuracy for negative values of x should be about 10^-8 absolute for results
-     * less than 10^5 and 10^-8 relative for results larger than that.</p>
+     * <p>
+     * Performance for large negative values of x will be quite expensive (proportional to
+     * |x|). Accuracy for negative values of x should be about 10^-8 absolute for results
+     * less than 10^5 and 10^-8 relative for results larger than that.
+     * </p>
      *
      * @param x Argument.
      * @return digamma(x) to within 10-8 relative or absolute error whichever is smaller.
@@ -457,9 +443,9 @@ public class Gamma {
         if (x >= C_LIMIT) {
             // use method 4 (accurate to O(1/x^8)
             double inv = 1 / (x * x);
-            //            1       1        1         1
-            // log(x) -  --- - ------ + ------- - -------
-            //           2 x   12 x^2   120 x^4   252 x^6
+            // 1 1 1 1
+            // log(x) - --- - ------ + ------- - -------
+            // 2 x 12 x^2 120 x^4 252 x^6
             return FastMath.log(x) - 0.5 / x - inv * ((1.0 / 12) + inv * (1.0 / 120 - inv / 252));
         }
 
@@ -488,10 +474,10 @@ public class Gamma {
 
         if (x >= C_LIMIT) {
             double inv = 1 / (x * x);
-            //  1    1      1       1       1
-            //  - + ---- + ---- - ----- + -----
-            //  x      2      3       5       7
-            //      2 x    6 x    30 x    42 x
+            // 1 1 1 1 1
+            // - + ---- + ---- - ----- + -----
+            // x 2 3 5 7
+            // 2 x 6 x 30 x 42 x
             return 1 / x + inv / 2 + inv / x * (1.0 / 6 - inv * (1.0 / 30 + inv / 42));
         }
 
@@ -513,9 +499,9 @@ public class Gamma {
      * @param x Argument.
      * @return The Lanczos approximation.
      * @see <a href="http://mathworld.wolfram.com/LanczosApproximation.html">Lanczos Approximation</a>
-     * equations (1) through (5), and Paul Godfrey's
-     * <a href="http://my.fit.edu/~gabdo/gamma.txt">Note on the computation
-     * of the convergent Lanczos complex Gamma approximation</a>
+     *      equations (1) through (5), and Paul Godfrey's
+     *      <a href="http://my.fit.edu/~gabdo/gamma.txt">Note on the computation
+     *      of the convergent Lanczos complex Gamma approximation</a>
      * @since 3.1
      */
     public static double lanczos(final double x) {
@@ -631,8 +617,7 @@ public class Gamma {
      * @throws NumberIsTooLargeException if {@code x > 1.5}.
      * @since 3.1
      */
-    public static double logGamma1p(final double x)
-        throws NumberIsTooSmallException, NumberIsTooLargeException {
+    public static double logGamma1p(final double x) throws NumberIsTooSmallException, NumberIsTooLargeException {
 
         if (x < -0.5) {
             throw new NumberIsTooSmallException(x, -0.5, true);
@@ -643,7 +628,6 @@ public class Gamma {
 
         return -FastMath.log1p(invGamma1pm1(x));
     }
-
 
     /**
      * Returns the value of Γ(x). Based on the <em>NSWC Library of
@@ -697,9 +681,7 @@ public class Gamma {
             }
         } else {
             final double y = absX + LANCZOS_G + 0.5;
-            final double gammaAbs = SQRT_TWO_PI / absX *
-                                    FastMath.pow(y, absX + 0.5) *
-                                    FastMath.exp(-y) * lanczos(absX);
+            final double gammaAbs = SQRT_TWO_PI / absX * FastMath.pow(y, absX + 0.5) * FastMath.exp(-y) * lanczos(absX);
             if (x > 0.0) {
                 ret = gammaAbs;
             } else {
@@ -711,8 +693,7 @@ public class Gamma {
                  * it is found
                  * Gamma(x) = -pi / [x * sin(pi * x) * Gamma(-x)].
                  */
-                ret = -FastMath.PI /
-                      (x * FastMath.sin(FastMath.PI * x) * gammaAbs);
+                ret = -FastMath.PI / (x * FastMath.sin(FastMath.PI * x) * gammaAbs);
             }
         }
         return ret;

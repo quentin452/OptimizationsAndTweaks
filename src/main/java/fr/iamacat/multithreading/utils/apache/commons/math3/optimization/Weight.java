@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +15,9 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.DiagonalMatrix;
 import fr.iamacat.multithreading.utils.apache.commons.math3.linear.NonSquareMatrixException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.linear.RealMatrix;
 
 /**
  * Weight matrix of the residuals between model and observations.
@@ -31,6 +29,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.linear.NonSquareMatr
  */
 @Deprecated
 public class Weight implements OptimizationData {
+
     /** Weight matrix. */
     private final RealMatrix weightMatrix;
 
@@ -46,12 +45,11 @@ public class Weight implements OptimizationData {
     /**
      * @param weight Weight matrix.
      * @throws NonSquareMatrixException if the argument is not
-     * a square matrix.
+     *                                  a square matrix.
      */
     public Weight(RealMatrix weight) {
         if (weight.getColumnDimension() != weight.getRowDimension()) {
-            throw new NonSquareMatrixException(weight.getColumnDimension(),
-                                               weight.getRowDimension());
+            throw new NonSquareMatrixException(weight.getColumnDimension(), weight.getRowDimension());
         }
 
         weightMatrix = weight.copy();

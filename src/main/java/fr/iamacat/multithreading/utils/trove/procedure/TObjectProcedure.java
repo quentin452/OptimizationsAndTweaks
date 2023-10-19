@@ -8,27 +8,27 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
-
 
 package fr.iamacat.multithreading.utils.trove.procedure;
 
 /**
  * Interface for procedures with one Object parameter.
  *
- * Created: Mon Nov  5 21:45:49 2001
+ * Created: Mon Nov 5 21:45:49 2001
  *
  * @author Eric D. Friedman
  * @version $Id: TObjectProcedure.java,v 1.1.2.1 2009/09/02 21:52:33 upholderoftruth Exp $
  */
 
 public interface TObjectProcedure<T> {
+
     /**
      * Executes this procedure. A false return value indicates that
      * the application executing this procedure should not invoke this
@@ -36,7 +36,7 @@ public interface TObjectProcedure<T> {
      *
      * @param object an <code>Object</code> value
      * @return true if additional invocations of the procedure are
-     * allowed.
+     *         allowed.
      */
     public boolean execute(T object);
 }// TObjectProcedure

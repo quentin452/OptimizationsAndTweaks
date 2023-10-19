@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +21,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
 /**
  * <a href="http://burtleburtle.net/bob/rand/isaacafa.html">
- *  ISAAC: a fast cryptographic pseudo-random number generator</a>
+ * ISAAC: a fast cryptographic pseudo-random number generator</a>
  * <br/>
  * ISAAC (Indirection, Shift, Accumulate, Add, and Count) generates 32-bit
  * random numbers.
@@ -41,6 +39,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * @since 3.0
  */
 public class ISAACRandom extends BitsStreamGenerator implements Serializable {
+
     /** Serializable version identifier */
     private static final long serialVersionUID = 7288197941165002400L;
     /** Log of size of rsl[] and mem[] */
@@ -74,7 +73,6 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
     /** Service variable. */
     private int isaacJ;
 
-
     /**
      * Creates a new ISAAC random number generator.
      * <br/>
@@ -98,7 +96,7 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
      * Creates a new ISAAC random number generator using an int array seed.
      *
      * @param seed Initial seed. If {@code null}, the seed will be related
-     * to the current time.
+     *             to the current time.
      */
     public ISAACRandom(int[] seed) {
         setSeed(seed);
@@ -107,13 +105,13 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
     /** {@inheritDoc} */
     @Override
     public void setSeed(int seed) {
-        setSeed(new int[]{seed});
+        setSeed(new int[] { seed });
     }
 
     /** {@inheritDoc} */
     @Override
     public void setSeed(long seed) {
-        setSeed(new int[]{(int) (seed >>> 32), (int) (seed & 0xffffffffL)});
+        setSeed(new int[] { (int) (seed >>> 32), (int) (seed & 0xffffffffL) });
     }
 
     /** {@inheritDoc} */
@@ -256,7 +254,8 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
         arr[0] += arr[1];
     }
 
-    /** Set the state by copying the internal arrays.
+    /**
+     * Set the state by copying the internal arrays.
      *
      * @param start First index into {@link #mem} array.
      */

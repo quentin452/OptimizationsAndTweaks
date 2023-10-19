@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,9 +17,9 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.util;
 
 import java.io.Serializable;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
  * A Default NumberTransformer for java.lang.Numbers and Numeric Strings. This
@@ -36,29 +34,29 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
     private static final long serialVersionUID = 4019938025047800455L;
 
     /**
-     * @param o  the object that gets transformed.
+     * @param o the object that gets transformed.
      * @return a double primitive representation of the Object o.
-     * @throws NullArgumentException if Object <code>o</code> is {@code null}.
+     * @throws NullArgumentException        if Object <code>o</code> is {@code null}.
      * @throws MathIllegalArgumentException if Object <code>o</code>
-     * cannot successfully be transformed
-     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html">Commons Collections Transformer</a>
+     *                                      cannot successfully be transformed
+     * @see <a href=
+     *      "http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html">Commons
+     *      Collections Transformer</a>
      */
-    public double transform(Object o)
-        throws NullArgumentException, MathIllegalArgumentException {
+    public double transform(Object o) throws NullArgumentException, MathIllegalArgumentException {
 
         if (o == null) {
             throw new NullArgumentException(LocalizedFormats.OBJECT_TRANSFORMATION);
         }
 
         if (o instanceof Number) {
-            return ((Number)o).doubleValue();
+            return ((Number) o).doubleValue();
         }
 
         try {
             return Double.parseDouble(o.toString());
         } catch (NumberFormatException e) {
-            throw new MathIllegalArgumentException(LocalizedFormats.CANNOT_TRANSFORM_TO_DOUBLE,
-                                                   o.toString());
+            throw new MathIllegalArgumentException(LocalizedFormats.CANNOT_TRANSFORM_TO_DOUBLE, o.toString());
         }
     }
 

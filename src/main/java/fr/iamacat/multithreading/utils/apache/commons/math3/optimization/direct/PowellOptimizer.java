@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +15,20 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.direct;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.ConvergenceChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.MultivariateOptimizer;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.PointValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.BracketFinder;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.BrentOptimizer;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.SimpleUnivariateValueChecker;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathArrays;
 
 /**
  * Powell algorithm.
@@ -50,9 +48,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univari
  * @since 2.2
  */
 @Deprecated
-public class PowellOptimizer
-    extends BaseAbstractMultivariateOptimizer<MultivariateFunction>
+public class PowellOptimizer extends BaseAbstractMultivariateOptimizer<MultivariateFunction>
     implements MultivariateOptimizer {
+
     /**
      * Minimum relative tolerance.
      */
@@ -78,15 +76,13 @@ public class PowellOptimizer
      * The internal line search tolerances are set to the square-root of their
      * corresponding value in the multivariate optimizer.
      *
-     * @param rel Relative threshold.
-     * @param abs Absolute threshold.
+     * @param rel     Relative threshold.
+     * @param abs     Absolute threshold.
      * @param checker Convergence checker.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      */
-    public PowellOptimizer(double rel,
-                           double abs,
-                           ConvergenceChecker<PointValuePair> checker) {
+    public PowellOptimizer(double rel, double abs, ConvergenceChecker<PointValuePair> checker) {
         this(rel, abs, FastMath.sqrt(rel), FastMath.sqrt(abs), checker);
     }
 
@@ -95,19 +91,16 @@ public class PowellOptimizer
      * in addition to the parameters that control the default convergence
      * checking procedure and the line search tolerances.
      *
-     * @param rel Relative threshold for this optimizer.
-     * @param abs Absolute threshold for this optimizer.
+     * @param rel     Relative threshold for this optimizer.
+     * @param abs     Absolute threshold for this optimizer.
      * @param lineRel Relative threshold for the internal line search optimizer.
      * @param lineAbs Absolute threshold for the internal line search optimizer.
      * @param checker Convergence checker.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      */
-    public PowellOptimizer(double rel,
-                           double abs,
-                           double lineRel,
-                           double lineAbs,
-                           ConvergenceChecker<PointValuePair> checker) {
+    public PowellOptimizer(double rel, double abs, double lineRel, double lineAbs,
+        ConvergenceChecker<PointValuePair> checker) {
         super(checker);
 
         if (rel < MIN_RELATIVE_TOLERANCE) {
@@ -120,8 +113,7 @@ public class PowellOptimizer
         absoluteThreshold = abs;
 
         // Create the line search optimizer.
-        line = new LineSearch(lineRel,
-                              lineAbs);
+        line = new LineSearch(lineRel, lineAbs);
     }
 
     /**
@@ -133,28 +125,24 @@ public class PowellOptimizer
      * @param rel Relative threshold.
      * @param abs Absolute threshold.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      */
-    public PowellOptimizer(double rel,
-                           double abs) {
+    public PowellOptimizer(double rel, double abs) {
         this(rel, abs, null);
     }
 
     /**
      * Builds an instance with the default convergence checking procedure.
      *
-     * @param rel Relative threshold.
-     * @param abs Absolute threshold.
+     * @param rel     Relative threshold.
+     * @param abs     Absolute threshold.
      * @param lineRel Relative threshold for the internal line search optimizer.
      * @param lineAbs Absolute threshold for the internal line search optimizer.
      * @throws NotStrictlyPositiveException if {@code abs <= 0}.
-     * @throws NumberIsTooSmallException if {@code rel < 2 * Math.ulp(1d)}.
+     * @throws NumberIsTooSmallException    if {@code rel < 2 * Math.ulp(1d)}.
      * @since 3.1
      */
-    public PowellOptimizer(double rel,
-                           double abs,
-                           double lineRel,
-                           double lineAbs) {
+    public PowellOptimizer(double rel, double abs, double lineRel, double lineAbs) {
         this(rel, abs, lineRel, lineAbs, null);
     }
 
@@ -170,8 +158,7 @@ public class PowellOptimizer
             direc[i][i] = 1;
         }
 
-        final ConvergenceChecker<PointValuePair> checker
-            = getConvergenceChecker();
+        final ConvergenceChecker<PointValuePair> checker = getConvergenceChecker();
 
         double[] x = guess;
         double fVal = computeObjectiveValue(x);
@@ -204,9 +191,8 @@ public class PowellOptimizer
             }
 
             // Default convergence check.
-            boolean stop = 2 * (fX - fVal) <=
-                (relativeThreshold * (FastMath.abs(fX) + FastMath.abs(fVal)) +
-                 absoluteThreshold);
+            boolean stop = 2 * (fX - fVal)
+                <= (relativeThreshold * (FastMath.abs(fX) + FastMath.abs(fVal)) + absoluteThreshold);
 
             final PointValuePair previous = new PointValuePair(x1, fX);
             final PointValuePair current = new PointValuePair(x, fVal);
@@ -257,15 +243,13 @@ public class PowellOptimizer
      * Compute a new point (in the original space) and a new direction
      * vector, resulting from the line search.
      *
-     * @param p Point used in the line search.
-     * @param d Direction used in the line search.
+     * @param p       Point used in the line search.
+     * @param d       Direction used in the line search.
      * @param optimum Optimum found by the line search.
      * @return a 2-element array containing the new point (at index 0) and
-     * the new direction (at index 1).
+     *         the new direction (at index 1).
      */
-    private double[][] newPointAndDirection(double[] p,
-                                            double[] d,
-                                            double optimum) {
+    private double[][] newPointAndDirection(double[] p, double[] d, double optimum) {
         final int n = p.length;
         final double[] nP = new double[n];
         final double[] nD = new double[n];
@@ -286,6 +270,7 @@ public class PowellOptimizer
      * direction.
      */
     private class LineSearch extends BrentOptimizer {
+
         /**
          * Value that will pass the precondition check for {@link BrentOptimizer}
          * but will not pass the convergence check, so that the custom checker
@@ -311,11 +296,8 @@ public class PowellOptimizer
          * @param rel Relative threshold.
          * @param abs Absolute threshold.
          */
-        LineSearch(double rel,
-                   double abs) {
-            super(REL_TOL_UNUSED,
-                  ABS_TOL_UNUSED,
-                  new SimpleUnivariateValueChecker(rel, abs));
+        LineSearch(double rel, double abs) {
+            super(REL_TOL_UNUSED, ABS_TOL_UNUSED, new SimpleUnivariateValueChecker(rel, abs));
         }
 
         /**
@@ -325,29 +307,33 @@ public class PowellOptimizer
          * @param d Search direction.
          * @return the optimum.
          * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-         * if the number of evaluations is exceeded.
+         *                                                                                                    if the
+         *                                                                                                    number of
+         *                                                                                                    evaluations
+         *                                                                                                    is
+         *                                                                                                    exceeded.
          */
         public UnivariatePointValuePair search(final double[] p, final double[] d) {
             final int n = p.length;
             final UnivariateFunction f = new UnivariateFunction() {
-                    /** {@inheritDoc} */
-                    public double value(double alpha) {
-                        final double[] x = new double[n];
-                        for (int i = 0; i < n; i++) {
-                            x[i] = p[i] + alpha * d[i];
-                        }
-                        final double obj = PowellOptimizer.this.computeObjectiveValue(x);
-                        return obj;
+
+                /** {@inheritDoc} */
+                public double value(double alpha) {
+                    final double[] x = new double[n];
+                    for (int i = 0; i < n; i++) {
+                        x[i] = p[i] + alpha * d[i];
                     }
-                };
+                    final double obj = PowellOptimizer.this.computeObjectiveValue(x);
+                    return obj;
+                }
+            };
 
             final GoalType goal = PowellOptimizer.this.getGoalType();
             bracket.search(f, goal, 0, 1);
             // Passing "MAX_VALUE" as a dummy value because it is the enclosing
             // class that counts the number of evaluations (and will eventually
             // generate the exception).
-            return optimize(Integer.MAX_VALUE, f, goal,
-                            bracket.getLo(), bracket.getHi(), bracket.getMid());
+            return optimize(Integer.MAX_VALUE, f, goal, bracket.getLo(), bracket.getHi(), bracket.getMid());
         }
     }
 }

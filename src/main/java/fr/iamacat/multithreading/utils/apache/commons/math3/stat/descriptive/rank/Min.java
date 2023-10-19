@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,12 +29,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * (i.e. <code>NaN</code> values have no impact on the value of the statistic).</li>
  * <li>If any of the values equals <code>Double.NEGATIVE_INFINITY</code>,
  * the result is <code>Double.NEGATIVE_INFINITY.</code></li>
- * </ul></p>
+ * </ul>
+ * </p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least
  * one of the threads invokes the <code>increment()</code> or
- * <code>clear()</code> method, it must be synchronized externally.</p>
+ * <code>clear()</code> method, it must be synchronized externally.
+ * </p>
  *
  */
 public class Min extends AbstractStorelessUnivariateStatistic implements Serializable {
@@ -44,10 +44,10 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
     /** Serializable version identifier */
     private static final long serialVersionUID = -2941995784909003131L;
 
-    /**Number of values that have been added */
+    /** Number of values that have been added */
     private long n;
 
-    /**Current value of the statistic */
+    /** Current value of the statistic */
     private double value;
 
     /**
@@ -110,25 +110,27 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
      * is empty.
      * <p>
      * Throws <code>MathIllegalArgumentException</code> if the array is null or
-     * the array index parameters are not valid.</p>
+     * the array index parameters are not valid.
+     * </p>
      * <p>
      * <ul>
      * <li>The result is <code>NaN</code> iff all values are <code>NaN</code>
      * (i.e. <code>NaN</code> values have no impact on the value of the statistic).</li>
      * <li>If any of the values equals <code>Double.NEGATIVE_INFINITY</code>,
      * the result is <code>Double.NEGATIVE_INFINITY.</code></li>
-     * </ul> </p>
+     * </ul>
+     * </p>
      *
      * @param values the input array
-     * @param begin index of the first array element to include
+     * @param begin  index of the first array element to include
      * @param length the number of elements to include
      * @return the minimum of the values or Double.NaN if length = 0
      * @throws MathIllegalArgumentException if the array is null or the array index
-     *  parameters are not valid
+     *                                      parameters are not valid
      */
     @Override
-    public double evaluate(final double[] values,final int begin, final int length)
-    throws MathIllegalArgumentException {
+    public double evaluate(final double[] values, final int begin, final int length)
+        throws MathIllegalArgumentException {
         double min = Double.NaN;
         if (test(values, begin, length)) {
             min = values[begin];
@@ -154,14 +156,15 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
      *
      * @param source Min to copy
-     * @param dest Min to copy to
+     * @param dest   Min to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(Min source, Min dest)
-        throws NullArgumentException {
+    public static void copy(Min source, Min dest) throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);
         dest.setData(source.getDataRef());

@@ -16,6 +16,7 @@ import sun.misc.Unsafe;
  * {@link ByteBuffer.allocateDirect()}
  */
 public abstract class AbstractOffheapArray {
+
     protected static final Unsafe UNSAFE;
 
     private static final CleanerCreateMethod createMethod = initializeCreateMethod();
@@ -110,17 +111,27 @@ public abstract class AbstractOffheapArray {
     }
 
     protected void check(long ourIndex, int arrayIndex, int arrayLength, int length) {
-        if (ourIndex < 0 || length < 0 || ourIndex + length > capacity() ||
-                arrayIndex < 0 || arrayIndex + length > arrayLength) {
-            throw new IndexOutOfBoundsException("ourIndex=" + ourIndex + ", ourLength=" + capacity() +
-                    ", arrayIndex=" + arrayIndex + ", arrayLength=" + arrayLength + ", length=" + length);
+        if (ourIndex < 0 || length < 0
+            || ourIndex + length > capacity()
+            || arrayIndex < 0
+            || arrayIndex + length > arrayLength) {
+            throw new IndexOutOfBoundsException(
+                "ourIndex=" + ourIndex
+                    + ", ourLength="
+                    + capacity()
+                    + ", arrayIndex="
+                    + arrayIndex
+                    + ", arrayLength="
+                    + arrayLength
+                    + ", length="
+                    + length);
         }
     }
 
     static {
         Field f = getPrivateDeclaredField(Unsafe.class, "theUnsafe");
         try {
-            UNSAFE = (Unsafe)f.get(null);
+            UNSAFE = (Unsafe) f.get(null);
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException(e);
         } catch (IllegalAccessException e) {
@@ -134,6 +145,7 @@ public abstract class AbstractOffheapArray {
     private static Field getPrivateDeclaredField(final Class<?> clazz, final String name) {
         // N.B., the setAccessible(true) call should happen within a doPrivileged() block.
         return AccessController.doPrivileged(new PrivilegedAction<Field>() {
+
             @Override
             public Field run() {
                 try {
@@ -187,7 +199,9 @@ public abstract class AbstractOffheapArray {
             Class<?> cleaner = Class.forName("java.lang.ref.Cleaner");
             Method create = cleaner.getMethod("create");
             Object cleanerInstance = create.invoke(null);
-            return new CleanerCreateMethod(cleaner.getMethod("register", Object.class, Runnable.class), cleanerInstance);
+            return new CleanerCreateMethod(
+                cleaner.getMethod("register", Object.class, Runnable.class),
+                cleanerInstance);
         } catch (ReflectiveOperationException e) {
             return null;
         }
@@ -218,6 +232,7 @@ public abstract class AbstractOffheapArray {
      * pieces of data.
      */
     private static class CleanerCreateMethod {
+
         final Method method;
         final Object instance;
 

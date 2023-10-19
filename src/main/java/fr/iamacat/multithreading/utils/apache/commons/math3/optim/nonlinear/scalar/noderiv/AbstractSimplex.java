@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +19,15 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.MultivariateFunction;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIllegalArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NullArgumentException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.OutOfRangeException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.ZeroException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.util.LocalizedFormats;
-import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointValuePair;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationData;
+import fr.iamacat.multithreading.utils.apache.commons.math3.optim.PointValuePair;
 
 /**
  * This class implements the simplex concept.
@@ -48,6 +46,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optim.OptimizationDa
  * @since 3.0
  */
 public abstract class AbstractSimplex implements OptimizationData {
+
     /** Simplex. */
     private PointValuePair[] simplex;
     /** Start simplex configuration. */
@@ -67,11 +66,10 @@ public abstract class AbstractSimplex implements OptimizationData {
     /**
      * Build a hypercube simplex with the given side length.
      *
-     * @param n Dimension of the simplex.
+     * @param n          Dimension of the simplex.
      * @param sideLength Length of the sides of the hypercube.
      */
-    protected AbstractSimplex(int n,
-                              double sideLength) {
+    protected AbstractSimplex(int n, double sideLength) {
         this(createHypercubeSteps(n, sideLength));
     }
 
@@ -89,9 +87,9 @@ public abstract class AbstractSimplex implements OptimizationData {
      * last vertex would be set to the diagonally opposite vertex at (2, 11, 3).
      *
      * @param steps Steps along the canonical axes representing box edges. They
-     * may be negative but not zero.
+     *              may be negative but not zero.
      * @throws NullArgumentException if {@code steps} is {@code null}.
-     * @throws ZeroException if one of the steps is zero.
+     * @throws ZeroException         if one of the steps is zero.
      */
     protected AbstractSimplex(final double[] steps) {
         if (steps == null) {
@@ -123,15 +121,14 @@ public abstract class AbstractSimplex implements OptimizationData {
      *
      * @param referenceSimplex Reference simplex.
      * @throws NotStrictlyPositiveException if the reference simplex does not
-     * contain at least one point.
-     * @throws DimensionMismatchException if there is a dimension mismatch
-     * in the reference simplex.
-     * @throws IllegalArgumentException if one of its vertices is duplicated.
+     *                                      contain at least one point.
+     * @throws DimensionMismatchException   if there is a dimension mismatch
+     *                                      in the reference simplex.
+     * @throws IllegalArgumentException     if one of its vertices is duplicated.
      */
     protected AbstractSimplex(final double[][] referenceSimplex) {
         if (referenceSimplex.length <= 0) {
-            throw new NotStrictlyPositiveException(LocalizedFormats.SIMPLEX_NEED_ONE_POINT,
-                                                   referenceSimplex.length);
+            throw new NotStrictlyPositiveException(LocalizedFormats.SIMPLEX_NEED_ONE_POINT, referenceSimplex.length);
         }
         dimension = referenceSimplex.length - 1;
 
@@ -158,8 +155,7 @@ public abstract class AbstractSimplex implements OptimizationData {
                     }
                 }
                 if (allEquals) {
-                    throw new MathIllegalArgumentException(LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX,
-                                                           i, j);
+                    throw new MathIllegalArgumentException(LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX, i, j);
                 }
             }
 
@@ -197,20 +193,23 @@ public abstract class AbstractSimplex implements OptimizationData {
      * Compute the next simplex of the algorithm.
      *
      * @param evaluationFunction Evaluation function.
-     * @param comparator Comparator to use to sort simplex vertices from best
-     * to worst.
+     * @param comparator         Comparator to use to sort simplex vertices from best
+     *                           to worst.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the algorithm fails to converge.
+     *                                                                                                    if the
+     *                                                                                                    algorithm
+     *                                                                                                    fails to
+     *                                                                                                    converge.
      */
     public abstract void iterate(final MultivariateFunction evaluationFunction,
-                                 final Comparator<PointValuePair> comparator);
+        final Comparator<PointValuePair> comparator);
 
     /**
      * Build an initial simplex.
      *
      * @param startPoint First point of the simplex.
      * @throws DimensionMismatchException if the start point does not match
-     * simplex dimension.
+     *                                    simplex dimension.
      */
     public void build(final double[] startPoint) {
         if (dimension != startPoint.length) {
@@ -236,12 +235,14 @@ public abstract class AbstractSimplex implements OptimizationData {
      * Evaluate all the non-evaluated points of the simplex.
      *
      * @param evaluationFunction Evaluation function.
-     * @param comparator Comparator to use to sort simplex vertices from best to worst.
+     * @param comparator         Comparator to use to sort simplex vertices from best to worst.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     * if the maximal number of evaluations is exceeded.
+     *                                                                                                    if the maximal
+     *                                                                                                    number of
+     *                                                                                                    evaluations is
+     *                                                                                                    exceeded.
      */
-    public void evaluate(final MultivariateFunction evaluationFunction,
-                         final Comparator<PointValuePair> comparator) {
+    public void evaluate(final MultivariateFunction evaluationFunction, final Comparator<PointValuePair> comparator) {
         // Evaluate the objective function at all non-evaluated simplex points.
         for (int i = 0; i < simplex.length; i++) {
             final PointValuePair vertex = simplex[i];
@@ -259,11 +260,10 @@ public abstract class AbstractSimplex implements OptimizationData {
      * Replace the worst point of the simplex by a new point.
      *
      * @param pointValuePair Point to insert.
-     * @param comparator Comparator to use for sorting the simplex vertices
-     * from best to worst.
+     * @param comparator     Comparator to use for sorting the simplex vertices
+     *                       from best to worst.
      */
-    protected void replaceWorstPoint(PointValuePair pointValuePair,
-                                     final Comparator<PointValuePair> comparator) {
+    protected void replaceWorstPoint(PointValuePair pointValuePair, final Comparator<PointValuePair> comparator) {
         for (int i = 0; i < dimension; i++) {
             if (comparator.compare(simplex[i], pointValuePair) > 0) {
                 PointValuePair tmp = simplex[i];
@@ -292,8 +292,7 @@ public abstract class AbstractSimplex implements OptimizationData {
      * @return the point at location {@code index}.
      */
     public PointValuePair getPoint(int index) {
-        if (index < 0 ||
-            index >= simplex.length) {
+        if (index < 0 || index >= simplex.length) {
             throw new OutOfRangeException(index, 0, simplex.length - 1);
         }
         return simplex[index];
@@ -307,8 +306,7 @@ public abstract class AbstractSimplex implements OptimizationData {
      * @param point New value.
      */
     protected void setPoint(int index, PointValuePair point) {
-        if (index < 0 ||
-            index >= simplex.length) {
+        if (index < 0 || index >= simplex.length) {
             throw new OutOfRangeException(index, 0, simplex.length - 1);
         }
         simplex[index] = point;
@@ -330,12 +328,11 @@ public abstract class AbstractSimplex implements OptimizationData {
     /**
      * Create steps for a unit hypercube.
      *
-     * @param n Dimension of the hypercube.
+     * @param n          Dimension of the hypercube.
      * @param sideLength Length of the sides of the hypercube.
      * @return the steps.
      */
-    private static double[] createHypercubeSteps(int n,
-                                                 double sideLength) {
+    private static double[] createHypercubeSteps(int n, double sideLength) {
         final double[] steps = new double[n];
         for (int i = 0; i < n; i++) {
             steps[i] = sideLength;

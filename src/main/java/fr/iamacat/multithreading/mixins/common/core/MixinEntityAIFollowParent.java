@@ -1,5 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import java.util.List;
+
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.passive.EntityAnimal;
 
@@ -8,9 +10,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-
-import java.util.Iterator;
-import java.util.List;
 
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
@@ -44,43 +43,45 @@ public class MixinEntityAIFollowParent {
             }
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
     public boolean shouldExecute() {
-        if(MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent){
-        int childGrowingAge = this.childAnimal.getGrowingAge();
+        if (MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent) {
+            int childGrowingAge = this.childAnimal.getGrowingAge();
 
-        if (childGrowingAge >= 0) {
-            return false;
-        }
+            if (childGrowingAge >= 0) {
+                return false;
+            }
 
-        List<EntityAnimal> list = this.childAnimal.worldObj.getEntitiesWithinAABB(EntityAnimal.class, this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
-        EntityAnimal entityanimal = null;
-        double minDistanceSquared = 9.0D;
+            List<EntityAnimal> list = this.childAnimal.worldObj
+                .getEntitiesWithinAABB(EntityAnimal.class, this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
+            EntityAnimal entityanimal = null;
+            double minDistanceSquared = 9.0D;
 
-        for (EntityAnimal entityanimal1 : list) {
-            int parentGrowingAge = entityanimal1.getGrowingAge();
+            for (EntityAnimal entityanimal1 : list) {
+                int parentGrowingAge = entityanimal1.getGrowingAge();
 
-            if (parentGrowingAge >= 0) {
-                double distanceSquared = this.childAnimal.getDistanceSqToEntity(entityanimal1);
+                if (parentGrowingAge >= 0) {
+                    double distanceSquared = this.childAnimal.getDistanceSqToEntity(entityanimal1);
 
-                if (distanceSquared < minDistanceSquared) {
-                    minDistanceSquared = distanceSquared;
-                    entityanimal = entityanimal1;
+                    if (distanceSquared < minDistanceSquared) {
+                        minDistanceSquared = distanceSquared;
+                        entityanimal = entityanimal1;
+                    }
                 }
             }
-        }
 
-        if (entityanimal == null) {
-            return false;
-        }
+            if (entityanimal == null) {
+                return false;
+            }
 
-        this.parentAnimal = entityanimal;
-        return true;
-    }
+            this.parentAnimal = entityanimal;
+            return true;
+        }
         return false;
     }
 }

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,21 +26,26 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitionin
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.RegionFactory;
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.partitioning.SubHyperplane;
 
-/** This class represent a tree of nested 2D boundary loops.
-
- * <p>This class is used for piecewise polygons construction.
+/**
+ * This class represent a tree of nested 2D boundary loops.
+ * 
+ * <p>
+ * This class is used for piecewise polygons construction.
  * Polygons are built using the outline edges as
  * representative of boundaries, the orientation of these lines are
  * meaningful. However, we want to allow the user to specify its
  * outline loops without having to take care of this orientation. This
- * class is devoted to correct mis-oriented loops.<p>
-
- * <p>Orientation is computed assuming the piecewise polygon is finite,
+ * class is devoted to correct mis-oriented loops.
+ * <p>
+ * 
+ * <p>
+ * Orientation is computed assuming the piecewise polygon is finite,
  * i.e. the outermost loops have their exterior side facing points at
  * infinity, and hence are oriented counter-clockwise. The orientation of
  * internal loops is computed as the reverse of the orientation of
- * their immediate surrounding loop.</p>
-
+ * their immediate surrounding loop.
+ * </p>
+ * 
  * @since 3.0
  */
 class NestedLoops {
@@ -62,36 +65,43 @@ class NestedLoops {
     /** Tolerance below which points are considered identical. */
     private final double tolerance;
 
-    /** Simple Constructor.
-     * <p>Build an empty tree of nested loops. This instance will become
+    /**
+     * Simple Constructor.
+     * <p>
+     * Build an empty tree of nested loops. This instance will become
      * the root node of a complete tree, it is not associated with any
      * loop by itself, the outermost loops are in the root tree child
-     * nodes.</p>
+     * nodes.
+     * </p>
+     * 
      * @param tolerance tolerance below which points are considered identical
      * @since 3.3
      */
     NestedLoops(final double tolerance) {
         this.surrounded = new ArrayList<NestedLoops>();
-        this.tolerance  = tolerance;
+        this.tolerance = tolerance;
     }
 
-    /** Constructor.
-     * <p>Build a tree node with neither parent nor children</p>
-     * @param loop boundary loop (will be reversed in place if needed)
+    /**
+     * Constructor.
+     * <p>
+     * Build a tree node with neither parent nor children
+     * </p>
+     * 
+     * @param loop      boundary loop (will be reversed in place if needed)
      * @param tolerance tolerance below which points are considered identical
      * @exception MathIllegalArgumentException if an outline has an open boundary loop
      * @since 3.3
      */
-    private NestedLoops(final Vector2D[] loop, final double tolerance)
-        throws MathIllegalArgumentException {
+    private NestedLoops(final Vector2D[] loop, final double tolerance) throws MathIllegalArgumentException {
 
         if (loop[0] == null) {
             throw new MathIllegalArgumentException(LocalizedFormats.OUTLINE_BOUNDARY_LOOP_OPEN);
         }
 
-        this.loop       = loop;
+        this.loop = loop;
         this.surrounded = new ArrayList<NestedLoops>();
-        this.tolerance  = tolerance;
+        this.tolerance = tolerance;
 
         // build the polygon defined by the loop
         final ArrayList<SubHyperplane<Euclidean2D>> edges = new ArrayList<SubHyperplane<Euclidean2D>>();
@@ -99,11 +109,13 @@ class NestedLoops {
         for (int i = 0; i < loop.length; ++i) {
             final Vector2D previous = current;
             current = loop[i];
-            final Line   line   = new Line(previous, current, tolerance);
-            final IntervalsSet region =
-                new IntervalsSet(line.toSubSpace((Point<Euclidean2D>) previous).getX(),
-                                 line.toSubSpace((Point<Euclidean2D>) current).getX(),
-                                 tolerance);
+            final Line line = new Line(previous, current, tolerance);
+            final IntervalsSet region = new IntervalsSet(
+                line.toSubSpace((Point<Euclidean2D>) previous)
+                    .getX(),
+                line.toSubSpace((Point<Euclidean2D>) current)
+                    .getX(),
+                tolerance);
             edges.add(new SubLine(line, region));
         }
         polygon = new PolygonsSet(edges, tolerance);
@@ -118,19 +130,23 @@ class NestedLoops {
 
     }
 
-    /** Add a loop in a tree.
+    /**
+     * Add a loop in a tree.
+     * 
      * @param bLoop boundary loop (will be reversed in place if needed)
      * @exception MathIllegalArgumentException if an outline has crossing
-     * boundary loops or open boundary loops
+     *                                         boundary loops or open boundary loops
      */
     public void add(final Vector2D[] bLoop) throws MathIllegalArgumentException {
         add(new NestedLoops(bLoop, tolerance));
     }
 
-    /** Add a loop in a tree.
+    /**
+     * Add a loop in a tree.
+     * 
      * @param node boundary loop (will be reversed in place if needed)
      * @exception MathIllegalArgumentException if an outline has boundary
-     * loops that cross each other
+     *                                         loops that cross each other
      */
     private void add(final NestedLoops node) throws MathIllegalArgumentException {
 
@@ -154,7 +170,8 @@ class NestedLoops {
         // we should be separate from the remaining children
         RegionFactory<Euclidean2D> factory = new RegionFactory<Euclidean2D>();
         for (final NestedLoops child : surrounded) {
-            if (!factory.intersection(node.polygon, child.polygon).isEmpty()) {
+            if (!factory.intersection(node.polygon, child.polygon)
+                .isEmpty()) {
                 throw new MathIllegalArgumentException(LocalizedFormats.CROSSING_BOUNDARY_LOOPS);
             }
         }
@@ -163,10 +180,13 @@ class NestedLoops {
 
     }
 
-    /** Correct the orientation of the loops contained in the tree.
-     * <p>This is this method that really inverts the loops that where
+    /**
+     * Correct the orientation of the loops contained in the tree.
+     * <p>
+     * This is this method that really inverts the loops that where
      * provided through the {@link #add(Vector2D[]) add} method if
-     * they are mis-oriented</p>
+     * they are mis-oriented
+     * </p>
      */
     public void correctOrientation() {
         for (NestedLoops child : surrounded) {
@@ -174,9 +194,11 @@ class NestedLoops {
         }
     }
 
-    /** Set the loop orientation.
+    /**
+     * Set the loop orientation.
+     * 
      * @param clockwise if true, the loop should be set to clockwise
-     * orientation
+     *                  orientation
      */
     private void setClockWise(final boolean clockwise) {
 

@@ -10,22 +10,20 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.impl.hash;
 
 import gnu.trove.impl.HashFunctions;
 
-
-
 /**
- * The base class for hashtables of primitive values.  Since there is
+ * The base class for hashtables of primitive values. Since there is
  * no notion of object equality for primitives, it isn't possible to
  * use a `REMOVED' object to track deletions in an open-addressed table.
  * So, we have to resort to using a parallel `bookkeeping' array of bytes,
@@ -36,8 +34,9 @@ import gnu.trove.impl.HashFunctions;
  * @version $Id: TPrimitiveHash.java,v 1.1.2.6 2010/03/01 23:39:07 robeden Exp $
  */
 abstract public class TPrimitiveHash extends THash {
-	@SuppressWarnings( { "UnusedDeclaration" } )
-	static final long serialVersionUID = 1L;
+
+    @SuppressWarnings({ "UnusedDeclaration" })
+    static final long serialVersionUID = 1L;
 
     /**
      * flags indicating whether each position in the hash is
@@ -59,7 +58,6 @@ abstract public class TPrimitiveHash extends THash {
      */
     public static final byte REMOVED = 2;
 
-
     /**
      * Creates a new <code>THash</code> instance with the default
      * capacity and load factor.
@@ -68,7 +66,6 @@ abstract public class TPrimitiveHash extends THash {
         super();
     }
 
-
     /**
      * Creates a new <code>TPrimitiveHash</code> instance with a prime
      * capacity at or near the specified capacity and with the default
@@ -76,10 +73,9 @@ abstract public class TPrimitiveHash extends THash {
      *
      * @param initialCapacity an <code>int</code> value
      */
-    public TPrimitiveHash( int initialCapacity ) {
-        this( initialCapacity, DEFAULT_LOAD_FACTOR );
+    public TPrimitiveHash(int initialCapacity) {
+        this(initialCapacity, DEFAULT_LOAD_FACTOR);
     }
-
 
     /**
      * Creates a new <code>TPrimitiveHash</code> instance with a prime
@@ -90,16 +86,15 @@ abstract public class TPrimitiveHash extends THash {
      * @param initialCapacity an <code>int</code> value
      * @param loadFactor      a <code>float</code> value
      */
-    public TPrimitiveHash( int initialCapacity, float loadFactor ) {
+    public TPrimitiveHash(int initialCapacity, float loadFactor) {
         super();
-		initialCapacity = Math.max( 1, initialCapacity );
+        initialCapacity = Math.max(1, initialCapacity);
         _loadFactor = loadFactor;
-        setUp( HashFunctions.fastCeil( initialCapacity / loadFactor ) );
+        setUp(HashFunctions.fastCeil(initialCapacity / loadFactor));
     }
 
-
     /**
-     * Returns the capacity of the hash table.  This is the true
+     * Returns the capacity of the hash table. This is the true
      * physical capacity, without adjusting for the load factor.
      *
      * @return the physical capacity of the hash table.
@@ -109,18 +104,16 @@ abstract public class TPrimitiveHash extends THash {
         return _states.length;
     }
 
-
     /**
      * Delete the record at <tt>index</tt>.
      *
      * @param index an <code>int</code> value
      */
     @Override
-    protected void removeAt( int index ) {
+    protected void removeAt(int index) {
         _states[index] = REMOVED;
-        super.removeAt( index );
+        super.removeAt(index);
     }
-
 
     /**
      * initializes the hashtable to a prime capacity which is at least
@@ -130,10 +123,10 @@ abstract public class TPrimitiveHash extends THash {
      * @return the actual capacity chosen
      */
     @Override
-    protected int setUp( int initialCapacity ) {
+    protected int setUp(int initialCapacity) {
         int capacity;
 
-        capacity = super.setUp( initialCapacity );
+        capacity = super.setUp(initialCapacity);
         _states = new byte[capacity];
         return capacity;
     }

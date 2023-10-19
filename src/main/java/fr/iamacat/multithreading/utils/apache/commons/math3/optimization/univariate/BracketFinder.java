@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +14,13 @@
  */
 package fr.iamacat.multithreading.utils.apache.commons.math3.optimization.univariate;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
+import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NotStrictlyPositiveException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.TooManyEvaluationsException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MaxCountExceededException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalType;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor;
 
 /**
  * Provide an interval that brackets a local optimum of a function.
@@ -34,6 +32,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.optimization.GoalTyp
  */
 @Deprecated
 public class BracketFinder {
+
     /** Tolerance to avoid division by zero. */
     private static final double EPS_MIN = 1e-21;
     /**
@@ -84,12 +83,11 @@ public class BracketFinder {
     /**
      * Create a bracketing interval finder.
      *
-     * @param growLimit Expanding factor.
+     * @param growLimit      Expanding factor.
      * @param maxEvaluations Maximum number of evaluations allowed for finding
-     * a bracketing interval.
+     *                       a bracketing interval.
      */
-    public BracketFinder(double growLimit,
-                         int maxEvaluations) {
+    public BracketFinder(double growLimit, int maxEvaluations) {
         if (growLimit <= 0) {
             throw new NotStrictlyPositiveException(growLimit);
         }
@@ -106,10 +104,10 @@ public class BracketFinder {
      *
      * @param func Function whose optimum should be bracketed.
      * @param goal {@link GoalType Goal type}.
-     * @param xA Initial point.
-     * @param xB Initial point.
+     * @param xA   Initial point.
+     * @param xB   Initial point.
      * @throws TooManyEvaluationsException if the maximum number of evaluations
-     * is exceeded.
+     *                                     is exceeded.
      */
     public void search(UnivariateFunction func, GoalType goal, double xA, double xB) {
         evaluations.resetCount();
@@ -117,9 +115,7 @@ public class BracketFinder {
 
         double fA = eval(func, xA);
         double fB = eval(func, xB);
-        if (isMinim ?
-            fA < fB :
-            fA > fB) {
+        if (isMinim ? fA < fB : fA > fB) {
 
             double tmp = xA;
             xA = xB;
@@ -146,17 +142,13 @@ public class BracketFinder {
             double fW;
             if ((w - xC) * (xB - w) > 0) {
                 fW = eval(func, w);
-                if (isMinim ?
-                    fW < fC :
-                    fW > fC) {
+                if (isMinim ? fW < fC : fW > fC) {
                     xA = xB;
                     xB = w;
                     fA = fB;
                     fB = fW;
                     break;
-                } else if (isMinim ?
-                           fW > fB :
-                           fW < fB) {
+                } else if (isMinim ? fW > fB : fW < fB) {
                     xC = w;
                     fC = fW;
                     break;
@@ -168,14 +160,12 @@ public class BracketFinder {
                 fW = eval(func, w);
             } else if ((w - wLim) * (xC - w) > 0) {
                 fW = eval(func, w);
-                if (isMinim ?
-                    fW < fC :
-                    fW > fC) {
+                if (isMinim ? fW < fC : fW > fC) {
                     xB = xC;
                     xC = w;
                     w = xC + GOLD * (xC - xB);
                     fB = fC;
-                    fC =fW;
+                    fC = fW;
                     fW = eval(func, w);
                 }
             } else {
@@ -233,6 +223,7 @@ public class BracketFinder {
 
     /**
      * Get function value at {@link #getLo()}.
+     * 
      * @return function value at {@link #getLo()}
      */
     public double getFLo() {
@@ -249,6 +240,7 @@ public class BracketFinder {
 
     /**
      * Get function value at {@link #getHi()}.
+     * 
      * @return function value at {@link #getHi()}
      */
     public double getFHi() {
@@ -265,6 +257,7 @@ public class BracketFinder {
 
     /**
      * Get function value at {@link #getMid()}.
+     * 
      * @return function value at {@link #getMid()}
      */
     public double getFMid() {
@@ -276,7 +269,7 @@ public class BracketFinder {
      * @param x Argument.
      * @return {@code f(x)}
      * @throws TooManyEvaluationsException if the maximal number of evaluations is
-     * exceeded.
+     *                                     exceeded.
      */
     private double eval(UnivariateFunction f, double x) {
         try {

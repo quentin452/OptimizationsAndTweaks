@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +15,10 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.dfp;
 
-/** Mathematical routines for use with {@link Dfp}.
+/**
+ * Mathematical routines for use with {@link Dfp}.
  * The constants are defined in {@link DfpField}
+ * 
  * @since 2.2
  */
 public class DfpMath {
@@ -29,16 +29,18 @@ public class DfpMath {
     /**
      * Private Constructor.
      */
-    private DfpMath() {
-    }
+    private DfpMath() {}
 
-    /** Breaks a string representation up into two dfp's.
-     * <p>The two dfp are such that the sum of them is equivalent
+    /**
+     * Breaks a string representation up into two dfp's.
+     * <p>
+     * The two dfp are such that the sum of them is equivalent
      * to the input string, but has higher precision than using a
      * single dfp. This is useful for improving accuracy of
      * exponentiation and critical multiplies.
+     * 
      * @param field field to which the Dfp must belong
-     * @param a string representation to split
+     * @param a     string representation to split
      * @return an array of two {@link Dfp} which sum is a
      */
     protected static Dfp[] split(final DfpField field, final String a) {
@@ -68,7 +70,7 @@ public class DfpMath {
             }
 
             if (buf[i] >= '0' && buf[i] <= '9' && !leading) {
-                sig ++;
+                sig++;
             }
         }
 
@@ -86,25 +88,30 @@ public class DfpMath {
         return result;
     }
 
-    /** Splits a {@link Dfp} into 2 {@link Dfp}'s such that their sum is equal to the input {@link Dfp}.
+    /**
+     * Splits a {@link Dfp} into 2 {@link Dfp}'s such that their sum is equal to the input {@link Dfp}.
+     * 
      * @param a number to split
      * @return two elements array containing the split number
      */
     protected static Dfp[] split(final Dfp a) {
         final Dfp[] result = new Dfp[2];
         final Dfp shift = a.multiply(a.power10K(a.getRadixDigits() / 2));
-        result[0] = a.add(shift).subtract(shift);
+        result[0] = a.add(shift)
+            .subtract(shift);
         result[1] = a.subtract(result[0]);
         return result;
     }
 
-    /** Multiply two numbers that are split in to two pieces that are
-     *  meant to be added together.
-     *  Use binomial multiplication so ab = a0 b0 + a0 b1 + a1 b0 + a1 b1
-     *  Store the first term in result0, the rest in result1
-     *  @param a first factor of the multiplication, in split form
-     *  @param b second factor of the multiplication, in split form
-     *  @return a &times; b, in split form
+    /**
+     * Multiply two numbers that are split in to two pieces that are
+     * meant to be added together.
+     * Use binomial multiplication so ab = a0 b0 + a0 b1 + a1 b0 + a1 b1
+     * Store the first term in result0, the rest in result1
+     * 
+     * @param a first factor of the multiplication, in split form
+     * @param b second factor of the multiplication, in split form
+     * @return a &times; b, in split form
      */
     protected static Dfp[] splitMult(final Dfp[] a, final Dfp[] b) {
         final Dfp[] result = new Dfp[2];
@@ -112,7 +119,8 @@ public class DfpMath {
         result[1] = a[0].getZero();
         result[0] = a[0].multiply(b[0]);
 
-        /* If result[0] is infinite or zero, don't compute result[1].
+        /*
+         * If result[0] is infinite or zero, don't compute result[1].
          * Attempting to do so may produce NaNs.
          */
 
@@ -120,17 +128,21 @@ public class DfpMath {
             return result;
         }
 
-        result[1] = a[0].multiply(b[1]).add(a[1].multiply(b[0])).add(a[1].multiply(b[1]));
+        result[1] = a[0].multiply(b[1])
+            .add(a[1].multiply(b[0]))
+            .add(a[1].multiply(b[1]));
 
         return result;
     }
 
-    /** Divide two numbers that are split in to two pieces that are meant to be added together.
+    /**
+     * Divide two numbers that are split in to two pieces that are meant to be added together.
      * Inverse of split multiply above:
-     *  (a+b) / (c+d) = (a/c) + ( (bc-ad)/(c**2+cd) )
-     *  @param a dividend, in split form
-     *  @param b divisor, in split form
-     *  @return a / b, in split form
+     * (a+b) / (c+d) = (a/c) + ( (bc-ad)/(c**2+cd) )
+     * 
+     * @param a dividend, in split form
+     * @param b divisor, in split form
+     * @return a / b, in split form
      */
     protected static Dfp[] splitDiv(final Dfp[] a, final Dfp[] b) {
         final Dfp[] result;
@@ -138,15 +150,20 @@ public class DfpMath {
         result = new Dfp[2];
 
         result[0] = a[0].divide(b[0]);
-        result[1] = a[1].multiply(b[0]).subtract(a[0].multiply(b[1]));
-        result[1] = result[1].divide(b[0].multiply(b[0]).add(b[0].multiply(b[1])));
+        result[1] = a[1].multiply(b[0])
+            .subtract(a[0].multiply(b[1]));
+        result[1] = result[1].divide(
+            b[0].multiply(b[0])
+                .add(b[0].multiply(b[1])));
 
         return result;
     }
 
-    /** Raise a split base to the a power.
+    /**
+     * Raise a split base to the a power.
+     * 
      * @param base number to raise
-     * @param a power
+     * @param a    power
      * @return base<sup>a</sup>
      */
     protected static Dfp splitPow(final Dfp[] base, int a) {
@@ -195,20 +212,22 @@ public class DfpMath {
         result[0] = result[0].add(result[1]);
 
         if (invert) {
-            result[0] = base[0].getOne().divide(result[0]);
+            result[0] = base[0].getOne()
+                .divide(result[0]);
         }
 
         return result[0];
 
     }
 
-    /** Raises base to the power a by successive squaring.
+    /**
+     * Raises base to the power a by successive squaring.
+     * 
      * @param base number to raise
-     * @param a power
+     * @param a    power
      * @return base<sup>a</sup>
      */
-    public static Dfp pow(Dfp base, int a)
-    {
+    public static Dfp pow(Dfp base, int a) {
         boolean invert = false;
 
         Dfp result = base.getOne();
@@ -235,7 +254,7 @@ public class DfpMath {
                 prevtrial = trial;
                 r = r.multiply(r);
                 trial *= 2;
-            } while (a>trial);
+            } while (a > trial);
 
             r = prevr;
             trial = prevtrial;
@@ -246,17 +265,20 @@ public class DfpMath {
         } while (a >= 1);
 
         if (invert) {
-            result = base.getOne().divide(result);
+            result = base.getOne()
+                .divide(result);
         }
 
         return base.newInstance(result);
 
     }
 
-    /** Computes e to the given power.
-     * a is broken into two parts, such that a = n+m  where n is an integer.
+    /**
+     * Computes e to the given power.
+     * a is broken into two parts, such that a = n+m where n is an integer.
      * We use pow() to compute e<sup>n</sup> and a Taylor series to compute
-     * e<sup>m</sup>.  We return e*<sup>n</sup> &times; e<sup>m</sup>
+     * e<sup>m</sup>. We return e*<sup>n</sup> &times; e<sup>m</sup>
+     * 
      * @param a power at which e should be raised
      * @return e<sup>a</sup>
      */
@@ -268,7 +290,7 @@ public class DfpMath {
         final int ia = inta.intValue();
         if (ia > 2147483646) {
             // return +Infinity
-            return a.newInstance((byte)1, Dfp.INFINITE);
+            return a.newInstance((byte) 1, Dfp.INFINITE);
         }
 
         if (ia < -2147483646) {
@@ -276,14 +298,19 @@ public class DfpMath {
             return a.newInstance();
         }
 
-        final Dfp einta = splitPow(a.getField().getESplit(), ia);
+        final Dfp einta = splitPow(
+            a.getField()
+                .getESplit(),
+            ia);
         final Dfp efraca = expInternal(fraca);
 
         return einta.multiply(efraca);
     }
 
-    /** Computes e to the given power.
-     * Where -1 < a < 1.  Use the classic Taylor series.  1 + x**2/2! + x**3/3! + x**4/4!  ...
+    /**
+     * Computes e to the given power.
+     * Where -1 < a < 1. Use the classic Taylor series. 1 + x**2/2! + x**3/3! + x**4/4! ...
+     * 
      * @param a power at which e should be raised
      * @return e<sup>a</sup>
      */
@@ -306,10 +333,12 @@ public class DfpMath {
         return y;
     }
 
-    /** Returns the natural logarithm of a.
-     * a is first split into three parts such that  a = (10000^h)(2^j)k.
+    /**
+     * Returns the natural logarithm of a.
+     * a is first split into three parts such that a = (10000^h)(2^j)k.
      * ln(a) is computed by ln(a) = ln(5)*h + ln(2)*(h+j) + ln(k)
      * k is in the range 2/3 < k <4/3 and is passed on to a series expansion.
+     * 
      * @param a number from which logarithm is requested
      * @return log(a)
      */
@@ -322,8 +351,9 @@ public class DfpMath {
         // Check the arguments somewhat here
         if (a.equals(a.getZero()) || a.lessThan(a.getZero()) || a.isNaN()) {
             // negative, zero or NaN
-            a.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
-            return a.dotrap(DfpField.FLAG_INVALID, "ln", a, a.newInstance((byte)1, Dfp.QNAN));
+            a.getField()
+                .setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            return a.dotrap(DfpField.FLAG_INVALID, "ln", a, a.newInstance((byte) 1, Dfp.QNAN));
         }
 
         if (a.classify() == Dfp.INFINITE) {
@@ -333,23 +363,24 @@ public class DfpMath {
         x = new Dfp(a);
         lr = x.log10K();
 
-        x = x.divide(pow(a.newInstance(10000), lr));  /* This puts x in the range 0-10000 */
-        ix = x.floor().intValue();
+        x = x.divide(pow(a.newInstance(10000), lr)); /* This puts x in the range 0-10000 */
+        ix = x.floor()
+            .intValue();
 
         while (ix > 2) {
             ix >>= 1;
             p2++;
         }
 
-
         Dfp[] spx = split(x);
         Dfp[] spy = new Dfp[2];
-        spy[0] = pow(a.getTwo(), p2);          // use spy[0] temporarily as a divisor
+        spy[0] = pow(a.getTwo(), p2); // use spy[0] temporarily as a divisor
         spx[0] = spx[0].divide(spy[0]);
         spx[1] = spx[1].divide(spy[0]);
 
-        spy[0] = a.newInstance("1.33333");    // Use spy[0] for comparison
-        while (spx[0].add(spx[1]).greaterThan(spy[0])) {
+        spy[0] = a.newInstance("1.33333"); // Use spy[0] for comparison
+        while (spx[0].add(spx[1])
+            .greaterThan(spy[0])) {
             spx[0] = spx[0].divide(2);
             spx[1] = spx[1].divide(2);
             p2++;
@@ -358,16 +389,26 @@ public class DfpMath {
         // X is now in the range of 2/3 < x < 4/3
         Dfp[] spz = logInternal(spx);
 
-        spx[0] = a.newInstance(new StringBuilder().append(p2+4*lr).toString());
+        spx[0] = a.newInstance(
+            new StringBuilder().append(p2 + 4 * lr)
+                .toString());
         spx[1] = a.getZero();
-        spy = splitMult(a.getField().getLn2Split(), spx);
+        spy = splitMult(
+            a.getField()
+                .getLn2Split(),
+            spx);
 
         spz[0] = spz[0].add(spy[0]);
         spz[1] = spz[1].add(spy[1]);
 
-        spx[0] = a.newInstance(new StringBuilder().append(4*lr).toString());
+        spx[0] = a.newInstance(
+            new StringBuilder().append(4 * lr)
+                .toString());
         spx[1] = a.getZero();
-        spy = splitMult(a.getField().getLn5Split(), spx);
+        spy = splitMult(
+            a.getField()
+                .getLn5Split(),
+            spx);
 
         spz[0] = spz[0].add(spy[0]);
         spz[1] = spz[1].add(spy[1]);
@@ -376,68 +417,73 @@ public class DfpMath {
 
     }
 
-    /** Computes the natural log of a number between 0 and 2.
-     *  Let f(x) = ln(x),
+    /**
+     * Computes the natural log of a number between 0 and 2.
+     * Let f(x) = ln(x),
      *
-     *  We know that f'(x) = 1/x, thus from Taylor's theorum we have:
+     * We know that f'(x) = 1/x, thus from Taylor's theorum we have:
      *
-     *           -----          n+1         n
-     *  f(x) =   \           (-1)    (x - 1)
-     *           /          ----------------    for 1 <= n <= infinity
-     *           -----             n
+     * ----- n+1 n
+     * f(x) = \ (-1) (x - 1)
+     * / ---------------- for 1 <= n <= infinity
+     * ----- n
      *
-     *  or
-     *                       2        3       4
-     *                   (x-1)   (x-1)    (x-1)
-     *  ln(x) =  (x-1) - ----- + ------ - ------ + ...
-     *                     2       3        4
+     * or
+     * 2 3 4
+     * (x-1) (x-1) (x-1)
+     * ln(x) = (x-1) - ----- + ------ - ------ + ...
+     * 2 3 4
      *
-     *  alternatively,
+     * alternatively,
      *
-     *                  2    3   4
-     *                 x    x   x
-     *  ln(x+1) =  x - -  + - - - + ...
-     *                 2    3   4
+     * 2 3 4
+     * x x x
+     * ln(x+1) = x - - + - - - + ...
+     * 2 3 4
      *
-     *  This series can be used to compute ln(x), but it converges too slowly.
+     * This series can be used to compute ln(x), but it converges too slowly.
      *
-     *  If we substitute -x for x above, we get
+     * If we substitute -x for x above, we get
      *
-     *                   2    3    4
-     *                  x    x    x
-     *  ln(1-x) =  -x - -  - -  - - + ...
-     *                  2    3    4
+     * 2 3 4
+     * x x x
+     * ln(1-x) = -x - - - - - - + ...
+     * 2 3 4
      *
-     *  Note that all terms are now negative.  Because the even powered ones
-     *  absorbed the sign.  Now, subtract the series above from the previous
-     *  one to get ln(x+1) - ln(1-x).  Note the even terms cancel out leaving
-     *  only the odd ones
+     * Note that all terms are now negative. Because the even powered ones
+     * absorbed the sign. Now, subtract the series above from the previous
+     * one to get ln(x+1) - ln(1-x). Note the even terms cancel out leaving
+     * only the odd ones
      *
-     *                             3     5      7
-     *                           2x    2x     2x
-     *  ln(x+1) - ln(x-1) = 2x + --- + --- + ---- + ...
-     *                            3     5      7
+     * 3 5 7
+     * 2x 2x 2x
+     * ln(x+1) - ln(x-1) = 2x + --- + --- + ---- + ...
+     * 3 5 7
      *
-     *  By the property of logarithms that ln(a) - ln(b) = ln (a/b) we have:
+     * By the property of logarithms that ln(a) - ln(b) = ln (a/b) we have:
      *
-     *                                3        5        7
-     *      x+1           /          x        x        x          \
-     *  ln ----- =   2 *  |  x  +   ----  +  ----  +  ---- + ...  |
-     *      x-1           \          3        5        7          /
+     * 3 5 7
+     * x+1 / x x x \
+     * ln ----- = 2 * | x + ---- + ---- + ---- + ... |
+     * x-1 \ 3 5 7 /
      *
-     *  But now we want to find ln(a), so we need to find the value of x
-     *  such that a = (x+1)/(x-1).   This is easily solved to find that
-     *  x = (a-1)/(a+1).
+     * But now we want to find ln(a), so we need to find the value of x
+     * such that a = (x+1)/(x-1). This is easily solved to find that
+     * x = (a-1)/(a+1).
+     * 
      * @param a number from which logarithm is requested, in split form
      * @return log(a)
      */
     protected static Dfp[] logInternal(final Dfp a[]) {
 
-        /* Now we want to compute x = (a-1)/(a+1) but this is prone to
-         * loss of precision.  So instead, compute x = (a/4 - 1/4) / (a/4 + 1/4)
+        /*
+         * Now we want to compute x = (a-1)/(a+1) but this is prone to
+         * loss of precision. So instead, compute x = (a/4 - 1/4) / (a/4 + 1/4)
          */
-        Dfp t = a[0].divide(4).add(a[1].divide(4));
-        Dfp x = t.add(a[0].newInstance("-0.25")).divide(t.add(a[0].newInstance("0.25")));
+        Dfp t = a[0].divide(4)
+            .add(a[1].divide(4));
+        Dfp x = t.add(a[0].newInstance("-0.25"))
+            .divide(t.add(a[0].newInstance("0.25")));
 
         Dfp y = new Dfp(x);
         Dfp num = new Dfp(x);
@@ -461,59 +507,69 @@ public class DfpMath {
 
     }
 
-    /** Computes x to the y power.<p>
+    /**
+     * Computes x to the y power.
+     * <p>
      *
-     *  Uses the following method:<p>
+     * Uses the following method:
+     * <p>
      *
-     *  <ol>
-     *  <li> Set u = rint(y), v = y-u
-     *  <li> Compute a = v * ln(x)
-     *  <li> Compute b = rint( a/ln(2) )
-     *  <li> Compute c = a - b*ln(2)
-     *  <li> x<sup>y</sup> = x<sup>u</sup>  *   2<sup>b</sup> * e<sup>c</sup>
-     *  </ol>
-     *  if |y| > 1e8, then we compute by exp(y*ln(x))   <p>
+     * <ol>
+     * <li>Set u = rint(y), v = y-u
+     * <li>Compute a = v * ln(x)
+     * <li>Compute b = rint( a/ln(2) )
+     * <li>Compute c = a - b*ln(2)
+     * <li>x<sup>y</sup> = x<sup>u</sup> * 2<sup>b</sup> * e<sup>c</sup>
+     * </ol>
+     * if |y| > 1e8, then we compute by exp(y*ln(x))
+     * <p>
      *
-     *  <b>Special Cases</b><p>
-     *  <ul>
-     *  <li>  if y is 0.0 or -0.0 then result is 1.0
-     *  <li>  if y is 1.0 then result is x
-     *  <li>  if y is NaN then result is NaN
-     *  <li>  if x is NaN and y is not zero then result is NaN
-     *  <li>  if |x| > 1.0 and y is +Infinity then result is +Infinity
-     *  <li>  if |x| < 1.0 and y is -Infinity then result is +Infinity
-     *  <li>  if |x| > 1.0 and y is -Infinity then result is +0
-     *  <li>  if |x| < 1.0 and y is +Infinity then result is +0
-     *  <li>  if |x| = 1.0 and y is +/-Infinity then result is NaN
-     *  <li>  if x = +0 and y > 0 then result is +0
-     *  <li>  if x = +Inf and y < 0 then result is +0
-     *  <li>  if x = +0 and y < 0 then result is +Inf
-     *  <li>  if x = +Inf and y > 0 then result is +Inf
-     *  <li>  if x = -0 and y > 0, finite, not odd integer then result is +0
-     *  <li>  if x = -0 and y < 0, finite, and odd integer then result is -Inf
-     *  <li>  if x = -Inf and y > 0, finite, and odd integer then result is -Inf
-     *  <li>  if x = -0 and y < 0, not finite odd integer then result is +Inf
-     *  <li>  if x = -Inf and y > 0, not finite odd integer then result is +Inf
-     *  <li>  if x < 0 and y > 0, finite, and odd integer then result is -(|x|<sup>y</sup>)
-     *  <li>  if x < 0 and y > 0, finite, and not integer then result is NaN
-     *  </ul>
-     *  @param x base to be raised
-     *  @param y power to which base should be raised
-     *  @return x<sup>y</sup>
+     * <b>Special Cases</b>
+     * <p>
+     * <ul>
+     * <li>if y is 0.0 or -0.0 then result is 1.0
+     * <li>if y is 1.0 then result is x
+     * <li>if y is NaN then result is NaN
+     * <li>if x is NaN and y is not zero then result is NaN
+     * <li>if |x| > 1.0 and y is +Infinity then result is +Infinity
+     * <li>if |x| < 1.0 and y is -Infinity then result is +Infinity
+     * <li>if |x| > 1.0 and y is -Infinity then result is +0
+     * <li>if |x| < 1.0 and y is +Infinity then result is +0
+     * <li>if |x| = 1.0 and y is +/-Infinity then result is NaN
+     * <li>if x = +0 and y > 0 then result is +0
+     * <li>if x = +Inf and y < 0 then result is +0
+     * <li>if x = +0 and y < 0 then result is +Inf
+     * <li>if x = +Inf and y > 0 then result is +Inf
+     * <li>if x = -0 and y > 0, finite, not odd integer then result is +0
+     * <li>if x = -0 and y < 0, finite, and odd integer then result is -Inf
+     * <li>if x = -Inf and y > 0, finite, and odd integer then result is -Inf
+     * <li>if x = -0 and y < 0, not finite odd integer then result is +Inf
+     * <li>if x = -Inf and y > 0, not finite odd integer then result is +Inf
+     * <li>if x < 0 and y > 0, finite, and odd integer then result is -(|x|<sup>y</sup>)
+     * <li>if x < 0 and y > 0, finite, and not integer then result is NaN
+     * </ul>
+     * 
+     * @param x base to be raised
+     * @param y power to which base should be raised
+     * @return x<sup>y</sup>
      */
     public static Dfp pow(Dfp x, final Dfp y) {
 
         // make sure we don't mix number with different precision
-        if (x.getField().getRadixDigits() != y.getField().getRadixDigits()) {
-            x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
+        if (x.getField()
+            .getRadixDigits()
+            != y.getField()
+                .getRadixDigits()) {
+            x.getField()
+                .setIEEEFlagsBits(DfpField.FLAG_INVALID);
             final Dfp result = x.newInstance(x.getZero());
             result.nans = Dfp.QNAN;
             return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, result);
         }
 
         final Dfp zero = x.getZero();
-        final Dfp one  = x.getOne();
-        final Dfp two  = x.getTwo();
+        final Dfp one = x.getOne();
+        final Dfp two = x.getTwo();
         boolean invert = false;
         int ui;
 
@@ -525,7 +581,8 @@ public class DfpMath {
         if (y.equals(one)) {
             if (x.isNaN()) {
                 // Test for NaNs
-                x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
+                x.getField()
+                    .setIEEEFlagsBits(DfpField.FLAG_INVALID);
                 return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x);
             }
             return x;
@@ -533,34 +590,39 @@ public class DfpMath {
 
         if (x.isNaN() || y.isNaN()) {
             // Test for NaNs
-            x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
-            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte)1, Dfp.QNAN));
+            x.getField()
+                .setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte) 1, Dfp.QNAN));
         }
 
         // X == 0
         if (x.equals(zero)) {
-            if (Dfp.copysign(one, x).greaterThan(zero)) {
+            if (Dfp.copysign(one, x)
+                .greaterThan(zero)) {
                 // X == +0
                 if (y.greaterThan(zero)) {
                     return x.newInstance(zero);
                 } else {
-                    return x.newInstance(x.newInstance((byte)1, Dfp.INFINITE));
+                    return x.newInstance(x.newInstance((byte) 1, Dfp.INFINITE));
                 }
             } else {
                 // X == -0
-                if (y.classify() == Dfp.FINITE && y.rint().equals(y) && !y.remainder(two).equals(zero)) {
+                if (y.classify() == Dfp.FINITE && y.rint()
+                    .equals(y)
+                    && !y.remainder(two)
+                        .equals(zero)) {
                     // If y is odd integer
                     if (y.greaterThan(zero)) {
                         return x.newInstance(zero.negate());
                     } else {
-                        return x.newInstance(x.newInstance((byte)-1, Dfp.INFINITE));
+                        return x.newInstance(x.newInstance((byte) -1, Dfp.INFINITE));
                     }
                 } else {
                     // Y is not odd integer
                     if (y.greaterThan(zero)) {
                         return x.newInstance(zero);
                     } else {
-                        return x.newInstance(x.newInstance((byte)1, Dfp.INFINITE));
+                        return x.newInstance(x.newInstance((byte) 1, Dfp.INFINITE));
                     }
                 }
             }
@@ -589,25 +651,29 @@ public class DfpMath {
         }
 
         if (x.equals(one) && y.classify() == Dfp.INFINITE) {
-            x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
-            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte)1, Dfp.QNAN));
+            x.getField()
+                .setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte) 1, Dfp.QNAN));
         }
 
         if (x.classify() == Dfp.INFINITE) {
             // x = +/- inf
             if (invert) {
                 // negative infinity
-                if (y.classify() == Dfp.FINITE && y.rint().equals(y) && !y.remainder(two).equals(zero)) {
+                if (y.classify() == Dfp.FINITE && y.rint()
+                    .equals(y)
+                    && !y.remainder(two)
+                        .equals(zero)) {
                     // If y is odd integer
                     if (y.greaterThan(zero)) {
-                        return x.newInstance(x.newInstance((byte)-1, Dfp.INFINITE));
+                        return x.newInstance(x.newInstance((byte) -1, Dfp.INFINITE));
                     } else {
                         return x.newInstance(zero.negate());
                     }
                 } else {
                     // Y is not odd integer
                     if (y.greaterThan(zero)) {
-                        return x.newInstance(x.newInstance((byte)1, Dfp.INFINITE));
+                        return x.newInstance(x.newInstance((byte) 1, Dfp.INFINITE));
                     } else {
                         return x.newInstance(zero);
                     }
@@ -622,9 +688,11 @@ public class DfpMath {
             }
         }
 
-        if (invert && !y.rint().equals(y)) {
-            x.getField().setIEEEFlagsBits(DfpField.FLAG_INVALID);
-            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte)1, Dfp.QNAN));
+        if (invert && !y.rint()
+            .equals(y)) {
+            x.getField()
+                .setIEEEFlagsBits(DfpField.FLAG_INVALID);
+            return x.dotrap(DfpField.FLAG_INVALID, POW_TRAP, x, x.newInstance((byte) 1, Dfp.QNAN));
         }
 
         // End special cases
@@ -638,9 +706,15 @@ public class DfpMath {
 
             if (v.unequal(zero)) {
                 final Dfp a = v.multiply(log(x));
-                final Dfp b = a.divide(x.getField().getLn2()).rint();
+                final Dfp b = a.divide(
+                    x.getField()
+                        .getLn2())
+                    .rint();
 
-                final Dfp c = a.subtract(b.multiply(x.getField().getLn2()));
+                final Dfp c = a.subtract(
+                    b.multiply(
+                        x.getField()
+                            .getLn2()));
                 r = splitPow(split(x), ui);
                 r = r.multiply(pow(two, b.intValue()));
                 r = r.multiply(exp(c));
@@ -648,11 +722,14 @@ public class DfpMath {
                 r = splitPow(split(x), ui);
             }
         } else {
-            // very large exponent.  |y| > 1e8
+            // very large exponent. |y| > 1e8
             r = exp(log(x).multiply(y));
         }
 
-        if (invert && y.rint().equals(y) && !y.remainder(two).equals(zero)) {
+        if (invert && y.rint()
+            .equals(y)
+            && !y.remainder(two)
+                .equals(zero)) {
             // if y is odd integer
             r = r.negate();
         }
@@ -661,8 +738,10 @@ public class DfpMath {
 
     }
 
-    /** Computes sin(a)  Used when 0 < a < pi/4.
-     * Uses the classic Taylor series.  x - x**3/3! + x**5/5!  ...
+    /**
+     * Computes sin(a) Used when 0 < a < pi/4.
+     * Uses the classic Taylor series. x - x**3/3! + x**5/5! ...
+     * 
      * @param a number from which sine is desired, in split form
      * @return sin(a)
      */
@@ -679,7 +758,7 @@ public class DfpMath {
             x = x.multiply(c);
             x = x.negate();
 
-            fact = fact.divide((i-1)*i);  // 1 over fact
+            fact = fact.divide((i - 1) * i); // 1 over fact
             y = y.add(x.multiply(fact));
             if (y.equals(py)) {
                 break;
@@ -691,14 +770,15 @@ public class DfpMath {
 
     }
 
-    /** Computes cos(a)  Used when 0 < a < pi/4.
-     * Uses the classic Taylor series for cosine.  1 - x**2/2! + x**4/4!  ...
+    /**
+     * Computes cos(a) Used when 0 < a < pi/4.
+     * Uses the classic Taylor series for cosine. 1 - x**2/2! + x**4/4! ...
+     * 
      * @param a number from which cosine is desired, in split form
      * @return cos(a)
      */
     protected static Dfp cosInternal(Dfp a[]) {
         final Dfp one = a[0].getOne();
-
 
         Dfp x = one;
         Dfp y = one;
@@ -712,7 +792,7 @@ public class DfpMath {
             x = x.multiply(c);
             x = x.negate();
 
-            fact = fact.divide((i - 1) * i);  // 1 over fact
+            fact = fact.divide((i - 1) * i); // 1 over fact
 
             y = y.add(x.multiply(fact));
             if (y.equals(py)) {
@@ -725,26 +805,31 @@ public class DfpMath {
 
     }
 
-    /** computes the sine of the argument.
+    /**
+     * computes the sine of the argument.
+     * 
      * @param a number from which sine is desired
      * @return sin(a)
      */
     public static Dfp sin(final Dfp a) {
-        final Dfp pi = a.getField().getPi();
-        final Dfp zero = a.getField().getZero();
+        final Dfp pi = a.getField()
+            .getPi();
+        final Dfp zero = a.getField()
+            .getZero();
         boolean neg = false;
 
         /* First reduce the argument to the range of +/- PI */
         Dfp x = a.remainder(pi.multiply(2));
 
         /* if x < 0 then apply identity sin(-x) = -sin(x) */
-        /* This puts x in the range 0 < x < PI            */
+        /* This puts x in the range 0 < x < PI */
         if (x.lessThan(zero)) {
             x = x.negate();
             neg = true;
         }
 
-        /* Since sine(x) = sine(pi - x) we can reduce the range to
+        /*
+         * Since sine(x) = sine(pi - x) we can reduce the range to
          * 0 < x < pi/2
          */
 
@@ -757,8 +842,10 @@ public class DfpMath {
             y = sinInternal(split(x));
         } else {
             final Dfp c[] = new Dfp[2];
-            final Dfp[] piSplit = a.getField().getPiSplit();
-            c[0] = piSplit[0].divide(2).subtract(x);
+            final Dfp[] piSplit = a.getField()
+                .getPiSplit();
+            c[0] = piSplit[0].divide(2)
+                .subtract(x);
             c[1] = piSplit[1].divide(2);
             y = cosInternal(c);
         }
@@ -771,25 +858,30 @@ public class DfpMath {
 
     }
 
-    /** computes the cosine of the argument.
+    /**
+     * computes the cosine of the argument.
+     * 
      * @param a number from which cosine is desired
      * @return cos(a)
      */
     public static Dfp cos(Dfp a) {
-        final Dfp pi = a.getField().getPi();
-        final Dfp zero = a.getField().getZero();
+        final Dfp pi = a.getField()
+            .getPi();
+        final Dfp zero = a.getField()
+            .getZero();
         boolean neg = false;
 
         /* First reduce the argument to the range of +/- PI */
         Dfp x = a.remainder(pi.multiply(2));
 
         /* if x < 0 then apply identity cos(-x) = cos(x) */
-        /* This puts x in the range 0 < x < PI           */
+        /* This puts x in the range 0 < x < PI */
         if (x.lessThan(zero)) {
             x = x.negate();
         }
 
-        /* Since cos(x) = -cos(pi - x) we can reduce the range to
+        /*
+         * Since cos(x) = -cos(pi - x) we can reduce the range to
          * 0 < x < pi/2
          */
 
@@ -807,8 +899,10 @@ public class DfpMath {
             y = cosInternal(c);
         } else {
             final Dfp c[] = new Dfp[2];
-            final Dfp[] piSplit = a.getField().getPiSplit();
-            c[0] = piSplit[0].divide(2).subtract(x);
+            final Dfp[] piSplit = a.getField()
+                .getPiSplit();
+            c[0] = piSplit[0].divide(2)
+                .subtract(x);
             c[1] = piSplit[1].divide(2);
             y = sinInternal(c);
         }
@@ -821,7 +915,9 @@ public class DfpMath {
 
     }
 
-    /** computes the tangent of the argument.
+    /**
+     * computes the tangent of the argument.
+     * 
      * @param a number from which tangent is desired
      * @return tan(a)
      */
@@ -829,7 +925,9 @@ public class DfpMath {
         return sin(a).divide(cos(a));
     }
 
-    /** computes the arc-tangent of the argument.
+    /**
+     * computes the arc-tangent of the argument.
+     * 
      * @param a number from which arc-tangent is desired
      * @return atan(a)
      */
@@ -854,29 +952,36 @@ public class DfpMath {
 
     }
 
-    /** computes the arc tangent of the argument
+    /**
+     * computes the arc tangent of the argument
      *
-     *  Uses the typical taylor series
+     * Uses the typical taylor series
      *
-     *  but may reduce arguments using the following identity
+     * but may reduce arguments using the following identity
      * tan(x+y) = (tan(x) + tan(y)) / (1 - tan(x)*tan(y))
      *
      * since tan(PI/8) = sqrt(2)-1,
      *
      * atan(x) = atan( (x - sqrt(2) + 1) / (1+x*sqrt(2) - x) + PI/8.0
+     * 
      * @param a number from which arc-tangent is desired
      * @return atan(a)
      */
     public static Dfp atan(final Dfp a) {
-        final Dfp   zero      = a.getField().getZero();
-        final Dfp   one       = a.getField().getOne();
-        final Dfp[] sqr2Split = a.getField().getSqr2Split();
-        final Dfp[] piSplit   = a.getField().getPiSplit();
+        final Dfp zero = a.getField()
+            .getZero();
+        final Dfp one = a.getField()
+            .getOne();
+        final Dfp[] sqr2Split = a.getField()
+            .getSqr2Split();
+        final Dfp[] piSplit = a.getField()
+            .getPiSplit();
         boolean recp = false;
         boolean neg = false;
         boolean sub = false;
 
-        final Dfp ty = sqr2Split[0].subtract(one).add(sqr2Split[1]);
+        final Dfp ty = sqr2Split[0].subtract(one)
+            .add(sqr2Split[1]);
 
         Dfp x = new Dfp(a);
         if (x.lessThan(zero)) {
@@ -907,17 +1012,20 @@ public class DfpMath {
             xs = splitDiv(xs, ds);
             x = xs[0].add(xs[1]);
 
-            //x = x.subtract(ty).divide(dfp.one.add(x.multiply(ty)));
+            // x = x.subtract(ty).divide(dfp.one.add(x.multiply(ty)));
         }
 
         Dfp y = atanInternal(x);
 
         if (sub) {
-            y = y.add(piSplit[0].divide(8)).add(piSplit[1].divide(8));
+            y = y.add(piSplit[0].divide(8))
+                .add(piSplit[1].divide(8));
         }
 
         if (recp) {
-            y = piSplit[0].divide(2).subtract(y).add(piSplit[1].divide(2));
+            y = piSplit[0].divide(2)
+                .subtract(y)
+                .add(piSplit[1].divide(2));
         }
 
         if (neg) {
@@ -928,15 +1036,23 @@ public class DfpMath {
 
     }
 
-    /** computes the arc-sine of the argument.
+    /**
+     * computes the arc-sine of the argument.
+     * 
      * @param a number from which arc-sine is desired
      * @return asin(a)
      */
     public static Dfp asin(final Dfp a) {
-        return atan(a.divide(a.getOne().subtract(a.multiply(a)).sqrt()));
+        return atan(
+            a.divide(
+                a.getOne()
+                    .subtract(a.multiply(a))
+                    .sqrt()));
     }
 
-    /** computes the arc-cosine of the argument.
+    /**
+     * computes the arc-cosine of the argument.
+     * 
      * @param a number from which arc-cosine is desired
      * @return acos(a)
      */
@@ -948,12 +1064,18 @@ public class DfpMath {
             negative = true;
         }
 
-        a = Dfp.copysign(a, a.getOne());  // absolute value
+        a = Dfp.copysign(a, a.getOne()); // absolute value
 
-        result = atan(a.getOne().subtract(a.multiply(a)).sqrt().divide(a));
+        result = atan(
+            a.getOne()
+                .subtract(a.multiply(a))
+                .sqrt()
+                .divide(a));
 
         if (negative) {
-            result = a.getField().getPi().subtract(result);
+            result = a.getField()
+                .getPi()
+                .subtract(result);
         }
 
         return a.newInstance(result);

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +15,10 @@
 
 package fr.iamacat.multithreading.utils.apache.commons.math3.ml.neuralnet;
 
-import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.RealDistribution;
-import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.UniformRealDistribution;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.UnivariateFunction;
 import fr.iamacat.multithreading.utils.apache.commons.math3.analysis.function.Constant;
+import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.RealDistribution;
+import fr.iamacat.multithreading.utils.apache.commons.math3.distribution.UniformRealDistribution;
 import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -30,6 +28,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomGenerat
  * @since 3.3
  */
 public class FeatureInitializerFactory {
+
     /** Class contains only static methods. */
     private FeatureInitializerFactory() {}
 
@@ -39,17 +38,15 @@ public class FeatureInitializerFactory {
      * @param min Lower bound of the range.
      * @param max Upper bound of the range.
      * @param rng Random number generator used to draw samples from a
-     * uniform distribution.
+     *            uniform distribution.
      * @return an initializer such that the features will be initialized with
-     * values within the given range.
+     *         values within the given range.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code min >= max}.
+     *                                                                                                  if
+     *                                                                                                  {@code min >= max}.
      */
-    public static FeatureInitializer uniform(final RandomGenerator rng,
-                                             final double min,
-                                             final double max) {
-        return randomize(new UniformRealDistribution(rng, min, max),
-                         function(new Constant(0), 0, 0));
+    public static FeatureInitializer uniform(final RandomGenerator rng, final double min, final double max) {
+        return randomize(new UniformRealDistribution(rng, min, max), function(new Constant(0), 0, 0));
     }
 
     /**
@@ -58,14 +55,13 @@ public class FeatureInitializerFactory {
      * @param min Lower bound of the range.
      * @param max Upper bound of the range.
      * @return an initializer such that the features will be initialized with
-     * values within the given range.
+     *         values within the given range.
      * @throws fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     * if {@code min >= max}.
+     *                                                                                                  if
+     *                                                                                                  {@code min >= max}.
      */
-    public static FeatureInitializer uniform(final double min,
-                                             final double max) {
-        return randomize(new UniformRealDistribution(min, max),
-                         function(new Constant(0), 0, 0));
+    public static FeatureInitializer uniform(final double min, final double max) {
+        return randomize(new UniformRealDistribution(min, max), function(new Constant(0), 0, 0));
     }
 
     /**
@@ -73,15 +69,14 @@ public class FeatureInitializerFactory {
      * The argument {@code x} is set to {@code init} at the first call
      * and will be incremented at each call.
      *
-     * @param f Function.
+     * @param f    Function.
      * @param init Initial value.
-     * @param inc Increment
+     * @param inc  Increment
      * @return the initializer.
      */
-    public static FeatureInitializer function(final UnivariateFunction f,
-                                              final double init,
-                                              final double inc) {
+    public static FeatureInitializer function(final UnivariateFunction f, final double init, final double inc) {
         return new FeatureInitializer() {
+
             /** Argument. */
             private double arg = init;
 
@@ -98,13 +93,13 @@ public class FeatureInitializerFactory {
      * Adds some amount of random data to the given initializer.
      *
      * @param random Random variable distribution.
-     * @param orig Original initializer.
+     * @param orig   Original initializer.
      * @return an initializer whose {@link FeatureInitializer#value() value}
-     * method will return {@code orig.value() + random.sample()}.
+     *         method will return {@code orig.value() + random.sample()}.
      */
-    public static FeatureInitializer randomize(final RealDistribution random,
-                                               final FeatureInitializer orig) {
+    public static FeatureInitializer randomize(final RealDistribution random, final FeatureInitializer orig) {
         return new FeatureInitializer() {
+
             /** {@inheritDoc} */
             public double value() {
                 return orig.value() + random.sample();

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +21,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.MathIntern
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Point;
 import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Space;
 
-/** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
+/**
+ * Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
  * <p>
  * The class implements the algorithm described in paper <a
  * href="http://www.inf.ethz.ch/personal/emo/PublFiles/SmallEnclDisk_LNCS555_91.pdf">Smallest
@@ -36,6 +35,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.geometry.Space;
  * Efficient Computation of Smallest Enclosing Balls in Three Dimensions</a> by Linus Källberg
  * to avoid performing local copies of data have been included.
  * </p>
+ * 
  * @param <S> Space type.
  * @param <P> Point type.
  * @since 3.3
@@ -48,7 +48,9 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
     /** Generator for balls on support. */
     private final SupportBallGenerator<S, P> generator;
 
-    /** Simple constructor.
+    /**
+     * Simple constructor.
+     * 
      * @param tolerance below which points are consider to be identical
      * @param generator generator for balls on support
      */
@@ -60,7 +62,8 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
     /** {@inheritDoc} */
     public EnclosingBall<S, P> enclose(final Iterable<P> points) {
 
-        if (points == null || !points.iterator().hasNext()) {
+        if (points == null || !points.iterator()
+            .hasNext()) {
             // return an empty ball
             return generator.ballOnSupport(new ArrayList<P>());
         }
@@ -70,15 +73,22 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
 
     }
 
-    /** Compute enclosing ball using Gärtner's pivoting heuristic.
+    /**
+     * Compute enclosing ball using Gärtner's pivoting heuristic.
+     * 
      * @param points points to be enclosed
      * @return enclosing ball
      */
     private EnclosingBall<S, P> pivotingBall(final Iterable<P> points) {
 
-        final P first = points.iterator().next();
-        final List<P> extreme = new ArrayList<P>(first.getSpace().getDimension() + 1);
-        final List<P> support = new ArrayList<P>(first.getSpace().getDimension() + 1);
+        final P first = points.iterator()
+            .next();
+        final List<P> extreme = new ArrayList<P>(
+            first.getSpace()
+                .getDimension() + 1);
+        final List<P> support = new ArrayList<P>(
+            first.getSpace()
+                .getDimension() + 1);
 
         // start with only first point selected as a candidate support
         extreme.add(first);
@@ -109,25 +119,28 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
             extreme.add(0, farthest);
 
             // prune the least interesting points
-            extreme.subList(ball.getSupportSize(), extreme.size()).clear();
-
+            extreme.subList(ball.getSupportSize(), extreme.size())
+                .clear();
 
         }
     }
 
-    /** Compute enclosing ball using Welzl's move to front heuristic.
-     * @param extreme subset of extreme points
+    /**
+     * Compute enclosing ball using Welzl's move to front heuristic.
+     * 
+     * @param extreme   subset of extreme points
      * @param nbExtreme number of extreme points to consider
-     * @param support points that must belong to the ball support
+     * @param support   points that must belong to the ball support
      * @return enclosing ball, for the extreme subset only
      */
-    private EnclosingBall<S, P> moveToFrontBall(final List<P> extreme, final int nbExtreme,
-                                                final List<P> support) {
+    private EnclosingBall<S, P> moveToFrontBall(final List<P> extreme, final int nbExtreme, final List<P> support) {
 
         // create a new ball on the prescribed support
         EnclosingBall<S, P> ball = generator.ballOnSupport(support);
 
-        if (ball.getSupportSize() <= ball.getCenter().getSpace().getDimension()) {
+        if (ball.getSupportSize() <= ball.getCenter()
+            .getSpace()
+            .getDimension()) {
 
             for (int i = 0; i < nbExtreme; ++i) {
                 final P pi = extreme.get(i);
@@ -155,22 +168,24 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
 
     }
 
-    /** Select the point farthest to the current ball.
+    /**
+     * Select the point farthest to the current ball.
+     * 
      * @param points points to be enclosed
-     * @param ball current ball
+     * @param ball   current ball
      * @return farthest point
      */
     public P selectFarthest(final Iterable<P> points, final EnclosingBall<S, P> ball) {
 
         final P center = ball.getCenter();
-        P farthest   = null;
-        double dMax  = -1.0;
+        P farthest = null;
+        double dMax = -1.0;
 
         for (final P point : points) {
             final double d = point.distance(center);
             if (d > dMax) {
                 farthest = point;
-                dMax     = d;
+                dMax = d;
             }
         }
 

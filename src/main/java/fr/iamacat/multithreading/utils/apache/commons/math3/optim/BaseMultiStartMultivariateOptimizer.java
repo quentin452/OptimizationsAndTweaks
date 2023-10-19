@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +28,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.RandomVectorG
  * <em>It is not a "user" class.</em>
  *
  * @param <PAIR> Type of the point/value pair returned by the optimization
- * algorithm.
+ *               algorithm.
  *
  * @since 3.0
  */
-public abstract class BaseMultiStartMultivariateOptimizer<PAIR>
-    extends BaseMultivariateOptimizer<PAIR> {
+public abstract class BaseMultiStartMultivariateOptimizer<PAIR> extends BaseMultivariateOptimizer<PAIR> {
+
     /** Underlying classical optimizer. */
     private final BaseMultivariateOptimizer<PAIR> optimizer;
     /** Number of evaluations already performed for all starts. */
@@ -68,16 +66,16 @@ public abstract class BaseMultiStartMultivariateOptimizer<PAIR>
      * generating a proper restart point. Users must be take great care of the <a
      * href="http://en.wikipedia.org/wiki/Curse_of_dimensionality">curse of dimensionality</a>.
      * </p>
+     * 
      * @param optimizer Single-start optimizer to wrap.
-     * @param starts Number of starts to perform. If {@code starts == 1},
-     * the {@link #optimize(OptimizationData[]) optimize} will return the
-     * same solution as the given {@code optimizer} would return.
+     * @param starts    Number of starts to perform. If {@code starts == 1},
+     *                  the {@link #optimize(OptimizationData[]) optimize} will return the
+     *                  same solution as the given {@code optimizer} would return.
      * @param generator Random vector generator to use for restarts.
      * @throws NotStrictlyPositiveException if {@code starts < 1}.
      */
-    public BaseMultiStartMultivariateOptimizer(final BaseMultivariateOptimizer<PAIR> optimizer,
-                                               final int starts,
-                                               final RandomVectorGenerator generator) {
+    public BaseMultiStartMultivariateOptimizer(final BaseMultivariateOptimizer<PAIR> optimizer, final int starts,
+        final RandomVectorGenerator generator) {
         super(optimizer.getConvergenceChecker());
 
         if (starts < 1) {
@@ -124,12 +122,12 @@ public abstract class BaseMultiStartMultivariateOptimizer<PAIR>
      * {@inheritDoc}
      *
      * @throws MathIllegalStateException if {@code optData} does not contain an
-     * instance of {@link MaxEval} or {@link InitialGuess}.
+     *                                   instance of {@link MaxEval} or {@link InitialGuess}.
      */
     @Override
     public PAIR optimize(OptimizationData... optData) {
         // Store arguments in order to pass them to the internal optimizer.
-       optimData = optData;
+        optimData = optData;
         // Set up base class and perform computations.
         return super.optimize(optData);
     }
@@ -222,6 +220,7 @@ public abstract class BaseMultiStartMultivariateOptimizer<PAIR>
      * @param optimum Result of an optimization run.
      */
     protected abstract void store(PAIR optimum);
+
     /**
      * Method that will called in order to clear all stored optima.
      */

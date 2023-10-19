@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,17 +49,16 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@link MathUnsupportedOperationException}, and
      * {@link #providesResidual()} returns {@code false}.
      *
-     * @param source the iterative solver which fired this event
+     * @param source     the iterative solver which fired this event
      * @param iterations the number of iterations performed at the time
-     * {@code this} event is created
-     * @param x the current estimate of the solution
-     * @param b the right-hand side vector
-     * @param r the current estimate of the residual (can be {@code null})
-     * @param rnorm the norm of the current estimate of the residual
+     *                   {@code this} event is created
+     * @param x          the current estimate of the solution
+     * @param b          the right-hand side vector
+     * @param r          the current estimate of the residual (can be {@code null})
+     * @param rnorm      the norm of the current estimate of the residual
      */
-    public DefaultIterativeLinearSolverEvent(final Object source, final int iterations,
-        final RealVector x, final RealVector b, final RealVector r,
-        final double rnorm) {
+    public DefaultIterativeLinearSolverEvent(final Object source, final int iterations, final RealVector x,
+        final RealVector b, final RealVector r, final double rnorm) {
         super(source, iterations);
         this.x = x;
         this.b = b;
@@ -80,15 +77,15 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@link MathUnsupportedOperationException}, while
      * {@link #providesResidual()} returns {@code false}.
      *
-     * @param source the iterative solver which fired this event
+     * @param source     the iterative solver which fired this event
      * @param iterations the number of iterations performed at the time
-     * {@code this} event is created
-     * @param x the current estimate of the solution
-     * @param b the right-hand side vector
-     * @param rnorm the norm of the current estimate of the residual
+     *                   {@code this} event is created
+     * @param x          the current estimate of the solution
+     * @param b          the right-hand side vector
+     * @param rnorm      the norm of the current estimate of the residual
      */
-    public DefaultIterativeLinearSolverEvent(final Object source, final int iterations,
-        final RealVector x, final RealVector b, final double rnorm) {
+    public DefaultIterativeLinearSolverEvent(final Object source, final int iterations, final RealVector x,
+        final RealVector b, final double rnorm) {
         super(source, iterations);
         this.x = x;
         this.b = b;

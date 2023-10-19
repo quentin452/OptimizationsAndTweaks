@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,24 +40,28 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
 
     /**
      * Linear objective function.
+     * 
      * @since 2.1
      */
     private LinearObjectiveFunction function;
 
     /**
      * Linear constraints.
+     * 
      * @since 2.1
      */
     private Collection<LinearConstraint> linearConstraints;
 
     /**
      * Type of optimization goal: either {@link GoalType#MAXIMIZE} or {@link GoalType#MINIMIZE}.
+     * 
      * @since 2.1
      */
     private GoalType goal;
 
     /**
      * Whether to restrict the variables to non-negative values.
+     * 
      * @since 2.1
      */
     private boolean nonNegative;
@@ -72,7 +74,9 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
 
     /**
      * Simple constructor with default settings.
-     * <p>The maximal number of evaluation is set to its default value.</p>
+     * <p>
+     * The maximal number of evaluation is set to its default value.
+     * </p>
      */
     protected AbstractLinearOptimizer() {
         setMaxIterations(DEFAULT_MAX_ITERATIONS);
@@ -123,28 +127,26 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
 
     /**
      * Increment the iterations counter by 1.
+     * 
      * @exception MaxCountExceededException if the maximal number of iterations is exceeded
      */
-    protected void incrementIterationsCounter()
-        throws MaxCountExceededException {
+    protected void incrementIterationsCounter() throws MaxCountExceededException {
         if (++iterations > maxIterations) {
             throw new MaxCountExceededException(maxIterations);
         }
     }
 
     /** {@inheritDoc} */
-    public PointValuePair optimize(final LinearObjectiveFunction f,
-                                   final Collection<LinearConstraint> constraints,
-                                   final GoalType goalType, final boolean restrictToNonNegative)
-        throws MathIllegalStateException {
+    public PointValuePair optimize(final LinearObjectiveFunction f, final Collection<LinearConstraint> constraints,
+        final GoalType goalType, final boolean restrictToNonNegative) throws MathIllegalStateException {
 
         // store linear problem characteristics
-        this.function          = f;
+        this.function = f;
         this.linearConstraints = constraints;
-        this.goal              = goalType;
-        this.nonNegative       = restrictToNonNegative;
+        this.goal = goalType;
+        this.nonNegative = restrictToNonNegative;
 
-        iterations  = 0;
+        iterations = 0;
 
         // solve the problem
         return doOptimize();
@@ -153,9 +155,10 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
 
     /**
      * Perform the bulk of optimization algorithm.
+     * 
      * @return the point/value pair giving the optimal value for objective function
      * @exception MathIllegalStateException if no solution fulfilling the constraints
-     * can be found in the allowed number of iterations
+     *                                      can be found in the allowed number of iterations
      */
     protected abstract PointValuePair doOptimize() throws MathIllegalStateException;
 

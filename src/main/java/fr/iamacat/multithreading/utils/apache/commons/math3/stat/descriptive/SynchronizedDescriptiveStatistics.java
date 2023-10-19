@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +21,10 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
 /**
  * Implementation of
  * {@link fr.iamacat.multithreading.utils.apache.commons.math3.stat.descriptive.DescriptiveStatistics} that
- * is safe to use in a multithreaded environment.  Multiple threads can safely
+ * is safe to use in a multithreaded environment. Multiple threads can safely
  * operate on a single instance without causing runtime exceptions due to race
- * conditions.  In effect, this implementation makes modification and access
- * methods atomic operations for a single instance.  That is to say, as one
+ * conditions. In effect, this implementation makes modification and access
+ * methods atomic operations for a single instance. That is to say, as one
  * thread is computing a statistic from the instance, no other thread can modify
  * the instance nor compute another statistic.
  *
@@ -47,9 +45,10 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
     /**
      * Construct an instance with finite window
+     * 
      * @param window the finite window size.
      * @throws MathIllegalArgumentException if window size is less than 1 but
-     * not equal to {@link #INFINITE_WINDOW}
+     *                                      not equal to {@link #INFINITE_WINDOW}
      */
     public SynchronizedDescriptiveStatistics(int window) throws MathIllegalArgumentException {
         super(window);
@@ -61,8 +60,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      * @param original the {@code SynchronizedDescriptiveStatistics} instance to copy
      * @throws NullArgumentException if original is null
      */
-    public SynchronizedDescriptiveStatistics(SynchronizedDescriptiveStatistics original)
-    throws NullArgumentException {
+    public SynchronizedDescriptiveStatistics(SynchronizedDescriptiveStatistics original) throws NullArgumentException {
         copy(original, this);
     }
 
@@ -162,8 +160,7 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
      */
     @Override
     public synchronized SynchronizedDescriptiveStatistics copy() {
-        SynchronizedDescriptiveStatistics result =
-            new SynchronizedDescriptiveStatistics();
+        SynchronizedDescriptiveStatistics result = new SynchronizedDescriptiveStatistics();
         // No try-catch or advertised exception because arguments are guaranteed non-null
         copy(this, result);
         return result;
@@ -171,15 +168,18 @@ public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 
     /**
      * Copies source to dest.
-     * <p>Neither source nor dest can be null.</p>
-     * <p>Acquires synchronization lock on source, then dest before copying.</p>
+     * <p>
+     * Neither source nor dest can be null.
+     * </p>
+     * <p>
+     * Acquires synchronization lock on source, then dest before copying.
+     * </p>
      *
      * @param source SynchronizedDescriptiveStatistics to copy
-     * @param dest SynchronizedDescriptiveStatistics to copy to
+     * @param dest   SynchronizedDescriptiveStatistics to copy to
      * @throws NullArgumentException if either source or dest is null
      */
-    public static void copy(SynchronizedDescriptiveStatistics source,
-                            SynchronizedDescriptiveStatistics dest)
+    public static void copy(SynchronizedDescriptiveStatistics source, SynchronizedDescriptiveStatistics dest)
         throws NullArgumentException {
         MathUtils.checkNotNull(source);
         MathUtils.checkNotNull(dest);

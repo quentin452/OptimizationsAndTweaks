@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,9 +65,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * </p>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Kolmogorov-Smirnov_test">
- * Kolmogorov-Smirnov test (Wikipedia)</a>
+ *      Kolmogorov-Smirnov test (Wikipedia)</a>
  * @deprecated to be removed in version 4.0 -
- *  use {@link fr.iamacat.multithreading.utils.apache.commons.math3.stat.inference.KolmogorovSmirnovTest}
+ *             use {@link fr.iamacat.multithreading.utils.apache.commons.math3.stat.inference.KolmogorovSmirnovTest}
  */
 public class KolmogorovSmirnovDistribution implements Serializable {
 
@@ -83,8 +81,7 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param n Number of observations
      * @throws NotStrictlyPositiveException if {@code n <= 0}
      */
-    public KolmogorovSmirnovDistribution(int n)
-        throws NotStrictlyPositiveException {
+    public KolmogorovSmirnovDistribution(int n) throws NotStrictlyPositiveException {
         if (n <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.NOT_POSITIVE_NUMBER_OF_SAMPLES, n);
         }
@@ -103,9 +100,11 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param d statistic
      * @return the two-sided probability of {@code P(D_n < d)}
      * @throws MathArithmeticException if algorithm fails to convert {@code h}
-     * to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in expressing
-     * {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                 to a
+     *                                 {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                 in expressing
+     *                                 {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                 {@code 0 <= h < 1}.
      */
     public double cdf(double d) throws MathArithmeticException {
         return this.cdf(d, false);
@@ -123,9 +122,11 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param d statistic
      * @return the two-sided probability of {@code P(D_n < d)}
      * @throws MathArithmeticException if algorithm fails to convert {@code h}
-     * to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in expressing
-     * {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                 to a
+     *                                 {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                 in expressing
+     *                                 {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                 {@code 0 <= h < 1}.
      */
     public double cdfExact(double d) throws MathArithmeticException {
         return this.cdf(d, true);
@@ -135,18 +136,20 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * Calculates {@code P(D_n < d)} using method described in [1] with quick
      * decisions for extreme values given in [2] (see above).
      *
-     * @param d statistic
+     * @param d     statistic
      * @param exact whether the probability should be calculated exact using
-     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} everywhere at the
-     * expense of very slow execution time, or if {@code double} should be used
-     * convenient places to gain speed. Almost never choose {@code true} in real
-     * applications unless you are very sure; {@code true} is almost solely for
-     * verification purposes.
+     *              {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} everywhere at the
+     *              expense of very slow execution time, or if {@code double} should be used
+     *              convenient places to gain speed. Almost never choose {@code true} in real
+     *              applications unless you are very sure; {@code true} is almost solely for
+     *              verification purposes.
      * @return the two-sided probability of {@code P(D_n < d)}
      * @throws MathArithmeticException if algorithm fails to convert {@code h}
-     * to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in expressing
-     * {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                 to a
+     *                                 {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                 in expressing
+     *                                 {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                 {@code 0 <= h < 1}.
      */
     public double cdf(double d, boolean exact) throws MathArithmeticException {
 
@@ -189,9 +192,11 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param d statistic
      * @return the two-sided probability of {@code P(D_n < d)}
      * @throws MathArithmeticException if algorithm fails to convert {@code h}
-     * to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in expressing
-     * {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                 to a
+     *                                 {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                 in expressing
+     *                                 {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                 {@code 0 <= h < 1}.
      */
     private double exactK(double d) throws MathArithmeticException {
 
@@ -203,7 +208,8 @@ public class KolmogorovSmirnovDistribution implements Serializable {
         BigFraction pFrac = Hpower.getEntry(k - 1, k - 1);
 
         for (int i = 1; i <= n; ++i) {
-            pFrac = pFrac.multiply(i).divide(n);
+            pFrac = pFrac.multiply(i)
+                .divide(n);
         }
 
         /*
@@ -211,7 +217,8 @@ public class KolmogorovSmirnovDistribution implements Serializable {
          * denominator to double and divides afterwards. That gives NaN quite
          * easy. This does not (scale is the number of digits):
          */
-        return pFrac.bigDecimalValue(20, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return pFrac.bigDecimalValue(20, BigDecimal.ROUND_HALF_UP)
+            .doubleValue();
     }
 
     /**
@@ -221,9 +228,11 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param d statistic
      * @return the two-sided probability of {@code P(D_n < d)}
      * @throws MathArithmeticException if algorithm fails to convert {@code h}
-     * to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in expressing
-     * {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                 to a
+     *                                 {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                 in expressing
+     *                                 {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                 {@code 0 <= h < 1}.
      */
     private double roundedK(double d) throws MathArithmeticException {
 
@@ -239,7 +248,11 @@ public class KolmogorovSmirnovDistribution implements Serializable {
 
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < m; ++j) {
-                H.setEntry(i, j, HBigFraction.getEntry(i, j).doubleValue());
+                H.setEntry(
+                    i,
+                    j,
+                    HBigFraction.getEntry(i, j)
+                        .doubleValue());
             }
         }
 
@@ -259,14 +272,15 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      *
      * @param d statistic
      * @return H matrix
-     * @throws NumberIsTooLargeException if fractional part is greater than 1
+     * @throws NumberIsTooLargeException   if fractional part is greater than 1
      * @throws FractionConversionException if algorithm fails to convert
-     * {@code h} to a {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction} in
-     * expressing {@code d} as {@code (k - h) / m} for integer {@code k, m} and
-     * {@code 0 <= h < 1}.
+     *                                     {@code h} to a
+     *                                     {@link fr.iamacat.multithreading.utils.apache.commons.math3.fraction.BigFraction}
+     *                                     in
+     *                                     expressing {@code d} as {@code (k - h) / m} for integer {@code k, m} and
+     *                                     {@code 0 <= h < 1}.
      */
-    private FieldMatrix<BigFraction> createH(double d)
-            throws NumberIsTooLargeException, FractionConversionException {
+    private FieldMatrix<BigFraction> createH(double d) throws NumberIsTooLargeException, FractionConversionException {
 
         int k = (int) FastMath.ceil(n * d);
 
@@ -328,7 +342,10 @@ public class KolmogorovSmirnovDistribution implements Serializable {
          * 1/2 is sufficient to check:
          */
         if (h.compareTo(BigFraction.ONE_HALF) == 1) {
-            Hdata[m - 1][0] = Hdata[m - 1][0].add(h.multiply(2).subtract(1).pow(m));
+            Hdata[m - 1][0] = Hdata[m - 1][0].add(
+                h.multiply(2)
+                    .subtract(1)
+                    .pow(m));
         }
 
         /*
@@ -337,7 +354,6 @@ public class KolmogorovSmirnovDistribution implements Serializable {
          * put, so only division with (i - j + 1)! is needed in the elements
          * that have 1's. There is no need to calculate (i - j + 1)! and then
          * divide - small steps avoid overflows.
-         *
          * Note that i - j + 1 > 0 <=> i + 1 > j instead of j'ing all the way to
          * m. Also note that it is started at g = 2 because dividing by 1 isn't
          * really necessary.

@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,8 +65,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * x = P<sup>T</sup> &middot; x<sub>hat</sub>.
  * The associated residual is
  * r<sub>hat</sub> = b<sub>hat</sub> - A<sub>hat</sub> &middot; x<sub>hat</sub>
- *                 = P &middot; [b - (A - shift &middot; I) &middot; x]
- *                 = P &middot; r.
+ * = P &middot; [b - (A - shift &middot; I) &middot; x]
+ * = P &middot; r.
  * </p>
  * <p>
  * In the case of preconditioning, the {@link IterativeLinearSolverEvent}s that
@@ -150,8 +148,7 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  *
  * @since 3.0
  */
-public class SymmLQ
-    extends PreconditionedIterativeLinearSolver {
+public class SymmLQ extends PreconditionedIterativeLinearSolver {
 
     /*
      * IMPLEMENTATION NOTES
@@ -161,65 +158,61 @@ public class SymmLQ
      * quantities which are relevant to iteration k can only be computed in
      * iteration (k+1). Therefore, minute attention must be paid to the index of
      * each state variable of this algorithm.
-     *
      * 1. Preconditioning
-     *    ---------------
+     * ---------------
      * The Lanczos iterations associated with Ahat and bhat read
-     *   beta[1] = ||P * b||
-     *   v[1] = P * b / beta[1]
-     *   beta[k+1] * v[k+1] = Ahat * v[k] - alpha[k] * v[k] - beta[k] * v[k-1]
-     *                      = P * (A - shift * I) * P' * v[k] - alpha[k] * v[k]
-     *                        - beta[k] * v[k-1]
+     * beta[1] = ||P * b||
+     * v[1] = P * b / beta[1]
+     * beta[k+1] * v[k+1] = Ahat * v[k] - alpha[k] * v[k] - beta[k] * v[k-1]
+     * = P * (A - shift * I) * P' * v[k] - alpha[k] * v[k]
+     * - beta[k] * v[k-1]
      * Multiplying both sides by P', we get
-     *   beta[k+1] * (P' * v)[k+1] = M * (A - shift * I) * (P' * v)[k]
-     *                               - alpha[k] * (P' * v)[k]
-     *                               - beta[k] * (P' * v[k-1]),
+     * beta[k+1] * (P' * v)[k+1] = M * (A - shift * I) * (P' * v)[k]
+     * - alpha[k] * (P' * v)[k]
+     * - beta[k] * (P' * v[k-1]),
      * and
-     *   alpha[k+1] = v[k+1]' * Ahat * v[k+1]
-     *              = v[k+1]' * P * (A - shift * I) * P' * v[k+1]
-     *              = (P' * v)[k+1]' * (A - shift * I) * (P' * v)[k+1].
-     *
+     * alpha[k+1] = v[k+1]' * Ahat * v[k+1]
+     * = v[k+1]' * P * (A - shift * I) * P' * v[k+1]
+     * = (P' * v)[k+1]' * (A - shift * I) * (P' * v)[k+1].
      * In other words, the Lanczos iterations are unchanged, except for the fact
      * that we really compute (P' * v) instead of v. It can easily be checked
      * that all other formulas are unchanged. It must be noted that P is never
      * explicitly used, only matrix-vector products involving are invoked.
-     *
      * 2. Accounting for the shift parameter
-     *    ----------------------------------
+     * ----------------------------------
      * Is trivial: each time A.operate(x) is invoked, one must subtract shift * x
      * to the result.
-     *
      * 3. Accounting for the goodb flag
-     *    -----------------------------
+     * -----------------------------
      * When goodb is set to true, the component of xL along b is computed
      * separately. From Paige and Saunders (1975), equation (5.9), we have
-     *   wbar[k+1] = s[k] * wbar[k] - c[k] * v[k+1],
-     *   wbar[1] = v[1].
+     * wbar[k+1] = s[k] * wbar[k] - c[k] * v[k+1],
+     * wbar[1] = v[1].
      * Introducing wbar2[k] = wbar[k] - s[1] * ... * s[k-1] * v[1], it can
      * easily be verified by induction that wbar2 follows the same recursive
      * relation
-     *   wbar2[k+1] = s[k] * wbar2[k] - c[k] * v[k+1],
-     *   wbar2[1] = 0,
+     * wbar2[k+1] = s[k] * wbar2[k] - c[k] * v[k+1],
+     * wbar2[1] = 0,
      * and we then have
-     *   w[k] = c[k] * wbar2[k] + s[k] * v[k+1]
-     *          + s[1] * ... * s[k-1] * c[k] * v[1].
+     * w[k] = c[k] * wbar2[k] + s[k] * v[k+1]
+     * + s[1] * ... * s[k-1] * c[k] * v[1].
      * Introducing w2[k] = w[k] - s[1] * ... * s[k-1] * c[k] * v[1], we find,
      * from (5.10)
-     *   xL[k] = zeta[1] * w[1] + ... + zeta[k] * w[k]
-     *         = zeta[1] * w2[1] + ... + zeta[k] * w2[k]
-     *           + (s[1] * c[2] * zeta[2] + ...
-     *           + s[1] * ... * s[k-1] * c[k] * zeta[k]) * v[1]
-     *         = xL2[k] + bstep[k] * v[1],
+     * xL[k] = zeta[1] * w[1] + ... + zeta[k] * w[k]
+     * = zeta[1] * w2[1] + ... + zeta[k] * w2[k]
+     * + (s[1] * c[2] * zeta[2] + ...
+     * + s[1] * ... * s[k-1] * c[k] * zeta[k]) * v[1]
+     * = xL2[k] + bstep[k] * v[1],
      * where xL2[k] is defined by
-     *   xL2[0] = 0,
-     *   xL2[k+1] = xL2[k] + zeta[k+1] * w2[k+1],
+     * xL2[0] = 0,
+     * xL2[k+1] = xL2[k] + zeta[k+1] * w2[k+1],
      * and bstep is defined by
-     *   bstep[1] = 0,
-     *   bstep[k] = bstep[k-1] + s[1] * ... * s[k-1] * c[k] * zeta[k].
+     * bstep[1] = 0,
+     * bstep[k] = bstep[k-1] + s[1] * ... * s[k-1] * c[k] * zeta[k].
      * We also have, from (5.11)
-     *   xC[k] = xL[k-1] + zbar[k] * wbar[k]
-     *         = xL2[k-1] + zbar[k] * wbar2[k]
-     *           + (bstep[k-1] + s[1] * ... * s[k-1] * zbar[k]) * v[1].
+     * xC[k] = xL[k-1] + zbar[k] * wbar[k]
+     * = xL2[k-1] + zbar[k] * wbar2[k]
+     * + (bstep[k-1] + s[1] * ... * s[k-1] * zbar[k]) * v[1].
      */
 
     /**
@@ -239,6 +232,7 @@ public class SymmLQ
      * </p>
      */
     private static class State {
+
         /** The cubic root of {@link #MACH_PREC}. */
         static final double CBRT_MACH_PREC;
 
@@ -369,24 +363,19 @@ public class SymmLQ
         /**
          * Creates and inits to k = 1 a new instance of this class.
          *
-         * @param a the linear operator A of the system
-         * @param m the preconditioner, M (can be {@code null})
-         * @param b the right-hand side vector
+         * @param a     the linear operator A of the system
+         * @param m     the preconditioner, M (can be {@code null})
+         * @param b     the right-hand side vector
          * @param goodb usually {@code false}, except if {@code x} is expected
-         * to contain a large multiple of {@code b}
+         *              to contain a large multiple of {@code b}
          * @param shift the amount to be subtracted to all diagonal elements of
-         * A
+         *              A
          * @param delta the &delta; parameter for the default stopping criterion
          * @param check {@code true} if self-adjointedness of both matrix and
-         * preconditioner should be checked
+         *              preconditioner should be checked
          */
-        State(final RealLinearOperator a,
-            final RealLinearOperator m,
-            final RealVector b,
-            final boolean goodb,
-            final double shift,
-            final double delta,
-            final boolean check) {
+        State(final RealLinearOperator a, final RealLinearOperator m, final RealVector b, final boolean goodb,
+            final double shift, final double delta, final boolean check) {
             this.a = a;
             this.m = m;
             this.b = b;
@@ -412,9 +401,8 @@ public class SymmLQ
          * @param z the vector z = L &middot; y
          * @throws NonSelfAdjointOperatorException when the test fails
          */
-        private static void checkSymmetry(final RealLinearOperator l,
-            final RealVector x, final RealVector y, final RealVector z)
-            throws NonSelfAdjointOperatorException {
+        private static void checkSymmetry(final RealLinearOperator l, final RealVector x, final RealVector y,
+            final RealVector z) throws NonSelfAdjointOperatorException {
             final double s = y.dotProduct(y);
             final double t = x.dotProduct(z);
             final double epsa = (s + MACH_PREC) * CBRT_MACH_PREC;
@@ -438,8 +426,8 @@ public class SymmLQ
          * @param v the offending vector
          * @throws NonPositiveDefiniteOperatorException in any circumstances
          */
-        private static void throwNPDLOException(final RealLinearOperator l,
-            final RealVector v) throws NonPositiveDefiniteOperatorException {
+        private static void throwNPDLOException(final RealLinearOperator l, final RealVector v)
+            throws NonPositiveDefiniteOperatorException {
             final NonPositiveDefiniteOperatorException e;
             e = new NonPositiveDefiniteOperatorException();
             final ExceptionContext context = e.getContext();
@@ -457,8 +445,7 @@ public class SymmLQ
          * @param x the vector to be added to {@code y}
          * @param y the vector to be incremented
          */
-        private static void daxpy(final double a, final RealVector x,
-            final RealVector y) {
+        private static void daxpy(final double a, final RealVector x, final RealVector y) {
             final int n = x.getDimension();
             for (int i = 0; i < n; i++) {
                 y.setEntry(i, a * x.getEntry(i) + y.getEntry(i));
@@ -476,8 +463,8 @@ public class SymmLQ
          * @param y the second vector to be added to {@code z}
          * @param z the vector to be incremented
          */
-        private static void daxpbypz(final double a, final RealVector x,
-            final double b, final RealVector y, final RealVector z) {
+        private static void daxpbypz(final double a, final RealVector x, final double b, final RealVector y,
+            final RealVector z) {
             final int n = z.getDimension();
             for (int i = 0; i < n; i++) {
                 final double zi;
@@ -499,7 +486,7 @@ public class SymmLQ
          *
          * @param x the vector to be updated with the refined value of xL
          */
-         void refineSolution(final RealVector x) {
+        void refineSolution(final RealVector x) {
             final int n = this.xL.getDimension();
             if (lqnorm < cgnorm) {
                 if (!goodb) {
@@ -540,7 +527,7 @@ public class SymmLQ
          * value of the state variables of {@code this} object correspond to k =
          * 1.
          */
-         void init() {
+        void init() {
             this.xL.set(0.);
             /*
              * Set up y for the first Lanczos vector. y and beta1 will be zero
@@ -563,10 +550,11 @@ public class SymmLQ
             }
             this.bIsNull = false;
             this.beta1 = FastMath.sqrt(this.beta1);
-            /* At this point
-             *   r1 = b,
-             *   y = M * b,
-             *   beta1 = beta[1].
+            /*
+             * At this point
+             * r1 = b,
+             * y = M * b,
+             * beta1 = beta[1].
              */
             final RealVector v = this.y.mapMultiply(1. / this.beta1);
             this.y = this.a.operate(v);
@@ -582,8 +570,8 @@ public class SymmLQ
             daxpy(-alpha / this.beta1, this.r1, this.y);
             /*
              * At this point
-             *   alpha = alpha[1]
-             *   y     = beta[2] * M^(-1) * P' * v[2]
+             * alpha = alpha[1]
+             * y = beta[2] * M^(-1) * P' * v[2]
              */
             /* Make sure r2 will be orthogonal to the first v. */
             final double vty = v.dotProduct(this.y);
@@ -601,10 +589,10 @@ public class SymmLQ
             this.beta = FastMath.sqrt(this.beta);
             /*
              * At this point
-             *   oldb = beta[1]
-             *   beta = beta[2]
-             *   y  = beta[2] * P' * v[2]
-             *   r2 = beta[2] * M^(-1) * P' * v[2]
+             * oldb = beta[1]
+             * beta = beta[2]
+             * y = beta[2] * P' * v[2]
+             * r2 = beta[2] * M^(-1) * P' * v[2]
              */
             this.cgnorm = this.beta1;
             this.gbar = alpha;
@@ -640,24 +628,23 @@ public class SymmLQ
             final double alpha = v.dotProduct(y);
             /*
              * At this point
-             *   v     = P' * v[k],
-             *   y     = (A - shift * I) * P' * v[k] - beta[k] * M^(-1) * P' * v[k-1],
-             *   alpha = v'[k] * P * (A - shift * I) * P' * v[k]
-             *           - beta[k] * v[k]' * P * M^(-1) * P' * v[k-1]
-             *         = v'[k] * P * (A - shift * I) * P' * v[k]
-             *           - beta[k] * v[k]' * v[k-1]
-             *         = alpha[k].
+             * v = P' * v[k],
+             * y = (A - shift * I) * P' * v[k] - beta[k] * M^(-1) * P' * v[k-1],
+             * alpha = v'[k] * P * (A - shift * I) * P' * v[k]
+             * - beta[k] * v[k]' * P * M^(-1) * P' * v[k-1]
+             * = v'[k] * P * (A - shift * I) * P' * v[k]
+             * - beta[k] * v[k]' * v[k-1]
+             * = alpha[k].
              */
             daxpy(-alpha / beta, r2, y);
             /*
              * At this point
-             *   y = (A - shift * I) * P' * v[k] - alpha[k] * M^(-1) * P' * v[k]
-             *       - beta[k] * M^(-1) * P' * v[k-1]
-             *     = M^(-1) * P' * (P * (A - shift * I) * P' * v[k] -alpha[k] * v[k]
-             *       - beta[k] * v[k-1])
-             *     = beta[k+1] * M^(-1) * P' * v[k+1],
+             * y = (A - shift * I) * P' * v[k] - alpha[k] * M^(-1) * P' * v[k]
+             * - beta[k] * M^(-1) * P' * v[k-1]
+             * = M^(-1) * P' * (P * (A - shift * I) * P' * v[k] -alpha[k] * v[k]
+             * - beta[k] * v[k-1])
+             * = beta[k+1] * M^(-1) * P' * v[k+1],
              * from Paige and Saunders (1975), equation (3.2).
-             *
              * WATCH-IT: the two following lines work only because y is no longer
              * updated up to the end of the present iteration, and is
              * reinitialized at the beginning of the next iteration.
@@ -675,28 +662,28 @@ public class SymmLQ
             beta = FastMath.sqrt(beta);
             /*
              * At this point
-             *   r1 = beta[k] * M^(-1) * P' * v[k],
-             *   r2 = beta[k+1] * M^(-1) * P' * v[k+1],
-             *   y  = beta[k+1] * P' * v[k+1],
-             *   oldb = beta[k],
-             *   beta = beta[k+1].
+             * r1 = beta[k] * M^(-1) * P' * v[k],
+             * r2 = beta[k+1] * M^(-1) * P' * v[k+1],
+             * y = beta[k+1] * P' * v[k+1],
+             * oldb = beta[k],
+             * beta = beta[k+1].
              */
             tnorm += alpha * alpha + oldb * oldb + beta * beta;
             /*
              * Compute the next plane rotation for Q. See Paige and Saunders
              * (1975), equation (5.6), with
-             *   gamma = gamma[k-1],
-             *   c     = c[k-1],
-             *   s     = s[k-1].
+             * gamma = gamma[k-1],
+             * c = c[k-1],
+             * s = s[k-1].
              */
             final double gamma = FastMath.sqrt(gbar * gbar + oldb * oldb);
             final double c = gbar / gamma;
             final double s = oldb / gamma;
             /*
              * The relations
-             *   gbar[k] = s[k-1] * (-c[k-2] * beta[k]) - c[k-1] * alpha[k]
-             *           = s[k-1] * dbar[k] - c[k-1] * alpha[k],
-             *   delta[k] = c[k-1] * dbar[k] + s[k-1] * alpha[k],
+             * gbar[k] = s[k-1] * (-c[k-2] * beta[k]) - c[k-1] * alpha[k]
+             * = s[k-1] * dbar[k] - c[k-1] * alpha[k],
+             * delta[k] = c[k-1] * dbar[k] + s[k-1] * alpha[k],
              * are not stated in Paige and Saunders (1975), but can be retrieved
              * by expanding the (k, k-1) and (k, k) coefficients of the matrix in
              * equation (5.5).
@@ -708,11 +695,11 @@ public class SymmLQ
             final double zeta = gammaZeta / gamma;
             /*
              * At this point
-             *   gbar   = gbar[k]
-             *   deltak = delta[k]
-             *   eps    = eps[k+1]
-             *   dbar   = dbar[k+1]
-             *   zeta   = zeta[k-1]
+             * gbar = gbar[k]
+             * deltak = delta[k]
+             * eps = eps[k+1]
+             * dbar = dbar[k+1]
+             * zeta = zeta[k-1]
              */
             final double zetaC = zeta * c;
             final double zetaS = zeta * s;
@@ -726,8 +713,8 @@ public class SymmLQ
             }
             /*
              * At this point
-             *   x = xL[k-1],
-             *   ptwbar = P' wbar[k],
+             * x = xL[k-1],
+             * ptwbar = P' wbar[k],
              * see Paige and Saunders (1975), equations (5.9) and (5.10).
              */
             bstep += snprod * c * zeta;
@@ -739,12 +726,12 @@ public class SymmLQ
             minusEpsZeta = -eps * zeta;
             /*
              * At this point
-             *   snprod       = s[1] * ... * s[k-1],
-             *   gmax         = max(|alpha[1]|, gamma[1], ..., gamma[k-1]),
-             *   gmin         = min(|alpha[1]|, gamma[1], ..., gamma[k-1]),
-             *   ynorm2       = zeta[1]^2 + ... + zeta[k-1]^2,
-             *   gammaZeta    = gamma[k] * zeta[k],
-             *   minusEpsZeta = -eps[k+1] * zeta[k-1].
+             * snprod = s[1] * ... * s[k-1],
+             * gmax = max(|alpha[1]|, gamma[1], ..., gamma[k-1]),
+             * gmin = min(|alpha[1]|, gamma[1], ..., gamma[k-1]),
+             * ynorm2 = zeta[1]^2 + ... + zeta[k-1]^2,
+             * gammaZeta = gamma[k] * zeta[k],
+             * minusEpsZeta = -eps[k+1] * zeta[k-1].
              * The relation for gammaZeta can be retrieved from Paige and
              * Saunders (1975), equation (5.4a), last line of the vector
              * gbar[k] * zbar[k] = -eps[k] * zeta[k-2] - delta[k] * zeta[k-1].
@@ -763,8 +750,7 @@ public class SymmLQ
             final double epsx = anorm * ynorm * MACH_PREC;
             final double epsr = anorm * ynorm * delta;
             final double diag = gbar == 0. ? epsa : gbar;
-            lqnorm = FastMath.sqrt(gammaZeta * gammaZeta +
-                                   minusEpsZeta * minusEpsZeta);
+            lqnorm = FastMath.sqrt(gammaZeta * gammaZeta + minusEpsZeta * minusEpsZeta);
             final double qrnorm = snprod * beta1;
             cgnorm = qrnorm * beta / FastMath.abs(diag);
 
@@ -862,12 +848,11 @@ public class SymmLQ
      * entails an extra matrix-vector product in the initial phase.
      *
      * @param maxIterations the maximum number of iterations
-     * @param delta the &delta; parameter for the default stopping criterion
-     * @param check {@code true} if self-adjointedness of both matrix and
-     * preconditioner should be checked
+     * @param delta         the &delta; parameter for the default stopping criterion
+     * @param check         {@code true} if self-adjointedness of both matrix and
+     *                      preconditioner should be checked
      */
-    public SymmLQ(final int maxIterations, final double delta,
-                  final boolean check) {
+    public SymmLQ(final int maxIterations, final double delta, final boolean check) {
         super(maxIterations);
         this.delta = delta;
         this.check = check;
@@ -880,12 +865,11 @@ public class SymmLQ
      * the initial phase.
      *
      * @param manager the custom iteration manager
-     * @param delta the &delta; parameter for the default stopping criterion
-     * @param check {@code true} if self-adjointedness of both matrix and
-     * preconditioner should be checked
+     * @param delta   the &delta; parameter for the default stopping criterion
+     * @param check   {@code true} if self-adjointedness of both matrix and
+     *                preconditioner should be checked
      */
-    public SymmLQ(final IterationManager manager, final double delta,
-                  final boolean check) {
+    public SymmLQ(final IterationManager manager, final double delta, final boolean check) {
         super(manager);
         this.delta = delta;
         this.check = check;
@@ -904,19 +888,16 @@ public class SymmLQ
     /**
      * {@inheritDoc}
      *
-     * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} or {@code m} is not self-adjoint
+     * @throws NonSelfAdjointOperatorException      if {@link #getCheck()} is
+     *                                              {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not
-     * positive definite
-     * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
+     *                                              positive definite
+     * @throws IllConditionedOperatorException      if {@code a} is ill-conditioned
      */
     @Override
-    public RealVector solve(final RealLinearOperator a,
-        final RealLinearOperator m, final RealVector b) throws
-        NullArgumentException, NonSquareOperatorException,
-        DimensionMismatchException, MaxCountExceededException,
-        NonSelfAdjointOperatorException, NonPositiveDefiniteOperatorException,
-        IllConditionedOperatorException {
+    public RealVector solve(final RealLinearOperator a, final RealLinearOperator m, final RealVector b)
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException, MaxCountExceededException,
+        NonSelfAdjointOperatorException, NonPositiveDefiniteOperatorException, IllConditionedOperatorException {
         MathUtils.checkNotNull(a);
         final RealVector x = new ArrayRealVector(a.getColumnDimension());
         return solveInPlace(a, m, b, x, false, 0.);
@@ -941,33 +922,32 @@ public class SymmLQ
      * normalized, x may be closer to an eigenvector than b.
      * </p>
      *
-     * @param a the linear operator A of the system
-     * @param m the preconditioner, M (can be {@code null})
-     * @param b the right-hand side vector
+     * @param a     the linear operator A of the system
+     * @param m     the preconditioner, M (can be {@code null})
+     * @param b     the right-hand side vector
      * @param goodb usually {@code false}, except if {@code x} is expected to
-     * contain a large multiple of {@code b}
+     *              contain a large multiple of {@code b}
      * @param shift the amount to be subtracted to all diagonal elements of A
      * @return a reference to {@code x} (shallow copy)
-     * @throws NullArgumentException if one of the parameters is {@code null}
-     * @throws NonSquareOperatorException if {@code a} or {@code m} is not square
-     * @throws DimensionMismatchException if {@code m} or {@code b} have dimensions
-     * inconsistent with {@code a}
-     * @throws MaxCountExceededException at exhaustion of the iteration count,
-     * unless a custom
-     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction of the {@link IterationManager}
-     * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} or {@code m} is not self-adjoint
+     * @throws NullArgumentException                if one of the parameters is {@code null}
+     * @throws NonSquareOperatorException           if {@code a} or {@code m} is not square
+     * @throws DimensionMismatchException           if {@code m} or {@code b} have dimensions
+     *                                              inconsistent with {@code a}
+     * @throws MaxCountExceededException            at exhaustion of the iteration count,
+     *                                              unless a custom
+     *                                              {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback
+     *                                              callback}
+     *                                              has been set at construction of the {@link IterationManager}
+     * @throws NonSelfAdjointOperatorException      if {@link #getCheck()} is
+     *                                              {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not
-     * positive definite
-     * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
+     *                                              positive definite
+     * @throws IllConditionedOperatorException      if {@code a} is ill-conditioned
      */
-    public RealVector solve(final RealLinearOperator a,
-        final RealLinearOperator m, final RealVector b, final boolean goodb,
-        final double shift) throws NullArgumentException,
-        NonSquareOperatorException, DimensionMismatchException,
-        MaxCountExceededException, NonSelfAdjointOperatorException,
-        NonPositiveDefiniteOperatorException, IllConditionedOperatorException {
+    public RealVector solve(final RealLinearOperator a, final RealLinearOperator m, final RealVector b,
+        final boolean goodb, final double shift)
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException, MaxCountExceededException,
+        NonSelfAdjointOperatorException, NonPositiveDefiniteOperatorException, IllConditionedOperatorException {
         MathUtils.checkNotNull(a);
         final RealVector x = new ArrayRealVector(a.getColumnDimension());
         return solveInPlace(a, m, b, x, goodb, shift);
@@ -977,19 +957,17 @@ public class SymmLQ
      * {@inheritDoc}
      *
      * @param x not meaningful in this implementation; should not be considered
-     * as an initial guess (<a href="#initguess">more</a>)
-     * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} or {@code m} is not self-adjoint
+     *          as an initial guess (<a href="#initguess">more</a>)
+     * @throws NonSelfAdjointOperatorException      if {@link #getCheck()} is
+     *                                              {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not positive
-     * definite
-     * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
+     *                                              definite
+     * @throws IllConditionedOperatorException      if {@code a} is ill-conditioned
      */
     @Override
-    public RealVector solve(final RealLinearOperator a,
-        final RealLinearOperator m, final RealVector b, final RealVector x)
-        throws NullArgumentException, NonSquareOperatorException,
-        DimensionMismatchException, NonSelfAdjointOperatorException,
-        NonPositiveDefiniteOperatorException, IllConditionedOperatorException,
+    public RealVector solve(final RealLinearOperator a, final RealLinearOperator m, final RealVector b,
+        final RealVector x) throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, NonPositiveDefiniteOperatorException, IllConditionedOperatorException,
         MaxCountExceededException {
         MathUtils.checkNotNull(x);
         return solveInPlace(a, m, b, x.copy(), false, 0.);
@@ -999,14 +977,13 @@ public class SymmLQ
      * {@inheritDoc}
      *
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} is not self-adjoint
+     *                                         {@code true}, and {@code a} is not self-adjoint
      * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
      */
     @Override
     public RealVector solve(final RealLinearOperator a, final RealVector b)
-        throws NullArgumentException, NonSquareOperatorException,
-        DimensionMismatchException, NonSelfAdjointOperatorException,
-        IllConditionedOperatorException, MaxCountExceededException {
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, IllConditionedOperatorException, MaxCountExceededException {
         MathUtils.checkNotNull(a);
         final RealVector x = new ArrayRealVector(a.getColumnDimension());
         x.set(0.);
@@ -1030,29 +1007,28 @@ public class SymmLQ
      * normalized, x may be closer to an eigenvector than b.
      * </p>
      *
-     * @param a the linear operator A of the system
-     * @param b the right-hand side vector
+     * @param a     the linear operator A of the system
+     * @param b     the right-hand side vector
      * @param goodb usually {@code false}, except if {@code x} is expected to
-     * contain a large multiple of {@code b}
+     *              contain a large multiple of {@code b}
      * @param shift the amount to be subtracted to all diagonal elements of A
      * @return a reference to {@code x}
-     * @throws NullArgumentException if one of the parameters is {@code null}
-     * @throws NonSquareOperatorException if {@code a} is not square
-     * @throws DimensionMismatchException if {@code b} has dimensions
-     * inconsistent with {@code a}
-     * @throws MaxCountExceededException at exhaustion of the iteration count,
-     * unless a custom
-     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction of the {@link IterationManager}
+     * @throws NullArgumentException           if one of the parameters is {@code null}
+     * @throws NonSquareOperatorException      if {@code a} is not square
+     * @throws DimensionMismatchException      if {@code b} has dimensions
+     *                                         inconsistent with {@code a}
+     * @throws MaxCountExceededException       at exhaustion of the iteration count,
+     *                                         unless a custom
+     *                                         {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback
+     *                                         callback}
+     *                                         has been set at construction of the {@link IterationManager}
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} is not self-adjoint
+     *                                         {@code true}, and {@code a} is not self-adjoint
      * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
      */
-    public RealVector solve(final RealLinearOperator a, final RealVector b,
-        final boolean goodb, final double shift) throws NullArgumentException,
-        NonSquareOperatorException, DimensionMismatchException,
-        NonSelfAdjointOperatorException, IllConditionedOperatorException,
-        MaxCountExceededException {
+    public RealVector solve(final RealLinearOperator a, final RealVector b, final boolean goodb, final double shift)
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, IllConditionedOperatorException, MaxCountExceededException {
         MathUtils.checkNotNull(a);
         final RealVector x = new ArrayRealVector(a.getColumnDimension());
         return solveInPlace(a, null, b, x, goodb, shift);
@@ -1062,17 +1038,15 @@ public class SymmLQ
      * {@inheritDoc}
      *
      * @param x not meaningful in this implementation; should not be considered
-     * as an initial guess (<a href="#initguess">more</a>)
+     *          as an initial guess (<a href="#initguess">more</a>)
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} is not self-adjoint
+     *                                         {@code true}, and {@code a} is not self-adjoint
      * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
      */
     @Override
-    public RealVector solve(final RealLinearOperator a, final RealVector b,
-        final RealVector x) throws NullArgumentException,
-        NonSquareOperatorException, DimensionMismatchException,
-        NonSelfAdjointOperatorException, IllConditionedOperatorException,
-        MaxCountExceededException {
+    public RealVector solve(final RealLinearOperator a, final RealVector b, final RealVector x)
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, IllConditionedOperatorException, MaxCountExceededException {
         MathUtils.checkNotNull(x);
         return solveInPlace(a, null, b, x.copy(), false, 0.);
     }
@@ -1081,19 +1055,17 @@ public class SymmLQ
      * {@inheritDoc}
      *
      * @param x the vector to be updated with the solution; {@code x} should
-     * not be considered as an initial guess (<a href="#initguess">more</a>)
-     * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} or {@code m} is not self-adjoint
+     *          not be considered as an initial guess (<a href="#initguess">more</a>)
+     * @throws NonSelfAdjointOperatorException      if {@link #getCheck()} is
+     *                                              {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not
-     * positive definite
-     * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
+     *                                              positive definite
+     * @throws IllConditionedOperatorException      if {@code a} is ill-conditioned
      */
     @Override
-    public RealVector solveInPlace(final RealLinearOperator a,
-        final RealLinearOperator m, final RealVector b, final RealVector x)
-        throws NullArgumentException, NonSquareOperatorException,
-        DimensionMismatchException, NonSelfAdjointOperatorException,
-        NonPositiveDefiniteOperatorException, IllConditionedOperatorException,
+    public RealVector solveInPlace(final RealLinearOperator a, final RealLinearOperator m, final RealVector b,
+        final RealVector x) throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, NonPositiveDefiniteOperatorException, IllConditionedOperatorException,
         MaxCountExceededException {
         return solveInPlace(a, m, b, x, false, 0.);
     }
@@ -1117,36 +1089,34 @@ public class SymmLQ
      * normalized, x may be closer to an eigenvector than b.
      * </p>
      *
-     * @param a the linear operator A of the system
-     * @param m the preconditioner, M (can be {@code null})
-     * @param b the right-hand side vector
-     * @param x the vector to be updated with the solution; {@code x} should
-     * not be considered as an initial guess (<a href="#initguess">more</a>)
+     * @param a     the linear operator A of the system
+     * @param m     the preconditioner, M (can be {@code null})
+     * @param b     the right-hand side vector
+     * @param x     the vector to be updated with the solution; {@code x} should
+     *              not be considered as an initial guess (<a href="#initguess">more</a>)
      * @param goodb usually {@code false}, except if {@code x} is expected to
-     * contain a large multiple of {@code b}
+     *              contain a large multiple of {@code b}
      * @param shift the amount to be subtracted to all diagonal elements of A
      * @return a reference to {@code x} (shallow copy).
-     * @throws NullArgumentException if one of the parameters is {@code null}
-     * @throws NonSquareOperatorException if {@code a} or {@code m} is not square
-     * @throws DimensionMismatchException if {@code m}, {@code b} or {@code x}
-     * have dimensions inconsistent with {@code a}.
-     * @throws MaxCountExceededException at exhaustion of the iteration count,
-     * unless a custom
-     * {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback callback}
-     * has been set at construction of the {@link IterationManager}
-     * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} or {@code m} is not self-adjoint
+     * @throws NullArgumentException                if one of the parameters is {@code null}
+     * @throws NonSquareOperatorException           if {@code a} or {@code m} is not square
+     * @throws DimensionMismatchException           if {@code m}, {@code b} or {@code x}
+     *                                              have dimensions inconsistent with {@code a}.
+     * @throws MaxCountExceededException            at exhaustion of the iteration count,
+     *                                              unless a custom
+     *                                              {@link fr.iamacat.multithreading.utils.apache.commons.math3.util.Incrementor.MaxCountExceededCallback
+     *                                              callback}
+     *                                              has been set at construction of the {@link IterationManager}
+     * @throws NonSelfAdjointOperatorException      if {@link #getCheck()} is
+     *                                              {@code true}, and {@code a} or {@code m} is not self-adjoint
      * @throws NonPositiveDefiniteOperatorException if {@code m} is not positive
-     * definite
-     * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
+     *                                              definite
+     * @throws IllConditionedOperatorException      if {@code a} is ill-conditioned
      */
-    public RealVector solveInPlace(final RealLinearOperator a,
-        final RealLinearOperator m, final RealVector b,
-        final RealVector x, final boolean goodb, final double shift)
-        throws NullArgumentException, NonSquareOperatorException,
-        DimensionMismatchException, NonSelfAdjointOperatorException,
-        NonPositiveDefiniteOperatorException, IllConditionedOperatorException,
-        MaxCountExceededException {
+    public RealVector solveInPlace(final RealLinearOperator a, final RealLinearOperator m, final RealVector b,
+        final RealVector x, final boolean goodb, final double shift) throws NullArgumentException,
+        NonSquareOperatorException, DimensionMismatchException, NonSelfAdjointOperatorException,
+        NonPositiveDefiniteOperatorException, IllConditionedOperatorException, MaxCountExceededException {
         checkParameters(a, m, b, x);
 
         final IterationManager manager = getIterationManager();
@@ -1159,11 +1129,7 @@ public class SymmLQ
         state.init();
         state.refineSolution(x);
         IterativeLinearSolverEvent event;
-        event = new DefaultIterativeLinearSolverEvent(this,
-                                                      manager.getIterations(),
-                                                      x,
-                                                      b,
-                                                      state.getNormOfResidual());
+        event = new DefaultIterativeLinearSolverEvent(this, manager.getIterations(), x, b, state.getNormOfResidual());
         if (state.bEqualsNullVector()) {
             /* If b = 0 exactly, stop with x = 0. */
             manager.fireTerminationEvent(event);
@@ -1176,27 +1142,25 @@ public class SymmLQ
         if (!earlyStop) {
             do {
                 manager.incrementIterationCount();
-                event = new DefaultIterativeLinearSolverEvent(this,
-                                                              manager.getIterations(),
-                                                              x,
-                                                              b,
-                                                              state.getNormOfResidual());
+                event = new DefaultIterativeLinearSolverEvent(
+                    this,
+                    manager.getIterations(),
+                    x,
+                    b,
+                    state.getNormOfResidual());
                 manager.fireIterationStartedEvent(event);
                 state.update();
                 state.refineSolution(x);
-                event = new DefaultIterativeLinearSolverEvent(this,
-                                                              manager.getIterations(),
-                                                              x,
-                                                              b,
-                                                              state.getNormOfResidual());
+                event = new DefaultIterativeLinearSolverEvent(
+                    this,
+                    manager.getIterations(),
+                    x,
+                    b,
+                    state.getNormOfResidual());
                 manager.fireIterationPerformedEvent(event);
             } while (!state.hasConverged());
         }
-        event = new DefaultIterativeLinearSolverEvent(this,
-                                                      manager.getIterations(),
-                                                      x,
-                                                      b,
-                                                      state.getNormOfResidual());
+        event = new DefaultIterativeLinearSolverEvent(this, manager.getIterations(), x, b, state.getNormOfResidual());
         manager.fireTerminationEvent(event);
         return x;
     }
@@ -1205,17 +1169,15 @@ public class SymmLQ
      * {@inheritDoc}
      *
      * @param x the vector to be updated with the solution; {@code x} should
-     * not be considered as an initial guess (<a href="#initguess">more</a>)
+     *          not be considered as an initial guess (<a href="#initguess">more</a>)
      * @throws NonSelfAdjointOperatorException if {@link #getCheck()} is
-     * {@code true}, and {@code a} is not self-adjoint
+     *                                         {@code true}, and {@code a} is not self-adjoint
      * @throws IllConditionedOperatorException if {@code a} is ill-conditioned
      */
     @Override
-    public RealVector solveInPlace(final RealLinearOperator a,
-        final RealVector b, final RealVector x) throws NullArgumentException,
-        NonSquareOperatorException, DimensionMismatchException,
-        NonSelfAdjointOperatorException, IllConditionedOperatorException,
-        MaxCountExceededException {
+    public RealVector solveInPlace(final RealLinearOperator a, final RealVector b, final RealVector x)
+        throws NullArgumentException, NonSquareOperatorException, DimensionMismatchException,
+        NonSelfAdjointOperatorException, IllConditionedOperatorException, MaxCountExceededException {
         return solveInPlace(a, null, b, x, false, 0.);
     }
 }

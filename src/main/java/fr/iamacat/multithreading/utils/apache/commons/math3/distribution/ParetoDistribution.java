@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,8 +28,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * <p>
  * <strong>Parameters:</strong>
  * The probability distribution function of {@code X} is given by (for {@code x >= k}):
+ * 
  * <pre>
- *  α * k^α / x^(α + 1)
+ * α * k ^ α / x ^ (α + 1)
  * </pre>
  * <p>
  * <ul>
@@ -40,9 +39,9 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * </ul>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Pareto_distribution">
- * Pareto distribution (Wikipedia)</a>
+ *      Pareto distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/ParetoDistribution.html">
- * Pareto distribution (MathWorld)</a>
+ *      Pareto distribution (MathWorld)</a>
  *
  * @since 3.3
  */
@@ -84,8 +83,7 @@ public class ParetoDistribution extends AbstractRealDistribution {
      * @param shape the shape parameter of this distribution
      * @throws NotStrictlyPositiveException if {@code scale <= 0} or {@code shape <= 0}.
      */
-    public ParetoDistribution(double scale, double shape)
-        throws NotStrictlyPositiveException {
+    public ParetoDistribution(double scale, double shape) throws NotStrictlyPositiveException {
         this(scale, shape, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
@@ -100,8 +98,8 @@ public class ParetoDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param scale the scale parameter of this distribution
-     * @param shape the shape parameter of this distribution
+     * @param scale              the scale parameter of this distribution
+     * @param shape              the shape parameter of this distribution
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code scale <= 0} or {@code shape <= 0}.
      */
@@ -113,29 +111,25 @@ public class ParetoDistribution extends AbstractRealDistribution {
     /**
      * Creates a Pareto distribution.
      *
-     * @param rng Random number generator.
+     * @param rng   Random number generator.
      * @param scale Scale parameter of this distribution.
      * @param shape Shape parameter of this distribution.
      * @throws NotStrictlyPositiveException if {@code scale <= 0} or {@code shape <= 0}.
      */
-    public ParetoDistribution(RandomGenerator rng, double scale, double shape)
-        throws NotStrictlyPositiveException {
+    public ParetoDistribution(RandomGenerator rng, double scale, double shape) throws NotStrictlyPositiveException {
         this(rng, scale, shape, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
      * Creates a Pareto distribution.
      *
-     * @param rng Random number generator.
-     * @param scale Scale parameter of this distribution.
-     * @param shape Shape parameter of this distribution.
+     * @param rng                Random number generator.
+     * @param scale              Scale parameter of this distribution.
+     * @param shape              Shape parameter of this distribution.
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code scale <= 0} or {@code shape <= 0}.
      */
-    public ParetoDistribution(RandomGenerator rng,
-                              double scale,
-                              double shape,
-                              double inverseCumAccuracy)
+    public ParetoDistribution(RandomGenerator rng, double scale, double shape, double inverseCumAccuracy)
         throws NotStrictlyPositiveException {
         super(rng);
 
@@ -187,7 +181,8 @@ public class ParetoDistribution extends AbstractRealDistribution {
         return FastMath.pow(scale, shape) / FastMath.pow(x, shape + 1) * shape;
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * See documentation of {@link #density(double)} for computation details.
      */
@@ -208,7 +203,7 @@ public class ParetoDistribution extends AbstractRealDistribution {
      * <li>{@code 1 - (k / x)^α} otherwise.</li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         if (x <= scale) {
             return 0;
         }
@@ -222,8 +217,7 @@ public class ParetoDistribution extends AbstractRealDistribution {
      */
     @Override
     @Deprecated
-    public double cumulativeProbability(double x0, double x1)
-        throws NumberIsTooLargeException {
+    public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
         return probability(x0, x1);
     }
 
@@ -311,7 +305,7 @@ public class ParetoDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     @Override
-    public double sample()  {
+    public double sample() {
         final double n = random.nextDouble();
         return scale / FastMath.pow(n, 1 / shape);
     }

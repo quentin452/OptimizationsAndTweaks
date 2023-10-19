@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,11 +27,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * Implementation of the triangular real distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Triangular_distribution">
- * Triangular distribution (Wikipedia)</a>
+ *      Triangular distribution (Wikipedia)</a>
  *
  * @since 3.0
  */
 public class TriangularDistribution extends AbstractRealDistribution {
+
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20120112L;
     /** Lower limit of this distribution (inclusive). */
@@ -71,32 +70,25 @@ public class TriangularDistribution extends AbstractRealDistribution {
      * Creates a triangular distribution.
      *
      * @param rng Random number generator.
-     * @param a Lower limit of this distribution (inclusive).
-     * @param b Upper limit of this distribution (inclusive).
-     * @param c Mode of this distribution.
+     * @param a   Lower limit of this distribution (inclusive).
+     * @param b   Upper limit of this distribution (inclusive).
+     * @param c   Mode of this distribution.
      * @throws NumberIsTooLargeException if {@code a >= b} or if {@code c > b}.
      * @throws NumberIsTooSmallException if {@code c < a}.
      * @since 3.1
      */
-    public TriangularDistribution(RandomGenerator rng,
-                                  double a,
-                                  double c,
-                                  double b)
+    public TriangularDistribution(RandomGenerator rng, double a, double c, double b)
         throws NumberIsTooLargeException, NumberIsTooSmallException {
         super(rng);
 
         if (a >= b) {
-            throw new NumberIsTooLargeException(
-                            LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
-                            a, b, false);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND, a, b, false);
         }
         if (c < a) {
-            throw new NumberIsTooSmallException(
-                    LocalizedFormats.NUMBER_TOO_SMALL, c, a, true);
+            throw new NumberIsTooSmallException(LocalizedFormats.NUMBER_TOO_SMALL, c, a, true);
         }
         if (c > b) {
-            throw new NumberIsTooLargeException(
-                    LocalizedFormats.NUMBER_TOO_LARGE, c, b, true);
+            throw new NumberIsTooLargeException(LocalizedFormats.NUMBER_TOO_LARGE, c, b, true);
         }
 
         this.a = a;
@@ -177,7 +169,7 @@ public class TriangularDistribution extends AbstractRealDistribution {
      * <li>{@code 1} if {@code x > b}.</li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         if (x < a) {
             return 0;
         }
@@ -264,8 +256,7 @@ public class TriangularDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     @Override
-    public double inverseCumulativeProbability(double p)
-        throws OutOfRangeException {
+    public double inverseCumulativeProbability(double p) throws OutOfRangeException {
         if (p < 0 || p > 1) {
             throw new OutOfRangeException(p, 0, 1);
         }

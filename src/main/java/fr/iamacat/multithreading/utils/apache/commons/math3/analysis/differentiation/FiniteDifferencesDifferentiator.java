@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +25,8 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTo
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 
-/** Univariate functions differentiator using finite differences.
+/**
+ * Univariate functions differentiator using finite differences.
  * <p>
  * This class creates some wrapper objects around regular
  * {@link UnivariateFunction univariate functions} (or {@link
@@ -57,20 +56,20 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * errors, we get the following results for a 7 points finite differences
  * for abscissae in the [-10, 10] range:
  * <ul>
- *   <li>step size = 0.25, second order derivative error about 9.97e-10</li>
- *   <li>step size = 0.25, fourth order derivative error about 5.43e-8</li>
- *   <li>step size = 1.0e-6, second order derivative error about 148</li>
- *   <li>step size = 1.0e-6, fourth order derivative error about 6.35e+14</li>
+ * <li>step size = 0.25, second order derivative error about 9.97e-10</li>
+ * <li>step size = 0.25, fourth order derivative error about 5.43e-8</li>
+ * <li>step size = 1.0e-6, second order derivative error about 148</li>
+ * <li>step size = 1.0e-6, fourth order derivative error about 6.35e+14</li>
  * </ul>
  * <p>
  * This example shows that the small step size is really bad, even simply
- * for second order derivative!</p>
+ * for second order derivative!
+ * </p>
  *
  * @since 3.1
  */
-public class FiniteDifferencesDifferentiator
-    implements UnivariateFunctionDifferentiator, UnivariateVectorFunctionDifferentiator,
-               UnivariateMatrixFunctionDifferentiator, Serializable {
+public class FiniteDifferencesDifferentiator implements UnivariateFunctionDifferentiator,
+    UnivariateVectorFunctionDifferentiator, UnivariateMatrixFunctionDifferentiator, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20120917L;
@@ -98,10 +97,11 @@ public class FiniteDifferencesDifferentiator
      * high derivation orders. Using very small step sizes is often a
      * <em>bad</em> idea.
      * </p>
+     * 
      * @param nbPoints number of points to use
      * @param stepSize step size (gap between each point)
-     * @exception NotPositiveException if {@code stepsize <= 0} (note that
-     * {@link NotPositiveException} extends {@link NumberIsTooSmallException})
+     * @exception NotPositiveException      if {@code stepsize <= 0} (note that
+     *                                      {@link NotPositiveException} extends {@link NumberIsTooSmallException})
      * @exception NumberIsTooSmallException {@code nbPoint <= 1}
      */
     public FiniteDifferencesDifferentiator(final int nbPoints, final double stepSize)
@@ -127,20 +127,20 @@ public class FiniteDifferencesDifferentiator
      * high derivation orders. Using very small step sizes is often a
      * <em>bad</em> idea.
      * </p>
+     * 
      * @param nbPoints number of points to use
      * @param stepSize step size (gap between each point)
-     * @param tLower lower bound for independent variable (may be {@code Double.NEGATIVE_INFINITY}
-     * if there are no lower bounds)
-     * @param tUpper upper bound for independent variable (may be {@code Double.POSITIVE_INFINITY}
-     * if there are no upper bounds)
-     * @exception NotPositiveException if {@code stepsize <= 0} (note that
-     * {@link NotPositiveException} extends {@link NumberIsTooSmallException})
+     * @param tLower   lower bound for independent variable (may be {@code Double.NEGATIVE_INFINITY}
+     *                 if there are no lower bounds)
+     * @param tUpper   upper bound for independent variable (may be {@code Double.POSITIVE_INFINITY}
+     *                 if there are no upper bounds)
+     * @exception NotPositiveException      if {@code stepsize <= 0} (note that
+     *                                      {@link NotPositiveException} extends {@link NumberIsTooSmallException})
      * @exception NumberIsTooSmallException {@code nbPoint <= 1}
      * @exception NumberIsTooLargeException {@code stepSize * (nbPoints - 1) >= tUpper - tLower}
      */
-    public FiniteDifferencesDifferentiator(final int nbPoints, final double stepSize,
-                                           final double tLower, final double tUpper)
-            throws NotPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
+    public FiniteDifferencesDifferentiator(final int nbPoints, final double stepSize, final double tLower,
+        final double tUpper) throws NotPositiveException, NumberIsTooSmallException, NumberIsTooLargeException {
 
         if (nbPoints <= 1) {
             throw new NumberIsTooSmallException(stepSize, 1, false);
@@ -164,6 +164,7 @@ public class FiniteDifferencesDifferentiator
 
     /**
      * Get the number of points to use.
+     * 
      * @return number of points to use
      */
     public int getNbPoints() {
@@ -172,6 +173,7 @@ public class FiniteDifferencesDifferentiator
 
     /**
      * Get the step size.
+     * 
      * @return step size
      */
     public double getStepSize() {
@@ -183,19 +185,19 @@ public class FiniteDifferencesDifferentiator
      * <p>
      * Evaluation is done using divided differences.
      * </p>
-     * @param t evaluation abscissa value and derivatives
+     * 
+     * @param t  evaluation abscissa value and derivatives
      * @param t0 first sample point abscissa
-     * @param y function values sample {@code y[i] = f(t[i]) = f(t0 + i * stepSize)}
+     * @param y  function values sample {@code y[i] = f(t[i]) = f(t0 + i * stepSize)}
      * @return value and derivatives at {@code t}
      * @exception NumberIsTooLargeException if the requested derivation order
-     * is larger or equal to the number of points
+     *                                      is larger or equal to the number of points
      */
-    private DerivativeStructure evaluate(final DerivativeStructure t, final double t0,
-                                         final double[] y)
+    private DerivativeStructure evaluate(final DerivativeStructure t, final double t0, final double[] y)
         throws NumberIsTooLargeException {
 
         // create divided differences diagonal arrays
-        final double[] top    = new double[nbPoints];
+        final double[] top = new double[nbPoints];
         final double[] bottom = new double[nbPoints];
 
         for (int i = 0; i < nbPoints; ++i) {
@@ -212,10 +214,10 @@ public class FiniteDifferencesDifferentiator
         }
 
         // evaluate interpolation polynomial (represented by top diagonal) at t
-        final int order            = t.getOrder();
-        final int parameters       = t.getFreeParameters();
+        final int order = t.getOrder();
+        final int parameters = t.getFreeParameters();
         final double[] derivatives = t.getAllDerivatives();
-        final double dt0           = t.getValue() - t0;
+        final double dt0 = t.getValue() - t0;
         DerivativeStructure interpolation = new DerivativeStructure(parameters, order, 0.0);
         DerivativeStructure monomial = null;
         for (int i = 0; i < nbPoints; ++i) {
@@ -235,8 +237,10 @@ public class FiniteDifferencesDifferentiator
 
     }
 
-    /** {@inheritDoc}
-     * <p>The returned object cannot compute derivatives to arbitrary orders. The
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The returned object cannot compute derivatives to arbitrary orders. The
      * value function will throw a {@link NumberIsTooLargeException} if the requested
      * derivation order is larger or equal to the number of points.
      * </p>
@@ -250,8 +254,7 @@ public class FiniteDifferencesDifferentiator
             }
 
             /** {@inheritDoc} */
-            public DerivativeStructure value(final DerivativeStructure t)
-                throws MathIllegalArgumentException {
+            public DerivativeStructure value(final DerivativeStructure t) throws MathIllegalArgumentException {
 
                 // check we can achieve the requested derivation order with the sample
                 if (t.getOrder() >= nbPoints) {
@@ -275,8 +278,10 @@ public class FiniteDifferencesDifferentiator
         };
     }
 
-    /** {@inheritDoc}
-     * <p>The returned object cannot compute derivatives to arbitrary orders. The
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The returned object cannot compute derivatives to arbitrary orders. The
      * value function will throw a {@link NumberIsTooLargeException} if the requested
      * derivation order is larger or equal to the number of points.
      * </p>
@@ -285,13 +290,12 @@ public class FiniteDifferencesDifferentiator
         return new UnivariateDifferentiableVectorFunction() {
 
             /** {@inheritDoc} */
-            public double[]value(final double x) throws MathIllegalArgumentException {
+            public double[] value(final double x) throws MathIllegalArgumentException {
                 return function.value(x);
             }
 
             /** {@inheritDoc} */
-            public DerivativeStructure[] value(final DerivativeStructure t)
-                throws MathIllegalArgumentException {
+            public DerivativeStructure[] value(final DerivativeStructure t) throws MathIllegalArgumentException {
 
                 // check we can achieve the requested derivation order with the sample
                 if (t.getOrder() >= nbPoints) {
@@ -326,8 +330,10 @@ public class FiniteDifferencesDifferentiator
         };
     }
 
-    /** {@inheritDoc}
-     * <p>The returned object cannot compute derivatives to arbitrary orders. The
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The returned object cannot compute derivatives to arbitrary orders. The
      * value function will throw a {@link NumberIsTooLargeException} if the requested
      * derivation order is larger or equal to the number of points.
      * </p>
@@ -336,13 +342,12 @@ public class FiniteDifferencesDifferentiator
         return new UnivariateDifferentiableMatrixFunction() {
 
             /** {@inheritDoc} */
-            public double[][]  value(final double x) throws MathIllegalArgumentException {
+            public double[][] value(final double x) throws MathIllegalArgumentException {
                 return function.value(x);
             }
 
             /** {@inheritDoc} */
-            public DerivativeStructure[][]  value(final DerivativeStructure t)
-                throws MathIllegalArgumentException {
+            public DerivativeStructure[][] value(final DerivativeStructure t) throws MathIllegalArgumentException {
 
                 // check we can achieve the requested derivation order with the sample
                 if (t.getOrder() >= nbPoints) {

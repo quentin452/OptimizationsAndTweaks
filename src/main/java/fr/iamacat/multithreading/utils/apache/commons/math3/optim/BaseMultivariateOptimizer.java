@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +15,8 @@
 package fr.iamacat.multithreading.utils.apache.commons.math3.optim;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.DimensionMismatchException;
-import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooLargeException;
+import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
  * Base class for implementing optimizers for multivariate functions.
@@ -27,12 +25,12 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.exception.NumberIsTo
  * <em>It is not a "user" class.</em>
  *
  * @param <PAIR> Type of the point/value pair returned by the optimization
- * algorithm.
+ *               algorithm.
  *
  * @since 3.1
  */
-public abstract class BaseMultivariateOptimizer<PAIR>
-    extends BaseOptimizer<PAIR> {
+public abstract class BaseMultivariateOptimizer<PAIR> extends BaseOptimizer<PAIR> {
+
     /** Initial guess. */
     private double[] start;
     /** Lower bounds. */
@@ -51,12 +49,12 @@ public abstract class BaseMultivariateOptimizer<PAIR>
      * {@inheritDoc}
      *
      * @param optData Optimization data. In addition to those documented in
-     * {@link BaseOptimizer#parseOptimizationData(OptimizationData[]) BaseOptimizer},
-     * this method will register the following data:
-     * <ul>
-     *  <li>{@link InitialGuess}</li>
-     *  <li>{@link SimpleBounds}</li>
-     * </ul>
+     *                {@link BaseOptimizer#parseOptimizationData(OptimizationData[]) BaseOptimizer},
+     *                this method will register the following data:
+     *                <ul>
+     *                <li>{@link InitialGuess}</li>
+     *                <li>{@link SimpleBounds}</li>
+     *                </ul>
      * @return {@inheritDoc}
      */
     @Override
@@ -70,10 +68,10 @@ public abstract class BaseMultivariateOptimizer<PAIR>
      * characterize the problem.
      *
      * @param optData Optimization data. The following data will be looked for:
-     * <ul>
-     *  <li>{@link InitialGuess}</li>
-     *  <li>{@link SimpleBounds}</li>
-     * </ul>
+     *                <ul>
+     *                <li>{@link InitialGuess}</li>
+     *                <li>{@link SimpleBounds}</li>
+     *                </ul>
      */
     @Override
     protected void parseOptimizationData(OptimizationData... optData) {
@@ -107,12 +105,14 @@ public abstract class BaseMultivariateOptimizer<PAIR>
     public double[] getStartPoint() {
         return start == null ? null : start.clone();
     }
+
     /**
      * @return the lower bounds, or {@code null} if not set.
      */
     public double[] getLowerBound() {
         return lowerBound == null ? null : lowerBound.clone();
     }
+
     /**
      * @return the upper bounds, or {@code null} if not set.
      */

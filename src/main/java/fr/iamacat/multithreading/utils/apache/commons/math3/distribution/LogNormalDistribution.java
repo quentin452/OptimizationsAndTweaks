@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,13 +44,14 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
  * </ul>
  *
  * @see <a href="http://en.wikipedia.org/wiki/Log-normal_distribution">
- * Log-normal distribution (Wikipedia)</a>
+ *      Log-normal distribution (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/LogNormalDistribution.html">
- * Log Normal distribution (MathWorld)</a>
+ *      Log Normal distribution (MathWorld)</a>
  *
  * @since 3.0
  */
 public class LogNormalDistribution extends AbstractRealDistribution {
+
     /** Default inverse cumulative probability accuracy. */
     public static final double DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9;
 
@@ -108,8 +107,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * @param shape the shape parameter of this distribution
      * @throws NotStrictlyPositiveException if {@code shape <= 0}.
      */
-    public LogNormalDistribution(double scale, double shape)
-        throws NotStrictlyPositiveException {
+    public LogNormalDistribution(double scale, double shape) throws NotStrictlyPositiveException {
         this(scale, shape, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
@@ -124,8 +122,8 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param scale the scale parameter of this distribution
-     * @param shape the shape parameter of this distribution
+     * @param scale              the scale parameter of this distribution
+     * @param shape              the shape parameter of this distribution
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code shape <= 0}.
      */
@@ -137,31 +135,27 @@ public class LogNormalDistribution extends AbstractRealDistribution {
     /**
      * Creates a log-normal distribution.
      *
-     * @param rng Random number generator.
+     * @param rng   Random number generator.
      * @param scale Scale parameter of this distribution.
      * @param shape Shape parameter of this distribution.
      * @throws NotStrictlyPositiveException if {@code shape <= 0}.
      * @since 3.3
      */
-    public LogNormalDistribution(RandomGenerator rng, double scale, double shape)
-        throws NotStrictlyPositiveException {
+    public LogNormalDistribution(RandomGenerator rng, double scale, double shape) throws NotStrictlyPositiveException {
         this(rng, scale, shape, DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     /**
      * Creates a log-normal distribution.
      *
-     * @param rng Random number generator.
-     * @param scale Scale parameter of this distribution.
-     * @param shape Shape parameter of this distribution.
+     * @param rng                Random number generator.
+     * @param scale              Scale parameter of this distribution.
+     * @param shape              Shape parameter of this distribution.
      * @param inverseCumAccuracy Inverse cumulative probability accuracy.
      * @throws NotStrictlyPositiveException if {@code shape <= 0}.
      * @since 3.1
      */
-    public LogNormalDistribution(RandomGenerator rng,
-                                 double scale,
-                                 double shape,
-                                 double inverseCumAccuracy)
+    public LogNormalDistribution(RandomGenerator rng, double scale, double shape, double inverseCumAccuracy)
         throws NotStrictlyPositiveException {
         super(rng);
 
@@ -213,7 +207,8 @@ public class LogNormalDistribution extends AbstractRealDistribution {
         return FastMath.exp(-0.5 * x1 * x1) / (shape * SQRT2PI * x);
     }
 
-    /** {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * See documentation of {@link #density(double)} for computation details.
      */
@@ -243,7 +238,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * <li>{@code 0.5 + 0.5 * erf((ln(x) - m) / (s * sqrt(2))} otherwise.</li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    public double cumulativeProbability(double x) {
         if (x <= 0) {
             return 0;
         }
@@ -259,20 +254,17 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      *
      * @deprecated See {@link RealDistribution#cumulativeProbability(double,double)}
      */
-    @Override@Deprecated
-    public double cumulativeProbability(double x0, double x1)
-        throws NumberIsTooLargeException {
+    @Override
+    @Deprecated
+    public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
         return probability(x0, x1);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double probability(double x0,
-                              double x1)
-        throws NumberIsTooLargeException {
+    public double probability(double x0, double x1) throws NumberIsTooLargeException {
         if (x0 > x1) {
-            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
-                                                x0, x1, true);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, x0, x1, true);
         }
         if (x0 <= 0 || x1 <= 0) {
             return super.probability(x0, x1);
@@ -330,7 +322,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * no matter the parameters.
      *
      * @return upper bound of the support (always
-     * {@code Double.POSITIVE_INFINITY})
+     *         {@code Double.POSITIVE_INFINITY})
      */
     public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
@@ -359,7 +351,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
 
     /** {@inheritDoc} */
     @Override
-    public double sample()  {
+    public double sample() {
         final double n = random.nextGaussian();
         return FastMath.exp(scale + shape * n);
     }

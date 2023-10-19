@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +21,8 @@ package fr.iamacat.multithreading.utils.apache.commons.math3.optim;
  *
  * @since 3.0
  */
-public abstract class AbstractConvergenceChecker<PAIR>
-    implements ConvergenceChecker<PAIR> {
+public abstract class AbstractConvergenceChecker<PAIR> implements ConvergenceChecker<PAIR> {
+
     /**
      * Relative tolerance threshold.
      */
@@ -40,8 +38,7 @@ public abstract class AbstractConvergenceChecker<PAIR>
      * @param relativeThreshold relative tolerance threshold
      * @param absoluteThreshold absolute tolerance threshold
      */
-    public AbstractConvergenceChecker(final double relativeThreshold,
-                                      final double absoluteThreshold) {
+    public AbstractConvergenceChecker(final double relativeThreshold, final double absoluteThreshold) {
         this.relativeThreshold = relativeThreshold;
         this.absoluteThreshold = absoluteThreshold;
     }
@@ -63,7 +60,5 @@ public abstract class AbstractConvergenceChecker<PAIR>
     /**
      * {@inheritDoc}
      */
-    public abstract boolean converged(int iteration,
-                                      PAIR previous,
-                                      PAIR current);
+    public abstract boolean converged(int iteration, PAIR previous, PAIR current);
 }

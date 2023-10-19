@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,9 +64,11 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.util.MathUtils;
  * arrays is negligible for small matrices (about 1%). The gain from cache efficiency leads
  * to up to 3-fold improvements for matrices of moderate to large size.
  * </p>
+ * 
  * @since 2.0
  */
 public class BlockRealMatrix extends AbstractRealMatrix implements Serializable {
+
     /** Block size. */
     public static final int BLOCK_SIZE = 52;
     /** Serializable version identifier */
@@ -87,13 +87,12 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     /**
      * Create a new matrix with the supplied row and column dimensions.
      *
-     * @param rows  the number of rows in the new matrix
-     * @param columns  the number of columns in the new matrix
+     * @param rows    the number of rows in the new matrix
+     * @param columns the number of columns in the new matrix
      * @throws NotStrictlyPositiveException if row or column dimension is not
-     * positive.
+     *                                      positive.
      */
-    public BlockRealMatrix(final int rows, final int columns)
-        throws NotStrictlyPositiveException {
+    public BlockRealMatrix(final int rows, final int columns) throws NotStrictlyPositiveException {
         super(rows, columns);
         this.rows = rows;
         this.columns = columns;
@@ -108,42 +107,47 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Create a new dense matrix copying entries from raw layout data.
-     * <p>The input array <em>must</em> already be in raw layout.</p>
-     * <p>Calling this constructor is equivalent to call:
-     * <pre>matrix = new BlockRealMatrix(rawData.length, rawData[0].length,
-     *                                   toBlocksLayout(rawData), false);</pre>
+     * <p>
+     * The input array <em>must</em> already be in raw layout.
+     * </p>
+     * <p>
+     * Calling this constructor is equivalent to call:
+     * 
+     * <pre>
+     * matrix = new BlockRealMatrix(rawData.length, rawData[0].length, toBlocksLayout(rawData), false);
+     * </pre>
      * </p>
      *
      * @param rawData data for new matrix, in raw layout
-     * @throws DimensionMismatchException if the shape of {@code blockData} is
-     * inconsistent with block layout.
+     * @throws DimensionMismatchException   if the shape of {@code blockData} is
+     *                                      inconsistent with block layout.
      * @throws NotStrictlyPositiveException if row or column dimension is not
-     * positive.
+     *                                      positive.
      * @see #BlockRealMatrix(int, int, double[][], boolean)
      */
-    public BlockRealMatrix(final double[][] rawData)
-        throws DimensionMismatchException, NotStrictlyPositiveException {
+    public BlockRealMatrix(final double[][] rawData) throws DimensionMismatchException, NotStrictlyPositiveException {
         this(rawData.length, rawData[0].length, toBlocksLayout(rawData), false);
     }
 
     /**
      * Create a new dense matrix copying entries from block layout data.
-     * <p>The input array <em>must</em> already be in blocks layout.</p>
+     * <p>
+     * The input array <em>must</em> already be in blocks layout.
+     * </p>
      *
-     * @param rows Number of rows in the new matrix.
-     * @param columns Number of columns in the new matrix.
+     * @param rows      Number of rows in the new matrix.
+     * @param columns   Number of columns in the new matrix.
      * @param blockData data for new matrix
      * @param copyArray Whether the input array will be copied or referenced.
-     * @throws DimensionMismatchException if the shape of {@code blockData} is
-     * inconsistent with block layout.
+     * @throws DimensionMismatchException   if the shape of {@code blockData} is
+     *                                      inconsistent with block layout.
      * @throws NotStrictlyPositiveException if row or column dimension is not
-     * positive.
+     *                                      positive.
      * @see #createBlocksLayout(int, int)
      * @see #toBlocksLayout(double[][])
      * @see #BlockRealMatrix(double[][])
      */
-    public BlockRealMatrix(final int rows, final int columns,
-                           final double[][] blockData, final boolean copyArray)
+    public BlockRealMatrix(final int rows, final int columns, final double[][] blockData, final boolean copyArray)
         throws DimensionMismatchException, NotStrictlyPositiveException {
         super(rows, columns);
         this.rows = rows;
@@ -166,8 +170,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
             final int iHeight = blockHeight(iBlock);
             for (int jBlock = 0; jBlock < blockColumns; ++jBlock, ++index) {
                 if (blockData[index].length != iHeight * blockWidth(jBlock)) {
-                    throw new DimensionMismatchException(blockData[index].length,
-                                                         iHeight * blockWidth(jBlock));
+                    throw new DimensionMismatchException(blockData[index].length, iHeight * blockWidth(jBlock));
                 }
                 if (copyArray) {
                     blocks[index] = blockData[index].clone();
@@ -191,17 +194,17 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
      * It can be used to provide the array argument of the {@link
      * #BlockRealMatrix(int, int, double[][], boolean)} constructor.
      * </p>
+     * 
      * @param rawData Data array in raw layout.
      * @return a new data array containing the same entries but in blocks layout.
      * @throws DimensionMismatchException if {@code rawData} is not rectangular.
      * @see #createBlocksLayout(int, int)
      * @see #BlockRealMatrix(int, int, double[][], boolean)
      */
-    public static double[][] toBlocksLayout(final double[][] rawData)
-        throws DimensionMismatchException {
+    public static double[][] toBlocksLayout(final double[][] rawData) throws DimensionMismatchException {
         final int rows = rawData.length;
         final int columns = rawData[0].length;
-        final int blockRows = (rows    + BLOCK_SIZE - 1) / BLOCK_SIZE;
+        final int blockRows = (rows + BLOCK_SIZE - 1) / BLOCK_SIZE;
         final int blockColumns = (columns + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
         // safety checks
@@ -247,14 +250,15 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
      * This method can be used to create the array argument of the {@link
      * #BlockRealMatrix(int, int, double[][], boolean)} constructor.
      * </p>
-     * @param rows Number of rows in the new matrix.
+     * 
+     * @param rows    Number of rows in the new matrix.
      * @param columns Number of columns in the new matrix.
      * @return a new data array in blocks layout.
      * @see #toBlocksLayout(double[][])
      * @see #BlockRealMatrix(int, int, double[][], boolean)
      */
     public static double[][] createBlocksLayout(final int rows, final int columns) {
-        final int blockRows = (rows    + BLOCK_SIZE - 1) / BLOCK_SIZE;
+        final int blockRows = (rows + BLOCK_SIZE - 1) / BLOCK_SIZE;
         final int blockColumns = (columns + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
         final double[][] blocks = new double[blockRows * blockColumns][];
@@ -277,8 +281,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix createMatrix(final int rowDimension,
-                                        final int columnDimension)
+    public BlockRealMatrix createMatrix(final int rowDimension, final int columnDimension)
         throws NotStrictlyPositiveException {
         return new BlockRealMatrix(rowDimension, columnDimension);
     }
@@ -299,8 +302,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix add(final RealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public BlockRealMatrix add(final RealMatrix m) throws MatrixDimensionMismatchException {
         try {
             return add((BlockRealMatrix) m);
         } catch (ClassCastException cce) {
@@ -316,7 +318,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
                     // perform addition on the current block
                     final double[] outBlock = out.blocks[blockIndex];
-                    final double[] tBlock   = blocks[blockIndex];
+                    final double[] tBlock = blocks[blockIndex];
                     final int pStart = iBlock * BLOCK_SIZE;
                     final int pEnd = FastMath.min(pStart + BLOCK_SIZE, rows);
                     final int qStart = jBlock * BLOCK_SIZE;
@@ -343,10 +345,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
      * @param m Matrix to be added.
      * @return {@code this} + m.
      * @throws MatrixDimensionMismatchException if {@code m} is not the same
-     * size as this matrix.
+     *                                          size as this matrix.
      */
-    public BlockRealMatrix add(final BlockRealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public BlockRealMatrix add(final BlockRealMatrix m) throws MatrixDimensionMismatchException {
         // safety check
         MatrixUtils.checkAdditionCompatible(this, m);
 
@@ -367,8 +368,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix subtract(final RealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public BlockRealMatrix subtract(final RealMatrix m) throws MatrixDimensionMismatchException {
         try {
             return subtract((BlockRealMatrix) m);
         } catch (ClassCastException cce) {
@@ -411,10 +411,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
      * @param m Matrix to be subtracted.
      * @return {@code this} - m.
      * @throws MatrixDimensionMismatchException if {@code m} is not the
-     * same size as this matrix.
+     *                                          same size as this matrix.
      */
-    public BlockRealMatrix subtract(final BlockRealMatrix m)
-        throws MatrixDimensionMismatchException {
+    public BlockRealMatrix subtract(final BlockRealMatrix m) throws MatrixDimensionMismatchException {
         // safety check
         MatrixUtils.checkSubtractionCompatible(this, m);
 
@@ -470,8 +469,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix multiply(final RealMatrix m)
-        throws DimensionMismatchException {
+    public BlockRealMatrix multiply(final RealMatrix m) throws DimensionMismatchException {
         try {
             return multiply((BlockRealMatrix) m);
         } catch (ClassCastException cce) {
@@ -530,8 +528,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
      * @return {@code this} * m.
      * @throws DimensionMismatchException if the matrices are not compatible.
      */
-    public BlockRealMatrix multiply(BlockRealMatrix m)
-        throws DimensionMismatchException {
+    public BlockRealMatrix multiply(BlockRealMatrix m) throws DimensionMismatchException {
         // safety check
         MatrixUtils.checkMultiplicationCompatible(this, m);
 
@@ -546,7 +543,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
             for (int jBlock = 0; jBlock < out.blockColumns; ++jBlock) {
                 final int jWidth = out.blockWidth(jBlock);
-                final int jWidth2 = jWidth  + jWidth;
+                final int jWidth2 = jWidth + jWidth;
                 final int jWidth3 = jWidth2 + jWidth;
                 final int jWidth4 = jWidth3 + jWidth;
 
@@ -567,10 +564,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                             int l = lStart;
                             int n = nStart;
                             while (l < lEnd - 3) {
-                                sum += tBlock[l] * mBlock[n] +
-                                       tBlock[l + 1] * mBlock[n + jWidth] +
-                                       tBlock[l + 2] * mBlock[n + jWidth2] +
-                                       tBlock[l + 3] * mBlock[n + jWidth3];
+                                sum += tBlock[l] * mBlock[n] + tBlock[l + 1] * mBlock[n + jWidth]
+                                    + tBlock[l + 2] * mBlock[n + jWidth2]
+                                    + tBlock[l + 3] * mBlock[n + jWidth3];
                                 l += 4;
                                 n += jWidth4;
                             }
@@ -612,7 +608,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                 }
                 System.arraycopy(blocks[blockIndex], lastPos, dataP, dataPos, lastColumns);
                 regularPos += BLOCK_SIZE;
-                lastPos    += lastColumns;
+                lastPos += lastColumns;
             }
         }
 
@@ -659,16 +655,13 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix getSubMatrix(final int startRow, final int endRow,
-                                        final int startColumn,
-                                        final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public BlockRealMatrix getSubMatrix(final int startRow, final int endRow, final int startColumn,
+        final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         // safety checks
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
 
         // create the output matrix
-        final BlockRealMatrix out =
-            new BlockRealMatrix(endRow - startRow + 1, endColumn - startColumn + 1);
+        final BlockRealMatrix out = new BlockRealMatrix(endRow - startRow + 1, endColumn - startColumn + 1);
 
         // compute blocks shifts
         final int blockStartRow = startRow / BLOCK_SIZE;
@@ -697,54 +690,117 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                     if (widthExcess > 0) {
                         // the submatrix block spans on two blocks columns from the original matrix
                         final int width2 = blockWidth(qBlock + 1);
-                        copyBlockPart(blocks[index], width,
-                                      rowsShift, BLOCK_SIZE,
-                                      columnsShift, BLOCK_SIZE,
-                                      outBlock, jWidth, 0, 0);
-                        copyBlockPart(blocks[index + 1], width2,
-                                      rowsShift, BLOCK_SIZE,
-                                      0, widthExcess,
-                                      outBlock, jWidth, 0, jWidth - widthExcess);
-                        copyBlockPart(blocks[index + blockColumns], width,
-                                      0, heightExcess,
-                                      columnsShift, BLOCK_SIZE,
-                                      outBlock, jWidth, iHeight - heightExcess, 0);
-                        copyBlockPart(blocks[index + blockColumns + 1], width2,
-                                      0, heightExcess,
-                                      0, widthExcess,
-                                      outBlock, jWidth, iHeight - heightExcess, jWidth - widthExcess);
+                        copyBlockPart(
+                            blocks[index],
+                            width,
+                            rowsShift,
+                            BLOCK_SIZE,
+                            columnsShift,
+                            BLOCK_SIZE,
+                            outBlock,
+                            jWidth,
+                            0,
+                            0);
+                        copyBlockPart(
+                            blocks[index + 1],
+                            width2,
+                            rowsShift,
+                            BLOCK_SIZE,
+                            0,
+                            widthExcess,
+                            outBlock,
+                            jWidth,
+                            0,
+                            jWidth - widthExcess);
+                        copyBlockPart(
+                            blocks[index + blockColumns],
+                            width,
+                            0,
+                            heightExcess,
+                            columnsShift,
+                            BLOCK_SIZE,
+                            outBlock,
+                            jWidth,
+                            iHeight - heightExcess,
+                            0);
+                        copyBlockPart(
+                            blocks[index + blockColumns + 1],
+                            width2,
+                            0,
+                            heightExcess,
+                            0,
+                            widthExcess,
+                            outBlock,
+                            jWidth,
+                            iHeight - heightExcess,
+                            jWidth - widthExcess);
                     } else {
                         // the submatrix block spans on one block column from the original matrix
-                        copyBlockPart(blocks[index], width,
-                                      rowsShift, BLOCK_SIZE,
-                                      columnsShift, jWidth + columnsShift,
-                                      outBlock, jWidth, 0, 0);
-                        copyBlockPart(blocks[index + blockColumns], width,
-                                      0, heightExcess,
-                                      columnsShift, jWidth + columnsShift,
-                                      outBlock, jWidth, iHeight - heightExcess, 0);
+                        copyBlockPart(
+                            blocks[index],
+                            width,
+                            rowsShift,
+                            BLOCK_SIZE,
+                            columnsShift,
+                            jWidth + columnsShift,
+                            outBlock,
+                            jWidth,
+                            0,
+                            0);
+                        copyBlockPart(
+                            blocks[index + blockColumns],
+                            width,
+                            0,
+                            heightExcess,
+                            columnsShift,
+                            jWidth + columnsShift,
+                            outBlock,
+                            jWidth,
+                            iHeight - heightExcess,
+                            0);
                     }
                 } else {
                     // the submatrix block spans on one block row from the original matrix
                     if (widthExcess > 0) {
                         // the submatrix block spans on two blocks columns from the original matrix
                         final int width2 = blockWidth(qBlock + 1);
-                        copyBlockPart(blocks[index], width,
-                                      rowsShift, iHeight + rowsShift,
-                                      columnsShift, BLOCK_SIZE,
-                                      outBlock, jWidth, 0, 0);
-                        copyBlockPart(blocks[index + 1], width2,
-                                      rowsShift, iHeight + rowsShift,
-                                      0, widthExcess,
-                                      outBlock, jWidth, 0, jWidth - widthExcess);
+                        copyBlockPart(
+                            blocks[index],
+                            width,
+                            rowsShift,
+                            iHeight + rowsShift,
+                            columnsShift,
+                            BLOCK_SIZE,
+                            outBlock,
+                            jWidth,
+                            0,
+                            0);
+                        copyBlockPart(
+                            blocks[index + 1],
+                            width2,
+                            rowsShift,
+                            iHeight + rowsShift,
+                            0,
+                            widthExcess,
+                            outBlock,
+                            jWidth,
+                            0,
+                            jWidth - widthExcess);
                     } else {
                         // the submatrix block spans on one block column from the original matrix
-                        copyBlockPart(blocks[index], width,
-                                      rowsShift, iHeight + rowsShift,
-                                      columnsShift, jWidth + columnsShift,
-                                      outBlock, jWidth, 0, 0);
+                        copyBlockPart(
+                            blocks[index],
+                            width,
+                            rowsShift,
+                            iHeight + rowsShift,
+                            columnsShift,
+                            jWidth + columnsShift,
+                            outBlock,
+                            jWidth,
+                            0,
+                            0);
                     }
-               }
+                }
                 ++qBlock;
             }
             ++pBlock;
@@ -755,24 +811,25 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Copy a part of a block into another one
-     * <p>This method can be called only when the specified part fits in both
-     * blocks, no verification is done here.</p>
-     * @param srcBlock source block
-     * @param srcWidth source block width ({@link #BLOCK_SIZE} or smaller)
-     * @param srcStartRow start row in the source block
-     * @param srcEndRow end row (exclusive) in the source block
+     * <p>
+     * This method can be called only when the specified part fits in both
+     * blocks, no verification is done here.
+     * </p>
+     * 
+     * @param srcBlock       source block
+     * @param srcWidth       source block width ({@link #BLOCK_SIZE} or smaller)
+     * @param srcStartRow    start row in the source block
+     * @param srcEndRow      end row (exclusive) in the source block
      * @param srcStartColumn start column in the source block
-     * @param srcEndColumn end column (exclusive) in the source block
-     * @param dstBlock destination block
-     * @param dstWidth destination block width ({@link #BLOCK_SIZE} or smaller)
-     * @param dstStartRow start row in the destination block
+     * @param srcEndColumn   end column (exclusive) in the source block
+     * @param dstBlock       destination block
+     * @param dstWidth       destination block width ({@link #BLOCK_SIZE} or smaller)
+     * @param dstStartRow    start row in the destination block
      * @param dstStartColumn start column in the destination block
      */
-    private void copyBlockPart(final double[] srcBlock, final int srcWidth,
-                               final int srcStartRow, final int srcEndRow,
-                               final int srcStartColumn, final int srcEndColumn,
-                               final double[] dstBlock, final int dstWidth,
-                               final int dstStartRow, final int dstStartColumn) {
+    private void copyBlockPart(final double[] srcBlock, final int srcWidth, final int srcStartRow, final int srcEndRow,
+        final int srcStartColumn, final int srcEndColumn, final double[] dstBlock, final int dstWidth,
+        final int dstStartRow, final int dstStartColumn) {
         final int length = srcEndColumn - srcStartColumn;
         int srcPos = srcStartRow * srcWidth + srcStartColumn;
         int dstPos = dstStartRow * dstWidth + dstStartColumn;
@@ -785,10 +842,8 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public void setSubMatrix(final double[][] subMatrix, final int row,
-                             final int column)
-        throws OutOfRangeException, NoDataException, NullArgumentException,
-        DimensionMismatchException {
+    public void setSubMatrix(final double[][] subMatrix, final int row, final int column)
+        throws OutOfRangeException, NoDataException, NullArgumentException, DimensionMismatchException {
         // safety checks
         MathUtils.checkNotNull(subMatrix);
         final int refLength = subMatrix[0].length;
@@ -814,22 +869,25 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         for (int iBlock = blockStartRow; iBlock < blockEndRow; ++iBlock) {
             final int iHeight = blockHeight(iBlock);
             final int firstRow = iBlock * BLOCK_SIZE;
-            final int iStart = FastMath.max(row,    firstRow);
+            final int iStart = FastMath.max(row, firstRow);
             final int iEnd = FastMath.min(endRow + 1, firstRow + iHeight);
 
             for (int jBlock = blockStartColumn; jBlock < blockEndColumn; ++jBlock) {
                 final int jWidth = blockWidth(jBlock);
                 final int firstColumn = jBlock * BLOCK_SIZE;
-                final int jStart = FastMath.max(column,    firstColumn);
+                final int jStart = FastMath.max(column, firstColumn);
                 final int jEnd = FastMath.min(endColumn + 1, firstColumn + jWidth);
                 final int jLength = jEnd - jStart;
 
                 // handle one block, row by row
                 final double[] block = blocks[iBlock * blockColumns + jBlock];
                 for (int i = iStart; i < iEnd; ++i) {
-                    System.arraycopy(subMatrix[i - row], jStart - column,
-                                     block, (i - firstRow) * jWidth + (jStart - firstColumn),
-                                     jLength);
+                    System.arraycopy(
+                        subMatrix[i - row],
+                        jStart - column,
+                        block,
+                        (i - firstRow) * jWidth + (jStart - firstColumn),
+                        jLength);
                 }
 
             }
@@ -838,8 +896,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix getRowMatrix(final int row)
-        throws OutOfRangeException {
+    public BlockRealMatrix getRowMatrix(final int row) throws OutOfRangeException {
         MatrixUtils.checkRowIndex(this, row);
         final BlockRealMatrix out = new BlockRealMatrix(1, columns);
 
@@ -880,24 +937,21 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Sets the entries in row number <code>row</code>
-     * as a row matrix.  Row indices start at 0.
+     * as a row matrix. Row indices start at 0.
      *
-     * @param row the row to be set
+     * @param row    the row to be set
      * @param matrix row matrix (must have one row and the same number of columns
-     * as the instance)
-     * @throws OutOfRangeException if the specified row index is invalid.
+     *               as the instance)
+     * @throws OutOfRangeException              if the specified row index is invalid.
      * @throws MatrixDimensionMismatchException if the matrix dimensions do
-     * not match one instance row.
+     *                                          not match one instance row.
      */
     public void setRowMatrix(final int row, final BlockRealMatrix matrix)
         throws OutOfRangeException, MatrixDimensionMismatchException {
         MatrixUtils.checkRowIndex(this, row);
         final int nCols = getColumnDimension();
-        if ((matrix.getRowDimension() != 1) ||
-            (matrix.getColumnDimension() != nCols)) {
-            throw new MatrixDimensionMismatchException(matrix.getRowDimension(),
-                                                       matrix.getColumnDimension(),
-                                                       1, nCols);
+        if ((matrix.getRowDimension() != 1) || (matrix.getColumnDimension() != nCols)) {
+            throw new MatrixDimensionMismatchException(matrix.getRowDimension(), matrix.getColumnDimension(), 1, nCols);
         }
 
         // perform copy block-wise, to ensure good cache behavior
@@ -909,7 +963,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         for (int jBlock = 0; jBlock < blockColumns; ++jBlock) {
             final int jWidth = blockWidth(jBlock);
             final double[] block = blocks[iBlock * blockColumns + jBlock];
-            final int available  = mBlock.length - mIndex;
+            final int available = mBlock.length - mIndex;
             if (jWidth > available) {
                 System.arraycopy(mBlock, mIndex, block, iRow * jWidth, available);
                 mBlock = matrix.blocks[++mBlockIndex];
@@ -918,14 +972,13 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
             } else {
                 System.arraycopy(mBlock, mIndex, block, iRow * jWidth, jWidth);
                 mIndex += jWidth;
-           }
+            }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public BlockRealMatrix getColumnMatrix(final int column)
-        throws OutOfRangeException {
+    public BlockRealMatrix getColumnMatrix(final int column) throws OutOfRangeException {
         MatrixUtils.checkColumnIndex(this, column);
         final BlockRealMatrix out = new BlockRealMatrix(rows, 1);
 
@@ -964,24 +1017,21 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Sets the entries in column number <code>column</code>
-     * as a column matrix.  Column indices start at 0.
+     * as a column matrix. Column indices start at 0.
      *
      * @param column the column to be set
      * @param matrix column matrix (must have one column and the same number of rows
-     * as the instance)
-     * @throws OutOfRangeException if the specified column index is invalid.
+     *               as the instance)
+     * @throws OutOfRangeException              if the specified column index is invalid.
      * @throws MatrixDimensionMismatchException if the matrix dimensions do
-     * not match one instance column.
+     *                                          not match one instance column.
      */
     void setColumnMatrix(final int column, final BlockRealMatrix matrix)
         throws OutOfRangeException, MatrixDimensionMismatchException {
         MatrixUtils.checkColumnIndex(this, column);
         final int nRows = getRowDimension();
-        if ((matrix.getRowDimension() != nRows) ||
-            (matrix.getColumnDimension() != 1)) {
-            throw new MatrixDimensionMismatchException(matrix.getRowDimension(),
-                                                       matrix.getColumnDimension(),
-                                                       nRows, 1);
+        if ((matrix.getRowDimension() != nRows) || (matrix.getColumnDimension() != 1)) {
+            throw new MatrixDimensionMismatchException(matrix.getRowDimension(), matrix.getColumnDimension(), nRows, 1);
         }
 
         // perform copy block-wise, to ensure good cache behavior
@@ -1006,8 +1056,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public RealVector getRowVector(final int row)
-        throws OutOfRangeException {
+    public RealVector getRowVector(final int row) throws OutOfRangeException {
         MatrixUtils.checkRowIndex(this, row);
         final double[] outData = new double[columns];
 
@@ -1038,8 +1087,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public RealVector getColumnVector(final int column)
-        throws OutOfRangeException {
+    public RealVector getColumnVector(final int column) throws OutOfRangeException {
         MatrixUtils.checkColumnIndex(this, column);
         final double[] outData = new double[rows];
 
@@ -1081,7 +1129,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         final int iRow = row - iBlock * BLOCK_SIZE;
         int outIndex = 0;
         for (int jBlock = 0; jBlock < blockColumns; ++jBlock) {
-            final int jWidth     = blockWidth(jBlock);
+            final int jWidth = blockWidth(jBlock);
             final double[] block = blocks[iBlock * blockColumns + jBlock];
             System.arraycopy(block, iRow * jWidth, out, outIndex, jWidth);
             outIndex += jWidth;
@@ -1105,7 +1153,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         final int iRow = row - iBlock * BLOCK_SIZE;
         int outIndex = 0;
         for (int jBlock = 0; jBlock < blockColumns; ++jBlock) {
-            final int jWidth     = blockWidth(jBlock);
+            final int jWidth = blockWidth(jBlock);
             final double[] block = blocks[iBlock * blockColumns + jBlock];
             System.arraycopy(array, outIndex, block, iRow * jWidth, jWidth);
             outIndex += jWidth;
@@ -1119,9 +1167,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         final double[] out = new double[rows];
 
         // perform copy block-wise, to ensure good cache behavior
-        final int jBlock  = column / BLOCK_SIZE;
+        final int jBlock = column / BLOCK_SIZE;
         final int jColumn = column - jBlock * BLOCK_SIZE;
-        final int jWidth  = blockWidth(jBlock);
+        final int jWidth = blockWidth(jBlock);
         int outIndex = 0;
         for (int iBlock = 0; iBlock < blockRows; ++iBlock) {
             final int iHeight = blockHeight(iBlock);
@@ -1145,7 +1193,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         }
 
         // perform copy block-wise, to ensure good cache behavior
-        final int jBlock  = column / BLOCK_SIZE;
+        final int jBlock = column / BLOCK_SIZE;
         final int jColumn = column - jBlock * BLOCK_SIZE;
         final int jWidth = blockWidth(jBlock);
         int outIndex = 0;
@@ -1160,51 +1208,41 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double getEntry(final int row, final int column)
-        throws OutOfRangeException {
+    public double getEntry(final int row, final int column) throws OutOfRangeException {
         MatrixUtils.checkMatrixIndex(this, row, column);
         final int iBlock = row / BLOCK_SIZE;
         final int jBlock = column / BLOCK_SIZE;
-        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) +
-            (column - jBlock * BLOCK_SIZE);
+        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) + (column - jBlock * BLOCK_SIZE);
         return blocks[iBlock * blockColumns + jBlock][k];
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setEntry(final int row, final int column, final double value)
-        throws OutOfRangeException {
+    public void setEntry(final int row, final int column, final double value) throws OutOfRangeException {
         MatrixUtils.checkMatrixIndex(this, row, column);
         final int iBlock = row / BLOCK_SIZE;
         final int jBlock = column / BLOCK_SIZE;
-        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) +
-            (column - jBlock * BLOCK_SIZE);
+        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) + (column - jBlock * BLOCK_SIZE);
         blocks[iBlock * blockColumns + jBlock][k] = value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addToEntry(final int row, final int column,
-                           final double increment)
-        throws OutOfRangeException {
+    public void addToEntry(final int row, final int column, final double increment) throws OutOfRangeException {
         MatrixUtils.checkMatrixIndex(this, row, column);
-        final int iBlock = row    / BLOCK_SIZE;
+        final int iBlock = row / BLOCK_SIZE;
         final int jBlock = column / BLOCK_SIZE;
-        final int k = (row    - iBlock * BLOCK_SIZE) * blockWidth(jBlock) +
-            (column - jBlock * BLOCK_SIZE);
+        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) + (column - jBlock * BLOCK_SIZE);
         blocks[iBlock * blockColumns + jBlock][k] += increment;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void multiplyEntry(final int row, final int column,
-                              final double factor)
-        throws OutOfRangeException {
+    public void multiplyEntry(final int row, final int column, final double factor) throws OutOfRangeException {
         MatrixUtils.checkMatrixIndex(this, row, column);
         final int iBlock = row / BLOCK_SIZE;
         final int jBlock = column / BLOCK_SIZE;
-        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) +
-            (column - jBlock * BLOCK_SIZE);
+        final int k = (row - iBlock * BLOCK_SIZE) * blockWidth(jBlock) + (column - jBlock * BLOCK_SIZE);
         blocks[iBlock * blockColumns + jBlock][k] *= factor;
     }
 
@@ -1233,7 +1271,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                     for (int q = qStart; q < qEnd; ++q) {
                         outBlock[k] = tBlock[l];
                         ++k;
-                        l+= lInc;
+                        l += lInc;
                     }
                 }
                 // go to next block
@@ -1258,8 +1296,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double[] operate(final double[] v)
-        throws DimensionMismatchException {
+    public double[] operate(final double[] v) throws DimensionMismatchException {
         if (v.length != columns) {
             throw new DimensionMismatchException(v.length, columns);
         }
@@ -1270,7 +1307,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
             final int pStart = iBlock * BLOCK_SIZE;
             final int pEnd = FastMath.min(pStart + BLOCK_SIZE, rows);
             for (int jBlock = 0; jBlock < blockColumns; ++jBlock) {
-                final double[] block  = blocks[iBlock * blockColumns + jBlock];
+                final double[] block = blocks[iBlock * blockColumns + jBlock];
                 final int qStart = jBlock * BLOCK_SIZE;
                 final int qEnd = FastMath.min(qStart + BLOCK_SIZE, columns);
                 int k = 0;
@@ -1278,10 +1315,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                     double sum = 0;
                     int q = qStart;
                     while (q < qEnd - 3) {
-                        sum += block[k]     * v[q]     +
-                               block[k + 1] * v[q + 1] +
-                               block[k + 2] * v[q + 2] +
-                               block[k + 3] * v[q + 3];
+                        sum += block[k] * v[q] + block[k + 1] * v[q + 1]
+                            + block[k + 2] * v[q + 2]
+                            + block[k + 3] * v[q + 3];
                         k += 4;
                         q += 4;
                     }
@@ -1298,8 +1334,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double[] preMultiply(final double[] v)
-        throws DimensionMismatchException {
+    public double[] preMultiply(final double[] v) throws DimensionMismatchException {
         if (v.length != rows) {
             throw new DimensionMismatchException(v.length, rows);
         }
@@ -1307,14 +1342,14 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
         // perform multiplication block-wise, to ensure good cache behavior
         for (int jBlock = 0; jBlock < blockColumns; ++jBlock) {
-            final int jWidth  = blockWidth(jBlock);
-            final int jWidth2 = jWidth  + jWidth;
+            final int jWidth = blockWidth(jBlock);
+            final int jWidth2 = jWidth + jWidth;
             final int jWidth3 = jWidth2 + jWidth;
             final int jWidth4 = jWidth3 + jWidth;
             final int qStart = jBlock * BLOCK_SIZE;
             final int qEnd = FastMath.min(qStart + BLOCK_SIZE, columns);
             for (int iBlock = 0; iBlock < blockRows; ++iBlock) {
-                final double[] block  = blocks[iBlock * blockColumns + jBlock];
+                final double[] block = blocks[iBlock * blockColumns + jBlock];
                 final int pStart = iBlock * BLOCK_SIZE;
                 final int pEnd = FastMath.min(pStart + BLOCK_SIZE, rows);
                 for (int q = qStart; q < qEnd; ++q) {
@@ -1322,10 +1357,9 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                     double sum = 0;
                     int p = pStart;
                     while (p < pEnd - 3) {
-                        sum += block[k]           * v[p]     +
-                               block[k + jWidth]  * v[p + 1] +
-                               block[k + jWidth2] * v[p + 2] +
-                               block[k + jWidth3] * v[p + 3];
+                        sum += block[k] * v[p] + block[k + jWidth] * v[p + 1]
+                            + block[k + jWidth2] * v[p + 2]
+                            + block[k + jWidth3] * v[p + 3];
                         k += jWidth4;
                         p += 4;
                     }
@@ -1360,7 +1394,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                         ++k;
                     }
                 }
-             }
+            }
         }
         return visitor.end();
     }
@@ -1384,17 +1418,15 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                         ++k;
                     }
                 }
-             }
+            }
         }
         return visitor.end();
     }
 
     /** {@inheritDoc} */
     @Override
-    public double walkInRowOrder(final RealMatrixChangingVisitor visitor,
-                                 final int startRow, final int endRow,
-                                 final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public double walkInRowOrder(final RealMatrixChangingVisitor visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
         visitor.start(rows, columns, startRow, endRow, startColumn, endColumn);
         for (int iBlock = startRow / BLOCK_SIZE; iBlock < 1 + endRow / BLOCK_SIZE; ++iBlock) {
@@ -1414,17 +1446,15 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                         ++k;
                     }
                 }
-             }
+            }
         }
         return visitor.end();
     }
 
     /** {@inheritDoc} */
     @Override
-    public double walkInRowOrder(final RealMatrixPreservingVisitor visitor,
-                                 final int startRow, final int endRow,
-                                 final int startColumn, final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public double walkInRowOrder(final RealMatrixPreservingVisitor visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
         visitor.start(rows, columns, startRow, endRow, startColumn, endColumn);
         for (int iBlock = startRow / BLOCK_SIZE; iBlock < 1 + endRow / BLOCK_SIZE; ++iBlock) {
@@ -1444,7 +1474,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
                         ++k;
                     }
                 }
-             }
+            }
         }
         return visitor.end();
     }
@@ -1501,11 +1531,8 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double walkInOptimizedOrder(final RealMatrixChangingVisitor visitor,
-                                       final int startRow, final int endRow,
-                                       final int startColumn,
-                                       final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public double walkInOptimizedOrder(final RealMatrixChangingVisitor visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
         visitor.start(rows, columns, startRow, endRow, startColumn, endColumn);
         for (int iBlock = startRow / BLOCK_SIZE; iBlock < 1 + endRow / BLOCK_SIZE; ++iBlock) {
@@ -1532,11 +1559,8 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /** {@inheritDoc} */
     @Override
-    public double walkInOptimizedOrder(final RealMatrixPreservingVisitor visitor,
-                                       final int startRow, final int endRow,
-                                       final int startColumn,
-                                       final int endColumn)
-        throws OutOfRangeException, NumberIsTooSmallException {
+    public double walkInOptimizedOrder(final RealMatrixPreservingVisitor visitor, final int startRow, final int endRow,
+        final int startColumn, final int endColumn) throws OutOfRangeException, NumberIsTooSmallException {
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
         visitor.start(rows, columns, startRow, endRow, startColumn, endColumn);
         for (int iBlock = startRow / BLOCK_SIZE; iBlock < 1 + endRow / BLOCK_SIZE; ++iBlock) {
@@ -1563,6 +1587,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Get the height of a block.
+     * 
      * @param blockRow row index (in block sense) of the block
      * @return height (number of rows) of the block
      */
@@ -1572,6 +1597,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
 
     /**
      * Get the width of a block.
+     * 
      * @param blockColumn column index (in block sense) of the block
      * @return width (number of columns) of the block
      */

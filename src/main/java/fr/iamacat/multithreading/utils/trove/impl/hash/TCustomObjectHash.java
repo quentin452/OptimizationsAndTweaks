@@ -10,23 +10,22 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
 
 package fr.iamacat.multithreading.utils.trove.impl.hash;
-
-import gnu.trove.impl.hash.TObjectHash;
-import gnu.trove.strategy.HashingStrategy;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import gnu.trove.impl.hash.TObjectHash;
+import gnu.trove.strategy.HashingStrategy;
 
 /**
  * An open addressed hashing implementation for Object types.
@@ -37,25 +36,23 @@ import java.io.ObjectOutput;
  * @version $Id: TObjectHash.java,v 1.1.2.6 2009/11/07 03:36:44 robeden Exp $
  */
 abstract public class TCustomObjectHash<T> extends TObjectHash<T> {
-	static final long serialVersionUID = 8766048185963756400L;
 
-	protected HashingStrategy<? super T> strategy;
+    static final long serialVersionUID = 8766048185963756400L;
 
+    protected HashingStrategy<? super T> strategy;
 
-	/** FOR EXTERNALIZATION ONLY!!! */
-	public TCustomObjectHash() {}
-
+    /** FOR EXTERNALIZATION ONLY!!! */
+    public TCustomObjectHash() {}
 
     /**
      * Creates a new <code>TManualObjectHash</code> instance with the
      * default capacity and load factor.
      */
-    public TCustomObjectHash( HashingStrategy<? super T> strategy ) {
+    public TCustomObjectHash(HashingStrategy<? super T> strategy) {
         super();
 
-		this.strategy = strategy;
+        this.strategy = strategy;
     }
-
 
     /**
      * Creates a new <code>TManualObjectHash</code> instance whose capacity
@@ -64,12 +61,11 @@ abstract public class TCustomObjectHash<T> extends TObjectHash<T> {
      *
      * @param initialCapacity an <code>int</code> value
      */
-    public TCustomObjectHash( HashingStrategy<? super T> strategy, int initialCapacity ) {
-        super( initialCapacity );
+    public TCustomObjectHash(HashingStrategy<? super T> strategy, int initialCapacity) {
+        super(initialCapacity);
 
-		this.strategy = strategy;
+        this.strategy = strategy;
     }
-
 
     /**
      * Creates a new <code>TManualObjectHash</code> instance with a prime
@@ -79,54 +75,49 @@ abstract public class TCustomObjectHash<T> extends TObjectHash<T> {
      * @param loadFactor      used to calculate the threshold over which
      *                        rehashing takes place.
      */
-    public TCustomObjectHash( HashingStrategy<? super T> strategy, int initialCapacity,
-		float loadFactor ) {
+    public TCustomObjectHash(HashingStrategy<? super T> strategy, int initialCapacity, float loadFactor) {
 
-        super( initialCapacity, loadFactor );
+        super(initialCapacity, loadFactor);
 
-		this.strategy = strategy;
+        this.strategy = strategy;
     }
-
-
-	@Override
-	protected int hash( Object obj ) {
-		//noinspection unchecked
-		return strategy.computeHashCode( ( T ) obj );
-	}
-
-	@Override
-	protected boolean equals( Object one, Object two ) {
-		//noinspection unchecked
-		return two != REMOVED && strategy.equals( ( T ) one, ( T ) two );
-	}
-
-
-	@Override
-    public void writeExternal( ObjectOutput out ) throws IOException {
-
-        // VERSION
-        out.writeByte( 0 );
-
-        // SUPER
-        super.writeExternal( out );
-
-	    // STRATEGY
-	    out.writeObject( strategy );
-    }
-
 
     @Override
-    public void readExternal( ObjectInput in )
-            throws IOException, ClassNotFoundException {
+    protected int hash(Object obj) {
+        // noinspection unchecked
+        return strategy.computeHashCode((T) obj);
+    }
+
+    @Override
+    protected boolean equals(Object one, Object two) {
+        // noinspection unchecked
+        return two != REMOVED && strategy.equals((T) one, (T) two);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+        // VERSION
+        out.writeByte(0);
+
+        // SUPER
+        super.writeExternal(out);
+
+        // STRATEGY
+        out.writeObject(strategy);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         // VERSION
         in.readByte();
 
         // SUPER
-        super.readExternal( in );
+        super.readExternal(in);
 
-	    // STRATEGY
-	    //noinspection unchecked
-	    strategy = ( HashingStrategy<T> ) in.readObject();
+        // STRATEGY
+        // noinspection unchecked
+        strategy = (HashingStrategy<T>) in.readObject();
     }
 } // TCustomObjectHash

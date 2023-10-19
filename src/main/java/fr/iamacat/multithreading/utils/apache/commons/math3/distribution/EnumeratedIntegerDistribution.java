@@ -1,13 +1,11 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,12 +30,16 @@ import fr.iamacat.multithreading.utils.apache.commons.math3.random.Well19937c;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.Pair;
 
 /**
- * <p>Implementation of an integer-valued {@link EnumeratedDistribution}.</p>
+ * <p>
+ * Implementation of an integer-valued {@link EnumeratedDistribution}.
+ * </p>
  *
- * <p>Values with zero-probability are allowed but they do not extend the
+ * <p>
+ * Values with zero-probability are allowed but they do not extend the
  * support.<br/>
  * Duplicate values are allowed. Probabilities of duplicate values are combined
- * when computing cumulative probabilities and statistics.</p>
+ * when computing cumulative probabilities and statistics.
+ * </p>
  *
  * @since 3.2
  */
@@ -63,18 +65,18 @@ public class EnumeratedIntegerDistribution extends AbstractIntegerDistribution {
      * as random generator via the appropriate constructors to avoid the
      * additional initialisation overhead.
      *
-     * @param singletons array of random variable values.
+     * @param singletons    array of random variable values.
      * @param probabilities array of probabilities.
      * @throws DimensionMismatchException if
-     * {@code singletons.length != probabilities.length}
-     * @throws NotPositiveException if any of the probabilities are negative.
-     * @throws NotFiniteNumberException if any of the probabilities are infinite.
-     * @throws NotANumberException if any of the probabilities are NaN.
-     * @throws MathArithmeticException all of the probabilities are 0.
+     *                                    {@code singletons.length != probabilities.length}
+     * @throws NotPositiveException       if any of the probabilities are negative.
+     * @throws NotFiniteNumberException   if any of the probabilities are infinite.
+     * @throws NotANumberException        if any of the probabilities are NaN.
+     * @throws MathArithmeticException    all of the probabilities are 0.
      */
     public EnumeratedIntegerDistribution(final int[] singletons, final double[] probabilities)
-    throws DimensionMismatchException, NotPositiveException, MathArithmeticException,
-           NotFiniteNumberException, NotANumberException{
+        throws DimensionMismatchException, NotPositiveException, MathArithmeticException, NotFiniteNumberException,
+        NotANumberException {
         this(new Well19937c(), singletons, probabilities);
     }
 
@@ -82,30 +84,28 @@ public class EnumeratedIntegerDistribution extends AbstractIntegerDistribution {
      * Create a discrete distribution using the given random number generator
      * and probability mass function definition.
      *
-     * @param rng random number generator.
-     * @param singletons array of random variable values.
+     * @param rng           random number generator.
+     * @param singletons    array of random variable values.
      * @param probabilities array of probabilities.
      * @throws DimensionMismatchException if
-     * {@code singletons.length != probabilities.length}
-     * @throws NotPositiveException if any of the probabilities are negative.
-     * @throws NotFiniteNumberException if any of the probabilities are infinite.
-     * @throws NotANumberException if any of the probabilities are NaN.
-     * @throws MathArithmeticException all of the probabilities are 0.
+     *                                    {@code singletons.length != probabilities.length}
+     * @throws NotPositiveException       if any of the probabilities are negative.
+     * @throws NotFiniteNumberException   if any of the probabilities are infinite.
+     * @throws NotANumberException        if any of the probabilities are NaN.
+     * @throws MathArithmeticException    all of the probabilities are 0.
      */
-    public EnumeratedIntegerDistribution(final RandomGenerator rng,
-                                       final int[] singletons, final double[] probabilities)
-        throws DimensionMismatchException, NotPositiveException, MathArithmeticException,
-                NotFiniteNumberException, NotANumberException {
+    public EnumeratedIntegerDistribution(final RandomGenerator rng, final int[] singletons,
+        final double[] probabilities) throws DimensionMismatchException, NotPositiveException, MathArithmeticException,
+        NotFiniteNumberException, NotANumberException {
         super(rng);
-        innerDistribution = new EnumeratedDistribution<Integer>(
-                rng, createDistribution(singletons, probabilities));
+        innerDistribution = new EnumeratedDistribution<Integer>(rng, createDistribution(singletons, probabilities));
     }
 
     /**
-     * Create a discrete integer-valued distribution from the input data.  Values are assigned
+     * Create a discrete integer-valued distribution from the input data. Values are assigned
      * mass based on their frequency.
      *
-     * @param rng random number generator used for sampling
+     * @param rng  random number generator used for sampling
      * @param data input dataset
      * @since 3.6
      */
@@ -126,15 +126,16 @@ public class EnumeratedIntegerDistribution extends AbstractIntegerDistribution {
         int index = 0;
         for (Entry<Integer, Integer> entry : dataMap.entrySet()) {
             values[index] = entry.getKey();
-            probabilities[index] = entry.getValue().intValue() / denom;
+            probabilities[index] = entry.getValue()
+                .intValue() / denom;
             index++;
         }
         innerDistribution = new EnumeratedDistribution<Integer>(rng, createDistribution(values, probabilities));
     }
 
     /**
-     * Create a discrete integer-valued distribution from the input data.  Values are assigned
-     * mass based on their frequency.  For example, [0,1,1,2] as input creates a distribution
+     * Create a discrete integer-valued distribution from the input data. Values are assigned
+     * mass based on their frequency. For example, [0,1,1,2] as input creates a distribution
      * with values 0, 1 and 2 having probability masses 0.25, 0.5 and 0.25 respectively,
      *
      * @param data input dataset
@@ -147,11 +148,11 @@ public class EnumeratedIntegerDistribution extends AbstractIntegerDistribution {
     /**
      * Create the list of Pairs representing the distribution from singletons and probabilities.
      *
-     * @param singletons values
+     * @param singletons    values
      * @param probabilities probabilities
      * @return list of value/probability pairs
      */
-    private static List<Pair<Integer, Double>>  createDistribution(int[] singletons, double[] probabilities) {
+    private static List<Pair<Integer, Double>> createDistribution(int[] singletons, double[] probabilities) {
         if (singletons.length != probabilities.length) {
             throw new DimensionMismatchException(probabilities.length, singletons.length);
         }

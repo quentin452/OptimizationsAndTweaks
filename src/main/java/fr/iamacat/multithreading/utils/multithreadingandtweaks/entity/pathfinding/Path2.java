@@ -1,8 +1,7 @@
 package fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding;
 
-import net.minecraft.pathfinding.PathPoint;
-
 public class Path2 {
+
     /** Contains the points in this path */
     private PathPoint2[] pathPoints = new PathPoint2[1024];
     /** The number of points in this path */
@@ -11,16 +10,11 @@ public class Path2 {
     /**
      * Adds a point to the path
      */
-    public PathPoint2 addPoint(PathPoint2 point)
-    {
-        if (point.index >= 0)
-        {
+    public PathPoint2 addPoint(PathPoint2 point) {
+        if (point.index >= 0) {
             throw new IllegalStateException("OW KNOWS!");
-        }
-        else
-        {
-            if (this.count == this.pathPoints.length)
-            {
+        } else {
+            if (this.count == this.pathPoints.length) {
                 PathPoint2[] apathpoint = new PathPoint2[this.count << 1];
                 System.arraycopy(this.pathPoints, 0, apathpoint, 0, this.count);
                 this.pathPoints = apathpoint;
@@ -36,22 +30,19 @@ public class Path2 {
     /**
      * Clears the path
      */
-    public void clearPath()
-    {
+    public void clearPath() {
         this.count = 0;
     }
 
     /**
      * Returns and removes the first point in the path
      */
-    public PathPoint2 dequeue()
-    {
+    public PathPoint2 dequeue() {
         PathPoint2 pathpoint = this.pathPoints[0];
         this.pathPoints[0] = this.pathPoints[--this.count];
         this.pathPoints[this.count] = null;
 
-        if (this.count > 0)
-        {
+        if (this.count > 0) {
             this.sortForward(0);
         }
 
@@ -62,17 +53,13 @@ public class Path2 {
     /**
      * Changes the provided point's distance to target
      */
-    public void changeDistance(PathPoint2 p_75850_1_, float p_75850_2_)
-    {
+    public void changeDistance(PathPoint2 p_75850_1_, float p_75850_2_) {
         float f1 = p_75850_1_.distanceToTarget;
         p_75850_1_.distanceToTarget = p_75850_2_;
 
-        if (p_75850_2_ < f1)
-        {
+        if (p_75850_2_ < f1) {
             this.sortBack(p_75850_1_.index);
-        }
-        else
-        {
+        } else {
             this.sortForward(p_75850_1_.index);
         }
     }
@@ -80,18 +67,15 @@ public class Path2 {
     /**
      * Sorts a point to the left
      */
-    private void sortBack(int p_75847_1_)
-    {
+    private void sortBack(int p_75847_1_) {
         PathPoint2 pathpoint = this.pathPoints[p_75847_1_];
         int j;
 
-        for (float f = pathpoint.distanceToTarget; p_75847_1_ > 0; p_75847_1_ = j)
-        {
+        for (float f = pathpoint.distanceToTarget; p_75847_1_ > 0; p_75847_1_ = j) {
             j = p_75847_1_ - 1 >> 1;
             PathPoint2 pathpoint1 = this.pathPoints[j];
 
-            if (f >= pathpoint1.distanceToTarget)
-            {
+            if (f >= pathpoint1.distanceToTarget) {
                 break;
             }
 
@@ -106,18 +90,15 @@ public class Path2 {
     /**
      * Sorts a point to the right
      */
-    private void sortForward(int p_75846_1_)
-    {
+    private void sortForward(int p_75846_1_) {
         PathPoint2 pathpoint = this.pathPoints[p_75846_1_];
         float f = pathpoint.distanceToTarget;
 
-        while (true)
-        {
+        while (true) {
             int j = 1 + (p_75846_1_ << 1);
             int k = j + 1;
 
-            if (j >= this.count)
-            {
+            if (j >= this.count) {
                 break;
             }
 
@@ -126,32 +107,24 @@ public class Path2 {
             PathPoint2 pathpoint2;
             float f2;
 
-            if (k >= this.count)
-            {
+            if (k >= this.count) {
                 pathpoint2 = null;
                 f2 = Float.POSITIVE_INFINITY;
-            }
-            else
-            {
+            } else {
                 pathpoint2 = this.pathPoints[k];
                 f2 = pathpoint2.distanceToTarget;
             }
 
-            if (f1 < f2)
-            {
-                if (f1 >= f)
-                {
+            if (f1 < f2) {
+                if (f1 >= f) {
                     break;
                 }
 
                 this.pathPoints[p_75846_1_] = pathpoint1;
                 pathpoint1.index = p_75846_1_;
                 p_75846_1_ = j;
-            }
-            else
-            {
-                if (f2 >= f)
-                {
+            } else {
+                if (f2 >= f) {
                     break;
                 }
 
@@ -168,8 +141,7 @@ public class Path2 {
     /**
      * Returns true if this path contains no points
      */
-    public boolean isPathEmpty()
-    {
+    public boolean isPathEmpty() {
         return this.count == 0;
     }
 }
