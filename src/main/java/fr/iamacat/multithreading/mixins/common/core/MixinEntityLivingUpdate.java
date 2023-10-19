@@ -1,13 +1,9 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import java.util.*;
-import java.util.concurrent.*;
-
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -17,19 +13,21 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.ChunkProviderServer;
-
 import net.minecraftforge.common.ForgeHooks;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate extends Entity {
@@ -228,159 +226,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     }
 
     /**
-     * @author
-     * @reason
-     */
-    @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
-    public void modifiedonLivingUpdate(CallbackInfo ci)
-    {
-        if(MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate){
-        if (this.jumpTicks > 0)
-        {
-            --this.jumpTicks;
-        }
-
-        if (this.newPosRotationIncrements > 0)
-        {
-            double d0 = this.posX + (this.newPosX - this.posX) / (double)this.newPosRotationIncrements;
-            double d1 = this.posY + (this.newPosY - this.posY) / (double)this.newPosRotationIncrements;
-            double d2 = this.posZ + (this.newPosZ - this.posZ) / (double)this.newPosRotationIncrements;
-            double d3 = MathHelper.wrapAngleTo180_double(this.newRotationYaw - (double)this.rotationYaw);
-            this.rotationYaw = (float)((double)this.rotationYaw + d3 / (double)this.newPosRotationIncrements);
-            this.rotationPitch = (float)((double)this.rotationPitch + (this.newRotationPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
-            --this.newPosRotationIncrements;
-            this.setPosition(d0, d1, d2);
-            this.setRotation(this.rotationYaw, this.rotationPitch);
-        }
-        else if (!this.isClientWorld())
-        {
-            this.motionX *= 0.98D;
-            this.motionY *= 0.98D;
-            this.motionZ *= 0.98D;
-        }
-
-        if (Math.abs(this.motionX) < 0.005D)
-        {
-            this.motionX = 0.0D;
-        }
-
-        if (Math.abs(this.motionY) < 0.005D)
-        {
-            this.motionY = 0.0D;
-        }
-
-        if (Math.abs(this.motionZ) < 0.005D)
-        {
-            this.motionZ = 0.0D;
-        }
-
-        this.worldObj.theProfiler.startSection("ai");
-
-        if (this.isMovementBlocked())
-        {
-            this.isJumping = false;
-            this.moveStrafing = 0.0F;
-            this.moveForward = 0.0F;
-            this.randomYawVelocity = 0.0F;
-        }
-        else if (this.isClientWorld())
-        {
-            if (this.isAIEnabled())
-            {
-                this.worldObj.theProfiler.startSection("newAi");
-                multithreadingandtweaks$executorService.submit(this::updateAITasks);
-                this.worldObj.theProfiler.endSection();
-            }
-            else
-            {
-                this.worldObj.theProfiler.startSection("oldAi");
-                this.updateEntityActionState();
-                this.worldObj.theProfiler.endSection();
-                this.rotationYawHead = this.rotationYaw;
-            }
-        }
-
-        this.worldObj.theProfiler.endSection();
-        this.worldObj.theProfiler.startSection("jump");
-
-        if (this.isJumping)
-        {
-            if (!this.isInWater() && !this.handleLavaMovement())
-            {
-                if (this.onGround && this.jumpTicks == 0)
-                {
-                    multithreadingandtweaks$executorService.submit(this::jump);
-                    this.jumpTicks = 10;
-                }
-            }
-            else
-            {
-                this.motionY += 0.03999999910593033D;
-            }
-        }
-        else
-        {
-            this.jumpTicks = 0;
-        }
-
-        this.worldObj.theProfiler.endSection();
-        this.worldObj.theProfiler.startSection("travel");
-        this.moveStrafing *= 0.98F;
-        this.moveForward *= 0.98F;
-        this.randomYawVelocity *= 0.9F;
-        multithreadingandtweaks$executorService.submit(() -> this.modifiedmoveEntityWithHeading(this.moveStrafing, this.moveForward,ci));
-        this.worldObj.theProfiler.endSection();
-        this.worldObj.theProfiler.startSection("push");
-
-        if (!this.worldObj.isRemote)
-        {
-            this.collideWithNearbyEntities();
-        }
-
-        this.worldObj.theProfiler.endSection();}
-        ci.cancel();
-    }
-
-    /**
-     * Takes in the distance the entity has fallen this tick and whether its on the ground to update the fall distance
-     * and deal fall damage if landing on the ground. Args: distanceFallenThisTick, onGround
-     */
-    @Inject(method = "updateFallState", at = @At("HEAD"), remap = false, cancellable = true)
-    protected void modifiedupdateFallState(double distanceFallenThisTick, boolean isOnGround,CallbackInfo ci) {
-        if(MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate){
-        if (!this.isInWater()) {
-            this.handleWaterMovement();
-        }
-
-        if (isOnGround && this.fallDistance > 0.0F) {
-            double posX = this.posX;
-            double posY = this.posY - 0.20000000298023224D - (double) this.yOffset;
-            double posZ = this.posZ;
-            int i = MathHelper.floor_double(posX);
-            int j = MathHelper.floor_double(posY);
-            int k = MathHelper.floor_double(posZ);
-            Block block = this.worldObj.getBlock(i, j, k);
-
-            if (block.getMaterial() == Material.air) {
-                int l = this.worldObj.getBlock(i, j - 1, k)
-                    .getRenderType();
-
-                if (l == 11 || l == 32 || l == 21) {
-                    block = this.worldObj.getBlock(i, j - 1, k);
-                }
-            } else if (!this.worldObj.isRemote && this.fallDistance > 3.0F) {
-                this.worldObj.playAuxSFX(2006, i, j, k, MathHelper.ceiling_float_int(this.fallDistance - 3.0F));
-            }
-
-            block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
-        }
-
-        super.updateFallState(distanceFallenThisTick, isOnGround);
-    }
-        ci.cancel();
-    }
-
-    /**
      * Causes this entity to do an upwards motion (jumping).
      */
     @Unique
@@ -421,139 +266,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
                 }
             }
         }
-    }
-
-    /**
-     * Moves the entity based on the specified heading.  Args: strafe, forward
-     */
-    @Inject(method = "moveEntityWithHeading", at = @At("HEAD"), remap = false, cancellable = true)
-    public void modifiedmoveEntityWithHeading(float p_70612_1_, float p_70612_2_,CallbackInfo ci)
-    {
-        if(MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate){
-            double d0 = this.posY;
-            boolean isPlayerFlying = entityLivingBase instanceof EntityPlayer && ((EntityPlayer) entityLivingBase).capabilities.isFlying;
-
-            if (this.isInWater() && !isPlayerFlying) {
-                double motionX = this.motionX;
-                double motionY = this.motionY;
-                double motionZ = this.motionZ;
-                double speed = this.isAIEnabled() ? 0.04F : 0.02F;
-
-                this.moveFlying(p_70612_1_, p_70612_2_, (float) speed);
-                this.moveEntity(motionX, motionY, motionZ);
-
-                motionX *= 0.800000011920929D;
-                motionY *= 0.800000011920929D;
-                motionZ *= 0.800000011920929D;
-                motionY -= 0.02D;
-
-                if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(motionX, motionY + 0.6000000238418579D - this.posY + d0, motionZ)) {
-                   this.motionY = 0.30000001192092896D;
-                }
-            }
-
-        else if (this.handleLavaMovement() && (!(entityLivingBase instanceof EntityPlayer) || !((EntityPlayer)entityLivingBase).capabilities.isFlying))
-        {
-            d0 = this.posY;
-            this.moveFlying(p_70612_1_, p_70612_2_, 0.02F);
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= 0.5D;
-            this.motionY *= 0.5D;
-            this.motionZ *= 0.5D;
-            this.motionY -= 0.02D;
-
-            if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(this.motionX, this.motionY + 0.6000000238418579D - this.posY + d0, this.motionZ))
-            {
-                this.motionY = 0.30000001192092896D;
-            }
-        }
-        else
-        {
-            float f2 = 0.91F;
-
-            if (this.onGround)
-            {
-                f2 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.91F;
-            }
-
-            float f3 = 0.16277136F / (f2 * f2 * f2);
-            float f4;
-
-            if (this.onGround)
-            {
-                f4 = this.getAIMoveSpeed() * f3;
-            }
-            else
-            {
-                f4 = this.jumpMovementFactor;
-            }
-
-            this.moveFlying(p_70612_1_, p_70612_2_, f4);
-            f2 = 0.91F;
-
-            if (this.onGround)
-            {
-                f2 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.91F;
-            }
-
-            if (this.isOnLadder()) {
-                float maxSpeed = 0.15F;
-                double maxHorizontalSpeed = maxSpeed;
-                double maxVerticalSpeed = -0.15D;
-
-                this.motionX = MathHelper.clamp_double(this.motionX, -maxHorizontalSpeed, maxHorizontalSpeed);
-                this.motionZ = MathHelper.clamp_double(this.motionZ, -maxHorizontalSpeed, maxHorizontalSpeed);
-                this.motionY = MathHelper.clamp_double(this.motionY, maxVerticalSpeed, maxHorizontalSpeed);
-
-                if (this.isSneaking() && entityLivingBase instanceof EntityPlayer && this.motionY < 0.0D) {
-                    this.motionY = 0.0D;
-                }
-
-                this.fallDistance = 0.0F;
-            }
-
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-            if (this.isCollidedHorizontally && this.isOnLadder())
-            {
-                this.motionY = 0.2D;
-            }
-
-            if (this.worldObj.isRemote && (!this.worldObj.blockExists((int)this.posX, 0, (int)this.posZ) || !this.worldObj.getChunkFromBlockCoords((int)this.posX, (int)this.posZ).isChunkLoaded))
-            {
-                if (this.posY > 0.0D)
-                {
-                    this.motionY = -0.1D;
-                }
-                else
-                {
-                    this.motionY = 0.0D;
-                }
-            }
-            else
-            {
-                this.motionY -= 0.08D;
-            }
-
-            this.motionY *= 0.9800000190734863D;
-            this.motionX *= f2;
-            this.motionZ *= f2;
-        }
-
-        this.prevLimbSwingAmount = this.limbSwingAmount;
-        d0 = this.posX - this.prevPosX;
-        double d1 = this.posZ - this.prevPosZ;
-        float f6 = MathHelper.sqrt_double(d0 * d0 + d1 * d1) * 4.0F;
-
-        if (f6 > 1.0F)
-        {
-            f6 = 1.0F;
-        }
-
-        this.limbSwingAmount += (f6 - this.limbSwingAmount) * 0.4F;
-        this.limbSwing += this.limbSwingAmount;
-    }
-        ci.cancel();
     }
 
     @Unique
