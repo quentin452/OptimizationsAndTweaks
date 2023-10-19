@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
-
+    common_core_MixinBlockGrass(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinBlockGrass,
+        "core.MixinBlockGrass"),
     common_adventurersamulet_MixinEntityEagle(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityEagle,
         "adventurersamulet.MixinEntityEagle"),
     common_core_MixinEntityLiving(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityLiving,

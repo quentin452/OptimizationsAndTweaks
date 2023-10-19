@@ -175,6 +175,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAgeable;
+
+    @Config.Comment("Optimize BlockGrass Ticking")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockGrass;
     @Config.Comment("Optimize OpenGlHelper")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
