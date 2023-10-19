@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.ai;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.passive.EntityAnimal;
 
@@ -19,36 +20,37 @@ public class EntityAIFollowParent2 extends EntityAIBase {
     public EntityAIFollowParent2(EntityAnimal p_i1626_1_, double p_i1626_2_) {
         this.childAnimal = p_i1626_1_;
         this.field_75347_c = p_i1626_2_;
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.executorService = Executors.newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
     }
 
     public boolean shouldExecute() {
-        if (this.childAnimal.getGrowingAge() >= 0) {
+        if (!this.childAnimal.isChild()) {
             return false;
         } else {
-            List list = this.childAnimal.worldObj.getEntitiesWithinAABB(this.childAnimal.getClass(), this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
-            EntityAnimal entityanimal = null;
-            double d0 = Double.MAX_VALUE;
+            List<EntityAnimal> list = this.childAnimal.worldObj.getEntitiesWithinAABB(
+                this.childAnimal.getClass(), this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D)
+            );
 
-            for (Object o : list) {
-                EntityAnimal entityanimal1 = (EntityAnimal) o;
+            EntityAnimal entityAnimal = null;
+            double minDistance = Double.MAX_VALUE;
 
-                if (entityanimal1.getGrowingAge() >= 0) {
-                    double d1 = this.childAnimal.getDistanceSqToEntity(entityanimal1);
+            for (EntityAnimal entityAnimal1 : list) {
+                if (!entityAnimal1.isChild()) {
+                    double distance = this.childAnimal.getDistanceSqToEntity(entityAnimal1);
 
-                    if (d1 <= d0) {
-                        d0 = d1;
-                        entityanimal = entityanimal1;
+                    if (distance <= minDistance) {
+                        minDistance = distance;
+                        entityAnimal = entityAnimal1;
                     }
                 }
             }
 
-            if (entityanimal == null) {
+            if (entityAnimal == null) {
                 return false;
-            } else if (d0 < 9.0D) {
+            } else if (minDistance < 9.0D) {
                 return false;
             } else {
-                this.parentAnimal = entityanimal;
+                this.parentAnimal = entityAnimal;
                 return true;
             }
         }
