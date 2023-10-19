@@ -9,6 +9,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
@@ -56,6 +57,13 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     public static HashMap<Integer, Integer> biomeBlacklist;
     @Shadow
     HashMap<Integer, Boolean> structureNode = new HashMap();
+    @Inject(method = "generate", at = @At("HEAD"), remap = false, cancellable = true)
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider, CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator){
+        this.worldGeneration(random, chunkX, chunkZ, world, true,ci);
+        }
+        ci.cancel();
+    }
     @Inject(method = "worldGeneration", at = @At("HEAD"), remap = false, cancellable = true)
     public void worldGeneration(Random random, int chunkX, int chunkZ, World world, boolean newGen, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator){
@@ -66,10 +74,12 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             switch (world.provider.dimensionId) {
                 case -1:
                     this.generateNether(world, random, chunkX, chunkZ, newGen,ci);
+                    break;
                 case 1:
                     break;
                 default:
                     this.generateSurface(world, random, chunkX, chunkZ, newGen,ci);
+                    break;
             }
 
             if (!newGen) {
@@ -165,10 +175,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     private static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood, boolean eerie, boolean small, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator){
         if (basicAspects.size() == 0) {
-            Iterator i$ = c.iterator();
 
-            while(i$.hasNext()) {
-                Aspect as = (Aspect)i$.next();
+            for (Aspect as : c) {
                 if (as.getComponents() != null) {
                     complexAspects.add(as);
                 } else {
@@ -356,6 +364,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         }
         ci.cancel();
     }
+
     @Inject(method = "createNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
     private static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator){
@@ -364,7 +373,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         }
 
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te != null && te instanceof TileNode) {
+        if (te instanceof TileNode) {
             ((TileNode)te).setNodeType(nt);
             ((TileNode)te).setNodeModifier(nm);
             ((TileNode)te).setAspects(al);
@@ -466,7 +475,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     }
     @Unique
     private static int getDimBlacklist(int dim) {
-        return !dimensionBlacklist.containsKey(dim) ? -1 : (Integer)dimensionBlacklist.get(dim);
+        return !dimensionBlacklist.containsKey(dim) ? -1 : dimensionBlacklist.get(dim);
     }
     @Unique
     private void generateVegetation(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
@@ -579,7 +588,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     }
     @Unique
     private static int getBiomeBlacklist(int biome) {
-        return !biomeBlacklist.containsKey(biome) ? -1 : (Integer)biomeBlacklist.get(biome);
+        return !biomeBlacklist.containsKey(biome) ? -1 : biomeBlacklist.get(biome);
     }
     @Unique
     private static boolean generateSilverwood(World world, Random random, int chunkX, int chunkZ) {
