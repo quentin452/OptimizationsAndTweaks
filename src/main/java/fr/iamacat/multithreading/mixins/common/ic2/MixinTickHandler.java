@@ -76,7 +76,8 @@ public class MixinTickHandler {
     @Unique
     private void multithreadingandtweaks$removeEnderChests(World world) {
         for (Object obj : world.loadedTileEntityList) {
-            if (obj instanceof TileEntity te) {
+            if (obj instanceof TileEntity) {
+                TileEntity te = (TileEntity) obj;
                 if (te instanceof TileEntityEnderChest && !te.isInvalid() && world.blockExists(te.xCoord, te.yCoord, te.zCoord)) {
                     world.setBlockToAir(te.xCoord, te.yCoord, te.zCoord);
                     IC2.log.info(LogCategory.General, "Removed vanilla ender chest at %s.", Util.formatPosition(te));
@@ -84,7 +85,6 @@ public class MixinTickHandler {
             }
         }
     }
-
     @Unique
     private static void multithreadingandtweaks$processTickCallbacks(World world) {
         WorldData worldData = WorldData.get(world);
