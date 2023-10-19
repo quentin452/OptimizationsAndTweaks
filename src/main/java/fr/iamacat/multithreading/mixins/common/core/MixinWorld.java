@@ -29,10 +29,13 @@ import com.google.common.collect.ImmutableSetMultimap;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld implements IBlockAccess {
+    @Shadow
+    public int skylightSubtracted;
     @Shadow
     int[] lightUpdateBlockList;
     @Shadow
@@ -719,5 +722,42 @@ public abstract class MixinWorld implements IBlockAccess {
     public boolean canBlockSeeTheSky(int p_72937_1_, int p_72937_2_, int p_72937_3_)
     {
         return this.getChunkFromChunkCoords(p_72937_1_ >> 4, p_72937_3_ >> 4).canBlockSeeTheSky(p_72937_1_ & 15, p_72937_2_, p_72937_3_ & 15);
+    }
+    @Inject(method = "getBlockLightValue_do", cancellable = true, at = @At(value = "HEAD"))
+    public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness, CallbackInfoReturnable<Integer> cir) {
+        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+
+
+        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
+            return 15;
+        }
+
+        if (useNeighborBrightness && this.getBlock(x, y, z).getUseNeighborBrightness()) {
+            int maxLight = 0;
+
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        int neighborLight = this.getBlockLightValue_do(x + dx, y + dy, z + dz, false, cir);
+                        maxLight = Math.max(maxLight, neighborLight);
+                    }
+                }
+            }
+
+            return maxLight;
+        } else if (y < 0) {
+            return 0;
+        } else if (y >= 256) {
+            y = 255;
+        }
+
+        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+        x &= 15;
+        z &= 15;
+        int blockLight = chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
+
+        return blockLight;
+        }
+        return x;
     }
 }
