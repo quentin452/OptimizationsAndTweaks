@@ -204,7 +204,7 @@ public class MultithreadingandtweaksConfig {
     @Config.Comment("Optimize PathFinder")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinPathFinder;
+    public static boolean enableMixinPathFinding;
     @Config.Comment("Optimize selectEntitiesWithinAABB")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -1,19 +1,34 @@
-package fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding;
+package fr.iamacat.multithreading.mixins.common.core.pathfinding;
 
+import fr.iamacat.multithreading.Multithreaded;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding.PathEntity2;
+import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class PathEntity2 {
+@Mixin(PathEntity.class)
+public class MixinPathEntity {
+    // todo WIP
     /** The actual points in the path */
-    public final PathPoint2[] points;
+    @Shadow
+    private final PathPoint2[] points;
     /** PathEntity Array Index the Entity is currently targeting */
+    @Shadow
     private int currentPathIndex;
     /** The total length of the path */
+    @Shadow
     private int pathLength;
 
-    public PathEntity2(PathPoint2[] p_i2136_1_)
+    public MixinPathEntity(PathPoint2[] p_i2136_1_)
     {
         this.points = p_i2136_1_;
         this.pathLength = p_i2136_1_.length;
@@ -95,6 +110,7 @@ public class PathEntity2 {
      */
     public boolean isSamePath(PathEntity2 p_75876_1_)
     {
+        if(MultithreadingandtweaksConfig.enableMixinPathFinding){
         if (p_75876_1_ == null)
         {
             return false;
@@ -116,10 +132,12 @@ public class PathEntity2 {
             return true;
         }
     }
-
+        return false;
+    }
     /**
      * Returns true if the final PathPoint in the PathEntity is equal to Vec3D coords.
      */
+    @Unique
     public boolean isDestinationSame(Vec3 p_75880_1_)
     {
         PathPoint2 pathpoint = this.getFinalPathPoint();
