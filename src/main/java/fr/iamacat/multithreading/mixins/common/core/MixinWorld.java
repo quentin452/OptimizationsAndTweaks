@@ -203,34 +203,23 @@ public abstract class MixinWorld implements IBlockAccess {
     /**
      * Returns the block corresponding to the given coordinates inside a chunk.
      */
-    @Overwrite
     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
-            if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000
-                && p_147439_1_ < 30000000
-                && p_147439_3_ < 30000000
-                && p_147439_2_ >= 0
-                && p_147439_2_ < 256) {
-                Chunk chunk = null;
-
-                try {
-                    chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
-                    return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
-                } catch (Throwable throwable) {
-                    CrashReport crashreport = CrashReport
-                        .makeCrashReport(throwable, "Exception getting block type in world");
-                    CrashReportCategory crashreportcategory = crashreport.makeCategory("Requested block coordinates");
-                    crashreportcategory.addCrashSection("Found chunk", chunk == null);
-                    crashreportcategory.addCrashSection(
-                        "Location",
-                        CrashReportCategory.getLocationInfo(p_147439_1_, p_147439_2_, p_147439_3_));
-                    throw new ReportedException(crashreport);
-                }
-            } else {
-                return Blocks.air;
-            }
+        if (!MultithreadingandtweaksConfig.enableMixinWorld) {
+            return null;
         }
-        return null;
+
+        if (p_147439_1_ < -30000000 || p_147439_3_ < -30000000
+            || p_147439_1_ >= 30000000 || p_147439_3_ >= 30000000
+            || p_147439_2_ < 0 || p_147439_2_ >= 256) {
+            return Blocks.air;
+        }
+
+        Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
+        if (chunk != null) {
+            return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
+        } else {
+            return Blocks.air;
+        }
     }
 
     /**
