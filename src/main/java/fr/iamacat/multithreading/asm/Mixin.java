@@ -71,7 +71,9 @@ public enum Mixin implements IMixin {
     common_core_MixinPatchSpawnerAnimals(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals,
         "core.MixinPatchSpawnerAnimals"),
     // BUGFIX MIXINS
-
+    common_thaumcraft_MixinFixCascadingWorldGenFromThaumcraftWorldGenerator(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator,
+        "thaumcraft.MixinFixCascadingWorldGenFromThaumcraftWorldGenerator"),
     common_minefactoryreloaded_MixinFixCascadingforMineFactoryReloadedWorldGen(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinFixCascadingforMineFactoryReloadedWorldGen,
         "minefactoryreloaded.MixinFixCascadingforMineFactoryReloadedWorldGen"),
