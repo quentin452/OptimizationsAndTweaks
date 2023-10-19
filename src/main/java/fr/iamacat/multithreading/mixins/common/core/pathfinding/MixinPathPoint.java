@@ -7,6 +7,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -40,7 +41,7 @@ public class MixinPathPoint {
     @Shadow
     public float distanceToTarget;
     /** The point preceding this in its assigned path */
-    @Shadow
+    @Unique
     public PathPoint2 previous;
     /** Indicates this is the origin */
     @Shadow
@@ -62,7 +63,7 @@ public class MixinPathPoint {
     /**
      * Returns the linear distance to another path point
      */
-    @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
+  //  @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
     public float distanceTo(PathPoint2 p_75829_1_, CallbackInfo ci)
     {
         if (MultithreadingandtweaksConfig.enableMixinPathFinding){

@@ -5,6 +5,7 @@ import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfindin
 import net.minecraft.pathfinding.Path;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,7 +15,7 @@ public class MixinPath {
 
     // todo WIP
     /** Contains the points in this path */
-    @Shadow
+    @Unique
     private PathPoint2[] pathPoints = new PathPoint2[1024];
     @Shadow
     /** The number of points in this path */
@@ -23,7 +24,7 @@ public class MixinPath {
     /**
      * Adds a point to the path
      */
-    @Inject(method = "addPoint", at = @At("HEAD"), cancellable = true)
+    //@Inject(method = "addPoint", at = @At("HEAD"), cancellable = true)
     public PathPoint2 addPoint(PathPoint2 point, CallbackInfo ci)
     {
         if (MultithreadingandtweaksConfig.enableMixinPathFinding){
