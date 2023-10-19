@@ -27,16 +27,16 @@ public class EntityAIFollowParent2 extends EntityAIBase {
         if (!this.childAnimal.isChild()) {
             return false;
         } else {
-            List<EntityAnimal> list = this.childAnimal.worldObj.getEntitiesWithinAABB(
-                this.childAnimal.getClass(), this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D)
-            );
-
+            List<EntityAnimal> list = getCachedEntitiesWithinAABB();
             EntityAnimal entityAnimal = null;
             double minDistance = Double.MAX_VALUE;
 
             for (EntityAnimal entityAnimal1 : list) {
                 if (!entityAnimal1.isChild()) {
-                    double distance = this.childAnimal.getDistanceSqToEntity(entityAnimal1);
+                    double dx = entityAnimal1.posX - childAnimal.posX;
+                    double dy = entityAnimal1.posY - childAnimal.posY;
+                    double dz = entityAnimal1.posZ - childAnimal.posZ;
+                    double distance = dx * dx + dy * dy + dz * dz;
 
                     if (distance <= minDistance) {
                         minDistance = distance;
@@ -54,6 +54,17 @@ public class EntityAIFollowParent2 extends EntityAIBase {
                 return true;
             }
         }
+    }
+
+    private List cachedEntitiesWithinAABB = null;
+
+    private List getCachedEntitiesWithinAABB() {
+        if (cachedEntitiesWithinAABB == null) {
+            cachedEntitiesWithinAABB = this.childAnimal.worldObj.getEntitiesWithinAABB(
+                this.childAnimal.getClass(), this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D)
+            );
+        }
+        return cachedEntitiesWithinAABB;
     }
 
     public boolean continueExecuting() {
