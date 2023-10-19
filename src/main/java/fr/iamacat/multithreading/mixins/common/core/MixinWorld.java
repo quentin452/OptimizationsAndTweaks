@@ -31,6 +31,10 @@ import com.google.common.collect.ImmutableSetMultimap;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld implements IBlockAccess {
@@ -203,24 +207,25 @@ public abstract class MixinWorld implements IBlockAccess {
     /**
      * Returns the block corresponding to the given coordinates inside a chunk.
      */
-    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (!MultithreadingandtweaksConfig.enableMixinWorld) {
-            return null;
+    @Inject(method = "getBlock", at = @At("HEAD"), cancellable = true)
+    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> cir) {
+        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+            if (p_147439_1_ < -30000000 || p_147439_3_ < -30000000
+                || p_147439_1_ >= 30000000 || p_147439_3_ >= 30000000
+                || p_147439_2_ < 0 || p_147439_2_ >= 256) {
+                cir.setReturnValue(Blocks.air);
+                cir.cancel();
+            } else {
+                Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
+                if (chunk != null) {
+                    cir.setReturnValue(chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15));
+                    cir.cancel();
+                }
+            }
         }
-
-        if (p_147439_1_ < -30000000 || p_147439_3_ < -30000000
-            || p_147439_1_ >= 30000000 || p_147439_3_ >= 30000000
-            || p_147439_2_ < 0 || p_147439_2_ >= 256) {
-            return Blocks.air;
-        }
-
-        Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
-        if (chunk != null) {
-            return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
-        } else {
-            return Blocks.air;
-        }
+        return null;
     }
+
 
     /**
      * Will get all entities within the specified AABB excluding the one passed into it. Args: entityToExclude, aabb
