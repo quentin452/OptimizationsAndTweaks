@@ -29,6 +29,7 @@ public enum TargetedMod implements ITargetedMod {
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
     NEI("NotEnoughItems", false, startsWith("nei")),
+    ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),
 
     THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
 
