@@ -46,6 +46,7 @@ public class MixinPath {
             this.sortBack(this.count++);
             return point;
         }
+
         }
         ci.cancel();
         return point;

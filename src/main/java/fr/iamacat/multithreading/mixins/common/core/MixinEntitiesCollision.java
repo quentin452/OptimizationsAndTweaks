@@ -28,8 +28,6 @@ public abstract class MixinEntitiesCollision {
     @Inject(at = @At("HEAD"), method = "collideWithNearbyEntities")
     private void batchCollisions(World world, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntitiesCollision) {
-            // Cancel vanilla method
-            ci.cancel();
 
             // Perform batched collisions asynchronously
             try {
@@ -38,6 +36,7 @@ public abstract class MixinEntitiesCollision {
                 // Handle the interruption
                 e.printStackTrace();
             }
+            ci.cancel();
         }
     }
 
@@ -116,7 +115,6 @@ public abstract class MixinEntitiesCollision {
     private void cancelVanillaCollision(CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntitiesCollision) {
 
-            // Cancel vanilla collision logic
             ci.cancel();
         }
     }

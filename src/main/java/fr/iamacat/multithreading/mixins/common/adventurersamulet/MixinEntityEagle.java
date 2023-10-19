@@ -55,7 +55,7 @@ public abstract class MixinEntityEagle extends EntityAnimal {
         }
 
         this.field_70886_e += this.field_70889_i * 2.0F;
+            ci.cancel();
     }
-        ci.cancel();
     }
 }

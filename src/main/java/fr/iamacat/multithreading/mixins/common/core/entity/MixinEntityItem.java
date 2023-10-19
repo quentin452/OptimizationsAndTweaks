@@ -129,8 +129,8 @@ public abstract class MixinEntityItem extends Entity {
                 this.setDead();
             }
         }
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     /**

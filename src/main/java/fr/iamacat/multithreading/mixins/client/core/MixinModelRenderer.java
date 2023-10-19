@@ -242,8 +242,8 @@ public class MixinModelRenderer {
             }
             GL11.glTranslatef(-offsetX, -offsetY, -offsetZ);
         }
-        }
         ci.cancel();
+        }
     }
 
     @Unique
@@ -291,8 +291,8 @@ public class MixinModelRenderer {
                     GL11.glPopMatrix();
                 }
             }
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     /**
@@ -335,8 +335,8 @@ public class MixinModelRenderer {
                     }
                 }
             }
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     /**

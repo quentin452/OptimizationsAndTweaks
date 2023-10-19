@@ -82,8 +82,9 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             }
 
             super.decorate(world, random, x, z);
+            ci.cancel();
         }
-        ci.cancel();
+
     }
 
     @Unique

@@ -61,8 +61,9 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator){
         this.worldGeneration(random, chunkX, chunkZ, world, true,ci);
+            ci.cancel();
         }
-        ci.cancel();
+
     }
     @Inject(method = "worldGeneration", at = @At("HEAD"), remap = false, cancellable = true)
     public void worldGeneration(Random random, int chunkX, int chunkZ, World world, boolean newGen, CallbackInfo ci) {
@@ -86,8 +87,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 world.getChunkFromChunkCoords(chunkX, chunkZ).setChunkModified();
             }
         }
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     @Inject(method = "generateNether", at = @At("HEAD"), remap = false, cancellable = true)
@@ -101,8 +102,9 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         if (newGen || Config.regenAura) {
             this.generateWildNodes(world, random, chunkX, chunkZ, auraGen, newGen,ci);
         }
-        }
         ci.cancel();
+        }
+
     }
     @Inject(method = "generateSurface", at = @At("HEAD"), remap = false, cancellable = true)
     private void generateSurface(World world, Random random, int chunkX, int chunkZ, boolean newGen, CallbackInfo ci) {
@@ -168,8 +170,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
             this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen,ci);
         }
+            ci.cancel();
         }
-        ci.cancel();
     }
     @Inject(method = "createRandomNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
     private static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood, boolean eerie, boolean small, CallbackInfo ci) {
@@ -361,8 +363,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         }
 
         createNodeAt(world, x, y, z, type, modifier, al,ci);
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     @Inject(method = "createNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
@@ -380,8 +382,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         }
 
         world.markBlockForUpdate(x, y, z);
+            ci.cancel();
         }
-        ci.cancel();
     }
 
     @Unique

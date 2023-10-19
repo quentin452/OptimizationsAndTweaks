@@ -38,8 +38,8 @@ public abstract class MixinLiquidRendering {
     private void onTesselate(IBlockAccess world, BlockPos pos, Tessellator tessellator, int metadata,
         CallbackInfoReturnable<Boolean> ci) {
         if (MultithreadingandtweaksConfig.enableMixinLiquidRendering) {
-            ci.cancel();
             multithreadingandtweaks$tesselateFluid(world, pos, tessellator, metadata);
+            ci.cancel();
         }
     }
 

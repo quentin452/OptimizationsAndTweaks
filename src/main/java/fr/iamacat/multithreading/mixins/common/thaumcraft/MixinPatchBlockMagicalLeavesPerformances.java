@@ -142,8 +142,8 @@ public class MixinPatchBlockMagicalLeavesPerformances {
                 }
             }
         }
+            ci.cancel();
         }
-        ci.cancel();
     }
     }
     @Unique

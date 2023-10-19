@@ -113,11 +113,10 @@ public abstract class MixinChunkProviderServer implements IChunkProvider{
                 }
 
                 multithreadingandtweaks$executorService.shutdown();
-
-                ci.cancel();
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
+            ci.cancel();
         }
     }
     /**

@@ -68,9 +68,9 @@ public class MixinTickHandler {
             IC2.platform.profilerEndStartSection("Networking");
             IC2.network.get().onTickEnd(world);
             IC2.platform.profilerEndSection();
-        }
+        }   ci.cancel();
     }
-        ci.cancel();
+
     }
 
     @Unique
