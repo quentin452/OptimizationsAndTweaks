@@ -217,7 +217,7 @@ public class PathNavigate2 {
         }
     }
 
-    private void pathFollow()
+    public void pathFollow()
     {
         Vec3 vec3 = this.getEntityPosition();
         int i = this.currentPath.getCurrentPathLength();

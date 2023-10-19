@@ -89,7 +89,7 @@ public class PathFinder2 {
         /**
          * Adds a path from start to end and returns the whole path (args: unused, start, end, unused, maxDistance)
          */
-        private PathEntity2 addToPath(Entity p_75861_1_, PathPoint2 p_75861_2_, PathPoint2 p_75861_3_, PathPoint2 p_75861_4_, float p_75861_5_)
+        public PathEntity2 addToPath(Entity p_75861_1_, PathPoint2 p_75861_2_, PathPoint2 p_75861_3_, PathPoint2 p_75861_4_, float p_75861_5_)
         {
             p_75861_2_.totalPathDistance = 0.0F;
             p_75861_2_.distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
