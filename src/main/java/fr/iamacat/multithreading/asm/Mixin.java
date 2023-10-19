@@ -59,8 +59,10 @@ public enum Mixin implements IMixin {
         "core.pathfinding.MixinPathFinder"),
     common_core_pathfinding_MixinPath(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
         "core.pathfinding.MixinPath"),
-    common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
+    // todo WIP
+    /*common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
         "core.pathfinding.MixinPathEntity"),
+     */
     common_core_pathfinding_MixinPathNavigate(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
         "core.pathfinding.MixinPathNavigate"),
     common_core_pathfinding_MixinPathPoint(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,

@@ -108,7 +108,8 @@ public class MixinPathEntity {
     /**
      * Returns true if the EntityPath are the same. Non instance related equals.
      */
-    public boolean isSamePath(PathEntity2 p_75876_1_)
+    @Inject(method = "isSamePath", at = @At("HEAD"), cancellable = true)
+    public boolean isSamePath(PathEntity2 p_75876_1_, CallbackInfo ci)
     {
         if(MultithreadingandtweaksConfig.enableMixinPathFinding){
         if (p_75876_1_ == null)
@@ -132,6 +133,7 @@ public class MixinPathEntity {
             return true;
         }
     }
+        ci.cancel();
         return false;
     }
     /**
