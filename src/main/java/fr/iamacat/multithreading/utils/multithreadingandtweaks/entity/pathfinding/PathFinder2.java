@@ -89,62 +89,53 @@ public class PathFinder2 {
         /**
          * Adds a path from start to end and returns the whole path (args: unused, start, end, unused, maxDistance)
          */
-        public PathEntity2 addToPath(Entity p_75861_1_, PathPoint2 p_75861_2_, PathPoint2 p_75861_3_, PathPoint2 p_75861_4_, float p_75861_5_)
-        {
+        public PathEntity2 addToPath(Entity p_75861_1_, PathPoint2 p_75861_2_, PathPoint2 p_75861_3_, PathPoint2 p_75861_4_, float p_75861_5_) {
+            float squaredDistanceToTarget = p_75861_2_.distanceToSquared(p_75861_3_);
+
             p_75861_2_.totalPathDistance = 0.0F;
-            p_75861_2_.distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
-            p_75861_2_.distanceToTarget = p_75861_2_.distanceToNext;
+            p_75861_2_.distanceToNext = squaredDistanceToTarget;
+            p_75861_2_.distanceToTarget = squaredDistanceToTarget;
+
             this.path.clearPath();
             this.path.addPoint(p_75861_2_);
+
             PathPoint2 pathpoint3 = p_75861_2_;
+            PathPoint2 pathpoint4;
 
-            while (!this.path.isPathEmpty())
-            {
-                PathPoint2 pathpoint4 = this.path.dequeue();
+            while (!(pathpoint4 = this.path.dequeue()).equals(p_75861_3_)) {
+                float distanceToTarget = pathpoint4.distanceToSquared(p_75861_3_);
 
-                if (pathpoint4.equals(p_75861_3_))
-                {
-                    return this.createEntityPath(p_75861_2_, p_75861_3_);
-                }
-
-                if (pathpoint4.distanceToSquared(p_75861_3_) < pathpoint3.distanceToSquared(p_75861_3_))
-                {
+                if (distanceToTarget < pathpoint3.distanceToSquared(p_75861_3_)) {
                     pathpoint3 = pathpoint4;
                 }
 
                 pathpoint4.isFirst = true;
-                int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_);
 
-                for (int j = 0; j < i; ++j)
-                {
-                    PathPoint2 pathpoint5 = this.pathOptions[j];
+                int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_);
+                PathPoint2[] pathOptions = this.pathOptions;
+
+                for (int j = 0; j < i; ++j) {
+                    PathPoint2 pathpoint5 = pathOptions[j];
                     float f1 = pathpoint4.totalPathDistance + pathpoint4.distanceToSquared(pathpoint5);
 
-                    if (!pathpoint5.isAssigned() || f1 < pathpoint5.totalPathDistance)
-                    {
+                    if (!pathpoint5.isAssigned() || f1 < pathpoint5.totalPathDistance) {
                         pathpoint5.previous = pathpoint4;
                         pathpoint5.totalPathDistance = f1;
                         pathpoint5.distanceToNext = pathpoint5.distanceToSquared(p_75861_3_);
 
-                        if (pathpoint5.isAssigned())
-                        {
-                            this.path.changeDistance(pathpoint5, pathpoint5.totalPathDistance + pathpoint5.distanceToNext);
-                        }
-                        else
-                        {
-                            pathpoint5.distanceToTarget = pathpoint5.totalPathDistance + pathpoint5.distanceToNext;
+                        if (pathpoint5.isAssigned()) {
+                            this.path.changeDistance(pathpoint5, f1 + pathpoint5.distanceToNext);
+                        } else {
+                            pathpoint5.distanceToTarget = f1 + pathpoint5.distanceToNext;
                             this.path.addPoint(pathpoint5);
                         }
                     }
                 }
             }
 
-            if (pathpoint3 == p_75861_2_)
-            {
+            if (pathpoint3 == p_75861_2_) {
                 return null;
-            }
-            else
-            {
+            } else {
                 return this.createEntityPath(p_75861_2_, pathpoint3);
             }
         }
