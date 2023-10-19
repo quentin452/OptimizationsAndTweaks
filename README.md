@@ -30,7 +30,7 @@ Go here : [Wiki](https://github.com/quentin452/Multithreadingandtweaks/wiki)
 
 [FalsePatternLib](https://legacy.curseforge.com/minecraft/mc-mods/fplib/files/4701057)
 
-# Secial Thanks
+# Special Thanks
 
 Special thanks to Falsetweaks code : [HERE](https://github.com/FalsePattern/FalseTweaks)
 
