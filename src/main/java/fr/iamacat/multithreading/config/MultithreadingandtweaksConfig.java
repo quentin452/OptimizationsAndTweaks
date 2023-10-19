@@ -171,6 +171,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityChicken;
+
+    @Config.Comment("Optimize HackTickHandler from Pneumaticraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinHackTickHandler;
     @Config.Comment("Optimize EntityAeable")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

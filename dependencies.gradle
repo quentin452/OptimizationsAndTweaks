@@ -83,6 +83,7 @@ dependencies {
     implementation "curse.maven:codechickencore-unofficial-746279:4378043-deobf-sources-api"
     implementation "curse.maven:codechickenlib-unofficial-746280:4388255-deobf-sources-api"
     implementation "curse.maven:adventurers-amulets-222637:2245006-deobf-sources-api"
+    implementation "curse.maven:pneumaticcraft-224125:2513763-deobf-sources-api"
 
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')

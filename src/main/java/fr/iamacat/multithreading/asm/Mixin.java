@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
-
+    common_pneumaticraft_MixinHackTickHandler(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinHackTickHandler,
+        "pneumaticraft.MixinHackTickHandler"),
     common_ic2_MixinPriorityExecutor(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPriorityExecutor,
         "ic2.MixinPriorityExecutor"),
     common_core_MixinBlockGrass(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinBlockGrass,
