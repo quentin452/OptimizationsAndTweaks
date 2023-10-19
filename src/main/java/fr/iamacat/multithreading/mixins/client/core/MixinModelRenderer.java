@@ -19,6 +19,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ModelRenderer.class)
 public class MixinModelRenderer {
@@ -184,8 +187,9 @@ public class MixinModelRenderer {
      * @reason
      */
     @SideOnly(Side.CLIENT)
-    @Overwrite
-    public void render(float p_78785_1_) {
+    @Inject(method = "render", at = @At("HEAD"), remap = false, cancellable = true)
+    public void render(float p_78785_1_, CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinModelRenderer){
         if (this.isHidden) {
             return;
         }
@@ -238,6 +242,8 @@ public class MixinModelRenderer {
             }
             GL11.glTranslatef(-offsetX, -offsetY, -offsetZ);
         }
+        }
+        ci.cancel();
     }
 
     @Unique
@@ -254,8 +260,8 @@ public class MixinModelRenderer {
      * @reason
      */
     @SideOnly(Side.CLIENT)
-    @Overwrite
-    public void renderWithRotation(float p_78791_1_) {
+    @Inject(method = "renderWithRotation", at = @At("HEAD"), remap = false, cancellable = true)
+    public void renderWithRotation(float p_78791_1_,CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinModelRenderer) {
             if (!this.isHidden) {
                 if (this.showModel) {
@@ -286,14 +292,15 @@ public class MixinModelRenderer {
                 }
             }
         }
+        ci.cancel();
     }
 
     /**
      * Allows the changing of Angles after a box has been rendered
      */
     @SideOnly(Side.CLIENT)
-    @Overwrite
-    public void postRender(float p_78794_1_) {
+    @Inject(method = "postRender", at = @At("HEAD"), remap = false, cancellable = true)
+    public void postRender(float p_78794_1_,CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinModelRenderer) {
             if (!this.isHidden) {
                 if (this.showModel) {
@@ -329,6 +336,7 @@ public class MixinModelRenderer {
                 }
             }
         }
+        ci.cancel();
     }
 
     /**
