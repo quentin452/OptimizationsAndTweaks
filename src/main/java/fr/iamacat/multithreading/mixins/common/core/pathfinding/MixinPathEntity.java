@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinPathEntity {
     // todo WIP
     /** The actual points in the path */
-    @Shadow
+    @Unique
     private final PathPoint2[] points;
     /** PathEntity Array Index the Entity is currently targeting */
     @Shadow
