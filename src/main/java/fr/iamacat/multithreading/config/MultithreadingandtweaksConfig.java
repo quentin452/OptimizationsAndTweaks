@@ -200,11 +200,15 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
+    @Config.Comment("Optimize BlockGrass Ticking")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPathFinding;
 
     @Config.Comment("Optimize PathFinder")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinPathFinding;
+    public static boolean enableMixinBlockGrass;
     @Config.Comment("Optimize selectEntitiesWithinAABB")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
