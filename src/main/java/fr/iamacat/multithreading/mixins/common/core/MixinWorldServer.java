@@ -46,14 +46,14 @@ public abstract class MixinWorldServer extends World {
      * @reason
      */
     @Overwrite
-    public void func_147456_g()
-    {
+    public void func_147456_g() {
         super.func_147456_g();
         int i = 0;
         int j = 0;
+        
+        ArrayList<ChunkCoordIntPair> activeChunksCopy = new ArrayList<>(this.activeChunkSet);
 
-        for (Object o : this.activeChunkSet) {
-            ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair) o;
+        for (ChunkCoordIntPair chunkcoordintpair : activeChunksCopy) {
             int k = chunkcoordintpair.chunkXPos * 16;
             int l = chunkcoordintpair.chunkZPos * 16;
             this.theProfiler.startSection("getChunk");
@@ -134,4 +134,3 @@ public abstract class MixinWorldServer extends World {
         }
     }
 }
-
