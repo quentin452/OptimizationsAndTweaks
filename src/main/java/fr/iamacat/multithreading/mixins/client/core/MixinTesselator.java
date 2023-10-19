@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 
+import net.minecraft.world.SpawnerAnimals;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
-@Mixin(Tessellator.class)
+@Mixin(value = Tessellator.class, priority = 999)
 public class MixinTesselator {
 
     @Shadow
