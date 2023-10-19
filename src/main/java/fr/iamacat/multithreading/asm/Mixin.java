@@ -169,8 +169,6 @@ public enum Mixin implements IMixin {
         "core.MixinWorldgen"),
     client_core_MixinLiquidRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinLiquidRendering,
         "core.MixinLiquidRendering"),
-    client_core_MixinEffectRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEffectRenderer,
-        "core.MixinEffectRenderer"),
 
     // MOD-FILTERED MIXINS
 
