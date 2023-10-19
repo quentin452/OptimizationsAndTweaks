@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -11,6 +12,10 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class MixinEntity {
@@ -37,6 +42,8 @@ public class MixinEntity {
     public final AxisAlignedBB boundingBox;
     @Shadow
     public float yOffset;
+    @Shadow
+    protected boolean inWater;
 
     public MixinEntity(AxisAlignedBB boundingBox) {
         this.boundingBox = boundingBox;
@@ -49,6 +56,7 @@ public class MixinEntity {
     @Overwrite
     @SideOnly(Side.CLIENT)
     public int getBrightnessForRender(float p_70070_1_) {
+        if (MultithreadingandtweaksConfig.enableMixinEntity){
         int i = MathHelper.floor_double(this.posX);
         int j = MathHelper.floor_double(this.posZ);
 
@@ -59,5 +67,33 @@ public class MixinEntity {
         } else {
             return 0;
         }
+        }
+        return 0;
     }
+    @Unique
+    private boolean cachedIsInWater = false;
+    @Unique
+    private long lastCheckTime = 0L;
+    @Unique
+    private static final long CACHE_EXPIRATION_TIME = 1000L;
+
+    @Inject(method = "isInWater", at = @At("HEAD"), remap = false, cancellable = true)
+    public boolean isInWater(CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinEntity) {
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {
+                return cachedIsInWater;
+            } else {
+                boolean inWater = this.inWater;
+                cachedIsInWater = inWater;
+                lastCheckTime = currentTime;
+                return inWater;
+            }
+        } else {
+            ci.cancel();
+            return false;
+        }
+    }
+
 }
