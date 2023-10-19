@@ -138,10 +138,6 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
 
-    @Config.Comment("Optimize EntityAILookIdle")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAILookIdle;
 
     @Config.Comment("Optimize WorldServer")
     @Config.DefaultBoolean(true)
