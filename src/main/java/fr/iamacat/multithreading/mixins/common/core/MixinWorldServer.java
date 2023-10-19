@@ -50,7 +50,7 @@ public abstract class MixinWorldServer extends World {
         super.func_147456_g();
         int i = 0;
         int j = 0;
-        
+
         ArrayList<ChunkCoordIntPair> activeChunksCopy = new ArrayList<>(this.activeChunkSet);
 
         for (ChunkCoordIntPair chunkcoordintpair : activeChunksCopy) {
