@@ -51,8 +51,7 @@ public class MixinTickHandler {
     public void onWorldTickmultiandtweaks(TickEvent.WorldTickEvent event, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinTickHandler) {
             World world = event.world;
-            if (!IC2.platform.isSimulating() || Minecraft.getMinecraft()
-                .isGamePaused()) {
+            if (!IC2.platform.isSimulating() || world.isRemote) {
                 return;
             }
 
@@ -70,13 +69,11 @@ public class MixinTickHandler {
                 IC2.platform.profilerStartSection("EnergyNet");
                 EnergyNetGlobal.onTickEnd(world);
                 IC2.platform.profilerEndStartSection("Networking");
-                IC2.network.get()
-                    .onTickEnd(world);
+                IC2.network.get().onTickEnd(world);
                 IC2.platform.profilerEndSection();
             }
             ci.cancel();
         }
-
     }
 
     @Unique
