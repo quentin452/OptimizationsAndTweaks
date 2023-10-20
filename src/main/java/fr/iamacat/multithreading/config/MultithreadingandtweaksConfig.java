@@ -155,10 +155,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCommonProxyForCatWalks2;
-    @Config.Comment("Optimize NetworkSystem")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinNetworkSystem;
     @Config.Comment("Optimize EntityEagle")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

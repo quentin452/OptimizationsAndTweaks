@@ -23,8 +23,6 @@ public enum Mixin implements IMixin {
 
     common_core_MixinOilTweakEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler, "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
-    common_core_MixinNetworkSystem(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinNetworkSystem, "core.MixinNetworkSystem"),
     common_core_MixinMinecraftServer(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinMinecraftServer, "core.MixinMinecraftServer"),
     common_core_MixinChunk(Side.COMMON,
