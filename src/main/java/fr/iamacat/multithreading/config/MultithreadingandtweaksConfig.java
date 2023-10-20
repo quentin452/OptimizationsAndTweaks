@@ -146,6 +146,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSteamcraftEventHandler;
+    @Config.Comment("Optimize EntityBlockLing from Blocklings mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityBlockling;
 
     @Config.Comment("Optimize CommonProxy from Catwalks 2")
     @Config.DefaultBoolean(true)

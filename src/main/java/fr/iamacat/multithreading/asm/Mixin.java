@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_blocklings_MixinEntityBlockling(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "blocklings.MixinEntityBlockling"),
     common_flaxbeardssteampower_MixinSteamcraftEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "flaxbeardssteampower.MixinSteamcraftEventHandler"),
     common_catwalks2_MixinCommonProxy(Side.COMMON,

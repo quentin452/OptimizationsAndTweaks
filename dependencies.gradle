@@ -90,6 +90,7 @@ dependencies {
     implementation "curse.maven:akatsuki-mod-262491:2391747-deobf-sources-api"
     implementation "curse.maven:flaxbeards-steam-power-224867:2301651-deobf-sources-api"
     implementation "curse.maven:catwalks-2-236460:2296725-deobf-sources-api"
+    implementation "curse.maven:blocklings-for-older-versions-353443:2835779-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
