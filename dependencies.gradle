@@ -86,6 +86,7 @@ dependencies {
     implementation "curse.maven:pneumaticcraft-224125:2513763-deobf-sources-api"
     implementation "curse.maven:not-enough-pets-322159:4460610-deobf-sources-api"
     implementation "curse.maven:aether-255308:3280117-deobf-sources-api"
+    implementation "curse.maven:practical-logistics-240562:2306263-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

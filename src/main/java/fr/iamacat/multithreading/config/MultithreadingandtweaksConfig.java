@@ -191,6 +191,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPlayerAether;
+    @Config.Comment("Optimize EventRegistry from Practical Logistics")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventRegistry;
 
     @Config.Comment("Optimize BlockGrass Ticking")
     @Config.DefaultBoolean(true)
