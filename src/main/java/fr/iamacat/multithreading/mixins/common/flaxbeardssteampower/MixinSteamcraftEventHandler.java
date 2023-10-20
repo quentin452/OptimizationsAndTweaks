@@ -21,6 +21,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,9 +31,6 @@ import java.util.*;
 
 @Mixin(SteamcraftEventHandler.class)
 public class MixinSteamcraftEventHandler {
-    @Shadow
-
-    private static final UUID uuid = UUID.fromString("bbd786a9-611f-4c31-88ad-36dc9da3e15c");
     @Shadow
     public static boolean lastViewVillagerGui;
     @Shadow
@@ -91,139 +89,138 @@ public class MixinSteamcraftEventHandler {
 
     @Inject(method = "updateVillagers", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateVillagers(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler){
-        EntityVillager villager;
-        EntityPlayer player;
-        if (event.entityLiving instanceof EntityVillager && timeUntilResetField != null && lastBuyingPlayerField != null) {
-            villager = (EntityVillager)event.entityLiving;
+        if (!MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler) {
+            return;
+        }
+
+        if (!(event.entityLiving instanceof EntityVillager)) {
+            return;
+        }
+
+        EntityVillager villager = (EntityVillager) event.entityLiving;
+
+        if (timeUntilResetField != null && lastBuyingPlayerField != null) {
             Integer timeUntilReset = null;
             String lastBuyingPlayer = null;
 
             try {
                 timeUntilReset = timeUntilResetField.getInt(villager);
-                lastBuyingPlayer = (String)lastBuyingPlayerField.get(villager);
-            } catch (IllegalAccessException var13) {
-                var13.printStackTrace();
+                lastBuyingPlayer = (String) lastBuyingPlayerField.get(villager);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
 
             if (!villager.isTrading() && timeUntilReset != null && timeUntilReset == 39 && lastBuyingPlayer != null) {
-                player = villager.worldObj.getPlayerEntityByName(lastBuyingPlayer);
-                if (player != null) {
-                    ItemStack hat;
-                    int level;
-                    if (player.inventory.armorInventory[3] != null && player.inventory.armorInventory[3].getItem() == SteamcraftItems.tophat) {
-                        hat = player.inventory.armorInventory[3];
-                        if (!hat.hasTagCompound()) {
-                            hat.setTagCompound(new NBTTagCompound());
-                        }
-
-                        if (!hat.stackTagCompound.hasKey("level")) {
-                            hat.stackTagCompound.setInteger("level", 0);
-                        }
-
-                        level = hat.stackTagCompound.getInteger("level");
-                        ++level;
-                        hat.stackTagCompound.setInteger("level", level);
-                    } else if (player.inventory.armorInventory[3] != null && player.inventory.armorInventory[3].getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor)player.inventory.armorInventory[3].getItem()).hasUpgrade(player.inventory.armorInventory[3], SteamcraftItems.tophat)) {
-                        hat = ((ItemExosuitArmor)player.inventory.armorInventory[3].getItem()).getStackInSlot(player.inventory.armorInventory[3], 3);
-                        if (!hat.hasTagCompound()) {
-                            hat.setTagCompound(new NBTTagCompound());
-                        }
-
-                        if (!hat.stackTagCompound.hasKey("level")) {
-                            hat.stackTagCompound.setInteger("level", 0);
-                        }
-
-                        level = hat.stackTagCompound.getInteger("level");
-                        ++level;
-                        hat.stackTagCompound.setInteger("level", level);
-                        ((ItemExosuitArmor)player.inventory.armorInventory[3].getItem()).setInventorySlotContents(player.inventory.armorInventory[3], 3, hat);
-                    }
-                }
+                updateHatLevel(villager, lastBuyingPlayer);
             }
         }
 
-        if (event.entityLiving instanceof EntityVillager && !event.entityLiving.worldObj.isRemote && buyingListField != null) {
-            villager = (EntityVillager)event.entityLiving;
-            ExtendedPropertiesVillager nbt = (ExtendedPropertiesVillager)villager.getExtendedProperties(Steamcraft.VILLAGER_PROPERTY_ID);
-            if (nbt.lastHadCustomer == null) {
-                nbt.lastHadCustomer = false;
+        if (!villager.worldObj.isRemote && buyingListField != null) {
+            updateMerchantRecipeList(villager);
+        }
+
+        ci.cancel();
+    }
+
+    @Unique
+    private void updateHatLevel(EntityVillager villager, String playerName) {
+        EntityPlayer player = villager.worldObj.getPlayerEntityByName(playerName);
+        if (player == null) {
+            return;
+        }
+
+        ItemStack hat = player.inventory.armorInventory[3];
+        if (hat != null && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem())).hasUpgrade(hat, SteamcraftItems.tophat)))) {
+            if (!hat.hasTagCompound()) {
+                hat.setTagCompound(new NBTTagCompound());
             }
 
-            boolean hasCustomer = false;
-            if (villager.getCustomer() != null && villager.getCustomer().inventory.armorInventory[3] != null && (villager.getCustomer().inventory.armorInventory[3].getItem() == SteamcraftItems.tophat || villager.getCustomer().inventory.armorInventory[3].getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor)villager.getCustomer().inventory.armorInventory[3].getItem()).hasUpgrade(villager.getCustomer().inventory.armorInventory[3], SteamcraftItems.tophat))) {
-                player = villager.getCustomer();
+            NBTTagCompound tagCompound = hat.getTagCompound();
+            if (!tagCompound.hasKey("level")) {
+                tagCompound.setInteger("level", 0);
+            }
+
+            int level = tagCompound.getInteger("level");
+            level++;
+            tagCompound.setInteger("level", level);
+
+            if (hat.getItem() == SteamcraftItems.exoArmorHead) {
+                ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem())).setInventorySlotContents(player.inventory.armorInventory[3], 3, hat);
+            }
+        }
+    }
+
+    @Unique
+    private void updateMerchantRecipeList(EntityVillager villager) {
+        ExtendedPropertiesVillager nbt = (ExtendedPropertiesVillager) villager.getExtendedProperties(Steamcraft.VILLAGER_PROPERTY_ID);
+        if (nbt.lastHadCustomer == null) {
+            nbt.lastHadCustomer = false;
+        }
+
+        boolean hasCustomer = false;
+        EntityPlayer customer = villager.getCustomer();
+        if (customer != null) {
+            ItemStack hat = customer.inventory.armorInventory[3];
+            if (hat != null && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor) hat.getItem()).hasUpgrade(hat, SteamcraftItems.tophat)))) {
                 hasCustomer = true;
                 if (!nbt.lastHadCustomer) {
-                    MerchantRecipeList recipeList = villager.getRecipes(player);
-                    Iterator var19 = recipeList.iterator();
-
-                    while(true) {
-                        while(var19.hasNext()) {
-                            Object obj = var19.next();
-                            MerchantRecipe recipe = (MerchantRecipe)obj;
-                            if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F)) {
-                                recipe.getItemToSell().stackSize = MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F);
-                            } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F)) {
-                                recipe.getItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F);
-                            } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F)) {
-                                recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F);
-                            }
+                    MerchantRecipeList recipeList = villager.getRecipes(customer);
+                    for (Object obj : recipeList) {
+                        MerchantRecipe recipe = (MerchantRecipe) obj;
+                        if (recipe.getItemToSell().stackSize > 1) {
+                            recipe.getItemToSell().stackSize = MathHelper.floor_float(recipe.getItemToSell().stackSize * 1.25F);
                         }
-
-                        try {
-                            buyingListField.set(villager, recipeList);
-                        } catch (IllegalAccessException var12) {
-                            var12.printStackTrace();
+                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F)) {
+                            recipe.getItemToSell().stackSize = MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F);
+                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F)) {
+                            recipe.getItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F);
+                        } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F)) {
+                            recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F);
                         }
-                        break;
+                    }
+
+                    try {
+                        buyingListField.set(villager, recipeList);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
             }
 
             if (!hasCustomer && nbt.lastHadCustomer) {
-                MerchantRecipeList recipeList = null;
-
-                try {
-                    recipeList = (MerchantRecipeList)buyingListField.get(villager);
-                } catch (IllegalAccessException var11) {
-                    var11.printStackTrace();
-                }
+                MerchantRecipeList recipeList = getMerchantRecipeList(villager);
 
                 if (recipeList != null) {
-                    Iterator var18 = recipeList.iterator();
-
-                    label129:
-                    while(true) {
-                        while(true) {
-                            if (!var18.hasNext()) {
-                                break label129;
-                            }
-
-                            Object obj = var18.next();
-                            MerchantRecipe recipe = (MerchantRecipe)obj;
-                            if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToSell().stackSize / 1.25F)) {
-                                recipe.getItemToSell().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToSell().stackSize / 1.25F);
-                            } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.floor_float((float)recipe.getItemToBuy().stackSize * 1.25F)) {
-                                recipe.getItemToBuy().stackSize = MathHelper.floor_float((float)recipe.getItemToBuy().stackSize * 1.25F);
-                            } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.floor_float
-                                ((float)recipe.getSecondItemToBuy().stackSize * 1.25F)) {
-                                recipe.getSecondItemToBuy().stackSize = MathHelper.floor_float((float)recipe.getSecondItemToBuy().stackSize * 1.25F);
-                            }
+                    for (Object obj : recipeList) {
+                        MerchantRecipe recipe = (MerchantRecipe)obj;
+                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F)) {
+                            recipe.getItemToSell().stackSize = MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F);
+                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F)) {
+                            recipe.getItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F);
+                        } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F)) {
+                            recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F);
                         }
                     }
-                }
 
-                try {
-                    buyingListField.set(villager, recipeList);
-                } catch (IllegalAccessException var10) {
-                    var10.printStackTrace();
+                    try {
+                        buyingListField.set(villager, recipeList);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             nbt.lastHadCustomer = hasCustomer;
         }
-        ci.cancel();
+    }
+
+    @Unique
+    private MerchantRecipeList getMerchantRecipeList(EntityVillager villager) {
+        try {
+            return (MerchantRecipeList) buyingListField.get(villager);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

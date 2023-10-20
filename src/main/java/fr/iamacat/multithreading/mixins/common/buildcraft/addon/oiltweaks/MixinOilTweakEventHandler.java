@@ -42,27 +42,28 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent e, CallbackInfo ci) {
-        if(MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler){
-        if (!BuildCraftOilTweak.config.isOilDense()) {
-            return;
-        }
-        EntityLivingBase entity = e.entityLiving;
-        if (!getInOil(entity).halfOfFull()) {
-            this.setNotInOil(entity);
-            return;
-        }
-        entity.motionY = FastMath.min(0.0D, entity.motionY);
-        if (entity.motionY < -0.05D) {
-            entity.motionY *= 0.05D;
-        }
+        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+            if (BuildCraftOilTweak.config.isOilDense()) {
+                EntityLivingBase entity = e.entityLiving;
 
-        entity.motionX = FastMath.max(-0.05D, FastMath.min(0.05D, entity.motionX * 0.05D));
-        entity.motionY -= 0.05D;
-        entity.motionZ = FastMath.max(-0.05D, FastMath.min(0.05D, entity.motionZ * 0.05D));
-        setStepHeight(entity, 0.0F);
+                if (getInOil(entity).halfOfFull()) {
+                    entity.motionY = Math.min(0.0D, entity.motionY);
+                    if (entity.motionY < -0.05D) {
+                        entity.motionY *= 0.05D;
+                    }
+
+                    entity.motionX = Math.max(-0.05D, Math.min(0.05D, entity.motionX * 0.05D));
+                    entity.motionY -= 0.05D;
+                    entity.motionZ = Math.max(-0.05D, Math.min(0.05D, entity.motionZ * 0.05D));
+                    setStepHeight(entity, 0.0F);
+                } else {
+                    setNotInOil(entity);
+                }
+            }
+            ci.cancel();
         }
-        ci.cancel();
     }
+
     @Inject(method = "onPlayerUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onPlayerUpdate(TickEvent.PlayerTickEvent e, CallbackInfo ci) {
         if(MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler){
@@ -204,6 +205,7 @@ public class MixinOilTweakEventHandler {
         }
         entity.stepHeight = height;
     }
+
     @Shadow
     private OilTweakProperties getProperties(EntityLivingBase entity) {
         IExtendedEntityProperties ieep = entity.getExtendedProperties("oiltweak");
