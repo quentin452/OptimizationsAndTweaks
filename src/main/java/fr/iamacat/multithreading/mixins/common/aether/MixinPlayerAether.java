@@ -106,51 +106,42 @@ public class MixinPlayerAether {
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinPlayerAether){
-        if (!this.player.worldObj.isRemote) {
-            AetherNetwork.sendToAll(new PacketPerkChanged(this.getEntity().getEntityId(), EnumAetherPerkType.Halo, this.shouldRenderHalo));
-            AetherNetwork.sendToAll(new PacketPerkChanged(this.getEntity().getEntityId(), EnumAetherPerkType.Glow, this.shouldRenderGlow));
-            AetherNetwork.sendToAll(new PacketCapeChanged(this.getEntity().getEntityId(), this.shouldRenderCape));
-            AetherNetwork.sendToAll(new PacketSendPoisonTime(this.getEntity(), this.poisonTime));
-            AetherNetwork.sendToAll(new PacketSendSeenDialogue(this.getEntity(), this.seenSpiritDialog));
-            AetherNetwork.sendToAll(new PacketPortalItem(this.getEntity(), this.shouldGetPortal));
-        }
+            if (!this.player.worldObj.isRemote) {
 
+        AetherNetwork.sendToAll(new PacketPerkChanged(this.getEntity().getEntityId(), EnumAetherPerkType.Halo, this.shouldRenderHalo));
+        AetherNetwork.sendToAll(new PacketPerkChanged(this.getEntity().getEntityId(), EnumAetherPerkType.Glow, this.shouldRenderGlow));
+        AetherNetwork.sendToAll(new PacketCapeChanged(this.getEntity().getEntityId(), this.shouldRenderCape));
+        AetherNetwork.sendToAll(new PacketSendPoisonTime(this.getEntity(), this.poisonTime));
+        AetherNetwork.sendToAll(new PacketSendSeenDialogue(this.getEntity(), this.seenSpiritDialog));
+        AetherNetwork.sendToAll(new PacketPortalItem(this.getEntity(), this.shouldGetPortal));
+        }
         if (this.isPoisoned) {
-            if (this.poisonTime > 0) {
-                --this.poisonTime;
-            } else {
-                this.poisonTime = 0;
-                this.isPoisoned = false;
-            }
+            this.poisonTime = Math.max(0, this.poisonTime - 1);
+            this.isPoisoned = this.poisonTime > 0;
         }
 
         if (this.isCured) {
-            if (this.cureTime > 0) {
-                --this.cureTime;
-            } else {
-                this.cureTime = 0;
-                this.isCured = false;
-            }
+            this.cureTime = Math.max(0, this.cureTime - 1);
+            this.isCured = this.cureTime > 0;
         }
 
-        int i;
-        for(i = 0; i < this.getAbilities().size(); ++i) {
-            IAetherAbility ability = (IAetherAbility)this.getAbilities().get(i);
-            if (ability.shouldExecute()) {
-                ability.onUpdate();
+            int i;
+            for(i = 0; i < this.getAbilities().size(); ++i) {
+                IAetherAbility ability = this.getAbilities().get(i);
+                if (ability.shouldExecute()) {
+                    ability.onUpdate();
+                }
             }
-        }
 
-        for(i = 0; i < this.clouds.size(); ++i) {
-            Entity entity = (Entity)this.clouds.get(i);
-            if (entity.isDead) {
-                this.clouds.remove(i);
+            for(i = 0; i < this.clouds.size(); ++i) {
+                Entity entity = this.clouds.get(i);
+                if (entity.isDead) {
+                    this.clouds.remove(i);
+                }
             }
-        }
 
-        if (this.cooldown > 0) {
-            this.cooldown -= 2;
-        }
+
+            this.cooldown = Math.max(0, this.cooldown - 2);
 
         if (this.isInsideBlock(BlocksAether.aercloud)) {
             this.getEntity().fallDistance = 0.0F;
@@ -160,20 +151,12 @@ public class MixinPlayerAether {
             this.activateParachute();
         }
 
-        if (!this.getEntity().onGround) {
-            this.wingSinage += 0.75F;
-        } else {
-            this.wingSinage += 0.15F;
-        }
+        this.wingSinage += this.getEntity().onGround ? 0.15F : 0.75F;
+        this.wingSinage %= 6.283186F;
 
-        if (this.wingSinage > 6.283186F) {
-            this.wingSinage -= 6.283186F;
-        } else {
-            this.wingSinage += 0.1F;
-        }
-
-        boolean hasJumped = (Boolean) ReflectionHelper.getPrivateValue(EntityLivingBase.class, this.getEntity(), new String[]{"isJumping", "field_70703_bu"});
+        boolean hasJumped = ReflectionHelper.getPrivateValue(EntityLivingBase.class, this.getEntity(), new String[]{"isJumping", "field_70703_bu"});
         this.setJumping(hasJumped);
+
         this.getEntity().worldObj.theProfiler.startSection("portal");
         if (this.getEntity().dimension == AetherConfig.getAetherDimensionID() && this.getEntity().posY < -2.0) {
             this.teleportPlayer(false);
@@ -261,6 +244,7 @@ public class MixinPlayerAether {
         }
         ci.cancel();
         }
+
     }
     @Unique
     public EntityPlayer getEntity() {

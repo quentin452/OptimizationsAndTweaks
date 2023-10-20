@@ -85,11 +85,11 @@ dependencies {
     implementation "curse.maven:adventurers-amulets-222637:2245006-deobf-sources-api"
     implementation "curse.maven:pneumaticcraft-224125:2513763-deobf-sources-api"
     implementation "curse.maven:not-enough-pets-322159:4460610-deobf-sources-api"
+    implementation "curse.maven:aether-255308:3280117-deobf-sources-api"
 
-    transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
-    runtimeOnly('com.github.GTNewHorizons:The-Aether-GTNH :1.1.2.2:dev')
+    transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
 
 }
 
