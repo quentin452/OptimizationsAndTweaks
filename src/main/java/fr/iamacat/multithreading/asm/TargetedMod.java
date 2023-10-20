@@ -39,6 +39,7 @@ public enum TargetedMod implements ITargetedMod {
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
     MINEFACTORYRELOADED2("MinefactoryReloaded", false, startsWith("cofh_mine")),
+    AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
 
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),

@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_akatsuki_MixinAnimTickHandler(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinAnimTickHandler, "akatsuki.MixinAnimTickHandler"),
+
     common_practicallogistics_MixinEventRegistry(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEventRegistry, "practicallogistics.MixinEventRegistry"),
     common_aether_MixinPlayerAether(Side.COMMON,
