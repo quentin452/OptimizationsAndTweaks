@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_core_MixinNetworkSystem(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinNetworkSystem, "core.MixinNetworkSystem"),
     common_core_MixinMinecraftServer(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinMinecraftServer, "core.MixinMinecraftServer"),
     common_core_MixinChunk(Side.COMMON,

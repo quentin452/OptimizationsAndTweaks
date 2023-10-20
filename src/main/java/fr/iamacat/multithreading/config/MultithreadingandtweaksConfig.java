@@ -138,6 +138,10 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
 
+    @Config.Comment("Optimize NetworkSystem")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNetworkSystem;
     @Config.Comment("Optimize EntityEagle")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
