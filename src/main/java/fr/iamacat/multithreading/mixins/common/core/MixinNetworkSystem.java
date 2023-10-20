@@ -7,6 +7,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.NetworkSystem;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ReportedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,9 +45,9 @@ public class MixinNetworkSystem {
 
                     if (!networkmanager.isChannelOpen()) {
                         iterator.remove();
-                        ChatComponentText disconnectMessage = (ChatComponentText) networkmanager.getExitMessage();
+                        ChatComponentTranslation disconnectMessage = (ChatComponentTranslation) networkmanager.getExitMessage();
                         if (disconnectMessage == null) {
-                            disconnectMessage = new ChatComponentText("Disconnected");
+                            disconnectMessage = new ChatComponentTranslation("Disconnected");
                         }
 
                         networkmanager.getNetHandler().onDisconnect(disconnectMessage);
@@ -62,7 +63,7 @@ public class MixinNetworkSystem {
                             }
 
                             logger.warn("Failed to handle packet for " + networkmanager.getSocketAddress(), exception);
-                            ChatComponentText errorText = new ChatComponentText("Internal server error");
+                            ChatComponentTranslation errorText = new ChatComponentTranslation("Internal server error");
                             networkmanager.scheduleOutboundPacket(new S40PacketDisconnect(errorText), p_operationComplete_1 -> {
                                 networkmanager.closeChannel(errorText);
                                 networkmanager.disableAutoRead();
