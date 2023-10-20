@@ -53,7 +53,8 @@ public enum TargetedMod implements ITargetedMod {
     SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),
     STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),
     PNEUMATICRAFT("pneumaticCraft", false, startsWith("pneumaticCraft")),
-    NOTENOUGHPETS("NotEnoughPets", false, startsWith("NotEnoughPets")),;
+    NOTENOUGHPETS("NotEnoughPets", false, startsWith("NotEnoughPets")),
+    AETHER("aether", false, startsWith("aether")),;
 
     @Getter
     private final String modName;
