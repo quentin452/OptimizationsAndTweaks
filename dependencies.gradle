@@ -89,6 +89,7 @@ dependencies {
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
+    runtimeOnly('com.github.GTNewHorizons:The-Aether-GTNH :1.1.2.2:dev')
 
 }
 

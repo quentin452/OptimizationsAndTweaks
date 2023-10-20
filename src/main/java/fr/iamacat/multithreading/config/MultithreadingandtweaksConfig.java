@@ -183,10 +183,14 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAgeable;
-    @Config.Comment("Optimize PriorityExecutor from Industrialcraft 2 ")
+    @Config.Comment("Optimize PriorityExecutor from Industrialcraft2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPriorityExecutor;
+    @Config.Comment("Optimize PlayerAether from Aether")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPlayerAether;
 
     @Config.Comment("Optimize BlockGrass Ticking")
     @Config.DefaultBoolean(true)
