@@ -207,6 +207,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMapStorage;
+
+    @Config.Comment("Optimize Block")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlock;
     @Config.Comment("Optimize BlockGrass Ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
