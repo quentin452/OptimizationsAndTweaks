@@ -14,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
-
-    common_core_MixinBlock(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinBlock, "core.MixinBlock"),
     common_core_MixinChunk(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinChunk, "core.MixinChunk"),
     common_core_MixinMapStorage(Side.COMMON,
