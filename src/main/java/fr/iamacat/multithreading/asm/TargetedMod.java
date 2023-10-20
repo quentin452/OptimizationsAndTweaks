@@ -58,6 +58,9 @@ public enum TargetedMod implements ITargetedMod {
     PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical")),
     SONARCORE("SonarCore", false, startsWith("SonarCore")),
     BUILDCRAFTOILTWEAK("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
+    CATWALK2("catwalks", false, startsWith("catwalks")),
+    BLOCKLINGS("Blocklings", false, startsWith("Blocklings")),
+
     AETHER("aether", false, startsWith("aether")),;
 
     @Getter
