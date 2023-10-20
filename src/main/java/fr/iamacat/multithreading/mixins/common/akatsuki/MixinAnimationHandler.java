@@ -29,61 +29,60 @@ public class MixinAnimationHandler {
     @Shadow
     private IMCAnimatedEntity animatedEntity;
     @Shadow
-    public ArrayList<Channel> animCurrentChannels = new ArrayList();
+    public ArrayList<Channel> animCurrentChannels = new ArrayList<>();
     @Shadow
-    public HashMap<String, Long> animPrevTime = new HashMap();
+    public HashMap<String, Long> animPrevTime = new HashMap<>();
     @Shadow
-    public HashMap<String, Float> animCurrentFrame = new HashMap();
+    public HashMap<String, Float> animCurrentFrame = new HashMap<>();
     @Shadow
-    private HashMap<String, ArrayList<String>> animationEvents = new HashMap();
-    /**
-     * @author
-     * @reason
-     */
+    private HashMap<String, ArrayList<String>> animationEvents = new HashMap<>();
+
     @Inject(method = "animationsUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void animationsUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinAnimationHandler){
-        Iterator<Channel> it = this.animCurrentChannels.iterator();
+        if (MultithreadingandtweaksConfig.enableMixinAnimationHandler) {
+            Iterator<Channel> channelIterator = this.animCurrentChannels.iterator();
 
-        while(it.hasNext()) {
-            Channel anim = it.next();
-            float prevFrame = this.animCurrentFrame.get(anim.name);
-            boolean animStatus = updateAnimation(this.animatedEntity, anim, this.animPrevTime, this.animCurrentFrame);
-            if (this.animCurrentFrame.get(anim.name) != null) {
-                this.fireAnimationEvent(anim, prevFrame, this.animCurrentFrame.get(anim.name));
-            }
+            while (channelIterator.hasNext()) {
+                Channel anim = channelIterator.next();
+                float prevFrame = this.animCurrentFrame.get(anim.name);
+                boolean animStatus = updateAnimation(anim);
 
-            if (!animStatus) {
-                it.remove();
-                this.animPrevTime.remove(anim.name);
-                this.animCurrentFrame.remove(anim.name);
-                this.animationEvents.get(anim.name).clear();
+                if (prevFrame != -1.0f) {
+                    this.fireAnimationEvent(anim, prevFrame, this.animCurrentFrame.get(anim.name));
+                }
+
+                if (!animStatus) {
+                    channelIterator.remove();
+                    this.animPrevTime.remove(anim.name);
+                    this.animCurrentFrame.remove(anim.name);
+                    this.animationEvents.get(anim.name).clear();
+                }
             }
-        }
-        ci.cancel();
+            ci.cancel();
         }
     }
+
     @Unique
-    private static boolean updateAnimation(IMCAnimatedEntity entity, Channel channel, HashMap<String, Long> prevTimeAnim, HashMap<String, Float> prevFrameAnim) {
+    private boolean updateAnimation(Channel channel) {
         long prevTime;
         if (!FMLCommonHandler.instance().getEffectiveSide().isServer() && (!FMLCommonHandler.instance().getEffectiveSide().isClient() || isGamePaused())) {
             prevTime = System.nanoTime();
-            prevTimeAnim.put(channel.name, prevTime);
+            this.animPrevTime.put(channel.name, prevTime);
             return true;
         } else if (channel.mode != 3) {
-            prevTime = prevTimeAnim.get(channel.name);
-            float prevFrame = prevFrameAnim.get(channel.name);
+            prevTime = this.animPrevTime.get(channel.name);
+            float prevFrame = this.animCurrentFrame.get(channel.name);
             long currentTime = System.nanoTime();
-            double deltaTime = (double)(currentTime - prevTime) / 1.0E9;
-            float numberOfSkippedFrames = (float)(deltaTime * (double)channel.fps);
+            double deltaTime = (double) (currentTime - prevTime) / 1.0E9;
+            float numberOfSkippedFrames = (float) (deltaTime * (double) channel.fps);
             float currentFrame = prevFrame + numberOfSkippedFrames;
-            if (currentFrame < (float)(channel.totalFrames - 1)) {
-                prevTimeAnim.put(channel.name, currentTime);
-                prevFrameAnim.put(channel.name, currentFrame);
+            if (currentFrame < (float) (channel.totalFrames - 1)) {
+                this.animPrevTime.put(channel.name, currentTime);
+                this.animCurrentFrame.put(channel.name, currentFrame);
                 return true;
             } else if (channel.mode == 1) {
-                prevTimeAnim.put(channel.name, currentTime);
-                prevFrameAnim.put(channel.name, 0.0F);
+                this.animPrevTime.put(channel.name, currentTime);
+                this.animCurrentFrame.put(channel.name, 0.0F);
                 return true;
             } else {
                 return false;
@@ -92,6 +91,7 @@ public class MixinAnimationHandler {
             return true;
         }
     }
+
     @Unique
     private void fireAnimationEvent(Channel anim, float prevFrame, float frame) {
         if (isWorldRemote(this.animatedEntity)) {
@@ -99,23 +99,24 @@ public class MixinAnimationHandler {
         } else {
             this.fireAnimationEventServerSide(anim, prevFrame, frame);
         }
-
     }
+
     @Unique
     private static boolean isWorldRemote(IMCAnimatedEntity animatedEntity) {
-        return ((Entity)animatedEntity).worldObj.isRemote;
+        return ((Entity) animatedEntity).worldObj.isRemote;
     }
 
     @Unique
-    public void fireAnimationEventServerSide(Channel var1, float var2, float var3) {
+    public void fireAnimationEventServerSide(Channel channel, float prevFrame, float frame) {
 
     }
 
     @Unique
     @SideOnly(Side.CLIENT)
-    public void fireAnimationEventClientSide(Channel var1, float var2, float var3) {
+    public void fireAnimationEventClientSide(Channel channel, float prevFrame, float frame) {
 
     }
+
     @Unique
     @SideOnly(Side.CLIENT)
     private static boolean isGamePaused() {
