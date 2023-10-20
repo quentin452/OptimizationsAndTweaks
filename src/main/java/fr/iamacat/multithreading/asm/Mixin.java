@@ -41,8 +41,6 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksConfig.enableMixinAnimTickHandler, "akatsuki.MixinAnimTickHandler"),
     common_akatsuki_MixinAnimationHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinAnimationHandler, "akatsuki.MixinAnimationHandler"),
-    common_practicallogistics_MixinEventRegistry(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinEventRegistry, "practicallogistics.MixinEventRegistry"),
     common_aether_MixinPlayerAether(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinPlayerAether, "aether.MixinPlayerAether"),
     common_notenoughpets_MixinEventHandlerNEP(Side.COMMON,

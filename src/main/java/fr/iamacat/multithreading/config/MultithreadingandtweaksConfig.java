@@ -216,10 +216,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPlayerAether;
-    @Config.Comment("Optimize EventRegistry from Practical Logistics")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEventRegistry;
     @Config.Comment("Optimize AnimTickHandler from Akatsuki mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
