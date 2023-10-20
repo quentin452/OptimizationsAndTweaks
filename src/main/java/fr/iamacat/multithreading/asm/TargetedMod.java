@@ -60,6 +60,7 @@ public enum TargetedMod implements ITargetedMod {
     BUILDCRAFTOILTWEAK("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
     CATWALK2("catwalks", false, startsWith("catwalks")),
     BLOCKLINGS("Blocklings", false, startsWith("Blocklings")),
+    FLAXBEARDSTEAMPOWER("FSP", false, startsWith("FSP")),
 
     AETHER("aether", false, startsWith("aether")),;
 
