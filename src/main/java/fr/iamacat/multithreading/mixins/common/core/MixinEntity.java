@@ -96,5 +96,4 @@ public class MixinEntity {
             return false;
         }
     }
-
 }

@@ -52,7 +52,7 @@ public class MixinNEIServerUtils {
     @Overwrite
     public static void setHourForward(World world, int hour, boolean notify) {
         long day = (getTime(world) / 24000L) * 24000L;
-        long newTime = day + 24000L + hour * 1000;
+        long newTime = day + 24000L + hour * 1000L;
         setTime(newTime, world);
         if (notify)
             ServerUtils.sendChatToAll(new ChatComponentTranslation("nei.chat.time", getTime(world) / 24000L, hour));

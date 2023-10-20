@@ -1,7 +1,6 @@
 package fr.iamacat.multithreading.utils.multithreadingandtweaks.util;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 

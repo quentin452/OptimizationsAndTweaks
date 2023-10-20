@@ -199,7 +199,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAnimTickHandler;
-
+    @Config.Comment("Optimize Chunk ticking")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunk;
     @Config.Comment("Optimize MapStorage")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
