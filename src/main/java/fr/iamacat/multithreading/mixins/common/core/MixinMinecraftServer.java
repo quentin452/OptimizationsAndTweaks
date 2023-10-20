@@ -167,61 +167,51 @@ public class MixinMinecraftServer {
         int i;
 
         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
-        for (int x = 0; x < ids.length; x++)
-        {
-            int id = ids[x];
-            long j = System.nanoTime();
+            for (int id : ids) {
+                long j = System.nanoTime();
 
-            if (id == 0 || this.getAllowNether())
-            {
-                WorldServer worldserver = DimensionManager.getWorld(id);
-                this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
-                this.theProfiler.startSection("pools");
-                this.theProfiler.endSection();
+                if (id == 0 || this.getAllowNether()) {
+                    WorldServer worldserver = DimensionManager.getWorld(id);
+                    this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+                    this.theProfiler.startSection("pools");
+                    this.theProfiler.endSection();
 
-                if (this.tickCounter % 20 == 0)
-                {
-                    this.theProfiler.startSection("timeSync");
-                    this.serverConfigManager.sendPacketToAllPlayersInDimension(new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getGameRuleBooleanValue("doDaylightCycle")), worldserver.provider.dimensionId);
+                    if (this.tickCounter % 20 == 0) {
+                        this.theProfiler.startSection("timeSync");
+                        this.serverConfigManager.sendPacketToAllPlayersInDimension(new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getGameRuleBooleanValue("doDaylightCycle")), worldserver.provider.dimensionId);
+                        this.theProfiler.endSection();
+                    }
+
+                    this.theProfiler.startSection("tick");
+                    FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                    CrashReport crashreport;
+
+                    try {
+                        worldserver.tick();
+                    } catch (Throwable throwable1) {
+                        crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
+                        worldserver.addWorldInfoToCrashReport(crashreport);
+                        throw new ReportedException(crashreport);
+                    }
+
+                    try {
+                        worldserver.updateEntities();
+                    } catch (Throwable throwable) {
+                        crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
+                        worldserver.addWorldInfoToCrashReport(crashreport);
+                        throw new ReportedException(crashreport);
+                    }
+
+                    FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                    this.theProfiler.endSection();
+                    this.theProfiler.startSection("tracker");
+                    worldserver.getEntityTracker().updateTrackedEntities();
+                    this.theProfiler.endSection();
                     this.theProfiler.endSection();
                 }
 
-                this.theProfiler.startSection("tick");
-                FMLCommonHandler.instance().onPreWorldTick(worldserver);
-                CrashReport crashreport;
-
-                try
-                {
-                    worldserver.tick();
-                }
-                catch (Throwable throwable1)
-                {
-                    crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
-                    worldserver.addWorldInfoToCrashReport(crashreport);
-                    throw new ReportedException(crashreport);
-                }
-
-                try
-                {
-                    worldserver.updateEntities();
-                }
-                catch (Throwable throwable)
-                {
-                    crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
-                    worldserver.addWorldInfoToCrashReport(crashreport);
-                    throw new ReportedException(crashreport);
-                }
-
-                FMLCommonHandler.instance().onPostWorldTick(worldserver);
-                this.theProfiler.endSection();
-                this.theProfiler.startSection("tracker");
-                worldserver.getEntityTracker().updateTrackedEntities();
-                this.theProfiler.endSection();
-                this.theProfiler.endSection();
+                worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
             }
-
-            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
-        }
 
         this.theProfiler.endStartSection("dim_unloading");
         DimensionManager.unloadWorlds(worldTickTimes);
