@@ -7,6 +7,7 @@ import net.minecraft.util.Vec3;
 
 public class AxisAlignedBB2
 {
+   // WIP
     public double minX;
     public double minY;
     public double minZ;
