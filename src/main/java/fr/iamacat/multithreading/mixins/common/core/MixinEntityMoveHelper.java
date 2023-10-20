@@ -1,5 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityMoveHelper;
@@ -11,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityMoveHelper.class)
 public class MixinEntityMoveHelper {
@@ -34,8 +38,9 @@ public class MixinEntityMoveHelper {
      * @author iamacatfr
      * @reason optimize tps
      */
-    @Overwrite
-    public void onUpdateMoveHelper() {
+    @Inject(at = @At("HEAD"), method = "onUpdateMoveHelper", cancellable = true)
+    public void onUpdateMoveHelper(CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityMoveHelper){
         this.entity.setMoveForward(0.0F);
 
         if (this.update) {
@@ -60,6 +65,8 @@ public class MixinEntityMoveHelper {
                         .setJumping();
                 }
             }
+        }
+        ci.cancel();
         }
     }
 

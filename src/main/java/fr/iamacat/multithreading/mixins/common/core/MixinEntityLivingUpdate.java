@@ -352,16 +352,25 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
     @Redirect(
         method = "attackEntityFrom",
-        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1))
-    private double redirectAtan2(double x, double y) {
-        double result = FastMath.atan2(y, x);
-        return result * 180.0D / Math.PI;
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/lang/Math;atan2(DD)D"
+        )
+    )
+    private double redirectAtan2attackEntityFrom(double d0, double d1) {
+        return FastMath.atan2(d0, d1);
     }
 
-    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
-    private double redirectAtan2onUpdate(double x, double y) {
-        double result = FastMath.atan2(y, x);
-        return (float) (result * 180.0F / (float) Math.PI) - 90.0F;
+
+    @Redirect(
+        method = "onUpdate",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/lang/Math;atan2(DD)D"
+        )
+    )
+    private double redirectAtan2onUpdate(double d0, double d1) {
+        return FastMath.atan2(d0, d1);
     }
 
     @Inject(method = "updateFallState", at = @At("HEAD"), cancellable = true)
