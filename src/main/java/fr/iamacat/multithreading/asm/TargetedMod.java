@@ -57,6 +57,7 @@ public enum TargetedMod implements ITargetedMod {
     NOTENOUGHPETS("NotEnoughPets", false, startsWith("NotEnoughPets")),
     PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical")),
     SONARCORE("SonarCore", false, startsWith("SonarCore")),
+    BUILDCRAFTOILTWEAK("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
     AETHER("aether", false, startsWith("aether")),;
 
     @Getter

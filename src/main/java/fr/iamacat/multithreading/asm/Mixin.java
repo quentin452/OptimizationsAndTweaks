@@ -14,6 +14,13 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_flaxbeardssteampower_MixinSteamcraftEventHandler(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "flaxbeardssteampower.MixinSteamcraftEventHandler"),
+    common_catwalks2_MixinCommonProxy(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2, "catwalks2.MixinCommonProxy"),
+
+    common_core_MixinOilTweakEventHandler(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler, "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
     common_core_MixinNetworkSystem(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinNetworkSystem, "core.MixinNetworkSystem"),
     common_core_MixinMinecraftServer(Side.COMMON,

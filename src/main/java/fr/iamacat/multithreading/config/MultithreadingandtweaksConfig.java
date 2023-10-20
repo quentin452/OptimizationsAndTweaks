@@ -137,7 +137,20 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
+    @Config.Comment("Optimize OilTweakEventHandler from Buildcraft oil Tweak addon")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinOilTweakEventHandler;
 
+    @Config.Comment("Optimize SteamcraftEventHandler from Flaxbeard's Steam Power")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinSteamcraftEventHandler;
+
+    @Config.Comment("Optimize CommonProxy from Catwalks 2")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCommonProxyForCatWalks2;
     @Config.Comment("Optimize NetworkSystem")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
