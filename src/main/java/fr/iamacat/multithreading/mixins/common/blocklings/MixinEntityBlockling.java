@@ -20,6 +20,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
@@ -87,8 +90,8 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
      * @author
      * @reason
      */
-    @Overwrite
-    public void func_70636_d() {
+    @Inject(method = "func_70636_d", at = @At("HEAD"), remap = false, cancellable = true)
+    public void func_70636_d(CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntityBlockling){
         super.onLivingUpdate();
 
@@ -132,6 +135,7 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
         if (!isRemote) {
             CreatePacketServerSide.sendS2CEntitySync(this);
         }
+        ci.cancel();
     }
     }
     @Shadow
