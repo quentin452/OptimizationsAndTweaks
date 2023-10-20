@@ -142,6 +142,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityEagle;
+    @Config.Comment("Optimize MinecraftServer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMinecraftServer;
 
     @Config.Comment("Optimize WorldServer")
     @Config.DefaultBoolean(true)
