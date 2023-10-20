@@ -20,24 +20,24 @@ public class MixinEventRegistry {
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEventRegistry) {
-            if (event.phase == TickEvent.Phase.START) {
-                Map<Integer, INetworkCache> networks = CacheRegistry.getNetworkCache();
-                if (networks.isEmpty()) {
-                    return;
+        if (MultithreadingandtweaksConfig.enableMixinEventRegistry && event.phase == TickEvent.Phase.START) {
+            Map<Integer, INetworkCache> networks = CacheRegistry.getNetworkCache();
+            if (networks.isEmpty()) {
+                ci.cancel();
+                return;
+            }
+
+            for (Iterator<Map.Entry<Integer, INetworkCache>> iterator = networks.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry<Integer, INetworkCache> entry = iterator.next();
+                INetworkCache cache = entry.getValue();
+                int networkID = cache.getNetworkID();
+
+                if (cache instanceof IRefreshCache) {
+                    ((IRefreshCache) cache).updateNetwork(networkID);
                 }
 
-                Iterator<Map.Entry<Integer, INetworkCache>> iterator = networks.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry<Integer, INetworkCache> entry = iterator.next();
-                    INetworkCache cache = entry.getValue();
-                    if (cache instanceof IRefreshCache) {
-                        ((IRefreshCache) cache).updateNetwork(cache.getNetworkID());
-                    }
-
-                    if (CableRegistry.getCables(cache.getNetworkID()).size() == 0) {
-                        iterator.remove();
-                    }
+                if (CableRegistry.getCables(networkID).isEmpty()) {
+                    iterator.remove();
                 }
             }
             ci.cancel();
