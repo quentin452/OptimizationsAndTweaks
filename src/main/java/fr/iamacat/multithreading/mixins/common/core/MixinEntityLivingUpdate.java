@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -26,10 +27,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate extends Entity {
@@ -359,5 +362,36 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     private double redirectAtan2onUpdate(double x, double y) {
         double result = FastMath.atan2(y, x);
         return (float) (result * 180.0F / (float) Math.PI) - 90.0F;
+    }
+
+    @Inject(method = "updateFallState", at = @At("HEAD"), cancellable = true)
+    protected void updateFallState(double distanceFallenThisTick, boolean isOnGround, CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate) {
+            if (!this.isInWater()) {
+                this.handleWaterMovement();
+            }
+
+            if (isOnGround && this.fallDistance > 0.0F) {
+                int i = MathHelper.floor_double(this.posX);
+                int j = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double) this.yOffset);
+                int k = MathHelper.floor_double(this.posZ);
+                Block block = this.worldObj.getBlock(i, j, k);
+
+                if (block.getMaterial() == Material.air) {
+                    int l = this.worldObj.getBlock(i, j - 1, k).getRenderType();
+
+                    if (l == 11 || l == 32 || l == 21) {
+                        block = this.worldObj.getBlock(i, j - 1, k);
+                    }
+                } else if (!this.worldObj.isRemote && this.fallDistance > 3.0F) {
+                    this.worldObj.playAuxSFX(2006, i, j, k, MathHelper.ceiling_float_int(this.fallDistance - 3.0F));
+                }
+
+                block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
+            }
+
+            super.updateFallState(distanceFallenThisTick, isOnGround);
+            ci.cancel();
+        }
     }
 }
