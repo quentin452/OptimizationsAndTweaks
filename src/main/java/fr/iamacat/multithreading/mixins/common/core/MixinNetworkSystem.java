@@ -38,7 +38,6 @@ public class MixinNetworkSystem {
         if (MultithreadingandtweaksConfig.enableMixinNetworkSystem) {
             synchronized (this.networkManagers) {
                 Iterator iterator = this.networkManagers.iterator();
-                List<NetworkManager> toRemove = new ArrayList<>();
 
                 while (iterator.hasNext()) {
                     final NetworkManager networkmanager = (NetworkManager) iterator.next();
