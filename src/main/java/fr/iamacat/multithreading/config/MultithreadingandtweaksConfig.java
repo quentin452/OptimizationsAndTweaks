@@ -370,10 +370,6 @@ public class MultithreadingandtweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchWorldGenCloudNine;
 
-    @Config.Comment("Disable Intial World Chunk Load to make world load Faster,but player will see void area for some sec")
-    @Config.DefaultBoolean(false)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinDisableinitialWorldChunkLoad;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

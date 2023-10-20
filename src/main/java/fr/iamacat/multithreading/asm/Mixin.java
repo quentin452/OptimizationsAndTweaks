@@ -131,9 +131,6 @@ public enum Mixin implements IMixin {
     common_steamcraft2_MixinFixCascadingFromWorldGenBrassTree(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinFixCascadingFromWorldGenBrassTree,
         "steamcraft2.MixinFixCascadingFromWorldGenBrassTree"),
-    common_core_MixinDisableinitialWorldChunkLoad(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinDisableinitialWorldChunkLoad,
-        "core.MixinDisableinitialWorldChunkLoad"),
 
     common_core_MixinEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntity, "core.MixinEntity"),
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
