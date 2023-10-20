@@ -55,7 +55,7 @@ public enum TargetedMod implements ITargetedMod {
     STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),
     PNEUMATICRAFT("pneumaticCraft", false, startsWith("pneumaticCraft")),
     NOTENOUGHPETS("NotEnoughPets", false, startsWith("NotEnoughPets")),
-    PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical-Logistics")),
+    PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical")),
     SONARCORE("SonarCore", false, startsWith("SonarCore")),
     AETHER("aether", false, startsWith("aether")),;
 
