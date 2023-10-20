@@ -203,6 +203,18 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAnimationHandler;
+    @Config.Comment("Optimize EntitySasosri from Akatsuki mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitySasosri;
+    @Config.Comment("Optimize EntitySasosri2 from Akatsuki mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitySasosri2;
+    @Config.Comment("Optimize PuppetKadz from Akatsuki mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPuppetKadz;
     @Config.Comment("Optimize Chunk ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
