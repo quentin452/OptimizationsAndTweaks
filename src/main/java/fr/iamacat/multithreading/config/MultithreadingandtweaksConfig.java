@@ -199,6 +199,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAnimTickHandler;
+    @Config.Comment("Optimize AnimationHandler from Akatsuki mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAnimationHandler;
     @Config.Comment("Optimize Chunk ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

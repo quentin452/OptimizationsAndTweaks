@@ -35,7 +35,7 @@ public class MixinAnimTickHandler {
                     }
                 }
             }
-            ci.cancel();
         }
+        ci.cancel();
     }
 }

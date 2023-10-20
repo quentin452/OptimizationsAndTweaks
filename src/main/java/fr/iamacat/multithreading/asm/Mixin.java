@@ -23,7 +23,8 @@ public enum Mixin implements IMixin {
         m -> MultithreadingandtweaksConfig.enableMixinMapStorage, "core.MixinMapStorage"),
     common_akatsuki_MixinAnimTickHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinAnimTickHandler, "akatsuki.MixinAnimTickHandler"),
-
+    common_akatsuki_MixinAnimationHandler(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinAnimationHandler, "akatsuki.MixinAnimationHandler"),
     common_practicallogistics_MixinEventRegistry(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinEventRegistry, "practicallogistics.MixinEventRegistry"),
     common_aether_MixinPlayerAether(Side.COMMON,
