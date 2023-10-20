@@ -3,7 +3,9 @@ package fr.iamacat.multithreading.mixins.common.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
+import fr.iamacat.multithreading.utils.fastrandom.FastRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -28,6 +30,53 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
+    @Unique
+    public FastRandom rand = new FastRandom() {
+        @Override
+        public void setSeed(long seed) {
+
+        }
+
+        @Override
+        public void nextBytes(byte[] bytes) {
+
+        }
+
+        @Override
+        public int nextInt() {
+            return 0;
+        }
+
+        @Override
+        public int nextInt(int n) {
+            return 0;
+        }
+
+        @Override
+        public long nextLong() {
+            return 0;
+        }
+
+        @Override
+        public boolean nextBoolean() {
+            return false;
+        }
+
+        @Override
+        public float nextFloat() {
+            return 0;
+        }
+
+        @Override
+        public double nextDouble() {
+            return 0;
+        }
+
+        @Override
+        public double nextGaussian() {
+            return 0;
+        }
+    };
 
     @Shadow
     protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_) {
