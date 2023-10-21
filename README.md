@@ -1,5 +1,9 @@
 ## DON'T FORGET RESSETING THE CONFIG FILE WHEN UPDATING THE MOD
 
+# Known Incompat
+
+Optifine: To ensure that Multithreadingandtweaks is compatible with Optifine, disable MixinTesselator in the MultithreadingandTweaks config or delete Optifine.
+
 # Description
 
 Description
