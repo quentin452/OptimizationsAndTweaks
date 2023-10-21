@@ -1,16 +1,28 @@
 package fr.iamacat.multithreading.mixins.common.catwalks2;
 
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.vec.BlockCoord;
+import com.thecodewarrior.catwalks.CatwalkMod;
 import com.thecodewarrior.catwalks.ICustomLadder;
+import com.thecodewarrior.catwalks.block.BlockCatwalk;
+import com.thecodewarrior.catwalks.block.BlockScaffold;
 import com.thecodewarrior.catwalks.util.*;
-import com.thecodewarrior.codechicken.lib.vec.BlockCoord;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,7 +31,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 @Mixin(CommonProxy.class)
 public class MixinCommonProxy {
@@ -27,91 +41,83 @@ public class MixinCommonProxy {
     public boolean isClient = false;
     @Shadow
     public LinkedList<WeakReference<EntityLivingBase>> entities = new LinkedList<>();
+
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2) {
+        BlockCoord coord = this.getLadderCoord(event.entityLiving);
+        EntityLivingBase e = event.entityLiving;
+        CatwalkEntityProperties catwalkEP = CatwalkUtil.getOrCreateEP(event.entity);
+        if (coord.y >= 0) {
+            Block b = event.entity.worldObj.getBlock(coord.x, coord.y, coord.z);
+            ICustomLadder icl = CustomLadderRegistry.getCustomLadderOrNull(b);
+            double upSpeed = icl.getLadderVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+            double downSpeed = icl.getLadderFallVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+            double motY = e.posY - catwalkEP.lastPosY;
+            double climbDownSpeed;
+            if (e.isCollidedHorizontally) {
+                if (e.motionY < upSpeed) {
+                    e.motionY = upSpeed;
+                    catwalkEP.highSpeedLadder = true;
+                }
+            } else {
+                if (downSpeed > 0.0) {
+                    e.fallDistance = 0.0F;
+                }
 
-        EntityLivingBase entity = event.entityLiving;
-        CatwalkEntityProperties catwalkEP = CatwalkUtil.getOrCreateEP(entity);
-        BlockCoord coord = getLadderCoord(entity);
+                if (downSpeed > 0.0 && e.motionY < -downSpeed) {
+                    e.motionY = -downSpeed;
+                }
 
-        if (coord.y < 0) {
-            ci.cancel();
-            return;
-        }
+                boolean shouldStopOnLadder = icl.shouldHoldOn(e.worldObj, coord.x, coord.y, coord.z, e);
+                boolean shouldClimbDown = icl.shouldClimbDown(e.worldObj, coord.x, coord.y, coord.z, e);
+                climbDownSpeed = icl.getClimbDownVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+                if (shouldStopOnLadder && !shouldClimbDown && e.motionY < 0.0) {
+                    e.motionY = 0.0;
+                }
 
-        Block block = entity.worldObj.getBlock(coord.x, coord.y, coord.z);
-        ICustomLadder icl = CustomLadderRegistry.getCustomLadderOrNull(block);
-
-        double upSpeed = icl.getLadderVelocity(entity.worldObj, coord.x, coord.y, coord.z, entity);
-        double downSpeed = icl.getLadderFallVelocity(entity.worldObj, coord.x, coord.y, coord.z, entity);
-        double motY = entity.posY - catwalkEP.lastPosY;
-
-        if (entity.isCollidedHorizontally && entity.motionY < upSpeed) {
-            entity.motionY = upSpeed;
-            catwalkEP.highSpeedLadder = true;
-        } else if (downSpeed > 0.0) {
-            entity.fallDistance = 0.0F;
-            if (entity.motionY < -downSpeed) {
-                entity.motionY = -downSpeed;
+                if (shouldClimbDown && e.motionY <= 0.0) {
+                    e.motionY = -climbDownSpeed;
+                }
             }
 
-            boolean shouldStopOnLadder = icl.shouldHoldOn(entity.worldObj, coord.x, coord.y, coord.z, entity);
-            boolean shouldClimbDown = icl.shouldClimbDown(entity.worldObj, coord.x, coord.y, coord.z, entity);
-            double climbDownSpeed = icl.getClimbDownVelocity(entity.worldObj, coord.x, coord.y, coord.z, entity);
-
-            if (shouldStopOnLadder && !shouldClimbDown && entity.motionY < 0.0) {
-                entity.motionY = 0.0;
+            if (motY >= 0.0) {
+                e.fallDistance = 0.0F;
             }
 
-            if (shouldClimbDown && entity.motionY <= 0.0) {
-                entity.motionY = -climbDownSpeed;
+            double dY = e.posY - catwalkEP.lastStepY;
+            climbDownSpeed = Math.abs(dY);
+            double distanceRequired = upSpeed * 10.0;
+            if (catwalkEP.isSlidingDownLadder && dY >= 0.0) {
+                distanceRequired = 0.0;
             }
-        }
 
-        if (motY >= 0.0) {
-            entity.fallDistance = 0.0F;
-        }
-
-        double dY = entity.posY - catwalkEP.lastStepY;
-        double climbDownSpeed = Math.abs(dY);
-        double distanceRequired = upSpeed * 10.0;
-
-        if (catwalkEP.isSlidingDownLadder && dY >= 0.0) {
-            distanceRequired = 0.0;
-        }
-
-        catwalkEP.isSlidingDownLadder = dY < 0.0;
-
-        if (climbDownSpeed > distanceRequired && distanceRequired > 0.0) {
-            catwalkEP.lastStepX = entity.posX;
-            catwalkEP.lastStepY = entity.posY;
-            catwalkEP.lastStepZ = entity.posZ;
-
-            boolean shouldPlay = dY < 0.0 ? icl.shouldPlayStepSound(entity.worldObj, coord.x, coord.y, coord.z, entity, true) : icl.shouldPlayStepSound(entity.worldObj, coord.x, coord.y, coord.z, entity, false);
-
-            if (shouldPlay) {
-                Block.SoundType soundtype = block.stepSound;
-                entity.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+            catwalkEP.isSlidingDownLadder = dY < 0.0;
+            if (climbDownSpeed > distanceRequired && distanceRequired > 0.0) {
+                catwalkEP.lastStepX = e.posX;
+                catwalkEP.lastStepY = e.posY;
+                catwalkEP.lastStepZ = e.posZ;
+                boolean shouldPlay = dY < 0.0 ? icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, true) : icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, false);
+                if (shouldPlay) {
+                    Block.SoundType soundtype = e.worldObj.getBlock(coord.x, coord.y, coord.z).stepSound;
+                    e.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+                }
             }
         }
 
-        catwalkEP.lastPosX = entity.posX;
-        catwalkEP.lastPosY = entity.posY;
-        catwalkEP.lastPosZ = entity.posZ;
-
-        if (catwalkEP.highSpeedLadder && !entity.isCollidedHorizontally) {
-            if (entity.motionY > 0.2) {
-                entity.motionY = 0.2;
+        catwalkEP.lastPosX = e.posX;
+        catwalkEP.lastPosY = e.posY;
+        catwalkEP.lastPosZ = e.posZ;
+        if (catwalkEP.highSpeedLadder && !event.entityLiving.isCollidedHorizontally) {
+            if (event.entity.motionY > 0.2) {
+                event.entity.motionY = 0.2;
             }
 
             catwalkEP.highSpeedLadder = false;
         }
-
         ci.cancel();
         }
     }
-
     @Unique
     public BlockCoord getLadderCoord(EntityLivingBase entity) {
         return this.findCollidingBlock(entity, new Predicate<BlockCoord>(entity) {
@@ -127,8 +133,10 @@ public class MixinCommonProxy {
             }
         });
     }
+
     @Unique
     public BlockCoord findCollidingBlock(EntityLivingBase entity, Predicate<BlockCoord> mat) {
+        World world = entity.worldObj;
         AxisAlignedBB bb = entity.boundingBox;
         double buf = 9.765625E-4;
         int mX = MathHelper.floor_double(bb.minX - buf);
@@ -147,5 +155,68 @@ public class MixinCommonProxy {
         }
 
         return new BlockCoord(0, -1, 0);
+    }
+
+    @Unique
+    private boolean isPlayerOnCatwalk(EntityPlayerMP player) {
+        BlockCoord catwalkCoords = this.findCollidingBlock(player, new Predicate<BlockCoord>(player) {
+            public boolean test(BlockCoord bc) {
+                EntityPlayerMP player = (EntityPlayerMP)this.args[0];
+                Block b = player.worldObj.getBlock(bc.x, bc.y, bc.z);
+                return b instanceof BlockCatwalk;
+            }
+        });
+        return catwalkCoords.y != -1;
+    }
+
+    @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
+    public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2){
+        double catwalkSpeedBonus = CatwalkMod.speedModifier.getAmount() * (double)CatwalkMod.options.speedPotionLevel;
+        if (event.phase == TickEvent.Phase.END) {
+            List<EntityPlayerMP> players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+            Iterator var5 = players.iterator();
+
+            while(true) {
+                while(var5.hasNext()) {
+                    EntityPlayerMP player = (EntityPlayerMP)var5.next();
+                    boolean shouldHaveModifier = this.isPlayerOnCatwalk(player);
+                    IAttributeInstance playerSpeedAttribute = player.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+                    AttributeModifier catwalksModifier = playerSpeedAttribute.getModifier(CatwalkMod.speedModifier.getID());
+                    boolean hasModifier = catwalksModifier != null;
+                    if (hasModifier) {
+                        if (!shouldHaveModifier) {
+                            playerSpeedAttribute.removeModifier(CatwalkMod.speedModifier);
+                            continue;
+                        }
+
+                        if (catwalksModifier.getAmount() != catwalkSpeedBonus) {
+                            playerSpeedAttribute.removeModifier(CatwalkMod.speedModifier);
+                            hasModifier = false;
+                        }
+                    }
+
+                    if (shouldHaveModifier && !hasModifier) {
+                        catwalksModifier = new AttributeModifier(CatwalkMod.speedModifier.getID(), "catwalkmod.speedup", catwalkSpeedBonus, 2);
+                        catwalksModifier.setSaved(false);
+                        playerSpeedAttribute.applyModifier(catwalksModifier);
+                    }
+                }
+
+                return;
+            }
+        }
+        ci.cancel();
+        }
+    }
+
+    @Inject(method = "blockPlaceEvent", at = @At("HEAD"), remap = false, cancellable = true)
+    public void blockPlaceEvent(BlockEvent.PlaceEvent event, CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2){
+        if (event.blockSnapshot.replacedBlock instanceof BlockScaffold) {
+            CatwalkUtil.giveItemsToPlayer(event.player, event.blockSnapshot.replacedBlock.getDrops(event.world, event.x, event.y, event.z, event.blockMetadata, 0));
+        }
+        ci.cancel();
+        }
     }
 }
