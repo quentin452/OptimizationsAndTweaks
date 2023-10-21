@@ -163,11 +163,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
-
-    @Config.Comment("Optimize EntityTrackerEntry")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityTrackerEntry;
     @Config.Comment("Optimize TickHandler from IC2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
