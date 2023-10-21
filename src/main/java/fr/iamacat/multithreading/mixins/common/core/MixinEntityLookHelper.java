@@ -12,6 +12,11 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityLookHelper.class)
 public class MixinEntityLookHelper {
@@ -88,10 +93,8 @@ public class MixinEntityLookHelper {
                 double d1 = this.posY - (this.entity.posY + (double) this.entity.getEyeHeight());
                 double d2 = this.posZ - this.entity.posZ;
 
-                // Précalcul des constantes
                 double angleToDegrees = 180.0D / Math.PI;
 
-                // Calcul de l'angle
                 double atan2Result = FastMath.atan2(d2, d0);
                 float f = (float) (atan2Result * angleToDegrees) - 90.0F;
                 float f1 = (float) (-FastMath.atan2(d1, Math.sqrt(d0 * d0 + d2 * d2)) * angleToDegrees);
@@ -118,11 +121,7 @@ public class MixinEntityLookHelper {
         }
     }
 
-    /**
-     * @author iamacat
-     * @reason no changes
-     */
-    @Overwrite
+    @Unique
     private float updateRotation(float p_75652_1_, float p_75652_2_, float p_75652_3_) {
         if (MultithreadingandtweaksConfig.enableMixinEntityLookHelper) {
             float f3 = MathHelper.wrapAngleTo180_float(p_75652_2_ - p_75652_1_);

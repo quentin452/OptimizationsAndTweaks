@@ -2,8 +2,6 @@
 
 # Known Incompat
 
-AiImprovement: To ensure that Multithreadingandtweaks is compatible with AiImprovement, disable MixinEntityLookHelper in the MultithreadingandTweaks config or delete AiImprovement.
-
 Optifine: To ensure that Multithreadingandtweaks is compatible with Optifine, disable MixinTesselator in the MultithreadingandTweaks config or delete Optifine.
 
 # Description
