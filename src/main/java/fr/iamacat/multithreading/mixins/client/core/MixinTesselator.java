@@ -4,11 +4,13 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 
+import net.minecraft.client.shader.TesselatorVertexState;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -20,30 +22,32 @@ import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 @Mixin(value = Tessellator.class, priority = 999)
 public class MixinTesselator {
 
-    @Shadow
+    @Unique
     private static int nativeBufferSize = 0x200000;
-    @Shadow
+    @Unique
     private static int trivertsInBuffer = (nativeBufferSize / 48) * 6;
     @Shadow
-    public static boolean renderingWorldRenderer = false;
-    @Shadow
     public boolean defaultTexture = false;
-    @Shadow
+
+    @Unique
     private int rawBufferSize = 0;
     @Shadow
     public int textureID = 0;
 
     /** The byte buffer used for GL allocation. */
-    @Shadow
+
+    @Unique
     private static ByteBuffer byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
     /** The same memory as byteBuffer, but referenced as an integer buffer. */
-    @Shadow
+
+    @Unique
     private static IntBuffer intBuffer = byteBuffer.asIntBuffer();
     /** The same memory as byteBuffer, but referenced as an float buffer. */
-    @Shadow
+
+    @Unique
     private static FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
     /** The same memory as byteBuffer, but referenced as an short buffer. */
-    @Shadow
+    @Unique
     private static ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
     /** Raw integer array. */
     @Shadow
@@ -193,6 +197,80 @@ public class MixinTesselator {
             }
         }
         return 0;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+
+    public void addVertex(double p_78377_1_, double p_78377_3_, double p_78377_5_)
+    {
+        if (rawBufferIndex >= rawBufferSize - 32)
+        {
+            if (rawBufferSize == 0)
+            {
+                rawBufferSize = 0x10000;
+                rawBuffer = new int[rawBufferSize];
+            }
+            else
+            {
+                rawBufferSize *= 2;
+                rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
+            }
+        }
+        ++this.addedVertices;
+
+        if (this.hasTexture)
+        {
+            this.rawBuffer[this.rawBufferIndex + 3] = Float.floatToRawIntBits((float)this.textureU);
+            this.rawBuffer[this.rawBufferIndex + 4] = Float.floatToRawIntBits((float)this.textureV);
+        }
+
+        if (this.hasBrightness)
+        {
+            this.rawBuffer[this.rawBufferIndex + 7] = this.brightness;
+        }
+
+        if (this.hasColor)
+        {
+            this.rawBuffer[this.rawBufferIndex + 5] = this.color;
+        }
+
+        if (this.hasNormals)
+        {
+            this.rawBuffer[this.rawBufferIndex + 6] = this.normal;
+        }
+
+        this.rawBuffer[this.rawBufferIndex + 0] = Float.floatToRawIntBits((float)(p_78377_1_ + this.xOffset));
+        this.rawBuffer[this.rawBufferIndex + 1] = Float.floatToRawIntBits((float)(p_78377_3_ + this.yOffset));
+        this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(p_78377_5_ + this.zOffset));
+        this.rawBufferIndex += 8;
+        ++this.vertexCount;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+
+    public void setVertexState(TesselatorVertexState p_147565_1_)
+    {
+        while (p_147565_1_.getRawBuffer().length > rawBufferSize && rawBufferSize > 0)
+        {
+            rawBufferSize <<= 1;
+        }
+        if (rawBufferSize > rawBuffer.length)
+        {
+            rawBuffer = new int[rawBufferSize];
+        }
+        System.arraycopy(p_147565_1_.getRawBuffer(), 0, this.rawBuffer, 0, p_147565_1_.getRawBuffer().length);
+        this.rawBufferIndex = p_147565_1_.getRawBufferIndex();
+        this.vertexCount = p_147565_1_.getVertexCount();
+        this.hasTexture = p_147565_1_.getHasTexture();
+        this.hasBrightness = p_147565_1_.getHasBrightness();
+        this.hasColor = p_147565_1_.getHasColor();
+        this.hasNormals = p_147565_1_.getHasNormals();
     }
 
     /**
