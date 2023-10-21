@@ -209,33 +209,6 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     /**
-     * Returns whether a chunk exists at chunk coordinates x, y
-     */
-    /**
-     * Returns the block corresponding to the given coordinates inside a chunk.
-     */
-    @Inject(method = "getBlock", at = @At("HEAD"), cancellable = true)
-    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
-            if (p_147439_1_ < -30000000 || p_147439_3_ < -30000000
-                || p_147439_1_ >= 30000000
-                || p_147439_3_ >= 30000000
-                || p_147439_2_ < 0
-                || p_147439_2_ >= 256) {
-                cir.setReturnValue(Blocks.air);
-                cir.cancel();
-            } else {
-                Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
-                if (chunk != null) {
-                    cir.setReturnValue(chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15));
-                    cir.cancel();
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Will get all entities within the specified AABB excluding the one passed into it. Args: entityToExclude, aabb
      */
     @Unique

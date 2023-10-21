@@ -291,12 +291,12 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     /**
      * Dead and sleeping entities cannot move
      */
-    @Unique
+    @Shadow
     protected boolean isMovementBlocked() {
         return this.getHealth() <= 0.0F;
     }
 
-    @Unique
+    @Shadow
     public final float getHealth() {
         return this.dataWatcher.getWatchableObjectFloat(6);
     }

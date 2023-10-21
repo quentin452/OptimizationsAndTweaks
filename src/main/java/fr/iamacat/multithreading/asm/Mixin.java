@@ -59,8 +59,6 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAgeable"),
     common_core_MixinEntityTrackerEntry(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityTrackerEntry,
         "core.MixinEntityTrackerEntry"),
-    common_core_MixinWorldServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinWorldServer,
-        "core.MixinWorldServer"),
     common_nei_MixinNEIServerUtils(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinNEIServerUtils,
         "nei.MixinNEIServerUtils"),
     common_nei_MixinConfig(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinConfig, "ic2.MixinConfig"),
