@@ -14,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+
     common_blocklings_MixinEntityBlockling(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "blocklings.MixinEntityBlockling"),
     common_flaxbeardssteampower_MixinSteamcraftEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "flaxbeardssteampower.MixinSteamcraftEventHandler"),
-    common_catwalks2_MixinCommonProxy(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2, "catwalks2.MixinCommonProxy"),
+    common_catwalks2_MixinCommonProxy(Side.COMMON, avoid(TargetedMod.CATWALK2OFFICIAL).and(m -> MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2), "catwalks2.MixinCommonProxy"),
 
     common_core_MixinOilTweakEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler, "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
@@ -198,8 +198,7 @@ public enum Mixin implements IMixin {
         "core.MixinParticleManager"),
     client_core_MixinModelRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinModelRenderer,
         "core.MixinModelRenderer"),
-    client_core_MixinTesselator(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinTesselator,
-        "core.MixinTesselator"),
+    client_core_MixinTesselator(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(m -> MultithreadingandtweaksConfig.enableMixinTesselator), "core.MixinTesselator"),
     client_core_MixinRenderManager(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinRenderManager,
         "core.MixinRenderManager"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinOpenGlHelper,
@@ -226,4 +225,9 @@ public enum Mixin implements IMixin {
     public final Predicate<List<ITargetedMod>> filter;
     @Getter
     public final String mixin;
+
+
+    static Predicate<List<ITargetedMod>> avoid(TargetedMod in) {
+        return modList -> !modList.contains(in);
+    }
 }

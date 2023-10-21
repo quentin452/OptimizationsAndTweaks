@@ -28,6 +28,7 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
+    OPTIFINE("OptiFine", false, startsWith("Optifine")),
     NEI("NotEnoughItems", false, startsWith("nei")),
     ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),
 
@@ -58,7 +59,8 @@ public enum TargetedMod implements ITargetedMod {
     PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical")),
     SONARCORE("SonarCore", false, startsWith("SonarCore")),
     BUILDCRAFTOILTWEAK("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
-    CATWALK2("catwalks", false, startsWith("catwalks")),
+    CATWALK2OFFICIAL("catwalks", false, startsWith("catwalks")),
+    CATWALK2UNOFFICIAL("catwalks", false, matches("catwalks-1.7.10-2.1.4-GTNH")),
     BLOCKLINGS("Blocklings", false, startsWith("Blocklings")),
     FLAXBEARDSTEAMPOWER("FSP", false, startsWith("FSP")),
 
