@@ -175,7 +175,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinConfig;
-
+    @Config.Comment("Optimize EventRegistry from Practical Logistics")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventRegistry;
     @Config.Comment("Optimize NibbleArray")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
