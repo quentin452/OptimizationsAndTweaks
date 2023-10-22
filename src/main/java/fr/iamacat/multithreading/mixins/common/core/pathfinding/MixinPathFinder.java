@@ -1,6 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core.pathfinding;
 
 import fr.iamacat.multithreading.asm.TargetedMod;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -30,12 +31,19 @@ public class MixinPathFinder {
      */
     @Overwrite
     public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater, boolean avoidWater, boolean checkDoors) {
+        if (!MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        }
         boolean isTrapdoorPresent = false;
+
+        int posX = (int) entity.posX;
+        int posY = (int) entity.posY;
+        int posZ = (int) entity.posZ;
+        Block block;
 
         for (int i = x; i < x + pathPoint.xCoord; ++i) {
             for (int j = y; j < y + pathPoint.yCoord; ++j) {
                 for (int k = z; k < z + pathPoint.zCoord; ++k) {
-                    Block block = entity.worldObj.getBlock(i, j, k);
+                    block = entity.worldObj.getBlock(i, j, k);
                     Material material = block.getMaterial();
 
                     if (material != Material.air) {
@@ -55,10 +63,6 @@ public class MixinPathFinder {
                         int renderType = block.getRenderType();
 
                         if (renderType == 9) {
-                            int posX = (int) entity.posX;
-                            int posY = (int) entity.posY;
-                            int posZ = (int) entity.posZ;
-
                             if (entity.worldObj.getBlock(posX, posY, posZ).getRenderType() != 9 && entity.worldObj.getBlock(posX, posY - 1, posZ).getRenderType() != 9) {
                                 return -3;
                             }
