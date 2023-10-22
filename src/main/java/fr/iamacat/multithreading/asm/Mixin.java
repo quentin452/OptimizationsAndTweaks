@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
+    common_core_MixinDataWatcher(Side.COMMON,
+        m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "core.MixinDataWatcher"),
 
     common_practicallogistics_MixinEventRegistry(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "practicallogistics.MixinEventRegistry"),

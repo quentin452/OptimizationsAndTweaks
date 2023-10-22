@@ -163,6 +163,11 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
+
+    @Config.Comment("Optimize DataWatcher(Avoid usage of locks and use ConcurrentHashMap)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinDataWatcher;
     @Config.Comment("Optimize TickHandler from IC2")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
