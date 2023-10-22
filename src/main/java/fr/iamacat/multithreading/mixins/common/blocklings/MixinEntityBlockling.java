@@ -401,18 +401,19 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
     public int howManySlots() {
         return 6;
     }
+    @Unique
     public void setMaxHealth() {
-        double bonusHealth = (double)(this.currentUpgradeTier * 2);
+        double bonusHealth = this.currentUpgradeTier * 2;
         if (this.currentSpecialTier >= 2 && this.currentSpecialTier < 5) {
-            bonusHealth = (double)(this.currentUpgradeTier * 2 + 5);
+            bonusHealth = this.currentUpgradeTier * 2 + 5;
         }
 
         if (this.currentSpecialTier >= 5 && this.currentSpecialTier < 8) {
-            bonusHealth = (double)(this.currentUpgradeTier * 2 + 11);
+            bonusHealth = this.currentUpgradeTier * 2 + 11;
         }
 
         if (this.currentSpecialTier >= 8) {
-            bonusHealth = (double)(this.currentUpgradeTier * 2 + 20);
+            bonusHealth = this.currentUpgradeTier * 2 + 20;
         }
 
         if (this.currentLevel <= 10) {
@@ -428,34 +429,35 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
 
     }
 
+    @Unique
     public void setAttackDamage() {
-        double bonusDamage = (double)this.currentUpgradeTier;
+        double bonusDamage = this.currentUpgradeTier;
         if (this.swordID > 0 && this.swordID < 6) {
-            bonusDamage = (double)(this.currentUpgradeTier + this.swordID * 2);
+            bonusDamage = this.currentUpgradeTier + this.swordID * 2;
         }
 
         if (this.currentSpecialTier >= 3 && this.currentSpecialTier < 6) {
-            bonusDamage = (double)(this.currentUpgradeTier + 3);
+            bonusDamage = this.currentUpgradeTier + 3;
         }
 
         if (this.currentSpecialTier >= 6 && this.currentSpecialTier < 9) {
-            bonusDamage = (double)(this.currentUpgradeTier + 6);
+            bonusDamage = this.currentUpgradeTier + 6;
         }
 
         if (this.currentSpecialTier >= 9) {
-            bonusDamage = (double)(this.currentUpgradeTier + 10);
+            bonusDamage = this.currentUpgradeTier + 10;
         }
 
         if (this.currentSpecialTier >= 3 && this.currentSpecialTier < 6 && this.swordID > 0 && this.swordID < 6) {
-            bonusDamage = (double)(this.currentUpgradeTier + this.swordID * 2 + 3);
+            bonusDamage = this.currentUpgradeTier + this.swordID * 2 + 3;
         }
 
         if (this.currentSpecialTier >= 6 && this.currentSpecialTier < 9 && this.swordID > 0 && this.swordID < 6) {
-            bonusDamage = (double)(this.currentUpgradeTier + this.swordID * 2 + 6);
+            bonusDamage = this.currentUpgradeTier + this.swordID * 2 + 6;
         }
 
         if (this.currentSpecialTier >= 9 && this.swordID > 0 && this.swordID < 6) {
-            bonusDamage = (double)(this.currentUpgradeTier + this.swordID * 2 + 10);
+            bonusDamage = this.currentUpgradeTier + this.swordID * 2 + 10;
         }
 
         if (this.swordID == 6 && this.currentLevel >= 10) {
@@ -469,6 +471,7 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(this.attackDamage);
     }
 
+    @Unique
     public void setMoveSpeed() {
         double bonusSpeed = 0.0;
         if (this.currentSpecialTier >= 4 && this.currentSpecialTier < 7) {
