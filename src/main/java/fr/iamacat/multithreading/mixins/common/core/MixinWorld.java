@@ -117,23 +117,25 @@ public abstract class MixinWorld implements IBlockAccess {
      * also relative to 1.0).
      */
     @Overwrite
-    public void playSoundAtEntity(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_) {
+    public void playSoundAtEntity(Entity entity, String soundName, float volume, float pitch) {
         if (MultithreadingandtweaksConfig.enableMixinWorld) {
-            PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
+            PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundName, volume, pitch);
             if (MinecraftForge.EVENT_BUS.post(event)) {
                 return;
             }
-            p_72956_2_ = event.name;
-            for (Object worldAccess : this.worldAccesses) {
-                ((IWorldAccess) worldAccess).playSound(
-                    p_72956_2_,
-                    p_72956_1_.posX,
-                    p_72956_1_.posY - (double) p_72956_1_.yOffset,
-                    p_72956_1_.posZ,
-                    p_72956_3_,
-                    p_72956_4_);
+            soundName = event.name;
+            for (IWorldAccess worldAccess : this.worldAccesses) {
+                playSoundAtEntity(worldAccess, entity, soundName, volume, pitch);
             }
         }
+    }
+
+    @Unique
+    private void playSoundAtEntity(IWorldAccess worldAccess, Entity entity, String soundName, float volume, float pitch) {
+        double x = entity.posX;
+        double y = entity.posY - (double) entity.yOffset;
+        double z = entity.posZ;
+        worldAccess.playSound(soundName, x, y, z, volume, pitch);
     }
 
     /**
