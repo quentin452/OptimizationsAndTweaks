@@ -6,13 +6,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(PathFinder.class)
@@ -97,5 +101,15 @@ public class MixinPathFinder {
         }
 
         return pathPoint;
+    }
+    @Redirect(
+        method = "addToPath",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/pathfinding/Path;pointMap:Ljava/util/Map;"
+        )
+    )
+    private Map<?, ?> redirectPointMap(PathEntity pathEntity) {
+        return multithreadingandtweaks$pointMap;
     }
 }
