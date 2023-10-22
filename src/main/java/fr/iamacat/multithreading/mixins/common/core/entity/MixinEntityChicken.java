@@ -22,8 +22,8 @@ public abstract class MixinEntityChicken extends EntityAnimal {
     public MixinEntityChicken(World p_i1681_1_) {
         super(p_i1681_1_);
     }
-
-    @Inject(at = @At(value = "RETURN"), method = "<init>(Lnet/minecraft/world/World;)V")
+    // remove EntityAIFollowParent Task
+   /* @Inject(at = @At(value = "RETURN"), method = "<init>(Lnet/minecraft/world/World;)V")
     private void modifyTasks(World worldIn, CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntityChicken) {
             Iterator<EntityAITasks.EntityAITaskEntry> iterator = ((EntityChicken) (Object) this).tasks.taskEntries
@@ -40,4 +40,6 @@ public abstract class MixinEntityChicken extends EntityAnimal {
                 .addTask(4, new EntityAIFollowParent2((EntityChicken) (Object) this, 1.1D));
         }
     }
+
+    */
 }
