@@ -1,5 +1,7 @@
 package fr.iamacat.multithreading.mixins.common.core.pathfinding;
 
+import fr.iamacat.multithreading.asm.TargetedMod;
+import fr.iamacat.multithreading.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -8,12 +10,19 @@ import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
+    @Unique
+    private THashMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new THashMap<>();
+
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason optimize func_82565_a
      */
     @Overwrite
     public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater, boolean avoidWater, boolean checkDoors) {
@@ -72,5 +81,21 @@ public class MixinPathFinder {
         }
 
         return isTrapdoorPresent ? 2 : 1;
+    }
+    /**
+     * @author iamacatfr
+     * @reason optimize openPoint
+     */
+    @Overwrite
+    private final PathPoint openPoint(int x, int y, int z) {
+        int hash = PathPoint.makeHash(x, y, z);
+        PathPoint pathPoint = this.multithreadingandtweaks$pointMap.get(hash);
+
+        if (pathPoint == null) {
+            pathPoint = new PathPoint(x, y, z);
+            this.multithreadingandtweaks$pointMap.put(hash, pathPoint);
+        }
+
+        return pathPoint;
     }
 }
