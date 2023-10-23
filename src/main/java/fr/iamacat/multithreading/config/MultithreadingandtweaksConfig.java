@@ -7,77 +7,11 @@ import fr.iamacat.multithreading.Tags;
 @Config(modid = Tags.MODID)
 public class MultithreadingandtweaksConfig {
 
-    // Make inconfig ingame Fixme todo
-    // make categories Fixme todo
-    // Multithreading/Batch
-    @Config.Comment("Enable multithreaded for leaf decay.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLeafDecay;
-    @Config.Comment("Enable multithreaded for EntityLiving Update.")
+    @Config.Comment("Optimize EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLivingUpdate;
-    @Config.Comment("Enable multithreaded for Fire Tick.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinFireTick;
-
-    @Config.Comment("Enable multithreaded for Growth Spreading.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinGrowthSpreading;
-    @Config.Comment("Enable multithreaded for Entity Spawning.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntitySpawning;
-    @Config.Comment("Enable multithreaded for Chunk Populating such as structure ,dungeons ets....")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkPopulating;
-    @Config.Comment("Enable multithreaded GUI/HUD/TEXT rendering")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinGUIHUD;
-    @Config.Comment("Enable multithreaded Particle rendering")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinParticle;
-
-    @Config.Comment("Enable multithreaded TileEntities rendering")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinTileEntities;
-    @Config.Comment("Enable multithreaded Worldgen)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinWorldgen;
-    @Config.Comment("Enable multithreaded Entities Rendering")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntitiesRendering;
-    @Config.Comment("Enable multithreaded Tile Entities Tick")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinTileEntitiesTick;
-    @Config.Comment("Enable Multithreaded Liquid Rendering")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLiquidRendering;
-    @Config.Comment("Enable Multithreaded Block Updates")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinUpdateBlocks;
-    @Config.Comment("Enable Multithreaded Grass Block Spreading")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinGrassSpread;
-    @Config.Comment("Enable Multithreaded Entities Collision")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntitiesCollision;
-
-    @Config.Comment("Enable Multithreaded Chunk Provider Server")
+    @Config.Comment("Optimize Chunk Provider Server")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;

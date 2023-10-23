@@ -13,7 +13,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
 
+
     // OPTIMIZATIONS MIXINS
+
+    common_core_MixinEntityLivingUpdate(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate,
+        "core.MixinEntityLivingUpdate"),
     common_core_MixinDataWatcher(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinNibbleArray,
         "core.MixinDataWatcher"),
 
@@ -207,37 +211,10 @@ public enum Mixin implements IMixin {
     common_core_MixinStatList(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinStatList,
         "core.MixinStatList"),
 
-    // MULTITHREADING MIXINS
-    common_core_MixinLeafDecay(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinLeafDecay,
-        "core.MixinLeafDecay"),
-    common_core_MixinEntityLivingUpdate(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate,
-        "core.MixinEntityLivingUpdate"),
-    common_core_MixinFireTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinFireTick,
-        "core.MixinFireTick"),
-    common_core_MixinGrowthSpreading(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinGrowthSpreading,
-        "core.MixinGrowthSpreading"),
-    common_core_MixinEntitySpawning(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitySpawning,
-        "core.MixinEntitySpawning"),
-    common_core_MixinChunkPopulating(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkPopulating,
-        "core.MixinChunkPopulating"),
-    common_core_MixinTileEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinTileEntitiesTick,
-        "core.MixinTileEntitiesTick"),
-
-    common_core_MixinUpdateBlocks(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinUpdateBlocks,
-        "core.MixinUpdateBlocks"),
-    common_core_MixinGrassSpread(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinGrassSpread,
-        "core.MixinGrassSpread"),
-    common_core_MixinEntitiesCollision(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinEntitiesCollision,
-        "core.MixinEntitiesCollision"),
-
-    common_core_MixinChunkProviderServer(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinChunkProviderServer,
-        "core.MixinChunkProviderServer"),
     // CLIENT MIXINS
 
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,
         m -> MultithreadingandtweaksConfig.enableMixinEntitySpellParticleFX, "core.MixinEntitySpellParticleFX"),
-    client_core_MixinParticle(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinParticle,
-        "core.MixinParticleManager"),
     client_core_MixinModelRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinModelRenderer,
         "core.MixinModelRenderer"),
     client_core_MixinTesselator(Side.CLIENT,
@@ -245,15 +222,6 @@ public enum Mixin implements IMixin {
         "core.MixinTesselator"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
-    client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,
-        "core.MixinEntitiesRendering"),
-    client_core_MixinTileEntities(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinTileEntities,
-        "core.MixinTileEntities"),
-    client_core_MixinGUIHUD(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinGUIHUD, "core.MixinGUIHUD"),
-    client_core_MixinWorldgen(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinWorldgen,
-        "core.MixinWorldgen"),
-    client_core_MixinLiquidRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinLiquidRendering,
-        "core.MixinLiquidRendering"),
 
     // MOD-FILTERED MIXINS
 
