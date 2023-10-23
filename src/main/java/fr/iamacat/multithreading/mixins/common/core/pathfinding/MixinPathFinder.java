@@ -2,6 +2,7 @@ package fr.iamacat.multithreading.mixins.common.core.pathfinding;
 
 import fr.iamacat.multithreading.asm.TargetedMod;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 import fr.iamacat.multithreading.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,6 +13,7 @@ import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -22,6 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
+    @Shadow
+    private boolean isWoddenDoorAllowed;
+    /** should the PathFinder disregard BlockMovement type materials in its path */
+    @Shadow
+    private boolean isMovementBlockAllowed;
+    @Shadow
+    private boolean isPathingInWater;
     @Unique
     private THashMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new THashMap<>();
 
@@ -115,5 +124,83 @@ public class MixinPathFinder {
     )
     private Map<?, ?> redirectPointMap(PathEntity pathEntity) {
         return multithreadingandtweaks$pointMap;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_)
+    {
+      if (MultithreadingandtweaksConfig.enableMixinPathFinding){
+        PathPoint pathpoint1 = null;
+        int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+
+        if (i1 == 2)
+        {
+            return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+        }
+        else
+        {
+            if (i1 == 1)
+            {
+                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+            }
+
+            if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4 && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_) == 1)
+            {
+                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
+                p_75858_3_ += p_75858_6_;
+            }
+
+            if (pathpoint1 != null)
+            {
+                int j1 = 0;
+                int k1 = 0;
+
+                while (p_75858_3_ > 0)
+                {
+                    k1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
+
+                    if (this.isPathingInWater && k1 == -1)
+                    {
+                        return null;
+                    }
+
+                    if (k1 != 1)
+                    {
+                        break;
+                    }
+
+                    if (j1++ >= p_75858_1_.getMaxSafePointTries())
+                    {
+                        return null;
+                    }
+
+                    --p_75858_3_;
+
+                    if (p_75858_3_ > 0)
+                    {
+                        pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+                    }
+                }
+
+                if (k1 == -2)
+                {
+                    return null;
+                }
+            }
+
+            return pathpoint1;
+        }
+      }
+        return p_75858_5_;
+    }
+
+
+    @Shadow
+    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_)
+    {
+        return func_82565_a(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
     }
 }
