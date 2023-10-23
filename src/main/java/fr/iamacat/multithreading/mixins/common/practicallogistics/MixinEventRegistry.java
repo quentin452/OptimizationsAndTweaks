@@ -26,8 +26,8 @@ public class MixinEventRegistry {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void
     onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-        if (event.phase == TickEvent.Phase.START) {
-            if (MultithreadingandtweaksConfig.enableMixinEventRegistry){
+        if (MultithreadingandtweaksConfig.enableMixinEventRegistry){
+            if (event.phase == TickEvent.Phase.START) {
                 THashMap<Integer, INetworkCache> networks = new THashMap<>();
                 networks.putAll(CacheRegistry.getNetworkCache());
             if (networks.isEmpty()) {
