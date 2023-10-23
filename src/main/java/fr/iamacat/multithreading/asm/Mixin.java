@@ -17,8 +17,8 @@ public enum Mixin implements IMixin {
     common_core_MixinDataWatcher(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "core.MixinDataWatcher"),
 
-    common_practicallogistics_MixinEventRegistry(Side.COMMON,
-        m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "practicallogistics.MixinEventRegistry"),
+ //   common_practicallogistics_MixinEventRegistry(Side.COMMON,
+//        m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "practicallogistics.MixinEventRegistry"),
     common_core_MixinNibbleArray(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinNibbleArray, "core.MixinNibbleArray"),
     common_blocklings_MixinEntityBlockling(Side.COMMON,
