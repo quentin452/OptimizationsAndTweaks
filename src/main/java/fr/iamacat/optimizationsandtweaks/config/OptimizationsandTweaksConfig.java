@@ -38,7 +38,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLookHelper;
-
+    @Config.Comment("Optimize BaseAttributeMap performances")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinServersideAttributeMap;
     @Config.Comment("Optimize LowerStringMap performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
