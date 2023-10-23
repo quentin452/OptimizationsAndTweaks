@@ -10,7 +10,7 @@ Go here : [Wiki](https://github.com/quentin452/https://github.com/quentin452/Opt
 
 # Links to descriptions of my projects.
 
-[*Modrinth*](https://modrinth.com/mod/optimizationsandtweaks) 
+[*Modrinth*](https://modrinth.com/mod/optimizationsandtweaks)
 
 [*Github*](https://github.com/quentin452/OptimizationsAndTweaks)
 
