@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
@@ -34,7 +35,7 @@ public class MixinPathFinder {
     @Shadow
     private boolean isPathingInWater;
     @Unique
-    private ConcurrentHashMapV8<Integer, PathPoint> multithreadingandtweaks$pointMap = new ConcurrentHashMapV8<>();
+    private ConcurrentSkipListMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new ConcurrentSkipListMap<>();
 
     /**
      * @author iamacatfr

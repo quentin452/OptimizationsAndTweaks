@@ -2,81 +2,61 @@ package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.p
 
 import net.minecraft.util.MathHelper;
 
+
 public class PathPoint2 {
 
-    /** The x coordinate of this point */
     public final int xCoord;
-    /** The y coordinate of this point */
     public final int yCoord;
-    /** The z coordinate of this point */
     public final int zCoord;
-    /** A hash of the coordinates used to identify this point */
     public final int hash;
-    /** The index of this point in its assigned path */
     public int index = -1;
-    /** The distance along the path to this point */
     public float totalPathDistance;
-    /** The linear distance to the next point */
     public float distanceToNext;
-    /** The distance to the target */
     public float distanceToTarget;
-    /** The point preceding this in its assigned path */
     public PathPoint2 previous;
-    /** Indicates this is the origin */
     public boolean isFirst;
 
-    public PathPoint2(int p_i2135_1_, int p_i2135_2_, int p_i2135_3_) {
-        this.xCoord = p_i2135_1_;
-        this.yCoord = p_i2135_2_;
-        this.zCoord = p_i2135_3_;
-        this.hash = makeHash(p_i2135_1_, p_i2135_2_, p_i2135_3_);
+    public PathPoint2(int x, int y, int z) {
+        this.xCoord = x;
+        this.yCoord = y;
+        this.zCoord = z;
+        this.hash = makeHash(x, y, z);
     }
 
-    public static int makeHash(int p_75830_0_, int p_75830_1_, int p_75830_2_) {
-        return p_75830_1_ & 255 | (p_75830_0_ & 32767) << 8
-            | (p_75830_2_ & 32767) << 24
-            | (p_75830_0_ < 0 ? Integer.MIN_VALUE : 0)
-            | (p_75830_2_ < 0 ? 32768 : 0);
+    public static int makeHash(int x, int y, int z) {
+        int xShort = x & 32767;
+        int yByte = y & 255;
+        int zShort = z & 32767;
+        int xFlag = (x < 0) ? Integer.MIN_VALUE : 0;
+        int zFlag = (z < 0) ? 32768 : 0;
+        return yByte | (xShort << 8) | (zShort << 24) | xFlag | zFlag;
     }
 
-    /**
-     * Returns the linear distance to another path point
-     */
-    public float distanceTo(PathPoint2 p_75829_1_) {
-        float f = (float) (p_75829_1_.xCoord - this.xCoord);
-        float f1 = (float) (p_75829_1_.yCoord - this.yCoord);
-        float f2 = (float) (p_75829_1_.zCoord - this.zCoord);
-        return MathHelper.sqrt_float(f * f + f1 * f1 + f2 * f2);
+    public float distanceTo(PathPoint2 other) {
+        float dx = (float) (other.xCoord - this.xCoord);
+        float dy = (float) (other.yCoord - this.yCoord);
+        float dz = (float) (other.zCoord - this.zCoord);
+        return MathHelper.sqrt_float(dx * dx + dy * dy + dz * dz);
     }
 
-    /**
-     * Returns the squared distance to another path point
-     */
-    public float distanceToSquared(PathPoint2 p_75832_1_) {
-        float f = (float) (p_75832_1_.xCoord - this.xCoord);
-        float f1 = (float) (p_75832_1_.yCoord - this.yCoord);
-        float f2 = (float) (p_75832_1_.zCoord - this.zCoord);
-        return f * f + f1 * f1 + f2 * f2;
+    public float distanceToSquared(PathPoint2 other) {
+        float dx = (float) (other.xCoord - this.xCoord);
+        float dy = (float) (other.yCoord - this.yCoord);
+        float dz = (float) (other.zCoord - this.zCoord);
+        return dx * dx + dy * dy + dz * dz;
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (!(p_equals_1_ instanceof PathPoint2)) {
-            return false;
-        } else {
-            PathPoint2 pathpoint = (PathPoint2) p_equals_1_;
-            return this.hash == pathpoint.hash && this.xCoord == pathpoint.xCoord
-                && this.yCoord == pathpoint.yCoord
-                && this.zCoord == pathpoint.zCoord;
-        }
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PathPoint2)) return false;
+        PathPoint2 other = (PathPoint2) obj;
+        return this.hash == other.hash && this.xCoord == other.xCoord && this.yCoord == other.yCoord && this.zCoord == other.zCoord;
     }
 
     public int hashCode() {
         return this.hash;
     }
 
-    /**
-     * Returns true if this point has already been assigned to a path
-     */
     public boolean isAssigned() {
         return this.index >= 0;
     }

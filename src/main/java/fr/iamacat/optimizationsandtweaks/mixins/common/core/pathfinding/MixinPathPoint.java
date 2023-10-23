@@ -2,98 +2,96 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
-
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 
 @Mixin(PathPoint.class)
 public class MixinPathPoint {
-    // todo WIP
 
-    /** The x coordinate of this point */
     @Shadow
     public final int xCoord;
-    /** The y coordinate of this point */
+
     @Shadow
     public final int yCoord;
-    /** The z coordinate of this point */
+
     @Shadow
     public final int zCoord;
-    /** A hash of the coordinates used to identify this point */
+
     @Shadow
-    private final int hash;
-    /** The index of this point in its assigned path */
+    public final int hash;
+
     @Shadow
-    int index = -1;
-    /** The distance along the path to this point */
+    public int index = -1;
+
     @Shadow
     public float totalPathDistance;
-    /** The linear distance to the next point */
+
     @Shadow
     public float distanceToNext;
-    /** The distance to the target */
+
     @Shadow
     public float distanceToTarget;
-    /** The point preceding this in its assigned path */
-    @Unique
-    public PathPoint2 previous;
-    /** Indicates this is the origin */
+
+    @Shadow
+    public PathPoint previous;
+
     @Shadow
     public boolean isFirst;
-
-    public MixinPathPoint(int p_i2135_1_, int p_i2135_2_, int p_i2135_3_) {
-        this.xCoord = p_i2135_1_;
-        this.yCoord = p_i2135_2_;
-        this.zCoord = p_i2135_3_;
-        this.hash = makeHash(p_i2135_1_, p_i2135_2_, p_i2135_3_);
-    }
-
-    private static int makeHash(int p_75830_0_, int p_75830_1_, int p_75830_2_) {
-        return p_75830_1_ & 255 | (p_75830_0_ & 32767) << 8
-            | (p_75830_2_ & 32767) << 24
-            | (p_75830_0_ < 0 ? Integer.MIN_VALUE : 0)
-            | (p_75830_2_ < 0 ? 32768 : 0);
+   public MixinPathPoint(int x, int y, int z) {
+        this.xCoord = x;
+        this.yCoord = y;
+        this.zCoord = z;
+        this.hash = makeHash(x, y, z);
     }
 
     /**
-     * Returns the linear distance to another path point
+     * @author
+     * @reason
      */
-    // @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
-    public float distanceTo(PathPoint2 p_75829_1_, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
-            float f = (float) (p_75829_1_.xCoord - this.xCoord);
-            float f1 = (float) (p_75829_1_.yCoord - this.yCoord);
-            float f2 = (float) (p_75829_1_.zCoord - this.zCoord);
-            return MathHelper.sqrt_float(f * f + f1 * f1 + f2 * f2);
-        }
-        ci.cancel();
-        return 0;
+    @Overwrite
+    public static int makeHash(int p_75830_0_, int p_75830_1_, int p_75830_2_) {
+        int xShort = p_75830_0_ & 32767;
+        int yByte = p_75830_1_ & 255;
+        int zShort = p_75830_2_ & 32767;
+        int xFlag = (p_75830_0_ < 0) ? Integer.MIN_VALUE : 0;
+        int zFlag = (p_75830_2_ < 0) ? 32768 : 0;
+        return yByte | (xShort << 8) | (zShort << 24) | xFlag | zFlag;
     }
 
     /**
-     * Returns the squared distance to another path point
+     * @author
+     * @reason
      */
-    public float distanceToSquared(PathPoint2 p_75832_1_) {
-        float f = (float) (p_75832_1_.xCoord - this.xCoord);
-        float f1 = (float) (p_75832_1_.yCoord - this.yCoord);
-        float f2 = (float) (p_75832_1_.zCoord - this.zCoord);
-        return f * f + f1 * f1 + f2 * f2;
+    @Overwrite
+    public float distanceTo(PathPoint p_75829_1_) {
+        float dx = (float) (p_75829_1_.xCoord - this.xCoord);
+        float dy = (float) (p_75829_1_.yCoord - this.yCoord);
+        float dz = (float) (p_75829_1_.zCoord - this.zCoord);
+        return MathHelper.sqrt_float(dx * dx + dy * dy + dz * dz);
     }
 
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public float distanceToSquared(PathPoint p_75832_1_) {
+        float dx = (float) (p_75832_1_.xCoord - this.xCoord);
+        float dy = (float) (p_75832_1_.yCoord - this.yCoord);
+        float dz = (float) (p_75832_1_.zCoord - this.zCoord);
+        return dx * dx + dy * dy + dz * dz;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean equals(Object p_equals_1_) {
-        if (!(p_equals_1_ instanceof PathPoint2)) {
-            return false;
-        } else {
-            PathPoint2 pathpoint = (PathPoint2) p_equals_1_;
-            return this.hash == pathpoint.hash && this.xCoord == pathpoint.xCoord
-                && this.yCoord == pathpoint.yCoord
-                && this.zCoord == pathpoint.zCoord;
-        }
+        if (this == p_equals_1_) return true;
+        if (!(p_equals_1_ instanceof PathPoint)) return false;
+        PathPoint other = (PathPoint) p_equals_1_;
+        return this.xCoord == other.xCoord && this.yCoord == other.yCoord && this.zCoord == other.zCoord;
     }
 
     public int hashCode() {
