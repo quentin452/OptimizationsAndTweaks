@@ -38,6 +38,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLookHelper;
+
+    @Config.Comment("Optimize LowerStringMap performances")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLowerStringMap;
     @Config.Comment("Optimize ModelRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
