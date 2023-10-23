@@ -29,10 +29,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import fr.iamacat.multithreading.utils.apache.commons.math3.util.FastMath;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate extends Entity {
@@ -350,25 +350,12 @@ public abstract class MixinEntityLivingUpdate extends Entity {
         return this.isAIEnabled() ? this.landMovementFactor : 0.1F;
     }
 
-    @Redirect(
-        method = "attackEntityFrom",
-        at = @At(
-            value = "INVOKE",
-            target = "Ljava/lang/Math;atan2(DD)D"
-        )
-    )
+    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
     private double redirectAtan2attackEntityFrom(double d0, double d1) {
         return FastMath.atan2(d0, d1);
     }
 
-
-    @Redirect(
-        method = "onUpdate",
-        at = @At(
-            value = "INVOKE",
-            target = "Ljava/lang/Math;atan2(DD)D"
-        )
-    )
+    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D"))
     private double redirectAtan2onUpdate(double d0, double d1) {
         return FastMath.atan2(d0, d1);
     }
@@ -387,7 +374,8 @@ public abstract class MixinEntityLivingUpdate extends Entity {
                 Block block = this.worldObj.getBlock(i, j, k);
 
                 if (block.getMaterial() == Material.air) {
-                    int l = this.worldObj.getBlock(i, j - 1, k).getRenderType();
+                    int l = this.worldObj.getBlock(i, j - 1, k)
+                        .getRenderType();
 
                     if (l == 11 || l == 32 || l == 21) {
                         block = this.worldObj.getBlock(i, j - 1, k);

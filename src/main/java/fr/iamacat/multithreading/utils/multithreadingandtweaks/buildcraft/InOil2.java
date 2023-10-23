@@ -1,6 +1,7 @@
 package fr.iamacat.multithreading.utils.multithreadingandtweaks.buildcraft;
 
 public enum InOil2 {
+
     NONE,
     HALF,
     FULL;
@@ -9,4 +10,3 @@ public enum InOil2 {
         return this != NONE;
     }
 }
-

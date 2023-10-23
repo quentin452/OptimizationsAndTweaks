@@ -1,27 +1,24 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import net.minecraft.command.ICommandManager;
+import java.io.File;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Random;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.network.NetworkSystem;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
-import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
-import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.ISaveFormat;
 import net.minecraftforge.common.DimensionManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,16 +28,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.File;
-import java.net.Proxy;
-import java.security.KeyPair;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Random;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
+
     @Unique
     private MinecraftServer minecraftServer;
     @Shadow
@@ -117,7 +112,7 @@ public class MixinMinecraftServer {
     private int field_143008_E = 0;
     @Shadow
     public final long[] tickTimeArray = new long[100];
-    //public long[][] timeOfLastDimensionTick;
+    // public long[][] timeOfLastDimensionTick;
     @Shadow
     public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
     @Shadow
@@ -159,31 +154,39 @@ public class MixinMinecraftServer {
     }
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"), remap = false, cancellable = true)
-    public void updateTimeLightAndEntities(CallbackInfo ci)
-    {
-        if (MultithreadingandtweaksConfig.enableMixinMinecraftServer){
-        this.theProfiler.startSection("levels");
-        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
-        int i;
+    public void updateTimeLightAndEntities(CallbackInfo ci) {
+        if (MultithreadingandtweaksConfig.enableMixinMinecraftServer) {
+            this.theProfiler.startSection("levels");
+            net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
+            int i;
 
-        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
+            Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
             for (int id : ids) {
                 long j = System.nanoTime();
 
                 if (id == 0 || this.getAllowNether()) {
                     WorldServer worldserver = DimensionManager.getWorld(id);
-                    this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+                    this.theProfiler.startSection(
+                        worldserver.getWorldInfo()
+                            .getWorldName());
                     this.theProfiler.startSection("pools");
                     this.theProfiler.endSection();
 
                     if (this.tickCounter % 20 == 0) {
                         this.theProfiler.startSection("timeSync");
-                        this.serverConfigManager.sendPacketToAllPlayersInDimension(new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getGameRuleBooleanValue("doDaylightCycle")), worldserver.provider.dimensionId);
+                        this.serverConfigManager.sendPacketToAllPlayersInDimension(
+                            new S03PacketTimeUpdate(
+                                worldserver.getTotalWorldTime(),
+                                worldserver.getWorldTime(),
+                                worldserver.getGameRules()
+                                    .getGameRuleBooleanValue("doDaylightCycle")),
+                            worldserver.provider.dimensionId);
                         this.theProfiler.endSection();
                     }
 
                     this.theProfiler.startSection("tick");
-                    FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                    FMLCommonHandler.instance()
+                        .onPreWorldTick(worldserver);
                     CrashReport crashreport;
 
                     try {
@@ -202,10 +205,12 @@ public class MixinMinecraftServer {
                         throw new ReportedException(crashreport);
                     }
 
-                    FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                    FMLCommonHandler.instance()
+                        .onPostWorldTick(worldserver);
                     this.theProfiler.endSection();
                     this.theProfiler.startSection("tracker");
-                    worldserver.getEntityTracker().updateTrackedEntities();
+                    worldserver.getEntityTracker()
+                        .updateTrackedEntities();
                     this.theProfiler.endSection();
                     this.theProfiler.endSection();
                 }
@@ -213,31 +218,31 @@ public class MixinMinecraftServer {
                 worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
             }
 
-        this.theProfiler.endStartSection("dim_unloading");
-        DimensionManager.unloadWorlds(worldTickTimes);
-        this.theProfiler.endStartSection("connection");
-        this.func_147137_ag().networkTick();
-        this.theProfiler.endStartSection("players");
-        this.serverConfigManager.sendPlayerInfoToAllPlayers();
-        this.theProfiler.endStartSection("tickables");
+            this.theProfiler.endStartSection("dim_unloading");
+            DimensionManager.unloadWorlds(worldTickTimes);
+            this.theProfiler.endStartSection("connection");
+            this.func_147137_ag()
+                .networkTick();
+            this.theProfiler.endStartSection("players");
+            this.serverConfigManager.sendPlayerInfoToAllPlayers();
+            this.theProfiler.endStartSection("tickables");
 
-        for (i = 0; i < this.tickables.size(); ++i)
-        {
-            ((IUpdatePlayerListBox)this.tickables.get(i)).update();
-        }
+            for (i = 0; i < this.tickables.size(); ++i) {
+                ((IUpdatePlayerListBox) this.tickables.get(i)).update();
+            }
 
-        this.theProfiler.endSection();
+            this.theProfiler.endSection();
         }
         ci.cancel();
     }
+
     @Unique
-    public boolean getAllowNether()
-    {
+    public boolean getAllowNether() {
         return true;
     }
+
     @Unique
-    public NetworkSystem func_147137_ag()
-    {
+    public NetworkSystem func_147137_ag() {
         return this.field_147144_o;
     }
 }

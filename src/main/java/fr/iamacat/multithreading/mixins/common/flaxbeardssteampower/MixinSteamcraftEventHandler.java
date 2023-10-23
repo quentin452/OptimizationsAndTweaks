@@ -1,13 +1,8 @@
 package fr.iamacat.multithreading.mixins.common.flaxbeardssteampower;
 
-import flaxbeard.steamcraft.Steamcraft;
-import flaxbeard.steamcraft.SteamcraftItems;
-import flaxbeard.steamcraft.api.Tuple3;
-import flaxbeard.steamcraft.api.util.SPLog;
-import flaxbeard.steamcraft.entity.ExtendedPropertiesVillager;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
-import flaxbeard.steamcraft.item.ItemExosuitArmor;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.lang.reflect.Field;
+import java.util.*;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.event.entity.living.LivingEvent;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,11 +22,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import flaxbeard.steamcraft.Steamcraft;
+import flaxbeard.steamcraft.SteamcraftItems;
+import flaxbeard.steamcraft.api.Tuple3;
+import flaxbeard.steamcraft.api.util.SPLog;
+import flaxbeard.steamcraft.entity.ExtendedPropertiesVillager;
+import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
+import flaxbeard.steamcraft.item.ItemExosuitArmor;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(SteamcraftEventHandler.class)
 public class MixinSteamcraftEventHandler {
+
     @Shadow
     public static boolean lastViewVillagerGui;
     @Shadow
@@ -130,7 +133,8 @@ public class MixinSteamcraftEventHandler {
         }
 
         ItemStack hat = player.inventory.armorInventory[3];
-        if (hat != null && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem())).hasUpgrade(hat, SteamcraftItems.tophat)))) {
+        if (hat != null && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead
+            && ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem())).hasUpgrade(hat, SteamcraftItems.tophat)))) {
             if (!hat.hasTagCompound()) {
                 hat.setTagCompound(new NBTTagCompound());
             }
@@ -145,14 +149,16 @@ public class MixinSteamcraftEventHandler {
             tagCompound.setInteger("level", level);
 
             if (hat.getItem() == SteamcraftItems.exoArmorHead) {
-                ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem())).setInventorySlotContents(player.inventory.armorInventory[3], 3, hat);
+                ((ItemExosuitArmor) Objects.requireNonNull(hat.getItem()))
+                    .setInventorySlotContents(player.inventory.armorInventory[3], 3, hat);
             }
         }
     }
 
     @Unique
     private void updateMerchantRecipeList(EntityVillager villager) {
-        ExtendedPropertiesVillager nbt = (ExtendedPropertiesVillager) villager.getExtendedProperties(Steamcraft.VILLAGER_PROPERTY_ID);
+        ExtendedPropertiesVillager nbt = (ExtendedPropertiesVillager) villager
+            .getExtendedProperties(Steamcraft.VILLAGER_PROPERTY_ID);
         if (nbt.lastHadCustomer == null) {
             nbt.lastHadCustomer = false;
         }
@@ -161,22 +167,32 @@ public class MixinSteamcraftEventHandler {
         EntityPlayer customer = villager.getCustomer();
         if (customer != null) {
             ItemStack hat = customer.inventory.armorInventory[3];
-            if (hat != null && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead && ((ItemExosuitArmor) hat.getItem()).hasUpgrade(hat, SteamcraftItems.tophat)))) {
+            if (hat != null
+                && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead
+                    && ((ItemExosuitArmor) hat.getItem()).hasUpgrade(hat, SteamcraftItems.tophat)))) {
                 hasCustomer = true;
                 if (!nbt.lastHadCustomer) {
                     MerchantRecipeList recipeList = villager.getRecipes(customer);
                     for (Object obj : recipeList) {
                         MerchantRecipe recipe = (MerchantRecipe) obj;
                         if (recipe.getItemToSell().stackSize > 1) {
-                            recipe.getItemToSell().stackSize = MathHelper.floor_float(recipe.getItemToSell().stackSize * 1.25F);
+                            recipe.getItemToSell().stackSize = MathHelper
+                                .floor_float(recipe.getItemToSell().stackSize * 1.25F);
                         }
-                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F)) {
-                            recipe.getItemToSell().stackSize = MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F);
-                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F)) {
-                            recipe.getItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F);
-                        } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F)) {
-                            recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F);
-                        }
+                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize
+                            != MathHelper.floor_float((float) recipe.getItemToSell().stackSize * 1.25F)) {
+                            recipe.getItemToSell().stackSize = MathHelper
+                                .floor_float((float) recipe.getItemToSell().stackSize * 1.25F);
+                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize
+                            != MathHelper.ceiling_float_int((float) recipe.getItemToBuy().stackSize / 1.25F)) {
+                                recipe.getItemToBuy().stackSize = MathHelper
+                                    .ceiling_float_int((float) recipe.getItemToBuy().stackSize / 1.25F);
+                            } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1
+                                && recipe.getSecondItemToBuy().stackSize != MathHelper
+                                    .ceiling_float_int((float) recipe.getSecondItemToBuy().stackSize / 1.25F)) {
+                                        recipe.getSecondItemToBuy().stackSize = MathHelper
+                                            .ceiling_float_int((float) recipe.getSecondItemToBuy().stackSize / 1.25F);
+                                    }
                     }
 
                     try {
@@ -192,14 +208,21 @@ public class MixinSteamcraftEventHandler {
 
                 if (recipeList != null) {
                     for (Object obj : recipeList) {
-                        MerchantRecipe recipe = (MerchantRecipe)obj;
-                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F)) {
-                            recipe.getItemToSell().stackSize = MathHelper.floor_float((float)recipe.getItemToSell().stackSize * 1.25F);
-                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F)) {
-                            recipe.getItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getItemToBuy().stackSize / 1.25F);
-                        } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F)) {
-                            recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int((float)recipe.getSecondItemToBuy().stackSize / 1.25F);
-                        }
+                        MerchantRecipe recipe = (MerchantRecipe) obj;
+                        if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize
+                            != MathHelper.floor_float((float) recipe.getItemToSell().stackSize * 1.25F)) {
+                            recipe.getItemToSell().stackSize = MathHelper
+                                .floor_float((float) recipe.getItemToSell().stackSize * 1.25F);
+                        } else if (recipe.getItemToBuy().stackSize > 1 && recipe.getItemToBuy().stackSize
+                            != MathHelper.ceiling_float_int((float) recipe.getItemToBuy().stackSize / 1.25F)) {
+                                recipe.getItemToBuy().stackSize = MathHelper
+                                    .ceiling_float_int((float) recipe.getItemToBuy().stackSize / 1.25F);
+                            } else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1
+                                && recipe.getSecondItemToBuy().stackSize != MathHelper
+                                    .ceiling_float_int((float) recipe.getSecondItemToBuy().stackSize / 1.25F)) {
+                                        recipe.getSecondItemToBuy().stackSize = MathHelper
+                                            .ceiling_float_int((float) recipe.getSecondItemToBuy().stackSize / 1.25F);
+                                    }
                     }
 
                     try {

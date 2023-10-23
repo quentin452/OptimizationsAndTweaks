@@ -1,29 +1,32 @@
 package fr.iamacat.multithreading.mixins.common.akatsuki;
 
-import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
-import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
-import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
-import com.akazuki.animation.common.MCACommonLibrary.animation.Channel;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
+import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
+import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
+import com.akazuki.animation.common.MCACommonLibrary.animation.Channel;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(AnimationHandler.class)
 public class MixinAnimationHandler {
+
     @Shadow
     public static AnimTickHandler animTickHandler;
     @Shadow
@@ -55,7 +58,8 @@ public class MixinAnimationHandler {
                     channelIterator.remove();
                     this.animPrevTime.remove(anim.name);
                     this.animCurrentFrame.remove(anim.name);
-                    this.animationEvents.get(anim.name).clear();
+                    this.animationEvents.get(anim.name)
+                        .clear();
                 }
             }
             ci.cancel();
@@ -65,7 +69,12 @@ public class MixinAnimationHandler {
     @Unique
     private boolean updateAnimation(Channel channel) {
         long prevTime;
-        if (!FMLCommonHandler.instance().getEffectiveSide().isServer() && (!FMLCommonHandler.instance().getEffectiveSide().isClient() || isGamePaused())) {
+        if (!FMLCommonHandler.instance()
+            .getEffectiveSide()
+            .isServer()
+            && (!FMLCommonHandler.instance()
+                .getEffectiveSide()
+                .isClient() || isGamePaused())) {
             prevTime = System.nanoTime();
             this.animPrevTime.put(channel.name, prevTime);
             return true;
@@ -121,6 +130,9 @@ public class MixinAnimationHandler {
     @SideOnly(Side.CLIENT)
     private static boolean isGamePaused() {
         Minecraft MC = Minecraft.getMinecraft();
-        return MC.isSingleplayer() && MC.currentScreen != null && MC.currentScreen.doesGuiPauseGame() && !MC.getIntegratedServer().getPublic();
+        return MC.isSingleplayer() && MC.currentScreen != null
+            && MC.currentScreen.doesGuiPauseGame()
+            && !MC.getIntegratedServer()
+                .getPublic();
     }
 }

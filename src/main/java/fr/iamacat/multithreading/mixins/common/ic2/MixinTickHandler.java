@@ -3,7 +3,6 @@ package fr.iamacat.multithreading.mixins.common.ic2;
 import java.lang.reflect.Field;
 import java.util.WeakHashMap;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.world.World;
@@ -69,7 +68,8 @@ public class MixinTickHandler {
                 IC2.platform.profilerStartSection("EnergyNet");
                 EnergyNetGlobal.onTickEnd(world);
                 IC2.platform.profilerEndStartSection("Networking");
-                IC2.network.get().onTickEnd(world);
+                IC2.network.get()
+                    .onTickEnd(world);
                 IC2.platform.profilerEndSection();
             }
             ci.cancel();

@@ -1,13 +1,5 @@
 package fr.iamacat.multithreading.mixins.common.akatsuki;
 
-import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
-import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
-import com.akazuki.animation.common.animation2.Sasori2.AnimationHandlerSasori2;
-import com.akazuki.entity.EntitySasori2;
-import com.akazuki.entity.Puppet;
-import com.akazuki.entity.Puppet2;
-import com.akazuki.entity.PuppetKadz;
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.projectile.EntitySmallFireball;
@@ -15,6 +7,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,8 +15,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
+import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
+import com.akazuki.animation.common.animation2.Sasori2.AnimationHandlerSasori2;
+import com.akazuki.entity.EntitySasori2;
+import com.akazuki.entity.Puppet;
+import com.akazuki.entity.Puppet2;
+import com.akazuki.entity.PuppetKadz;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+
 @Mixin(EntitySasori2.class)
 public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimatedEntity, IBossDisplayData {
+
     @Unique
     protected AnimationHandler animHandler = new AnimationHandlerSasori2((IMCAnimatedEntity) this);
     @Shadow
@@ -44,40 +48,41 @@ public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimate
     public AnimationHandler getAnimationHandler() {
         return this.animHandler;
     }
+
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
         if (MultithreadingandtweaksConfig.enableMixinEntitySasosri2) {
 
-        if (this.TimeKykla == 0 && this.getHealth() <= 190.0F) {
-            activateAnimationIfNeeded("prisiv", 0.0F);
-            if (!this.worldObj.isRemote) {
-                spawnPuppetKadz();
+            if (this.TimeKykla == 0 && this.getHealth() <= 190.0F) {
+                activateAnimationIfNeeded("prisiv", 0.0F);
+                if (!this.worldObj.isRemote) {
+                    spawnPuppetKadz();
+                }
+                this.TimeKykla = 1;
             }
-            this.TimeKykla = 1;
-        }
 
-        if (this.getHealth() <= 50.0F && this.Kykl100 == 0) {
-            activateAnimationIfNeeded("100kykl", 0.0F);
-            if (!this.worldObj.isRemote) {
-                spawnPuppets();
+            if (this.getHealth() <= 50.0F && this.Kykl100 == 0) {
+                activateAnimationIfNeeded("100kykl", 0.0F);
+                if (!this.worldObj.isRemote) {
+                    spawnPuppets();
+                }
+                this.Kykl100 = 1;
             }
-            this.Kykl100 = 1;
-        }
 
-        if (this.getHealth() <= 100.0F && this.Phase2 == 1) {
-            this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, 24));
-            activateAnimationIfNeeded("krutilka", 0.0F);
-        }
+            if (this.getHealth() <= 100.0F && this.Phase2 == 1) {
+                this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, 24));
+                activateAnimationIfNeeded("krutilka", 0.0F);
+            }
 
-        if (this.getHealth() < 100.0F) {
-            handleTimerFire();
-        }
+            if (this.getHealth() < 100.0F) {
+                handleTimerFire();
+            }
 
-        if (this.getHealth() <= 200.0F && this.getHealth() > 100.0F) {
-            handleTimerFireAnim();
-        }
+            if (this.getHealth() <= 200.0F && this.getHealth() > 100.0F) {
+                handleTimerFireAnim();
+            }
 
-        applyPotionEffect();
+            applyPotionEffect();
 
             super.onUpdate();
             ci.cancel();
@@ -86,8 +91,10 @@ public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimate
 
     @Unique
     private void activateAnimationIfNeeded(String animationName, float initialValue) {
-        if (!this.getAnimationHandler().isAnimationActive(animationName)) {
-            this.getAnimationHandler().activateAnimation(animationName, initialValue);
+        if (!this.getAnimationHandler()
+            .isAnimationActive(animationName)) {
+            this.getAnimationHandler()
+                .activateAnimation(animationName, initialValue);
         }
     }
 
@@ -134,15 +141,22 @@ public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimate
             if (!this.worldObj.isRemote) {
                 this.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 40, 40));
                 double d0 = this.posX - this.posX;
-                double d1 = this.boundingBox.minY + (double) (this.height / 2.0F) - (this.posY + (double) (this.height / 2.0F));
+                double d1 = this.boundingBox.minY + (double) (this.height / 2.0F)
+                    - (this.posY + (double) (this.height / 2.0F));
                 double d2 = this.posZ - this.posZ;
                 float f1 = MathHelper.sqrt_float(5.0F) * 0.5F;
-                EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.worldObj, this, d0 + this.rand.nextGaussian() * (double) f1, d1, d2 + this.rand.nextGaussian() * (double) f1);
+                EntitySmallFireball entitysmallfireball = new EntitySmallFireball(
+                    this.worldObj,
+                    this,
+                    d0 + this.rand.nextGaussian() * (double) f1,
+                    d1,
+                    d2 + this.rand.nextGaussian() * (double) f1);
                 entitysmallfireball.posY = this.posY + (double) (this.height / 2.0F) + 0.5;
                 this.worldObj.spawnEntityInWorld(entitysmallfireball);
                 if (this.TimerFire > 500) {
                     this.TimerFire = 0;
-                    this.getAnimationHandler().stopAnimation("ognemot");
+                    this.getAnimationHandler()
+                        .stopAnimation("ognemot");
                 }
             }
         }

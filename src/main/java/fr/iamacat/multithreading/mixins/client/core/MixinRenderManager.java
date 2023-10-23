@@ -17,14 +17,13 @@ import net.minecraft.util.ReportedException;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(RenderManager.class)
 public class MixinRenderManager {
@@ -53,7 +52,7 @@ public class MixinRenderManager {
      * @reason
      */
     @Inject(method = "renderEntityStatic", at = @At("HEAD"), cancellable = true)
-    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender,CallbackInfoReturnable cir) {
+    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender, CallbackInfoReturnable cir) {
         if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
             return doRender;
         }
@@ -86,12 +85,13 @@ public class MixinRenderManager {
             interpZ - renderPosZ,
             interpYaw,
             partialTicks,
-            doRender,cir);
+            doRender,
+            cir);
     }
 
     @Inject(method = "func_147939_a", at = @At("HEAD"), cancellable = true)
     public boolean func_147939_a(Entity entity, double x, double y, double z, float yaw, float partialTicks,
-                                 boolean doRender, CallbackInfoReturnable cir) {
+        boolean doRender, CallbackInfoReturnable cir) {
         if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
             return doRender;
         }

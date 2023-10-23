@@ -131,7 +131,8 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    private void playSoundAtEntity(IWorldAccess worldAccess, Entity entity, String soundName, float volume, float pitch) {
+    private void playSoundAtEntity(IWorldAccess worldAccess, Entity entity, String soundName, float volume,
+        float pitch) {
         double x = entity.posX;
         double y = entity.posY - (double) entity.yOffset;
         double z = entity.posZ;

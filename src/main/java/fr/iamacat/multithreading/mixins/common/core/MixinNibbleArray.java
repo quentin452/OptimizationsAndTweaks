@@ -1,12 +1,14 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
 import net.minecraft.world.chunk.NibbleArray;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NibbleArray.class)
 public class MixinNibbleArray {
+
     @Shadow
     public final byte[] data;
 
@@ -52,9 +54,9 @@ public class MixinNibbleArray {
         byte currentData = this.data[j1];
 
         if (k1 == 0) {
-            this.data[j1] = (byte)((currentData & 0xF0) | (p_76581_4 & 0xF));
+            this.data[j1] = (byte) ((currentData & 0xF0) | (p_76581_4 & 0xF));
         } else {
-            this.data[j1] = (byte)((currentData & 0xF) | ((p_76581_4 & 0xF) << 4));
+            this.data[j1] = (byte) ((currentData & 0xF) | ((p_76581_4 & 0xF) << 4));
         }
     }
 }

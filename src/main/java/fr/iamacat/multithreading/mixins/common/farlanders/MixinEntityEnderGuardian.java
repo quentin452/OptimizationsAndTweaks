@@ -1,16 +1,19 @@
 package fr.iamacat.multithreading.mixins.common.farlanders;
 
-import com.fabiulu.farlanders.common.entity.EntityEnderGuardian;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.fabiulu.farlanders.common.entity.EntityEnderGuardian;
+
 @Mixin(EntityEnderGuardian.class)
 public abstract class MixinEntityEnderGuardian extends EntityMob implements IRangedAttackMob {
+
     public MixinEntityEnderGuardian(World p_i1738_1_) {
         super(p_i1738_1_);
     }
@@ -23,6 +26,7 @@ public abstract class MixinEntityEnderGuardian extends EntityMob implements IRan
 
         cir.setReturnValue(null);
     }
+
     @Inject(method = "func_70673_aS", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70673_aS(CallbackInfoReturnable<String> cir) {
         this.worldObj.playSoundAtEntity(this, "farlanders:titanDeath", 1.5F, 1.7F);

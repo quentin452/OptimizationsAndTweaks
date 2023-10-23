@@ -1,26 +1,26 @@
 package fr.iamacat.multithreading.mixins.common.core;
 
-import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import java.io.File;
+import java.io.FileOutputStream;
+
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
 
 @Mixin(MapStorage.class)
 public class MixinMapStorage {
+
     @Shadow
     private ISaveHandler saveHandler;
 
