@@ -60,10 +60,6 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTileEntitiesTick;
-    @Config.Comment("Enable multithreaded Explosions")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinExplosions;
     @Config.Comment("Enable Multithreaded Liquid Rendering")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

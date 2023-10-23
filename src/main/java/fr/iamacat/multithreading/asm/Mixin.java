@@ -223,8 +223,6 @@ public enum Mixin implements IMixin {
     common_core_MixinTileEntitiesTick(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinTileEntitiesTick,
         "core.MixinTileEntitiesTick"),
 
-    common_core_MixinExplosions(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinExplosions,
-        "core.MixinExplosions"),
     common_core_MixinUpdateBlocks(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinUpdateBlocks,
         "core.MixinUpdateBlocks"),
     common_core_MixinGrassSpread(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinGrassSpread,
