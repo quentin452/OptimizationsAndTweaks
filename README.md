@@ -2,23 +2,19 @@
 
 # Description
 
-Description
-
-This mod adds multithreading for certain features in Minecraft 1.7.10, which can improve TPS (Ticks Per Second) and FPS (Frames Per Second) in some situations.
-
-This mod also includes some tweaks in the configuration file to fix bugs. Please note that this mod is in its early stages, so it may have some bugs and exhibit unexpected behavior. It's essential to understand that this mod is not a magical solution to fix all TPS issues.
+Optimizations and Tweaks for FPS/TPS - Fix bugs and tweak various things to help optimize performance in Minecraft 1.7.10. This mod aims to smooth out gameplay and improve framerates through optimizations.
 
 # What this mod have for now?
 
-Go here : [Wiki](https://github.com/quentin452/Multithreadingandtweaks/wiki)
+Go here : [Wiki](https://github.com/quentin452/https://github.com/quentin452/OptimizationsAndTweaks/wiki/wiki)
 
 # Links to descriptions of my projects.
 
-[*Modrinth*](https://modrinth.com/mod/multithreadingandtweaks)
+[*Modrinth*](https://modrinth.com/mod/optimizationsandtweaks) 
 
-[*Github*](https://github.com/quentin452/Multithreadingandtweaks)
+[*Github*](https://github.com/quentin452/OptimizationsAndTweaks)
 
-[*Curseforge*](https://legacy.curseforge.com/minecraft/mc-mods/multithreadingandtweaks)
+[*Curseforge*](https://legacy.curseforge.com/minecraft/mc-mods/optimizationsandtweaks)
 
 # Requirement
 
