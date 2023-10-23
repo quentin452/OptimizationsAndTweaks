@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -33,7 +34,7 @@ public class MixinPathFinder {
     @Shadow
     private boolean isPathingInWater;
     @Unique
-    private HashMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new HashMap<>();
+    private ConcurrentHashMapV8<Integer, PathPoint> multithreadingandtweaks$pointMap = new ConcurrentHashMapV8<>();
 
     /**
      * @author iamacatfr
