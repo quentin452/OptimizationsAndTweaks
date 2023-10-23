@@ -92,6 +92,7 @@ dependencies {
     implementation "curse.maven:catwalks-2-236460:2296725-deobf-sources-api"
     implementation "curse.maven:blocklings-for-older-versions-353443:2835779-deobf-sources-api"
     implementation "curse.maven:witchery-69673:2234410-deobf-sources-api"
+    implementation "curse.maven:farlanders-336432:2777303-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

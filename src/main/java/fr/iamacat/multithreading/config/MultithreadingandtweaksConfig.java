@@ -334,7 +334,10 @@ public class MultithreadingandtweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixWorldGenPamFruitTree;
-
+    @Config.Comment("Fix Unable to play unknown soundEvent: minecraft: for Entities from Farlanders mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenBrassTree from Steamcraft 2 mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
