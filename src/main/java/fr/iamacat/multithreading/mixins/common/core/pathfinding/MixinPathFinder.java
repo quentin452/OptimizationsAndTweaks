@@ -1,9 +1,6 @@
 package fr.iamacat.multithreading.mixins.common.core.pathfinding;
 
-import fr.iamacat.multithreading.asm.TargetedMod;
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
-import fr.iamacat.multithreading.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
-import fr.iamacat.multithreading.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -12,16 +9,15 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
@@ -39,10 +35,9 @@ public class MixinPathFinder {
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
-    @Overwrite
-    public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater, boolean avoidWater, boolean checkDoors) {
-        if (!MultithreadingandtweaksConfig.enableMixinPathFinding) {
-        }
+    @Inject(method = "func_82565_a", at = @At("HEAD"), cancellable = true)
+    private static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater, boolean avoidWater, boolean checkDoors,CallbackInfoReturnable cir) {
+        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
         boolean isTrapdoorPresent = false;
 
         int posX = (int) entity.posX;
@@ -99,13 +94,17 @@ public class MixinPathFinder {
         }
 
         return isTrapdoorPresent ? 2 : 1;
+        }
+        cir.setReturnValue(false);
+        return x;
     }
     /**
      * @author iamacatfr
      * @reason optimize openPoint
      */
-    @Overwrite
-    private final PathPoint openPoint(int x, int y, int z) {
+    @Inject(method = "openPoint", at = @At("HEAD"), cancellable = true)
+    private final PathPoint openPoint(int x, int y, int z,CallbackInfoReturnable<PathPoint> cir) {
+        if (MultithreadingandtweaksConfig.enableMixinPathFinding){
         int hash = PathPoint.makeHash(x, y, z);
         PathPoint pathPoint = this.multithreadingandtweaks$pointMap.get(hash);
 
@@ -113,8 +112,10 @@ public class MixinPathFinder {
             pathPoint = new PathPoint(x, y, z);
             this.multithreadingandtweaks$pointMap.put(hash, pathPoint);
         }
-
+        cir.setReturnValue(pathPoint);
         return pathPoint;
+        }
+        return null;
     }
     @Redirect(
         method = "addToPath",
@@ -130,78 +131,96 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-    @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_)
+    @Inject(method = "getSafePoint", at = @At("HEAD"), cancellable = true)
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_, CallbackInfoReturnable<PathPoint> cir)
     {
-      if (MultithreadingandtweaksConfig.enableMixinPathFinding){
-        PathPoint pathpoint1 = null;
-        int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+        if (MultithreadingandtweaksConfig.enableMixinPathFinding){
+            PathPoint pathpoint1 = null;
+            int i1 = this.multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_,cir);
 
-        if (i1 == 2)
-        {
-            return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-        }
-        else
-        {
-            if (i1 == 1)
+            if (i1 == 2)
             {
-                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+                return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_,cir);
             }
-
-            if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4 && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_) == 1)
+            else
             {
-                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
-                p_75858_3_ += p_75858_6_;
-            }
-
-            if (pathpoint1 != null)
-            {
-                int j1 = 0;
-                int k1 = 0;
-
-                while (p_75858_3_ > 0)
+                if (i1 == 1)
                 {
-                    k1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
+                    pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_,cir);
+                }
 
-                    if (this.isPathingInWater && k1 == -1)
+                if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4 && this.multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_,cir) == 1)
+                {
+                    pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_,cir);
+                    p_75858_3_ += p_75858_6_;
+                }
+
+                if (pathpoint1 != null)
+                {
+                    int j1 = 0;
+                    int k1 = 0;
+
+                    while (p_75858_3_ > 0)
+                    {
+                        k1 = this.multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_,cir);
+
+                        if (this.isPathingInWater && k1 == -1)
+                        {
+                            return null;
+                        }
+
+                        if (k1 != 1)
+                        {
+                            break;
+                        }
+
+                        if (j1++ >= p_75858_1_.getMaxSafePointTries())
+                        {
+                            return null;
+                        }
+
+                        --p_75858_3_;
+
+                        if (p_75858_3_ > 0)
+                        {
+                            pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_,cir);
+                        }
+                    }
+
+                    if (k1 == -2)
                     {
                         return null;
                     }
-
-                    if (k1 != 1)
-                    {
-                        break;
-                    }
-
-                    if (j1++ >= p_75858_1_.getMaxSafePointTries())
-                    {
-                        return null;
-                    }
-
-                    --p_75858_3_;
-
-                    if (p_75858_3_ > 0)
-                    {
-                        pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-                    }
                 }
 
-                if (k1 == -2)
-                {
-                    return null;
-                }
+                return pathpoint1;
             }
-
-            return pathpoint1;
         }
-      }
+        cir.setReturnValue(p_75858_5_);
         return p_75858_5_;
+
+    }
+    @Redirect(
+        method = "findPathOptions",
+        at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/pathfinding/PathFinder;getVerticalOffset(Lnet/minecraft/entity/Entity;IIIILnet/minecraft/pathfinding/PathPoint;)I")
+    )
+    private int redirectGetVerticalOffset(
+        PathFinder pathFinder,
+        Entity entity,
+        int x, int y, int z,
+        PathPoint pathPoint,
+        float p_75860_5,
+    CallbackInfoReturnable cir)
+    {
+        return multithreadingandtweaks$getVerticalOffset(
+            entity, x, y, z, pathPoint, cir);
     }
 
 
-    @Shadow
-    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_)
+    @Unique
+    public int multithreadingandtweaks$getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_, CallbackInfoReturnable cir)
     {
-        return func_82565_a(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
+        return func_82565_a(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoddenDoorAllowed,cir);
     }
 }
