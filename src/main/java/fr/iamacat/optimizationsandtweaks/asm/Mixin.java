@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
-
+    // TWEAKING MIXINS
+    common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
+        "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
     common_core_MixinEntityAIAttackOnCollide(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide,

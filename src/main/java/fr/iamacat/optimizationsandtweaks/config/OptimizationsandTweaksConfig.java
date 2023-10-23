@@ -46,6 +46,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
+
+    @Config.Comment("Make Minestones item with 64 item stacksize instead of 1")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemMinestone;
     @Config.Comment("Fix a large bottleneck in EntityVillageGuard class from Witchery")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
