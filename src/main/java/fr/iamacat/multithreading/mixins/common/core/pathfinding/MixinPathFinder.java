@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mixin(PathFinder.class)
@@ -32,7 +33,7 @@ public class MixinPathFinder {
     @Shadow
     private boolean isPathingInWater;
     @Unique
-    private THashMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new THashMap<>();
+    private TreeMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new TreeMap<>();
 
     /**
      * @author iamacatfr
