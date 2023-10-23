@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -32,7 +33,7 @@ public class MixinPathFinder {
     @Shadow
     private boolean isPathingInWater;
     @Unique
-    private TreeMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new TreeMap<>();
+    private HashMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new HashMap<>();
 
     /**
      * @author iamacatfr
