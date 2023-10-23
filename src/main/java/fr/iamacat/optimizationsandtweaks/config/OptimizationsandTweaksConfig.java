@@ -42,7 +42,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinServersideAttributeMap;
-
+    @Config.Comment("Optimize EntityAIAttackOnCollide performances")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIAttackOnCollide;
     @Config.Comment("Fix a large bottleneck in EntityVillageGuard class from Witchery")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

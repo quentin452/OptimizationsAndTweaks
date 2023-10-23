@@ -1,113 +1,52 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai;
+package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class EntityAIAttackOnCollide2 extends EntityAIBase
-{
+@Mixin(EntityAIAttackOnCollide.class)
+public class MixinEntityAIAttackOnCollide {
+
+    @Shadow
     World worldObj;
+    @Shadow
     EntityCreature attacker;
     /** An amount of decrementing ticks that allows the entity to attack once the tick reaches 0. */
+    @Shadow
     int attackTick;
     /** The speed with which the mob will approach the target */
+    @Shadow
     double speedTowardsTarget;
     /** When true, the mob will continue chasing its target, even if it can't find a path to them right now. */
+    @Shadow
     boolean longMemory;
     /** The PathEntity of our entity. */
+    @Shadow
     PathEntity entityPathEntity;
+    @Shadow
     Class classTarget;
+    @Shadow
     private int field_75445_i;
+    @Shadow
     private double field_151497_i;
+    @Shadow
     private double field_151495_j;
+    @Shadow
     private double field_151496_k;
 
+    @Shadow
     private int failedPathFindingPenalty;
-
-    public EntityAIAttackOnCollide2(EntityCreature p_i1635_1_, Class p_i1635_2_, double p_i1635_3_, boolean p_i1635_5_)
-    {
-        this(p_i1635_1_, p_i1635_3_, p_i1635_5_);
-        this.classTarget = p_i1635_2_;
-    }
-
-    public EntityAIAttackOnCollide2(EntityCreature p_i1636_1_, double p_i1636_2_, boolean p_i1636_4_)
-    {
-        this.attacker = p_i1636_1_;
-        this.worldObj = p_i1636_1_.worldObj;
-        this.speedTowardsTarget = p_i1636_2_;
-        this.longMemory = p_i1636_4_;
-        this.setMutexBits(3);
-    }
-
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
-    public boolean shouldExecute()
-    {
-        EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
-
-        if (entitylivingbase == null)
-        {
-            return false;
-        }
-        else if (!entitylivingbase.isEntityAlive())
-        {
-            return false;
-        }
-        else if (this.classTarget != null && !this.classTarget.isAssignableFrom(entitylivingbase.getClass()))
-        {
-            return false;
-        }
-        else
-        {
-            if (-- this.field_75445_i <= 0)
-            {
-                this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
-                this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
-                return this.entityPathEntity != null;
-            }
-            else
-            {
-                return true;
-            }
-        }
-    }
-
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
-    public boolean continueExecuting()
-    {
-        EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
-        return entitylivingbase != null && (entitylivingbase.isEntityAlive() && (!this.longMemory ? !this.attacker.getNavigator().noPath() : this.attacker.isWithinHomeDistance(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    public void startExecuting()
-    {
-        this.attacker.getNavigator().setPath(this.entityPathEntity, this.speedTowardsTarget);
-        this.field_75445_i = 0;
-    }
-
-    /**
-     * Resets the task
-     */
-    public void resetTask()
-    {
-        this.attacker.getNavigator().clearPathEntity();
-    }
-
-    /**
-     * Updates the task
-     */
-    public void updateTask() {
+    @Inject(method = "updateTask", at = @At("HEAD"), cancellable = true)
+    public void updateTask(CallbackInfo ci) {
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
 
         if (entitylivingbase == null) {
@@ -162,5 +101,6 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
                 }
             }
         }
+        ci.cancel();
     }
 }
