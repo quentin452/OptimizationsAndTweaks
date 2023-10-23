@@ -26,7 +26,8 @@ public enum Mixin implements IMixin {
     common_flaxbeardssteampower_MixinSteamcraftEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler, "flaxbeardssteampower.MixinSteamcraftEventHandler"),
     common_catwalks2_MixinCommonProxy(Side.COMMON, avoid(TargetedMod.CATWALK2OFFICIAL).and(m -> MultithreadingandtweaksConfig.enableMixinCommonProxyForCatWalks2), "catwalks2.MixinCommonProxy"),
-
+    client_core_MixinRenderManager(Side.CLIENT,avoid(TargetedMod.SKINPORT).and(m -> MultithreadingandtweaksConfig.enableMixinRenderManager),
+        "core.MixinRenderManager"),
     common_core_MixinOilTweakEventHandler(Side.COMMON,
         m -> MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler, "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
     common_core_MixinMinecraftServer(Side.COMMON,
@@ -201,8 +202,6 @@ public enum Mixin implements IMixin {
     client_core_MixinModelRenderer(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinModelRenderer,
         "core.MixinModelRenderer"),
     client_core_MixinTesselator(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(m -> MultithreadingandtweaksConfig.enableMixinTesselator), "core.MixinTesselator"),
-    client_core_MixinRenderManager(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinRenderManager,
-        "core.MixinRenderManager"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
     client_core_MixinEntitiesRendering(Side.CLIENT, m -> MultithreadingandtweaksConfig.enableMixinEntitiesRendering,

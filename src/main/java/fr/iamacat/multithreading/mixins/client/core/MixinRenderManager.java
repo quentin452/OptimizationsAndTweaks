@@ -22,6 +22,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.multithreading.config.MultithreadingandtweaksConfig;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RenderManager.class)
 public class MixinRenderManager {
@@ -49,8 +52,8 @@ public class MixinRenderManager {
      * @author
      * @reason
      */
-    @Overwrite
-    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender) {
+    @Inject(method = "renderEntityStatic", at = @At("HEAD"), cancellable = true)
+    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender,CallbackInfoReturnable cir) {
         if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
             return doRender;
         }
@@ -83,16 +86,12 @@ public class MixinRenderManager {
             interpZ - renderPosZ,
             interpYaw,
             partialTicks,
-            doRender);
+            doRender,cir);
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Inject(method = "func_147939_a", at = @At("HEAD"), cancellable = true)
     public boolean func_147939_a(Entity entity, double x, double y, double z, float yaw, float partialTicks,
-        boolean doRender) {
+                                 boolean doRender, CallbackInfoReturnable cir) {
         if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
             return doRender;
         }
@@ -121,7 +120,7 @@ public class MixinRenderManager {
             rendererCategory.addCrashSection("Delta", partialTicks);
             throw new ReportedException(crashReport);
         }
-
+        cir.setReturnValue(false);
         return true;
     }
 

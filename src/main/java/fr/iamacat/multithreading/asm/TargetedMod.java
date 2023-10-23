@@ -63,6 +63,7 @@ public enum TargetedMod implements ITargetedMod {
     CATWALK2UNOFFICIAL("catwalks", false, matches("catwalks-1.7.10-2.1.4-GTNH")),
     BLOCKLINGS("Blocklings", false, startsWith("Blocklings")),
     FLAXBEARDSTEAMPOWER("FSP", false, startsWith("FSP")),
+    SKINPORT("SkinPort", false, startsWith("SkinPort")),
 
     AETHER("aether", false, startsWith("aether")),;
 
