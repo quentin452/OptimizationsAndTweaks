@@ -35,7 +35,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public boolean containsKey(Object p_containsKey_1_) {
-        String lowercaseKey = getLowercaseKey(p_containsKey_1_);
+        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_containsKey_1_);
         return this.multithreadingandtweaks$internalMap.containsKey(lowercaseKey);
     }
     /**
@@ -52,7 +52,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object get(Object p_get_1_) {
-        String lowercaseKey = getLowercaseKey(p_get_1_);
+        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_get_1_);
         return this.multithreadingandtweaks$internalMap.get(lowercaseKey);
     }
     /**
@@ -61,7 +61,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object put(String p_put_1_, Object p_put_2_) {
-        String lowercaseKey = getLowercaseKey(p_put_1_);
+        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_put_1_);
         return this.multithreadingandtweaks$internalMap.put(lowercaseKey, p_put_2_);
     }
     /**
@@ -70,7 +70,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object remove(Object p_remove_1_) {
-        String lowercaseKey = getLowercaseKey(p_remove_1_);
+        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_remove_1_);
         return this.multithreadingandtweaks$internalMap.remove(lowercaseKey);
     }
     /**
@@ -81,7 +81,7 @@ public class MixinLowerStringMap {
     public void putAll(Map p_putAll_1_) {
         for (Object obj : p_putAll_1_.entrySet()) {
             if (obj instanceof Map.Entry entry) {
-                String lowercaseKey = getLowercaseKey(entry.getKey());
+                String lowercaseKey = multithreadingandtweaks$getLowercaseKey(entry.getKey());
                 this.multithreadingandtweaks$internalMap.put(lowercaseKey, entry.getValue());
             }
         }
@@ -128,17 +128,16 @@ public class MixinLowerStringMap {
     }
 
     @Unique
-    private String getLowercaseKey(Object key) {
-        if (key instanceof String) {
-            String strKey = (String) key;
-            String lowercaseKey = multithreadingandtweaks$lowercaseCache.get(strKey);
-            if (lowercaseKey == null) {
-                lowercaseKey = strKey.toLowerCase();
-                multithreadingandtweaks$lowercaseCache.put(strKey, lowercaseKey);
-            }
-            return lowercaseKey;
+    private String multithreadingandtweaks$getLowercaseKey(Object key) {
+        if (key instanceof String strKey) {
+            return multithreadingandtweaks$lowercaseCache.computeIfAbsent(strKey, this::multithreadingandtweaks$toLowerCase);
         } else {
-            return key.toString().toLowerCase();
+            return multithreadingandtweaks$toLowerCase(key.toString());
         }
+    }
+
+    @Unique
+    private String multithreadingandtweaks$toLowerCase(String str) {
+        return str.toLowerCase(Locale.ROOT);
     }
 }
