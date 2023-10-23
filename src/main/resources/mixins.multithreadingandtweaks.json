@@ -1,8 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8.5-GTNH",
-  "package": "fr.iamacat.multithreading.mixins",
-  "plugin": "fr.iamacat.multithreading.asm.MultithreadedMixinPlugin",
+  "package": "fr.iamacat.optimizationsandtweaks.mixins",
+  "plugin": "fr.iamacat.optimizationsandtweaks.asm.MultithreadedMixinPlugin",
   "refmap": "mixins.multithreadingandtweaks.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
