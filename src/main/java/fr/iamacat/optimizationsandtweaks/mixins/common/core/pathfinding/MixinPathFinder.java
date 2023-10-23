@@ -141,69 +141,70 @@ public class MixinPathFinder {
      * @reason
      */
     @Inject(method = "getSafePoint", at = @At("HEAD"), cancellable = true)
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_, CallbackInfoReturnable<PathPoint> cir) {
-        if (!OptimizationsandTweaksConfig.enableMixinPathFinding) {
-            cir.setReturnValue(p_75858_5_);
-            return p_75858_5_;
-        }
+    private void injectGetSafePoint(Entity entity, int x, int y, int z, PathPoint originalPoint, int maxSafePointTries, CallbackInfoReturnable<PathPoint> cir) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
+            int verticalOffset = multithreadingandtweaks$getVerticalOffset(entity, x, y, z, originalPoint, cir);
 
-        int verticalOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_, cir);
-
-        if (verticalOffset == 2) {
-            return openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
-        }
-
-        PathPoint resultPoint = null;
-
-        if (verticalOffset == 1) {
-            resultPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
-        }
-
-        while (resultPoint == null && p_75858_6_ > 0 && verticalOffset != -3 && verticalOffset != -4) {
-            int yOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_, cir);
-
-            if (yOffset == 1) {
-                resultPoint = openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, cir);
-                p_75858_3_ += p_75858_6_;
-            } else {
-                break;
+            if (verticalOffset == 2) {
+                cir.setReturnValue(openPoint(x, y, z, cir));
+                return;
             }
 
-            p_75858_6_--;
-        }
+            PathPoint resultPoint = null;
 
-        if (resultPoint != null) {
-            int tries = 0;
-            int yOffset = 0;
+            if (verticalOffset == 1) {
+                resultPoint = openPoint(x, y, z, cir);
+            }
 
-            while (p_75858_3_ > 0) {
-                yOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_, cir);
+            while (resultPoint == null && maxSafePointTries > 0 && verticalOffset != -3 && verticalOffset != -4) {
+                int yOffset = multithreadingandtweaks$getVerticalOffset(entity, x, y + maxSafePointTries, z, originalPoint, cir);
 
-                if (isPathingInWater && yOffset == -1) {
-                    return null;
-                }
-
-                if (yOffset != 1) {
+                if (yOffset == 1) {
+                    resultPoint = openPoint(x, y + maxSafePointTries, z, cir);
+                    y += maxSafePointTries;
+                } else {
                     break;
                 }
 
-                if (tries++ >= p_75858_1_.getMaxSafePointTries()) {
-                    return null;
+                maxSafePointTries--;
+            }
+
+            if (resultPoint != null) {
+                int tries = 0;
+                int yOffset = 0;
+
+                while (y > 0) {
+                    yOffset = multithreadingandtweaks$getVerticalOffset(entity, x, y - 1, z, originalPoint, cir);
+
+                    if (isPathingInWater && yOffset == -1) {
+                        cir.setReturnValue(null);
+                        return;
+                    }
+
+                    if (yOffset != 1) {
+                        break;
+                    }
+
+                    if (tries++ >= entity.getMaxSafePointTries()) {
+                        cir.setReturnValue(null);
+                        return;
+                    }
+
+                    y--;
+
+                    if (y > 0) {
+                        resultPoint = openPoint(x, y, z, cir);
+                    }
                 }
 
-                p_75858_3_--;
-
-                if (p_75858_3_ > 0) {
-                    resultPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+                if (yOffset == -2) {
+                    cir.setReturnValue(null);
+                    return;
                 }
             }
 
-            if (yOffset == -2) {
-                return null;
-            }
+            cir.setReturnValue(resultPoint);
         }
-
-        return resultPoint;
     }
 
     @Redirect(
