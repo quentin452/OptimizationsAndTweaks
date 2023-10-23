@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityAnimal.class)
 public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimals {
@@ -35,7 +35,7 @@ public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimal
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAnimal) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAnimal) {
             super.onLivingUpdate();
 
             if (this.getGrowingAge() != 0) {

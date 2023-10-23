@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityItem.class)
 public abstract class MixinEntityItem extends Entity {
@@ -44,7 +44,7 @@ public abstract class MixinEntityItem extends Entity {
      */
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityItem) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityItem) {
             ItemStack stack = this.getDataWatcher()
                 .getWatchableObjectItemStack(10);
             if (stack != null && stack.getItem() != null) {
@@ -171,7 +171,7 @@ public abstract class MixinEntityItem extends Entity {
      */
     @Inject(method = "combineItems", at = @At("HEAD"), remap = false, cancellable = true)
     public boolean combineItems(EntityItem p_70289_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityItem) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityItem) {
             if (p_70289_1_ == entityItem) {
                 return false;
             } else if (p_70289_1_.isEntityAlive() && this.isEntityAlive()) {

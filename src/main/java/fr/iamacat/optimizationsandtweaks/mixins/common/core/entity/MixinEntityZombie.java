@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityZombie.class)
 public class MixinEntityZombie extends EntityMob {
@@ -29,7 +29,7 @@ public class MixinEntityZombie extends EntityMob {
      */
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityZombie) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityZombie) {
             super.onLivingUpdate();
             // Add a check for the conditions where the entity can catch fire
             if (multithreadingandtweaks$shouldCatchFire()) {

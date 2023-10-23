@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai.EntityAITasks2;
 
 @Mixin(EntityLiving.class)
@@ -38,7 +38,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
     @Inject(at = @At(value = "RETURN"), method = "<init>(Lnet/minecraft/world/World;)V")
     private void modifyTasks(World worldIn, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLiving) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLiving) {
             Iterator iterator = ((EntityLiving) (Object) this).tasks.taskEntries.iterator();
             while (iterator.hasNext()) {
                 EntityLiving entry = (EntityLiving) iterator.next();
@@ -63,7 +63,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
     @Inject(method = "canPickUpLoot", at = @At("HEAD"), remap = false, cancellable = true)
     public boolean canPickUpLoot(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLiving) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLiving) {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {

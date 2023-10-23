@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntitySpellParticleFX.class)
 public class MixinEntitySpellParticleFX extends EntityFX {
@@ -49,7 +49,7 @@ public class MixinEntitySpellParticleFX extends EntityFX {
      */
     @Overwrite
     public void onUpdate() {
-        if (MultithreadingandtweaksConfig.enableMixinRenderManager) {
+        if (OptimizationsandTweaksConfig.enableMixinRenderManager) {
 
             this.prevPosX = this.posX;
             this.prevPosY = this.posY;

@@ -23,7 +23,7 @@ import com.akazuki.entity.Puppet;
 import com.akazuki.entity.Puppet2;
 import com.akazuki.entity.PuppetKadz;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntitySasori2.class)
 public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimatedEntity, IBossDisplayData {
@@ -51,7 +51,7 @@ public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimate
 
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntitySasosri2) {
+        if (OptimizationsandTweaksConfig.enableMixinEntitySasosri2) {
 
             if (this.TimeKykla == 0 && this.getHealth() <= 190.0F) {
                 activateAnimationIfNeeded("prisiv", 0.0F);

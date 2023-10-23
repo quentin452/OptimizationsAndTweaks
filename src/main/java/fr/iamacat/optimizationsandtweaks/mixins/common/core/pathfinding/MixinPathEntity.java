@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathEntity2;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 
@@ -100,7 +100,7 @@ public class MixinPathEntity {
      */
     @Inject(method = "isSamePath", at = @At("HEAD"), cancellable = true)
     public boolean isSamePath(PathEntity2 p_75876_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             if (p_75876_1_ == null) {
                 return false;
             } else if (p_75876_1_.points.length != this.points.length) {

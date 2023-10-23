@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(MapStorage.class)
 public class MixinMapStorage {
@@ -26,7 +26,7 @@ public class MixinMapStorage {
 
     @Inject(method = "saveData", at = @At("HEAD"), remap = false, cancellable = true)
     private void saveData(WorldSavedData p_75747_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinMapStorage) {
+        if (OptimizationsandTweaksConfig.enableMixinMapStorage) {
             if (this.saveHandler != null) {
                 try {
                     File file1 = this.saveHandler.getMapFileFromName(p_75747_1_.mapName);

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityAITasks.class)
 public class MixinEntityAITasks {
@@ -33,7 +33,7 @@ public class MixinEntityAITasks {
      */
     @Overwrite
     private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAITasks) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAITasks) {
             this.theProfiler.startSection("canUse");
 
             for (EntityAITasks.EntityAITaskEntry entityaitaskentry : this.taskEntries) {

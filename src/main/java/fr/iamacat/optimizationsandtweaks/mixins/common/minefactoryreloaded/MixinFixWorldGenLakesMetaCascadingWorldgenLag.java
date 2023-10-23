@@ -13,7 +13,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import powercrystals.minefactoryreloaded.world.WorldGenLakesMeta;
 
 @Mixin(WorldGenLakesMeta.class)
@@ -29,7 +29,7 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
 
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
-        if (MultithreadingandtweaksConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix) {
+        if (OptimizationsandTweaksConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix) {
             if (multithreading1_7_10$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {
                 // Limit lake generation to prevent cascading issues
                 return false;

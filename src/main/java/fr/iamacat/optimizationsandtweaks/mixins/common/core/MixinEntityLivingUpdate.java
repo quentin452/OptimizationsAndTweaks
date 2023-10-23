@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
@@ -201,7 +201,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     private EntityLivingBase entityObject;
 
     @Unique
-    private final int batchSize = MultithreadingandtweaksConfig.batchsize;
+    private final int batchSize = OptimizationsandTweaksConfig.batchsize;
     @Unique
     private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
     @Unique
@@ -216,8 +216,8 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
     @Unique
     private final ThreadPoolExecutor multithreadingandtweaks$executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksConfig.numberofcpus,
-        MultithreadingandtweaksConfig.numberofcpus,
+        OptimizationsandTweaksConfig.numberofcpus,
+        OptimizationsandTweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new LinkedBlockingQueue<>(),
@@ -362,7 +362,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
     @Inject(method = "updateFallState", at = @At("HEAD"), cancellable = true)
     protected void updateFallState(double distanceFallenThisTick, boolean isOnGround, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLivingUpdate) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLivingUpdate) {
             if (!this.isInWater()) {
                 this.handleWaterMovement();
             }

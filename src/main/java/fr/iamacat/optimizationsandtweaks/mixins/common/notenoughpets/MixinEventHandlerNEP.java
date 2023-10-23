@@ -26,14 +26,14 @@ import astrotibs.notenoughpets.util.LogHelper;
 import astrotibs.notenoughpets.util.SkinVariations;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EventHandlerNEP.class)
 public class MixinEventHandlerNEP {
 
     @Inject(method = "spawnStraysWithVillageTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void spawnStraysWithVillageTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinEventHandlerNEP) {
+        if (!OptimizationsandTweaksConfig.enableMixinEventHandlerNEP) {
             ci.cancel();
             return;
         }

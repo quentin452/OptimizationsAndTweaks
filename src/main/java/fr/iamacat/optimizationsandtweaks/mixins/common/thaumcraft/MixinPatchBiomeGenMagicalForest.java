@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.utils.Utils;
 import thaumcraft.common.lib.world.WorldGenManaPods;
@@ -39,7 +39,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
      */
     @Inject(method = "func_76728_a", at = @At("HEAD"), remap = false, cancellable = true)
     public void decorate(World world, Random random, int x, int z, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPatchBiomeGenMagicalForest) {
+        if (OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest) {
             for (int i = 0; i < 3; ++i) {
                 int posX = x + random.nextInt(16) + 8;
                 int posZ = z + random.nextInt(16) + 8;

@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.nodes.NodeModifier;
@@ -64,7 +64,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     @Inject(method = "generate", at = @At("HEAD"), remap = false, cancellable = true)
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             this.worldGeneration(random, chunkX, chunkZ, world, true, ci);
             ci.cancel();
         }
@@ -73,7 +73,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
     @Inject(method = "worldGeneration", at = @At("HEAD"), remap = false, cancellable = true)
     public void worldGeneration(Random random, int chunkX, int chunkZ, World world, boolean newGen, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (world.provider.dimensionId == Config.dimensionOuterId) {
                 MazeHandler.generateEldritch(world, random, chunkX, chunkZ);
                 world.getChunkFromChunkCoords(chunkX, chunkZ)
@@ -101,7 +101,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
     @Inject(method = "generateNether", at = @At("HEAD"), remap = false, cancellable = true)
     private void generateNether(World world, Random random, int chunkX, int chunkZ, boolean newGen, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             boolean auraGen = false;
             if (!world.getWorldInfo()
                 .getTerrainType()
@@ -120,7 +120,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
     @Inject(method = "generateSurface", at = @At("HEAD"), remap = false, cancellable = true)
     private void generateSurface(World world, Random random, int chunkX, int chunkZ, boolean newGen, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             boolean auraGen = false;
             int blacklist = getDimBlacklist(world.provider.dimensionId);
             if (blacklist == -1 && Config.genTrees
@@ -224,7 +224,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     @Inject(method = "createRandomNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
     private static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood,
         boolean eerie, boolean small, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (basicAspects.size() == 0) {
 
                 for (Aspect as : c) {
@@ -417,7 +417,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     @Inject(method = "createNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
     private static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al,
         CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (world.isAirBlock(x, y, z)) {
                 world.setBlock(x, y, z, ConfigBlocks.blockAiry, 0, 0);
             }
@@ -437,7 +437,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     @Unique
     private boolean generateWildNodes(World world, Random random, int chunkX, int chunkZ, boolean auraGen,
         boolean newGen, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (Config.genAura && random.nextInt(Config.nodeRarity) == 0 && !auraGen) {
                 int x = chunkX * 16 + random.nextInt(16);
                 int z = chunkZ * 16 + random.nextInt(16);
@@ -477,7 +477,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
     private boolean generateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen,
         CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (Config.genStructure && (world.provider.dimensionId == 0 || world.provider.dimensionId == 1)
                 && newGen
                 && !auraGen

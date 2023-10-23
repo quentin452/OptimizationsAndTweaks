@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(BlockGrass.class)
 public abstract class MixinGrassSpread {
 
     @Unique
     private static final ExecutorService EXECUTOR_SERVICE = Executors
-        .newFixedThreadPool(MultithreadingandtweaksConfig.numberofcpus);
+        .newFixedThreadPool(OptimizationsandTweaksConfig.numberofcpus);
 
     /**
      * @author

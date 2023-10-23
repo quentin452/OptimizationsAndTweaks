@@ -1,8 +1,8 @@
 [
 {
-  "modid": "multithreadingandtweaks",
-  "name": "Multithreading and Tweaks",
-  "description": "Make some things multithreaded.",
+  "modid": "optimizationsandtweaks",
+  "name": "Optimizations and Tweaks",
+  "description": "Just a mods targetted on Optimizations ,Tweaking and Bugfixings.",
   "version": "0.8.7.4.2",
   "mcversion": "1.7.10",
   "url": "",

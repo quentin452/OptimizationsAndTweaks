@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
@@ -155,7 +155,7 @@ public class MixinMinecraftServer {
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"), remap = false, cancellable = true)
     public void updateTimeLightAndEntities(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinMinecraftServer) {
+        if (OptimizationsandTweaksConfig.enableMixinMinecraftServer) {
             this.theProfiler.startSection("levels");
             net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
             int i;

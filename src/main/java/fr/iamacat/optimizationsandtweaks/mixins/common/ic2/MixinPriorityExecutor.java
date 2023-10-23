@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.industrialcraft2.FixedPriorityQueue2;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.industrialcraft2.ThreadFactoryImpl2;
 import ic2.core.util.PriorityExecutor;
@@ -34,7 +34,7 @@ public class MixinPriorityExecutor extends ThreadPoolExecutor {
      */
     @Inject(method = "executeAll", at = @At("HEAD"), remap = false, cancellable = true)
     public void executeAll(List<? extends Runnable> tasks, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPriorityExecutor) {
+        if (OptimizationsandTweaksConfig.enableMixinPriorityExecutor) {
             if (this.isShutdown()) {
                 throw new RejectedExecutionException("Tasks " + tasks + " rejected from " + this + ".");
             } else {

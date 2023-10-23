@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.fabiulu.farlanders.common.entity.EntityFanEnderman;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityFanEnderman.class)
 public class MixinEntityFanEnderman extends EntityMob {
@@ -21,13 +21,13 @@ public class MixinEntityFanEnderman extends EntityMob {
 
     @Inject(method = "func_70639_aQ", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70639_aQ(CallbackInfoReturnable<String> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {}
+        if (OptimizationsandTweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {}
         cir.setReturnValue(null);
     }
 
     @Inject(method = "func_70673_aS", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70673_aS(CallbackInfoReturnable<String> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {
+        if (OptimizationsandTweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {
             this.worldObj.playSoundAtEntity(this, "farlanders:fandeath", 0.7F, 1.0F);
             cir.setReturnValue(null);
         }

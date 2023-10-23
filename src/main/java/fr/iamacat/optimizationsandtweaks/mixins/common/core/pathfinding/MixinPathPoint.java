@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 
 @Mixin(PathPoint.class)
@@ -65,7 +65,7 @@ public class MixinPathPoint {
      */
     // @Inject(method = "distanceTo", at = @At("HEAD"), cancellable = true)
     public float distanceTo(PathPoint2 p_75829_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             float f = (float) (p_75829_1_.xCoord - this.xCoord);
             float f1 = (float) (p_75829_1_.yCoord - this.yCoord);
             float f2 = (float) (p_75829_1_.zCoord - this.zCoord);

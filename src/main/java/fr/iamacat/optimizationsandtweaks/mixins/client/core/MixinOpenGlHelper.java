@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(OpenGlHelper.class)
 public class MixinOpenGlHelper {
@@ -30,7 +30,7 @@ public class MixinOpenGlHelper {
      */
     @Overwrite
     public static void setLightmapTextureCoords(int p_77475_0_, float p_77475_1_, float p_77475_2_) {
-        if (MultithreadingandtweaksConfig.enableMixinOpenGlHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinOpenGlHelper) {
             if (p_77475_0_ == cachedLightmapTexUnit) {
                 if (field_153215_z) {
                     ARBMultitexture.glMultiTexCoord2fARB(p_77475_0_, p_77475_1_, p_77475_2_);

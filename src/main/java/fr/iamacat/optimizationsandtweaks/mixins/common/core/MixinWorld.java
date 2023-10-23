@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld implements IBlockAccess {
@@ -74,7 +74,7 @@ public abstract class MixinWorld implements IBlockAccess {
      */
     @Overwrite
     public List<Entity> selectEntitiesWithinAABB(Class clazz, AxisAlignedBB bb, IEntitySelector selector) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
             int minXChunk = MathHelper.floor_double((bb.minX - MAX_ENTITY_RADIUS) / 16.0D);
             int maxXChunk = MathHelper.floor_double((bb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
             int minZChunk = MathHelper.floor_double((bb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
@@ -118,7 +118,7 @@ public abstract class MixinWorld implements IBlockAccess {
      */
     @Overwrite
     public void playSoundAtEntity(Entity entity, String soundName, float volume, float pitch) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
             PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundName, volume, pitch);
             if (MinecraftForge.EVENT_BUS.post(event)) {
                 return;
@@ -145,7 +145,7 @@ public abstract class MixinWorld implements IBlockAccess {
      */
     @Overwrite
     public List<AxisAlignedBB> getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2_) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
             this.collidingBoundingBoxes.clear();
             int i = MathHelper.floor_double(p_72945_2_.minX);
             int j = MathHelper.floor_double(p_72945_2_.maxX + 1.0D);
@@ -281,7 +281,7 @@ public abstract class MixinWorld implements IBlockAccess {
     @Overwrite
     public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_,
         int p_72904_6_) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
             if (p_72904_5_ >= 0 && p_72904_2_ < 256) {
                 p_72904_1_ >>= 4;
                 p_72904_3_ >>= 4;
@@ -310,7 +310,7 @@ public abstract class MixinWorld implements IBlockAccess {
      */
     @Overwrite
     public int getSavedLightValue(EnumSkyBlock lightType, int x, int y, int z) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
 
             // Ensure y is within the valid range [0, 255]
             y = Math.min(255, Math.max(0, y));
@@ -339,7 +339,7 @@ public abstract class MixinWorld implements IBlockAccess {
      */ // todo
     @Overwrite
     public void updateEntityWithOptionalForce(Entity entity, boolean forceUpdate) {
-        if (!MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (!OptimizationsandTweaksConfig.enableMixinWorld) {
             return;
         }
 
@@ -702,7 +702,7 @@ public abstract class MixinWorld implements IBlockAccess {
     @Inject(method = "getBlockLightValue_do", cancellable = true, at = @At(value = "HEAD"))
     public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness,
         CallbackInfoReturnable<Integer> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinWorld) {
+        if (OptimizationsandTweaksConfig.enableMixinWorld) {
 
             if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
                 return 15;

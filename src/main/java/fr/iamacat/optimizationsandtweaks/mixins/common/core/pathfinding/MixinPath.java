@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
 
 @Mixin(Path.class)
@@ -26,7 +26,7 @@ public class MixinPath {
      */
     // @Inject(method = "addPoint", at = @At("HEAD"), cancellable = true)
     public PathPoint2 addPoint(PathPoint2 point, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             if (point.index >= 0) {
                 throw new IllegalStateException("OW KNOWS!");
             } else {

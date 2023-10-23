@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import thaumcraft.common.blocks.BlockMagicalLeaves;
 import thaumcraft.common.config.ConfigBlocks;
 
@@ -31,7 +31,7 @@ public class MixinPatchBlockMagicalLeavesPerformances {
     @Inject(method = "func_149674_a", at = @At("HEAD"), remap = false, cancellable = true)
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random, CallbackInfo ci) {
         {
-            if (MultithreadingandtweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances) {
+            if (OptimizationsandTweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances) {
                 if (!par1World.isRemote) {
                     int l = par1World.getBlockMetadata(par2, par3, par4);
 

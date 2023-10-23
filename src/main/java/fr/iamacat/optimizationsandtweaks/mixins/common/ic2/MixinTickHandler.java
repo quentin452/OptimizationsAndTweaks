@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import ic2.core.IC2;
 import ic2.core.ITickCallback;
 import ic2.core.TickHandler;
@@ -48,7 +48,7 @@ public class MixinTickHandler {
      */
     @Inject(method = "onWorldTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onWorldTickmultiandtweaks(TickEvent.WorldTickEvent event, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinTickHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinTickHandler) {
             World world = event.world;
             if (!IC2.platform.isSimulating() || world.isRemote) {
                 return;

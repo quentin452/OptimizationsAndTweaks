@@ -19,7 +19,7 @@ import com.akazuki.animation.common.animations.Kadz.AnimationHandlerKykl3;
 import com.akazuki.entity.PuppetKadz;
 import com.akazuki.entitygun.EntityPlevok;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PuppetKadz.class)
 public abstract class MixinPuppetKadz extends EntityMob implements IMCAnimatedEntity {
@@ -37,7 +37,7 @@ public abstract class MixinPuppetKadz extends EntityMob implements IMCAnimatedEn
 
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPuppetKadz) {
+        if (OptimizationsandTweaksConfig.enableMixinPuppetKadz) {
 
             ++this.Fire;
 

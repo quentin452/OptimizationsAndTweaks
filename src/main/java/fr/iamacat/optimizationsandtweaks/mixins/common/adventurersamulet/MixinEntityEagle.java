@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.eagle.adventurersamulets.common.entity.EntityEagle;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityEagle.class)
 public abstract class MixinEntityEagle extends EntityAnimal {
@@ -36,7 +36,7 @@ public abstract class MixinEntityEagle extends EntityAnimal {
      */
     @Inject(method = "func_70636_d", at = @At("HEAD"), remap = false, cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityEagle) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityEagle) {
             super.onLivingUpdate();
 
             float previousDestPos = this.destPos;

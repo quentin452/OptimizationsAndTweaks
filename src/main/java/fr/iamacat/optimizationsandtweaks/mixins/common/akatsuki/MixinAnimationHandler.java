@@ -22,7 +22,7 @@ import com.akazuki.animation.common.MCACommonLibrary.animation.Channel;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(AnimationHandler.class)
 public class MixinAnimationHandler {
@@ -42,7 +42,7 @@ public class MixinAnimationHandler {
 
     @Inject(method = "animationsUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void animationsUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinAnimationHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinAnimationHandler) {
             Iterator<Channel> channelIterator = this.animCurrentChannels.iterator();
 
             while (channelIterator.hasNext()) {

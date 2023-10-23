@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
@@ -41,7 +41,7 @@ public class MixinPathFinder {
     @Inject(method = "func_82565_a", at = @At("HEAD"), cancellable = true)
     private static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater,
         boolean avoidWater, boolean checkDoors, CallbackInfoReturnable cir) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             boolean isTrapdoorPresent = false;
 
             int posX = (int) entity.posX;
@@ -113,7 +113,7 @@ public class MixinPathFinder {
      */
     @Inject(method = "openPoint", at = @At("HEAD"), cancellable = true)
     private final PathPoint openPoint(int x, int y, int z, CallbackInfoReturnable<PathPoint> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             int hash = PathPoint.makeHash(x, y, z);
             PathPoint pathPoint = this.multithreadingandtweaks$pointMap.get(hash);
 
@@ -141,7 +141,7 @@ public class MixinPathFinder {
     @Inject(method = "getSafePoint", at = @At("HEAD"), cancellable = true)
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
         PathPoint p_75858_5_, int p_75858_6_, CallbackInfoReturnable<PathPoint> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             PathPoint pathpoint1 = null;
             int i1 = this.multithreadingandtweaks$getVerticalOffset(
                 p_75858_1_,

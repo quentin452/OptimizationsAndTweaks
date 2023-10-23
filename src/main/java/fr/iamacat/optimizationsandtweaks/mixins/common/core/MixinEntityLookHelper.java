@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntityLookHelper.class)
@@ -41,7 +41,7 @@ public class MixinEntityLookHelper {
      */
     @Overwrite
     public void setLookPositionWithEntity(Entity p_75651_1_, float p_75651_2_, float p_75651_3_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLookHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
             this.posX = p_75651_1_.posX;
 
             if (p_75651_1_ instanceof EntityLivingBase) {
@@ -64,7 +64,7 @@ public class MixinEntityLookHelper {
     @Overwrite
     public void setLookPosition(double p_75650_1_, double p_75650_3_, double p_75650_5_, float p_75650_7_,
         float p_75650_8_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLookHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
             this.posX = p_75650_1_;
             this.posY = p_75650_3_;
             this.posZ = p_75650_5_;
@@ -80,7 +80,7 @@ public class MixinEntityLookHelper {
      */
     @Overwrite
     public void onUpdateLook() {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLookHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
             this.entity.rotationPitch = 0.0F;
 
             if (this.isLooking) {
@@ -119,7 +119,7 @@ public class MixinEntityLookHelper {
 
     @Unique
     private float updateRotation(float p_75652_1_, float p_75652_2_, float p_75652_3_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityLookHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
             float f3 = MathHelper.wrapAngleTo180_float(p_75652_2_ - p_75652_1_);
 
             if (f3 > p_75652_3_) {

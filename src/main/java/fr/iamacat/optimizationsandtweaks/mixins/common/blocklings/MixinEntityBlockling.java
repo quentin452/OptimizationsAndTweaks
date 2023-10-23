@@ -26,7 +26,7 @@ import com.blocklings.gui.InventoryBlockling;
 import com.blocklings.main.Blocklings;
 import com.blocklings.network.CreatePacketServerSide;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityBlockling.class)
 public abstract class MixinEntityBlockling extends EntityTameable implements IInvBasic, IRangedAttackMob {
@@ -96,7 +96,7 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
      */
     @Inject(method = "func_70636_d", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70636_d(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityBlockling) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityBlockling) {
             super.onLivingUpdate();
 
             World world = this.worldObj;

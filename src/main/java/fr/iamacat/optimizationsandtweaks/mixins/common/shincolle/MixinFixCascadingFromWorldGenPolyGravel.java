@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(WorldGenPolyGravel.class)
 public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGenerator {
@@ -20,7 +20,7 @@ public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGener
      */
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingFromShinColleWorldGen) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingFromShinColleWorldGen) {
             return false;
         }
         return false;

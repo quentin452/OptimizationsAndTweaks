@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -53,7 +53,7 @@ public class MixinPatchSpawnerAnimals {
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType p_77190_0_, World p_77190_1_, int p_77190_2_,
         int p_77190_3_, int p_77190_4_) {
-        if (MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals) {
+        if (OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals) {
             if (p_77190_0_.getCreatureMaterial() == Material.water) {
                 return p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_)
                     .getMaterial()
@@ -89,7 +89,7 @@ public class MixinPatchSpawnerAnimals {
     @Overwrite
     public int findChunksForSpawning(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_,
         boolean p_77192_4_) {
-        if (MultithreadingandtweaksConfig.enableMixinPatchSpawnerAnimals) {
+        if (OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals) {
             if (!p_77192_2_ && !p_77192_3_) {
                 return 0;
             } else {

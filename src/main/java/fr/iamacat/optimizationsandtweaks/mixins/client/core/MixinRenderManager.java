@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(RenderManager.class)
 public class MixinRenderManager {
@@ -53,7 +53,7 @@ public class MixinRenderManager {
      */
     @Inject(method = "renderEntityStatic", at = @At("HEAD"), cancellable = true)
     public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender, CallbackInfoReturnable cir) {
-        if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
+        if (!OptimizationsandTweaksConfig.enableMixinRenderManager) {
             return doRender;
         }
 
@@ -92,7 +92,7 @@ public class MixinRenderManager {
     @Inject(method = "func_147939_a", at = @At("HEAD"), cancellable = true)
     public boolean func_147939_a(Entity entity, double x, double y, double z, float yaw, float partialTicks,
         boolean doRender, CallbackInfoReturnable cir) {
-        if (!MultithreadingandtweaksConfig.enableMixinRenderManager) {
+        if (!OptimizationsandTweaksConfig.enableMixinRenderManager) {
             return doRender;
         }
 

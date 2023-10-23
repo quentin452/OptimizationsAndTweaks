@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(ModelRenderer.class)
 public class MixinModelRenderer {
@@ -188,7 +188,7 @@ public class MixinModelRenderer {
     @SideOnly(Side.CLIENT)
     @Inject(method = "render", at = @At("HEAD"), remap = false, cancellable = true)
     public void render(float p_78785_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinModelRenderer) {
+        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
             if (this.isHidden) {
                 return;
             }
@@ -261,7 +261,7 @@ public class MixinModelRenderer {
     @SideOnly(Side.CLIENT)
     @Inject(method = "renderWithRotation", at = @At("HEAD"), remap = false, cancellable = true)
     public void renderWithRotation(float p_78791_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinModelRenderer) {
+        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
             if (!this.isHidden) {
                 if (this.showModel) {
                     if (!this.compiled) {
@@ -300,7 +300,7 @@ public class MixinModelRenderer {
     @SideOnly(Side.CLIENT)
     @Inject(method = "postRender", at = @At("HEAD"), remap = false, cancellable = true)
     public void postRender(float p_78794_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinModelRenderer) {
+        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
             if (!this.isHidden) {
                 if (this.showModel) {
                     if (!this.compiled) {

@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(BlockGrass.class)
 public class MixinBlockGrass {
 
     @Inject(method = "updateTick", cancellable = true, at = @At(value = "HEAD"))
     public void updateTick(World worldIn, int x, int y, int z, Random random, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinBlockGrass && !worldIn.isRemote) {
+        if (OptimizationsandTweaksConfig.enableMixinBlockGrass && !worldIn.isRemote) {
             int lightValue = worldIn.getBlockLightValue(x, y + 1, z);
             int lightOpacity = worldIn.getBlockLightOpacity(x, y + 1, z);
 

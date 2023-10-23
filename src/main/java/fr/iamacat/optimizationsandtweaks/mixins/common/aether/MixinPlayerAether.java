@@ -42,7 +42,7 @@ import com.gildedgames.the_aether.world.TeleporterAether;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.ReflectionHelper;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PlayerAether.class)
 public class MixinPlayerAether {
@@ -110,7 +110,7 @@ public class MixinPlayerAether {
 
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPlayerAether) {
+        if (OptimizationsandTweaksConfig.enableMixinPlayerAether) {
             if (!this.player.worldObj.isRemote) {
 
                 AetherNetwork.sendToAll(

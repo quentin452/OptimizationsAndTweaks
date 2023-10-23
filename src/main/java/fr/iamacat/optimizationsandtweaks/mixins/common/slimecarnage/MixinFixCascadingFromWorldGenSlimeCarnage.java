@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Unique;
 import com.lulan.shincolle.utility.LogHelper;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import supremopete.SlimeCarnage.worldgen.*;
 import supremopete.SlimeCarnage.worldgen.WorldGenSlimeCarnage;
 
@@ -27,7 +27,7 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
-        if (MultithreadingandtweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage) {
+        if (OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage) {
             switch (world.provider.dimensionId) {
                 case -1:
                     generateNether(world, random, chunkX, chunkZ);

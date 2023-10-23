@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityAgeable.class)
 public abstract class MixinEntityAgeable extends EntityCreature {
@@ -57,7 +57,7 @@ public abstract class MixinEntityAgeable extends EntityCreature {
      */
     @Overwrite
     public void addGrowth(int p_110195_1_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAgeable) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAgeable) {
             int currentAge = multithreadingandtweaks$getGrowingAge();
             currentAge += p_110195_1_ * 20;
 
@@ -75,7 +75,7 @@ public abstract class MixinEntityAgeable extends EntityCreature {
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAgeable) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAgeable) {
             super.onLivingUpdate();
 
             if (this.worldObj.isRemote) {

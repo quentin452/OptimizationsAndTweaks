@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
 import sonar.logistics.api.cache.INetworkCache;
 import sonar.logistics.api.cache.IRefreshCache;
@@ -25,7 +25,7 @@ public class MixinEventRegistry {
      */
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEventRegistry) {
+        if (OptimizationsandTweaksConfig.enableMixinEventRegistry) {
             if (event.phase == TickEvent.Phase.START) {
                 THashMap<Integer, INetworkCache> networks = new THashMap<>();
                 networks.putAll(CacheRegistry.getNetworkCache());

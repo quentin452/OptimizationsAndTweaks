@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
@@ -28,7 +28,7 @@ public class MixinChunk {
     @Overwrite
     public void getEntitiesWithinAABBForEntity(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List<Entity> p_76588_3_,
         IEntitySelector p_76588_4_) {
-        if (MultithreadingandtweaksConfig.enableMixinChunk) {
+        if (OptimizationsandTweaksConfig.enableMixinChunk) {
             int i = MathHelper.floor_double((p_76588_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
             int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
             i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);

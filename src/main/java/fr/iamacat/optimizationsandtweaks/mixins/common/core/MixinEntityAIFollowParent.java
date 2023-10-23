@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
@@ -28,7 +28,7 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public void updateTask() {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent) {
             if (--this.field_75345_d <= 0) {
                 this.field_75345_d = 10;
 
@@ -50,7 +50,7 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public boolean shouldExecute() {
-        if (MultithreadingandtweaksConfig.enableMixinEntityAIFollowParent) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent) {
             int childGrowingAge = this.childAnimal.getGrowingAge();
 
             if (childGrowingAge >= 0) {

@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 // avoid usage of locks and use ConcurrentHashMap instead of HashMap for more tps performances
 @Mixin(DataWatcher.class)
@@ -55,7 +55,7 @@ public class MixinDataWatcher {
      */
     // @Inject(method = "addObject", at = @At("HEAD"), cancellable = true)
     public void addObject(int p_75682_1_, Object p_75682_2_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             Integer integer = multithreadingandtweaks$dataTypes.get(p_75682_2_.getClass());
 
             if (integer == null) {
@@ -82,7 +82,7 @@ public class MixinDataWatcher {
      */
     // @Inject(method = "addObjectByDataType", at = @At("HEAD"), cancellable = true)
     public void addObjectByDataType(int p_82709_1_, int p_82709_2_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, null);
             this.multithreadingandtweaks$watchedObjects.put(p_82709_1_, watchableobject);
             this.isBlank = false;
@@ -92,7 +92,7 @@ public class MixinDataWatcher {
 
     @Inject(method = "getWatchedObject", at = @At("HEAD"), cancellable = true)
     private DataWatcher.WatchableObject getWatchedObject(int p_75691_1_, CallbackInfoReturnable<Boolean> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             DataWatcher.WatchableObject watchableobject;
 
             try {
@@ -112,7 +112,7 @@ public class MixinDataWatcher {
 
     // @Inject(method = "getChanged", at = @At("HEAD"), cancellable = true)
     public List<DataWatcher.WatchableObject> getChanged(CallbackInfoReturnable<Boolean> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             ArrayList<DataWatcher.WatchableObject> arraylist = null;
 
             if (this.objectChanged) {
@@ -142,7 +142,7 @@ public class MixinDataWatcher {
 
     // @Inject(method = "func_151509_a", at = @At("HEAD"), cancellable = true)
     public void func_151509_a(PacketBuffer p_151509_1_, CallbackInfo ci) throws IOException {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
 
             for (DataWatcher.WatchableObject watchableobject : this.multithreadingandtweaks$watchedObjects.values()) {
                 multithreadingandtweaks$writeWatchableObjectToPacketBuffer(p_151509_1_, watchableobject);
@@ -155,7 +155,7 @@ public class MixinDataWatcher {
 
     // @Inject(method = "getAllWatched", at = @At("HEAD"), cancellable = true)
     public List<DataWatcher.WatchableObject> getAllWatched(CallbackInfoReturnable<Boolean> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             ArrayList<DataWatcher.WatchableObject> arraylist = null;
             DataWatcher.WatchableObject watchableobject;
 
@@ -216,7 +216,7 @@ public class MixinDataWatcher {
     // @Inject(method = "updateWatchedObjectsFromList", at = @At("HEAD"), cancellable = true)
     @SideOnly(Side.CLIENT)
     public void updateWatchedObjectsFromList(List<DataWatcher.WatchableObject> p_75687_1_, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinDataWatcher) {
+        if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
 
             for (DataWatcher.WatchableObject watchableobject : p_75687_1_) {
                 DataWatcher.WatchableObject watchableobject1 = this.multithreadingandtweaks$watchedObjects

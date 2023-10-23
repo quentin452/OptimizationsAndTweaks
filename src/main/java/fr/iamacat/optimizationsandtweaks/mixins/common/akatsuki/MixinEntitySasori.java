@@ -24,7 +24,7 @@ import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
 import com.akazuki.animation.common.animation2.Sasori2.AnimationHandlerSasori2;
 import com.akazuki.entity.EntitySasori;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntitySasori.class)
 public abstract class MixinEntitySasori extends EntityMob implements IMCAnimatedEntity, IBossDisplayData {
@@ -46,7 +46,7 @@ public abstract class MixinEntitySasori extends EntityMob implements IMCAnimated
 
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntitySasosri) {
+        if (OptimizationsandTweaksConfig.enableMixinEntitySasosri) {
             AnimationHandler animationHandler = this.getAnimationHandler();
 
             if (!animationHandler.isAnimationActive("hodba")) {

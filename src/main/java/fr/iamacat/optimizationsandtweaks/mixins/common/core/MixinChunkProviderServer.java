@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer implements IChunkProvider {
@@ -68,8 +68,8 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
 
     @Unique
     private final ThreadPoolExecutor multithreadingandtweaks$executorService = new ThreadPoolExecutor(
-        MultithreadingandtweaksConfig.numberofcpus,
-        MultithreadingandtweaksConfig.numberofcpus,
+        OptimizationsandTweaksConfig.numberofcpus,
+        OptimizationsandTweaksConfig.numberofcpus,
         60L,
         TimeUnit.SECONDS,
         new SynchronousQueue<>(),
@@ -78,9 +78,9 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void tick(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinChunkProviderServer) {
+        if (OptimizationsandTweaksConfig.enableMixinChunkProviderServer) {
             try {
-                int batchSize = MultithreadingandtweaksConfig.batchsize;
+                int batchSize = OptimizationsandTweaksConfig.batchsize;
 
                 List<Chunk> chunksToProcess = new ArrayList<>();
                 WorldServer world = MinecraftServer.getServer().worldServers[0];
@@ -128,7 +128,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      */
     @Inject(method = "originalLoadChunk", at = @At("HEAD"), remap = false, cancellable = true)
     public void originalLoadChunk(int p_73158_1_, int p_73158_2_, CallbackInfoReturnable<Chunk> cir) {
-        if (MultithreadingandtweaksConfig.enableMixinChunkProviderServer) {
+        if (OptimizationsandTweaksConfig.enableMixinChunkProviderServer) {
             long k = ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_);
             this.chunksToUnload.remove(k);
             Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
@@ -183,7 +183,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      */
     @Overwrite
     private Chunk safeLoadChunk(int p_73239_1_, int p_73239_2_) {
-        if (MultithreadingandtweaksConfig.enableMixinChunkProviderServer) {
+        if (OptimizationsandTweaksConfig.enableMixinChunkProviderServer) {
 
             if (this.currentChunkLoader == null) {
                 return null;
@@ -214,7 +214,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      */
     @Overwrite
     private void safeSaveExtraChunkData(Chunk p_73243_1_) {
-        if (MultithreadingandtweaksConfig.enableMixinChunkProviderServer) {
+        if (OptimizationsandTweaksConfig.enableMixinChunkProviderServer) {
             if (this.currentChunkLoader != null) {
                 try {
                     this.currentChunkLoader.saveExtraChunkData(this.worldObj, p_73243_1_);

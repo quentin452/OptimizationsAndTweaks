@@ -11,10 +11,10 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
-public class Multithreaded {
+public class OptimizationsAndTweaks {
 
     @Mod.Instance(Tags.MODID)
-    public static Multithreaded instance;
+    public static OptimizationsAndTweaks instance;
     @SidedProxy(clientSide = Tags.CLIENTPROXY, serverSide = Tags.SERVERPROXY)
     public static CommonProxy proxy;
     public static Configuration config;

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntitySquid.class)
@@ -59,7 +59,7 @@ public class MixinEntitySquid extends EntityWaterMob {
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (MultithreadingandtweaksConfig.enableMixinEntitySquid) {
+        if (OptimizationsandTweaksConfig.enableMixinEntitySquid) {
             super.onLivingUpdate();
             this.prevSquidPitch = this.squidPitch;
             this.prevSquidYaw = this.squidYaw;

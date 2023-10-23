@@ -29,7 +29,7 @@ import flaxbeard.steamcraft.api.util.SPLog;
 import flaxbeard.steamcraft.entity.ExtendedPropertiesVillager;
 import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
 import flaxbeard.steamcraft.item.ItemExosuitArmor;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(SteamcraftEventHandler.class)
 public class MixinSteamcraftEventHandler {
@@ -92,7 +92,7 @@ public class MixinSteamcraftEventHandler {
 
     @Inject(method = "updateVillagers", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateVillagers(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
-        if (!MultithreadingandtweaksConfig.enableMixinSteamcraftEventHandler) {
+        if (!OptimizationsandTweaksConfig.enableMixinSteamcraftEventHandler) {
             return;
         }
 

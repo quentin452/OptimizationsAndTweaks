@@ -33,7 +33,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.buildcraft.InOil2;
 
 @Mixin(OilTweakEventHandler.class)
@@ -41,7 +41,7 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (BuildCraftOilTweak.config.isOilDense()) {
                 EntityLivingBase entity = e.entityLiving;
 
@@ -65,7 +65,7 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onPlayerUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onPlayerUpdate(TickEvent.PlayerTickEvent e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -91,7 +91,7 @@ public class MixinOilTweakEventHandler {
     @SideOnly(Side.CLIENT)
     @Inject(method = "onPlayerClientUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onPlayerClientUpdate(TickEvent.ClientTickEvent e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -119,7 +119,7 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onBreakSpeed", at = @At("HEAD"), remap = false, cancellable = true)
     public void onBreakSpeed(PlayerEvent.BreakSpeed e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -133,7 +133,7 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onTeleportAttempt", at = @At("HEAD"), remap = false, cancellable = true)
     public void onTeleportAttempt(EnderTeleportEvent e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -150,7 +150,7 @@ public class MixinOilTweakEventHandler {
 
     @Inject(method = "onRightClick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onRightClick(PlayerInteractEvent e, CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinOilTweakEventHandler) {
+        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (e.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK || !BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }

@@ -5,7 +5,7 @@ import com.falsepattern.lib.config.Config;
 import fr.iamacat.optimizationsandtweaks.Tags;
 
 @Config(modid = Tags.MODID)
-public class MultithreadingandtweaksConfig {
+public class OptimizationsandTweaksConfig {
 
     @Config.Comment("Optimize EntityLiving Update.")
     @Config.DefaultBoolean(true)

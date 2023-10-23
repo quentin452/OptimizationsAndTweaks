@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PathNavigate.class)
 public class MixinPathNavigate {
@@ -218,7 +218,7 @@ public class MixinPathNavigate {
 
     @Inject(method = "onUpdateNavigation", at = @At("HEAD"), cancellable = true)
     public void onUpdateNavigation(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinPathFinding) {
+        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             ++this.totalTicks;
 
             if (!this.noPath()) {

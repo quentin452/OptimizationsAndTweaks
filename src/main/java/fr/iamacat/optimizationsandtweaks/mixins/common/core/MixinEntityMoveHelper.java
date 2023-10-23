@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntityMoveHelper.class)
@@ -39,7 +39,7 @@ public class MixinEntityMoveHelper {
      */
     @Inject(at = @At("HEAD"), method = "onUpdateMoveHelper", cancellable = true)
     public void onUpdateMoveHelper(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntityMoveHelper) {
+        if (OptimizationsandTweaksConfig.enableMixinEntityMoveHelper) {
             this.entity.setMoveForward(0.0F);
 
             if (this.update) {

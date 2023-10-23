@@ -18,7 +18,7 @@ import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.core.util.oredict.OreDictionaryArbiterProxy;
 import cofh.lib.util.ItemWrapper;
 import cofh.lib.util.helpers.ItemHelper;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 
@@ -45,7 +45,7 @@ public class MixinOreDictionaryArbiter {
      */
     @Overwrite
     public static void initialize() {
-        if (MultithreadingandtweaksConfig.enableMixinOreDictCofhFix) {
+        if (OptimizationsandTweaksConfig.enableMixinOreDictCofhFix) {
             if (!multithreading1_7_10$initialized) {
                 oreIDs = HashBiMap.create(32);
                 oreStacks = new THashMap<>(32);
@@ -87,7 +87,7 @@ public class MixinOreDictionaryArbiter {
      */
     @Overwrite
     public static void registerOreDictionaryEntry(ItemStack var0, String var1) {
-        if (MultithreadingandtweaksConfig.enableMixinOreDictCofhFix) {
+        if (OptimizationsandTweaksConfig.enableMixinOreDictCofhFix) {
             if (var0 != null && var0.getItem() != null && !Strings.isNullOrEmpty(var1)) {
                 int var2 = OreDictionary.getOreID(var1);
                 oreIDs.put(var1, var2);

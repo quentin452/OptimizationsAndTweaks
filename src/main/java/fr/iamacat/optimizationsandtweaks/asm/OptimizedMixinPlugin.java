@@ -8,17 +8,17 @@ import com.falsepattern.lib.mixin.IMixin;
 import com.falsepattern.lib.mixin.IMixinPlugin;
 import com.falsepattern.lib.mixin.ITargetedMod;
 
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import lombok.Getter;
 
-public class MultithreadedMixinPlugin implements IMixinPlugin {
+public class OptimizedMixinPlugin implements IMixinPlugin {
 
     @Getter
     private final Logger logger = IMixinPlugin.createLogger("MultithreadingAndTweaks");
 
-    public MultithreadedMixinPlugin() {
+    public OptimizedMixinPlugin() {
         try {
-            ConfigurationManager.initialize(MultithreadingandtweaksConfig.class);
+            ConfigurationManager.initialize(OptimizationsandTweaksConfig.class);
         } catch (ConfigException e) {
             throw new RuntimeException(e);
         }

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import fr.iamacat.optimizationsandtweaks.MultithreadingLogger;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import powercrystals.minefactoryreloaded.api.FactoryRegistry;
 
 // should fix spam logs like this with highlands,pam's harvestcraft,Growthcraft,akkamaddi.ashenwheat,thermal
@@ -119,7 +119,7 @@ public class MixinFixNoSuchMethodException {
      */
     @Overwrite
     public static void sendMessage(String message, Object value) {
-        if (MultithreadingandtweaksConfig.enableMixinFixNoSuchMethodException) {
+        if (OptimizationsandTweaksConfig.enableMixinFixNoSuchMethodException) {
             try {
                 Class.forName("powercrystals.minefactoryreloaded.api.FactoryRegistry");
             } catch (ClassNotFoundException e) {

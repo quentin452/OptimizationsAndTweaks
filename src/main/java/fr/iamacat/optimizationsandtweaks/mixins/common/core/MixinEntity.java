@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.MultithreadingandtweaksConfig;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(Entity.class)
 public class MixinEntity {
@@ -61,7 +61,7 @@ public class MixinEntity {
     @Overwrite
     @SideOnly(Side.CLIENT)
     public int getBrightnessForRender(float p_70070_1_) {
-        if (MultithreadingandtweaksConfig.enableMixinEntity) {
+        if (OptimizationsandTweaksConfig.enableMixinEntity) {
             int i = MathHelper.floor_double(this.posX);
             int j = MathHelper.floor_double(this.posZ);
 
@@ -85,7 +85,7 @@ public class MixinEntity {
 
     @Inject(method = "isInWater", at = @At("HEAD"), remap = false, cancellable = true)
     public boolean isInWater(CallbackInfo ci) {
-        if (MultithreadingandtweaksConfig.enableMixinEntity) {
+        if (OptimizationsandTweaksConfig.enableMixinEntity) {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {
