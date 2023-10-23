@@ -141,82 +141,69 @@ public class MixinPathFinder {
      * @reason
      */
     @Inject(method = "getSafePoint", at = @At("HEAD"), cancellable = true)
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
-        PathPoint p_75858_5_, int p_75858_6_, CallbackInfoReturnable<PathPoint> cir) {
-        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
-            PathPoint pathpoint1 = null;
-            int i1 = this.multithreadingandtweaks$getVerticalOffset(
-                p_75858_1_,
-                p_75858_2_,
-                p_75858_3_,
-                p_75858_4_,
-                p_75858_5_,
-                cir);
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_, CallbackInfoReturnable<PathPoint> cir) {
+        if (!OptimizationsandTweaksConfig.enableMixinPathFinding) {
+            cir.setReturnValue(p_75858_5_);
+            return p_75858_5_;
+        }
 
-            if (i1 == 2) {
-                return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+        int verticalOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_, cir);
+
+        if (verticalOffset == 2) {
+            return openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+        }
+
+        PathPoint resultPoint = null;
+
+        if (verticalOffset == 1) {
+            resultPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+        }
+
+        while (resultPoint == null && p_75858_6_ > 0 && verticalOffset != -3 && verticalOffset != -4) {
+            int yOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_, cir);
+
+            if (yOffset == 1) {
+                resultPoint = openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, cir);
+                p_75858_3_ += p_75858_6_;
             } else {
-                if (i1 == 1) {
-                    pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+                break;
+            }
+
+            p_75858_6_--;
+        }
+
+        if (resultPoint != null) {
+            int tries = 0;
+            int yOffset = 0;
+
+            while (p_75858_3_ > 0) {
+                yOffset = multithreadingandtweaks$getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_, cir);
+
+                if (isPathingInWater && yOffset == -1) {
+                    return null;
                 }
 
-                if (pathpoint1 == null && p_75858_6_ > 0
-                    && i1 != -3
-                    && i1 != -4
-                    && this.multithreadingandtweaks$getVerticalOffset(
-                        p_75858_1_,
-                        p_75858_2_,
-                        p_75858_3_ + p_75858_6_,
-                        p_75858_4_,
-                        p_75858_5_,
-                        cir) == 1) {
-                    pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, cir);
-                    p_75858_3_ += p_75858_6_;
+                if (yOffset != 1) {
+                    break;
                 }
 
-                if (pathpoint1 != null) {
-                    int j1 = 0;
-                    int k1 = 0;
-
-                    while (p_75858_3_ > 0) {
-                        k1 = this.multithreadingandtweaks$getVerticalOffset(
-                            p_75858_1_,
-                            p_75858_2_,
-                            p_75858_3_ - 1,
-                            p_75858_4_,
-                            p_75858_5_,
-                            cir);
-
-                        if (this.isPathingInWater && k1 == -1) {
-                            return null;
-                        }
-
-                        if (k1 != 1) {
-                            break;
-                        }
-
-                        if (j1++ >= p_75858_1_.getMaxSafePointTries()) {
-                            return null;
-                        }
-
-                        --p_75858_3_;
-
-                        if (p_75858_3_ > 0) {
-                            pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
-                        }
-                    }
-
-                    if (k1 == -2) {
-                        return null;
-                    }
+                if (tries++ >= p_75858_1_.getMaxSafePointTries()) {
+                    return null;
                 }
 
-                return pathpoint1;
+                p_75858_3_--;
+
+                if (p_75858_3_ > 0) {
+                    resultPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_, cir);
+                }
+            }
+
+            if (yOffset == -2) {
+                return null;
             }
         }
-        cir.setReturnValue(p_75858_5_);
-        return p_75858_5_;
 
+        return resultPoint;
     }
 
     @Redirect(
