@@ -15,6 +15,9 @@ public enum Mixin implements IMixin {
 
 
     // OPTIMIZATIONS MIXINS
+
+    common_witchery_MixinEntityVillageGuard(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard,
+        "witchery.MixinEntityVillageGuard"),
     common_core_MixinServersideAttributeMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap,
         "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
