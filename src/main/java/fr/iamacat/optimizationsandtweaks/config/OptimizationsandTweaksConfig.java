@@ -242,7 +242,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
 
-    @Config.Comment("Optimize PathFinder")
+    @Config.Comment("Optimize PathFinding")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPathFinding;
