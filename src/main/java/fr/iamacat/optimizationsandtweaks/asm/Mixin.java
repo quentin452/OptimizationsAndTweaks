@@ -18,6 +18,9 @@ public enum Mixin implements IMixin {
         "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
+
+    common_core_MixinEntityAITempt(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityAITempt, "core.MixinEntityAITempt"),
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIEatDroppedFood, "easybreeding.MixinEntityAIEatDroppedFood"),
     common_core_MixinRandomPositionGenerator(Side.COMMON,

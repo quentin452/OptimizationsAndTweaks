@@ -159,6 +159,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIEatDroppedFood;
+
+    @Config.Comment("Optimize EntityAITempt")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAITempt;
     @Config.Comment("Optimize EventHandlerNEP from notenoughpets")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
