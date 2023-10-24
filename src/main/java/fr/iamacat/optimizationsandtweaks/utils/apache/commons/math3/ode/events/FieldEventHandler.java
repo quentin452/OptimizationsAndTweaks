@@ -147,7 +147,8 @@ public interface FieldEventHandler<T extends RealFieldElement<T>> {
      *
      * <p>
      * The scheduling between this method and the {@link
-     * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler FieldStepHandler} method
+     * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler FieldStepHandler}
+     * method
      * {@link
      * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler#handleStep(
      * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepInterpolator, boolean)
@@ -160,12 +161,14 @@ public interface FieldEventHandler<T extends RealFieldElement<T>> {
      * code called by step handlers may experience apparently out of order values
      * of the independent time variable. As an example, if the same user object
      * implements both this {@link FieldEventHandler FieldEventHandler} interface and the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler FieldStepHandler}
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler
+     * FieldStepHandler}
      * interface, a <em>forward</em> integration may call its
      * {code eventOccurred} method with t = 10 first and call its
      * {code handleStep} method with t = 9 afterwards. Such out of order
      * calls are limited to the size of the integration step for {@link
-     * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler variable step handlers}.
+     * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FieldStepHandler variable step
+     * handlers}.
      * </p>
      *
      * @param state      current value of the independent <i>time</i> variable, state vector

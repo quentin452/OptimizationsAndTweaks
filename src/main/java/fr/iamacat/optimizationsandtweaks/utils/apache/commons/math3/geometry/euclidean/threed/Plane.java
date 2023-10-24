@@ -371,7 +371,8 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param point point of the space (must be a {@link Vector3D
      *              Vector3D} instance)
      * @return in-plane point (really a {@link
-     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.euclidean.twod.Vector2D Vector2D} instance)
+     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.euclidean.twod.Vector2D Vector2D}
+     *         instance)
      * @see #toSpace
      */
     public Vector2D toSubSpace(final Point<Euclidean3D> point) {
@@ -383,7 +384,8 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * Transform an in-plane point into a 3D space point.
      *
      * @param point in-plane point (must be a {@link
-     *              fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.euclidean.twod.Vector2D Vector2D}
+     *              fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.euclidean.twod.Vector2D
+     *              Vector2D}
      *              instance)
      * @return 3D space point (really a {@link Vector3D Vector3D} instance)
      * @see #toSubSpace

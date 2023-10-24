@@ -68,10 +68,13 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * @param evaluationPoint Point at which the gradient must be evaluated.
      * @return the gradient at the specified point.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the allowed
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            allowed
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      */
     protected double[] computeObjectiveGradient(final double[] evaluationPoint) {
         return gradient.value(evaluationPoint);
@@ -98,19 +101,25 @@ public abstract class AbstractScalarDifferentiableOptimizer
      * @return the point/value pair giving the optimal value for objective
      *         function.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the start
-     *                                                                                                    point
-     *                                                                                                    dimension is
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            start
+     *                                                                                                            point
+     *                                                                                                            dimension
+     *                                                                                                            is
+     *                                                                                                            wrong.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if
-     *                                                                                                    any argument
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
+     *                                                                                                            any
+     *                                                                                                            argument
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      */
     public PointValuePair optimize(final int maxEval, final MultivariateDifferentiableFunction f,
         final GoalType goalType, final double[] startPoint) {

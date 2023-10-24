@@ -43,7 +43,8 @@ public class LeastSquaresFactory {
     private LeastSquaresFactory() {}
 
     /**
-     * Create a {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
+     * Create a
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
      * from the given elements. There will be no weights applied (unit weights).
      *
      * @param model          the model function. Produces the computed values.
@@ -81,7 +82,8 @@ public class LeastSquaresFactory {
     }
 
     /**
-     * Create a {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
+     * Create a
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
      * from the given elements. There will be no weights applied (unit weights).
      *
      * @param model          the model function. Produces the computed values.
@@ -99,7 +101,8 @@ public class LeastSquaresFactory {
     }
 
     /**
-     * Create a {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
+     * Create a
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
      * from the given elements.
      *
      * @param model          the model function. Produces the computed values.
@@ -118,7 +121,8 @@ public class LeastSquaresFactory {
     }
 
     /**
-     * Create a {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
+     * Create a
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem}
      * from the given elements.
      * <p>
      * This factory method is provided for continuity with previous interfaces. Newer

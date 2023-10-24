@@ -142,9 +142,12 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
      * @param initialGuess first guess of the function parameters.
      * @return the fitted parameters.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the start
-     *                                                                                                   point dimension
-     *                                                                                                   is wrong.
+     *                                                                                                           if the
+     *                                                                                                           start
+     *                                                                                                           point
+     *                                                                                                           dimension
+     *                                                                                                           is
+     *                                                                                                           wrong.
      */
     public double[] fit(T f, final double[] initialGuess) {
         return fit(Integer.MAX_VALUE, f, initialGuess);
@@ -162,15 +165,20 @@ public class CurveFitter<T extends ParametricUnivariateFunction> {
      * @param maxEval      Maximum number of function evaluations.
      * @return the fitted parameters.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the number
-     *                                                                                                    of allowed
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            allowed
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the start
-     *                                                                                                    point
-     *                                                                                                    dimension is
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            start
+     *                                                                                                            point
+     *                                                                                                            dimension
+     *                                                                                                            is
+     *                                                                                                            wrong.
      * @since 3.0
      */
     public double[] fit(int maxEval, T f, final double[] initialGuess) {

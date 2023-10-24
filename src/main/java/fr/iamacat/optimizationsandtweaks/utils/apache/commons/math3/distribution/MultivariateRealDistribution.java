@@ -69,10 +69,11 @@ public interface MultivariateRealDistribution {
      * @param sampleSize the number of random vectors to generate.
      * @return an array representing the random samples.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code sampleSize}
-     *                                                                                                     is not
-     *                                                                                                     positive.
+     *                                                                                                             if
+     *                                                                                                             {@code sampleSize}
+     *                                                                                                             is
+     *                                                                                                             not
+     *                                                                                                             positive.
      *
      * @see #sample()
      */

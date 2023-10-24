@@ -35,8 +35,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMat
  * @since 2.2
  *
  */
-public abstract class AbstractWell
-    extends fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.BitsStreamGenerator implements Serializable {
+public abstract class AbstractWell extends
+    fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.BitsStreamGenerator implements Serializable {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = -817701723016583596L;

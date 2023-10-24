@@ -1,11 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -142,7 +139,8 @@ public class MixinPathFinder {
      * @reason
      */
     @Inject(method = "getSafePoint", at = @At("HEAD"), cancellable = true)
-    private void injectGetSafePoint(Entity entity, int x, int y, int z, PathPoint originalPoint, int maxSafePointTries, CallbackInfoReturnable<PathPoint> cir) {
+    private void injectGetSafePoint(Entity entity, int x, int y, int z, PathPoint originalPoint, int maxSafePointTries,
+        CallbackInfoReturnable<PathPoint> cir) {
         if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             int verticalOffset = multithreadingandtweaks$getVerticalOffset(entity, x, y, z, originalPoint, cir);
 
@@ -158,7 +156,13 @@ public class MixinPathFinder {
             }
 
             while (resultPoint == null && maxSafePointTries > 0 && verticalOffset != -3 && verticalOffset != -4) {
-                int yOffset = multithreadingandtweaks$getVerticalOffset(entity, x, y + maxSafePointTries, z, originalPoint, cir);
+                int yOffset = multithreadingandtweaks$getVerticalOffset(
+                    entity,
+                    x,
+                    y + maxSafePointTries,
+                    z,
+                    originalPoint,
+                    cir);
 
                 if (yOffset == 1) {
                     resultPoint = openPoint(x, y + maxSafePointTries, z, cir);

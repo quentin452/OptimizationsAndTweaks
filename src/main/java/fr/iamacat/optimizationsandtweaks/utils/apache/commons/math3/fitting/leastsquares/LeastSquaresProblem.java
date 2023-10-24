@@ -67,13 +67,18 @@ public interface LeastSquaresProblem extends OptimizationProblem<LeastSquaresPro
      * @param point the parameter values.
      * @return the model's value and derivative at the given point.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations
-     *                                                                                                    (of the model
-     *                                                                                                    vector
-     *                                                                                                    function) is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            (of
+     *                                                                                                            the
+     *                                                                                                            model
+     *                                                                                                            vector
+     *                                                                                                            function)
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      */
     Evaluation evaluate(RealVector point);
 
@@ -95,11 +100,13 @@ public interface LeastSquaresProblem extends OptimizationProblem<LeastSquaresPro
          * @param threshold Singularity threshold.
          * @return the covariance matrix.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-         *                                                                                             if the covariance
-         *                                                                                             matrix cannot be
-         *                                                                                             computed
-         *                                                                                             (singular
-         *                                                                                             problem).
+         *                                                                                                     if the
+         *                                                                                                     covariance
+         *                                                                                                     matrix
+         *                                                                                                     cannot be
+         *                                                                                                     computed
+         *                                                                                                     (singular
+         *                                                                                                     problem).
          */
         RealMatrix getCovariances(double threshold);
 
@@ -114,9 +121,11 @@ public interface LeastSquaresProblem extends OptimizationProblem<LeastSquaresPro
          *                                       #getCovariances(double) computeCovariances}).
          * @return an estimate of the standard deviation of the optimized parameters
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-         *                                                                                             if the covariance
-         *                                                                                             matrix cannot be
-         *                                                                                             computed.
+         *                                                                                                     if the
+         *                                                                                                     covariance
+         *                                                                                                     matrix
+         *                                                                                                     cannot be
+         *                                                                                                     computed.
          */
         RealVector getSigma(double covarianceSingularityThreshold);
 
@@ -133,13 +142,15 @@ public interface LeastSquaresProblem extends OptimizationProblem<LeastSquaresPro
          *
          * @return the weighted Jacobian: W<sup>1/2</sup> J.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-         *                                                                                                   if the
-         *                                                                                                   Jacobian
-         *                                                                                                   dimension
-         *                                                                                                   does not
-         *                                                                                                   match
-         *                                                                                                   problem
-         *                                                                                                   dimension.
+         *                                                                                                           if
+         *                                                                                                           the
+         *                                                                                                           Jacobian
+         *                                                                                                           dimension
+         *                                                                                                           does
+         *                                                                                                           not
+         *                                                                                                           match
+         *                                                                                                           problem
+         *                                                                                                           dimension.
          */
         RealMatrix getJacobian();
 
@@ -159,11 +170,13 @@ public interface LeastSquaresProblem extends OptimizationProblem<LeastSquaresPro
          *
          * @return the weighted residuals: W<sup>1/2</sup> K.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-         *                                                                                                   if the
-         *                                                                                                   residuals
-         *                                                                                                   have the
-         *                                                                                                   wrong
-         *                                                                                                   length.
+         *                                                                                                           if
+         *                                                                                                           the
+         *                                                                                                           residuals
+         *                                                                                                           have
+         *                                                                                                           the
+         *                                                                                                           wrong
+         *                                                                                                           length.
          */
         RealVector getResiduals();
 

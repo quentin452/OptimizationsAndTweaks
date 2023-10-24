@@ -25,7 +25,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathUti
 /**
  * Returns the sum of the natural logs for this collection of values.
  * <p>
- * Uses {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath#log(double)} to compute the logs.
+ * Uses {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath#log(double)} to compute the
+ * logs.
  * Therefore,
  * <ul>
  * <li>If any of values are &lt; 0, the result is <code>NaN.</code></li>

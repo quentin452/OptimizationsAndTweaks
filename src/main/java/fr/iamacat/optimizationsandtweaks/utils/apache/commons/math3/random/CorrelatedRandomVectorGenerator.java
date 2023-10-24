@@ -20,7 +20,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.RealM
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.RectangularCholeskyDecomposition;
 
 /**
- * A {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomVectorGenerator} that generates vectors
+ * A {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomVectorGenerator} that generates
+ * vectors
  * with with
  * correlated components.
  * <p>
@@ -38,7 +39,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Recta
  * Multivariate Normal Distribution</a>. The approach using a Cholesky
  * decomposition is quite usual in this case. However, it can be extended
  * to other cases as long as the underlying random generator provides
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.NormalizedRandomGenerator normalized values} like
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.NormalizedRandomGenerator normalized
+ * values} like
  * {@link
  * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.GaussianRandomGenerator} or
  * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.UniformRandomGenerator}.
@@ -87,20 +89,25 @@ public class CorrelatedRandomVectorGenerator
      * @param generator  underlying generator for uncorrelated normalized
      *                   components.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.NonPositiveDefiniteMatrixException
-     *                                                                                                        if the
-     *                                                                                                        covariance
-     *                                                                                                        matrix is
-     *                                                                                                        not
-     *                                                                                                        strictly
-     *                                                                                                        positive
-     *                                                                                                        definite.
-     * @throws DimensionMismatchException                                                                     if the
-     *                                                                                                        mean and
-     *                                                                                                        covariance
-     *                                                                                                        arrays
-     *                                                                                                        dimensions
-     *                                                                                                        do not
-     *                                                                                                        match.
+     *                                                                                                                if
+     *                                                                                                                the
+     *                                                                                                                covariance
+     *                                                                                                                matrix
+     *                                                                                                                is
+     *                                                                                                                not
+     *                                                                                                                strictly
+     *                                                                                                                positive
+     *                                                                                                                definite.
+     * @throws DimensionMismatchException                                                                             if
+     *                                                                                                                the
+     *                                                                                                                mean
+     *                                                                                                                and
+     *                                                                                                                covariance
+     *                                                                                                                arrays
+     *                                                                                                                dimensions
+     *                                                                                                                do
+     *                                                                                                                not
+     *                                                                                                                match.
      */
     public CorrelatedRandomVectorGenerator(double[] mean, RealMatrix covariance, double small,
         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.NormalizedRandomGenerator generator) {
@@ -128,13 +135,15 @@ public class CorrelatedRandomVectorGenerator
      * @param generator  Underlying generator for uncorrelated normalized
      *                   components.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.NonPositiveDefiniteMatrixException
-     *                                                                                                        if the
-     *                                                                                                        covariance
-     *                                                                                                        matrix is
-     *                                                                                                        not
-     *                                                                                                        strictly
-     *                                                                                                        positive
-     *                                                                                                        definite.
+     *                                                                                                                if
+     *                                                                                                                the
+     *                                                                                                                covariance
+     *                                                                                                                matrix
+     *                                                                                                                is
+     *                                                                                                                not
+     *                                                                                                                strictly
+     *                                                                                                                positive
+     *                                                                                                                definite.
      */
     public CorrelatedRandomVectorGenerator(RealMatrix covariance, double small,
         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.NormalizedRandomGenerator generator) {

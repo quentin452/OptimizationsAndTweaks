@@ -41,13 +41,17 @@ public interface DecompositionSolver {
      * @param b right-hand side of the equation A &times; X = B
      * @return a vector X that minimizes the two norm of A &times; X - B
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the matrices
-     *                                                                                                   dimensions do
-     *                                                                                                   not match.
-     * @throws SingularMatrixException                                                                   if the
-     *                                                                                                   decomposed
-     *                                                                                                   matrix is
-     *                                                                                                   singular.
+     *                                                                                                           if the
+     *                                                                                                           matrices
+     *                                                                                                           dimensions
+     *                                                                                                           do
+     *                                                                                                           not
+     *                                                                                                           match.
+     * @throws SingularMatrixException                                                                           if the
+     *                                                                                                           decomposed
+     *                                                                                                           matrix
+     *                                                                                                           is
+     *                                                                                                           singular.
      */
     RealVector solve(final RealVector b) throws SingularMatrixException;
 
@@ -60,13 +64,17 @@ public interface DecompositionSolver {
      * @param b right-hand side of the equation A &times; X = B
      * @return a matrix X that minimizes the two norm of A &times; X - B
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the matrices
-     *                                                                                                   dimensions do
-     *                                                                                                   not match.
-     * @throws SingularMatrixException                                                                   if the
-     *                                                                                                   decomposed
-     *                                                                                                   matrix is
-     *                                                                                                   singular.
+     *                                                                                                           if the
+     *                                                                                                           matrices
+     *                                                                                                           dimensions
+     *                                                                                                           do
+     *                                                                                                           not
+     *                                                                                                           match.
+     * @throws SingularMatrixException                                                                           if the
+     *                                                                                                           decomposed
+     *                                                                                                           matrix
+     *                                                                                                           is
+     *                                                                                                           singular.
      */
     RealMatrix solve(final RealMatrix b) throws SingularMatrixException;
 

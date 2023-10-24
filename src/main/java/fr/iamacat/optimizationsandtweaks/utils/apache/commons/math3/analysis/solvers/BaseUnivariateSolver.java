@@ -133,18 +133,26 @@ public interface BaseUnivariateSolver<FUNC extends UnivariateFunction> {
      * @return a value where the function is zero.
      * @param maxEval Maximum number of evaluations.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MathIllegalArgumentException
-     *                                                                                                     if the
-     *                                                                                                     arguments do
-     *                                                                                                     not satisfy
-     *                                                                                                     the
-     *                                                                                                     requirements
-     *                                                                                                     specified by
-     *                                                                                                     the solver.
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             arguments
+     *                                                                                                             do
+     *                                                                                                             not
+     *                                                                                                             satisfy
+     *                                                                                                             the
+     *                                                                                                             requirements
+     *                                                                                                             specified
+     *                                                                                                             by
+     *                                                                                                             the
+     *                                                                                                             solver.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException  if
-     *                                                                                                     the allowed
-     *                                                                                                     number of
-     *                                                                                                     evaluations
-     *                                                                                                     is exceeded.
+     *                                                                                                             the
+     *                                                                                                             allowed
+     *                                                                                                             number
+     *                                                                                                             of
+     *                                                                                                             evaluations
+     *                                                                                                             is
+     *                                                                                                             exceeded.
      */
     double solve(int maxEval, FUNC f, double startValue);
 }

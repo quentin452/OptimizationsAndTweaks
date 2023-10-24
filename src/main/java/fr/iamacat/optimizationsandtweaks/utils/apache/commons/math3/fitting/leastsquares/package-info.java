@@ -30,7 +30,8 @@
  * with a set of given set of observed values.
  * <br/>
  * The problem can be created progressively using a {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder builder} or it can
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder builder} or it
+ * can
  * be created at once using a
  * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory
  * factory}.

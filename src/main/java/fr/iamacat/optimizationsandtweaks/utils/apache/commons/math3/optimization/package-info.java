@@ -38,10 +38,12 @@
  * function:
  * <ul>
  * <li>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.univariate.UnivariateOptimizer
- * UnivariateOptimizer} for {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.UnivariateFunction
+ * UnivariateOptimizer} for
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.UnivariateFunction
  * univariate real functions}</li>
  * <li>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.MultivariateOptimizer
- * MultivariateOptimizer} for {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateFunction
+ * MultivariateOptimizer} for
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateFunction
  * multivariate real functions}</li>
  * <li>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.MultivariateDifferentiableOptimizer
  * MultivariateDifferentiableOptimizer} for {@link
@@ -58,12 +60,15 @@
  * Despite there are only four types of supported optimizers, it is possible to optimize a
  * transform a {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateVectorFunction
  * non-differentiable multivariate vectorial function} by converting it to a {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateFunction non-differentiable multivariate
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateFunction non-differentiable
+ * multivariate
  * real function} thanks to the {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.LeastSquaresConverter LeastSquaresConverter} helper
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.LeastSquaresConverter
+ * LeastSquaresConverter} helper
  * class.
  * The transformed function can be optimized using any implementation of the {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.MultivariateOptimizer MultivariateOptimizer}
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.MultivariateOptimizer
+ * MultivariateOptimizer}
  * interface.
  * </p>
  *

@@ -31,14 +31,17 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.Precisi
  * <ul>
  * <li>objective function: {@link LinearObjectiveFunction} - mandatory</li>
  * <li>linear constraints {@link LinearConstraintSet} - mandatory</li>
- * <li>type of optimization: {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType
+ * <li>type of optimization:
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType
  * GoalType}
  * - optional, default:
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MINIMIZE MINIMIZE}</li>
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MINIMIZE
+ * MINIMIZE}</li>
  * <li>whether to allow negative values as solution: {@link NonNegativeConstraint} - optional, default: true</li>
  * <li>pivot selection rule: {@link PivotSelectionRule} - optional, default {@link PivotSelectionRule#DANTZIG}</li>
  * <li>callback for the best solution: {@link SolutionCallback} - optional</li>
- * <li>maximum number of iterations: {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.MaxIter} -
+ * <li>maximum number of iterations: {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.MaxIter}
+ * -
  * optional, default: {@link Integer#MAX_VALUE}</li>
  * </ul>
  * <p>

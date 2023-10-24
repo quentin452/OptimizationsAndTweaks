@@ -782,10 +782,12 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      *
      * @return significance level for slope/correlation
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if the
-     *                                                                                                  significance
-     *                                                                                                  level can not be
-     *                                                                                                  computed.
+     *                                                                                                          if the
+     *                                                                                                          significance
+     *                                                                                                          level
+     *                                                                                                          can not
+     *                                                                                                          be
+     *                                                                                                          computed.
      */
     public double getSignificance() {
         if (n < 3) {

@@ -24,7 +24,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Diago
 
 /**
  * Fits points to a {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.polynomials.PolynomialFunction.Parametric polynomial}
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.polynomials.PolynomialFunction.Parametric
+ * polynomial}
  * function.
  * <br/>
  * The size of the {@link #withStartPoint(double[]) initial guess} array defines the

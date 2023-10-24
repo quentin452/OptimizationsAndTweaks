@@ -7,10 +7,9 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class EntityAIAttackOnCollide2 extends EntityAIBase
-{
+public class EntityAIAttackOnCollide2 extends EntityAIBase {
+
     World worldObj;
     EntityCreature attacker;
     /** An amount of decrementing ticks that allows the entity to attack once the tick reaches 0. */
@@ -29,14 +28,13 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
 
     private int failedPathFindingPenalty;
 
-    public EntityAIAttackOnCollide2(EntityCreature p_i1635_1_, Class p_i1635_2_, double p_i1635_3_, boolean p_i1635_5_)
-    {
+    public EntityAIAttackOnCollide2(EntityCreature p_i1635_1_, Class p_i1635_2_, double p_i1635_3_,
+        boolean p_i1635_5_) {
         this(p_i1635_1_, p_i1635_3_, p_i1635_5_);
         this.classTarget = p_i1635_2_;
     }
 
-    public EntityAIAttackOnCollide2(EntityCreature p_i1636_1_, double p_i1636_2_, boolean p_i1636_4_)
-    {
+    public EntityAIAttackOnCollide2(EntityCreature p_i1636_1_, double p_i1636_2_, boolean p_i1636_4_) {
         this.attacker = p_i1636_1_;
         this.worldObj = p_i1636_1_.worldObj;
         this.speedTowardsTarget = p_i1636_2_;
@@ -47,32 +45,23 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
     /**
      * Returns whether the EntityAIBase should begin execution.
      */
-    public boolean shouldExecute()
-    {
+    public boolean shouldExecute() {
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
 
-        if (entitylivingbase == null)
-        {
+        if (entitylivingbase == null) {
             return false;
-        }
-        else if (!entitylivingbase.isEntityAlive())
-        {
+        } else if (!entitylivingbase.isEntityAlive()) {
             return false;
-        }
-        else if (this.classTarget != null && !this.classTarget.isAssignableFrom(entitylivingbase.getClass()))
-        {
+        } else if (this.classTarget != null && !this.classTarget.isAssignableFrom(entitylivingbase.getClass())) {
             return false;
-        }
-        else
-        {
-            if (-- this.field_75445_i <= 0)
-            {
-                this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
-                this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
+        } else {
+            if (--this.field_75445_i <= 0) {
+                this.entityPathEntity = this.attacker.getNavigator()
+                    .getPathToEntityLiving(entitylivingbase);
+                this.field_75445_i = 4 + this.attacker.getRNG()
+                    .nextInt(7);
                 return this.entityPathEntity != null;
-            }
-            else
-            {
+            } else {
                 return true;
             }
         }
@@ -81,27 +70,32 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean continueExecuting()
-    {
+    public boolean continueExecuting() {
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
-        return entitylivingbase != null && (entitylivingbase.isEntityAlive() && (!this.longMemory ? !this.attacker.getNavigator().noPath() : this.attacker.isWithinHomeDistance(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posY), MathHelper.floor_double(entitylivingbase.posZ))));
+        return entitylivingbase != null && (entitylivingbase.isEntityAlive() && (!this.longMemory
+            ? !this.attacker.getNavigator()
+                .noPath()
+            : this.attacker.isWithinHomeDistance(
+                MathHelper.floor_double(entitylivingbase.posX),
+                MathHelper.floor_double(entitylivingbase.posY),
+                MathHelper.floor_double(entitylivingbase.posZ))));
     }
 
     /**
      * Execute a one shot task or start executing a continuous task
      */
-    public void startExecuting()
-    {
-        this.attacker.getNavigator().setPath(this.entityPathEntity, this.speedTowardsTarget);
+    public void startExecuting() {
+        this.attacker.getNavigator()
+            .setPath(this.entityPathEntity, this.speedTowardsTarget);
         this.field_75445_i = 0;
     }
 
     /**
      * Resets the task
      */
-    public void resetTask()
-    {
-        this.attacker.getNavigator().clearPathEntity();
+    public void resetTask() {
+        this.attacker.getNavigator()
+            .clearPathEntity();
     }
 
     /**
@@ -114,9 +108,11 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
             return;
         }
 
-        this.attacker.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
+        this.attacker.getLookHelper()
+            .setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
 
-        double d0 = this.attacker.getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ);
+        double d0 = this.attacker
+            .getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ);
         double d1 = (this.attacker.width * 2.0F * this.attacker.width * 2.0F + entitylivingbase.width);
 
         if (d0 <= d1 && this.attackTick <= 20) {
@@ -130,19 +126,26 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
             return;
         }
 
-        if (this.longMemory || this.attacker.getEntitySenses().canSee(entitylivingbase)) {
+        if (this.longMemory || this.attacker.getEntitySenses()
+            .canSee(entitylivingbase)) {
             --this.field_75445_i;
 
             if (this.field_75445_i <= 0) {
                 this.field_151497_i = entitylivingbase.posX;
                 this.field_151495_j = entitylivingbase.boundingBox.minY;
                 this.field_151496_k = entitylivingbase.posZ;
-                this.field_75445_i = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
+                this.field_75445_i = failedPathFindingPenalty + 4
+                    + this.attacker.getRNG()
+                        .nextInt(7);
 
-                if (this.attacker.getNavigator().getPath() != null) {
-                    PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
+                if (this.attacker.getNavigator()
+                    .getPath() != null) {
+                    PathPoint finalPathPoint = this.attacker.getNavigator()
+                        .getPath()
+                        .getFinalPathPoint();
 
-                    if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
+                    if (finalPathPoint != null && entitylivingbase
+                        .getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
                         failedPathFindingPenalty = 0;
                     } else {
                         failedPathFindingPenalty += 10;
@@ -157,7 +160,8 @@ public class EntityAIAttackOnCollide2 extends EntityAIBase
                     this.field_75445_i += 5;
                 }
 
-                if (!this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget)) {
+                if (!this.attacker.getNavigator()
+                    .tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget)) {
                     this.field_75445_i += 15;
                 }
             }

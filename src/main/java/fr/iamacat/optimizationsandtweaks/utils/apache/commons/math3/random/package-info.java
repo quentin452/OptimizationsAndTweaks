@@ -115,7 +115,8 @@
  * <td>1</td>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.JDKRandomGenerator JDKRandomGenerator}</td>
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.JDKRandomGenerator
+ * JDKRandomGenerator}</td>
  * <td>between 0.96 and 1.16</td>
  * </tr>
  * <tr>
@@ -148,7 +149,8 @@
  * <p>
  * So for most simulation problems, the better generators like {@link
  * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.Well19937c Well19937c} and {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.Well44497b Well44497b} are probably very good choices.
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.Well44497b Well44497b} are probably very good
+ * choices.
  * </p>
  *
  * <p>

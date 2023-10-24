@@ -63,7 +63,8 @@ public class TestUtils {
     // CHECKSTYLE: stop JavadocMethodCheck
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#homoscedasticT(double[], double[])
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#homoscedasticT(double[],
+     *      double[])
      */
     public static double homoscedasticT(final double[] sample1, final double[] sample2)
         throws NullArgumentException, NumberIsTooSmallException {
@@ -108,7 +109,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedT(double[], double[])
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedT(double[],
+     *      double[])
      */
     public static double pairedT(final double[] sample1, final double[] sample2)
         throws NullArgumentException, NoDataException, DimensionMismatchException, NumberIsTooSmallException {
@@ -116,7 +118,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedTTest(double[], double[],
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedTTest(double[],
+     *      double[],
      *      double)
      */
     public static boolean pairedTTest(final double[] sample1, final double[] sample2, final double alpha)
@@ -126,7 +129,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedTTest(double[], double[])
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#pairedTTest(double[],
+     *      double[])
      */
     public static double pairedTTest(final double[] sample1, final double[] sample2) throws NullArgumentException,
         NoDataException, DimensionMismatchException, NumberIsTooSmallException, MaxCountExceededException {
@@ -168,7 +172,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#tTest(double, double[], double)
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#tTest(double, double[],
+     *      double)
      */
     public static boolean tTest(final double mu, final double[] sample, final double alpha)
         throws NullArgumentException, NumberIsTooSmallException, OutOfRangeException, MaxCountExceededException {
@@ -202,7 +207,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#tTest(double[], double[], double)
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.TTest#tTest(double[], double[],
+     *      double)
      */
     public static boolean tTest(final double[] sample1, final double[] sample2, final double alpha)
         throws NullArgumentException, NumberIsTooSmallException, OutOfRangeException, MaxCountExceededException {
@@ -373,7 +379,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#gTestIntrinsic(double[], long[] )
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#gTestIntrinsic(double[],
+     *      long[] )
      * @since 3.1
      */
     public static double gTestIntrinsic(final double[] expected, final long[] observed) throws NotPositiveException,
@@ -382,7 +389,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#gTest( double[],long[],double)
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#gTest(
+     *      double[],long[],double)
      * @since 3.1
      */
     public static boolean gTest(final double[] expected, final long[] observed, final double alpha)
@@ -402,7 +410,8 @@ public class TestUtils {
     }
 
     /**
-     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#rootLogLikelihoodRatio(long, long,
+     * @see fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.GTest#rootLogLikelihoodRatio(long,
+     *      long,
      *      long, long)
      * @since 3.1
      */

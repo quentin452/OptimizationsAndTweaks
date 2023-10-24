@@ -61,20 +61,23 @@ public class MicrosphereProjectionInterpolator implements MultivariateInterpolat
      *                                 value, no interpolation will be performed (the value of the sample
      *                                 will be returned).
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code dimension <= 0}
-     *                                                                                                     or
-     *                                                                                                     {@code elements <= 0}.
-     * @throws NotPositiveException                                                                        if
-     *                                                                                                     {@code exponent < 0}.
-     * @throws NotPositiveException                                                                        if
-     *                                                                                                     {@code darkThreshold < 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code dimension <= 0}
+     *                                                                                                             or
+     *                                                                                                             {@code elements <= 0}.
+     * @throws NotPositiveException                                                                                if
+     *                                                                                                             {@code exponent < 0}.
+     * @throws NotPositiveException                                                                                if
+     *                                                                                                             {@code darkThreshold < 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.OutOfRangeException          if
-     *                                                                                                     {@code maxDarkFraction}
-     *                                                                                                     does not
-     *                                                                                                     belong to the
-     *                                                                                                     interval
-     *                                                                                                     {@code [0, 1]}.
+     *                                                                                                             {@code maxDarkFraction}
+     *                                                                                                             does
+     *                                                                                                             not
+     *                                                                                                             belong
+     *                                                                                                             to
+     *                                                                                                             the
+     *                                                                                                             interval
+     *                                                                                                             {@code [0, 1]}.
      */
     public MicrosphereProjectionInterpolator(int dimension, int elements, double maxDarkFraction, double darkThreshold,
         double background, double exponent, boolean sharedSphere, double noInterpolationTolerance) {

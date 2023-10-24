@@ -129,23 +129,33 @@ public class MatrixUtils {
      * @param data input array
      * @return RealMatrix containing the values of the array
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if {@code data}
-     *                                                                                                   is not
-     *                                                                                                   rectangular
-     *                                                                                                   (not all rows
-     *                                                                                                   have the same
-     *                                                                                                   length).
-     * @throws NoDataException                                                                           if a row or
-     *                                                                                                   column is
-     *                                                                                                   empty.
-     * @throws NullArgumentException                                                                     if either
-     *                                                                                                   {@code data} or
-     *                                                                                                   {@code data[0]}
-     *                                                                                                   is
-     *                                                                                                   {@code null}.
-     * @throws DimensionMismatchException                                                                if {@code data}
-     *                                                                                                   is not
-     *                                                                                                   rectangular.
+     *                                                                                                           if
+     *                                                                                                           {@code data}
+     *                                                                                                           is not
+     *                                                                                                           rectangular
+     *                                                                                                           (not
+     *                                                                                                           all
+     *                                                                                                           rows
+     *                                                                                                           have
+     *                                                                                                           the
+     *                                                                                                           same
+     *                                                                                                           length).
+     * @throws NoDataException                                                                                   if a
+     *                                                                                                           row or
+     *                                                                                                           column
+     *                                                                                                           is
+     *                                                                                                           empty.
+     * @throws NullArgumentException                                                                             if
+     *                                                                                                           either
+     *                                                                                                           {@code data}
+     *                                                                                                           or
+     *                                                                                                           {@code data[0]}
+     *                                                                                                           is
+     *                                                                                                           {@code null}.
+     * @throws DimensionMismatchException                                                                        if
+     *                                                                                                           {@code data}
+     *                                                                                                           is not
+     *                                                                                                           rectangular.
      * @see #createRealMatrix(int, int)
      */
     public static RealMatrix createRealMatrix(double[][] data)
@@ -173,20 +183,29 @@ public class MatrixUtils {
      * @param data input array
      * @return a matrix containing the values of the array.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if {@code data}
-     *                                                                                                   is not
-     *                                                                                                   rectangular
-     *                                                                                                   (not all rows
-     *                                                                                                   have the same
-     *                                                                                                   length).
-     * @throws NoDataException                                                                           if a row or
-     *                                                                                                   column is
-     *                                                                                                   empty.
-     * @throws NullArgumentException                                                                     if either
-     *                                                                                                   {@code data} or
-     *                                                                                                   {@code data[0]}
-     *                                                                                                   is
-     *                                                                                                   {@code null}.
+     *                                                                                                           if
+     *                                                                                                           {@code data}
+     *                                                                                                           is not
+     *                                                                                                           rectangular
+     *                                                                                                           (not
+     *                                                                                                           all
+     *                                                                                                           rows
+     *                                                                                                           have
+     *                                                                                                           the
+     *                                                                                                           same
+     *                                                                                                           length).
+     * @throws NoDataException                                                                                   if a
+     *                                                                                                           row or
+     *                                                                                                           column
+     *                                                                                                           is
+     *                                                                                                           empty.
+     * @throws NullArgumentException                                                                             if
+     *                                                                                                           either
+     *                                                                                                           {@code data}
+     *                                                                                                           or
+     *                                                                                                           {@code data[0]}
+     *                                                                                                           is
+     *                                                                                                           {@code null}.
      * @see #createFieldMatrix(Field, int, int)
      * @since 2.0
      */

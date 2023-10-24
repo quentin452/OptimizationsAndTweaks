@@ -4,8 +4,6 @@ import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -13,7 +11,6 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.ReportedException;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -28,7 +25,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableSetMultimap;
@@ -741,11 +737,14 @@ public abstract class MixinWorld implements IBlockAccess {
         }
         return x;
     }
+
     @Inject(method = "getBlock", cancellable = true, at = @At(value = "HEAD"))
-    public void getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> ci)
-    {
-        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256)
-        {
+    public void getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> ci) {
+        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000
+            && p_147439_1_ < 30000000
+            && p_147439_3_ < 30000000
+            && p_147439_2_ >= 0
+            && p_147439_2_ < 256) {
             Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
             Block block = chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
 
@@ -754,9 +753,7 @@ public abstract class MixinWorld implements IBlockAccess {
             } else {
                 ci.setReturnValue(block);
             }
-        }
-        else
-        {
+        } else {
             ci.setReturnValue(Blocks.air);
         }
     }

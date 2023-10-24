@@ -48,19 +48,25 @@ public interface BaseMultivariateVectorOptimizer<FUNC extends MultivariateVector
      *         function.
      * @param maxEval Maximum number of function evaluations.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the start
-     *                                                                                                    point
-     *                                                                                                    dimension is
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            start
+     *                                                                                                            point
+     *                                                                                                            dimension
+     *                                                                                                            is
+     *                                                                                                            wrong.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if
-     *                                                                                                    any argument
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
+     *                                                                                                            any
+     *                                                                                                            argument
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      * @deprecated As of 3.1. In 4.0, this will be replaced by the declaration
      *             corresponding to this
      *             {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optimization.direct.BaseAbstractMultivariateVectorOptimizer#optimize(int,MultivariateVectorFunction,OptimizationData[])

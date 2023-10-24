@@ -198,10 +198,11 @@ public abstract class AbstractSimplex implements OptimizationData {
      * @param comparator         Comparator to use to sort simplex vertices from best
      *                           to worst.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the
-     *                                                                                                    algorithm
-     *                                                                                                    fails to
-     *                                                                                                    converge.
+     *                                                                                                            if the
+     *                                                                                                            algorithm
+     *                                                                                                            fails
+     *                                                                                                            to
+     *                                                                                                            converge.
      */
     public abstract void iterate(final MultivariateFunction evaluationFunction,
         final Comparator<PointValuePair> comparator);
@@ -239,10 +240,13 @@ public abstract class AbstractSimplex implements OptimizationData {
      * @param evaluationFunction Evaluation function.
      * @param comparator         Comparator to use to sort simplex vertices from best to worst.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      */
     public void evaluate(final MultivariateFunction evaluationFunction, final Comparator<PointValuePair> comparator) {
         // Evaluate the objective function at all non-evaluated simplex points.

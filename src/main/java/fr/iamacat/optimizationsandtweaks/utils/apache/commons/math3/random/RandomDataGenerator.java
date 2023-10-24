@@ -416,7 +416,8 @@ public class RandomDataGenerator implements RandomData, Serializable {
     /**
      * <p>
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.GammaDistribution Gamma Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.GammaDistribution Gamma
+     * Distribution}.
      * </p>
      *
      * <p>

@@ -59,13 +59,15 @@ public class NewtonSolver extends AbstractDifferentiableUnivariateSolver {
      * @param maxEval Maximum number of evaluations.
      * @return the value where the function is zero.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    evaluation
-     *                                                                                                    count is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            evaluation
+     *                                                                                                            count
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                    if
-     *                                                                                                    {@code min >= max}.
+     *                                                                                                            if
+     *                                                                                                            {@code min >= max}.
      */
     @Override
     public double solve(int maxEval, final DifferentiableUnivariateFunction f, final double min, final double max)

@@ -307,11 +307,13 @@ public class PowellOptimizer extends BaseAbstractMultivariateOptimizer<Multivari
          * @param d Search direction.
          * @return the optimum.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-         *                                                                                                    if the
-         *                                                                                                    number of
-         *                                                                                                    evaluations
-         *                                                                                                    is
-         *                                                                                                    exceeded.
+         *                                                                                                            if
+         *                                                                                                            the
+         *                                                                                                            number
+         *                                                                                                            of
+         *                                                                                                            evaluations
+         *                                                                                                            is
+         *                                                                                                            exceeded.
          */
         public UnivariatePointValuePair search(final double[] p, final double[] d) {
             final int n = p.length;

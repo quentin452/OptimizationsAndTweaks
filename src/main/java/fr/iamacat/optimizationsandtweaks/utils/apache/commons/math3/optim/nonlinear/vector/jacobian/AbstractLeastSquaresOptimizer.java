@@ -137,10 +137,13 @@ public abstract class AbstractLeastSquaresOptimizer extends JacobianMultivariate
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed (singular
-     *                                                                                             problem).
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed
+     *                                                                                                     (singular
+     *                                                                                                     problem).
      */
     public double[][] computeCovariances(double[] params, double threshold) {
         // Set up the Jacobian.
@@ -168,9 +171,11 @@ public abstract class AbstractLeastSquaresOptimizer extends JacobianMultivariate
      *                                       {@link #computeCovariances(double[],double) computeCovariances}).
      * @return an estimate of the standard deviation of the optimized parameters
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed.
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed.
      */
     public double[] computeSigma(double[] params, double covarianceSingularityThreshold) {
         final int nC = params.length;

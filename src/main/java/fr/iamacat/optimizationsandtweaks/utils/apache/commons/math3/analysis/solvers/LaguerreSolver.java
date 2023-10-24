@@ -179,21 +179,28 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      * @param initial      Start value.
      * @return the full set of complex roots of the polynomial
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded when
-     *                                                                                                    solving for
-     *                                                                                                    one of the
-     *                                                                                                    roots
-     * @throws NullArgumentException                                                                      if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
-     * @throws NoDataException                                                                            if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    array is
-     *                                                                                                    empty.
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded
+     *                                                                                                            when
+     *                                                                                                            solving
+     *                                                                                                            for
+     *                                                                                                            one of
+     *                                                                                                            the
+     *                                                                                                            roots
+     * @throws NullArgumentException                                                                              if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
+     * @throws NoDataException                                                                                    if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            array
+     *                                                                                                            is
+     *                                                                                                            empty.
      * @since 3.1
      */
     public Complex[] solveAllComplex(double[] coefficients, double initial)
@@ -213,20 +220,28 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      * @param maxEval      maximum number of evaluations
      * @return the full set of complex roots of the polynomial
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded when
-     *                                                                                                    solving for
-     *                                                                                                    one of the
-     *                                                                                                    roots
-     * @throws NullArgumentException                                                                      if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    is
-     *                                                                                                    {@code null}
-     * @throws NoDataException                                                                            if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    array is empty
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded
+     *                                                                                                            when
+     *                                                                                                            solving
+     *                                                                                                            for
+     *                                                                                                            one of
+     *                                                                                                            the
+     *                                                                                                            roots
+     * @throws NullArgumentException                                                                              if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            is
+     *                                                                                                            {@code null}
+     * @throws NoDataException                                                                                    if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            array
+     *                                                                                                            is
+     *                                                                                                            empty
      * @since 3.5
      */
     public Complex[] solveAllComplex(double[] coefficients, double initial, int maxEval)
@@ -251,18 +266,22 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      * @param initial      Start value.
      * @return a complex root of the polynomial
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
-     * @throws NullArgumentException                                                                      if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
-     * @throws NoDataException                                                                            if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    array is
-     *                                                                                                    empty.
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
+     * @throws NullArgumentException                                                                              if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
+     * @throws NoDataException                                                                                    if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            array
+     *                                                                                                            is
+     *                                                                                                            empty.
      * @since 3.1
      */
     public Complex solveComplex(double[] coefficients, double initial)
@@ -282,17 +301,22 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
      * @param maxEval      maximum number of evaluations
      * @return a complex root of the polynomial
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded
-     * @throws NullArgumentException                                                                      if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    is
-     *                                                                                                    {@code null}
-     * @throws NoDataException                                                                            if the
-     *                                                                                                    {@code coefficients}
-     *                                                                                                    array is empty
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded
+     * @throws NullArgumentException                                                                              if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            is
+     *                                                                                                            {@code null}
+     * @throws NoDataException                                                                                    if the
+     *                                                                                                            {@code coefficients}
+     *                                                                                                            array
+     *                                                                                                            is
+     *                                                                                                            empty
      * @since 3.1
      */
     public Complex solveComplex(double[] coefficients, double initial, int maxEval)
@@ -336,20 +360,25 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
          * @param initial      Start value.
          * @return the point at which the function value is zero.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-         *                                                                                                    if the
-         *                                                                                                    maximum
-         *                                                                                                    number of
-         *                                                                                                    evaluations
-         *                                                                                                    is
-         *                                                                                                    exceeded.
-         * @throws NullArgumentException                                                                      if the
-         *                                                                                                    {@code coefficients}
-         *                                                                                                    is
-         *                                                                                                    {@code null}.
-         * @throws NoDataException                                                                            if the
-         *                                                                                                    {@code coefficients}
-         *                                                                                                    array is
-         *                                                                                                    empty.
+         *                                                                                                            if
+         *                                                                                                            the
+         *                                                                                                            maximum
+         *                                                                                                            number
+         *                                                                                                            of
+         *                                                                                                            evaluations
+         *                                                                                                            is
+         *                                                                                                            exceeded.
+         * @throws NullArgumentException                                                                              if
+         *                                                                                                            the
+         *                                                                                                            {@code coefficients}
+         *                                                                                                            is
+         *                                                                                                            {@code null}.
+         * @throws NoDataException                                                                                    if
+         *                                                                                                            the
+         *                                                                                                            {@code coefficients}
+         *                                                                                                            array
+         *                                                                                                            is
+         *                                                                                                            empty.
          */
         public Complex[] solveAll(Complex coefficients[], Complex initial)
             throws NullArgumentException, NoDataException, TooManyEvaluationsException {
@@ -393,20 +422,25 @@ public class LaguerreSolver extends AbstractPolynomialSolver {
          * @param initial      Start value.
          * @return the point at which the function value is zero.
          * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-         *                                                                                                    if the
-         *                                                                                                    maximum
-         *                                                                                                    number of
-         *                                                                                                    evaluations
-         *                                                                                                    is
-         *                                                                                                    exceeded.
-         * @throws NullArgumentException                                                                      if the
-         *                                                                                                    {@code coefficients}
-         *                                                                                                    is
-         *                                                                                                    {@code null}.
-         * @throws NoDataException                                                                            if the
-         *                                                                                                    {@code coefficients}
-         *                                                                                                    array is
-         *                                                                                                    empty.
+         *                                                                                                            if
+         *                                                                                                            the
+         *                                                                                                            maximum
+         *                                                                                                            number
+         *                                                                                                            of
+         *                                                                                                            evaluations
+         *                                                                                                            is
+         *                                                                                                            exceeded.
+         * @throws NullArgumentException                                                                              if
+         *                                                                                                            the
+         *                                                                                                            {@code coefficients}
+         *                                                                                                            is
+         *                                                                                                            {@code null}.
+         * @throws NoDataException                                                                                    if
+         *                                                                                                            the
+         *                                                                                                            {@code coefficients}
+         *                                                                                                            array
+         *                                                                                                            is
+         *                                                                                                            empty.
          */
         public Complex solve(Complex coefficients[], Complex initial)
             throws NullArgumentException, NoDataException, TooManyEvaluationsException {

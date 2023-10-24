@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.p
 
 import net.minecraft.util.MathHelper;
 
-
 public class PathPoint2 {
 
     public final int xCoord;
@@ -50,7 +49,9 @@ public class PathPoint2 {
         if (this == obj) return true;
         if (!(obj instanceof PathPoint2)) return false;
         PathPoint2 other = (PathPoint2) obj;
-        return this.hash == other.hash && this.xCoord == other.xCoord && this.yCoord == other.yCoord && this.zCoord == other.zCoord;
+        return this.hash == other.hash && this.xCoord == other.xCoord
+            && this.yCoord == other.yCoord
+            && this.zCoord == other.zCoord;
     }
 
     public int hashCode() {

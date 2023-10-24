@@ -179,7 +179,9 @@ public class EmpiricalDistribution extends AbstractRealDistribution {
      * @since 3.0
      */
     public EmpiricalDistribution(int binCount, RandomGenerator generator) {
-        this(binCount, new fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataGenerator(generator));
+        this(
+            binCount,
+            new fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataGenerator(generator));
     }
 
     /**
@@ -195,7 +197,8 @@ public class EmpiricalDistribution extends AbstractRealDistribution {
 
     /**
      * Creates a new EmpiricalDistribution with the specified bin count using the
-     * provided {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataImpl} instance as the
+     * provided {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataImpl} instance as
+     * the
      * source of random data.
      *
      * @param binCount   number of bins
@@ -211,7 +214,8 @@ public class EmpiricalDistribution extends AbstractRealDistribution {
 
     /**
      * Creates a new EmpiricalDistribution with default bin count using the
-     * provided {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataImpl} as the source of
+     * provided {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.RandomDataImpl} as the source
+     * of
      * random data.
      *
      * @param randomData random data generator (may be null, resulting in default JDK generator)

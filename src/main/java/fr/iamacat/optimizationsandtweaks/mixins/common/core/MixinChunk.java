@@ -2,8 +2,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.*;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.IEntitySelector;
@@ -19,26 +17,25 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.world.ChunkEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(value = Chunk.class,priority = 999)
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+
+@Mixin(value = Chunk.class, priority = 999)
 public class MixinChunk {
 
     @Unique
@@ -118,8 +115,7 @@ public class MixinChunk {
     @Shadow
     private int queuedLightChecks;
 
-    public MixinChunk(Chunk chunk, World p_i1995_1_, int p_i1995_2_, int p_i1995_3_)
-    {
+    public MixinChunk(Chunk chunk, World p_i1995_1_, int p_i1995_2_, int p_i1995_3_) {
         this.chunk = chunk;
         this.storageArrays = new ExtendedBlockStorage[16];
         this.blockBiomeArray = new byte[256];
@@ -133,14 +129,14 @@ public class MixinChunk {
         this.zPosition = p_i1995_3_;
         this.heightMap = new int[256];
 
-        for (int k = 0; k < this.entityLists.length; ++k)
-        {
+        for (int k = 0; k < this.entityLists.length; ++k) {
             this.entityLists[k] = new ArrayList();
         }
 
         Arrays.fill(this.precipitationHeightMap, -999);
-        Arrays.fill(this.blockBiomeArray, (byte) - 1);
+        Arrays.fill(this.blockBiomeArray, (byte) -1);
     }
+
     /**
      * @author
      * @reason
@@ -154,6 +150,7 @@ public class MixinChunk {
             throw new IllegalArgumentException("Invalid coordinates (x, z)");
         }
     }
+
     /**
      * @author
      * @reason
@@ -179,6 +176,7 @@ public class MixinChunk {
             return 0;
         }
     }
+
     /**
      * @author
      * @reason
@@ -240,6 +238,7 @@ public class MixinChunk {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -285,7 +284,8 @@ public class MixinChunk {
 
                             if (blockStorage != null) {
                                 blockStorage.setExtSkylightValue(x, blockY & 15, z, y);
-                                this.worldObj.func_147479_m((this.xPosition << 4) + x, blockY, (this.zPosition << 4) + z);
+                                this.worldObj
+                                    .func_147479_m((this.xPosition << 4) + x, blockY, (this.zPosition << 4) + z);
                             }
                         }
 
@@ -299,12 +299,13 @@ public class MixinChunk {
     }
 
     @Shadow
-    public int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_)
-    {
+    public int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_) {
         int x = (xPosition << 4) + p_150808_1_;
         int z = (zPosition << 4) + p_150808_3_;
-        return this.getBlock(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(worldObj, x, p_150808_2_, z);
+        return this.getBlock(p_150808_1_, p_150808_2_, p_150808_3_)
+            .getLightOpacity(worldObj, x, p_150808_2_, z);
     }
+
     /**
      * @author
      * @reason
@@ -319,23 +320,27 @@ public class MixinChunk {
                 } catch (Throwable throwable) {
                     CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Getting block");
                     CrashReportCategory blockCategory = crashReport.makeCategory("Block being got");
-                    blockCategory.addCrashSection("Location", CrashReportCategory.getLocationInfo(p_150810_1_, p_150810_2_, p_150810_3_));
+                    blockCategory.addCrashSection(
+                        "Location",
+                        CrashReportCategory.getLocationInfo(p_150810_1_, p_150810_2_, p_150810_3_));
                     throw new ReportedException(crashReport);
                 }
             }
         }
         return Blocks.air;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    private void propagateSkylightOcclusion(int p_76595_1_, int p_76595_2_){
+    private void propagateSkylightOcclusion(int p_76595_1_, int p_76595_2_) {
         int index = p_76595_1_ + p_76595_2_ * 16;
         updateSkylightColumns[index] = true;
         isGapLightingUpdated = true;
     }
+
     /**
      * @author
      * @reason
@@ -404,6 +409,7 @@ public class MixinChunk {
             this.isModified = true;
         }
     }
+
     /**
      * @author
      * @reason
@@ -443,8 +449,10 @@ public class MixinChunk {
     @Unique
     private void multithreadingandtweaks$updateHeightMap(int x, int z, int newHeight, int currentHeight) {
         this.heightMap[z << 4 | x] = newHeight;
-        this.worldObj.markBlocksDirtyVertical(x + this.xPosition * 16, z + this.zPosition * 16, newHeight, currentHeight);
+        this.worldObj
+            .markBlocksDirtyVertical(x + this.xPosition * 16, z + this.zPosition * 16, newHeight, currentHeight);
     }
+
     /**
      * @author
      * @reason
@@ -464,6 +472,7 @@ public class MixinChunk {
     private boolean multithreadingandtweaks$isChunkWithinBounds(int y) {
         return (y >> 4) < this.storageArrays.length;
     }
+
     /**
      * @author
      * @reason
@@ -512,12 +521,28 @@ public class MixinChunk {
             currentBlock.breakBlock(this.worldObj, worldX, y, worldZ, currentBlock, currentBlockMeta);
 
             TileEntity tileEntity = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-            if (tileEntity != null && tileEntity.shouldRefresh(currentBlock, this.getBlock(x & 0x0F, y, z & 0x0F), currentBlockMeta, this.getBlockMetadata(x & 0x0F, y, z & 0x0F), this.worldObj, worldX, y, worldZ)) {
+            if (tileEntity != null && tileEntity.shouldRefresh(
+                currentBlock,
+                this.getBlock(x & 0x0F, y, z & 0x0F),
+                currentBlockMeta,
+                this.getBlockMetadata(x & 0x0F, y, z & 0x0F),
+                this.worldObj,
+                worldX,
+                y,
+                worldZ)) {
                 this.removeTileEntity(x & 0x0F, y, z & 0x0F);
             }
         } else if (currentBlock.hasTileEntity(currentBlockMeta)) {
             TileEntity tileEntity = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-            if (tileEntity != null && tileEntity.shouldRefresh(currentBlock, newBlock, currentBlockMeta, newBlockMeta, this.worldObj, worldX, y, worldZ)) {
+            if (tileEntity != null && tileEntity.shouldRefresh(
+                currentBlock,
+                newBlock,
+                currentBlockMeta,
+                newBlockMeta,
+                this.worldObj,
+                worldX,
+                y,
+                worldZ)) {
                 this.worldObj.removeTileEntity(worldX, y, worldZ);
             }
         }
@@ -541,7 +566,9 @@ public class MixinChunk {
                 this.relightBlock(x, y, z);
             }
 
-            if (lightOpacityCurrentBlock != lightOpacity && (lightOpacityCurrentBlock < lightOpacity || this.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > 0 || this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) > 0)) {
+            if (lightOpacityCurrentBlock != lightOpacity
+                && (lightOpacityCurrentBlock < lightOpacity || this.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > 0
+                    || this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) > 0)) {
                 this.propagateSkylightOcclusion(x, z);
             }
         }
@@ -562,6 +589,7 @@ public class MixinChunk {
         this.isModified = true;
         return true;
     }
+
     /**
      * @author
      * @reason
@@ -610,14 +638,15 @@ public class MixinChunk {
         ExtendedBlockStorage extendedBlockStorage = this.multithreadingandtweaks$getExtendedBlockStorage(p_76614_3);
 
         if (extendedBlockStorage == null) {
-            return (p_76614_1 == EnumSkyBlock.Sky && !this.worldObj.provider.hasNoSky) ? 0 : p_76614_1.defaultLightValue;
+            return (p_76614_1 == EnumSkyBlock.Sky && !this.worldObj.provider.hasNoSky) ? 0
+                : p_76614_1.defaultLightValue;
         }
 
         return (p_76614_1 == EnumSkyBlock.Sky && !this.worldObj.provider.hasNoSky)
             ? extendedBlockStorage.getExtSkylightValue(p_76614_2, p_76614_3 & 15, p_76614_4)
             : (p_76614_1 == EnumSkyBlock.Block)
-            ? extendedBlockStorage.getExtBlocklightValue(p_76614_2, p_76614_3 & 15, p_76614_4)
-            : p_76614_1.defaultLightValue;
+                ? extendedBlockStorage.getExtBlocklightValue(p_76614_2, p_76614_3 & 15, p_76614_4)
+                : p_76614_1.defaultLightValue;
     }
 
     /**
@@ -630,7 +659,8 @@ public class MixinChunk {
      */
     @Overwrite
     public void setLightValue(EnumSkyBlock p_76633_1, int p_76633_2, int p_76633_3, int p_76633_4, int p_76633_5) {
-        ExtendedBlockStorage extendedBlockStorage = this.multithreadingandtweaks$getOrCreateExtendedBlockStorage(p_76633_3);
+        ExtendedBlockStorage extendedBlockStorage = this
+            .multithreadingandtweaks$getOrCreateExtendedBlockStorage(p_76633_3);
 
         if (p_76633_1 == EnumSkyBlock.Sky && !this.worldObj.provider.hasNoSky) {
             extendedBlockStorage.setExtSkylightValue(p_76633_2, p_76633_3 & 15, p_76633_4, p_76633_5);
@@ -651,12 +681,12 @@ public class MixinChunk {
         ExtendedBlockStorage extendedBlockStorage = this.multithreadingandtweaks$getExtendedBlockStorage(p_76629_2);
 
         if (extendedBlockStorage == null) {
-            return (this.worldObj.provider.hasNoSky || p_76629_4 >= EnumSkyBlock.Sky.defaultLightValue)
-                ? 0
+            return (this.worldObj.provider.hasNoSky || p_76629_4 >= EnumSkyBlock.Sky.defaultLightValue) ? 0
                 : EnumSkyBlock.Sky.defaultLightValue - p_76629_4;
         }
 
-        int skyLightValue = (this.worldObj.provider.hasNoSky) ? 0 : extendedBlockStorage.getExtSkylightValue(p_76629_1, p_76629_2 & 15, p_76629_3);
+        int skyLightValue = (this.worldObj.provider.hasNoSky) ? 0
+            : extendedBlockStorage.getExtSkylightValue(p_76629_1, p_76629_2 & 15, p_76629_3);
 
         if (skyLightValue > 0) {
             isLit = true;
@@ -681,11 +711,14 @@ public class MixinChunk {
     private ExtendedBlockStorage multithreadingandtweaks$getOrCreateExtendedBlockStorage(int blockY) {
         ExtendedBlockStorage extendedBlockStorage = this.storageArrays[blockY >> 4];
         if (extendedBlockStorage == null) {
-            extendedBlockStorage = this.storageArrays[blockY >> 4] = new ExtendedBlockStorage(blockY >> 4 << 4, !this.worldObj.provider.hasNoSky);
+            extendedBlockStorage = this.storageArrays[blockY >> 4] = new ExtendedBlockStorage(
+                blockY >> 4 << 4,
+                !this.worldObj.provider.hasNoSky);
             this.generateSkylightMap();
         }
         return extendedBlockStorage;
     }
+
     /**
      * @author
      * @reason
@@ -697,20 +730,37 @@ public class MixinChunk {
         int z = MathHelper.floor_double(entity.posZ / 16.0D);
 
         if (x != this.xPosition || z != this.zPosition) {
-            logger.warn("Wrong location! " + entity + " (at " + x + ", " + z + " instead of " + this.xPosition + ", " + this.zPosition + ")");
+            logger.warn(
+                "Wrong location! " + entity
+                    + " (at "
+                    + x
+                    + ", "
+                    + z
+                    + " instead of "
+                    + this.xPosition
+                    + ", "
+                    + this.zPosition
+                    + ")");
             Thread.dumpStack();
         }
 
         int y = MathHelper.floor_double(entity.posY / 16.0D);
         y = MathHelper.clamp_int(y, 0, this.entityLists.length - 1);
 
-        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(entity, this.xPosition, this.zPosition, entity.chunkCoordX, entity.chunkCoordZ));
+        MinecraftForge.EVENT_BUS.post(
+            new EntityEvent.EnteringChunk(
+                entity,
+                this.xPosition,
+                this.zPosition,
+                entity.chunkCoordX,
+                entity.chunkCoordZ));
         entity.addedToChunk = true;
         entity.chunkCoordX = this.xPosition;
         entity.chunkCoordY = y;
         entity.chunkCoordZ = this.zPosition;
         this.entityLists[y].add(entity);
     }
+
     /**
      * @author
      * @reason
@@ -719,6 +769,7 @@ public class MixinChunk {
     public void removeEntity(Entity entity) {
         this.removeEntityAtIndex(entity, entity.chunkCoordY);
     }
+
     /**
      * @author
      * @reason
@@ -728,6 +779,7 @@ public class MixinChunk {
         y = MathHelper.clamp_int(y, 0, this.entityLists.length - 1);
         this.entityLists[y].remove(entity);
     }
+
     /**
      * @author
      * @reason
@@ -736,6 +788,7 @@ public class MixinChunk {
     public boolean canBlockSeeTheSky(int x, int y, int z) {
         return y >= this.heightMap[z << 4 | x];
     }
+
     /**
      * @author
      * @reason
@@ -769,6 +822,7 @@ public class MixinChunk {
 
         return tileentity;
     }
+
     /**
      * @author
      * @reason
@@ -784,6 +838,7 @@ public class MixinChunk {
             this.worldObj.addTileEntity(tileEntity);
         }
     }
+
     /**
      * @author
      * @reason
@@ -797,7 +852,8 @@ public class MixinChunk {
         tileEntity.zCoord = this.zPosition * 16 + z;
         int metadata = getBlockMetadata(x, y, z);
 
-        if (this.getBlock(x, y, z).hasTileEntity(metadata)) {
+        if (this.getBlock(x, y, z)
+            .hasTileEntity(metadata)) {
             if (this.chunkTileEntityMap.containsKey(chunkposition)) {
                 ((TileEntity) this.chunkTileEntityMap.get(chunkposition)).invalidate();
             }
@@ -806,6 +862,7 @@ public class MixinChunk {
             this.chunkTileEntityMap.put(chunkposition, tileEntity);
         }
     }
+
     /**
      * @author
      * @reason
@@ -832,12 +889,14 @@ public class MixinChunk {
     public void setChunkModified() {
         this.isModified = true;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void getEntitiesOfTypeWithinAAAB(Class<?> entityType, AxisAlignedBB boundingBox, List<Entity> resultEntities, IEntitySelector entitySelector) {
+    public void getEntitiesOfTypeWithinAAAB(Class<?> entityType, AxisAlignedBB boundingBox, List<Entity> resultEntities,
+        IEntitySelector entitySelector) {
         int minYChunk = MathHelper.floor_double((boundingBox.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
         int maxYChunk = MathHelper.floor_double((boundingBox.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
         minYChunk = MathHelper.clamp_int(minYChunk, 0, this.entityLists.length - 1);
@@ -847,12 +906,14 @@ public class MixinChunk {
             List<Entity> entityList = this.entityLists[chunkY];
 
             for (Entity entity : entityList) {
-                if (entityType.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(boundingBox) && (entitySelector == null || entitySelector.isEntityApplicable(entity))) {
+                if (entityType.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(boundingBox)
+                    && (entitySelector == null || entitySelector.isEntityApplicable(entity))) {
                     resultEntities.add(entity);
                 }
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -869,15 +930,20 @@ public class MixinChunk {
         }
         return this.isModified;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
     public Random getRandomWithSeed(long p_76617_1_) {
-        long seed = this.worldObj.getSeed() + (long)(this.xPosition * this.xPosition * 4987142) + (long)(this.xPosition * 5947611) + (long)(this.zPosition * this.zPosition) * 4392871L + (long)(this.zPosition * 389711) ^ p_76617_1_;
+        long seed = this.worldObj.getSeed() + (long) (this.xPosition * this.xPosition * 4987142)
+            + (long) (this.xPosition * 5947611)
+            + (long) (this.zPosition * this.zPosition) * 4392871L
+            + (long) (this.zPosition * 389711) ^ p_76617_1_;
         return new Random(seed);
     }
+
     /**
      * @author
      * @reason
@@ -886,6 +952,7 @@ public class MixinChunk {
     public boolean isEmpty() {
         return false;
     }
+
     /**
      * @author
      * @reason
@@ -893,32 +960,40 @@ public class MixinChunk {
     @Overwrite
     public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_) {
         if (!this.isTerrainPopulated) {
-            if (p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_)) {
+            if (p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1)
+                && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1)
+                && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_)) {
                 p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
             }
 
             if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_)) {
                 Chunk chunk = p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_);
-                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1)) {
+                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1)
+                    && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1)
+                    && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1)) {
                     p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_);
                 }
             }
 
             if (p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1)) {
                 Chunk chunk = p_76624_1_.provideChunk(p_76624_3_, p_76624_4_ - 1);
-                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_)) {
+                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1)
+                    && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1)
+                    && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_)) {
                     p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_ - 1);
                 }
             }
 
             if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ - 1)) {
                 Chunk chunk = p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_ - 1);
-                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_)) {
+                if (!chunk.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1)
+                    && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_)) {
                     p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
                 }
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -933,7 +1008,7 @@ public class MixinChunk {
             height = -1;
 
             while (topFilledSegment > 0 && height == -1) {
-                Block block = this.getBlock(p_76626_1_, topFilledSegment,p_76626_2_);
+                Block block = this.getBlock(p_76626_1_, topFilledSegment, p_76626_2_);
                 Material material = block.getMaterial();
 
                 if (!material.blocksMovement() && !material.isLiquid()) {
@@ -948,6 +1023,7 @@ public class MixinChunk {
 
         return height;
     }
+
     /**
      * @author
      * @reason
@@ -964,6 +1040,7 @@ public class MixinChunk {
             this.func_150809_p();
         }
     }
+
     /**
      * @author
      * @reason
@@ -972,6 +1049,7 @@ public class MixinChunk {
     public boolean func_150802_k() {
         return this.field_150815_m && this.isTerrainPopulated && this.isLightPopulated;
     }
+
     /**
      * @author
      * @reason
@@ -980,6 +1058,7 @@ public class MixinChunk {
     public ChunkCoordIntPair getChunkCoordIntPair() {
         return new ChunkCoordIntPair(this.xPosition, this.zPosition);
     }
+
     /**
      * @author
      * @reason
@@ -999,6 +1078,7 @@ public class MixinChunk {
 
         return true;
     }
+
     /**
      * @author
      * @reason
@@ -1007,6 +1087,7 @@ public class MixinChunk {
     public void setStorageArrays(ExtendedBlockStorage[] p_76602_1_) {
         this.storageArrays = p_76602_1_;
     }
+
     /**
      * @author
      * @reason
@@ -1014,7 +1095,8 @@ public class MixinChunk {
     @Overwrite
     @SideOnly(Side.CLIENT)
     public void fillChunk(byte[] data, int blockMask, int metadataMask, boolean p_76607_4_) {
-        Iterator<TileEntity> iterator = chunkTileEntityMap.values().iterator();
+        Iterator<TileEntity> iterator = chunkTileEntityMap.values()
+            .iterator();
 
         while (iterator.hasNext()) {
             TileEntity tileEntity = iterator.next();
@@ -1079,9 +1161,10 @@ public class MixinChunk {
                     System.arraycopy(data, k, nibblearray.data, 0, nibblearray.data.length);
                     k += nibblearray.data.length;
                 }
-            } else if (p_76607_4_ && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null) {
-                this.storageArrays[l].clearMSBArray();
-            }
+            } else
+                if (p_76607_4_ && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null) {
+                    this.storageArrays[l].clearMSBArray();
+                }
         }
         return k;
     }
@@ -1098,7 +1181,8 @@ public class MixinChunk {
     @Unique
     private void removeInvalidTileEntities(boolean p_76607_4_) {
         List<TileEntity> invalidList = new ArrayList<TileEntity>();
-        Iterator<TileEntity> iterator = this.chunkTileEntityMap.values().iterator();
+        Iterator<TileEntity> iterator = this.chunkTileEntityMap.values()
+            .iterator();
 
         while (iterator.hasNext()) {
             TileEntity tileentity = iterator.next();
@@ -1107,7 +1191,16 @@ public class MixinChunk {
             int z = tileentity.zCoord & 15;
             Block block = tileentity.getBlockType();
 
-            if ((block != getBlock(x, y, z) || tileentity.blockMetadata != this.getBlockMetadata(x, y, z)) && tileentity.shouldRefresh(block, getBlock(x, y, z), tileentity.blockMetadata, this.getBlockMetadata(x, y, z), worldObj, x, y, z)) {
+            if ((block != getBlock(x, y, z) || tileentity.blockMetadata != this.getBlockMetadata(x, y, z))
+                && tileentity.shouldRefresh(
+                    block,
+                    getBlock(x, y, z),
+                    tileentity.blockMetadata,
+                    this.getBlockMetadata(x, y, z),
+                    worldObj,
+                    x,
+                    y,
+                    z)) {
                 invalidList.add(tileentity);
             }
             tileentity.updateContainingBlockInfo();
@@ -1117,6 +1210,7 @@ public class MixinChunk {
             te.invalidate();
         }
     }
+
     /**
      * @author
      * @reason
@@ -1125,6 +1219,7 @@ public class MixinChunk {
     public byte[] getBiomeArray() {
         return this.blockBiomeArray;
     }
+
     /**
      * @author
      * @reason
@@ -1133,6 +1228,7 @@ public class MixinChunk {
     public void setBiomeArray(byte[] biomeArray) {
         this.blockBiomeArray = biomeArray;
     }
+
     /**
      * @author
      * @reason
@@ -1141,6 +1237,7 @@ public class MixinChunk {
     public void resetRelightChecks() {
         this.queuedLightChecks = 0;
     }
+
     /**
      * @author
      * @reason
@@ -1162,7 +1259,9 @@ public class MixinChunk {
             for (int y = 0; y < 16; ++y) {
                 int blockX = (j << 4) + y;
 
-                if ((this.storageArrays[j] == null && (y == 0 || y == 15 || k == 0 || k == 15 || l == 0 || l == 15)) || (this.storageArrays[j] != null && this.storageArrays[j].getBlockByExtId(k, y, l).getMaterial() == Material.air)) {
+                if ((this.storageArrays[j] == null && (y == 0 || y == 15 || k == 0 || k == 15 || l == 0 || l == 15))
+                    || (this.storageArrays[j] != null && this.storageArrays[j].getBlockByExtId(k, y, l)
+                        .getMaterial() == Material.air)) {
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
                             for (int dz = -1; dz <= 1; dz++) {
@@ -1170,7 +1269,8 @@ public class MixinChunk {
                                 int neighborY = blockX + dy;
                                 int neighborZ = z + dz;
 
-                                if (this.worldObj.getBlock(neighborX, neighborY, neighborZ).getLightValue() > 0) {
+                                if (this.worldObj.getBlock(neighborX, neighborY, neighborZ)
+                                    .getLightValue() > 0) {
                                     this.worldObj.func_147451_t(neighborX, neighborY, neighborZ);
                                 }
                             }
@@ -1182,6 +1282,7 @@ public class MixinChunk {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -1191,7 +1292,13 @@ public class MixinChunk {
         this.isTerrainPopulated = true;
         this.isLightPopulated = true;
 
-        if (!this.worldObj.provider.hasNoSky && this.worldObj.checkChunksExist(this.xPosition * 16 - 1, 0, this.zPosition * 16 - 1, this.xPosition * 16 + 17, 63, this.zPosition * 16 + 17)) {
+        if (!this.worldObj.provider.hasNoSky && this.worldObj.checkChunksExist(
+            this.xPosition * 16 - 1,
+            0,
+            this.zPosition * 16 - 1,
+            this.xPosition * 16 + 17,
+            63,
+            this.zPosition * 16 + 17)) {
             for (int i = 0; i < 16; ++i) {
                 for (int j = 0; j < 16; ++j) {
                     if (!this.func_150811_f(i, j)) {
@@ -1225,6 +1332,7 @@ public class MixinChunk {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -1244,19 +1352,22 @@ public class MixinChunk {
 
             if (!hasBlocks && blockLight > 0) {
                 hasBlocks = true;
-            } else if (hasBlocks && blockLight == 0 && !this.worldObj.func_147451_t(this.xPosition * 16 + x, y, this.zPosition * 16 + z)) {
-                return false;
-            }
+            } else if (hasBlocks && blockLight == 0
+                && !this.worldObj.func_147451_t(this.xPosition * 16 + x, y, this.zPosition * 16 + z)) {
+                    return false;
+                }
         }
 
         for (; topSegment > 0; --topSegment) {
-            if (this.getBlock(x, topSegment, z).getLightValue() > 0) {
+            if (this.getBlock(x, topSegment, z)
+                .getLightValue() > 0) {
                 this.worldObj.func_147451_t(this.xPosition * 16 + x, topSegment, this.zPosition * 16 + z);
             }
         }
 
         return true;
     }
+
     /**
      * @author
      * @reason

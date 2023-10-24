@@ -29,7 +29,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMat
 
 /**
  * Fits points to a {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.function.Gaussian.Parametric Gaussian} function.
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.function.Gaussian.Parametric Gaussian}
+ * function.
  * <p>
  * Usage example:
  *

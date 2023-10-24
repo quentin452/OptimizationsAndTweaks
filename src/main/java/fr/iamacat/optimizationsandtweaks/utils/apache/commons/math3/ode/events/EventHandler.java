@@ -207,7 +207,8 @@ public interface EventHandler {
      * code called by step handlers may experience apparently out of order values
      * of the independent time variable. As an example, if the same user object
      * implements both this {@link EventHandler EventHandler} interface and the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FixedStepHandler FixedStepHandler}
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.sampling.FixedStepHandler
+     * FixedStepHandler}
      * interface, a <em>forward</em> integration may call its
      * <code>eventOccurred</code> method with t = 10 first and call its
      * <code>handleStep</code> method with t = 9 afterwards. Such out of order

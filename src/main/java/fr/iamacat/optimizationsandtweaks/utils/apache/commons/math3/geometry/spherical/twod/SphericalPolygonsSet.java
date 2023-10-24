@@ -520,7 +520,8 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
      * In the special cases of empty or whole sphere polygons, special
      * spherical caps are returned, with angular radius set to negative
      * or positive infinity so the {@link
-     * EnclosingBall#contains(fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.Point) ball.contains(point)}
+     * EnclosingBall#contains(fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.geometry.Point)
+     * ball.contains(point)}
      * method return always false or true.
      * </p>
      * <p>

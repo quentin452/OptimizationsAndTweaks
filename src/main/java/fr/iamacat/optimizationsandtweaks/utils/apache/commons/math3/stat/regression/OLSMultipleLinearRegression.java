@@ -201,11 +201,14 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
      *
      * @return residual sum of squares
      * @since 2.2
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design matrix
-     *                                                                                             is singular
-     * @throws NullPointerException                                                                if the data for the
-     *                                                                                             model have not been
-     *                                                                                             loaded
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design
+     *                                                                                                     matrix
+     *                                                                                                     is singular
+     * @throws NullPointerException                                                                        if the data
+     *                                                                                                     for the
+     *                                                                                                     model have
+     *                                                                                                     not been
+     *                                                                                                     loaded
      */
     public double calculateResidualSumOfSquares() {
         final RealVector residuals = calculateResiduals();
@@ -228,10 +231,12 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
      * </p>
      *
      * @return R-square statistic
-     * @throws NullPointerException                                                                if the sample has not
-     *                                                                                             been set
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design matrix
-     *                                                                                             is singular
+     * @throws NullPointerException                                                                        if the sample
+     *                                                                                                     has not
+     *                                                                                                     been set
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design
+     *                                                                                                     matrix
+     *                                                                                                     is singular
      * @since 2.2
      */
     public double calculateRSquared() {
@@ -264,10 +269,12 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
      * </p>
      *
      * @return adjusted R-Squared statistic
-     * @throws NullPointerException                                                                if the sample has not
-     *                                                                                             been set
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design matrix
-     *                                                                                             is singular
+     * @throws NullPointerException                                                                        if the sample
+     *                                                                                                     has not
+     *                                                                                                     been set
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design
+     *                                                                                                     matrix
+     *                                                                                                     is singular
      * @see #isNoIntercept()
      * @since 2.2
      */
@@ -304,11 +311,14 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
      * </p>
      *
      * @return beta
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design matrix
-     *                                                                                             is singular
-     * @throws NullPointerException                                                                if the data for the
-     *                                                                                             model have not been
-     *                                                                                             loaded
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design
+     *                                                                                                     matrix
+     *                                                                                                     is singular
+     * @throws NullPointerException                                                                        if the data
+     *                                                                                                     for the
+     *                                                                                                     model have
+     *                                                                                                     not been
+     *                                                                                                     loaded
      */
     @Override
     protected RealVector calculateBeta() {
@@ -336,11 +346,14 @@ public class OLSMultipleLinearRegression extends AbstractMultipleLinearRegressio
      * </p>
      *
      * @return The beta variance-covariance matrix
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design matrix
-     *                                                                                             is singular
-     * @throws NullPointerException                                                                if the data for the
-     *                                                                                             model have not been
-     *                                                                                             loaded
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException if the design
+     *                                                                                                     matrix
+     *                                                                                                     is singular
+     * @throws NullPointerException                                                                        if the data
+     *                                                                                                     for the
+     *                                                                                                     model have
+     *                                                                                                     not been
+     *                                                                                                     loaded
      */
     @Override
     protected RealMatrix calculateBetaVariance() {

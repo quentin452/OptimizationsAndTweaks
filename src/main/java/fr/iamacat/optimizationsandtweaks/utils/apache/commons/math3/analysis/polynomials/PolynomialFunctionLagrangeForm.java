@@ -89,23 +89,32 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      *
      * @param z Point at which the function value is to be computed.
      * @return the function value.
-     * @throws DimensionMismatchException                                                                   if {@code x}
-     *                                                                                                      and
-     *                                                                                                      {@code y}
-     *                                                                                                      have
-     *                                                                                                      different
-     *                                                                                                      lengths.
+     * @throws DimensionMismatchException                                                                           if
+     *                                                                                                              {@code x}
+     *                                                                                                              and
+     *                                                                                                              {@code y}
+     *                                                                                                              have
+     *                                                                                                              different
+     *                                                                                                              lengths.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     *                                                                                                      if {@code x}
-     *                                                                                                      is not
-     *                                                                                                      sorted in
-     *                                                                                                      strictly
-     *                                                                                                      increasing
-     *                                                                                                      order.
-     * @throws NumberIsTooSmallException                                                                    if the size
-     *                                                                                                      of {@code x}
-     *                                                                                                      is less
-     *                                                                                                      than 2.
+     *                                                                                                              if
+     *                                                                                                              {@code x}
+     *                                                                                                              is
+     *                                                                                                              not
+     *                                                                                                              sorted
+     *                                                                                                              in
+     *                                                                                                              strictly
+     *                                                                                                              increasing
+     *                                                                                                              order.
+     * @throws NumberIsTooSmallException                                                                            if
+     *                                                                                                              the
+     *                                                                                                              size
+     *                                                                                                              of
+     *                                                                                                              {@code x}
+     *                                                                                                              is
+     *                                                                                                              less
+     *                                                                                                              than
+     *                                                                                                              2.
      */
     public double value(double z) {
         return evaluateInternal(x, y, z);
@@ -212,23 +221,32 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * @param y Interpolating values array.
      * @param z Point at which the function value is to be computed.
      * @return the function value.
-     * @throws DimensionMismatchException                                                                   if {@code x}
-     *                                                                                                      and
-     *                                                                                                      {@code y}
-     *                                                                                                      have
-     *                                                                                                      different
-     *                                                                                                      lengths.
+     * @throws DimensionMismatchException                                                                           if
+     *                                                                                                              {@code x}
+     *                                                                                                              and
+     *                                                                                                              {@code y}
+     *                                                                                                              have
+     *                                                                                                              different
+     *                                                                                                              lengths.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     *                                                                                                      if {@code x}
-     *                                                                                                      is not
-     *                                                                                                      sorted in
-     *                                                                                                      strictly
-     *                                                                                                      increasing
-     *                                                                                                      order.
-     * @throws NumberIsTooSmallException                                                                    if the size
-     *                                                                                                      of {@code x}
-     *                                                                                                      is less
-     *                                                                                                      than 2.
+     *                                                                                                              if
+     *                                                                                                              {@code x}
+     *                                                                                                              is
+     *                                                                                                              not
+     *                                                                                                              sorted
+     *                                                                                                              in
+     *                                                                                                              strictly
+     *                                                                                                              increasing
+     *                                                                                                              order.
+     * @throws NumberIsTooSmallException                                                                            if
+     *                                                                                                              the
+     *                                                                                                              size
+     *                                                                                                              of
+     *                                                                                                              {@code x}
+     *                                                                                                              is
+     *                                                                                                              less
+     *                                                                                                              than
+     *                                                                                                              2.
      */
     private static double evaluateInternal(double x[], double y[], double z) {
         int nearest = 0;
@@ -329,23 +347,35 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * @param x     Interpolating points array.
      * @param y     Interpolating values array.
      * @param abort Whether to throw an exception if {@code x} is not sorted.
-     * @throws DimensionMismatchException                                                                   if the array
-     *                                                                                                      lengths are
-     *                                                                                                      different.
-     * @throws NumberIsTooSmallException                                                                    if the
-     *                                                                                                      number of
-     *                                                                                                      points is
-     *                                                                                                      less than 2.
+     * @throws DimensionMismatchException                                                                           if
+     *                                                                                                              the
+     *                                                                                                              array
+     *                                                                                                              lengths
+     *                                                                                                              are
+     *                                                                                                              different.
+     * @throws NumberIsTooSmallException                                                                            if
+     *                                                                                                              the
+     *                                                                                                              number
+     *                                                                                                              of
+     *                                                                                                              points
+     *                                                                                                              is
+     *                                                                                                              less
+     *                                                                                                              than
+     *                                                                                                              2.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NonMonotonicSequenceException
-     *                                                                                                      if {@code x}
-     *                                                                                                      is not
-     *                                                                                                      sorted in
-     *                                                                                                      strictly
-     *                                                                                                      increasing
-     *                                                                                                      order and
-     *                                                                                                      {@code abort}
-     *                                                                                                      is
-     *                                                                                                      {@code true}.
+     *                                                                                                              if
+     *                                                                                                              {@code x}
+     *                                                                                                              is
+     *                                                                                                              not
+     *                                                                                                              sorted
+     *                                                                                                              in
+     *                                                                                                              strictly
+     *                                                                                                              increasing
+     *                                                                                                              order
+     *                                                                                                              and
+     *                                                                                                              {@code abort}
+     *                                                                                                              is
+     *                                                                                                              {@code true}.
      * @return {@code false} if the {@code x} is not sorted in increasing order,
      *         {@code true} otherwise.
      * @see #evaluate(double[], double[], double)

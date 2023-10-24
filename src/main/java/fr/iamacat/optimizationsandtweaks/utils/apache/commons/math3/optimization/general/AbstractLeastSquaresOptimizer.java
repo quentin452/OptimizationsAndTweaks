@@ -209,16 +209,22 @@ public abstract class AbstractLeastSquaresOptimizer
     /**
      * Update the residuals array and cost function value.
      *
-     * @throws DimensionMismatchException                                                                 if the
-     *                                                                                                    dimension does
-     *                                                                                                    not match the
-     *                                                                                                    problem
-     *                                                                                                    dimension.
+     * @throws DimensionMismatchException                                                                         if the
+     *                                                                                                            dimension
+     *                                                                                                            does
+     *                                                                                                            not
+     *                                                                                                            match
+     *                                                                                                            the
+     *                                                                                                            problem
+     *                                                                                                            dimension.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @deprecated As of 3.1. Please use {@link #computeResiduals(double[])},
      *             {@link #computeObjectiveValue(double[])}, {@link #computeCost(double[])}
      *             and {@link #setCost(double)} instead.
@@ -300,10 +306,13 @@ public abstract class AbstractLeastSquaresOptimizer
      *
      * @return the covariance matrix.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed (singular
-     *                                                                                             problem).
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed
+     *                                                                                                     (singular
+     *                                                                                                     problem).
      * @see #getCovariances(double)
      * @deprecated As of 3.1. Please use {@link #computeCovariances(double[],double)}
      *             instead.
@@ -326,10 +335,13 @@ public abstract class AbstractLeastSquaresOptimizer
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed (singular
-     *                                                                                             problem).
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed
+     *                                                                                                     (singular
+     *                                                                                                     problem).
      * @deprecated As of 3.1. Please use {@link #computeCovariances(double[],double)}
      *             instead.
      */
@@ -352,10 +364,13 @@ public abstract class AbstractLeastSquaresOptimizer
      * @param threshold Singularity threshold.
      * @return the covariance matrix.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed (singular
-     *                                                                                             problem).
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed
+     *                                                                                                     (singular
+     *                                                                                                     problem).
      * @since 3.1
      */
     public double[][] computeCovariances(double[] params, double threshold) {
@@ -393,18 +408,25 @@ public abstract class AbstractLeastSquaresOptimizer
      *
      * @return an estimate of the standard deviation of the optimized parameters
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed.
-     * @throws NumberIsTooSmallException                                                           if the number of
-     *                                                                                             degrees of freedom is
-     *                                                                                             not
-     *                                                                                             positive, i.e. the
-     *                                                                                             number of
-     *                                                                                             measurements is less
-     *                                                                                             or equal to the
-     *                                                                                             number of
-     *                                                                                             parameters.
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed.
+     * @throws NumberIsTooSmallException                                                                   if the number
+     *                                                                                                     of
+     *                                                                                                     degrees of
+     *                                                                                                     freedom is
+     *                                                                                                     not
+     *                                                                                                     positive,
+     *                                                                                                     i.e. the
+     *                                                                                                     number of
+     *                                                                                                     measurements
+     *                                                                                                     is less
+     *                                                                                                     or equal to
+     *                                                                                                     the
+     *                                                                                                     number of
+     *                                                                                                     parameters.
      * @deprecated as of version 3.1, {@link #computeSigma(double[],double)} should be used
      *             instead. It should be emphasized that {@code guessParametersErrors} and
      *             {@code computeSigma} are <em>not</em> strictly equivalent.
@@ -435,9 +457,11 @@ public abstract class AbstractLeastSquaresOptimizer
      *                                       {@link #computeCovariances(double[],double) computeCovariances}).
      * @return an estimate of the standard deviation of the optimized parameters
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.SingularMatrixException
-     *                                                                                             if the covariance
-     *                                                                                             matrix cannot be
-     *                                                                                             computed.
+     *                                                                                                     if the
+     *                                                                                                     covariance
+     *                                                                                                     matrix cannot
+     *                                                                                                     be
+     *                                                                                                     computed.
      * @since 3.1
      */
     public double[] computeSigma(double[] params, double covarianceSingularityThreshold) {
@@ -485,19 +509,25 @@ public abstract class AbstractLeastSquaresOptimizer
      *         function.
      * @param maxEval Maximum number of function evaluations.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the start
-     *                                                                                                    point
-     *                                                                                                    dimension is
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            start
+     *                                                                                                            point
+     *                                                                                                            dimension
+     *                                                                                                            is
+     *                                                                                                            wrong.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if
-     *                                                                                                    any argument
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
+     *                                                                                                            any
+     *                                                                                                            argument
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      * @deprecated As of 3.1. Please use
      *             {@link BaseAbstractMultivariateVectorOptimizer#optimize(int,
      *             fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
@@ -527,16 +557,21 @@ public abstract class AbstractLeastSquaresOptimizer
      * @return the point/value pair giving the optimal value of the objective
      *         function.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException if
-     *                                                                                                    the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
-     * @throws DimensionMismatchException                                                                 if the target,
-     *                                                                                                    and weight
-     *                                                                                                    arguments
-     *                                                                                                    have
-     *                                                                                                    inconsistent
-     *                                                                                                    dimensions.
+     *                                                                                                            the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
+     * @throws DimensionMismatchException                                                                         if the
+     *                                                                                                            target,
+     *                                                                                                            and
+     *                                                                                                            weight
+     *                                                                                                            arguments
+     *                                                                                                            have
+     *                                                                                                            inconsistent
+     *                                                                                                            dimensions.
      * @see BaseAbstractMultivariateVectorOptimizer#optimizeInternal(int,
      *      fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.MultivariateVectorFunction,OptimizationData[])
      * @since 3.1

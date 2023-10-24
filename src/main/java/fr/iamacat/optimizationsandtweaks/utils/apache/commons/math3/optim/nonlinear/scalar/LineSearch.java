@@ -103,9 +103,12 @@ public class LineSearch {
      * @param direction  Search direction.
      * @return the optimum.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the number
-     *                                                                                                    of evaluations
-     *                                                                                                    is exceeded.
+     *                                                                                                            if the
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      */
     public UnivariatePointValuePair search(final double[] startPoint, final double[] direction) {
         final int n = startPoint.length;

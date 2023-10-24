@@ -220,7 +220,8 @@ public interface FirstOrderFieldIntegrator<T extends RealFieldElement<T>> {
      *                     (can be set to a value smaller than {@code t0} for backward integration)
      * @return final state, its time will be the same as {@code finalTime} if
      *         integration reached its target, but may be different if some {@link
-     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.events.FieldEventHandler} stops it at some
+     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.events.FieldEventHandler} stops it at
+     *         some
      *         point.
      * @exception NumberIsTooSmallException if integration step is too small
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded

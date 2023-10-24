@@ -100,9 +100,10 @@ public class Beta {
      * @param b Parameter {@code b}.
      * @return the regularized beta function I(x, a, b).
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if the algorithm
-     *                                                                                                  fails to
-     *                                                                                                  converge.
+     *                                                                                                          if the
+     *                                                                                                          algorithm
+     *                                                                                                          fails to
+     *                                                                                                          converge.
      */
     public static double regularizedBeta(double x, double a, double b) {
         return regularizedBeta(x, a, b, DEFAULT_EPSILON, Integer.MAX_VALUE);
@@ -121,9 +122,10 @@ public class Beta {
      *                further elements in the series.
      * @return the regularized beta function I(x, a, b)
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if the algorithm
-     *                                                                                                  fails to
-     *                                                                                                  converge.
+     *                                                                                                          if the
+     *                                                                                                          algorithm
+     *                                                                                                          fails to
+     *                                                                                                          converge.
      */
     public static double regularizedBeta(double x, double a, double b, double epsilon) {
         return regularizedBeta(x, a, b, epsilon, Integer.MAX_VALUE);
@@ -138,9 +140,10 @@ public class Beta {
      * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized beta function I(x, a, b)
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if the algorithm
-     *                                                                                                  fails to
-     *                                                                                                  converge.
+     *                                                                                                          if the
+     *                                                                                                          algorithm
+     *                                                                                                          fails to
+     *                                                                                                          converge.
      */
     public static double regularizedBeta(double x, double a, double b, int maxIterations) {
         return regularizedBeta(x, a, b, DEFAULT_EPSILON, maxIterations);
@@ -168,9 +171,10 @@ public class Beta {
      * @param maxIterations Maximum number of "iterations" to complete.
      * @return the regularized beta function I(x, a, b)
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if the algorithm
-     *                                                                                                  fails to
-     *                                                                                                  converge.
+     *                                                                                                          if the
+     *                                                                                                          algorithm
+     *                                                                                                          fails to
+     *                                                                                                          converge.
      */
     public static double regularizedBeta(double x, final double a, final double b, double epsilon, int maxIterations) {
         double ret;

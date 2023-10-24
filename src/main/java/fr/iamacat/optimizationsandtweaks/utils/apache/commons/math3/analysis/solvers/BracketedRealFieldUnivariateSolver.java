@@ -111,18 +111,26 @@ public interface BracketedRealFieldUnivariateSolver<T extends RealFieldElement<T
      *                        accept as solutions.
      * @return A value where the function is zero.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MathIllegalArgumentException
-     *                                                                                                     if the
-     *                                                                                                     arguments do
-     *                                                                                                     not satisfy
-     *                                                                                                     the
-     *                                                                                                     requirements
-     *                                                                                                     specified by
-     *                                                                                                     the solver.
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             arguments
+     *                                                                                                             do
+     *                                                                                                             not
+     *                                                                                                             satisfy
+     *                                                                                                             the
+     *                                                                                                             requirements
+     *                                                                                                             specified
+     *                                                                                                             by
+     *                                                                                                             the
+     *                                                                                                             solver.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException  if
-     *                                                                                                     the allowed
-     *                                                                                                     number of
-     *                                                                                                     evaluations
-     *                                                                                                     is exceeded.
+     *                                                                                                             the
+     *                                                                                                             allowed
+     *                                                                                                             number
+     *                                                                                                             of
+     *                                                                                                             evaluations
+     *                                                                                                             is
+     *                                                                                                             exceeded.
      */
     T solve(int maxEval, RealFieldUnivariateFunction<T> f, T min, T max, AllowedSolution allowedSolution);
 
@@ -141,18 +149,26 @@ public interface BracketedRealFieldUnivariateSolver<T extends RealFieldElement<T
      *                        accept as solutions.
      * @return A value where the function is zero.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MathIllegalArgumentException
-     *                                                                                                     if the
-     *                                                                                                     arguments do
-     *                                                                                                     not satisfy
-     *                                                                                                     the
-     *                                                                                                     requirements
-     *                                                                                                     specified by
-     *                                                                                                     the solver.
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             arguments
+     *                                                                                                             do
+     *                                                                                                             not
+     *                                                                                                             satisfy
+     *                                                                                                             the
+     *                                                                                                             requirements
+     *                                                                                                             specified
+     *                                                                                                             by
+     *                                                                                                             the
+     *                                                                                                             solver.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException  if
-     *                                                                                                     the allowed
-     *                                                                                                     number of
-     *                                                                                                     evaluations
-     *                                                                                                     is exceeded.
+     *                                                                                                             the
+     *                                                                                                             allowed
+     *                                                                                                             number
+     *                                                                                                             of
+     *                                                                                                             evaluations
+     *                                                                                                             is
+     *                                                                                                             exceeded.
      */
     T solve(int maxEval, RealFieldUnivariateFunction<T> f, T min, T max, T startValue, AllowedSolution allowedSolution);
 

@@ -271,7 +271,8 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /**
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.BetaDistribution Beta Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.BetaDistribution Beta
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
@@ -302,7 +303,8 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /**
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.CauchyDistribution Cauchy Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.CauchyDistribution Cauchy
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(RealDistribution) inversion}
      * to generate random values.
      *
@@ -350,7 +352,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * <p>
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.GammaDistribution Gamma Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.GammaDistribution Gamma
+     * Distribution}.
      * </p>
      *
      * <p>
@@ -406,7 +409,8 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /**
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.PascalDistribution Pascal Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.PascalDistribution Pascal
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
      * to generate random values.
      *
@@ -457,7 +461,8 @@ public class RandomDataImpl implements RandomData, Serializable {
 
     /**
      * Generates a random value from the
-     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.ZipfDistribution Zipf Distribution}.
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.distribution.ZipfDistribution Zipf
+     * Distribution}.
      * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
      * to generate random values.
      *

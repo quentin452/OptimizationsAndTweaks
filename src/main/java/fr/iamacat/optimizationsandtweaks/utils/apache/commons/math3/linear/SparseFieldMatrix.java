@@ -61,10 +61,14 @@ public class SparseFieldMatrix<T extends FieldElement<T>> extends AbstractFieldM
      * @param rowDimension    Number of rows in the new matrix.
      * @param columnDimension Number of columns in the new matrix.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if row or
-     *                                                                                                     column
-     *                                                                                                     dimension is
-     *                                                                                                     not positive.
+     *                                                                                                             if
+     *                                                                                                             row
+     *                                                                                                             or
+     *                                                                                                             column
+     *                                                                                                             dimension
+     *                                                                                                             is
+     *                                                                                                             not
+     *                                                                                                             positive.
      */
     public SparseFieldMatrix(final Field<T> field, final int rowDimension, final int columnDimension) {
         super(field, rowDimension, columnDimension);

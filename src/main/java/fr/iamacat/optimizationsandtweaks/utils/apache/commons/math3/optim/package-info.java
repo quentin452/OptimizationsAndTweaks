@@ -16,10 +16,13 @@
 /**
  * <p>
  * Generally, optimizers are algorithms that will either
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MINIMIZE minimize} or
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MAXIMIZE maximize}
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MINIMIZE
+ * minimize} or
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.GoalType#MAXIMIZE
+ * maximize}
  * a scalar function, called the
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction <em>objective
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction
+ * <em>objective
  * function</em>}.
  * <br/>
  * For some scalar objective functions the gradient can be computed (analytically

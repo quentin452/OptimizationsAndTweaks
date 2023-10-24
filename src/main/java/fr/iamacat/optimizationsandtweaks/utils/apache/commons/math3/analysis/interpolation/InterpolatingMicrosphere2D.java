@@ -43,16 +43,19 @@ public class InterpolatingMicrosphere2D extends InterpolatingMicrosphere {
      * @param background      Value returned when the {@code maxDarkFraction}
      *                        threshold is exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code size <= 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code size <= 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotPositiveException         if
-     *                                                                                                     {@code darkThreshold < 0}.
+     *                                                                                                             {@code darkThreshold < 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.OutOfRangeException          if
-     *                                                                                                     {@code maxDarkFraction}
-     *                                                                                                     does not
-     *                                                                                                     belong to the
-     *                                                                                                     interval
-     *                                                                                                     {@code [0, 1]}.
+     *                                                                                                             {@code maxDarkFraction}
+     *                                                                                                             does
+     *                                                                                                             not
+     *                                                                                                             belong
+     *                                                                                                             to
+     *                                                                                                             the
+     *                                                                                                             interval
+     *                                                                                                             {@code [0, 1]}.
      */
     public InterpolatingMicrosphere2D(int size, double maxDarkFraction, double darkThreshold, double background) {
         super(DIMENSION, size, maxDarkFraction, darkThreshold, background);

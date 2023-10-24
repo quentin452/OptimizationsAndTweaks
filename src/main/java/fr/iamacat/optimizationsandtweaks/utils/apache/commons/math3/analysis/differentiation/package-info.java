@@ -30,7 +30,8 @@
  * The
  * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.differentiation.UnivariateFunctionDifferentiator
  * UnivariateFunctionDifferentiator} interface defines a way to differentiate a simple {@link
- * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.UnivariateFunction UnivariateFunction} and get a {@link
+ * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.UnivariateFunction UnivariateFunction} and get
+ * a {@link
  * fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction
  * UnivariateDifferentiableFunction}.
  * </p>

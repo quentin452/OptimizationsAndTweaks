@@ -45,19 +45,19 @@ public class LearningFactorFunctionFactory {
      *                       {@code valueAtNumCall}.
      * @return the learning factor function.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.OutOfRangeException
-     *                                                                                                     if
-     *                                                                                                     {@code initValue <= 0}
-     *                                                                                                     or
-     *                                                                                                     {@code initValue > 1}.
+     *                                                                                                             if
+     *                                                                                                             {@code initValue <= 0}
+     *                                                                                                             or
+     *                                                                                                             {@code initValue > 1}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code valueAtNumCall <= 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code valueAtNumCall <= 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                     if
-     *                                                                                                     {@code valueAtNumCall >= initValue}.
+     *                                                                                                             if
+     *                                                                                                             {@code valueAtNumCall >= initValue}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code numCall <= 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code numCall <= 0}.
      */
     public static LearningFactorFunction exponentialDecay(final double initValue, final double valueAtNumCall,
         final long numCall) {
@@ -95,16 +95,16 @@ public class LearningFactorFunctionFactory {
      * @param numCall   Inflexion point.
      * @return the learning factor function.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.OutOfRangeException
-     *                                                                                                     if
-     *                                                                                                     {@code initValue <= 0}
-     *                                                                                                     or
-     *                                                                                                     {@code initValue > 1}.
+     *                                                                                                             if
+     *                                                                                                             {@code initValue <= 0}
+     *                                                                                                             or
+     *                                                                                                             {@code initValue > 1}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                     if
-     *                                                                                                     {@code slope >= 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code slope >= 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code numCall <= 0}.
+     *                                                                                                             if
+     *                                                                                                             {@code numCall <= 0}.
      */
     public static LearningFactorFunction quasiSigmoidDecay(final double initValue, final double slope,
         final long numCall) {

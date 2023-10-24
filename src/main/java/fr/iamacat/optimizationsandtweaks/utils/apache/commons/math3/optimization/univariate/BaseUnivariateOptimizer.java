@@ -49,25 +49,31 @@ public interface BaseUnivariateOptimizer<FUNC extends UnivariateFunction>
      * @param maxEval  Maximum number of function evaluations.
      * @return a (point, value) pair where the function is optimum.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    evaluation
-     *                                                                                                    count is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            evaluation
+     *                                                                                                            count
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                                    if the
-     *                                                                                                    optimizer
-     *                                                                                                    detects a
-     *                                                                                                    convergence
-     *                                                                                                    problem.
-     * @throws IllegalArgumentException                                                                   if
-     *                                                                                                    {@code min > max}
-     *                                                                                                    or the
-     *                                                                                                    endpoints
-     *                                                                                                    do not satisfy
-     *                                                                                                    the
-     *                                                                                                    requirements
-     *                                                                                                    specified by
-     *                                                                                                    the optimizer.
+     *                                                                                                            if the
+     *                                                                                                            optimizer
+     *                                                                                                            detects
+     *                                                                                                            a
+     *                                                                                                            convergence
+     *                                                                                                            problem.
+     * @throws IllegalArgumentException                                                                           if
+     *                                                                                                            {@code min > max}
+     *                                                                                                            or the
+     *                                                                                                            endpoints
+     *                                                                                                            do not
+     *                                                                                                            satisfy
+     *                                                                                                            the
+     *                                                                                                            requirements
+     *                                                                                                            specified
+     *                                                                                                            by
+     *                                                                                                            the
+     *                                                                                                            optimizer.
      */
     UnivariatePointValuePair optimize(int maxEval, FUNC f, GoalType goalType, double min, double max);
 
@@ -84,27 +90,34 @@ public interface BaseUnivariateOptimizer<FUNC extends UnivariateFunction>
      * @param maxEval    Maximum number of function evaluations.
      * @return a (point, value) pair where the function is optimum.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximum
-     *                                                                                                    evaluation
-     *                                                                                                    count is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximum
+     *                                                                                                            evaluation
+     *                                                                                                            count
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException        if the
-     *                                                                                                    optimizer
-     *                                                                                                    detects a
-     *                                                                                                    convergence
-     *                                                                                                    problem.
-     * @throws IllegalArgumentException                                                                   if
-     *                                                                                                    {@code min > max}
-     *                                                                                                    or the
-     *                                                                                                    endpoints
-     *                                                                                                    do not satisfy
-     *                                                                                                    the
-     *                                                                                                    requirements
-     *                                                                                                    specified by
-     *                                                                                                    the optimizer.
+     *                                                                                                            optimizer
+     *                                                                                                            detects
+     *                                                                                                            a
+     *                                                                                                            convergence
+     *                                                                                                            problem.
+     * @throws IllegalArgumentException                                                                           if
+     *                                                                                                            {@code min > max}
+     *                                                                                                            or the
+     *                                                                                                            endpoints
+     *                                                                                                            do not
+     *                                                                                                            satisfy
+     *                                                                                                            the
+     *                                                                                                            requirements
+     *                                                                                                            specified
+     *                                                                                                            by
+     *                                                                                                            the
+     *                                                                                                            optimizer.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if any
-     *                                                                                                    argument is
-     *                                                                                                    {@code null}.
+     *                                                                                                            argument
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      */
     UnivariatePointValuePair optimize(int maxEval, FUNC f, GoalType goalType, double min, double max,
         double startValue);

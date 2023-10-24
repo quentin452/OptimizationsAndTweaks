@@ -6,8 +6,8 @@ import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -45,6 +45,7 @@ public class MixinEntityAIAttackOnCollide {
 
     @Shadow
     private int failedPathFindingPenalty;
+
     @Inject(method = "updateTask", at = @At("HEAD"), cancellable = true)
     public void updateTask(CallbackInfo ci) {
         EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
@@ -53,9 +54,11 @@ public class MixinEntityAIAttackOnCollide {
             return;
         }
 
-        this.attacker.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
+        this.attacker.getLookHelper()
+            .setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
 
-        double d0 = this.attacker.getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ);
+        double d0 = this.attacker
+            .getDistanceSq(entitylivingbase.posX, entitylivingbase.boundingBox.minY, entitylivingbase.posZ);
         double d1 = (this.attacker.width * 2.0F * this.attacker.width * 2.0F + entitylivingbase.width);
 
         if (d0 <= d1 && this.attackTick <= 20) {
@@ -69,19 +72,26 @@ public class MixinEntityAIAttackOnCollide {
             return;
         }
 
-        if (this.longMemory || this.attacker.getEntitySenses().canSee(entitylivingbase)) {
+        if (this.longMemory || this.attacker.getEntitySenses()
+            .canSee(entitylivingbase)) {
             --this.field_75445_i;
 
             if (this.field_75445_i <= 0) {
                 this.field_151497_i = entitylivingbase.posX;
                 this.field_151495_j = entitylivingbase.boundingBox.minY;
                 this.field_151496_k = entitylivingbase.posZ;
-                this.field_75445_i = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
+                this.field_75445_i = failedPathFindingPenalty + 4
+                    + this.attacker.getRNG()
+                        .nextInt(7);
 
-                if (this.attacker.getNavigator().getPath() != null) {
-                    PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
+                if (this.attacker.getNavigator()
+                    .getPath() != null) {
+                    PathPoint finalPathPoint = this.attacker.getNavigator()
+                        .getPath()
+                        .getFinalPathPoint();
 
-                    if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
+                    if (finalPathPoint != null && entitylivingbase
+                        .getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
                         failedPathFindingPenalty = 0;
                     } else {
                         failedPathFindingPenalty += 10;
@@ -96,7 +106,8 @@ public class MixinEntityAIAttackOnCollide {
                     this.field_75445_i += 5;
                 }
 
-                if (!this.attacker.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget)) {
+                if (!this.attacker.getNavigator()
+                    .tryMoveToEntityLiving(entitylivingbase, this.speedTowardsTarget)) {
                     this.field_75445_i += 15;
                 }
             }

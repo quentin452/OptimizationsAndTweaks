@@ -448,10 +448,13 @@ public class LoessInterpolator implements UnivariateInterpolator, Serializable {
      *
      * @param values Values array.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotFiniteNumberException
-     *                                                                                                 if one of the
-     *                                                                                                 values is not a
-     *                                                                                                 finite real
-     *                                                                                                 number.
+     *                                                                                                         if one of
+     *                                                                                                         the
+     *                                                                                                         values is
+     *                                                                                                         not a
+     *                                                                                                         finite
+     *                                                                                                         real
+     *                                                                                                         number.
      */
     private static void checkAllFiniteReal(final double[] values) {
         for (int i = 0; i < values.length; i++) {

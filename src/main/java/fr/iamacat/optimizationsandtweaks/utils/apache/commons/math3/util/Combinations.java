@@ -69,9 +69,9 @@ public class Combinations implements Iterable<int[]> {
      * @param n Size of the set from which subsets are selected.
      * @param k Size of the subsets to be enumerated.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotPositiveException      if
-     *                                                                                                  {@code n < 0}.
+     *                                                                                                          {@code n < 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException if
-     *                                                                                                  {@code k > n}.
+     *                                                                                                          {@code k > n}.
      */
     public Combinations(int n, int k) {
         this(n, k, IterationOrder.LEXICOGRAPHIC);
@@ -99,9 +99,9 @@ public class Combinations implements Iterable<int[]> {
      * @param k              Size of the subsets to be enumerated.
      * @param iterationOrder Specifies the {@link #iterator() iteration order}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotPositiveException      if
-     *                                                                                                  {@code n < 0}.
+     *                                                                                                          {@code n < 0}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException if
-     *                                                                                                  {@code k > n}.
+     *                                                                                                          {@code k > n}.
      */
     private Combinations(int n, int k, IterationOrder iterationOrder) {
         CombinatoricsUtils.checkBinomial(n, k);

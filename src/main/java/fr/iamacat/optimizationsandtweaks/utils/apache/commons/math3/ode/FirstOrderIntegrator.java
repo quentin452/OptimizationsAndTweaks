@@ -59,7 +59,8 @@ public interface FirstOrderIntegrator extends ODEIntegrator {
      *                  step (and hence at the end of integration), can be the same object as y0
      * @return stop time, will be the same as target time if integration reached its
      *         target, but may be different if some {@link
-     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.events.EventHandler} stops it at some point.
+     *         fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.events.EventHandler} stops it at some
+     *         point.
      * @exception DimensionMismatchException if arrays dimension do not match equations settings
      * @exception NumberIsTooSmallException  if integration step is too small
      * @exception MaxCountExceededException  if the number of functions evaluations is exceeded

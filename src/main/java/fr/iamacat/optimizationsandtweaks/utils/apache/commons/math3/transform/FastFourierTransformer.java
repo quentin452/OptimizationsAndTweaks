@@ -374,24 +374,41 @@ public class FastFourierTransformer implements Serializable {
      * @param type the type of transform (forward, inverse) to be performed
      * @return the complex transformed array
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                     if the lower
-     *                                                                                                     bound is
-     *                                                                                                     greater than,
-     *                                                                                                     or equal to
-     *                                                                                                     the upper
-     *                                                                                                     bound
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             lower
+     *                                                                                                             bound
+     *                                                                                                             is
+     *                                                                                                             greater
+     *                                                                                                             than,
+     *                                                                                                             or
+     *                                                                                                             equal
+     *                                                                                                             to
+     *                                                                                                             the
+     *                                                                                                             upper
+     *                                                                                                             bound
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if the number
-     *                                                                                                     of sample
-     *                                                                                                     points
-     *                                                                                                     {@code n} is
-     *                                                                                                     negative
-     * @throws MathIllegalArgumentException                                                                if the number
-     *                                                                                                     of sample
-     *                                                                                                     points
-     *                                                                                                     {@code n} is
-     *                                                                                                     not a power
-     *                                                                                                     of two
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             number
+     *                                                                                                             of
+     *                                                                                                             sample
+     *                                                                                                             points
+     *                                                                                                             {@code n}
+     *                                                                                                             is
+     *                                                                                                             negative
+     * @throws MathIllegalArgumentException                                                                        if
+     *                                                                                                             the
+     *                                                                                                             number
+     *                                                                                                             of
+     *                                                                                                             sample
+     *                                                                                                             points
+     *                                                                                                             {@code n}
+     *                                                                                                             is
+     *                                                                                                             not a
+     *                                                                                                             power
+     *                                                                                                             of
+     *                                                                                                             two
      */
     public Complex[] transform(final UnivariateFunction f, final double min, final double max, final int n,
         final TransformType type) {

@@ -20,7 +20,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.RealM
 
 /**
  * Implementation of
- * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.descriptive.MultivariateSummaryStatistics} that
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.descriptive.MultivariateSummaryStatistics}
+ * that
  * is safe to use in a multithreaded environment. Multiple threads can safely
  * operate on a single instance without causing runtime exceptions due to race
  * conditions. In effect, this implementation makes modification and access

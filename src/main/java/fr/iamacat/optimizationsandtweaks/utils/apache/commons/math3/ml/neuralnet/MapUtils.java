@@ -49,13 +49,18 @@ public class MapUtils {
      *                 passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
      * @return the neuron whose features are closest to the given data.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the size of
-     *                                                                                                   the input is
-     *                                                                                                   not compatible
-     *                                                                                                   with the
-     *                                                                                                   neurons
-     *                                                                                                   features
-     *                                                                                                   size.
+     *                                                                                                           if the
+     *                                                                                                           size of
+     *                                                                                                           the
+     *                                                                                                           input
+     *                                                                                                           is
+     *                                                                                                           not
+     *                                                                                                           compatible
+     *                                                                                                           with
+     *                                                                                                           the
+     *                                                                                                           neurons
+     *                                                                                                           features
+     *                                                                                                           size.
      */
     public static Neuron findBest(double[] features, Iterable<Neuron> neurons, DistanceMeasure distance) {
         Neuron best = null;
@@ -81,13 +86,18 @@ public class MapUtils {
      *                 passed as the first argument to {@link DistanceMeasure#compute(double[],double[])}.
      * @return the two neurons whose features are closest to the given data.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the size of
-     *                                                                                                   the input is
-     *                                                                                                   not compatible
-     *                                                                                                   with the
-     *                                                                                                   neurons
-     *                                                                                                   features
-     *                                                                                                   size.
+     *                                                                                                           if the
+     *                                                                                                           size of
+     *                                                                                                           the
+     *                                                                                                           input
+     *                                                                                                           is
+     *                                                                                                           not
+     *                                                                                                           compatible
+     *                                                                                                           with
+     *                                                                                                           the
+     *                                                                                                           neurons
+     *                                                                                                           features
+     *                                                                                                           size.
      */
     public static Pair<Neuron, Neuron> findBestAndSecondBest(double[] features, Iterable<Neuron> neurons,
         DistanceMeasure distance) {
@@ -124,13 +134,18 @@ public class MapUtils {
      * @return the neurons, sorted in increasing order of distance in data
      *         space.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                   if the size of
-     *                                                                                                   the input is
-     *                                                                                                   not compatible
-     *                                                                                                   with the
-     *                                                                                                   neurons
-     *                                                                                                   features
-     *                                                                                                   size.
+     *                                                                                                           if the
+     *                                                                                                           size of
+     *                                                                                                           the
+     *                                                                                                           input
+     *                                                                                                           is
+     *                                                                                                           not
+     *                                                                                                           compatible
+     *                                                                                                           with
+     *                                                                                                           the
+     *                                                                                                           neurons
+     *                                                                                                           features
+     *                                                                                                           size.
      *
      * @see #findBest(double[],Iterable,DistanceMeasure)
      * @see #findBestAndSecondBest(double[],Iterable,DistanceMeasure)

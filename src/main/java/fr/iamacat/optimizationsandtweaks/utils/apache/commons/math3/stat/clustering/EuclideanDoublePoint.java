@@ -25,7 +25,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathArr
  *
  * @since 3.1
  * @deprecated As of 3.2 (to be removed in 4.0),
- *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.DoublePoint} instead
+ *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.DoublePoint}
+ *             instead
  */
 @Deprecated
 public class EuclideanDoublePoint implements Clusterable<EuclideanDoublePoint>, Serializable {

@@ -67,7 +67,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMat
  * @see <a href="http://en.wikipedia.org/wiki/Kolmogorov-Smirnov_test">
  *      Kolmogorov-Smirnov test (Wikipedia)</a>
  * @deprecated to be removed in version 4.0 -
- *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.KolmogorovSmirnovTest}
+ *             use
+ *             {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.stat.inference.KolmogorovSmirnovTest}
  */
 public class KolmogorovSmirnovDistribution implements Serializable {
 
@@ -138,7 +139,8 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      *
      * @param d     statistic
      * @param exact whether the probability should be calculated exact using
-     *              {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction} everywhere at the
+     *              {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction} everywhere
+     *              at the
      *              expense of very slow execution time, or if {@code double} should be used
      *              convenient places to gain speed. Almost never choose {@code true} in real
      *              applications unless you are very sure; {@code true} is almost solely for

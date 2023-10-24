@@ -1,16 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.google.common.collect.Sets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import net.minecraft.entity.ai.attributes.*;
 import net.minecraft.server.management.LowerStringMap;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.Sets;
 
 @Mixin(BaseAttributeMap.class)
 public class MixinServersideAttributeMap {
@@ -36,7 +38,9 @@ public class MixinServersideAttributeMap {
         if (attributesByName.containsKey(attribute.getAttributeUnlocalizedName())) {
             throw new IllegalArgumentException("Attribute is already registered!");
         } else {
-            ModifiableAttributeInstance attributeInstance = new ModifiableAttributeInstance(baseAttributeMap, attribute);
+            ModifiableAttributeInstance attributeInstance = new ModifiableAttributeInstance(
+                baseAttributeMap,
+                attribute);
             attributesByName.put(attribute.getAttributeUnlocalizedName(), attributeInstance);
 
             if (attribute instanceof RangedAttribute) {

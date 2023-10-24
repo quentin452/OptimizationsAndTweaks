@@ -132,18 +132,27 @@ public class MultiDirectionalSimplex extends AbstractSimplex {
      * @param khi              Expansion coefficient.
      * @param gamma            Contraction coefficient.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if the
-     *                                                                                                     reference
-     *                                                                                                     simplex does
-     *                                                                                                     not contain
-     *                                                                                                     at least one
-     *                                                                                                     point.
+     *                                                                                                             if
+     *                                                                                                             the
+     *                                                                                                             reference
+     *                                                                                                             simplex
+     *                                                                                                             does
+     *                                                                                                             not
+     *                                                                                                             contain
+     *                                                                                                             at
+     *                                                                                                             least
+     *                                                                                                             one
+     *                                                                                                             point.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                     if there is a
-     *                                                                                                     dimension
-     *                                                                                                     mismatch in
-     *                                                                                                     the reference
-     *                                                                                                     simplex.
+     *                                                                                                             if
+     *                                                                                                             there
+     *                                                                                                             is a
+     *                                                                                                             dimension
+     *                                                                                                             mismatch
+     *                                                                                                             in
+     *                                                                                                             the
+     *                                                                                                             reference
+     *                                                                                                             simplex.
      */
     public MultiDirectionalSimplex(final double[][] referenceSimplex, final double khi, final double gamma) {
         super(referenceSimplex);
@@ -188,10 +197,13 @@ public class MultiDirectionalSimplex extends AbstractSimplex {
      *                           to poorest.
      * @return the best point in the transformed simplex.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      */
     private PointValuePair evaluateNewSimplex(final MultivariateFunction evaluationFunction,
         final PointValuePair[] original, final double coeff, final Comparator<PointValuePair> comparator) {

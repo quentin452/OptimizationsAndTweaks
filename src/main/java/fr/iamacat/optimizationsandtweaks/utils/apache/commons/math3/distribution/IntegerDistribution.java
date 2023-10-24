@@ -151,10 +151,11 @@ public interface IntegerDistribution {
      * @param sampleSize the number of random values to generate
      * @return an array representing the random sample
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NotStrictlyPositiveException
-     *                                                                                                     if
-     *                                                                                                     {@code sampleSize}
-     *                                                                                                     is not
-     *                                                                                                     positive
+     *                                                                                                             if
+     *                                                                                                             {@code sampleSize}
+     *                                                                                                             is
+     *                                                                                                             not
+     *                                                                                                             positive
      * @since 3.0
      */
     int[] sample(int sampleSize);

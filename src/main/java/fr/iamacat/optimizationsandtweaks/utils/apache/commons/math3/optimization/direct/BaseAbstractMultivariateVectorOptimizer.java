@@ -166,19 +166,25 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
      *         function.
      * @param maxEval Maximum number of function evaluations.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the start
-     *                                                                                                    point
-     *                                                                                                    dimension is
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            start
+     *                                                                                                            point
+     *                                                                                                            dimension
+     *                                                                                                            is
+     *                                                                                                            wrong.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if
-     *                                                                                                    any argument
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
+     *                                                                                                            any
+     *                                                                                                            argument
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      * @deprecated As of 3.1. Please use
      *             {@link #optimizeInternal(int,MultivariateVectorFunction,OptimizationData[])}
      *             instead.

@@ -42,8 +42,8 @@ public class FeatureInitializerFactory {
      * @return an initializer such that the features will be initialized with
      *         values within the given range.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                  if
-     *                                                                                                  {@code min >= max}.
+     *                                                                                                          if
+     *                                                                                                          {@code min >= max}.
      */
     public static FeatureInitializer uniform(final RandomGenerator rng, final double min, final double max) {
         return randomize(new UniformRealDistribution(rng, min, max), function(new Constant(0), 0, 0));
@@ -57,8 +57,8 @@ public class FeatureInitializerFactory {
      * @return an initializer such that the features will be initialized with
      *         values within the given range.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException
-     *                                                                                                  if
-     *                                                                                                  {@code min >= max}.
+     *                                                                                                          if
+     *                                                                                                          {@code min >= max}.
      */
     public static FeatureInitializer uniform(final double min, final double max) {
         return randomize(new UniformRealDistribution(min, max), function(new Constant(0), 0, 0));

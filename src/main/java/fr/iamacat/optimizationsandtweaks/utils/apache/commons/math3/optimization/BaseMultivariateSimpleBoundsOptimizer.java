@@ -48,32 +48,46 @@ public interface BaseMultivariateSimpleBoundsOptimizer<FUNC extends Multivariate
      * @return the point/value pair giving the optimal value for objective
      *         function.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException
-     *                                                                                                    if the array
-     *                                                                                                    sizes are
-     *                                                                                                    wrong.
+     *                                                                                                            if the
+     *                                                                                                            array
+     *                                                                                                            sizes
+     *                                                                                                            are
+     *                                                                                                            wrong.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException
-     *                                                                                                    if the maximal
-     *                                                                                                    number of
-     *                                                                                                    evaluations is
-     *                                                                                                    exceeded.
+     *                                                                                                            if the
+     *                                                                                                            maximal
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            is
+     *                                                                                                            exceeded.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException       if
-     *                                                                                                    {@code f},
-     *                                                                                                    {@code goalType}
-     *                                                                                                    or
-     *                                                                                                    {@code startPoint}
-     *                                                                                                    is
-     *                                                                                                    {@code null}.
+     *                                                                                                            {@code f},
+     *                                                                                                            {@code goalType}
+     *                                                                                                            or
+     *                                                                                                            {@code startPoint}
+     *                                                                                                            is
+     *                                                                                                            {@code null}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooSmallException   if any
-     *                                                                                                    of the initial
-     *                                                                                                    values is less
-     *                                                                                                    than its lower
-     *                                                                                                    bound.
+     *                                                                                                            of the
+     *                                                                                                            initial
+     *                                                                                                            values
+     *                                                                                                            is
+     *                                                                                                            less
+     *                                                                                                            than
+     *                                                                                                            its
+     *                                                                                                            lower
+     *                                                                                                            bound.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooLargeException   if any
-     *                                                                                                    of the initial
-     *                                                                                                    values is
-     *                                                                                                    greater than
-     *                                                                                                    its upper
-     *                                                                                                    bound.
+     *                                                                                                            of the
+     *                                                                                                            initial
+     *                                                                                                            values
+     *                                                                                                            is
+     *                                                                                                            greater
+     *                                                                                                            than
+     *                                                                                                            its
+     *                                                                                                            upper
+     *                                                                                                            bound.
      */
     PointValuePair optimize(int maxEval, FUNC f, GoalType goalType, double[] startPoint, double[] lowerBound,
         double[] upperBound);

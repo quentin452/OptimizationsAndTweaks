@@ -464,7 +464,8 @@ public class KolmogorovSmirnovTest {
      * Calculates \(P(D_n < d)\) using the method described in [1] with quick decisions for extreme
      * values given in [2] (see above). The result is not exact as with
      * {@link #cdfExact(double, int)} because calculations are based on
-     * {@code double} rather than {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction}.
+     * {@code double} rather than
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction}.
      *
      * @param d statistic
      * @param n sample size
@@ -504,7 +505,8 @@ public class KolmogorovSmirnovTest {
      * @param d     statistic
      * @param n     sample size
      * @param exact whether the probability should be calculated exact using
-     *              {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction} everywhere at the
+     *              {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction} everywhere
+     *              at the
      *              expense of
      *              very slow execution time, or if {@code double} should be used convenient places to
      *              gain speed. Almost never choose {@code true} in real applications unless you are very
@@ -546,7 +548,8 @@ public class KolmogorovSmirnovTest {
 
     /**
      * Calculates the exact value of {@code P(D_n < d)} using the method described in [1] (reference
-     * in class javadoc above) and {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction}
+     * in class javadoc above) and
+     * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction}
      * (see
      * above).
      *

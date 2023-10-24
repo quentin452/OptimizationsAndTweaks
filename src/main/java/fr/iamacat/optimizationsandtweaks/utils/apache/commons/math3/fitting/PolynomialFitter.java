@@ -47,15 +47,18 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * @param maxEval Maximum number of evaluations of the polynomial.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException if
-     *                                                                                                    the number of
-     *                                                                                                    evaluations
-     *                                                                                                    exceeds
-     *                                                                                                    {@code maxEval}.
+     *                                                                                                            the
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            exceeds
+     *                                                                                                            {@code maxEval}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                                    if the
-     *                                                                                                    algorithm
-     *                                                                                                    failed to
-     *                                                                                                    converge.
+     *                                                                                                            if the
+     *                                                                                                            algorithm
+     *                                                                                                            failed
+     *                                                                                                            to
+     *                                                                                                            converge.
      */
     public double[] fit(int maxEval, double[] guess) {
         return fit(maxEval, new PolynomialFunction.Parametric(), guess);
@@ -69,8 +72,10 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      *              increasing order of the polynomial's degree.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                             if the algorithm
-     *                                                                                             failed to converge.
+     *                                                                                                     if the
+     *                                                                                                     algorithm
+     *                                                                                                     failed to
+     *                                                                                                     converge.
      */
     public double[] fit(double[] guess) {
         return fit(new PolynomialFunction.Parametric(), guess);

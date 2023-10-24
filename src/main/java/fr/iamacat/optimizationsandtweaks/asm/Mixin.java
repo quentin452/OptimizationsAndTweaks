@@ -12,17 +12,18 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
+
     // TWEAKING MIXINS
     common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
-    common_core_MixinEntityAIAttackOnCollide(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide,
-        "core.MixinEntityAIAttackOnCollide"),
-    common_witchery_MixinEntityVillageGuard(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard,
-        "witchery.MixinEntityVillageGuard"),
-    common_core_MixinServersideAttributeMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap,
-        "core.MixinServersideAttributeMap"),
+    common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
+    common_witchery_MixinEntityVillageGuard(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard, "witchery.MixinEntityVillageGuard"),
+    common_core_MixinServersideAttributeMap(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap, "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
         "core.MixinLowerStringMap"),
     common_core_MixinEntityLivingUpdate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLivingUpdate,
@@ -65,10 +66,10 @@ public enum Mixin implements IMixin {
         "akatsuki.MixinAnimationHandler"),
     common_aether_MixinPlayerAether(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPlayerAether,
         "aether.MixinPlayerAether"),
-    common_notenoughpets_MixinEventHandlerNEP(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEventHandlerNEP, "notenoughpets.MixinEventHandlerNEP"),
-    common_pneumaticraft_MixinHackTickHandler(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinHackTickHandler, "pneumaticraft.MixinHackTickHandler"),
+    common_notenoughpets_MixinEventHandlerNEP(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventHandlerNEP,
+        "notenoughpets.MixinEventHandlerNEP"),
+    common_pneumaticraft_MixinHackTickHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinHackTickHandler,
+        "pneumaticraft.MixinHackTickHandler"),
     common_ic2_MixinPriorityExecutor(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPriorityExecutor,
         "ic2.MixinPriorityExecutor"),
     common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
@@ -217,8 +218,7 @@ public enum Mixin implements IMixin {
 
     common_core_MixinGodZillaFix(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
-    common_core_MixinStatList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStatList,
-        "core.MixinStatList"),
+    common_core_MixinStatList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStatList, "core.MixinStatList"),
 
     // CLIENT MIXINS
 

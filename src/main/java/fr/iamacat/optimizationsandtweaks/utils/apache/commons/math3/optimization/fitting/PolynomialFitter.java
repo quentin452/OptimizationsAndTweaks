@@ -71,8 +71,10 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      *
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                             if the algorithm
-     *                                                                                             failed to converge.
+     *                                                                                                     if the
+     *                                                                                                     algorithm
+     *                                                                                                     failed to
+     *                                                                                                     converge.
      * @deprecated Since 3.1 (to be removed in 4.0). Please use {@link #fit(double[])} instead.
      */
     @Deprecated
@@ -89,15 +91,18 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      * @param maxEval Maximum number of evaluations of the polynomial.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.TooManyEvaluationsException if
-     *                                                                                                    the number of
-     *                                                                                                    evaluations
-     *                                                                                                    exceeds
-     *                                                                                                    {@code maxEval}.
+     *                                                                                                            the
+     *                                                                                                            number
+     *                                                                                                            of
+     *                                                                                                            evaluations
+     *                                                                                                            exceeds
+     *                                                                                                            {@code maxEval}.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                                    if the
-     *                                                                                                    algorithm
-     *                                                                                                    failed to
-     *                                                                                                    converge.
+     *                                                                                                            if the
+     *                                                                                                            algorithm
+     *                                                                                                            failed
+     *                                                                                                            to
+     *                                                                                                            converge.
      * @since 3.1
      */
     public double[] fit(int maxEval, double[] guess) {
@@ -112,8 +117,10 @@ public class PolynomialFitter extends CurveFitter<PolynomialFunction.Parametric>
      *              increasing order of the polynomial's degree.
      * @return the coefficients of the polynomial that best fits the observed points.
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.ConvergenceException
-     *                                                                                             if the algorithm
-     *                                                                                             failed to converge.
+     *                                                                                                     if the
+     *                                                                                                     algorithm
+     *                                                                                                     failed to
+     *                                                                                                     converge.
      * @since 3.1
      */
     public double[] fit(double[] guess) {

@@ -51,8 +51,10 @@ public class IterationManager {
      * @param maxIterations the maximum number of iterations
      * @param callBack      the function to be called when the maximum number of
      *                      iterations has been reached
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack}
-     *                                                                                              is {@code null}
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException if
+     *                                                                                                      {@code callBack}
+     *                                                                                                      is
+     *                                                                                                      {@code null}
      * @since 3.1
      * @deprecated as of 3.6, replaced with {@link #IterationManager(int,
      *             fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.IntegerSequence.Incrementor.MaxCountExceededCallback)}
@@ -74,8 +76,10 @@ public class IterationManager {
      * @param maxIterations the maximum number of iterations
      * @param callBack      the function to be called when the maximum number of
      *                      iterations has been reached
-     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException if {@code callBack}
-     *                                                                                              is {@code null}
+     * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NullArgumentException if
+     *                                                                                                      {@code callBack}
+     *                                                                                                      is
+     *                                                                                                      {@code null}
      * @since 3.6
      */
     public IterationManager(final int maxIterations,

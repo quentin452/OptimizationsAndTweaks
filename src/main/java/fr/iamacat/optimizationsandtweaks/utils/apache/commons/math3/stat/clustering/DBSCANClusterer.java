@@ -55,7 +55,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathUti
  *      A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise</a>
  * @since 3.1
  * @deprecated As of 3.2 (to be removed in 4.0),
- *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.DBSCANClusterer} instead
+ *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.DBSCANClusterer}
+ *             instead
  */
 @Deprecated
 public class DBSCANClusterer<T extends Clusterable<T>> {

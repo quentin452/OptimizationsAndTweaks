@@ -35,7 +35,8 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathUti
  * @see <a href="http://en.wikipedia.org/wiki/K-means%2B%2B">K-means++ (wikipedia)</a>
  * @since 2.0
  * @deprecated As of 3.2 (to be removed in 4.0),
- *             use {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer}
+ *             use
+ *             {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer}
  *             instead
  */
 @Deprecated

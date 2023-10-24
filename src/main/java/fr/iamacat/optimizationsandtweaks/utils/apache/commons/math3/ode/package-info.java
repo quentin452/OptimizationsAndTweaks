@@ -140,11 +140,13 @@
  * <td>1</td>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.MidpointIntegrator Midpoint}</td>
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.MidpointIntegrator
+ * Midpoint}</td>
  * <td>2</td>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator Classical
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator
+ * Classical
  * Runge-Kutta}</td>
  * <td>4</td>
  * </tr>
@@ -153,7 +155,8 @@
  * <td>4</td>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegrator 3/8}</td>
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegrator
+ * 3/8}</td>
  * <td>4</td>
  * </tr>
  * <tr>
@@ -174,13 +177,15 @@
  * <td>Error Estimation Order</td></font>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.HighamHall54Integrator Higham and
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.HighamHall54Integrator Higham
+ * and
  * Hall}</td>
  * <td>5</td>
  * <td>4</td>
  * </tr>
  * <tr>
- * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator Dormand-Prince
+ * <td>{@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator
+ * Dormand-Prince
  * 5(4)}</td>
  * <td>5</td>
  * <td>4</td>
@@ -215,7 +220,8 @@
  * <p>
  * In the table above, the
  * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator
- * Adams-Bashforth} and {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator
+ * Adams-Bashforth} and
+ * {@link fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator
  * Adams-Moulton} integrators appear as variable-step ones. This is an experimental extension
  * to the classical algorithms using the Nordsieck vector representation.
  * </p>

@@ -204,13 +204,17 @@ public class PearsonsCorrelation {
      *
      * @return matrix of p-values
      * @throws fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException
-     *                                                                                                  if an error
-     *                                                                                                  occurs
-     *                                                                                                  estimating
-     *                                                                                                  probabilities
-     * @throws NullPointerException                                                                     if this instance
-     *                                                                                                  was created with
-     *                                                                                                  no data
+     *                                                                                                          if an
+     *                                                                                                          error
+     *                                                                                                          occurs
+     *                                                                                                          estimating
+     *                                                                                                          probabilities
+     * @throws NullPointerException                                                                             if this
+     *                                                                                                          instance
+     *                                                                                                          was
+     *                                                                                                          created
+     *                                                                                                          with
+     *                                                                                                          no data
      */
     public RealMatrix getCorrelationPValues() {
         TDistribution tDistribution = new TDistribution(nObs - 2);
