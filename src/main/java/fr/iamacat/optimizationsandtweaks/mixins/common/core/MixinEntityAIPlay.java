@@ -1,20 +1,21 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIPlay;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.util.Vec3;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
-import java.util.List;
-
 @Mixin(EntityAIPlay.class)
 public class MixinEntityAIPlay extends EntityAIBase {
+
     @Shadow
     private EntityVillager villagerObj;
     @Shadow
@@ -52,17 +53,20 @@ public class MixinEntityAIPlay extends EntityAIBase {
 
             double distanceSq = this.villagerObj.getDistanceSqToEntity(this.targetVillager);
             if (distanceSq > 4.0D) {
-                this.villagerObj.getNavigator().tryMoveToEntityLiving(this.targetVillager, this.field_75261_c);
+                this.villagerObj.getNavigator()
+                    .tryMoveToEntityLiving(this.targetVillager, this.field_75261_c);
             }
             return true;
         }
 
-        List<EntityVillager> nearbyVillagers = this.villagerObj.worldObj.getEntitiesWithinAABB(EntityVillager.class, this.villagerObj.boundingBox.expand(6.0D, 3.0D, 6.0D));
+        List<EntityVillager> nearbyVillagers = this.villagerObj.worldObj
+            .getEntitiesWithinAABB(EntityVillager.class, this.villagerObj.boundingBox.expand(6.0D, 3.0D, 6.0D));
 
         double closestDistanceSq = Double.MAX_VALUE;
 
         for (EntityVillager entityvillager : nearbyVillagers) {
-            if (entityvillager != this.villagerObj && !entityvillager.isPlaying() && entityvillager.getGrowingAge() < 0) {
+            if (entityvillager != this.villagerObj && !entityvillager.isPlaying()
+                && entityvillager.getGrowingAge() < 0) {
                 double distanceSq = entityvillager.getDistanceSqToEntity(this.villagerObj);
                 if (distanceSq < closestDistanceSq) {
                     closestDistanceSq = distanceSq;
@@ -74,7 +78,8 @@ public class MixinEntityAIPlay extends EntityAIBase {
         if (this.targetVillager == null) {
             Vec3 vec3 = RandomPositionGenerator.findRandomTarget(this.villagerObj, 16, 3);
             if (vec3 != null) {
-                this.villagerObj.getNavigator().tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.field_75261_c);
+                this.villagerObj.getNavigator()
+                    .tryMoveToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.field_75261_c);
                 return true;
             }
         }

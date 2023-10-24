@@ -62,7 +62,8 @@ public class EntityAIFollowParent2 extends EntityAIBase {
 
         if (hasValidParent && this.childAnimal.getGrowingAge() <= 0) {
             while (continueExecuting()) {
-                this.childAnimal.getNavigator().tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
+                this.childAnimal.getNavigator()
+                    .tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
             }
         }
 
