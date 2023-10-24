@@ -80,7 +80,8 @@ public class MixinLowerStringMap {
     @Overwrite
     public void putAll(Map p_putAll_1_) {
         for (Object obj : p_putAll_1_.entrySet()) {
-            if (obj instanceof Map.Entry entry) {
+            if (obj instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) obj;
                 String lowercaseKey = multithreadingandtweaks$getLowercaseKey(entry.getKey());
                 this.multithreadingandtweaks$internalMap.put(lowercaseKey, entry.getValue());
             }
@@ -127,9 +128,11 @@ public class MixinLowerStringMap {
         return this.put((String) p_put_1_, p_put_2_);
     }
 
+
     @Unique
     private String multithreadingandtweaks$getLowercaseKey(Object key) {
-        if (key instanceof String strKey) {
+        if (key instanceof String) {
+            String strKey = (String) key;
             return multithreadingandtweaks$lowercaseCache.computeIfAbsent(strKey, this::multithreadingandtweaks$toLowerCase);
         } else {
             return multithreadingandtweaks$toLowerCase(key.toString());
