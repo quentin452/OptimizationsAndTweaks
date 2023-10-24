@@ -6,7 +6,10 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
-
+    @Config.Comment("Optimize EntityAIPlay Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIPlay;
     @Config.Comment("Optimize EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

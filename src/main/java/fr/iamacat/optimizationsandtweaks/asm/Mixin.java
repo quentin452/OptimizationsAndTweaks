@@ -18,6 +18,9 @@ public enum Mixin implements IMixin {
         "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
+
+    common_core_MixinEntityAIPlay(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityAIPlay, "core.MixinEntityAIPlay"),
     common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
     common_witchery_MixinEntityVillageGuard(Side.COMMON,
