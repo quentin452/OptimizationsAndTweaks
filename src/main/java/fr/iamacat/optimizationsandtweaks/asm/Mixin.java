@@ -81,8 +81,6 @@ public enum Mixin implements IMixin {
         "adventurersamulet.MixinEntityEagle"),
     common_core_MixinEntityLiving(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLiving,
         "core.MixinEntityLiving"),
-    common_core_entity_MixinEntityChicken(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityChicken,
-        "core.entity.MixinEntityChicken"),
     common_core_MixinEntityAgeable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAgeable,
         "core.MixinEntityAgeable"),
     common_nei_MixinNEIServerUtils(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNEIServerUtils,
