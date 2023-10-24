@@ -335,17 +335,6 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    private void propagateSkylightOcclusion(int p_76595_1_, int p_76595_2_) {
-        int index = p_76595_1_ + p_76595_2_ * 16;
-        updateSkylightColumns[index] = true;
-        isGapLightingUpdated = true;
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
     private void recheckGaps(boolean p_150803_1_) {
         this.worldObj.theProfiler.startSection("recheckGaps");
 
@@ -410,42 +399,6 @@ public class MixinChunk {
         }
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private void relightBlock(int p_76615_1_, int p_76615_2_, int p_76615_3_) {
-        int blockIndex = p_76615_3_ << 4 | p_76615_1_;
-        int currentHeight = this.heightMap[blockIndex] & 255;
-        int newHeight = Math.max(currentHeight, p_76615_2_);
-
-        while (newHeight > 0 && this.func_150808_b(p_76615_1_, newHeight - 1, p_76615_3_) == 0) {
-            --newHeight;
-        }
-
-        if (newHeight != currentHeight) {
-            multithreadingandtweaks$updateHeightMap(p_76615_1_, p_76615_3_, newHeight, currentHeight);
-
-            int blockX = this.xPosition * 16 + p_76615_1_;
-            int blockZ = this.zPosition * 16 + p_76615_3_;
-
-            if (!this.worldObj.provider.hasNoSky) {
-                for (int xOffset = -1; xOffset <= 1; xOffset++) {
-                    for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                        if (xOffset == 0 && zOffset == 0) {
-                            continue;
-                        }
-                        updateSkylightNeighborHeight(blockX + xOffset, blockZ + zOffset, newHeight, currentHeight);
-                    }
-                }
-                updateSkylightNeighborHeight(blockX, blockZ, newHeight, currentHeight);
-            }
-
-            this.isModified = true;
-        }
-    }
-
     @Unique
     private void multithreadingandtweaks$updateHeightMap(int x, int z, int newHeight, int currentHeight) {
         this.heightMap[z << 4 | x] = newHeight;
@@ -471,123 +424,6 @@ public class MixinChunk {
     @Unique
     private boolean multithreadingandtweaks$isChunkWithinBounds(int y) {
         return (y >> 4) < this.storageArrays.length;
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public boolean func_150807_a(int x, int y, int z, Block newBlock, int newBlockMeta) {
-        int i1 = z << 4 | x;
-        int currentPrecipitationHeight = this.precipitationHeightMap[i1];
-
-        if (y >= currentPrecipitationHeight - 1) {
-            this.precipitationHeightMap[i1] = -999;
-        }
-
-        int currentHeight = this.heightMap[i1];
-        Block currentBlock = this.getBlock(x, y, z);
-        int currentBlockMeta = this.getBlockMetadata(x, y, z);
-
-        if (currentBlock == newBlock && currentBlockMeta == newBlockMeta) {
-            return false;
-        }
-
-        ExtendedBlockStorage extendedBlockStorage = this.multithreadingandtweaks$getOrCreateExtendedBlockStorage(y);
-
-        boolean flag = false;
-
-        if (extendedBlockStorage.isEmpty()) {
-            if (newBlock == Blocks.air) {
-                return false;
-            }
-            flag = y >= currentHeight;
-        }
-
-        int worldX = this.xPosition * 16 + x;
-        int worldZ = this.zPosition * 16 + z;
-
-        int lightOpacity = newBlock.getLightOpacity(this.worldObj, worldX, y, worldZ);
-
-        if (!this.worldObj.isRemote) {
-            currentBlock.onBlockPreDestroy(this.worldObj, worldX, y, worldZ, currentBlockMeta);
-        }
-
-        extendedBlockStorage.func_150818_a(x, y & 15, z, newBlock);
-        extendedBlockStorage.setExtBlockMetadata(x, y & 15, z, newBlockMeta);
-
-        if (!this.worldObj.isRemote) {
-            currentBlock.breakBlock(this.worldObj, worldX, y, worldZ, currentBlock, currentBlockMeta);
-
-            TileEntity tileEntity = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-            if (tileEntity != null && tileEntity.shouldRefresh(
-                currentBlock,
-                this.getBlock(x & 0x0F, y, z & 0x0F),
-                currentBlockMeta,
-                this.getBlockMetadata(x & 0x0F, y, z & 0x0F),
-                this.worldObj,
-                worldX,
-                y,
-                worldZ)) {
-                this.removeTileEntity(x & 0x0F, y, z & 0x0F);
-            }
-        } else if (currentBlock.hasTileEntity(currentBlockMeta)) {
-            TileEntity tileEntity = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-            if (tileEntity != null && tileEntity.shouldRefresh(
-                currentBlock,
-                newBlock,
-                currentBlockMeta,
-                newBlockMeta,
-                this.worldObj,
-                worldX,
-                y,
-                worldZ)) {
-                this.worldObj.removeTileEntity(worldX, y, worldZ);
-            }
-        }
-
-        if (extendedBlockStorage.getBlockByExtId(x, y & 15, z) != newBlock) {
-            return false;
-        }
-
-        extendedBlockStorage.setExtBlockMetadata(x, y & 15, z, newBlockMeta);
-
-        if (flag) {
-            this.generateSkylightMap();
-        } else {
-            int lightOpacityCurrentBlock = currentBlock.getLightOpacity(this.worldObj, worldX, y, worldZ);
-
-            if (lightOpacityCurrentBlock > 0) {
-                if (y >= currentHeight) {
-                    this.relightBlock(x, y + 1, z);
-                }
-            } else if (y == currentHeight - 1) {
-                this.relightBlock(x, y, z);
-            }
-
-            if (lightOpacityCurrentBlock != lightOpacity
-                && (lightOpacityCurrentBlock < lightOpacity || this.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > 0
-                    || this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) > 0)) {
-                this.propagateSkylightOcclusion(x, z);
-            }
-        }
-
-        if (!this.worldObj.isRemote) {
-            newBlock.onBlockAdded(this.worldObj, worldX, y, worldZ);
-        }
-
-        if (newBlock.hasTileEntity(newBlockMeta)) {
-            TileEntity tileEntity = this.getTileEntityUnsafe(x & 0x0F, y, z & 0x0F);
-
-            if (tileEntity != null) {
-                tileEntity.updateContainingBlockInfo();
-                tileEntity.blockMetadata = newBlockMeta;
-            }
-        }
-
-        this.isModified = true;
-        return true;
     }
 
     /**
