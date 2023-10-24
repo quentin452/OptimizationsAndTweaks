@@ -6,7 +6,10 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
-
+    @Config.Comment("Optimize RandomPositionGenerator Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRandomPositionGenerator;
     @Config.Comment("Optimize EntityAIWander Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
