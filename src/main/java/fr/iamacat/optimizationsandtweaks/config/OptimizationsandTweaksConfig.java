@@ -154,6 +154,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLiving;
+    @Config.Comment("Optimize EntityChicken")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityChicken;
     @Config.Comment("Optimize EventHandlerNEP from notenoughpets")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
