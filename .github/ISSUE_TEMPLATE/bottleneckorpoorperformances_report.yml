@@ -1,5 +1,5 @@
-name: Bottleneck or Performances problems caused by mods
-description: Report an issue with my mod
+name: Performances problems report
+description: Report an issue with my mod or other mods of vanilla
 title: "[TYPE THE MC VERSION]: "
 labels: ["bug"]
 assignees:
