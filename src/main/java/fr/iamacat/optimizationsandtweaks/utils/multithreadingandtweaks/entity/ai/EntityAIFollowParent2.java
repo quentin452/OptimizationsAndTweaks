@@ -1,6 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -32,13 +34,21 @@ public class EntityAIFollowParent2 extends EntityAIBase {
             && this.childAnimal.getDistanceSqToEntity(this.parentAnimal) >= 9.0D;
     }
 
+    private Map<EntityAnimal, Integer> growingAgeCache = new HashMap<>();
+
     public boolean shouldExecute() {
         List<EntityAnimal> nearbyEntities = getCachedEntitiesWithinAABB();
         double minDistanceSq = Double.MAX_VALUE;
         boolean hasValidParent = false;
 
         for (EntityAnimal entity : nearbyEntities) {
-            int growingAge = entity.getGrowingAge();
+            Integer growingAge = growingAgeCache.get(entity);
+
+            if (growingAge == null) {
+                growingAge = entity.getGrowingAge();
+                growingAgeCache.put(entity, growingAge);
+            }
+
             if (growingAge <= 0) {
                 double distanceSq = this.childAnimal.getDistanceSqToEntity(entity);
 
@@ -52,8 +62,7 @@ public class EntityAIFollowParent2 extends EntityAIBase {
 
         if (hasValidParent && this.childAnimal.getGrowingAge() <= 0) {
             while (continueExecuting()) {
-                this.childAnimal.getNavigator()
-                    .tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
+                this.childAnimal.getNavigator().tryMoveToEntityLiving(this.parentAnimal, this.followDistanceSq);
             }
         }
 
