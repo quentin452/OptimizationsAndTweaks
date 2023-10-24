@@ -28,6 +28,8 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
+    EASYBREEDING("easybreading", false, startsWith("easybreading")),
+
     OPTIFINE("OptiFine", false, startsWith("Optifine")),
     NEI("NotEnoughItems", false, startsWith("nei")),
     ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),

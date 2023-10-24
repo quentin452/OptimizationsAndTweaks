@@ -155,7 +155,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLiving;
-
+    @Config.Comment("Optimize EntityAIEatDroppedFood from Easy Breeding mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIEatDroppedFood;
     @Config.Comment("Optimize EventHandlerNEP from notenoughpets")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
