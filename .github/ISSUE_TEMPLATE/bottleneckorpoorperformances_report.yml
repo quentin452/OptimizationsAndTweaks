@@ -1,4 +1,4 @@
-name: Bug
+name: Bottleneck or Performances problems caused by mods
 description: Report an issue with my mod
 title: "[TYPE THE MC VERSION]: "
 labels: ["bug"]
