@@ -6,6 +6,11 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
+
+    @Config.Comment("Optimize EntityAIWander Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIWander;
     @Config.Comment("Optimize EntityAIPlay Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
