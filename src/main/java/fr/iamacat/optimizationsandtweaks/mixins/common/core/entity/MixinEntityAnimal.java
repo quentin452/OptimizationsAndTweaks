@@ -1,24 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.entity;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai.EntityAIFollowParent2;
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.ai.EntityAIFollowParent;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.*;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityAnimal.class)
 public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimals {
@@ -70,17 +61,6 @@ public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimal
             } else {
                 this.breeding = 0;
             }
-        }
-    }
-    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/world/World;)V")
-    private void modifyTasks(World worldIn, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityAnimal) {
-            EntityAITasks taskList = this.tasks;
-            List<EntityAITasks.EntityAITaskEntry> taskEntries = taskList.taskEntries;
-
-            taskEntries.removeIf(entry -> entry.action instanceof EntityAIFollowParent);
-
-            taskList.addTask(4, new EntityAIFollowParent2((EntityAnimal) (Object)this, 1.1D));
         }
     }
 }
