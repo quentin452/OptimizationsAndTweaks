@@ -285,10 +285,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShipwreckGen;
-    @Config.Comment("Fix Entity Collision FPS(Inspired by Entity Collision FPS Fix from modern version)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkEntityCollisionFPSFix;
+
     @Config.Comment("Fix Some Cascading Worldgen caused by Trees from pam's harvestcraft mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
