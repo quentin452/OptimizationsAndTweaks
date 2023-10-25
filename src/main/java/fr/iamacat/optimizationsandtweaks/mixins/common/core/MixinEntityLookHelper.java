@@ -34,27 +34,25 @@ public class MixinEntityLookHelper {
     private double posY;
     @Shadow
     private double posZ;
+    
+    @Shadow
+    public void setLookPositionWithEntity(Entity p_75651_1_, float p_75651_2_, float p_75651_3_)
+    {
+        this.posX = p_75651_1_.posX;
 
-    /**
-     * @author iamacat
-     * @reason no changes
-     */
-    @Overwrite
-    public void setLookPositionWithEntity(Entity p_75651_1_, float p_75651_2_, float p_75651_3_) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
-            this.posX = p_75651_1_.posX;
-
-            if (p_75651_1_ instanceof EntityLivingBase) {
-                this.posY = p_75651_1_.posY + (double) p_75651_1_.getEyeHeight();
-            } else {
-                this.posY = (p_75651_1_.boundingBox.minY + p_75651_1_.boundingBox.maxY) / 2.0D;
-            }
-
-            this.posZ = p_75651_1_.posZ;
-            this.deltaLookYaw = p_75651_2_;
-            this.deltaLookPitch = p_75651_3_;
-            this.isLooking = true;
+        if (p_75651_1_ instanceof EntityLivingBase)
+        {
+            this.posY = p_75651_1_.posY + (double)p_75651_1_.getEyeHeight();
         }
+        else
+        {
+            this.posY = (p_75651_1_.boundingBox.minY + p_75651_1_.boundingBox.maxY) / 2.0D;
+        }
+
+        this.posZ = p_75651_1_.posZ;
+        this.deltaLookYaw = p_75651_2_;
+        this.deltaLookPitch = p_75651_3_;
+        this.isLooking = true;
     }
 
     /**
