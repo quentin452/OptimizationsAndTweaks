@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
@@ -11,15 +12,14 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityAIAttackOnCollide.class)
-public class MixinEntityAIAttackOnCollide {
-
+public class MixinEntityAIAttackOnCollide extends EntityAIBase {
     @Shadow
     World worldObj;
     @Shadow
     EntityCreature attacker;
+
     @Shadow
     int attackTick;
     @Shadow
@@ -41,20 +41,26 @@ public class MixinEntityAIAttackOnCollide {
     @Shadow
     private int failedPathFindingPenalty;
 
+    public MixinEntityAIAttackOnCollide(EntityCreature attacker, double speedTowardsTarget, boolean longMemory) {
+        this.attacker = attacker;
+        this.worldObj = attacker.worldObj;
+        this.speedTowardsTarget = speedTowardsTarget;
+        this.longMemory = longMemory;
+        this.setMutexBits(3);
+    }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
     public boolean shouldExecute() {
-        EntityLivingBase targetEntity = this.attacker.getAttackTarget();
-
-        if (targetEntity == null || !targetEntity.isEntityAlive() || (this.classTarget != null && !this.classTarget.isAssignableFrom(targetEntity.getClass()))) {
+        EntityLivingBase target = this.attacker.getAttackTarget();
+        if (target == null || !target.isEntityAlive() || (this.classTarget != null && !this.classTarget.isAssignableFrom(target.getClass()))) {
             return false;
         }
-
-        if (--this.field_75445_i <= 0 || this.entityPathEntity == null) {
-            this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(targetEntity);
+        if (--this.field_75445_i <= 0) {
+            this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(target);
             this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
             return this.entityPathEntity != null;
         } else {
@@ -68,20 +74,9 @@ public class MixinEntityAIAttackOnCollide {
      */
     @Overwrite
     public boolean continueExecuting() {
-        EntityLivingBase targetEntity = this.attacker.getAttackTarget();
-
-        if (targetEntity == null || !targetEntity.isEntityAlive()) {
-            return false;
-        }
-
-        if (!this.longMemory) {
-            return !this.attacker.getNavigator().noPath();
-        } else {
-            int posX = MathHelper.floor_double(targetEntity.posX);
-            int posY = MathHelper.floor_double(targetEntity.posY);
-            int posZ = MathHelper.floor_double(targetEntity.posZ);
-            return this.attacker.isWithinHomeDistance(posX, posY, posZ);
-        }
+        EntityLivingBase target = this.attacker.getAttackTarget();
+        return target != null && target.isEntityAlive() && (!this.longMemory || !this.attacker.getNavigator().noPath())
+            && this.attacker.isWithinHomeDistance(MathHelper.floor_double(target.posX), MathHelper.floor_double(target.posY), MathHelper.floor_double(target.posZ));
     }
 
     /**
@@ -99,67 +94,63 @@ public class MixinEntityAIAttackOnCollide {
      * @reason
      */
     @Overwrite
-    public void updateTask() {
-        EntityLivingBase targetEntity = this.attacker.getAttackTarget();
-
-        if (targetEntity == null) {
-            return;
-        }
-
-        this.attacker.getLookHelper().setLookPositionWithEntity(targetEntity, 30.0F, 30.0F);
-
-        double distanceSq = this.attacker.getDistanceSq(targetEntity.posX, targetEntity.boundingBox.minY, targetEntity.posZ);
-        double maxAttackDistance = this.attacker.width * 2.0F * this.attacker.width * 2.0F + targetEntity.width;
-
-        if (distanceSq <= maxAttackDistance && this.attackTick <= 20) {
-            this.attackTick = 20;
-            this.attacker.swingItem();
-
-            if (this.attacker.getHeldItem() != null) {
-                this.attacker.attackEntityAsMob(targetEntity);
-            }
-        } else if (this.longMemory || this.attacker.getEntitySenses().canSee(targetEntity)) {
-            if (this.field_75445_i <= 0) {
-                this.multithreadingandtweaks$updatePathToTarget(targetEntity);
-            } else {
-                this.field_75445_i--;
-            }
-        }
+    public void resetTask() {
+        this.attacker.getNavigator().clearPathEntity();
     }
 
-    @Unique
-    private void multithreadingandtweaks$updatePathToTarget(EntityLivingBase targetEntity) {
-        this.field_151497_i = targetEntity.posX;
-        this.field_151495_j = targetEntity.boundingBox.minY;
-        this.field_151496_k = targetEntity.posZ;
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void updateTask() {
+        EntityLivingBase target = this.attacker.getAttackTarget();
+        this.attacker.getLookHelper().setLookPositionWithEntity(target, 30.0F, 30.0F);
+        double distanceSquared = this.attacker.getDistanceSq(target.posX, target.boundingBox.minY, target.posZ);
+        double attackRange = this.attacker.width * 2.0F * this.attacker.width * 2.0F + target.width;
+        --this.field_75445_i;
 
-        if (this.attacker.getNavigator().getPath() == null || this.field_75445_i <= 0) {
-            this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(targetEntity);
-            this.field_75445_i = failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
+        if ((this.longMemory || this.attacker.getEntitySenses().canSee(target))
+            && this.field_75445_i <= 0
+            && (this.field_151497_i == 0.0D && this.field_151495_j == 0.0D && this.field_151496_k == 0.0D
+            || target.getDistanceSq(this.field_151497_i, this.field_151495_j, this.field_151496_k) >= 1.0D
+            || this.attacker.getRNG().nextFloat() < 0.05F)) {
+            this.field_151497_i = target.posX;
+            this.field_151495_j = target.boundingBox.minY;
+            this.field_151496_k = target.posZ;
+            this.field_75445_i = this.failedPathFindingPenalty + 4 + this.attacker.getRNG().nextInt(7);
 
-            if (this.attacker.getNavigator().getPath() != null) {
-                PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
-
-                if (finalPathPoint != null && targetEntity.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
-                    failedPathFindingPenalty = 0;
+            PathEntity attackerPath = this.attacker.getNavigator().getPath();
+            if (attackerPath != null) {
+                PathPoint finalPathPoint = attackerPath.getFinalPathPoint();
+                if (finalPathPoint != null && target.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1) {
+                    this.failedPathFindingPenalty = 0;
                 } else {
-                    failedPathFindingPenalty += 10;
+                    this.failedPathFindingPenalty += 10;
                 }
             } else {
-                failedPathFindingPenalty += 10;
+                this.failedPathFindingPenalty += 10;
             }
 
-            double distanceSq = this.attacker.getDistanceSq(targetEntity.posX, targetEntity.boundingBox.minY, targetEntity.posZ);
-
-            if (distanceSq > 1024.0D) {
+            if (distanceSquared > 1024.0D) {
                 this.field_75445_i += 10;
-            } else if (distanceSq > 256.0D) {
+            } else if (distanceSquared > 256.0D) {
                 this.field_75445_i += 5;
             }
 
-            if (!this.attacker.getNavigator().tryMoveToEntityLiving(targetEntity, this.speedTowardsTarget)) {
+            if (!this.attacker.getNavigator().tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
                 this.field_75445_i += 15;
             }
+        }
+
+        this.attackTick = Math.max(this.attackTick - 1, 0);
+
+        if (distanceSquared <= attackRange && this.attackTick <= 20) {
+            this.attackTick = 20;
+            if (this.attacker.getHeldItem() != null) {
+                this.attacker.swingItem();
+            }
+            this.attacker.attackEntityAsMob(target);
         }
     }
 }
