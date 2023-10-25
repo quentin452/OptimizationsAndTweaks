@@ -241,13 +241,15 @@ public class MixinChunk {
     @Unique
     private void multithreadingandtweaks$processEntitiesInRange(int minIndex, int maxIndex, Entity entity, AxisAlignedBB aabb, List<Entity> entityList, IEntitySelector selector) {
         for (int k = minIndex; k <= maxIndex; ++k) {
-            List list1 = this.entityLists[k];
+            if (this.isChunkLoaded) {
+                List list1 = this.entityLists[k];
 
-            for (Object o : list1) {
-                Entity entity1 = (Entity) o;
+                for (Object o : list1) {
+                    Entity entity1 = (Entity) o;
 
-                if (entity1 != entity && entity1.boundingBox.intersectsWith(aabb) && (selector == null || selector.isEntityApplicable(entity1))) {
-                    entityList.add(entity1);
+                    if (entity1 != entity && entity1.boundingBox.intersectsWith(aabb) && (selector == null || selector.isEntityApplicable(entity1))) {
+                        entityList.add(entity1);
+                    }
                 }
             }
         }
