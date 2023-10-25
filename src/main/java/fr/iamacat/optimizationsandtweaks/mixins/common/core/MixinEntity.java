@@ -139,68 +139,43 @@ public class MixinEntity {
             AxisAlignedBB axisalignedbb = this.boundingBox.copy();
             boolean flag = entity.onGround && entity.isSneaking() && entity instanceof EntityPlayer;
 
-            if (flag)
-            {
-                double d9;
+            if (flag) {
+                double d9 = 0.05D;
 
-                for (d9 = 0.05D; x != 0.0D && this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.getOffsetBoundingBox(x, -1.0D, 0.0D)).isEmpty(); d6 = x)
-                {
-                    if (x < d9 && x >= -d9)
-                    {
-                        x = 0.0D;
-                    }
-                    else if (x > 0.0D)
-                    {
-                        x -= d9;
-                    }
-                    else
-                    {
-                        x += d9;
-                    }
-                }
+                while (x != 0.0D || z != 0.0D) {
+                    boolean xModified = false;
+                    boolean zModified = false;
 
-                for (; z != 0.0D && this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.getOffsetBoundingBox(0.0D, -1.0D, z)).isEmpty(); d8 = z)
-                {
-                    if (z < d9 && z >= -d9)
-                    {
-                        z = 0.0D;
-                    }
-                    else if (z > 0.0D)
-                    {
-                        z -= d9;
-                    }
-                    else
-                    {
-                        z += d9;
-                    }
-                }
-
-                while (x != 0.0D && z != 0.0D && this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.getOffsetBoundingBox(x, -1.0D, z)).isEmpty())
-                {
-                    if (x < d9 && x >= -d9)
-                    {
-                        x = 0.0D;
-                    }
-                    else if (x > 0.0D)
-                    {
-                        x -= d9;
-                    }
-                    else
-                    {
-                        x += d9;
+                    if (x != 0.0D) {
+                        List<AxisAlignedBB> xCollisions = this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.getOffsetBoundingBox(x, -1.0D, 0.0D));
+                        if (xCollisions.isEmpty()) {
+                            if (Math.abs(x) < d9) {
+                                x = 0.0D;
+                            } else if (x > 0.0D) {
+                                x -= d9;
+                            } else {
+                                x += d9;
+                            }
+                            xModified = true;
+                        }
                     }
 
-                    if (z < d9 && z >= -d9)
-                    {
-                        z = 0.0D;
+                    if (z != 0.0D) {
+                        List<AxisAlignedBB> zCollisions = this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.getOffsetBoundingBox(0.0D, -1.0D, z));
+                        if (zCollisions.isEmpty()) {
+                            if (Math.abs(z) < d9) {
+                                z = 0.0D;
+                            } else if (z > 0.0D) {
+                                z -= d9;
+                            } else {
+                                z += d9;
+                            }
+                            zModified = true;
+                        }
                     }
-                    else if (z > 0.0D)
-                    {
-                        z -= d9;
-                    }
-                    else
-                    {
-                        z += d9;
+
+                    if (!xModified && !zModified) {
+                        break;
                     }
 
                     d6 = x;
@@ -210,9 +185,8 @@ public class MixinEntity {
 
             List list = this.worldObj.getCollidingBoundingBoxes(entity, this.boundingBox.addCoord(x, y, z));
 
-            for (int i = 0; i < list.size(); ++i)
-            {
-                y = ((AxisAlignedBB)list.get(i)).calculateYOffset(this.boundingBox, y);
+            for (Object o : list) {
+                y = ((AxisAlignedBB) o).calculateYOffset(this.boundingBox, y);
             }
 
             this.boundingBox.offset(0.0D, y, 0.0D);
@@ -266,7 +240,7 @@ public class MixinEntity {
                 d10 = y;
                 d11 = z;
                 x = d6;
-                y = (double)entity.stepHeight;
+                y = entity.stepHeight;
                 z = d8;
                 AxisAlignedBB axisalignedbb1 = this.boundingBox.copy();
                 this.boundingBox.setBB(axisalignedbb);
@@ -322,7 +296,7 @@ public class MixinEntity {
                 }
                 else
                 {
-                    y = (double)(-entity.stepHeight);
+                    y = -entity.stepHeight;
 
                     for (k = 0; k < list.size(); ++k)
                     {
