@@ -17,8 +17,8 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Game log
-      description: Attach the fml-client-latest.log or fml-server-latest.log or both file here.
+      label: Spark profiler
+      description: Attach the .sparkprofile or the link of your profiler
     validations:
       required: true
 # Essential
@@ -26,6 +26,6 @@ body:
     id: description
     attributes:
       label: Description
-      description: Describe how and when you experience this bug.
+      description: Describe how and when you experience this performances problems.
     validations:
       required: true
