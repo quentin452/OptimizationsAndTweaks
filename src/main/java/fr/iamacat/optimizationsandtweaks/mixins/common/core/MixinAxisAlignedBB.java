@@ -325,62 +325,121 @@ public class MixinAxisAlignedBB {
      * @reason
      */
     @Overwrite
-    public MovingObjectPosition calculateIntercept(Vec3 p_72327_1_, Vec3 p_72327_2_)
-    {
-        Vec3 vec32 = p_72327_1_.getIntermediateWithXValue(p_72327_2_, this.minX);
-        Vec3 vec33 = p_72327_1_.getIntermediateWithXValue(p_72327_2_, this.maxX);
-        Vec3 vec34 = p_72327_1_.getIntermediateWithYValue(p_72327_2_, this.minY);
-        Vec3 vec35 = p_72327_1_.getIntermediateWithYValue(p_72327_2_, this.maxY);
-        Vec3 vec36 = p_72327_1_.getIntermediateWithZValue(p_72327_2_, this.minZ);
-        Vec3 vec37 = p_72327_1_.getIntermediateWithZValue(p_72327_2_, this.maxZ);
+    public MovingObjectPosition calculateIntercept(Vec3 p_72327_1_, Vec3 p_72327_2_) {
+        Vec3 hit = null;
+        int sideHit = -1;
 
-        Vec3 vec38 = null;
-        byte b0 = -1;
+        double tMin = (this.minX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
+        double tMax = (this.maxX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
 
-        if (this.isVecInYZ(vec32) && (vec38 == null || p_72327_1_.squareDistanceTo(vec32) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec32;
-            b0 = 4;
+        if (tMin > tMax) {
+            double temp = tMin;
+            tMin = tMax;
+            tMax = temp;
         }
 
-        if (this.isVecInYZ(vec33) && (vec38 == null || p_72327_1_.squareDistanceTo(vec33) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec33;
-            b0 = 5;
+        double tyMin = (this.minY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
+        double tyMax = (this.maxY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
+
+        if (tyMin > tyMax) {
+            double temp = tyMin;
+            tyMin = tyMax;
+            tyMax = temp;
         }
 
-        if (this.isVecInXZ(vec34) && (vec38 == null || p_72327_1_.squareDistanceTo(vec34) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec34;
-            b0 = 0;
-        }
-
-        if (this.isVecInXZ(vec35) && (vec38 == null || p_72327_1_.squareDistanceTo(vec35) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec35;
-            b0 = 1;
-        }
-
-        if (this.isVecInXY(vec36) && (vec38 == null || p_72327_1_.squareDistanceTo(vec36) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec36;
-            b0 = 2;
-        }
-
-        if (this.isVecInXY(vec37) && (vec38 == null || p_72327_1_.squareDistanceTo(vec37) < p_72327_1_.squareDistanceTo(vec38)))
-        {
-            vec38 = vec37;
-            b0 = 3;
-        }
-
-        if (vec38 == null)
-        {
+        if ((tMin > tyMax) || (tyMin > tMax)) {
             return null;
         }
-        else
-        {
-            return new MovingObjectPosition(0, 0, 0, b0, vec38);
+
+        if (tyMin > tMin) {
+            tMin = tyMin;
         }
+
+        if (tyMax < tMax) {
+            tMax = tyMax;
+        }
+
+        double tzMin = (this.minZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
+        double tzMax = (this.maxZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
+
+        if (tzMin > tzMax) {
+            double temp = tzMin;
+            tzMin = tzMax;
+            tzMax = temp;
+        }
+
+        if ((tMin > tzMax) || (tzMin > tMax)) {
+            return null;
+        }
+
+        if (tzMin > tMin) {
+            tMin = tzMin;
+        }
+
+        if (tzMax < tMax) {
+            tMax = tzMax;
+        }
+
+        if (tMax < 0.0) {
+            return null;
+        }
+
+        hit = p_72327_1_.addVector(tMax * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+            tMax * (p_72327_2_.yCoord - p_72327_1_.yCoord),
+            tMax * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+
+        if (tMin > 0.0) {
+            double side;
+
+            if (tMin == tMin) {
+                side = -1;
+            } else {
+                side = 1;
+            }
+
+            if (Math.abs(tMin - tyMin) < 1.0E-12) {
+                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
+                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+                hit = hit.addVector(side * 1.0E-6, 0, 0);
+            } else if (Math.abs(tMin - tyMax) < 1.0E-12) {
+                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
+                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+                hit = hit.addVector(side * 1.0E-6, 0, 0);
+            } else if (Math.abs(tMin - tzMin) < 1.0E-12) {
+                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
+                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+                hit = hit.addVector(0, 0, side * 1.0E-6);
+            }
+        }
+
+        if (hit.xCoord == this.minX) {
+            sideHit = 4;
+        }
+
+        if (hit.xCoord == this.maxX) {
+            sideHit = 5;
+        }
+
+        if (hit.yCoord == this.minY) {
+            sideHit = 0;
+        }
+
+        if (hit.yCoord == this.maxY) {
+            sideHit = 1;
+        }
+
+        if (hit.zCoord == this.minZ) {
+            sideHit = 2;
+        }
+
+        if (hit.zCoord == this.maxZ) {
+            sideHit = 3;
+        }
+
+        return new MovingObjectPosition(0, 0, 0, sideHit, hit);
     }
 
     /**
