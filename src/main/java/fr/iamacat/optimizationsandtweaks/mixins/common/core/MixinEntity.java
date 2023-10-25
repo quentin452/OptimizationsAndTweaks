@@ -441,11 +441,7 @@ public class MixinEntity {
             entity.attackEntityFrom(DamageSource.inFire, (float)amount);
         }
     }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     protected void func_145775_I()
     {
         int i = MathHelper.floor_double(this.boundingBox.minX + 0.001D);
