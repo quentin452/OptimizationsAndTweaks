@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import net.minecraft.block.Block;
@@ -221,19 +222,32 @@ public class MixinPathFinder {
         PathPoint pathPoint, float p_75860_5, CallbackInfoReturnable cir) {
         return multithreadingandtweaks$getVerticalOffset(entity, x, y, z, pathPoint, cir);
     }
+    @Unique
+    private final Map<Integer, Integer> multithreadingandtweaks$blockCache = new ConcurrentHashMap<>();
 
     @Unique
-    public int multithreadingandtweaks$getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_,
-        int p_75855_4_, PathPoint p_75855_5_, CallbackInfoReturnable cir) {
-        return func_82565_a(
-            p_75855_1_,
-            p_75855_2_,
-            p_75855_3_,
-            p_75855_4_,
-            p_75855_5_,
+    public int multithreadingandtweaks$getVerticalOffset(Entity entity, int x, int y, int z, PathPoint pathPoint, CallbackInfoReturnable cir) {
+        int key = ((x & 0xFFF) << 20) | ((z & 0xFFF) << 8) | (y & 0xFF);
+
+        Integer cachedResult = multithreadingandtweaks$blockCache.get(key);
+        if (cachedResult != null) {
+            return cachedResult;
+        }
+
+        int result = func_82565_a(
+            entity,
+            x,
+            y,
+            z,
+            pathPoint,
             this.isPathingInWater,
             this.isMovementBlockAllowed,
             this.isWoddenDoorAllowed,
-            cir);
+            cir
+        );
+
+        multithreadingandtweaks$blockCache.put(key, result);
+
+        return result;
     }
 }
