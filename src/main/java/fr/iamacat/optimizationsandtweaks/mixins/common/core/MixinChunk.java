@@ -34,9 +34,6 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Chunk.class, priority = 999)
 public class MixinChunk {
@@ -449,8 +446,8 @@ public class MixinChunk {
      * @author
      * @reason
      */
-    @Inject(method = "setBlockMetadata", at = @At("HEAD"), remap = false, cancellable = true)
-    public boolean setBlockMetadata(int x, int y, int z, int newMetadata, CallbackInfoReturnable<Boolean> cir) {
+    @Overwrite
+    public boolean setBlockMetadata(int x, int y, int z, int newMetadata) {
         ExtendedBlockStorage extendedBlockStorage = this.multithreadingandtweaks$getOrCreateExtendedBlockStorage(y);
 
         if (extendedBlockStorage == null) {
@@ -477,7 +474,7 @@ public class MixinChunk {
                 tileEntity.updateContainingBlockInfo();
             }
         }
-        cir.setReturnValue(false);
+
         return true;
     }
 
