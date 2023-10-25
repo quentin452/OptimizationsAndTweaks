@@ -152,137 +152,104 @@ public class MixinAxisAlignedBB {
     @Overwrite
     public double calculateXOffset(AxisAlignedBB other, double p_72316_2_)
     {
-        if (other.maxY > this.minY && other.minY < this.maxY)
-        {
-            if (other.maxZ > this.minZ && other.minZ < this.maxZ)
-            {
-                double d1;
-
-                if (p_72316_2_ > 0.0D && other.maxX <= this.minX)
-                {
-                    d1 = this.minX - other.maxX;
-
-                    if (d1 < p_72316_2_)
-                    {
-                        p_72316_2_ = d1;
-                    }
-                }
-
-                if (p_72316_2_ < 0.0D && other.minX >= this.maxX)
-                {
-                    d1 = this.maxX - other.minX;
-
-                    if (d1 > p_72316_2_)
-                    {
-                        p_72316_2_ = d1;
-                    }
-                }
-
-                return p_72316_2_;
-            }
-            else
-            {
-                return p_72316_2_;
-            }
-        }
-        else
+        if (other.maxY <= this.minY || other.minY >= this.maxY)
         {
             return p_72316_2_;
         }
+
+        if (other.maxZ > this.minZ && other.minZ < this.maxZ)
+        {
+            if (p_72316_2_ > 0.0D && other.maxX <= this.minX)
+            {
+                double d1 = this.minX - other.maxX;
+                if (d1 < p_72316_2_)
+                {
+                    p_72316_2_ = d1;
+                }
+            }
+
+            if (p_72316_2_ < 0.0D && other.minX >= this.maxX)
+            {
+                double d1 = this.maxX - other.minX;
+                if (d1 > p_72316_2_)
+                {
+                    p_72316_2_ = d1;
+                }
+            }
+        }
+        return p_72316_2_;
     }
 
     /**
-     * if instance and the argument bounding boxes overlap in the X and Z dimensions, calculate the offset between them
-     * in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * @author
+     * @reason
      */
     @Overwrite
     public double calculateYOffset(AxisAlignedBB other, double p_72323_2_)
     {
-        if (other.maxX > this.minX && other.minX < this.maxX)
-        {
-            if (other.maxZ > this.minZ && other.minZ < this.maxZ)
-            {
-                double d1;
-
-                if (p_72323_2_ > 0.0D && other.maxY <= this.minY)
-                {
-                    d1 = this.minY - other.maxY;
-
-                    if (d1 < p_72323_2_)
-                    {
-                        p_72323_2_ = d1;
-                    }
-                }
-
-                if (p_72323_2_ < 0.0D && other.minY >= this.maxY)
-                {
-                    d1 = this.maxY - other.minY;
-
-                    if (d1 > p_72323_2_)
-                    {
-                        p_72323_2_ = d1;
-                    }
-                }
-
-                return p_72323_2_;
-            }
-            else
-            {
-                return p_72323_2_;
-            }
-        }
-        else
+        if (other.maxX <= this.minX || other.minX >= this.maxX)
         {
             return p_72323_2_;
         }
+
+        if (other.maxZ > this.minZ && other.minZ < this.maxZ)
+        {
+            if (p_72323_2_ > 0.0D && other.maxY <= this.minY)
+            {
+                double d1 = this.minY - other.maxY;
+                if (d1 < p_72323_2_)
+                {
+                    p_72323_2_ = d1;
+                }
+            }
+
+            if (p_72323_2_ < 0.0D && other.minY >= this.maxY)
+            {
+                double d1 = this.maxY - other.minY;
+                if (d1 > p_72323_2_)
+                {
+                    p_72323_2_ = d1;
+                }
+            }
+        }
+        return p_72323_2_;
     }
 
     /**
-     * if instance and the argument bounding boxes overlap in the Y and X dimensions, calculate the offset between them
-     * in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * @author
+     * @reason
      */
     @Overwrite
     public double calculateZOffset(AxisAlignedBB other, double p_72322_2_)
     {
-        if (other.maxX > this.minX && other.minX < this.maxX)
-        {
-            if (other.maxY > this.minY && other.minY < this.maxY)
-            {
-                double d1;
-
-                if (p_72322_2_ > 0.0D && other.maxZ <= this.minZ)
-                {
-                    d1 = this.minZ - other.maxZ;
-
-                    if (d1 < p_72322_2_)
-                    {
-                        p_72322_2_ = d1;
-                    }
-                }
-
-                if (p_72322_2_ < 0.0D && other.minZ >= this.maxZ)
-                {
-                    d1 = this.maxZ - other.minZ;
-
-                    if (d1 > p_72322_2_)
-                    {
-                        p_72322_2_ = d1;
-                    }
-                }
-
-                return p_72322_2_;
-            }
-            else
-            {
-                return p_72322_2_;
-            }
-        }
-        else
+        if (other.maxX <= this.minX || other.minX >= this.maxX)
         {
             return p_72322_2_;
         }
+
+        if (other.maxY <= this.minY || other.minY >= this.maxY)
+        {
+            return p_72322_2_;
+        }
+
+        if (p_72322_2_ > 0.0D && other.maxZ <= this.minZ)
+        {
+            double d1 = this.minZ - other.maxZ;
+            if (d1 < p_72322_2_)
+            {
+                p_72322_2_ = d1;
+            }
+        }
+
+        if (p_72322_2_ < 0.0D && other.minZ >= this.maxZ)
+        {
+            double d1 = this.maxZ - other.minZ;
+            if (d1 > p_72322_2_)
+            {
+                p_72322_2_ = d1;
+            }
+        }
+        return p_72322_2_;
     }
 
     /**
