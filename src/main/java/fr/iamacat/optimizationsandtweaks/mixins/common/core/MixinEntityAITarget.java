@@ -148,9 +148,7 @@ public abstract class MixinEntityAITarget extends EntityAIBase
             if (this.targetSearchStatus == 0) {
                 this.targetSearchStatus = this.canEasilyReach(targetEntity) ? 1 : 2;
             }
-            if (this.targetSearchStatus == 2) {
-                return false;
-            }
+            return this.targetSearchStatus != 2;
         }
 
         return true;
@@ -160,7 +158,7 @@ public abstract class MixinEntityAITarget extends EntityAIBase
      * Checks to see if this entity can find a short path to the given target.
      */
     @Overwrite
-    private boolean canEasilyReach(EntityLivingBase targetEntity) {
+    public boolean canEasilyReach(EntityLivingBase targetEntity) {
         this.targetSearchDelay = 10 + this.taskOwner.getRNG().nextInt(5);
         PathEntity pathEntity = this.taskOwner.getNavigator().getPathToEntityLiving(targetEntity);
 
