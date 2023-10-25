@@ -13,6 +13,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
 
+    //SERVER MIXINS
+
+    server_core_MixinChunkEntityCollisionFPSFix(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinChunkEntityCollisionFPSFix, "core.MixinChunkEntityCollisionFPSFix"),
+
     // TWEAKING MIXINS
     common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
