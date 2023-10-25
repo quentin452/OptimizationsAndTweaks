@@ -659,17 +659,18 @@ public class MixinChunk {
             Block block = this.getBlock(x, y, z);
             int meta = this.getBlockMetadata(x, y, z);
 
-            if (!block.hasTileEntity(meta)) {
-                return null;
-            }
+            if (block != null && block.hasTileEntity(meta)) {
+                tileentity = block.createTileEntity(worldObj, meta);
 
-            tileentity = block.createTileEntity(worldObj, meta);
-            tileentity.setWorldObj(this.worldObj);
-            tileentity.xCoord = this.xPosition * 16 + x;
-            tileentity.yCoord = y;
-            tileentity.zCoord = this.zPosition * 16 + z;
-            this.worldObj.setTileEntity(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord, tileentity);
-            this.chunkTileEntityMap.put(chunkposition, tileentity);
+                if (tileentity != null) {
+                    tileentity.setWorldObj(this.worldObj);
+                    tileentity.xCoord = this.xPosition * 16 + x;
+                    tileentity.yCoord = y;
+                    tileentity.zCoord = this.zPosition * 16 + z;
+                    this.worldObj.setTileEntity(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord, tileentity);
+                    this.chunkTileEntityMap.put(chunkposition, tileentity);
+                }
+            }
         }
 
         return tileentity;
