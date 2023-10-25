@@ -147,30 +147,27 @@ public abstract class MixinWorld implements IBlockAccess {
     public List<AxisAlignedBB> getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2_) {
         if (OptimizationsandTweaksConfig.enableMixinWorld) {
             this.collidingBoundingBoxes.clear();
-            int i = MathHelper.floor_double(p_72945_2_.minX);
-            int j = MathHelper.floor_double(p_72945_2_.maxX + 1.0D);
-            int k = MathHelper.floor_double(p_72945_2_.minY);
-            int l = MathHelper.floor_double(p_72945_2_.maxY + 1.0D);
-            int i1 = MathHelper.floor_double(p_72945_2_.minZ);
-            int j1 = MathHelper.floor_double(p_72945_2_.maxZ + 1.0D);
+            double minX = p_72945_2_.minX;
+            double maxX = p_72945_2_.maxX + 1.0D;
+            double minY = p_72945_2_.minY;
+            double maxY = p_72945_2_.maxY + 1.0D;
+            double minZ = p_72945_2_.minZ;
+            double maxZ = p_72945_2_.maxZ + 1.0D;
 
-            for (int k1 = i; k1 < j; ++k1) {
-                for (int l1 = i1; l1 < j1; ++l1) {
-                    if (this.multithreadingandtweaks$blockExists(k1, 64, l1)) {
-                        for (int i2 = k - 1; i2 < l; ++i2) {
-                            Block block;
+            for (int x = MathHelper.floor_double(minX); x < MathHelper.floor_double(maxX); ++x) {
+                for (int z = MathHelper.floor_double(minZ); z < MathHelper.floor_double(maxZ); ++z) {
+                    if (this.multithreadingandtweaks$blockExists(x, 64, z)) {
+                        double blockMinY = Math.max(minY - 1, 0);  // Avoid negative values for minY
+                        double blockMaxY = Math.min(maxY, 256);      // Avoid exceeding world height
 
-                            if (k1 >= -30000000 && k1 < 30000000 && l1 >= -30000000 && l1 < 30000000) {
-                                block = this.getBlock(k1, i2, l1);
-                            } else {
-                                block = Blocks.stone;
-                            }
+                        for (int y = MathHelper.floor_double(blockMinY); y < MathHelper.floor_double(blockMaxY); ++y) {
+                            Block block = this.getBlock(x, y, z);
                             World world = p_72945_1_.worldObj;
                             block.addCollisionBoxesToList(
                                 world,
-                                k1,
-                                i2,
-                                l1,
+                                x,
+                                y,
+                                z,
                                 p_72945_2_,
                                 this.collidingBoundingBoxes,
                                 p_72945_1_);
@@ -179,24 +176,23 @@ public abstract class MixinWorld implements IBlockAccess {
                 }
             }
 
-            double d0 = 0.25D;
             List<Entity> list = this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
                 p_72945_1_,
-                p_72945_2_.expand(d0, d0, d0));
+                p_72945_2_);
 
-            for (int j2 = 0; j2 < list.size(); ++j2) {
-                AxisAlignedBB axisalignedbb1 = (list.get(j2)).getBoundingBox();
+            for (Entity entity : list) {
+                AxisAlignedBB entityAABB = entity.getBoundingBox();
+                AxisAlignedBB collisionBox = p_72945_1_.getCollisionBox(entity);
 
-                if (axisalignedbb1 != null && axisalignedbb1.intersectsWith(p_72945_2_)) {
-                    this.collidingBoundingBoxes.add(axisalignedbb1);
+                if (entityAABB != null && entityAABB.intersectsWith(p_72945_2_)) {
+                    this.collidingBoundingBoxes.add(entityAABB);
                 }
 
-                axisalignedbb1 = p_72945_1_.getCollisionBox(list.get(j2));
-
-                if (axisalignedbb1 != null && axisalignedbb1.intersectsWith(p_72945_2_)) {
-                    this.collidingBoundingBoxes.add(axisalignedbb1);
+                if (collisionBox != null && collisionBox.intersectsWith(p_72945_2_)) {
+                    this.collidingBoundingBoxes.add(collisionBox);
                 }
             }
+
             return this.collidingBoundingBoxes;
         }
         return null;
@@ -211,12 +207,8 @@ public abstract class MixinWorld implements IBlockAccess {
             && this.multithreadingandtweaks$chunkExists(p_72899_1_ >> 4, p_72899_3_ >> 4);
     }
 
-    /**
-     * Will get all entities within the specified AABB excluding the one passed into it. Args: entityToExclude, aabb
-     */
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_,
-        AxisAlignedBB p_72839_2_) {
+    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_, AxisAlignedBB p_72839_2_) {
         return this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
             p_72839_1_,
             p_72839_2_,
@@ -224,18 +216,21 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_,
-        AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
+    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
         ArrayList<Entity> arraylist = new ArrayList<>();
-        int i = MathHelper.floor_double((p_94576_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
-        int j = MathHelper.floor_double((p_94576_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-        int k = MathHelper.floor_double((p_94576_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-        int l = MathHelper.floor_double((p_94576_2_.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
 
-        for (int i1 = i; i1 <= j; ++i1) {
-            for (int j1 = k; j1 <= l; ++j1) {
-                if (this.multithreadingandtweaks$chunkExists(i1, j1)) {
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(i1, j1)
+        double centerX = (p_94576_2_.minX + p_94576_2_.maxX) * 0.5D;
+        double centerZ = (p_94576_2_.minZ + p_94576_2_.maxZ) * 0.5D;
+
+        int minChunkX = MathHelper.floor_double((centerX - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxChunkX = MathHelper.floor_double((centerX + MAX_ENTITY_RADIUS) / 16.0D);
+        int minChunkZ = MathHelper.floor_double((centerZ - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxChunkZ = MathHelper.floor_double((centerZ + MAX_ENTITY_RADIUS) / 16.0D);
+
+        for (int i = minChunkX; i <= maxChunkX; ++i) {
+            for (int j = minChunkZ; j <= maxChunkZ; ++j) {
+                if (this.multithreadingandtweaks$chunkExists(i, j)) {
+                    this.multithreadingandtweaks$getChunkFromChunkCoords(i, j)
                         .getEntitiesWithinAABBForEntity(p_94576_1_, p_94576_2_, arraylist, p_94576_3_);
                 }
             }
@@ -243,6 +238,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
         return arraylist;
     }
+
 
     @Unique
     private void multithreadingandtweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ,
