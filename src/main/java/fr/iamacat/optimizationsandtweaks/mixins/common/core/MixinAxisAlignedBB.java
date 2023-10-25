@@ -62,45 +62,16 @@ public class MixinAxisAlignedBB {
     @Overwrite
     public AxisAlignedBB addCoord(double x, double y, double z)
     {
-        double d3 = this.minX;
-        double d4 = this.minY;
-        double d5 = this.minZ;
-        double d6 = this.maxX;
-        double d7 = this.maxY;
-        double d8 = this.maxZ;
-
-        if (x < 0.0D)
-        {
-            d3 += x;
-        }
-
-        if (x > 0.0D)
-        {
-            d6 += x;
-        }
-
-        if (y < 0.0D)
-        {
-            d4 += y;
-        }
-
-        if (y > 0.0D)
-        {
-            d7 += y;
-        }
-
-        if (z < 0.0D)
-        {
-            d5 += z;
-        }
-
-        if (z > 0.0D)
-        {
-            d8 += z;
-        }
+        double d3 = this.minX + (FastMath.min(x, 0.0D));
+        double d4 = this.minY + (FastMath.min(y, 0.0D));
+        double d5 = this.minZ + (FastMath.min(z, 0.0D));
+        double d6 = this.maxX + (FastMath.max(x, 0.0D));
+        double d7 = this.maxY + (FastMath.max(y, 0.0D));
+        double d8 = this.maxZ + (FastMath.max(z, 0.0D));
 
         return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
     }
+
 
     /**
      * Returns a bounding box expanded by the specified vector (if negative numbers are given it will shrink). Args: x,
@@ -109,13 +80,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     public AxisAlignedBB expand(double x, double y, double z)
     {
-        double d3 = this.minX - x;
-        double d4 = this.minY - y;
-        double d5 = this.minZ - z;
-        double d6 = this.maxX + x;
-        double d7 = this.maxY + y;
-        double d8 = this.maxZ + z;
-        return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
+        return AxisAlignedBB.getBoundingBox(this.minX - x, this.minY - y, this.minZ - z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
     /**
@@ -280,37 +245,28 @@ public class MixinAxisAlignedBB {
      * Returns if the supplied Vec3D is completely inside the bounding box
      */
     @Overwrite
-    public boolean isVecInside(Vec3 vec)
-    {
-        return vec.xCoord > this.minX && vec.xCoord < this.maxX && (vec.yCoord > this.minY && vec.yCoord < this.maxY && vec.zCoord > this.minZ && vec.zCoord < this.maxZ);
+    public boolean isVecInside(Vec3 vec) {
+        return (vec.xCoord > this.minX && vec.xCoord < this.maxX) &&
+            (vec.yCoord > this.minY && vec.yCoord < this.maxY) &&
+            (vec.zCoord > this.minZ && vec.zCoord < this.maxZ);
     }
 
     /**
      * Returns the average length of the edges of the bounding box.
      */
     @Overwrite
-    public double getAverageEdgeLength()
-    {
-        double d0 = this.maxX - this.minX;
-        double d1 = this.maxY - this.minY;
-        double d2 = this.maxZ - this.minZ;
-        return (d0 + d1 + d2) / 3.0D;
+    public double getAverageEdgeLength() {
+        return (this.maxX - this.minX + this.maxY - this.minY + this.maxZ - this.minZ) / 3.0D;
     }
 
     /**
      * Returns a bounding box that is inset by the specified amounts
      */
     @Overwrite
-    public AxisAlignedBB contract(double x, double y, double z)
-    {
-        double d3 = this.minX + x;
-        double d4 = this.minY + y;
-        double d5 = this.minZ + z;
-        double d6 = this.maxX - x;
-        double d7 = this.maxY - y;
-        double d8 = this.maxZ - z;
-        return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
+    public AxisAlignedBB contract(double x, double y, double z) {
+        return AxisAlignedBB.getBoundingBox(this.minX + x, this.minY + y, this.minZ + z, this.maxX - x, this.maxY - y, this.maxZ - z);
     }
+
 
     /**
      * Returns a copy of the bounding box.
@@ -326,7 +282,7 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public MovingObjectPosition calculateIntercept(Vec3 p_72327_1_, Vec3 p_72327_2_) {
-        Vec3 hit = null;
+        Vec3 hit;
         int sideHit = -1;
 
         double tMin = (this.minX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
