@@ -4,8 +4,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.SplittableRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.iamacat.optimizationsandtweaks.utils.fastrandom.XorShift128PlusRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -42,8 +44,8 @@ public class MixinEntity {
     private int nextStepDistance;
     @Shadow
     private int fire;
-    @Shadow
-    protected Random rand;
+    @Unique
+    protected XorShift128PlusRandom rand;
     @Shadow
     protected boolean isInWeb;
     @Unique
