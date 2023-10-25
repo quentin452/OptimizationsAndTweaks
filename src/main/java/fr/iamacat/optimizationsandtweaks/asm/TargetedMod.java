@@ -67,6 +67,7 @@ public enum TargetedMod implements ITargetedMod {
     FLAXBEARDSTEAMPOWER("FSP", false, startsWith("FSP")),
     SKINPORT("SkinPort", false, startsWith("SkinPort")),
     MINESTONES("minestones", false, startsWith("minestones")),
+    BLENDTRONIC("minestones", false, startsWith("blendtronic")),
 
     AETHER("aether", false, startsWith("aether")),;
 
