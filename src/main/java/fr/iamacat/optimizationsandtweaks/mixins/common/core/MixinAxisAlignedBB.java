@@ -367,66 +367,43 @@ public class MixinAxisAlignedBB {
         Vec3 vec36 = p_72327_1_.getIntermediateWithZValue(p_72327_2_, this.minZ);
         Vec3 vec37 = p_72327_1_.getIntermediateWithZValue(p_72327_2_, this.maxZ);
 
-        if (!this.isVecInYZ(vec32))
-        {
-            vec32 = null;
-        }
-
-        if (!this.isVecInYZ(vec33))
-        {
-            vec33 = null;
-        }
-
-        if (!this.isVecInXZ(vec34))
-        {
-            vec34 = null;
-        }
-
-        if (!this.isVecInXZ(vec35))
-        {
-            vec35 = null;
-        }
-
-        if (!this.isVecInXY(vec36))
-        {
-            vec36 = null;
-        }
-
-        if (!this.isVecInXY(vec37))
-        {
-            vec37 = null;
-        }
-
         Vec3 vec38 = null;
+        byte b0 = -1;
 
-        if (vec32 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec32) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInYZ(vec32) && (vec38 == null || p_72327_1_.squareDistanceTo(vec32) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec32;
+            b0 = 4;
         }
 
-        if (vec33 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec33) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInYZ(vec33) && (vec38 == null || p_72327_1_.squareDistanceTo(vec33) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec33;
+            b0 = 5;
         }
 
-        if (vec34 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec34) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInXZ(vec34) && (vec38 == null || p_72327_1_.squareDistanceTo(vec34) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec34;
+            b0 = 0;
         }
 
-        if (vec35 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec35) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInXZ(vec35) && (vec38 == null || p_72327_1_.squareDistanceTo(vec35) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec35;
+            b0 = 1;
         }
 
-        if (vec36 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec36) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInXY(vec36) && (vec38 == null || p_72327_1_.squareDistanceTo(vec36) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec36;
+            b0 = 2;
         }
 
-        if (vec37 != null && (vec38 == null || p_72327_1_.squareDistanceTo(vec37) < p_72327_1_.squareDistanceTo(vec38)))
+        if (this.isVecInXY(vec37) && (vec38 == null || p_72327_1_.squareDistanceTo(vec37) < p_72327_1_.squareDistanceTo(vec38)))
         {
             vec38 = vec37;
+            b0 = 3;
         }
 
         if (vec38 == null)
@@ -435,38 +412,6 @@ public class MixinAxisAlignedBB {
         }
         else
         {
-            byte b0 = -1;
-
-            if (vec38 == vec32)
-            {
-                b0 = 4;
-            }
-
-            if (vec38 == vec33)
-            {
-                b0 = 5;
-            }
-
-            if (vec38 == vec34)
-            {
-                b0 = 0;
-            }
-
-            if (vec38 == vec35)
-            {
-                b0 = 1;
-            }
-
-            if (vec38 == vec36)
-            {
-                b0 = 2;
-            }
-
-            if (vec38 == vec37)
-            {
-                b0 = 3;
-            }
-
             return new MovingObjectPosition(0, 0, 0, b0, vec38);
         }
     }
