@@ -353,17 +353,17 @@ public class MixinAxisAlignedBB {
                 side = 1;
             }
 
-            if (Math.abs(tMin - tyMin) < 1.0E-12) {
+            if (FastMath.abs(tMin - tyMin) < 1.0E-12) {
                 hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
                 hit = hit.addVector(side * 1.0E-6, 0, 0);
-            } else if (Math.abs(tMin - tyMax) < 1.0E-12) {
+            } else if (FastMath.abs(tMin - tyMax) < 1.0E-12) {
                 hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
                 hit = hit.addVector(side * 1.0E-6, 0, 0);
-            } else if (Math.abs(tMin - tzMin) < 1.0E-12) {
+            } else if (FastMath.abs(tMin - tzMin) < 1.0E-12) {
                 hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
