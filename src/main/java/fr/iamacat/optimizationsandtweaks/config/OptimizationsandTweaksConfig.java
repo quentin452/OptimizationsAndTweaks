@@ -118,7 +118,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCommonProxyForCatWalks2;
-    @Config.Comment("Optimize EntityEagle")
+    @Config.Comment("Optimize EntityEagle from Adventurers Amulet")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityEagle;
