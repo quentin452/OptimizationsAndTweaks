@@ -160,7 +160,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIEatDroppedFood;
 
-    @Config.Comment("Optimize EntityAITempt")
+    @Config.Comment("Optimize EntityAITempt + add a follower limit(30 max) at the same time")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITempt;
