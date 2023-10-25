@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -117,15 +118,19 @@ public class MixinAxisAlignedBB {
         return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
     }
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     public AxisAlignedBB func_111270_a(AxisAlignedBB other)
     {
-        double d0 = Math.min(this.minX, other.minX);
-        double d1 = Math.min(this.minY, other.minY);
-        double d2 = Math.min(this.minZ, other.minZ);
-        double d3 = Math.max(this.maxX, other.maxX);
-        double d4 = Math.max(this.maxY, other.maxY);
-        double d5 = Math.max(this.maxZ, other.maxZ);
+        double d0 = FastMath.min(this.minX, other.minX);
+        double d1 = FastMath.min(this.minY, other.minY);
+        double d2 = FastMath.min(this.minZ, other.minZ);
+        double d3 = FastMath.max(this.maxX, other.maxX);
+        double d4 = FastMath.max(this.maxY, other.maxY);
+        double d5 = FastMath.max(this.maxZ, other.maxZ);
         return AxisAlignedBB.getBoundingBox(d0, d1, d2, d3, d4, d5);
     }
 
@@ -286,7 +291,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     public boolean intersectsWith(AxisAlignedBB other)
     {
-        return other.maxX > this.minX && other.minX < this.maxX ? (other.maxY > this.minY && other.minY < this.maxY ? other.maxZ > this.minZ && other.minZ < this.maxZ : false) : false;
+        return other.maxX > this.minX && other.minX < this.maxX && (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ);
     }
 
     /**
@@ -310,7 +315,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     public boolean isVecInside(Vec3 vec)
     {
-        return vec.xCoord > this.minX && vec.xCoord < this.maxX ? (vec.yCoord > this.minY && vec.yCoord < this.maxY ? vec.zCoord > this.minZ && vec.zCoord < this.maxZ : false) : false;
+        return vec.xCoord > this.minX && vec.xCoord < this.maxX && (vec.yCoord > this.minY && vec.yCoord < this.maxY && vec.zCoord > this.minZ && vec.zCoord < this.maxZ);
     }
 
     /**
@@ -472,7 +477,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     private boolean isVecInYZ(Vec3 vec)
     {
-        return vec == null ? false : vec.yCoord >= this.minY && vec.yCoord <= this.maxY && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
+        return vec != null && vec.yCoord >= this.minY && vec.yCoord <= this.maxY && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
     }
 
     /**
@@ -481,7 +486,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     private boolean isVecInXZ(Vec3 vec)
     {
-        return vec == null ? false : vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
+        return vec != null && vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
     }
 
     /**
@@ -490,7 +495,7 @@ public class MixinAxisAlignedBB {
     @Overwrite
     private boolean isVecInXY(Vec3 vec)
     {
-        return vec == null ? false : vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.yCoord >= this.minY && vec.yCoord <= this.maxY;
+        return vec != null && vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.yCoord >= this.minY && vec.yCoord <= this.maxY;
     }
 
     /**
