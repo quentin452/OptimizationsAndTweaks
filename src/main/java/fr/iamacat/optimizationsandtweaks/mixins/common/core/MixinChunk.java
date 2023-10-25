@@ -217,23 +217,37 @@ public class MixinChunk {
      */
     @Overwrite
     public void getEntitiesWithinAABBForEntity(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List<Entity> p_76588_3_,
-        IEntitySelector p_76588_4_) {
+                                               IEntitySelector p_76588_4_) {
         if (OptimizationsandTweaksConfig.enableMixinChunk) {
-            int i = MathHelper.floor_double((p_76588_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
-            int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+            int i = multithreadingandtweaks$calculateMinIndex(p_76588_2_);
+            int j = multithreadingandtweaks$calculateMaxIndex(p_76588_2_);
             i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
             j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
 
-            for (int k = i; k <= j; ++k) {
-                List list1 = this.entityLists[k];
+            multithreadingandtweaks$processEntitiesInRange(i, j, p_76588_1_, p_76588_2_, p_76588_3_, p_76588_4_);
+        }
+    }
 
-                for (Object o : list1) {
-                    Entity entity1 = (Entity) o;
+    @Unique
+    private int multithreadingandtweaks$calculateMinIndex(AxisAlignedBB aabb) {
+        return MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
+    }
 
-                    if (entity1 != p_76588_1_ && entity1.boundingBox.intersectsWith(p_76588_2_)
-                        && (p_76588_4_ == null || p_76588_4_.isEntityApplicable(entity1))) {
-                        p_76588_3_.add(entity1);
-                    }
+    @Unique
+    private int multithreadingandtweaks$calculateMaxIndex(AxisAlignedBB aabb) {
+        return MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+    }
+
+    @Unique
+    private void multithreadingandtweaks$processEntitiesInRange(int minIndex, int maxIndex, Entity entity, AxisAlignedBB aabb, List<Entity> entityList, IEntitySelector selector) {
+        for (int k = minIndex; k <= maxIndex; ++k) {
+            List list1 = this.entityLists[k];
+
+            for (Object o : list1) {
+                Entity entity1 = (Entity) o;
+
+                if (entity1 != entity && entity1.boundingBox.intersectsWith(aabb) && (selector == null || selector.isEntityApplicable(entity1))) {
+                    entityList.add(entity1);
                 }
             }
         }
