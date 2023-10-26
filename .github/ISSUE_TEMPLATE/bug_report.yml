@@ -13,7 +13,7 @@ body:
       description: If you used the mod in a modpack, you should include the pack's exact name and version here to make debugging easier.
     validations:
       required: false
-# Essential
+  # Essential
   - type: textarea
     id: logs
     attributes:
@@ -21,6 +21,14 @@ body:
       description: Attach the fml-client-latest.log or fml-server-latest.log or both file here.
     validations:
       required: true
+# Essential
+  - type: textarea
+    id: isolation
+    attributes:
+      label: Help isloating the issue
+      description: Can you try to disable some mixins in the mod config to see what mixin make the issue?
+    validations:
+      required: false
 # Essential
   - type: textarea
     id: description
