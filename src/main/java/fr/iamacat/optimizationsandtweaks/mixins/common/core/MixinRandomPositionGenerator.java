@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.Random;
 
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.MathHelper;
@@ -62,11 +63,6 @@ public class MixinRandomPositionGenerator {
         int posX = MathHelper.floor_double(entity.posX);
         int posY = MathHelper.floor_double(entity.posY);
         int posZ = MathHelper.floor_double(entity.posZ);
-
-        double maxDistanceSquared = hasHome ? entity.getHomePosition()
-            .getDistanceSquared(posX, posY, posZ) + 4.0F : Double.MAX_VALUE;
-
-        double maxDistance = Math.min(maxDistanceSquared, entity.func_110174_bM() + maxHorizontalDistance);
 
         int bestX = 0;
         int bestY = 0;
