@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
@@ -143,7 +144,7 @@ public class MixinEntityAIAttackOnCollide extends EntityAIBase {
             }
         }
 
-        this.attackTick = Math.max(this.attackTick - 1, 0);
+        this.attackTick = FastMath.max(this.attackTick - 1, 0);
 
         if (distanceSquared <= attackRange && this.attackTick <= 20) {
             this.attackTick = 20;
