@@ -695,9 +695,12 @@ public abstract class MixinWorld implements IBlockAccess {
             .canBlockSeeTheSky(p_72937_1_ & 15, p_72937_2_, p_72937_3_ & 15);
     }
 
-    @Inject(method = "getBlockLightValue_do", cancellable = true, at = @At(value = "HEAD"))
-    public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness,
-        CallbackInfoReturnable<Integer> cir) {
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getBlockLightValue_do(int x, int y, int z, boolean useNeighborBrightness) {
         if (OptimizationsandTweaksConfig.enableMixinWorld) {
 
             if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
@@ -711,7 +714,7 @@ public abstract class MixinWorld implements IBlockAccess {
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         for (int dz = -1; dz <= 1; dz++) {
-                            int neighborLight = this.getBlockLightValue_do(x + dx, y + dy, z + dz, false, cir);
+                            int neighborLight = this.getBlockLightValue_do(x + dx, y + dy, z + dz, false);
                             maxLight = Math.max(maxLight, neighborLight);
                         }
                     }
@@ -732,6 +735,7 @@ public abstract class MixinWorld implements IBlockAccess {
             return blockLight;
         }
         return x;
+
     }
 
     @Unique
