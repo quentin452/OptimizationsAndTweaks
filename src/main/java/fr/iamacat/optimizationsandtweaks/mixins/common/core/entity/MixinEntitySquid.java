@@ -70,8 +70,8 @@ public class MixinEntitySquid extends EntityWaterMob {
             if (this.squidRotation > ((float) Math.PI * 2F)) {
                 this.squidRotation -= ((float) Math.PI * 2F);
 
-                if (this.rand.nextInt(10) == 0) {
-                    this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
+                if (this.getRNG().nextInt(10) == 0) {
+                    this.rotationVelocity = 1.0F / (this.getRNG().nextFloat() + 1.0F) * 0.2F;
                 }
             }
 
