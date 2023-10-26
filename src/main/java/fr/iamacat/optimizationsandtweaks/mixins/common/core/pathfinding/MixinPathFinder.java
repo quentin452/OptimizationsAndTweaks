@@ -41,7 +41,7 @@ public class MixinPathFinder {
      */
     @Inject(method = "func_82565_a", at = @At("HEAD"), cancellable = true)
     private static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater,
-        boolean avoidWater, boolean checkDoors, CallbackInfoReturnable cir) {
+        boolean avoidWater, boolean checkDoors, CallbackInfoReturnable<Integer> cir) {
         if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             boolean isTrapdoorPresent = false;
 
@@ -104,7 +104,8 @@ public class MixinPathFinder {
 
             return isTrapdoorPresent ? 2 : 1;
         }
-        cir.setReturnValue(false);
+        cir.setReturnValue(null);
+        cir.cancel();
         return x;
     }
 
@@ -125,6 +126,7 @@ public class MixinPathFinder {
             cir.setReturnValue(pathPoint);
             return pathPoint;
         }
+        cir.cancel();
         return null;
     }
 
@@ -210,6 +212,7 @@ public class MixinPathFinder {
             }
 
             cir.setReturnValue(resultPoint);
+            cir.cancel();
         }
     }
 
