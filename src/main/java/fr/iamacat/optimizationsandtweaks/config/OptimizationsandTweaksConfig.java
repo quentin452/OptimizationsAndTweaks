@@ -11,10 +11,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITarget;
-    @Config.Comment("Optimize EntityAINearestAttackableTarget Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAINearestAttackableTarget;
     @Config.Comment("Optimize AxisAlignedBB Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -124,7 +127,7 @@ public class MixinPathFinder {
      * @author iamacatfr
      * @reason optimize openPoint
      */
-    @Overwrite
+    @Shadow
     private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_)
     {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
@@ -186,7 +189,7 @@ public class MixinPathFinder {
      * @reason
      */
     @Unique
-    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_, float p_75861_5_) {
+    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_, float p_75861_5_,CallbackInfoReturnable cir) {
         totalPathDistance = 0.0F;
         distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
         distanceToTarget = distanceToNext;
@@ -206,7 +209,7 @@ public class MixinPathFinder {
             }
 
             pathpoint4.isFirst = true;
-            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_);
+            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_,cir);
 
             for (int j = 0; j < i; ++j) {
                 PathPoint pathpoint5 = this.pathOptions[j];
@@ -306,8 +309,12 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-    @Overwrite
-    private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_, float p_75860_5_)
+    @Inject(
+        method = "findPathOptions",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_, float p_75860_5_, CallbackInfoReturnable<Integer> cir)
     {
         int i = 0;
         byte b0 = 0;
@@ -341,7 +348,8 @@ public class MixinPathFinder {
         {
             this.pathOptions[i++] = pathpoint6;
         }
-
+        cir.cancel();
+        cir.setReturnValue(i);
         return i;
     }
 
