@@ -44,7 +44,7 @@ public class MixinBlockGrass {
                     }
                 }
             }
-            ci.cancel();
         }
+        ci.cancel();
     }
 }
