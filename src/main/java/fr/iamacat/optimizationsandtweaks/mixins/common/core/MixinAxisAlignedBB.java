@@ -11,8 +11,6 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(value = AxisAlignedBB.class,priority = 999)
 public class MixinAxisAlignedBB {
-    @Unique
-    private AxisAlignedBB axisAlignedBB;
     @Shadow
     public double minX;
     @Shadow
@@ -39,21 +37,6 @@ public class MixinAxisAlignedBB {
         this.maxX = x2;
         this.maxY = y2;
         this.maxZ = z2;
-    }
-
-    /**
-     * Sets the bounds of the bounding box. Args: minX, minY, minZ, maxX, maxY, maxZ
-     */
-    @Overwrite
-    public AxisAlignedBB setBounds(double x1, double y1, double z1, double x2, double y2, double z2)
-    {
-        this.minX = x1;
-        this.minY = y1;
-        this.minZ = z1;
-        this.maxX = x2;
-        this.maxY = y2;
-        this.maxZ = z2;
-        return axisAlignedBB;
     }
 
     /**
@@ -224,21 +207,6 @@ public class MixinAxisAlignedBB {
     public boolean intersectsWith(AxisAlignedBB other)
     {
         return other.maxX > this.minX && other.minX < this.maxX && (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ);
-    }
-
-    /**
-     * Offsets the current bounding box by the specified coordinates. Args: x, y, z
-     */
-    @Overwrite
-    public AxisAlignedBB offset(double x, double y, double z)
-    {
-        this.minX += x;
-        this.minY += y;
-        this.minZ += z;
-        this.maxX += x;
-        this.maxY += y;
-        this.maxZ += z;
-        return axisAlignedBB;
     }
 
     /**
