@@ -14,13 +14,13 @@ body:
     validations:
       required: false
   # Essential
-  - type: textarea
+  - type: checkboxes
     id: isolation
     attributes:
       label: Help isloating the issue
-      description: Can you try to disable some mixins in the mod config to see what mixin make the issue?
-    validations:
-      required: false
+      options:
+        - label : Did you tried to disabling some mixins in the mod config to see what mixin made the issue?
+        - label : Did you find what mixin made the issue?
   # Essential
   - type: textarea
     id: logs
