@@ -730,9 +730,8 @@ public abstract class MixinWorld implements IBlockAccess {
             Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
             x &= 15;
             z &= 15;
-            int blockLight = chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
 
-            return blockLight;
+            return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
         }
         return x;
 
