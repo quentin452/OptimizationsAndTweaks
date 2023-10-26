@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.practicallogistics;
+package fr.iamacat.optimizationsandtweaks.mixins.client.practicallogistics;
 
 import java.util.Map;
 
