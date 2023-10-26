@@ -407,6 +407,7 @@ public abstract class MixinWorld implements IBlockAccess {
     /**
      * Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
      */
+    @Unique
     public void updateEntity(Entity p_72870_1_) {
         this.updateEntityWithOptionalForce(p_72870_1_, true);
     }
@@ -469,6 +470,7 @@ public abstract class MixinWorld implements IBlockAccess {
         return flag;
     }
 
+    @Unique
     public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_) {
         if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17)) {
             return false;
@@ -662,6 +664,7 @@ public abstract class MixinWorld implements IBlockAccess {
         }
     }
 
+    @Unique
     public void setLightValue(EnumSkyBlock p_72915_1_, int p_72915_2_, int p_72915_3_, int p_72915_4_, int p_72915_5_) {
         if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000) {
             if (p_72915_3_ >= 0) {
@@ -670,8 +673,8 @@ public abstract class MixinWorld implements IBlockAccess {
                         Chunk chunk = this.getChunkFromChunkCoords(p_72915_2_ >> 4, p_72915_4_ >> 4);
                         chunk.setLightValue(p_72915_1_, p_72915_2_ & 15, p_72915_3_, p_72915_4_ & 15, p_72915_5_);
 
-                        for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1) {
-                            (this.worldAccesses.get(i1)).markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
+                        for (IWorldAccess worldAccess : this.worldAccesses) {
+                            worldAccess.markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
                         }
                     }
                 }
