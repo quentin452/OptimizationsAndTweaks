@@ -15,20 +15,20 @@ body:
       required: false
   # Essential
   - type: textarea
-    id: logs
-    attributes:
-      label: Game log
-      description: Attach the fml-client-latest.log or fml-server-latest.log or both file here.
-    validations:
-      required: true
-# Essential
-  - type: textarea
     id: isolation
     attributes:
       label: Help isloating the issue
       description: Can you try to disable some mixins in the mod config to see what mixin make the issue?
     validations:
       required: false
+  # Essential
+  - type: textarea
+    id: logs
+    attributes:
+      label: Game log
+      description: Attach the fml-client-latest.log or fml-server-latest.log or both file here.
+    validations:
+      required: true
 # Essential
   - type: textarea
     id: description
