@@ -8,10 +8,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,6 +35,11 @@ public class MixinPathFinder {
     private boolean isMovementBlockAllowed;
     @Shadow
     private boolean isPathingInWater;
+    @Shadow
+    private IBlockAccess worldMap;
+    /** The path being generated */
+    @Shadow
+    private Path path = new Path();
     @Unique
     private ConcurrentSkipListMap<Integer, PathPoint> multithreadingandtweaks$pointMap = new ConcurrentSkipListMap<>();
 
@@ -41,7 +49,7 @@ public class MixinPathFinder {
      */
     @Inject(method = "func_82565_a", at = @At("HEAD"), cancellable = true)
     private static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean checkWater,
-        boolean avoidWater, boolean checkDoors, CallbackInfoReturnable<Integer> cir) {
+        boolean avoidWater, boolean checkDoors, CallbackInfoReturnable<PathPoint> cir) {
         if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             boolean isTrapdoorPresent = false;
 
@@ -231,7 +239,7 @@ public class MixinPathFinder {
 
     @Unique
     public int multithreadingandtweaks$getVerticalOffset(Entity entity, int x, int y, int z, PathPoint pathPoint,
-        CallbackInfoReturnable cir) {
+        CallbackInfoReturnable<PathPoint> cir) {
         int key = ((x & 0xFFF) << 20) | ((z & 0xFFF) << 8) | (y & 0xFF);
 
         Integer cachedResult = multithreadingandtweaks$blockCache.get(key);
