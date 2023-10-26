@@ -737,8 +737,12 @@ public abstract class MixinWorld implements IBlockAccess {
     @Unique
     private static final Block AIR_BLOCK = Blocks.air;
 
-    @Inject(method = "getBlock", cancellable = true, at = @At(value = "HEAD"))
-    public void getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_, CallbackInfoReturnable<Block> ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
         if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000
             && p_147439_1_ < 30000000
             && p_147439_3_ < 30000000
@@ -751,13 +755,12 @@ public abstract class MixinWorld implements IBlockAccess {
             Block block = chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
 
             if (block == null) {
-                ci.setReturnValue(AIR_BLOCK);
+                return AIR_BLOCK;
             } else {
-                ci.setReturnValue(block);
+                return block;
             }
         } else {
-            ci.setReturnValue(AIR_BLOCK);
+            return AIR_BLOCK;
         }
-        ci.cancel();
     }
 }
