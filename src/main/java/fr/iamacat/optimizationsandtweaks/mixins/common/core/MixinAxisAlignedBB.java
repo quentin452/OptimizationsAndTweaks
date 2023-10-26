@@ -1,16 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(value = AxisAlignedBB.class,priority = 999)
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
+
+@Mixin(value = AxisAlignedBB.class, priority = 999)
 public class MixinAxisAlignedBB {
+
     @Shadow
     public double minX;
     @Shadow
@@ -29,8 +31,7 @@ public class MixinAxisAlignedBB {
 
     public double maxZ;
 
-    protected MixinAxisAlignedBB(double x1, double y1, double z1, double x2, double y2, double z2)
-    {
+    protected MixinAxisAlignedBB(double x1, double y1, double z1, double x2, double y2, double z2) {
         this.minX = x1;
         this.minY = y1;
         this.minZ = z1;
@@ -43,8 +44,7 @@ public class MixinAxisAlignedBB {
      * Adds the coordinates to the bounding box extending it if the point lies outside the current ranges. Args: x, y, z
      */
     @Overwrite
-    public AxisAlignedBB addCoord(double x, double y, double z)
-    {
+    public AxisAlignedBB addCoord(double x, double y, double z) {
         double d3 = this.minX + (FastMath.min(x, 0.0D));
         double d4 = this.minY + (FastMath.min(y, 0.0D));
         double d5 = this.minZ + (FastMath.min(z, 0.0D));
@@ -55,15 +55,14 @@ public class MixinAxisAlignedBB {
         return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
     }
 
-
     /**
      * Returns a bounding box expanded by the specified vector (if negative numbers are given it will shrink). Args: x,
      * y, z
      */
     @Overwrite
-    public AxisAlignedBB expand(double x, double y, double z)
-    {
-        return AxisAlignedBB.getBoundingBox(this.minX - x, this.minY - y, this.minZ - z, this.maxX + x, this.maxY + y, this.maxZ + z);
+    public AxisAlignedBB expand(double x, double y, double z) {
+        return AxisAlignedBB
+            .getBoundingBox(this.minX - x, this.minY - y, this.minZ - z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
     /**
@@ -71,8 +70,7 @@ public class MixinAxisAlignedBB {
      * @reason
      */
     @Overwrite
-    public AxisAlignedBB func_111270_a(AxisAlignedBB other)
-    {
+    public AxisAlignedBB func_111270_a(AxisAlignedBB other) {
         double d0 = FastMath.min(this.minX, other.minX);
         double d1 = FastMath.min(this.minY, other.minY);
         double d2 = FastMath.min(this.minZ, other.minZ);
@@ -87,40 +85,33 @@ public class MixinAxisAlignedBB {
      * y, z
      */
     @Overwrite
-    public AxisAlignedBB getOffsetBoundingBox(double x, double y, double z)
-    {
-        return AxisAlignedBB.getBoundingBox(this.minX + x, this.minY + y, this.minZ + z, this.maxX + x, this.maxY + y, this.maxZ + z);
+    public AxisAlignedBB getOffsetBoundingBox(double x, double y, double z) {
+        return AxisAlignedBB
+            .getBoundingBox(this.minX + x, this.minY + y, this.minZ + z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
     /**
      * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
-     * in the X dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * in the X dimension. return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
+     * calculated offset. Otherwise return the calculated offset.
      */
     @Overwrite
-    public double calculateXOffset(AxisAlignedBB other, double p_72316_2_)
-    {
-        if (other.maxY <= this.minY || other.minY >= this.maxY)
-        {
+    public double calculateXOffset(AxisAlignedBB other, double p_72316_2_) {
+        if (other.maxY <= this.minY || other.minY >= this.maxY) {
             return p_72316_2_;
         }
 
-        if (other.maxZ > this.minZ && other.minZ < this.maxZ)
-        {
-            if (p_72316_2_ > 0.0D && other.maxX <= this.minX)
-            {
+        if (other.maxZ > this.minZ && other.minZ < this.maxZ) {
+            if (p_72316_2_ > 0.0D && other.maxX <= this.minX) {
                 double d1 = this.minX - other.maxX;
-                if (d1 < p_72316_2_)
-                {
+                if (d1 < p_72316_2_) {
                     p_72316_2_ = d1;
                 }
             }
 
-            if (p_72316_2_ < 0.0D && other.minX >= this.maxX)
-            {
+            if (p_72316_2_ < 0.0D && other.minX >= this.maxX) {
                 double d1 = this.maxX - other.minX;
-                if (d1 > p_72316_2_)
-                {
+                if (d1 > p_72316_2_) {
                     p_72316_2_ = d1;
                 }
             }
@@ -133,29 +124,22 @@ public class MixinAxisAlignedBB {
      * @reason
      */
     @Overwrite
-    public double calculateYOffset(AxisAlignedBB other, double p_72323_2_)
-    {
-        if (other.maxX <= this.minX || other.minX >= this.maxX)
-        {
+    public double calculateYOffset(AxisAlignedBB other, double p_72323_2_) {
+        if (other.maxX <= this.minX || other.minX >= this.maxX) {
             return p_72323_2_;
         }
 
-        if (other.maxZ > this.minZ && other.minZ < this.maxZ)
-        {
-            if (p_72323_2_ > 0.0D && other.maxY <= this.minY)
-            {
+        if (other.maxZ > this.minZ && other.minZ < this.maxZ) {
+            if (p_72323_2_ > 0.0D && other.maxY <= this.minY) {
                 double d1 = this.minY - other.maxY;
-                if (d1 < p_72323_2_)
-                {
+                if (d1 < p_72323_2_) {
                     p_72323_2_ = d1;
                 }
             }
 
-            if (p_72323_2_ < 0.0D && other.minY >= this.maxY)
-            {
+            if (p_72323_2_ < 0.0D && other.minY >= this.maxY) {
                 double d1 = this.maxY - other.minY;
-                if (d1 > p_72323_2_)
-                {
+                if (d1 > p_72323_2_) {
                     p_72323_2_ = d1;
                 }
             }
@@ -168,32 +152,25 @@ public class MixinAxisAlignedBB {
      * @reason
      */
     @Overwrite
-    public double calculateZOffset(AxisAlignedBB other, double p_72322_2_)
-    {
-        if (other.maxX <= this.minX || other.minX >= this.maxX)
-        {
+    public double calculateZOffset(AxisAlignedBB other, double p_72322_2_) {
+        if (other.maxX <= this.minX || other.minX >= this.maxX) {
             return p_72322_2_;
         }
 
-        if (other.maxY <= this.minY || other.minY >= this.maxY)
-        {
+        if (other.maxY <= this.minY || other.minY >= this.maxY) {
             return p_72322_2_;
         }
 
-        if (p_72322_2_ > 0.0D && other.maxZ <= this.minZ)
-        {
+        if (p_72322_2_ > 0.0D && other.maxZ <= this.minZ) {
             double d1 = this.minZ - other.maxZ;
-            if (d1 < p_72322_2_)
-            {
+            if (d1 < p_72322_2_) {
                 p_72322_2_ = d1;
             }
         }
 
-        if (p_72322_2_ < 0.0D && other.minZ >= this.maxZ)
-        {
+        if (p_72322_2_ < 0.0D && other.minZ >= this.maxZ) {
             double d1 = this.maxZ - other.minZ;
-            if (d1 > p_72322_2_)
-            {
+            if (d1 > p_72322_2_) {
                 p_72322_2_ = d1;
             }
         }
@@ -204,9 +181,9 @@ public class MixinAxisAlignedBB {
      * Returns whether the given bounding box intersects with this one. Args: axisAlignedBB
      */
     @Overwrite
-    public boolean intersectsWith(AxisAlignedBB other)
-    {
-        return other.maxX > this.minX && other.minX < this.maxX && (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ);
+    public boolean intersectsWith(AxisAlignedBB other) {
+        return other.maxX > this.minX && other.minX < this.maxX
+            && (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ);
     }
 
     /**
@@ -214,9 +191,8 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public boolean isVecInside(Vec3 vec) {
-        return (vec.xCoord > this.minX && vec.xCoord < this.maxX) &&
-            (vec.yCoord > this.minY && vec.yCoord < this.maxY) &&
-            (vec.zCoord > this.minZ && vec.zCoord < this.maxZ);
+        return (vec.xCoord > this.minX && vec.xCoord < this.maxX) && (vec.yCoord > this.minY && vec.yCoord < this.maxY)
+            && (vec.zCoord > this.minZ && vec.zCoord < this.maxZ);
     }
 
     /**
@@ -232,18 +208,18 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public AxisAlignedBB contract(double x, double y, double z) {
-        return AxisAlignedBB.getBoundingBox(this.minX + x, this.minY + y, this.minZ + z, this.maxX - x, this.maxY - y, this.maxZ - z);
+        return AxisAlignedBB
+            .getBoundingBox(this.minX + x, this.minY + y, this.minZ + z, this.maxX - x, this.maxY - y, this.maxZ - z);
     }
-
 
     /**
      * Returns a copy of the bounding box.
      */
     @Overwrite
-    public AxisAlignedBB copy()
-    {
+    public AxisAlignedBB copy() {
         return AxisAlignedBB.getBoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     }
+
     /**
      * @author
      * @reason
@@ -308,7 +284,8 @@ public class MixinAxisAlignedBB {
             return null;
         }
 
-        hit = p_72327_1_.addVector(tMax * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+        hit = p_72327_1_.addVector(
+            tMax * (p_72327_2_.xCoord - p_72327_1_.xCoord),
             tMax * (p_72327_2_.yCoord - p_72327_1_.yCoord),
             tMax * (p_72327_2_.zCoord - p_72327_1_.zCoord));
 
@@ -322,17 +299,20 @@ public class MixinAxisAlignedBB {
             }
 
             if (FastMath.abs(tMin - tyMin) < 1.0E-12) {
-                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                hit = p_72327_1_.addVector(
+                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
                 hit = hit.addVector(side * 1.0E-6, 0, 0);
             } else if (FastMath.abs(tMin - tyMax) < 1.0E-12) {
-                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                hit = p_72327_1_.addVector(
+                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
                 hit = hit.addVector(side * 1.0E-6, 0, 0);
             } else if (FastMath.abs(tMin - tzMin) < 1.0E-12) {
-                hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+                hit = p_72327_1_.addVector(
+                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
                     tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
                     tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
                 hit = hit.addVector(0, 0, side * 1.0E-6);
@@ -370,35 +350,40 @@ public class MixinAxisAlignedBB {
      * Checks if the specified vector is within the YZ dimensions of the bounding box. Args: Vec3D
      */
     @Overwrite
-    private boolean isVecInYZ(Vec3 vec)
-    {
-        return vec != null && vec.yCoord >= this.minY && vec.yCoord <= this.maxY && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
+    private boolean isVecInYZ(Vec3 vec) {
+        return vec != null && vec.yCoord >= this.minY
+            && vec.yCoord <= this.maxY
+            && vec.zCoord >= this.minZ
+            && vec.zCoord <= this.maxZ;
     }
 
     /**
      * Checks if the specified vector is within the XZ dimensions of the bounding box. Args: Vec3D
      */
     @Overwrite
-    private boolean isVecInXZ(Vec3 vec)
-    {
-        return vec != null && vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
+    private boolean isVecInXZ(Vec3 vec) {
+        return vec != null && vec.xCoord >= this.minX
+            && vec.xCoord <= this.maxX
+            && vec.zCoord >= this.minZ
+            && vec.zCoord <= this.maxZ;
     }
 
     /**
      * Checks if the specified vector is within the XY dimensions of the bounding box. Args: Vec3D
      */
     @Overwrite
-    private boolean isVecInXY(Vec3 vec)
-    {
-        return vec != null && vec.xCoord >= this.minX && vec.xCoord <= this.maxX && vec.yCoord >= this.minY && vec.yCoord <= this.maxY;
+    private boolean isVecInXY(Vec3 vec) {
+        return vec != null && vec.xCoord >= this.minX
+            && vec.xCoord <= this.maxX
+            && vec.yCoord >= this.minY
+            && vec.yCoord <= this.maxY;
     }
 
     /**
      * Sets the bounding box to the same bounds as the bounding box passed in. Args: axisAlignedBB
      */
     @Overwrite
-    public void setBB(AxisAlignedBB other)
-    {
+    public void setBB(AxisAlignedBB other) {
         this.minX = other.minX;
         this.minY = other.minY;
         this.minZ = other.minZ;
@@ -406,13 +391,24 @@ public class MixinAxisAlignedBB {
         this.maxY = other.maxY;
         this.maxZ = other.maxZ;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public String toString()
-    {
-        return "box[" + this.minX + ", " + this.minY + ", " + this.minZ + " -> " + this.maxX + ", " + this.maxY + ", " + this.maxZ + "]";
+    public String toString() {
+        return "box[" + this.minX
+            + ", "
+            + this.minY
+            + ", "
+            + this.minZ
+            + " -> "
+            + this.maxX
+            + ", "
+            + this.maxY
+            + ", "
+            + this.maxZ
+            + "]";
     }
 }

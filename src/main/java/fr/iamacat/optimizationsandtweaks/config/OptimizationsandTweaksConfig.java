@@ -6,6 +6,7 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
+
     @Config.Comment("Optimize EntityAITarget Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

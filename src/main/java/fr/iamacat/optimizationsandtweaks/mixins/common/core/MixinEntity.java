@@ -1,19 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.SplittableRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
-import fr.iamacat.optimizationsandtweaks.utils.fastrandom.XorShift128PlusRandom;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -23,7 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,9 +25,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.utils.fastrandom.XorShift128PlusRandom;
 
-@Mixin(value = Entity.class,priority = 999)
+@Mixin(value = Entity.class, priority = 999)
 public class MixinEntity {
+
     @Shadow
     protected boolean isImmuneToFire;
 
@@ -108,16 +103,14 @@ public class MixinEntity {
     }
 
     @Shadow
-    protected void dealFireDamage(int amount)
-    {
-        if (!this.isImmuneToFire)
-        {
-            entity.attackEntityFrom(DamageSource.inFire, (float)amount);
+    protected void dealFireDamage(int amount) {
+        if (!this.isImmuneToFire) {
+            entity.attackEntityFrom(DamageSource.inFire, (float) amount);
         }
     }
+
     @Shadow
-    protected void func_145775_I()
-    {
+    protected void func_145775_I() {
         int i = MathHelper.floor_double(this.boundingBox.minX + 0.001D);
         int j = MathHelper.floor_double(this.boundingBox.minY + 0.001D);
         int k = MathHelper.floor_double(this.boundingBox.minZ + 0.001D);
@@ -125,25 +118,26 @@ public class MixinEntity {
         int i1 = MathHelper.floor_double(this.boundingBox.maxY - 0.001D);
         int j1 = MathHelper.floor_double(this.boundingBox.maxZ - 0.001D);
 
-        if (this.worldObj.checkChunksExist(i, j, k, l, i1, j1))
-        {
-            for (int k1 = i; k1 <= l; ++k1)
-            {
-                for (int l1 = j; l1 <= i1; ++l1)
-                {
-                    for (int i2 = k; i2 <= j1; ++i2)
-                    {
+        if (this.worldObj.checkChunksExist(i, j, k, l, i1, j1)) {
+            for (int k1 = i; k1 <= l; ++k1) {
+                for (int l1 = j; l1 <= i1; ++l1) {
+                    for (int i2 = k; i2 <= j1; ++i2) {
                         Block block = this.worldObj.getBlock(k1, l1, i2);
 
-                        try
-                        {
+                        try {
                             block.onEntityCollidedWithBlock(this.worldObj, k1, l1, i2, entity);
-                        }
-                        catch (Throwable throwable)
-                        {
-                            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Colliding entity with block");
-                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being collided with");
-                            CrashReportCategory.func_147153_a(crashreportcategory, k1, l1, i2, block, this.worldObj.getBlockMetadata(k1, l1, i2));
+                        } catch (Throwable throwable) {
+                            CrashReport crashreport = CrashReport
+                                .makeCrashReport(throwable, "Colliding entity with block");
+                            CrashReportCategory crashreportcategory = crashreport
+                                .makeCategory("Block being collided with");
+                            CrashReportCategory.func_147153_a(
+                                crashreportcategory,
+                                k1,
+                                l1,
+                                i2,
+                                block,
+                                this.worldObj.getBlockMetadata(k1, l1, i2));
                             throw new ReportedException(crashreport);
                         }
                     }
@@ -151,38 +145,32 @@ public class MixinEntity {
             }
         }
     }
+
     @Shadow
-    protected void func_145780_a(int x, int y, int z, Block blockIn)
-    {
+    protected void func_145780_a(int x, int y, int z, Block blockIn) {
         Block.SoundType soundtype = blockIn.stepSound;
 
-        if (this.worldObj.getBlock(x, y + 1, z) == Blocks.snow_layer)
-        {
+        if (this.worldObj.getBlock(x, y + 1, z) == Blocks.snow_layer) {
             soundtype = Blocks.snow_layer.stepSound;
             entity.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
-        }
-        else if (!blockIn.getMaterial().isLiquid())
-        {
-            entity.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
-        }
+        } else if (!blockIn.getMaterial()
+            .isLiquid()) {
+                entity.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+            }
     }
 
     @Shadow
-    protected void updateFallState(double distanceFallenThisTick, boolean isOnGround)
-    {
-        if (isOnGround)
-        {
-            if (entity.fallDistance > 0.0F)
-            {
-                this. fall(entity.fallDistance);
+    protected void updateFallState(double distanceFallenThisTick, boolean isOnGround) {
+        if (isOnGround) {
+            if (entity.fallDistance > 0.0F) {
+                this.fall(entity.fallDistance);
                 entity.fallDistance = 0.0F;
             }
-        }
-        else if (distanceFallenThisTick < 0.0D)
-        {
-            entity.fallDistance = (float)((double)entity.fallDistance - distanceFallenThisTick);
+        } else if (distanceFallenThisTick < 0.0D) {
+            entity.fallDistance = (float) ((double) entity.fallDistance - distanceFallenThisTick);
         }
     }
+
     @Shadow
     protected void fall(float distance) {
         if (this.riddenByEntity != null) {
@@ -196,16 +184,17 @@ public class MixinEntity {
             }
         }
     }
+
     @Shadow
-    protected boolean canTriggerWalking()
-    {
+    protected boolean canTriggerWalking() {
         return true;
     }
+
     @Shadow
-    protected String getSwimSound()
-    {
+    protected String getSwimSound() {
         return "game.neutral.swim";
     }
+
     @Unique
     protected ConcurrentHashMap<String, IExtendedEntityProperties> multithreadingandtweaks$extendedProperties;
 

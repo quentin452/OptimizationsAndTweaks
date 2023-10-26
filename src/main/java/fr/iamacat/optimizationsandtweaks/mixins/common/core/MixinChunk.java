@@ -217,7 +217,7 @@ public class MixinChunk {
      */
     @Overwrite
     public void getEntitiesWithinAABBForEntity(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List<Entity> p_76588_3_,
-                                               IEntitySelector p_76588_4_) {
+        IEntitySelector p_76588_4_) {
         if (OptimizationsandTweaksConfig.enableMixinChunk) {
             int i = multithreadingandtweaks$calculateMinIndex(p_76588_2_);
             int j = multithreadingandtweaks$calculateMaxIndex(p_76588_2_);
@@ -239,7 +239,8 @@ public class MixinChunk {
     }
 
     @Unique
-    private void multithreadingandtweaks$processEntitiesInRange(int minIndex, int maxIndex, Entity entity, AxisAlignedBB aabb, List<Entity> entityList, IEntitySelector selector) {
+    private void multithreadingandtweaks$processEntitiesInRange(int minIndex, int maxIndex, Entity entity,
+        AxisAlignedBB aabb, List<Entity> entityList, IEntitySelector selector) {
         for (int k = minIndex; k <= maxIndex; ++k) {
             if (this.isChunkLoaded) {
                 List list1 = this.entityLists[k];
@@ -247,7 +248,8 @@ public class MixinChunk {
                 for (Object o : list1) {
                     Entity entity1 = (Entity) o;
 
-                    if (entity1 != entity && entity1.boundingBox.intersectsWith(aabb) && (selector == null || selector.isEntityApplicable(entity1))) {
+                    if (entity1 != entity && entity1.boundingBox.intersectsWith(aabb)
+                        && (selector == null || selector.isEntityApplicable(entity1))) {
                         entityList.add(entity1);
                     }
                 }

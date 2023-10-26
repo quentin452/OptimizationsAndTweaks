@@ -1,21 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.easybreeding;
 
-import easyBreeding.EntityAIEatDroppedFood;
+import java.util.List;
+
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.List;
+import easyBreeding.EntityAIEatDroppedFood;
 
 @Mixin(EntityAIEatDroppedFood.class)
 public abstract class MixinEntityAIEatDroppedFood extends EntityAIBase {
+
     @Shadow
     private EntityAnimal animal;
     @Unique
@@ -27,10 +29,14 @@ public abstract class MixinEntityAIEatDroppedFood extends EntityAIBase {
     public MixinEntityAIEatDroppedFood(EntityAnimal ent) {
         this.animal = ent;
         this.multithreadingandtweaks$searchBoundingBox = AxisAlignedBB.getBoundingBox(
-            ent.posX - multithreadingandtweaks$searchDistance, ent.posY - multithreadingandtweaks$searchDistance, ent.posZ - multithreadingandtweaks$searchDistance,
-            ent.posX + multithreadingandtweaks$searchDistance, ent.posY + multithreadingandtweaks$searchDistance, ent.posZ + multithreadingandtweaks$searchDistance
-        );
+            ent.posX - multithreadingandtweaks$searchDistance,
+            ent.posY - multithreadingandtweaks$searchDistance,
+            ent.posZ - multithreadingandtweaks$searchDistance,
+            ent.posX + multithreadingandtweaks$searchDistance,
+            ent.posY + multithreadingandtweaks$searchDistance,
+            ent.posZ + multithreadingandtweaks$searchDistance);
     }
+
     /**
      * @author iamcatfr
      * @reason d
@@ -69,7 +75,8 @@ public abstract class MixinEntityAIEatDroppedFood extends EntityAIBase {
      */
     @Overwrite(remap = false)
     public boolean execute(EntityAnimal enta, EntityItem enti) {
-        if (enta.getNavigator().tryMoveToXYZ(enti.posX, enti.posY, enti.posZ, 1.25) && enta.getDistanceToEntity(enti) < 1.0F) {
+        if (enta.getNavigator()
+            .tryMoveToXYZ(enti.posX, enti.posY, enti.posZ, 1.25) && enta.getDistanceToEntity(enti) < 1.0F) {
             this.eatOne(enti);
             enta.func_146082_f(null);
         }

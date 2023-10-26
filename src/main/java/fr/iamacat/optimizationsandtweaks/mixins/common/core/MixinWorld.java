@@ -157,8 +157,8 @@ public abstract class MixinWorld implements IBlockAccess {
             for (int x = MathHelper.floor_double(minX); x < MathHelper.floor_double(maxX); ++x) {
                 for (int z = MathHelper.floor_double(minZ); z < MathHelper.floor_double(maxZ); ++z) {
                     if (this.multithreadingandtweaks$blockExists(x, 64, z)) {
-                        double blockMinY = Math.max(minY - 1, 0);  // Avoid negative values for minY
-                        double blockMaxY = Math.min(maxY, 256);      // Avoid exceeding world height
+                        double blockMinY = Math.max(minY - 1, 0); // Avoid negative values for minY
+                        double blockMaxY = Math.min(maxY, 256); // Avoid exceeding world height
 
                         for (int y = MathHelper.floor_double(blockMinY); y < MathHelper.floor_double(blockMaxY); ++y) {
                             Block block = this.getBlock(x, y, z);
@@ -176,9 +176,8 @@ public abstract class MixinWorld implements IBlockAccess {
                 }
             }
 
-            List<Entity> list = this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
-                p_72945_1_,
-                p_72945_2_);
+            List<Entity> list = this
+                .multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(p_72945_1_, p_72945_2_);
 
             for (Entity entity : list) {
                 AxisAlignedBB entityAABB = entity.getBoundingBox();
@@ -208,7 +207,8 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_, AxisAlignedBB p_72839_2_) {
+    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_,
+        AxisAlignedBB p_72839_2_) {
         return this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
             p_72839_1_,
             p_72839_2_,
@@ -216,7 +216,8 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
+    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_,
+        AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
         ArrayList<Entity> arraylist = new ArrayList<>();
 
         double centerX = (p_94576_2_.minX + p_94576_2_.maxX) * 0.5D;
@@ -238,7 +239,6 @@ public abstract class MixinWorld implements IBlockAccess {
 
         return arraylist;
     }
-
 
     @Unique
     private void multithreadingandtweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ,

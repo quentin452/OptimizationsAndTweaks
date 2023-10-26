@@ -222,11 +222,13 @@ public class MixinPathFinder {
         PathPoint pathPoint, float p_75860_5, CallbackInfoReturnable cir) {
         return multithreadingandtweaks$getVerticalOffset(entity, x, y, z, pathPoint, cir);
     }
+
     @Unique
     private final Map<Integer, Integer> multithreadingandtweaks$blockCache = new ConcurrentHashMap<>();
 
     @Unique
-    public int multithreadingandtweaks$getVerticalOffset(Entity entity, int x, int y, int z, PathPoint pathPoint, CallbackInfoReturnable cir) {
+    public int multithreadingandtweaks$getVerticalOffset(Entity entity, int x, int y, int z, PathPoint pathPoint,
+        CallbackInfoReturnable cir) {
         int key = ((x & 0xFFF) << 20) | ((z & 0xFFF) << 8) | (y & 0xFF);
 
         Integer cachedResult = multithreadingandtweaks$blockCache.get(key);
@@ -243,8 +245,7 @@ public class MixinPathFinder {
             this.isPathingInWater,
             this.isMovementBlockAllowed,
             this.isWoddenDoorAllowed,
-            cir
-        );
+            cir);
 
         multithreadingandtweaks$blockCache.put(key, result);
 

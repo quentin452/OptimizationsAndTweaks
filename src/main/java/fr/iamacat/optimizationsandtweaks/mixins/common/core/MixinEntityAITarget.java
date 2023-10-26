@@ -12,14 +12,15 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
+
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityAITarget.class)
-public abstract class MixinEntityAITarget extends EntityAIBase
-{
+public abstract class MixinEntityAITarget extends EntityAIBase {
+
     /** The entity that this task belongs to */
     @Shadow
     protected EntityCreature taskOwner;
@@ -38,13 +39,11 @@ public abstract class MixinEntityAITarget extends EntityAIBase
     @Shadow
     private int field_75298_g;
 
-    public MixinEntityAITarget(EntityCreature p_i1669_1_, boolean p_i1669_2_)
-    {
+    public MixinEntityAITarget(EntityCreature p_i1669_1_, boolean p_i1669_2_) {
         this(p_i1669_1_, p_i1669_2_, false);
     }
 
-    public MixinEntityAITarget(EntityCreature p_i1670_1_, boolean p_i1670_2_, boolean p_i1670_3_)
-    {
+    public MixinEntityAITarget(EntityCreature p_i1670_1_, boolean p_i1670_2_, boolean p_i1670_3_) {
         this.taskOwner = p_i1670_1_;
         this.shouldCheckSight = p_i1670_2_;
         this.nearbyOnly = p_i1670_3_;
@@ -68,22 +67,24 @@ public abstract class MixinEntityAITarget extends EntityAIBase
         }
 
         if (this.shouldCheckSight) {
-            if (this.taskOwner.getEntitySenses().canSee(targetEntity)) {
+            if (this.taskOwner.getEntitySenses()
+                .canSee(targetEntity)) {
                 this.field_75298_g = 0;
             } else if (++this.field_75298_g > 60) {
                 return false;
             }
         }
 
-        return !(targetEntity instanceof EntityPlayerMP) || !((EntityPlayerMP) targetEntity).theItemInWorldManager.isCreative();
+        return !(targetEntity instanceof EntityPlayerMP)
+            || !((EntityPlayerMP) targetEntity).theItemInWorldManager.isCreative();
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    protected double getTargetDistance()
-    {
+    protected double getTargetDistance() {
         IAttributeInstance iattributeinstance = this.taskOwner.getEntityAttribute(SharedMonsterAttributes.followRange);
         return iattributeinstance == null ? 16.0D : iattributeinstance.getAttributeValue();
     }
@@ -92,8 +93,7 @@ public abstract class MixinEntityAITarget extends EntityAIBase
      * Execute a one shot task or start executing a continuous task
      */
     @Overwrite
-    public void startExecuting()
-    {
+    public void startExecuting() {
         this.targetSearchStatus = 0;
         this.targetSearchDelay = 0;
         this.field_75298_g = 0;
@@ -103,8 +103,7 @@ public abstract class MixinEntityAITarget extends EntityAIBase
      * Resets the task
      */
     @Overwrite
-    public void resetTask()
-    {
+    public void resetTask() {
         this.taskOwner.setAttackTarget(null);
     }
 
@@ -113,7 +112,9 @@ public abstract class MixinEntityAITarget extends EntityAIBase
      */
     @Overwrite
     protected boolean isSuitableTarget(EntityLivingBase targetEntity, boolean checkSight) {
-        if (targetEntity == null || targetEntity == this.taskOwner || !targetEntity.isEntityAlive() || !this.taskOwner.canAttackClass(targetEntity.getClass())) {
+        if (targetEntity == null || targetEntity == this.taskOwner
+            || !targetEntity.isEntityAlive()
+            || !this.taskOwner.canAttackClass(targetEntity.getClass())) {
             return false;
         }
 
@@ -121,7 +122,8 @@ public abstract class MixinEntityAITarget extends EntityAIBase
             IEntityOwnable ownable = (IEntityOwnable) this.taskOwner;
             if (StringUtils.isNotEmpty(ownable.func_152113_b())) {
                 if (targetEntity instanceof IEntityOwnable) {
-                    if (ownable.func_152113_b().equals(((IEntityOwnable) targetEntity).func_152113_b())) {
+                    if (ownable.func_152113_b()
+                        .equals(((IEntityOwnable) targetEntity).func_152113_b())) {
                         return false;
                     }
                 }
@@ -129,15 +131,20 @@ public abstract class MixinEntityAITarget extends EntityAIBase
                     return false;
                 }
             }
-        } else if (targetEntity instanceof EntityPlayer && !checkSight && ((EntityPlayer) targetEntity).capabilities.disableDamage) {
+        } else if (targetEntity instanceof EntityPlayer && !checkSight
+            && ((EntityPlayer) targetEntity).capabilities.disableDamage) {
+                return false;
+            }
+
+        if (!this.taskOwner.isWithinHomeDistance(
+            MathHelper.floor_double(targetEntity.posX),
+            MathHelper.floor_double(targetEntity.posY),
+            MathHelper.floor_double(targetEntity.posZ))) {
             return false;
         }
 
-        if (!this.taskOwner.isWithinHomeDistance(MathHelper.floor_double(targetEntity.posX), MathHelper.floor_double(targetEntity.posY), MathHelper.floor_double(targetEntity.posZ))) {
-            return false;
-        }
-
-        if (this.shouldCheckSight && !this.taskOwner.getEntitySenses().canSee(targetEntity)) {
+        if (this.shouldCheckSight && !this.taskOwner.getEntitySenses()
+            .canSee(targetEntity)) {
             return false;
         }
 
@@ -159,8 +166,10 @@ public abstract class MixinEntityAITarget extends EntityAIBase
      */
     @Overwrite
     public boolean canEasilyReach(EntityLivingBase targetEntity) {
-        this.targetSearchDelay = 10 + this.taskOwner.getRNG().nextInt(5);
-        PathEntity pathEntity = this.taskOwner.getNavigator().getPathToEntityLiving(targetEntity);
+        this.targetSearchDelay = 10 + this.taskOwner.getRNG()
+            .nextInt(5);
+        PathEntity pathEntity = this.taskOwner.getNavigator()
+            .getPathToEntityLiving(targetEntity);
 
         if (pathEntity == null || pathEntity.getFinalPathPoint() == null) {
             return false;

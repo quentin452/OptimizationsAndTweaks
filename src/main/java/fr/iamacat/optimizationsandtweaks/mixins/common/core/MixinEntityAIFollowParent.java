@@ -10,9 +10,9 @@ import net.minecraft.entity.passive.EntityAnimal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
@@ -38,6 +38,7 @@ public class MixinEntityAIFollowParent {
         }
         return multithreadingandtweaks$cachedEntitiesWithinAABB;
     }
+
     /**
      * Updates the task
      */
@@ -70,9 +71,11 @@ public class MixinEntityAIFollowParent {
 
     @Unique
     private Map<EntityAnimal, Integer> multithreadingandtweaks$growingAgeCache = new HashMap<>();
+
     /**
      * @author iamacatfr
-     * @reason fix a large bottleneck/freeze tps when there are alot of babies in the game caused by GrowingAge by adding a cache
+     * @reason fix a large bottleneck/freeze tps when there are alot of babies in the game caused by GrowingAge by
+     *         adding a cache
      */
     @Overwrite
     public boolean shouldExecute() {
