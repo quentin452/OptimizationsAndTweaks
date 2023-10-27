@@ -9,7 +9,10 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.IntHashMap;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -60,68 +63,72 @@ public class MixinPathFinder {
      * @reason optimize func_82565_a
      */
     @Overwrite
-    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_, PathPoint p_82565_4_, boolean p_82565_5_,
-        boolean p_82565_6_, boolean p_82565_7_) {
-            boolean isTrapdoorPresent = false;
+    public static int func_82565_a(Entity entity, int startX, int startY, int startZ, PathPoint endPathPoint, boolean canSwim, boolean canPassOpenDoors, boolean canEnterDoors) {
+        boolean isTrapdoorPresent = false;
+        World world = entity.worldObj;
+        int posX = MathHelper.floor_double(entity.posX);
+        int posY = MathHelper.floor_double(entity.posY);
+        int posZ = MathHelper.floor_double(entity.posZ);
 
-            int posX = (int) p_82565_0_.posX;
-            int posY = (int) p_82565_0_.posY;
-            int posZ = (int) p_82565_0_.posZ;
-            Block block;
+        int x2 = startX + endPathPoint.xCoord;
+        int y2 = startY + endPathPoint.yCoord;
+        int z2 = startZ + endPathPoint.zCoord;
 
-            for (int i = p_82565_1_; i < p_82565_1_ + p_82565_4_.xCoord; ++i) {
-                for (int j = p_82565_2_; j < p_82565_2_ + p_82565_4_.yCoord; ++j) {
-                    for (int k = p_82565_3_; k <p_82565_3_ + p_82565_4_.zCoord; ++k) {
-                        block = p_82565_0_.worldObj.getBlock(i, j, k);
-                        Material material = block.getMaterial();
+        for (int x = startX; x < x2; ++x) {
+            for (int y = startY; y < y2; ++y) {
+                for (int z = startZ; z < z2; ++z) {
+                    int chunkX = x >> 4;
+                    int chunkZ = z >> 4;
+                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-                        if (material != Material.air) {
-                            if (block == Blocks.trapdoor) {
-                                isTrapdoorPresent = true;
-                            } else if (block != Blocks.flowing_water && block != Blocks.water) {
-                                if (!p_82565_7_ && block == Blocks.wooden_door) {
-                                    return 0;
-                                }
-                            } else {
-                                if (p_82565_5_) {
-                                    return -1;
-                                }
-                                isTrapdoorPresent = true;
+                    int localX = x & 15;
+                    int localZ = z & 15;
+
+                    Block block = chunk.getBlock(localX, y, localZ);
+                    Material material = block.getMaterial();
+
+                    if (material != Material.air) {
+                        if (block == Blocks.trapdoor) {
+                            isTrapdoorPresent = true;
+                        } else if (block != Blocks.flowing_water && block != Blocks.water) {
+                            if (!canEnterDoors && block == Blocks.wooden_door) {
+                                return 0;
                             }
+                        } else {
+                            if (canSwim) {
+                                return -1;
+                            }
+                            isTrapdoorPresent = true;
+                        }
 
-                            int renderType = block.getRenderType();
+                        int renderType = block.getRenderType();
 
-                            if (renderType == 9) {
-                                if (p_82565_0_.worldObj.getBlock(posX, posY, posZ)
-                                    .getRenderType() != 9
-                                    && p_82565_0_.worldObj.getBlock(posX, posY - 1, posZ)
-                                        .getRenderType() != 9) {
-                                    return -3;
-                                }
-                            } else if (!block.getBlocksMovement(p_82565_0_.worldObj, i, j, k)
-                                && (!p_82565_6_ || block != Blocks.wooden_door)) {
-                                    if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                        return -3;
-                                    }
-
-                                    if (block == Blocks.trapdoor) {
-                                        return -4;
-                                    }
-
-                                    if (material != Material.lava) {
-                                        return 0;
-                                    }
-
-                                    if (!p_82565_0_.handleLavaMovement()) {
-                                        return -2;
-                                    }
-                                }
+                        if (renderType == 9) {
+                            Block currentBlock = world.getBlock(posX, posY, posZ);
+                            Block blockBelow = world.getBlock(posX, posY - 1, posZ);
+                            if (currentBlock.getRenderType() != 9 && blockBelow.getRenderType() != 9) {
+                                return -3;
+                            }
+                        } else if (!block.getBlocksMovement(world, x, y, z) && (!canPassOpenDoors || block != Blocks.wooden_door)) {
+                            if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                return -3;
+                            }
+                            if (block == Blocks.trapdoor) {
+                                return -4;
+                            }
+                            if (material != Material.lava) {
+                                return 0;
+                            }
+                            if (!entity.handleLavaMovement()) {
+                                return -2;
+                            }
                         }
                     }
                 }
             }
+        }
 
-            return isTrapdoorPresent ? 2 : 1;
+        return isTrapdoorPresent ? 2 : 1;
     }
 
     /**
