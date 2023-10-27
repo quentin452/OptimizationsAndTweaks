@@ -111,37 +111,6 @@ public class MixinEntity {
         }
     }
 
-    @Inject(method = "func_145775_I", at = @At("HEAD"), cancellable = true)
-    protected void func_145775_I(CallbackInfo ci) {
-        AxisAlignedBB boundingBox = this.boundingBox.expand(-0.001D, -0.001D, -0.001D);
-        int minX = MathHelper.floor_double(boundingBox.minX);
-        int minY = MathHelper.floor_double(boundingBox.minY);
-        int minZ = MathHelper.floor_double(boundingBox.minZ);
-        int maxX = MathHelper.floor_double(boundingBox.maxX - 1.0D);
-        int maxY = MathHelper.floor_double(boundingBox.maxY - 1.0D);
-        int maxZ = MathHelper.floor_double(boundingBox.maxZ - 1.0D);
-
-        if (this.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ)) {
-            for (int x = minX; x <= maxX; ++x) {
-                for (int y = minY; y <= maxY; ++y) {
-                    for (int z = minZ; z <= maxZ; ++z) {
-                        Block block = this.worldObj.getBlock(x, y, z);
-
-                        try {
-                            block.onEntityCollidedWithBlock(this.worldObj, x, y, z, entity);
-                        } catch (Throwable throwable) {
-                            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Colliding entity with block");
-                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being collided with");
-                            CrashReportCategory.func_147153_a(crashreportcategory, x, y, z, block, this.worldObj.getBlockMetadata(x, y, z));
-                            throw new ReportedException(crashreport);
-                        }
-                    }
-                }
-            }
-        }
-        ci.cancel();
-    }
-
     @Shadow
     protected void func_145780_a(int x, int y, int z, Block blockIn) {
         Block.SoundType soundtype = blockIn.stepSound;
