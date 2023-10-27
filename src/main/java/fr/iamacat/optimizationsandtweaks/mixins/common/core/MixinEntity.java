@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.fastrandom.XorShift128PlusRandom;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Entity.class, priority = 999)
 public class MixinEntity {
@@ -77,29 +78,30 @@ public class MixinEntity {
     }
 
     @Unique
-    private boolean cachedIsInWater = false;
+    private boolean multithreadingandtweaks$cachedIsInWater = false;
     @Unique
-    private long lastCheckTime = 0L;
+    private long multithreadingandtweaks$lastCheckTime = 0L;
     @Unique
     private static final long CACHE_EXPIRATION_TIME = 1000L;
 
-    @Inject(method = "isInWater", at = @At("HEAD"), remap = false, cancellable = true)
-    public boolean isInWater(CallbackInfo ci) {
+    @Inject(method = "isInWater", at = @At("HEAD"), cancellable = true)
+    public boolean isInWater(CallbackInfoReturnable<Boolean> cir) {
         if (OptimizationsandTweaksConfig.enableMixinEntity) {
             long currentTime = System.currentTimeMillis();
 
-            if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {
-                return cachedIsInWater;
+            if (currentTime - multithreadingandtweaks$lastCheckTime < CACHE_EXPIRATION_TIME) {
+                return multithreadingandtweaks$cachedIsInWater;
             } else {
                 boolean inWater = this.inWater;
-                cachedIsInWater = inWater;
-                lastCheckTime = currentTime;
+                multithreadingandtweaks$cachedIsInWater = inWater;
+                multithreadingandtweaks$lastCheckTime = currentTime;
                 return inWater;
             }
         } else {
-            ci.cancel();
-            return false;
+            cir.cancel();
+            cir.setReturnValue(false);
         }
+        return false;
     }
 
     @Shadow
@@ -109,41 +111,35 @@ public class MixinEntity {
         }
     }
 
-    @Shadow
-    protected void func_145775_I() {
-        int i = MathHelper.floor_double(this.boundingBox.minX + 0.001D);
-        int j = MathHelper.floor_double(this.boundingBox.minY + 0.001D);
-        int k = MathHelper.floor_double(this.boundingBox.minZ + 0.001D);
-        int l = MathHelper.floor_double(this.boundingBox.maxX - 0.001D);
-        int i1 = MathHelper.floor_double(this.boundingBox.maxY - 0.001D);
-        int j1 = MathHelper.floor_double(this.boundingBox.maxZ - 0.001D);
+    @Inject(method = "func_145775_I", at = @At("HEAD"), cancellable = true)
+    protected void func_145775_I(CallbackInfo ci) {
+        AxisAlignedBB boundingBox = this.boundingBox.expand(-0.001D, -0.001D, -0.001D);
+        int minX = MathHelper.floor_double(boundingBox.minX);
+        int minY = MathHelper.floor_double(boundingBox.minY);
+        int minZ = MathHelper.floor_double(boundingBox.minZ);
+        int maxX = MathHelper.floor_double(boundingBox.maxX - 1.0D);
+        int maxY = MathHelper.floor_double(boundingBox.maxY - 1.0D);
+        int maxZ = MathHelper.floor_double(boundingBox.maxZ - 1.0D);
 
-        if (this.worldObj.checkChunksExist(i, j, k, l, i1, j1)) {
-            for (int k1 = i; k1 <= l; ++k1) {
-                for (int l1 = j; l1 <= i1; ++l1) {
-                    for (int i2 = k; i2 <= j1; ++i2) {
-                        Block block = this.worldObj.getBlock(k1, l1, i2);
+        if (this.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ)) {
+            for (int x = minX; x <= maxX; ++x) {
+                for (int y = minY; y <= maxY; ++y) {
+                    for (int z = minZ; z <= maxZ; ++z) {
+                        Block block = this.worldObj.getBlock(x, y, z);
 
                         try {
-                            block.onEntityCollidedWithBlock(this.worldObj, k1, l1, i2, entity);
+                            block.onEntityCollidedWithBlock(this.worldObj, x, y, z, entity);
                         } catch (Throwable throwable) {
-                            CrashReport crashreport = CrashReport
-                                .makeCrashReport(throwable, "Colliding entity with block");
-                            CrashReportCategory crashreportcategory = crashreport
-                                .makeCategory("Block being collided with");
-                            CrashReportCategory.func_147153_a(
-                                crashreportcategory,
-                                k1,
-                                l1,
-                                i2,
-                                block,
-                                this.worldObj.getBlockMetadata(k1, l1, i2));
+                            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Colliding entity with block");
+                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being collided with");
+                            CrashReportCategory.func_147153_a(crashreportcategory, x, y, z, block, this.worldObj.getBlockMetadata(x, y, z));
                             throw new ReportedException(crashreport);
                         }
                     }
                 }
             }
         }
+        ci.cancel();
     }
 
     @Shadow
