@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(PathNavigate.class)
 public class MixinPathNavigate {
@@ -189,7 +190,8 @@ public class MixinPathNavigate {
      * sets the active path data if path is 100% unique compared to old path, checks to adjust path for sun avoiding
      * ents and stores end coords
      */
-    private Map<PathEntity, Boolean> pathCache = new HashMap<>();
+    @Unique
+    private Map<PathEntity, Boolean> multithreadingandtweaks$pathCache = new HashMap<>();
 
     /**
      * @author
@@ -203,14 +205,14 @@ public class MixinPathNavigate {
         }
 
         // Check if the path is already in the cache
-        if (pathCache.containsKey(newPath)) {
-            return pathCache.get(newPath);
+        if (multithreadingandtweaks$pathCache.containsKey(newPath)) {
+            return multithreadingandtweaks$pathCache.get(newPath);
         }
 
         // Check only if the start/end of the path has changed
         if (this.currentPath == null || !this.currentPath.isSamePath(newPath)) {
             this.currentPath = newPath;
-            pathCache.put(newPath, true); // Cache the result
+            multithreadingandtweaks$pathCache.put(newPath, true); // Cache the result
         }
 
         // Calculate position data only once
@@ -229,7 +231,7 @@ public class MixinPathNavigate {
      */
     @Overwrite
     public PathEntity getPath() {
-        if (pathCache.containsKey(currentPath)) {
+        if (multithreadingandtweaks$pathCache.containsKey(currentPath)) {
             return currentPath;
         } else {
             return null;
@@ -242,21 +244,18 @@ public class MixinPathNavigate {
      */
     @Overwrite
     public void onUpdateNavigation() {
-        if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
-            ++this.totalTicks;
+        ++this.totalTicks;
+
+        if (!this.noPath()) {
+            if (this.canNavigate()) {
+                this.pathFollow();
+            }
 
             if (!this.noPath()) {
-                if (this.canNavigate()) {
-                    this.pathFollow();
-                }
+                Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
 
-                if (!this.noPath()) {
-                    Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
-
-                    if (vec3 != null) {
-                        this.theEntity.getMoveHelper()
-                            .setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
-                    }
+                if (vec3 != null) {
+                    this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
                 }
             }
         }
@@ -268,62 +267,45 @@ public class MixinPathNavigate {
      */
     @Overwrite
     public void pathFollow() {
-        Vec3 entityPosition = this.getEntityPosition();
+        Vec3 vec3 = this.getEntityPosition();
         int i = this.currentPath.getCurrentPathLength();
 
-        int currentPathLength = this.currentPath.getCurrentPathLength();
-        int currentPathIndex = this.currentPath.getCurrentPathIndex();
+        for (int j = this.currentPath.getCurrentPathIndex(); j < i; ++j) {
+            if (this.currentPath.getPathPointFromIndex(j).yCoord != (int)vec3.yCoord) {
+                i = j;
+                break;
+            }
+        }
 
-        int deviationPoint = IntStream.range(currentPathIndex, currentPathLength)
-            .filter(j -> {
-                PathPoint pathPoint = this.currentPath.getPathPointFromIndex(j);
-                return pathPoint != null && pathPoint.yCoord != (int) entityPosition.yCoord;
-            })
-            .findFirst()
-            .orElse(currentPathLength);
-
-        double entityWidthSquared = this.theEntity.width * this.theEntity.width;
+        float entityWidthSquared = this.theEntity.width * this.theEntity.width;
         int ceilingWidth = MathHelper.ceiling_float_int(this.theEntity.width);
-        int entityHeightPlusOne = (int) this.theEntity.height + 1;
-        int pathIndex = deviationPoint;
+        int entityHeightPlusOne = (int)this.theEntity.height + 1;
 
-        for (int j = deviationPoint - 1; j >= currentPathIndex; j--) {
-            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, j);
+        for (int k = this.currentPath.getCurrentPathIndex(); k < i; ++k) {
+            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, k);
 
-            if (pathVector != null) {
-                if (entityPosition.squareDistanceTo(pathVector) < entityWidthSquared) {
-                    pathIndex = j;
-                } else {
-                    break;
-                }
+            if (pathVector != null && vec3.squareDistanceTo(pathVector) < entityWidthSquared) {
+                this.currentPath.setCurrentPathIndex(k + 1);
             }
         }
 
-        for (int j = pathIndex - 1; j >= currentPathIndex; j--) {
-            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, j);
+        for (int k = i - 1; k >= this.currentPath.getCurrentPathIndex(); --k) {
+            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, k);
 
-            if (pathVector != null) {
-                if (isDirectPathBetweenPoints(
-                    entityPosition,
-                    pathVector,
-                    ceilingWidth,
-                    entityHeightPlusOne,
-                    ceilingWidth)) {
-                    pathIndex = j;
-                    break;
-                }
+            if (pathVector != null && isDirectPathBetweenPoints(vec3, pathVector, ceilingWidth, entityHeightPlusOne, ceilingWidth)) {
+                this.currentPath.setCurrentPathIndex(k);
+                break;
             }
         }
+
         if (this.totalTicks - this.ticksAtLastPos > 100) {
-            if (entityPosition.squareDistanceTo(this.lastPosCheck) < 2.25D) {
+            if (vec3.squareDistanceTo(this.lastPosCheck) < 2.25D) {
                 // this.clearPathEntity(); null crash when enabled
             }
 
             this.ticksAtLastPos = this.totalTicks;
-            this.lastPosCheck = entityPosition;
+            this.lastPosCheck = vec3;
         }
-
-        this.currentPath.setCurrentPathIndex(pathIndex);
     }
 
     /**
