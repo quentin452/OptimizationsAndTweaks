@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Blocks;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.pathfinding.PathPoint;
@@ -19,6 +20,7 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,6 +29,7 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Mixin(PathNavigate.class)
 public class MixinPathNavigate {
@@ -113,6 +116,7 @@ public class MixinPathNavigate {
     /**
      * Sets the speed
      */
+    @Overwrite
     public void setSpeed(double p_75489_1_) {
         this.speed = p_75489_1_;
     }
@@ -127,6 +131,7 @@ public class MixinPathNavigate {
     /**
      * Gets the maximum distance that the path finding will search in.
      */
+    @Overwrite
     public float getPathSearchRange() {
         return (float) this.pathSearchRange.getAttributeValue();
     }
@@ -134,6 +139,7 @@ public class MixinPathNavigate {
     /**
      * Returns the path to the given coordinates
      */
+    @Overwrite
     public PathEntity getPathToXYZ(double p_75488_1_, double p_75488_3_, double p_75488_5_) {
         return !this.canNavigate() ? null
             : this.worldObj.getEntityPathToXYZ(
@@ -222,7 +228,7 @@ public class MixinPathNavigate {
 
         return true;
     }
-    
+
     /**
      * gets the actively used PathEntity
      */
@@ -235,9 +241,12 @@ public class MixinPathNavigate {
         }
     }
 
-
-    @Inject(method = "onUpdateNavigation", at = @At("HEAD"), cancellable = true)
-    public void onUpdateNavigation(CallbackInfo ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void onUpdateNavigation() {
         if (OptimizationsandTweaksConfig.enableMixinPathFinding) {
             ++this.totalTicks;
 
@@ -250,80 +259,93 @@ public class MixinPathNavigate {
                     Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
 
                     if (vec3 != null) {
-                        this.theEntity.getMoveHelper()
-                            .setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
+                        this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
                     }
                 }
             }
         }
-        ci.cancel();
     }
-
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void pathFollow() {
-        Vec3 vec3 = this.getEntityPosition();
+        Vec3 entityPosition = this.getEntityPosition();
         int i = this.currentPath.getCurrentPathLength();
 
-        for (int j = this.currentPath.getCurrentPathIndex(); j < this.currentPath.getCurrentPathLength(); ++j) {
-            if (this.currentPath.getPathPointFromIndex(j).yCoord != (int) vec3.yCoord) {
-                i = j;
-                break;
+        int currentPathLength = this.currentPath.getCurrentPathLength();
+        int currentPathIndex = this.currentPath.getCurrentPathIndex();
+
+        int deviationPoint = IntStream.range(currentPathIndex, currentPathLength)
+            .filter(j -> {
+                PathPoint pathPoint = this.currentPath.getPathPointFromIndex(j);
+                return pathPoint != null && pathPoint.yCoord != (int) entityPosition.yCoord;
+            })
+            .findFirst()
+            .orElse(currentPathLength);
+
+        double entityWidthSquared = this.theEntity.width * this.theEntity.width;
+        int ceilingWidth = MathHelper.ceiling_float_int(this.theEntity.width);
+        int entityHeightPlusOne = (int) this.theEntity.height + 1;
+        int pathIndex = deviationPoint;
+
+        for (int j = deviationPoint - 1; j >= currentPathIndex; j--) {
+            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, j);
+
+            if (pathVector != null) {
+                if (entityPosition.squareDistanceTo(pathVector) < entityWidthSquared) {
+                    pathIndex = j;
+                } else {
+                    break;
+                }
             }
         }
 
-        float f = this.theEntity.width * this.theEntity.width;
-        int k;
+        for (int j = pathIndex - 1; j >= currentPathIndex; j--) {
+            Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, j);
 
-        for (k = this.currentPath.getCurrentPathIndex(); k < i; ++k) {
-            if (vec3.squareDistanceTo(this.currentPath.getVectorFromIndex(this.theEntity, k)) < (double) f) {
-                this.currentPath.setCurrentPathIndex(k + 1);
+            if (pathVector != null) {
+                if (isDirectPathBetweenPoints(entityPosition, pathVector, ceilingWidth, entityHeightPlusOne, ceilingWidth)) {
+                    pathIndex = j;
+                    break;
+                }
             }
         }
-
-        k = MathHelper.ceiling_float_int(this.theEntity.width);
-        int l = (int) this.theEntity.height + 1;
-        int i1 = k;
-
-        for (int j1 = i - 1; j1 >= this.currentPath.getCurrentPathIndex(); --j1) {
-            if (this
-                .isDirectPathBetweenPoints(vec3, this.currentPath.getVectorFromIndex(this.theEntity, j1), k, l, i1)) {
-                this.currentPath.setCurrentPathIndex(j1);
-                break;
-            }
-        }
-
         if (this.totalTicks - this.ticksAtLastPos > 100) {
-            if (vec3.squareDistanceTo(this.lastPosCheck) < 2.25D) {
-                this.clearPathEntity();
+            if (entityPosition.squareDistanceTo(this.lastPosCheck) < 2.25D) {
+             //   this.clearPathEntity(); null crash when enabled 
             }
 
             this.ticksAtLastPos = this.totalTicks;
-            this.lastPosCheck.xCoord = vec3.xCoord;
-            this.lastPosCheck.yCoord = vec3.yCoord;
-            this.lastPosCheck.zCoord = vec3.zCoord;
+            this.lastPosCheck = entityPosition;
         }
+
+
+        this.currentPath.setCurrentPathIndex(pathIndex);
     }
 
     /**
      * If null path or reached the end
      */
+    @Overwrite
     public boolean noPath() {
         return this.currentPath == null || this.currentPath.isFinished();
     }
 
     /**
-     * sets active PathEntity to null
+     * @author
+     * @reason
      */
-    public void clearPathEntity() {
-        this.currentPath = null;
-    }
-
+    @Overwrite
     private Vec3 getEntityPosition() {
-        return Vec3.createVectorHelper(this.theEntity.posX, (double) this.getPathableYPos(), this.theEntity.posZ);
+        return Vec3.createVectorHelper(this.theEntity.posX, this.getPathableYPos(), this.theEntity.posZ);
     }
 
     /**
      * Gets the safe pathing Y position for the entity depending on if it can path swim or not
      */
+    @Overwrite
     private int getPathableYPos() {
         if (this.theEntity.isInWater() && this.canSwim) {
             int i = (int) this.theEntity.boundingBox.minY;
@@ -355,6 +377,7 @@ public class MixinPathNavigate {
     /**
      * If on ground or swimming and can swim
      */
+    @Overwrite
     private boolean canNavigate() {
         return this.theEntity.onGround || this.canSwim && this.isInLiquid()
             || this.theEntity.isRiding() && this.theEntity instanceof EntityZombie
@@ -364,6 +387,7 @@ public class MixinPathNavigate {
     /**
      * Returns true if the entity is in water or lava, false otherwise
      */
+    @Overwrite
     private boolean isInLiquid() {
         return this.theEntity.isInWater() || this.theEntity.handleLavaMovement();
     }
@@ -391,6 +415,7 @@ public class MixinPathNavigate {
      * Returns true when an entity of specified size could safely walk in a straight line between the two points. Args:
      * pos1, pos2, entityXSize, entityYSize, entityZSize
      */
+    @Overwrite
     private boolean isDirectPathBetweenPoints(Vec3 p_75493_1_, Vec3 p_75493_2_, int p_75493_3_, int p_75493_4_,
         int p_75493_5_) {
         int l = MathHelper.floor_double(p_75493_1_.xCoord);
@@ -478,6 +503,7 @@ public class MixinPathNavigate {
      * Returns true when an entity could stand at a position, including solid blocks under the entire entity. Args:
      * xOffset, yOffset, zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
+    @Overwrite
     private boolean isSafeToStandAt(int p_75483_1_, int p_75483_2_, int p_75483_3_, int p_75483_4_, int p_75483_5_,
         int p_75483_6_, Vec3 p_75483_7_, double p_75483_8_, double p_75483_10_) {
         int k1 = p_75483_1_ - p_75483_4_ / 2;
@@ -527,6 +553,7 @@ public class MixinPathNavigate {
      * Returns true if an entity does not collide with any solid blocks at the position. Args: xOffset, yOffset,
      * zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
+    @Overwrite
     private boolean isPositionClear(int p_75496_1_, int p_75496_2_, int p_75496_3_, int p_75496_4_, int p_75496_5_,
         int p_75496_6_, Vec3 p_75496_7_, double p_75496_8_, double p_75496_10_) {
         for (int k1 = p_75496_1_; k1 < p_75496_1_ + p_75496_4_; ++k1) {
