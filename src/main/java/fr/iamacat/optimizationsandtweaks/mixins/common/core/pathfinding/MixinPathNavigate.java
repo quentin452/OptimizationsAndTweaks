@@ -201,18 +201,18 @@ public class MixinPathNavigate {
             return false;
         }
 
-        // Vérifier si le chemin est déjà dans le cache
+        // Check if the path is already in the cache
         if (pathCache.containsKey(newPath)) {
             return pathCache.get(newPath);
         }
 
-        // Vérifier uniquement si le début/fin du chemin a changé
+        // Check only if the start/end of the path has changed
         if (this.currentPath == null || !this.currentPath.isSamePath(newPath)) {
             this.currentPath = newPath;
-            pathCache.put(newPath, true); // Mettre en cache le résultat
+            pathCache.put(newPath, true); // Cache the result
         }
 
-        // Calculer les données de position une seule fois
+        // Calculate position data only once
         Vec3 entityPosition = this.getEntityPosition();
         this.speed = speed;
         this.ticksAtLastPos = this.totalTicks;
@@ -222,7 +222,7 @@ public class MixinPathNavigate {
 
         return true;
     }
-
+    
     /**
      * gets the actively used PathEntity
      */
