@@ -36,7 +36,11 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
     common_witchery_MixinEntityVillageGuard(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard, "witchery.MixinEntityVillageGuard"),
+        require(TargetedMod.WITCHERY).and(m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard), "witchery.MixinEntityVillageGuard"),
+
+    client_core_MixinRenderManager(Side.CLIENT,
+        avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
+        "core.MixinRenderManager"),
     common_core_MixinServersideAttributeMap(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap, "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
@@ -58,9 +62,6 @@ public enum Mixin implements IMixin {
     common_catwalks2_MixinCommonProxy(Side.COMMON,
         avoid(TargetedMod.CATWALK2OFFICIAL).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyForCatWalks2),
         "catwalks2.MixinCommonProxy"),
-    client_core_MixinRenderManager(Side.CLIENT,
-        avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
-        "core.MixinRenderManager"),
     common_core_MixinOilTweakEventHandler(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler,
         "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
@@ -259,6 +260,10 @@ public enum Mixin implements IMixin {
     public final Predicate<List<ITargetedMod>> filter;
     @Getter
     public final String mixin;
+
+    static Predicate<List<ITargetedMod>> require(TargetedMod in) {
+        return modList -> modList.contains(in);
+    }
 
     static Predicate<List<ITargetedMod>> avoid(TargetedMod in) {
         return modList -> !modList.contains(in);
