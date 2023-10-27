@@ -86,6 +86,8 @@ public class MixinPathFinder {
                     Block block = chunk.getBlock(localX, y, localZ);
                     Material material = block.getMaterial();
 
+                    int renderType = block.getRenderType();
+
                     if (material != Material.air) {
                         if (block == Blocks.trapdoor) {
                             isTrapdoorPresent = true;
@@ -100,29 +102,29 @@ public class MixinPathFinder {
                             isTrapdoorPresent = true;
                         }
 
-                        int renderType = block.getRenderType();
-
                         if (renderType == 9) {
                             Block currentBlock = world.getBlock(posX, posY, posZ);
                             Block blockBelow = world.getBlock(posX, posY - 1, posZ);
-                            if (currentBlock.getRenderType() != 9 && blockBelow.getRenderType() != 9) {
+                            int currentBlockRenderType = currentBlock.getRenderType();
+                            int blockBelowRenderType = blockBelow.getRenderType();
+                            if (currentBlockRenderType != 9 && blockBelowRenderType != 9) {
                                 return -3;
                             }
                         } else if (!block.getBlocksMovement(world, x, y, z)
                             && (!p_82565_6_ || block != Blocks.wooden_door)) {
-                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                    return -3;
-                                }
-                                if (block == Blocks.trapdoor) {
-                                    return -4;
-                                }
-                                if (material != Material.lava) {
-                                    return 0;
-                                }
-                                if (!p_82565_0_.handleLavaMovement()) {
-                                    return -2;
-                                }
+                            if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                return -3;
                             }
+                            if (block == Blocks.trapdoor) {
+                                return -4;
+                            }
+                            if (material != Material.lava) {
+                                return 0;
+                            }
+                            if (!p_82565_0_.handleLavaMovement()) {
+                                return -2;
+                            }
+                        }
                     }
                 }
             }
