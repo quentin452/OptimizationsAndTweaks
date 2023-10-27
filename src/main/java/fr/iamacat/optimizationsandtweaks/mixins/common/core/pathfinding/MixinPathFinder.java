@@ -3,6 +3,11 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Int2ObjectHashMap;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2IntCounterMap;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2IntHashMap;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.ObjectHashSet;
+import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -55,8 +60,6 @@ public class MixinPathFinder {
     float distanceToTarget;
     @Unique
     PathPoint previous;
-    @Shadow
-    private IntHashMap pointMap = new IntHashMap();
     /**
      * @author iamacatfr
      * @reason optimize func_82565_a
@@ -137,18 +140,23 @@ public class MixinPathFinder {
      * @author iamacatfr
      * @reason optimize openPoint
      */
-    @Shadow
+    @Unique
+    private final Int2ObjectHashMap<PathPoint> multithreadingandtweaks$pointCache = new Int2ObjectHashMap<>();
+
     private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
-        PathPoint pathpoint = (PathPoint) this.pointMap.lookup(l);
+
+        PathPoint pathpoint = multithreadingandtweaks$pointCache.get(l);
 
         if (pathpoint == null) {
             pathpoint = new PathPoint(p_75854_1_, p_75854_2_, p_75854_3_);
-            this.pointMap.addKey(l, pathpoint);
+
+            multithreadingandtweaks$pointCache.put(l, pathpoint);
         }
 
         return pathpoint;
     }
+
 
     @Unique
     private PathEntity multithreadingandtweaks$createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
