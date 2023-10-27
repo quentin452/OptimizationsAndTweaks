@@ -27,6 +27,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIPlay;
+
+    @Config.Comment("Optimize EntityArrowAttack Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityArrowAttack;
     @Config.Comment("Optimize EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -71,10 +76,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemMinestone;
-    @Config.Comment("Fix a large bottleneck in EntityVillageGuard class from Witchery")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityVillageGuard;
     @Config.Comment("Optimize LowerStringMap performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

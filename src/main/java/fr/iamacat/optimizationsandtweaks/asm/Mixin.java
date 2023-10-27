@@ -18,6 +18,9 @@ public enum Mixin implements IMixin {
         "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
+
+    common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
+        "core.MixinEntityArrowAttack"),
     common_core_MixinEntityAITarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITarget,
         "core.MixinEntityAITarget"),
     common_core_MixinAxisAlignedBB(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAxisAlignedBB,
@@ -35,8 +38,6 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAIPlay"),
     common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
-    common_witchery_MixinEntityVillageGuard(Side.COMMON,
-        require(TargetedMod.WITCHERY).and(m -> OptimizationsandTweaksConfig.enableMixinEntityVillageGuard), "witchery.MixinEntityVillageGuard"),
 
     client_core_MixinRenderManager(Side.CLIENT,
         avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
