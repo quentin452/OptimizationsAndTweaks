@@ -417,87 +417,75 @@ public class MixinPathNavigate {
      * pos1, pos2, entityXSize, entityYSize, entityZSize
      */
     @Overwrite
-    private boolean isDirectPathBetweenPoints(Vec3 p_75493_1_, Vec3 p_75493_2_, int p_75493_3_, int p_75493_4_,
-        int p_75493_5_) {
-        int l = MathHelper.floor_double(p_75493_1_.xCoord);
-        int i1 = MathHelper.floor_double(p_75493_1_.zCoord);
-        double d0 = p_75493_2_.xCoord - p_75493_1_.xCoord;
-        double d1 = p_75493_2_.zCoord - p_75493_1_.zCoord;
+    private boolean isDirectPathBetweenPoints(Vec3 p_75493_1, Vec3 p_75493_2, int p_75493_3, int p_75493_4, int p_75493_5) {
+        int l = MathHelper.floor_double(p_75493_1.xCoord);
+        int i1 = MathHelper.floor_double(p_75493_1.zCoord);
+
+        double d0 = p_75493_2.xCoord - p_75493_1.xCoord;
+        double d1 = p_75493_2.zCoord - p_75493_1.zCoord;
         double d2 = d0 * d0 + d1 * d1;
 
         if (d2 < 1.0E-8D) {
             return false;
-        } else {
-            double d3 = 1.0D / Math.sqrt(d2);
-            d0 *= d3;
-            d1 *= d3;
-            p_75493_3_ += 2;
-            p_75493_5_ += 2;
-
-            if (!this.isSafeToStandAt(
-                l,
-                (int) p_75493_1_.yCoord,
-                i1,
-                p_75493_3_,
-                p_75493_4_,
-                p_75493_5_,
-                p_75493_1_,
-                d0,
-                d1)) {
-                return false;
-            } else {
-                p_75493_3_ -= 2;
-                p_75493_5_ -= 2;
-                double d4 = 1.0D / Math.abs(d0);
-                double d5 = 1.0D / Math.abs(d1);
-                double d6 = (double) (l * 1) - p_75493_1_.xCoord;
-                double d7 = (double) (i1 * 1) - p_75493_1_.zCoord;
-
-                if (d0 >= 0.0D) {
-                    ++d6;
-                }
-
-                if (d1 >= 0.0D) {
-                    ++d7;
-                }
-
-                d6 /= d0;
-                d7 /= d1;
-                int j1 = d0 < 0.0D ? -1 : 1;
-                int k1 = d1 < 0.0D ? -1 : 1;
-                int l1 = MathHelper.floor_double(p_75493_2_.xCoord);
-                int i2 = MathHelper.floor_double(p_75493_2_.zCoord);
-                int j2 = l1 - l;
-                int k2 = i2 - i1;
-
-                do {
-                    if (j2 * j1 <= 0 && k2 * k1 <= 0) {
-                        return true;
-                    }
-
-                    if (d6 < d7) {
-                        d6 += d4;
-                        l += j1;
-                        j2 = l1 - l;
-                    } else {
-                        d7 += d5;
-                        i1 += k1;
-                        k2 = i2 - i1;
-                    }
-                } while (this.isSafeToStandAt(
-                    l,
-                    (int) p_75493_1_.yCoord,
-                    i1,
-                    p_75493_3_,
-                    p_75493_4_,
-                    p_75493_5_,
-                    p_75493_1_,
-                    d0,
-                    d1));
-
-                return false;
-            }
         }
+
+        double d3 = 1.0D / Math.sqrt(d2);
+        d0 *= d3;
+        d1 *= d3;
+
+        p_75493_3 += 2;
+        p_75493_5 += 2;
+
+        if (!this.isSafeToStandAt(l, (int) p_75493_1.yCoord, i1, p_75493_3, p_75493_4, p_75493_5, p_75493_1, d0, d1)) {
+            return false;
+        }
+
+        p_75493_3 -= 2;
+        p_75493_5 -= 2;
+
+        double d4 = 1.0D / Math.abs(d0);
+        double d5 = 1.0D / Math.abs(d1);
+
+        double d6 = (l) - p_75493_1.xCoord;
+        double d7 = (i1) - p_75493_1.zCoord;
+
+        if (d0 >= 0.0D) {
+            ++d6;
+        }
+
+        if (d1 >= 0.0D) {
+            ++d7;
+        }
+
+        d6 /= d0;
+        d7 /= d1;
+
+        int j1 = d0 < 0.0D ? -1 : 1;
+        int k1 = d1 < 0.0D ? -1 : 1;
+
+        int l1 = MathHelper.floor_double(p_75493_2.xCoord);
+        int i2 = MathHelper.floor_double(p_75493_2.zCoord);
+
+        int j2 = l1 - l;
+        int k2 = i2 - i1;
+
+        do {
+            if (j2 * j1 <= 0 && k2 * k1 <= 0) {
+                return true;
+            }
+
+            if (d6 < d7) {
+                d6 += d4;
+                l += j1;
+                j2 = l1 - l;
+            } else {
+                d7 += d5;
+                i1 += k1;
+                k2 = i2 - i1;
+            }
+        } while (this.isSafeToStandAt(l, (int) p_75493_1.yCoord, i1, p_75493_3, p_75493_4, p_75493_5, p_75493_1, d0, d1));
+
+        return false;
     }
 
     /**
@@ -505,70 +493,78 @@ public class MixinPathNavigate {
      * xOffset, yOffset, zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    private boolean isSafeToStandAt(int p_75483_1_, int p_75483_2_, int p_75483_3_, int p_75483_4_, int p_75483_5_,
-        int p_75483_6_, Vec3 p_75483_7_, double p_75483_8_, double p_75483_10_) {
-        int k1 = p_75483_1_ - p_75483_4_ / 2;
-        int l1 = p_75483_3_ - p_75483_6_ / 2;
+    private boolean isSafeToStandAt(int p_75483_1, int p_75483_2, int p_75483_3, int p_75483_4, int p_75483_5, int p_75483_6, Vec3 p_75483_7, double p_75483_8, double p_75483_10) {
+        int k1 = p_75483_1 - p_75483_4 / 2;
+        int l1 = p_75483_3 - p_75483_6 / 2;
 
-        if (!this.isPositionClear(
-            k1,
-            p_75483_2_,
-            l1,
-            p_75483_4_,
-            p_75483_5_,
-            p_75483_6_,
-            p_75483_7_,
-            p_75483_8_,
-            p_75483_10_)) {
+        if (!this.isPositionClear(k1, p_75483_2, l1, p_75483_4, p_75483_5, p_75483_6, p_75483_7, p_75483_8, p_75483_10)) {
             return false;
-        } else {
-            for (int i2 = k1; i2 < k1 + p_75483_4_; ++i2) {
-                for (int j2 = l1; j2 < l1 + p_75483_6_; ++j2) {
-                    double d2 = (double) i2 + 0.5D - p_75483_7_.xCoord;
-                    double d3 = (double) j2 + 0.5D - p_75483_7_.zCoord;
+        }
 
-                    if (d2 * p_75483_8_ + d3 * p_75483_10_ >= 0.0D) {
-                        Block block = this.worldObj.getBlock(i2, p_75483_2_ - 1, j2);
-                        Material material = block.getMaterial();
+        double halfWidth = p_75483_8 * 0.5;
+        double halfHeight = p_75483_10 * 0.5;
 
-                        if (material == Material.air) {
-                            return false;
-                        }
+        double centerX = p_75483_7.xCoord + halfWidth;
+        double centerZ = p_75483_7.zCoord + halfHeight;
 
-                        if (material == Material.water && !this.theEntity.isInWater()) {
-                            return false;
-                        }
+        for (int i2 = k1; i2 < k1 + p_75483_4; ++i2) {
+            double d2 = (double) i2 + 0.5D - centerX;
+            double xProjection = d2 * p_75483_8;
 
-                        if (material == Material.lava) {
-                            return false;
-                        }
+            for (int j2 = l1; j2 < l1 + p_75483_6; ++j2) {
+                double d3 = (double) j2 + 0.5D - centerZ;
+                double zProjection = d3 * p_75483_10;
+
+                double projection = xProjection + zProjection;
+
+                if (projection >= 0.0D) {
+                    Block block = this.worldObj.getBlock(i2, p_75483_2 - 1, j2);
+                    Material material = block.getMaterial();
+
+                    if (material == Material.air) {
+                        return false;
+                    }
+
+                    if (material == Material.water && !this.theEntity.isInWater()) {
+                        return false;
+                    }
+
+                    if (material == Material.lava) {
+                        return false;
                     }
                 }
             }
-
-            return true;
         }
+
+        return true;
     }
+
 
     /**
      * Returns true if an entity does not collide with any solid blocks at the position. Args: xOffset, yOffset,
      * zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    private boolean isPositionClear(int p_75496_1_, int p_75496_2_, int p_75496_3_, int p_75496_4_, int p_75496_5_,
-        int p_75496_6_, Vec3 p_75496_7_, double p_75496_8_, double p_75496_10_) {
-        for (int k1 = p_75496_1_; k1 < p_75496_1_ + p_75496_4_; ++k1) {
-            for (int l1 = p_75496_2_; l1 < p_75496_2_ + p_75496_5_; ++l1) {
-                for (int i2 = p_75496_3_; i2 < p_75496_3_ + p_75496_6_; ++i2) {
-                    double d2 = (double) k1 + 0.5D - p_75496_7_.xCoord;
-                    double d3 = (double) i2 + 0.5D - p_75496_7_.zCoord;
+    private boolean isPositionClear(int p_75496_1, int p_75496_2, int p_75496_3, int p_75496_4, int p_75496_5, int p_75496_6, Vec3 p_75496_7, double p_75496_8, double p_75496_10) {
+        double centerX = p_75496_7.xCoord + 0.5;
+        double centerZ = p_75496_7.zCoord + 0.5;
 
-                    if (d2 * p_75496_8_ + d3 * p_75496_10_ >= 0.0D) {
-                        Block block = this.worldObj.getBlock(k1, l1, i2);
+        double xProjection = p_75496_8 * 0.5;
+        double zProjection = p_75496_10 * 0.5;
 
-                        if (!block.getBlocksMovement(this.worldObj, k1, l1, i2)) {
-                            return false;
-                        }
+        for (int k1 = p_75496_1; k1 < p_75496_1 + p_75496_4; ++k1) {
+            double d2 = (double) k1 + 0.5 - centerX;
+
+            for (int l1 = p_75496_2; l1 < p_75496_2 + p_75496_5; ++l1) {
+                double d3 = (double) l1 + 0.5 - centerZ;
+
+                double projection = d2 * xProjection + d3 * zProjection;
+
+                if (projection >= 0.0D) {
+                    Block block = this.worldObj.getBlock(k1, l1, p_75496_3);
+
+                    if (!block.getBlocksMovement(this.worldObj, k1, l1, p_75496_3)) {
+                        return false;
                     }
                 }
             }
