@@ -17,12 +17,16 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(PathNavigate.class)
 public class MixinPathNavigate {
@@ -158,6 +162,7 @@ public class MixinPathNavigate {
     /**
      * Returns the path to the given EntityLiving
      */
+    @Overwrite
     public PathEntity getPathToEntityLiving(Entity p_75494_1_) {
         return !this.canNavigate() ? null
             : this.worldObj.getPathEntityToEntity(
@@ -173,6 +178,7 @@ public class MixinPathNavigate {
     /**
      * Try to find and set a path to EntityLiving. Returns true if successful.
      */
+    @Overwrite
     public boolean tryMoveToEntityLiving(Entity p_75497_1_, double p_75497_2_) {
         PathEntity pathentity = this.getPathToEntityLiving(p_75497_1_);
         return pathentity != null ? this.setPath(pathentity, p_75497_2_) : false;
@@ -182,39 +188,53 @@ public class MixinPathNavigate {
      * sets the active path data if path is 100% unique compared to old path, checks to adjust path for sun avoiding
      * ents and stores end coords
      */
-    public boolean setPath(PathEntity p_75484_1_, double p_75484_2_) {
-        if (p_75484_1_ == null) {
+    private Map<PathEntity, Boolean> pathCache = new HashMap<>();
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean setPath(PathEntity newPath, double speed) {
+        if (newPath == null) {
             this.currentPath = null;
             return false;
-        } else {
-            if (!p_75484_1_.isSamePath(this.currentPath)) {
-                this.currentPath = p_75484_1_;
-            }
-
-            if (this.noSunPathfind) {
-                this.removeSunnyPath();
-            }
-
-            if (this.currentPath.getCurrentPathLength() == 0) {
-                return false;
-            } else {
-                this.speed = p_75484_2_;
-                Vec3 vec3 = this.getEntityPosition();
-                this.ticksAtLastPos = this.totalTicks;
-                this.lastPosCheck.xCoord = vec3.xCoord;
-                this.lastPosCheck.yCoord = vec3.yCoord;
-                this.lastPosCheck.zCoord = vec3.zCoord;
-                return true;
-            }
         }
+
+        // Vérifier si le chemin est déjà dans le cache
+        if (pathCache.containsKey(newPath)) {
+            return pathCache.get(newPath);
+        }
+
+        // Vérifier uniquement si le début/fin du chemin a changé
+        if (this.currentPath == null || !this.currentPath.isSamePath(newPath)) {
+            this.currentPath = newPath;
+            pathCache.put(newPath, true); // Mettre en cache le résultat
+        }
+
+        // Calculer les données de position une seule fois
+        Vec3 entityPosition = this.getEntityPosition();
+        this.speed = speed;
+        this.ticksAtLastPos = this.totalTicks;
+        this.lastPosCheck.xCoord = entityPosition.xCoord;
+        this.lastPosCheck.yCoord = entityPosition.yCoord;
+        this.lastPosCheck.zCoord = entityPosition.zCoord;
+
+        return true;
     }
 
     /**
      * gets the actively used PathEntity
      */
+    @Overwrite
     public PathEntity getPath() {
-        return this.currentPath;
+        if (pathCache.containsKey(currentPath)) {
+            return currentPath;
+        } else {
+            return null;
+        }
     }
+
 
     @Inject(method = "onUpdateNavigation", at = @At("HEAD"), cancellable = true)
     public void onUpdateNavigation(CallbackInfo ci) {
