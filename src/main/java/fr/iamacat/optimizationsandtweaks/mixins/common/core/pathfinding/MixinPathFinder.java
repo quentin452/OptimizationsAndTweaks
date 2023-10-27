@@ -349,26 +349,8 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_) {
-        int key = ((p_75855_2_ & 0xFFF) << 20) | ((p_75855_4_ & 0xFFF) << 8) | (p_75855_3_ & 0xFF);
-
-        Integer cachedResult = multithreadingandtweaks$blockCache.get(key);
-        if (cachedResult != null) {
-            return cachedResult;
-        }
-
-        int result = func_82565_a(
-            p_75855_1_,
-            p_75855_2_,
-            p_75855_3_,
-            p_75855_4_,
-            p_75855_5_,
-            this.isPathingInWater,
-            this.isMovementBlockAllowed,
-            this.isWoddenDoorAllowed);
-
-        multithreadingandtweaks$blockCache.put(key, result);
-
-        return result;
+    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_)
+    {
+        return func_82565_a(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
     }
 }
