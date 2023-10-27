@@ -1,5 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -9,7 +13,6 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Blocks;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.pathfinding.PathPoint;
@@ -20,16 +23,8 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.IntStream;
 
 @Mixin(PathNavigate.class)
 public class MixinPathNavigate {
@@ -259,12 +254,14 @@ public class MixinPathNavigate {
                     Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
 
                     if (vec3 != null) {
-                        this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
+                        this.theEntity.getMoveHelper()
+                            .setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
                     }
                 }
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -306,7 +303,12 @@ public class MixinPathNavigate {
             Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, j);
 
             if (pathVector != null) {
-                if (isDirectPathBetweenPoints(entityPosition, pathVector, ceilingWidth, entityHeightPlusOne, ceilingWidth)) {
+                if (isDirectPathBetweenPoints(
+                    entityPosition,
+                    pathVector,
+                    ceilingWidth,
+                    entityHeightPlusOne,
+                    ceilingWidth)) {
                     pathIndex = j;
                     break;
                 }
@@ -314,13 +316,12 @@ public class MixinPathNavigate {
         }
         if (this.totalTicks - this.ticksAtLastPos > 100) {
             if (entityPosition.squareDistanceTo(this.lastPosCheck) < 2.25D) {
-             //   this.clearPathEntity(); null crash when enabled 
+                // this.clearPathEntity(); null crash when enabled
             }
 
             this.ticksAtLastPos = this.totalTicks;
             this.lastPosCheck = entityPosition;
         }
-
 
         this.currentPath.setCurrentPathIndex(pathIndex);
     }

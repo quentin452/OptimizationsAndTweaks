@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.MathHelper;

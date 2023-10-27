@@ -6,11 +6,13 @@ import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.EntityAIArrowAttack;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.MathHelper;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityAIArrowAttack.class)
 public class MixinEntityArrowAttack extends EntityAIBase {
+
     @Shadow
     private final EntityLiving entityHost;
     @Shadow
@@ -32,12 +34,13 @@ public class MixinEntityArrowAttack extends EntityAIBase {
     private final float field_96562_i;
     @Shadow
     private final float field_82642_h;
+
     public MixinEntityArrowAttack(IRangedAttackMob p_i1649_1_, double p_i1649_2_, int p_i1649_4_, float p_i1649_5_) {
         this(p_i1649_1_, p_i1649_2_, p_i1649_4_, p_i1649_4_, p_i1649_5_);
     }
 
     public MixinEntityArrowAttack(IRangedAttackMob p_i1650_1_, double p_i1650_2_, int p_i1650_4_, int p_i1650_5_,
-                                float p_i1650_6_) {
+        float p_i1650_6_) {
         this.rangedAttackTime = -1;
 
         if (!(p_i1650_1_ instanceof EntityLivingBase)) {

@@ -27,7 +27,7 @@ public class MixinChunk {
      */
     @Overwrite
     public void getEntitiesWithinAABBForEntity(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List<Entity> p_76588_3_,
-                                               IEntitySelector p_76588_4_) {
+        IEntitySelector p_76588_4_) {
         if (OptimizationsandTweaksConfig.enableMixinChunk) {
             int i = MathHelper.floor_double((p_76588_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
             int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);

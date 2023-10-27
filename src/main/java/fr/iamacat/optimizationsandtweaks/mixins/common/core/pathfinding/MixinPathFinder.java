@@ -1,5 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -13,6 +16,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,12 +25,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
+
     @Shadow
     private boolean canEntityDrown;
 
@@ -57,13 +58,13 @@ public class MixinPathFinder {
     @Shadow
     private IntHashMap pointMap = new IntHashMap();
 
-
     /**
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
     @Overwrite
-    public static int func_82565_a(Entity entity, int startX, int startY, int startZ, PathPoint endPathPoint, boolean canSwim, boolean canPassOpenDoors, boolean canEnterDoors) {
+    public static int func_82565_a(Entity entity, int startX, int startY, int startZ, PathPoint endPathPoint,
+        boolean canSwim, boolean canPassOpenDoors, boolean canEnterDoors) {
         boolean isTrapdoorPresent = false;
         World world = entity.worldObj;
         int posX = MathHelper.floor_double(entity.posX);
@@ -109,20 +110,21 @@ public class MixinPathFinder {
                             if (currentBlock.getRenderType() != 9 && blockBelow.getRenderType() != 9) {
                                 return -3;
                             }
-                        } else if (!block.getBlocksMovement(world, x, y, z) && (!canPassOpenDoors || block != Blocks.wooden_door)) {
-                            if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                return -3;
+                        } else if (!block.getBlocksMovement(world, x, y, z)
+                            && (!canPassOpenDoors || block != Blocks.wooden_door)) {
+                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                    return -3;
+                                }
+                                if (block == Blocks.trapdoor) {
+                                    return -4;
+                                }
+                                if (material != Material.lava) {
+                                    return 0;
+                                }
+                                if (!entity.handleLavaMovement()) {
+                                    return -2;
+                                }
                             }
-                            if (block == Blocks.trapdoor) {
-                                return -4;
-                            }
-                            if (material != Material.lava) {
-                                return 0;
-                            }
-                            if (!entity.handleLavaMovement()) {
-                                return -2;
-                            }
-                        }
                     }
                 }
             }
@@ -136,27 +138,24 @@ public class MixinPathFinder {
      * @reason optimize openPoint
      */
     @Shadow
-    private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_)
-    {
+    private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
-        PathPoint pathpoint = (PathPoint)this.pointMap.lookup(l);
+        PathPoint pathpoint = (PathPoint) this.pointMap.lookup(l);
 
-        if (pathpoint == null)
-        {
+        if (pathpoint == null) {
             pathpoint = new PathPoint(p_75854_1_, p_75854_2_, p_75854_3_);
             this.pointMap.addKey(l, pathpoint);
         }
 
         return pathpoint;
     }
+
     @Unique
-    private PathEntity multithreadingandtweaks$createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_)
-    {
+    private PathEntity multithreadingandtweaks$createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
         int i = 1;
         PathPoint pathpoint2;
 
-        for (pathpoint2 = p_75853_2_; previous != null; pathpoint2 = previous)
-        {
+        for (pathpoint2 = p_75853_2_; previous != null; pathpoint2 = previous) {
             ++i;
         }
 
@@ -164,40 +163,37 @@ public class MixinPathFinder {
         pathpoint2 = p_75853_2_;
         --i;
 
-        for (apathpoint[i] = p_75853_2_; previous != null; apathpoint[i] = pathpoint2)
-        {
+        for (apathpoint[i] = p_75853_2_; previous != null; apathpoint[i] = pathpoint2) {
             pathpoint2 = previous;
             --i;
         }
         return new PathEntity(apathpoint);
         /*
-          int i = 1;
-        PathPoint pathpoint2;
-
-        for (pathpoint2 = p_75853_2_; pathpoint2.previous != null; pathpoint2 = pathpoint2.previous)
-        {
-            ++i;
-        }
-
-        PathPoint[] apathpoint = new PathPoint[i];
-        pathpoint2 = p_75853_2_;
-        --i;
-
-        for (apathpoint[i] = p_75853_2_; pathpoint2.previous != null; apathpoint[i] = pathpoint2)
-        {
-            pathpoint2 = pathpoint2.previous;
-            --i;
-        }
-
-        return new PathEntity2(apathpoint);
+         * int i = 1;
+         * PathPoint pathpoint2;
+         * for (pathpoint2 = p_75853_2_; pathpoint2.previous != null; pathpoint2 = pathpoint2.previous)
+         * {
+         * ++i;
+         * }
+         * PathPoint[] apathpoint = new PathPoint[i];
+         * pathpoint2 = p_75853_2_;
+         * --i;
+         * for (apathpoint[i] = p_75853_2_; pathpoint2.previous != null; apathpoint[i] = pathpoint2)
+         * {
+         * pathpoint2 = pathpoint2.previous;
+         * --i;
+         * }
+         * return new PathEntity2(apathpoint);
          */
     }
+
     /**
      * @author
      * @reason
      */
     @Unique
-    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_, float p_75861_5_,CallbackInfoReturnable cir) {
+    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_,
+        float p_75861_5_, CallbackInfoReturnable cir) {
         totalPathDistance = 0.0F;
         distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
         distanceToTarget = distanceToNext;
@@ -217,7 +213,7 @@ public class MixinPathFinder {
             }
 
             pathpoint4.isFirst = true;
-            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_,cir);
+            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_, cir);
 
             for (int j = 0; j < i; ++j) {
                 PathPoint pathpoint5 = this.pathOptions[j];
@@ -244,67 +240,60 @@ public class MixinPathFinder {
             return this.multithreadingandtweaks$createEntityPath(p_75861_2_, pathpoint3);
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_)
-    {
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
+        PathPoint p_75858_5_, int p_75858_6_) {
         PathPoint pathpoint1 = null;
         int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
 
-        if (i1 == 2)
-        {
+        if (i1 == 2) {
             return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-        }
-        else
-        {
-            if (i1 == 1)
-            {
+        } else {
+            if (i1 == 1) {
                 pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
             }
 
-            if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4 && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_) == 1)
-            {
+            if (pathpoint1 == null && p_75858_6_ > 0
+                && i1 != -3
+                && i1 != -4
+                && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_)
+                    == 1) {
                 pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
                 p_75858_3_ += p_75858_6_;
             }
 
-            if (pathpoint1 != null)
-            {
+            if (pathpoint1 != null) {
                 int j1 = 0;
                 int k1 = 0;
 
-                while (p_75858_3_ > 0)
-                {
+                while (p_75858_3_ > 0) {
                     k1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
 
-                    if (this.isPathingInWater && k1 == -1)
-                    {
+                    if (this.isPathingInWater && k1 == -1) {
                         return null;
                     }
 
-                    if (k1 != 1)
-                    {
+                    if (k1 != 1) {
                         break;
                     }
 
-                    if (j1++ >= p_75858_1_.getMaxSafePointTries())
-                    {
+                    if (j1++ >= p_75858_1_.getMaxSafePointTries()) {
                         return null;
                     }
 
                     --p_75858_3_;
 
-                    if (p_75858_3_ > 0)
-                    {
+                    if (p_75858_3_ > 0) {
                         pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
                     }
                 }
 
-                if (k1 == -2)
-                {
+                if (k1 == -2) {
                     return null;
                 }
             }
@@ -317,16 +306,14 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-    @Inject(
-        method = "findPathOptions",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_, float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
+    @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
+    private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
+        float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
         int i = 0;
         byte b0 = 0;
 
-        if (this.getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_) == 1) {
+        if (this.getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_)
+            == 1) {
             b0 = 1;
         }
 
@@ -334,8 +321,13 @@ public class MixinPathFinder {
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0),
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
-            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0)
-        };
+            this.getSafePoint(
+                p_75860_1_,
+                p_75860_2_.xCoord,
+                p_75860_2_.yCoord,
+                p_75860_2_.zCoord - 1,
+                p_75860_3_,
+                b0) };
 
         for (PathPoint pathpoint : pathpoints) {
             if (pathpoint != null && !pathpoint.isFirst && pathpoint.distanceTo(p_75860_4_) < p_75860_5_) {
@@ -356,8 +348,16 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_)
-    {
-        return func_82565_a(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
+    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_,
+        PathPoint p_75855_5_) {
+        return func_82565_a(
+            p_75855_1_,
+            p_75855_2_,
+            p_75855_3_,
+            p_75855_4_,
+            p_75855_5_,
+            this.isPathingInWater,
+            this.isMovementBlockAllowed,
+            this.isWoddenDoorAllowed);
     }
 }
