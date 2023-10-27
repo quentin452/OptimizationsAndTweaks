@@ -57,27 +57,25 @@ public class MixinPathFinder {
     PathPoint previous;
     @Shadow
     private IntHashMap pointMap = new IntHashMap();
-
     /**
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
     @Overwrite
-    public static int func_82565_a(Entity entity, int startX, int startY, int startZ, PathPoint endPathPoint,
-        boolean canSwim, boolean canPassOpenDoors, boolean canEnterDoors) {
+    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_, PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         boolean isTrapdoorPresent = false;
-        World world = entity.worldObj;
-        int posX = MathHelper.floor_double(entity.posX);
-        int posY = MathHelper.floor_double(entity.posY);
-        int posZ = MathHelper.floor_double(entity.posZ);
+        World world = p_82565_0_.worldObj;
+        int posX = MathHelper.floor_double(p_82565_0_.posX);
+        int posY = MathHelper.floor_double(p_82565_0_.posY);
+        int posZ = MathHelper.floor_double(p_82565_0_.posZ);
 
-        int x2 = startX + endPathPoint.xCoord;
-        int y2 = startY + endPathPoint.yCoord;
-        int z2 = startZ + endPathPoint.zCoord;
+        int x2 = p_82565_1_ + p_82565_4_.xCoord;
+        int y2 = p_82565_2_ + p_82565_4_.yCoord;
+        int z2 = p_82565_3_ + p_82565_4_.zCoord;
 
-        for (int x = startX; x < x2; ++x) {
-            for (int y = startY; y < y2; ++y) {
-                for (int z = startZ; z < z2; ++z) {
+        for (int x = p_82565_1_; x < x2; ++x) {
+            for (int y = p_82565_2_; y < y2; ++y) {
+                for (int z = p_82565_3_; z < z2; ++z) {
                     int chunkX = x >> 4;
                     int chunkZ = z >> 4;
                     Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
@@ -92,11 +90,11 @@ public class MixinPathFinder {
                         if (block == Blocks.trapdoor) {
                             isTrapdoorPresent = true;
                         } else if (block != Blocks.flowing_water && block != Blocks.water) {
-                            if (!canEnterDoors && block == Blocks.wooden_door) {
+                            if (!p_82565_7_ && block == Blocks.wooden_door) {
                                 return 0;
                             }
                         } else {
-                            if (canSwim) {
+                            if (p_82565_5_) {
                                 return -1;
                             }
                             isTrapdoorPresent = true;
@@ -111,7 +109,7 @@ public class MixinPathFinder {
                                 return -3;
                             }
                         } else if (!block.getBlocksMovement(world, x, y, z)
-                            && (!canPassOpenDoors || block != Blocks.wooden_door)) {
+                            && (!p_82565_6_ || block != Blocks.wooden_door)) {
                                 if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
                                     return -3;
                                 }
@@ -121,7 +119,7 @@ public class MixinPathFinder {
                                 if (material != Material.lava) {
                                     return 0;
                                 }
-                                if (!entity.handleLavaMovement()) {
+                                if (!p_82565_0_.handleLavaMovement()) {
                                     return -2;
                                 }
                             }
