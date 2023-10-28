@@ -119,22 +119,32 @@ public class MixinEntityAIAttackOnCollide extends EntityAIBase {
      */
     @Overwrite
     public void updateTask() {
-        EntityLivingBase target = this.attacker.getAttackTarget();
+      EntityLivingBase target = this.attacker.getAttackTarget();
         if (target == null) {
             return;
         }
 
-        double distanceSquared = this.attacker.getDistanceSq(target.posX, target.boundingBox.minY, target.posZ);
+        PathNavigate navigator = this.attacker.getNavigator();
+
+        double targetX = target.posX;
+        double targetY = target.boundingBox.minY;
+        double targetZ = target.posZ;
+
+        double distanceSquared = this.attacker.getDistanceSq(targetX, targetY, targetZ);
         double attackRange = this.attacker.width * 2.0F * this.attacker.width * 2.0F + target.width;
+
         --this.field_75445_i;
 
-        if ((this.longMemory || this.attacker.getEntitySenses()
-            .canSee(target)) && shouldUpdate(target)) {
-            updatePositionVariables(target.posX, target.boundingBox.minY, target.posZ, distanceSquared, target);
+        if ((this.longMemory || this.attacker.getEntitySenses().canSee(target)) && shouldUpdate(target)) {
+            updatePositionVariables(targetX, targetY, targetZ, distanceSquared, target);
 
-            if (!this.attacker.getNavigator()
-                .tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
-                this.field_75445_i += 15;
+            double penaltyDistance = 6;
+            double penaltyFactor = 1.5;
+
+            double distance = this.attacker.getDistanceToEntity(target);
+            // lags here caused by   if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
+            if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
+                this.field_75445_i += (int) (distance / penaltyDistance) * penaltyFactor;
             }
         }
 
