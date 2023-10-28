@@ -63,7 +63,7 @@ public class MixinPathFinder {
      */
     @Overwrite
     public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_,
-        PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
+                                   PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         World world = p_82565_0_.worldObj;
         int entityX = MathHelper.floor_double(p_82565_0_.posX);
         int entityY = MathHelper.floor_double(p_82565_0_.posY);
@@ -75,57 +75,53 @@ public class MixinPathFinder {
 
         boolean isTrapdoorPresent = false;
 
-        for (int x = p_82565_1_; x < endX; ++x) {
-            for (int y = p_82565_2_; y < endY; ++y) {
-                for (int z = p_82565_3_; z < endZ; ++z) {
-                    int chunkX = x >> 4;
-                    int chunkZ = z >> 4;
-                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+        for (int x = p_82565_1_, y = p_82565_2_, z = p_82565_3_; x < endX && y < endY && z < endZ; ++x, ++y, ++z) {
+            int chunkX = x >> 4;
+            int chunkZ = z >> 4;
+            Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-                    int localX = x & 15;
-                    int localZ = z & 15;
+            int localX = x & 15;
+            int localZ = z & 15;
 
-                    Block block = chunk.getBlock(localX, y, localZ);
-                    Material material = block.getMaterial();
-                    int renderType = block.getRenderType();
+            Block block = chunk.getBlock(localX, y, localZ);
+            Material material = block.getMaterial();
+            int renderType = block.getRenderType();
 
-                    if (material != Material.air) {
-                        if (block == Blocks.trapdoor) {
-                            isTrapdoorPresent = true;
-                        } else if (block != Blocks.flowing_water && block != Blocks.water) {
-                            if (!p_82565_6_ && block == Blocks.wooden_door) {
-                                return 0;
-                            }
-                        } else {
-                            if (p_82565_5_) {
-                                return -1;
-                            }
-                            isTrapdoorPresent = true;
-                        }
+            if (material != Material.air) {
+                if (block == Blocks.trapdoor) {
+                    isTrapdoorPresent = true;
+                } else if (block != Blocks.flowing_water && block != Blocks.water) {
+                    if (!p_82565_6_ && block == Blocks.wooden_door) {
+                        return 0;
+                    }
+                } else {
+                    if (p_82565_5_) {
+                        return -1;
+                    }
+                    isTrapdoorPresent = true;
+                }
 
-                        if (renderType == 9) {
-                            Block currentBlock = world.getBlock(entityX, entityY, entityZ);
-                            Block blockBelow = world.getBlock(entityX, entityY - 1, entityZ);
-                            int currentBlockRenderType = currentBlock.getRenderType();
-                            int blockBelowRenderType = blockBelow.getRenderType();
-                            if (currentBlockRenderType != 9 && blockBelowRenderType != 9) {
-                                return -3;
-                            }
-                        } else if (!block.getBlocksMovement(world, x, y, z)
-                            && (!p_82565_7_ || block != Blocks.wooden_door)) {
-                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                    return -3;
-                                }
-                                if (block == Blocks.trapdoor) {
-                                    return -4;
-                                }
-                                if (material != Material.lava) {
-                                    return 0;
-                                }
-                                if (!p_82565_0_.handleLavaMovement()) {
-                                    return -2;
-                                }
-                            }
+                if (renderType == 9) {
+                    Block currentBlock = world.getBlock(entityX, entityY, entityZ);
+                    Block blockBelow = world.getBlock(entityX, entityY - 1, entityZ);
+                    int currentBlockRenderType = currentBlock.getRenderType();
+                    int blockBelowRenderType = blockBelow.getRenderType();
+                    if (currentBlockRenderType != 9 && blockBelowRenderType != 9) {
+                        return -3;
+                    }
+                } else if (!block.getBlocksMovement(world, x, y, z)
+                    && (!p_82565_7_ || block != Blocks.wooden_door)) {
+                    if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                        return -3;
+                    }
+                    if (block == Blocks.trapdoor) {
+                        return -4;
+                    }
+                    if (material != Material.lava) {
+                        return 0;
+                    }
+                    if (!p_82565_0_.handleLavaMovement()) {
+                        return -2;
                     }
                 }
             }
