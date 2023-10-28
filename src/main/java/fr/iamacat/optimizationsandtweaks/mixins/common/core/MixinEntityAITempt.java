@@ -45,6 +45,9 @@ public class MixinEntityAITempt {
     @Unique
     private static int activeFollowers = 0;
 
+    @Unique
+    private static final Object followersLock = new Object();
+
     public MixinEntityAITempt(EntityCreature p_i45316_1_, double p_i45316_2_, Item p_i45316_4_, boolean p_i45316_5_) {
         this.temptedEntity = p_i45316_1_;
         this.field_75282_b = p_i45316_2_;
@@ -115,7 +118,7 @@ public class MixinEntityAITempt {
                 .getAvoidsWater();
             this.temptedEntity.getNavigator()
                 .setAvoidsWater(false);
-            activeFollowers++;
+            incrementActiveFollowers();
         }
     }
 
@@ -131,7 +134,20 @@ public class MixinEntityAITempt {
         this.isRunning = false;
         this.temptedEntity.getNavigator()
             .setAvoidsWater(this.field_75286_m);
-        activeFollowers--;
+        decrementActiveFollowers();
+    }
+    @Unique
+    private void incrementActiveFollowers() {
+        synchronized (followersLock) {
+            activeFollowers++;
+        }
+    }
+
+    @Unique
+    private void decrementActiveFollowers() {
+        synchronized (followersLock) {
+            activeFollowers--;
+        }
     }
 
     /**
