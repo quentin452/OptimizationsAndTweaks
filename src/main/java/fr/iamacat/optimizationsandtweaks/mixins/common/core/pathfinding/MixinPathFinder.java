@@ -140,7 +140,11 @@ public class MixinPathFinder {
      */
     @Unique
     private final Int2ObjectHashMap<PathPoint> multithreadingandtweaks$pointCache = new Int2ObjectHashMap<>();
-
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
 
