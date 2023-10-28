@@ -61,13 +61,13 @@ public enum TargetedMod implements ITargetedMod {
     PRACTICALLOGISTICS("Practical-Logistics", false, startsWith("Practical")),
     SONARCORE("SonarCore", false, startsWith("SonarCore")),
     BUILDCRAFTOILTWEAK("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
-    CATWALK2OFFICIAL("catwalks", false, startsWith("catwalks")),
-    CATWALK2UNOFFICIAL("catwalks", false, matches("catwalks-1.7.10-2.1.4-GTNH")),
+    CATWALK2OFFICIAL("catwalksof", false, startsWith("catwalks")),
+    CATWALK2UNOFFICIAL("catwalksunof", false, matches("catwalks-1.7.10-2.1.4-GTNH")),
     BLOCKLINGS("Blocklings", false, startsWith("Blocklings")),
     FLAXBEARDSTEAMPOWER("FSP", false, startsWith("FSP")),
     SKINPORT("SkinPort", false, startsWith("SkinPort")),
     MINESTONES("minestones", false, startsWith("minestones")),
-    BLENDTRONIC("minestones", false, startsWith("blendtronic")),
+    BLENDTRONIC("blendtronic", false, startsWith("blendtronic")),
     WITCHERY("witchery", false, startsWith("witchery")),
 
     AETHER("aether", false, startsWith("aether")),;
