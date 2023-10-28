@@ -71,7 +71,7 @@ public class MixinPathFinder {
 
         boolean isTrapdoorPresent = false;
 
-        for (int currentX = p_82565_1_, currentY =p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
+        for (int currentX = p_82565_1_, currentY = p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
             int chunkX = currentX >> 4;
             int chunkZ = currentZ >> 4;
             Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
@@ -80,43 +80,70 @@ public class MixinPathFinder {
             int localZ = currentZ & 15;
 
             Block block = chunk.getBlock(localX, currentY, localZ);
-            Material material = block.getMaterial();
-            int renderType = block.getRenderType();
 
-            if (material != Material.air) {
-                if (block == Blocks.trapdoor) {
-                    isTrapdoorPresent = true;
-                } else if (block != Blocks.flowing_water && block != Blocks.water) {
-                    if (!p_82565_6_ && block == Blocks.wooden_door) {
-                        return 0;
-                    }
-                } else {
-                    if (p_82565_5_) {
-                        return -1;
-                    }
-                    isTrapdoorPresent = true;
+            int result = processBlock(p_82565_0_, block, world, entityX, entityY, entityZ, p_82565_6_, p_82565_7_);
+            if (result == 0) {
+                return 0;
+            } else if (result == -1) {
+                if (p_82565_5_) {
+                    return -1;
                 }
-
-                if (renderType == 9 && !isRenderTypeValid(world, entityX, entityY, entityZ)) {
-                    return -3;
-                } else if (!block.getBlocksMovement(world, currentX, currentY, currentZ) && (!p_82565_7_ || block != Blocks.wooden_door)) {
-                    if (isInvalidMovementBlock(renderType, block)) {
-                        return -3;
-                    }
-                    if (block == Blocks.trapdoor) {
-                        return -4;
-                    }
-                    if (material != Material.lava) {
-                        return 0;
-                    }
-                    if (!p_82565_0_.handleLavaMovement()) {
-                        return -2;
-                    }
-                }
+                isTrapdoorPresent = true;
+            } else if (result == -2) {
+                return -2;
+            } else if (result == -3) {
+                return -3;
+            } else if (result == -4) {
+                return -4;
             }
         }
 
         return isTrapdoorPresent ? 2 : 1;
+    }
+
+    @Unique
+    private static int processBlock(Entity entity, Block block, World world, int entityX, int entityY, int entityZ, boolean p_82565_6, boolean p_82565_7) {
+        Material material = block.getMaterial();
+        int renderType = block.getRenderType();
+
+        if (material == Material.air) {
+            return 1;
+        }
+
+        if (block == Blocks.trapdoor) {
+            return -4;
+        }
+
+        if (block == Blocks.flowing_water || block == Blocks.water) {
+            if (p_82565_6) {
+                return -1;
+            }
+            return 1;
+        }
+
+        if (!p_82565_6 && block == Blocks.wooden_door) {
+            return 0;
+        }
+
+        if (renderType == 9 && !isRenderTypeValid(world, entityX, entityY, entityZ)) {
+            return -3;
+        }
+
+        if (!block.getBlocksMovement(world, entityX, entityY, entityZ) && (!p_82565_7 || block != Blocks.wooden_door)) {
+            if (isInvalidMovementBlock(renderType, block)) {
+                return -3;
+            }
+
+            if (material != Material.lava) {
+                return 0;
+            }
+
+            if (!entity.handleLavaMovement()) {
+                return -2;
+            }
+        }
+
+        return 1;
     }
 
     @Unique
