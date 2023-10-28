@@ -130,22 +130,28 @@ public class MixinPathFinder {
         }
 
         if (!block.getBlocksMovement(world, entityX, entityY, entityZ) && (!p_82565_7 || block != Blocks.wooden_door)) {
-            if (isInvalidMovementBlock(renderType, block)) {
-                return -3;
-            }
-
-            if (material != Material.lava) {
-                return 0;
-            }
-
-            if (!entity.handleLavaMovement()) {
-                return -2;
-            }
+            return checkInvalidBlock(renderType, block, material, entity);
         }
 
         return 1;
     }
 
+    @Unique
+    private static int checkInvalidBlock(int renderType, Block block, Material material, Entity entity) {
+        if (isInvalidMovementBlock(renderType, block)) {
+            return -3;
+        }
+
+        if (material != Material.lava) {
+            return 0;
+        }
+
+        if (!entity.handleLavaMovement()) {
+            return -2;
+        }
+
+        return 1;
+    }
     @Unique
     private static boolean isRenderTypeValid(World world, int x, int y, int z) {
         Block currentBlock = world.getBlock(x, y, z);
