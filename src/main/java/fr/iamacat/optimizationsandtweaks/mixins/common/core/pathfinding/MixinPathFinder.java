@@ -1,8 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -11,7 +8,6 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -155,97 +151,6 @@ public class MixinPathFinder {
         return pathpoint;
     }
 
-    @Unique
-    private PathEntity multithreadingandtweaks$createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
-        int i = 1;
-        PathPoint pathpoint2;
-
-        for (pathpoint2 = p_75853_2_; previous != null; pathpoint2 = previous) {
-            ++i;
-        }
-
-        PathPoint[] apathpoint = new PathPoint[i];
-        pathpoint2 = p_75853_2_;
-        --i;
-
-        for (apathpoint[i] = p_75853_2_; previous != null; apathpoint[i] = pathpoint2) {
-            pathpoint2 = previous;
-            --i;
-        }
-        return new PathEntity(apathpoint);
-        /*
-         * int i = 1;
-         * PathPoint pathpoint2;
-         * for (pathpoint2 = p_75853_2_; pathpoint2.previous != null; pathpoint2 = pathpoint2.previous)
-         * {
-         * ++i;
-         * }
-         * PathPoint[] apathpoint = new PathPoint[i];
-         * pathpoint2 = p_75853_2_;
-         * --i;
-         * for (apathpoint[i] = p_75853_2_; pathpoint2.previous != null; apathpoint[i] = pathpoint2)
-         * {
-         * pathpoint2 = pathpoint2.previous;
-         * --i;
-         * }
-         * return new PathEntity2(apathpoint);
-         */
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Unique
-    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_,
-        float p_75861_5_, CallbackInfoReturnable cir) {
-        totalPathDistance = 0.0F;
-        distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
-        distanceToTarget = distanceToNext;
-        this.path.clearPath();
-        this.path.addPoint(p_75861_2_);
-        PathPoint pathpoint3 = p_75861_2_;
-
-        while (!this.path.isPathEmpty()) {
-            PathPoint pathpoint4 = this.path.dequeue();
-
-            if (pathpoint4.equals(p_75861_3_)) {
-                return this.multithreadingandtweaks$createEntityPath(p_75861_2_, p_75861_3_);
-            }
-
-            if (pathpoint4.distanceToSquared(p_75861_3_) < pathpoint3.distanceToSquared(p_75861_3_)) {
-                pathpoint3 = pathpoint4;
-            }
-
-            pathpoint4.isFirst = true;
-            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_, cir);
-
-            for (int j = 0; j < i; ++j) {
-                PathPoint pathpoint5 = this.pathOptions[j];
-                float f1 = totalPathDistance + pathpoint4.distanceToSquared(pathpoint5);
-
-                if (!pathpoint5.isAssigned() || f1 < totalPathDistance) {
-                    previous = pathpoint4;
-                    totalPathDistance = f1;
-                    distanceToNext = pathpoint5.distanceToSquared(p_75861_3_);
-
-                    if (pathpoint5.isAssigned()) {
-                        this.path.changeDistance(pathpoint5, totalPathDistance + distanceToNext);
-                    } else {
-                        distanceToTarget = totalPathDistance + distanceToNext;
-                        this.path.addPoint(pathpoint5);
-                    }
-                }
-            }
-        }
-
-        if (pathpoint3 == p_75861_2_) {
-            return null;
-        } else {
-            return this.multithreadingandtweaks$createEntityPath(p_75861_2_, pathpoint3);
-        }
-    }
-
     /**
      * @author
      * @reason
@@ -253,48 +158,67 @@ public class MixinPathFinder {
     @Overwrite
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
         int verticalOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
-        int newOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
+        int newOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
 
-        if (verticalOffset == 2 || verticalOffset == 1) {
-            return openPoint(p_75858_2_, p_75858_3_,p_75858_4_);
+        if (isVerticalOffsetValid(verticalOffset)) {
+            return openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
         }
 
+        return multithreadingandtweaks$calculatePathPoint(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_6_, verticalOffset, newOffset, p_75858_5_);
+    }
+
+    @Unique
+    private PathPoint multithreadingandtweaks$calculatePathPoint(Entity entity, int x, int y, int z, int yOffset, int verticalOffset, int newOffset, PathPoint originalPoint) {
         PathPoint pathPoint = null;
 
-        if (p_75858_6_ > 0 && verticalOffset != -3 && verticalOffset != -4) {
-            int newY = p_75858_3_ + p_75858_6_;
-            int newVerticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, newY, p_75858_4_, p_75858_5_);
-
-            if (newVerticalOffset == 1) {
-                pathPoint = openPoint(p_75858_2_, newY, p_75858_4_);
-                p_75858_3_ = newY;
-
-                while (p_75858_3_ > 0) {
-                    if (isPathingInWater && newOffset == -1) {
-                        return null;
-                    }
-
-                    if (newOffset != 1) {
-                        break;
-                    }
-
-                    if (p_75858_3_ - 1 <= 0) {
-                        return null;
-                    }
-
-                    p_75858_3_--;
-                    pathPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-                }
-
-                if (newOffset == -2) {
-                    return null;
-                }
-            }
+        if (shouldCalculatePathPoint(yOffset, verticalOffset, newOffset)) {
+            pathPoint = calculatePathPointInternal(entity, x, y, z, yOffset, newOffset, originalPoint);
         }
 
         return pathPoint;
     }
 
+    @Unique
+    private boolean shouldCalculatePathPoint(int yOffset, int verticalOffset, int newOffset) {
+        return yOffset > 0 && isVerticalOffsetValid(verticalOffset) && newOffset == -2;
+    }
+
+    @Unique
+    private PathPoint calculatePathPointInternal(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
+        int newY = y + yOffset;
+        int newVerticalOffset = getVerticalOffset(entity, x, newY, z, originalPoint);
+
+        if (newVerticalOffset == 1) {
+            return calculatePathPointFromNewOffset(entity, x, newY, z, yOffset, newOffset, originalPoint);
+        }
+
+        return null;
+    }
+
+    @Unique
+    private PathPoint calculatePathPointFromNewOffset(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
+        PathPoint pathPoint = openPoint(x, y, z);
+
+        while (y > 0) {
+            if (isPathingInWater && newOffset == -1) {
+                return null;
+            }
+
+            if (newOffset != 1 || y - 1 <= 0) {
+                return null;
+            }
+
+            y--;
+            pathPoint = openPoint(x, y, z);
+        }
+
+        return pathPoint;
+    }
+
+    @Unique
+    private boolean isVerticalOffsetValid(int offset) {
+        return offset == 2 || offset == 1;
+    }
     /**
      * @author
      * @reason
