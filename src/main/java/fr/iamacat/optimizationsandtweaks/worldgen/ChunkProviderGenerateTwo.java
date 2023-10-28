@@ -106,7 +106,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
 
         for (int j = -2; j <= 2; ++j) {
             for (int k = -2; k <= 2; ++k) {
-                float f = 10.0F / MathHelper.sqrt_float((float) (j * j + k * k) + 0.2F);
+                float f = 10.0F / MathHelper.sqrt_float((j * j + k * k) + 0.2F);
                 this.parabolicField[j + 2 + (k + 2) * 5] = f;
             }
         }
@@ -158,7 +158,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
                         double d13 = (d4 - d2) * d9;
 
                         for (int i3 = 0; i3 < 4; ++i3) {
-                            int j3 = i3 + k * 4 << 12 | 0 + j1 * 4 << 8 | k2 * 8 + l2;
+                            int j3 = i3 + k * 4 << 12 | j1 * 4 << 8 | k2 * 8 + l2;
                             short short1 = 256;
                             j3 -= short1;
                             double d14 = 0.25D;
@@ -240,7 +240,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
      * specified chunk from the map seed and chunk seed
      */
     public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
-        this.rand.setSeed((long) p_73154_1_ * 341873128712L + (long) p_73154_2_ * 132897987541L);
+        this.rand.setSeed(p_73154_1_ * 341873128712L + p_73154_2_ * 132897987541L);
         Block[] ablock = new Block[65536];
         byte[] abyte = new byte[65536];
         this.func_147424_a(p_73154_1_, p_73154_2_, ablock);
@@ -269,10 +269,6 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     }
 
     private void func_147423_a(int p_147423_1_, int p_147423_2_, int p_147423_3_) {
-        double d0 = 684.412D;
-        double d1 = 684.412D;
-        double d2 = 512.0D;
-        double d3 = 512.0D;
         this.field_147426_g = this.noiseGen6
             .generateNoiseOctaves(this.field_147426_g, p_147423_1_, p_147423_3_, 5, 5, 200.0D, 200.0D, 0.5D);
         this.field_147427_d = this.field_147429_l.generateNoiseOctaves(
@@ -382,7 +378,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
                 double d5 = 8.5D + d13 * 4.0D;
 
                 for (int j2 = 0; j2 < 33; ++j2) {
-                    double d6 = ((double) j2 - d5) * 12.0D * 128.0D / 256.0D / d14;
+                    double d6 = (j2 - d5) * 12.0D * 128.0D / 256.0D / d14;
 
                     if (d6 < 0.0D) {
                         d6 *= 4.0D;
@@ -394,7 +390,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
                     double d10 = MathHelper.denormalizeClamp(d7, d8, d9) - d6;
 
                     if (j2 > 29) {
-                        double d11 = (double) ((float) (j2 - 29) / 3.0F);
+                        double d11 =(j2 - 29) / 3.0F;
                         d10 = d10 * (1.0D - d11) + -10.0D * d11;
                     }
 
@@ -423,7 +419,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         this.rand.setSeed(this.worldObj.getSeed());
         long i1 = this.rand.nextLong() / 2L * 2L + 1L;
         long j1 = this.rand.nextLong() / 2L * 2L + 1L;
-        this.rand.setSeed((long) p_73153_2_ * i1 + (long) p_73153_3_ * j1 ^ this.worldObj.getSeed());
+        this.rand.setSeed(p_73153_2_ * i1 + p_73153_3_ * j1 ^ this.worldObj.getSeed());
         boolean flag = false;
 
         MinecraftForge.EVENT_BUS
