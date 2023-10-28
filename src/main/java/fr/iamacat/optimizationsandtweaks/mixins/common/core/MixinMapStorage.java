@@ -48,7 +48,7 @@ public class MixinMapStorage {
                     exception.printStackTrace();
                 }
             }
-            ci.cancel();
         }
+        ci.cancel();
     }
 }
