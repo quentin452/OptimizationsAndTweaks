@@ -53,7 +53,6 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public void updateTask() {
-        if (OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent) {
             if (--this.field_75345_d <= 0) {
                 this.field_75345_d = 10;
 
@@ -66,7 +65,6 @@ public class MixinEntityAIFollowParent {
                     }
                 }
             }
-        }
     }
 
     @Unique
