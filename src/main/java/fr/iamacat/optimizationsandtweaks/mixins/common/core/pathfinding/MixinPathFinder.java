@@ -314,13 +314,7 @@ public class MixinPathFinder {
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0),
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
             this.getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
-            this.getSafePoint(
-                p_75860_1_,
-                p_75860_2_.xCoord,
-                p_75860_2_.yCoord,
-                p_75860_2_.zCoord - 1,
-                p_75860_3_,
-                b0) };
+            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0) };
 
         for (PathPoint pathpoint : pathpoints) {
             if (pathpoint != null && !pathpoint.isFirst && pathpoint.distanceTo(p_75860_4_) < p_75860_5_) {
@@ -332,9 +326,6 @@ public class MixinPathFinder {
         cir.setReturnValue(i);
         return i;
     }
-
-    @Unique
-    private final Map<Integer, Integer> multithreadingandtweaks$blockCache = new HashMap<>();
 
     /**
      * @author
