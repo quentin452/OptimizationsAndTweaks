@@ -48,4 +48,29 @@ public class MixinChunk {
             }
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void getEntitiesOfTypeWithinAAAB(Class p_76618_1_, AxisAlignedBB p_76618_2_, List p_76618_3_, IEntitySelector p_76618_4_) {
+        int minYChunk = MathHelper.floor_double((p_76618_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
+        int maxYChunk = MathHelper.floor_double((p_76618_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+        minYChunk = MathHelper.clamp_int(minYChunk, 0, this.entityLists.length - 1);
+        maxYChunk = MathHelper.clamp_int(maxYChunk, 0, this.entityLists.length - 1);
+
+        for (int chunkY = minYChunk; chunkY <= maxYChunk; chunkY++) {
+            List entityList = this.entityLists[chunkY];
+
+            for (Object entityObj : entityList) {
+                Entity entity = (Entity) entityObj;
+
+                if (p_76618_1_.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(p_76618_2_) &&
+                    (p_76618_4_ == null || p_76618_4_.isEntityApplicable(entity))) {
+                    p_76618_3_.add(entity);
+                }
+            }
+        }
+    }
+
 }
