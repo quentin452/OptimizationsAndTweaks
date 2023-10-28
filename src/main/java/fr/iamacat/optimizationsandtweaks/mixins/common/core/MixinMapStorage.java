@@ -26,7 +26,6 @@ public class MixinMapStorage {
 
     @Inject(method = "saveData", at = @At("HEAD"), remap = false, cancellable = true)
     private void saveData(WorldSavedData p_75747_1_, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinMapStorage) {
             if (this.saveHandler != null) {
                 try {
                     File file1 = this.saveHandler.getMapFileFromName(p_75747_1_.mapName);
@@ -48,7 +47,6 @@ public class MixinMapStorage {
                     exception.printStackTrace();
                 }
             }
-        }
         ci.cancel();
     }
 }
