@@ -253,61 +253,50 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
-        PathPoint p_75858_5_, int p_75858_6_) {
-        PathPoint pathpoint1 = null;
-        int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+    private PathPoint getSafePoint(Entity entity, int x, int y, int z, PathPoint currentPoint, int yOffset) {
+        int verticalOffset = getVerticalOffset(entity, x, y, z, currentPoint);
+        int newOffset = getVerticalOffset(entity, x, y - 1, z, currentPoint);
 
-        if (i1 == 2) {
-            return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-        } else {
-            if (i1 == 1) {
-                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-            }
+        if (verticalOffset == 2 || verticalOffset == 1) {
+            return openPoint(x, y, z);
+        }
 
-            if (pathpoint1 == null && p_75858_6_ > 0
-                && i1 != -3
-                && i1 != -4
-                && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_)
-                    == 1) {
-                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
-                p_75858_3_ += p_75858_6_;
-            }
+        PathPoint pathPoint = null;
 
-            if (pathpoint1 != null) {
-                int j1 = 0;
-                int k1 = 0;
+        if (yOffset > 0 && verticalOffset != -3 && verticalOffset != -4) {
+            int newY = y + yOffset;
+            int newVerticalOffset = getVerticalOffset(entity, x, newY, z, currentPoint);
 
-                while (p_75858_3_ > 0) {
-                    k1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
+            if (newVerticalOffset == 1) {
+                pathPoint = openPoint(x, newY, z);
+                y = newY;
 
-                    if (this.isPathingInWater && k1 == -1) {
+                while (y > 0) {
+                    if (isPathingInWater && newOffset == -1) {
                         return null;
                     }
 
-                    if (k1 != 1) {
+                    if (newOffset != 1) {
                         break;
                     }
 
-                    if (j1++ >= p_75858_1_.getMaxSafePointTries()) {
+                    if (y - 1 <= 0) {
                         return null;
                     }
 
-                    --p_75858_3_;
-
-                    if (p_75858_3_ > 0) {
-                        pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-                    }
+                    y--;
+                    pathPoint = openPoint(x, y, z);
                 }
 
-                if (k1 == -2) {
+                if (newOffset == -2) {
                     return null;
                 }
             }
-
-            return pathpoint1;
         }
+
+        return pathPoint;
     }
+
 
     /**
      * @author
