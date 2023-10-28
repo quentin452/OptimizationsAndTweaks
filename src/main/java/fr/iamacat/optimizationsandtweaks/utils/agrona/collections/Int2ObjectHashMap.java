@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +12,9 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
+import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
@@ -31,9 +30,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
-import static java.util.Objects.requireNonNull;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 
 /**
  * {@link Map} implementation specialised for int keys using open addressing and
@@ -41,14 +38,16 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <V> type of values stored in the {@link Map}
  */
-public class Int2ObjectHashMap<V> implements Map<Integer, V>
-{
+public class Int2ObjectHashMap<V> implements Map<Integer, V> {
+
     @DoNotSub
     static final int MIN_CAPACITY = 8;
 
     private final float loadFactor;
-    @DoNotSub private int resizeThreshold;
-    @DoNotSub private int size;
+    @DoNotSub
+    private int resizeThreshold;
+    @DoNotSub
+    private int size;
     private final boolean shouldAvoidAllocation;
 
     private int[] keys;
@@ -61,8 +60,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Constructs map with {@link #MIN_CAPACITY}, {@link Hashing#DEFAULT_LOAD_FACTOR} and enables caching of iterators.
      */
-    public Int2ObjectHashMap()
-    {
+    public Int2ObjectHashMap() {
         this(MIN_CAPACITY, Hashing.DEFAULT_LOAD_FACTOR, true);
     }
 
@@ -72,10 +70,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param initialCapacity for the backing array
      * @param loadFactor      limit for resizing on puts
      */
-    public Int2ObjectHashMap(
-        @DoNotSub final int initialCapacity,
-        final float loadFactor)
-    {
+    public Int2ObjectHashMap(@DoNotSub final int initialCapacity, final float loadFactor) {
         this(initialCapacity, loadFactor, true);
     }
 
@@ -86,18 +81,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param loadFactor            limit for resizing on puts
      * @param shouldAvoidAllocation should allocation be avoided by caching iterators and map entries.
      */
-    public Int2ObjectHashMap(
-        @DoNotSub final int initialCapacity,
-        final float loadFactor,
-        final boolean shouldAvoidAllocation)
-    {
+    public Int2ObjectHashMap(@DoNotSub final int initialCapacity, final float loadFactor,
+        final boolean shouldAvoidAllocation) {
         validateLoadFactor(loadFactor);
 
         this.loadFactor = loadFactor;
         this.shouldAvoidAllocation = shouldAvoidAllocation;
 
         /* @DoNotSub */ final int capacity = findNextPositivePowerOfTwo(Math.max(MIN_CAPACITY, initialCapacity));
-        /* @DoNotSub */ resizeThreshold = (int)(capacity * loadFactor);
+        /* @DoNotSub */ resizeThreshold = (int) (capacity * loadFactor);
 
         keys = new int[capacity];
         values = new Object[capacity];
@@ -108,8 +100,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @param mapToCopy for construction.
      */
-    public Int2ObjectHashMap(final Int2ObjectHashMap<V> mapToCopy)
-    {
+    public Int2ObjectHashMap(final Int2ObjectHashMap<V> mapToCopy) {
         this.loadFactor = mapToCopy.loadFactor;
         this.resizeThreshold = mapToCopy.resizeThreshold;
         this.size = mapToCopy.size;
@@ -124,8 +115,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @return load factor for when the map should increase size.
      */
-    public float loadFactor()
-    {
+    public float loadFactor() {
         return loadFactor;
     }
 
@@ -134,8 +124,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @return the total capacity for the map.
      */
-    @DoNotSub public int capacity()
-    {
+    @DoNotSub
+    public int capacity() {
         return values.length;
     }
 
@@ -145,32 +135,30 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @return the threshold when the map will resize.
      */
-    @DoNotSub public int resizeThreshold()
-    {
+    @DoNotSub
+    public int resizeThreshold() {
         return resizeThreshold;
     }
 
     /**
      * {@inheritDoc}
      */
-    @DoNotSub public int size()
-    {
+    @DoNotSub
+    public int size() {
         return size;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return 0 == size;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void forEach(final BiConsumer<? super Integer, ? super V> action)
-    {
+    public void forEach(final BiConsumer<? super Integer, ? super V> action) {
         forEachInt(action::accept);
     }
 
@@ -182,8 +170,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @deprecated Use {@link #forEachInt(IntObjConsumer)} instead.
      */
     @Deprecated
-    public void intForEach(final IntObjConsumer<V> consumer)
-    {
+    public void intForEach(final IntObjConsumer<V> consumer) {
         forEachInt(consumer);
     }
 
@@ -195,18 +182,17 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @param consumer a callback called for each key/value pair in the map.
      */
-    public void forEachInt(final IntObjConsumer<V> consumer)
-    {
+    public void forEachInt(final IntObjConsumer<V> consumer) {
         requireNonNull(consumer);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int length = values.length;
+        @DoNotSub
+        final int length = values.length;
 
-        for (@DoNotSub int index = 0, remaining = size; remaining > 0 && index < length; index++)
-        {
+        for (@DoNotSub
+        int index = 0, remaining = size; remaining > 0 && index < length; index++) {
             final Object value = values[index];
-            if (null != value)
-            {
+            if (null != value) {
                 consumer.accept(keys[index], unmapNullValue(value));
                 --remaining;
             }
@@ -216,9 +202,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public boolean containsKey(final Object key)
-    {
-        return containsKey((int)key);
+    public boolean containsKey(final Object key) {
+        return containsKey((int) key);
     }
 
     /**
@@ -227,18 +212,17 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key for indexing the {@link Map}
      * @return true if the key is found otherwise false.
      */
-    public boolean containsKey(final int key)
-    {
+    public boolean containsKey(final int key) {
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         boolean found = false;
-        while (null != values[index])
-        {
-            if (key == keys[index])
-            {
+        while (null != values[index]) {
+            if (key == keys[index]) {
                 found = true;
                 break;
             }
@@ -252,22 +236,19 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public boolean containsValue(final Object value)
-    {
+    public boolean containsValue(final Object value) {
         boolean found = false;
         final Object val = mapNullValue(value);
 
-        if (null != val)
-        {
+        if (null != val) {
             final Object[] values = this.values;
-            @DoNotSub final int length = values.length;
-            for (@DoNotSub int i = 0, remaining = size; remaining > 0 && i < length; i++)
-            {
+            @DoNotSub
+            final int length = values.length;
+            for (@DoNotSub
+            int i = 0, remaining = size; remaining > 0 && i < length; i++) {
                 final Object existingValue = values[i];
-                if (null != existingValue)
-                {
-                    if (Objects.equals(existingValue, val))
-                    {
+                if (null != existingValue) {
+                    if (Objects.equals(existingValue, val)) {
                         found = true;
                         break;
                     }
@@ -282,9 +263,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V get(final Object key)
-    {
-        return get((int)key);
+    public V get(final Object key) {
+        return get((int) key);
     }
 
     /**
@@ -293,8 +273,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key for indexing the {@link Map}.
      * @return the value if found otherwise null.
      */
-    public V get(final int key)
-    {
+    public V get(final int key) {
         return unmapNullValue(getMapped(key));
     }
 
@@ -305,10 +284,9 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key          whose associated value is to be returned.
      * @param defaultValue the default mapping of the key.
      * @return the value to which the specified key is mapped, or
-     * {@code defaultValue} if this map contains no mapping for the key.
+     *         {@code defaultValue} if this map contains no mapping for the key.
      */
-    public V getOrDefault(final int key, final V defaultValue)
-    {
+    public V getOrDefault(final int key, final V defaultValue) {
         final V value = getMapped(key);
         return null != value ? unmapNullValue(value) : defaultValue;
     }
@@ -320,33 +298,31 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @return mapped value or {@code null}.
      */
     @SuppressWarnings("unchecked")
-    protected V getMapped(final int key)
-    {
+    protected V getMapped(final int key) {
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object value;
-        while (null != (value = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (value = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
             index = ++index & mask;
         }
 
-        return (V)value;
+        return (V) value;
     }
 
     /**
      * {@inheritDoc}
      */
-    public V computeIfAbsent(final Integer key, final Function<? super Integer, ? extends V> mappingFunction)
-    {
-        return computeIfAbsent((int)key, mappingFunction::apply);
+    public V computeIfAbsent(final Integer key, final Function<? super Integer, ? extends V> mappingFunction) {
+        return computeIfAbsent((int) key, mappingFunction::apply);
     }
 
     /**
@@ -359,19 +335,18 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param mappingFunction to provide a value if the get returns null.
      * @return the value if found otherwise the default.
      */
-    public V computeIfAbsent(final int key, final IntFunction<? extends V> mappingFunction)
-    {
+    public V computeIfAbsent(final int key, final IntFunction<? extends V> mappingFunction) {
         requireNonNull(mappingFunction);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedValue;
-        while (null != (mappedValue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (mappedValue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
@@ -380,14 +355,11 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
 
         V value = unmapNullValue(mappedValue);
 
-        if (null == value && (value = mappingFunction.apply(key)) != null)
-        {
+        if (null == value && (value = mappingFunction.apply(key)) != null) {
             values[index] = value;
-            if (null == mappedValue)
-            {
+            if (null == mappedValue) {
                 keys[index] = key;
-                if (++size > resizeThreshold)
-                {
+                if (++size > resizeThreshold) {
                     increaseCapacity();
                 }
             }
@@ -399,10 +371,9 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V computeIfPresent(
-        final Integer key, final BiFunction<? super Integer, ? super V, ? extends V> remappingFunction)
-    {
-        return computeIfPresent((int)key, remappingFunction::apply);
+    public V computeIfPresent(final Integer key,
+        final BiFunction<? super Integer, ? super V, ? extends V> remappingFunction) {
+        return computeIfPresent((int) key, remappingFunction::apply);
     }
 
     /**
@@ -417,20 +388,19 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param remappingFunction to provide a value if the get returns missingValue.
      * @return the new value associated with the specified key, or {@code null} if none.
      */
-    public V computeIfPresent(
-        final int key, final IntObjectToObjectFunction<? super V, ? extends V> remappingFunction)
-    {
+    public V computeIfPresent(final int key,
+        final IntObjectToObjectFunction<? super V, ? extends V> remappingFunction) {
         requireNonNull(remappingFunction);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedValue;
-        while (null != (mappedValue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (mappedValue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
@@ -439,12 +409,10 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
 
         V value = unmapNullValue(mappedValue);
 
-        if (null != value)
-        {
+        if (null != value) {
             value = remappingFunction.apply(key, value);
             values[index] = value;
-            if (null == value)
-            {
+            if (null == value) {
                 --size;
                 compactChain(index);
             }
@@ -456,9 +424,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V compute(final Integer key, final BiFunction<? super Integer, ? super V, ? extends V> remappingFunction)
-    {
-        return compute((int)key, remappingFunction::apply);
+    public V compute(final Integer key, final BiFunction<? super Integer, ? super V, ? extends V> remappingFunction) {
+        return compute((int) key, remappingFunction::apply);
     }
 
     /**
@@ -474,19 +441,18 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param remappingFunction to provide a value if the get returns missingValue.
      * @return the new value associated with the specified key, or {@code null} if none.
      */
-    public V compute(final int key, final IntObjectToObjectFunction<? super V, ? extends V> remappingFunction)
-    {
+    public V compute(final int key, final IntObjectToObjectFunction<? super V, ? extends V> remappingFunction) {
         requireNonNull(remappingFunction);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedvalue;
-        while (null != (mappedvalue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (mappedvalue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
@@ -494,20 +460,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         }
 
         final V newValue = remappingFunction.apply(key, unmapNullValue(mappedvalue));
-        if (null != newValue)
-        {
+        if (null != newValue) {
             values[index] = newValue;
-            if (null == mappedvalue)
-            {
+            if (null == mappedvalue) {
                 keys[index] = key;
-                if (++size > resizeThreshold)
-                {
+                if (++size > resizeThreshold) {
                     increaseCapacity();
                 }
             }
-        }
-        else if (null != mappedvalue)
-        {
+        } else if (null != mappedvalue) {
             values[index] = null;
             size--;
             compactChain(index);
@@ -519,10 +480,9 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V merge(
-        final Integer key, final V value, final BiFunction<? super V, ? super V, ? extends V> remappingFunction)
-    {
-        return merge((int)key, value, remappingFunction);
+    public V merge(final Integer key, final V value,
+        final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return merge((int) key, value, remappingFunction);
     }
 
     /**
@@ -534,22 +494,22 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *                          is associated with the key, to be associated with the key.
      * @param remappingFunction the function to recompute a value if present.
      * @return the new value associated with the specified key, or null if no
-     * value is associated with the key.
+     *         value is associated with the key.
      */
-    public V merge(final int key, final V value, final BiFunction<? super V, ? super V, ? extends V> remappingFunction)
-    {
+    public V merge(final int key, final V value,
+        final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         requireNonNull(value);
         requireNonNull(remappingFunction);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedvalue;
-        while (null != (mappedvalue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (mappedvalue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
@@ -559,20 +519,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         final V oldValue = unmapNullValue(mappedvalue);
         final V newValue = null == oldValue ? value : remappingFunction.apply(oldValue, value);
 
-        if (null != newValue)
-        {
+        if (null != newValue) {
             values[index] = newValue;
-            if (null == mappedvalue)
-            {
+            if (null == mappedvalue) {
                 keys[index] = key;
-                if (++size > resizeThreshold)
-                {
+                if (++size > resizeThreshold) {
                     increaseCapacity();
                 }
             }
-        }
-        else if (null != mappedvalue)
-        {
+        } else if (null != mappedvalue) {
             values[index] = null;
             size--;
             compactChain(index);
@@ -584,9 +539,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V put(final Integer key, final V value)
-    {
-        return put((int)key, value);
+    public V put(final Integer key, final V value) {
+        return put((int) key, value);
     }
 
     /**
@@ -597,37 +551,34 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @return the previous value if found otherwise null.
      */
     @SuppressWarnings("unchecked")
-    public V put(final int key, final V value)
-    {
-        final V val = (V)mapNullValue(value);
+    public V put(final int key, final V value) {
+        final V val = (V) mapNullValue(value);
         requireNonNull(val, "value cannot be null");
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object oldValue;
-        while (null != (oldValue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (oldValue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
             index = ++index & mask;
         }
 
-        if (null == oldValue)
-        {
+        if (null == oldValue) {
             ++size;
             keys[index] = key;
         }
 
         values[index] = val;
 
-        if (size > resizeThreshold)
-        {
+        if (size > resizeThreshold) {
             increaseCapacity();
         }
 
@@ -637,9 +588,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public V remove(final Object key)
-    {
-        return remove((int)key);
+    public V remove(final Object key) {
+        return remove((int) key);
     }
 
     /**
@@ -648,18 +598,17 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key for indexing the {@link Map}.
      * @return the value if found otherwise null.
      */
-    public V remove(final int key)
-    {
+    public V remove(final int key) {
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object value;
-        while (null != (value = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (value = values[index])) {
+            if (key == keys[index]) {
                 values[index] = null;
                 --size;
 
@@ -677,9 +626,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public boolean remove(final Object key, final Object value)
-    {
-        return remove((int)key, (V)value);
+    public boolean remove(final Object key, final Object value) {
+        return remove((int) key, (V) value);
     }
 
     /**
@@ -689,23 +637,20 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param value expected to be associated with the specified key.
      * @return {@code true} if the value was removed.
      */
-    public boolean remove(final int key, final V value)
-    {
+    public boolean remove(final int key, final V value) {
         final Object val = mapNullValue(value);
-        if (null != val)
-        {
+        if (null != val) {
             final int[] keys = this.keys;
             final Object[] values = this.values;
-            @DoNotSub final int mask = values.length - 1;
-            @DoNotSub int index = Hashing.hash(key, mask);
+            @DoNotSub
+            final int mask = values.length - 1;
+            @DoNotSub
+            int index = Hashing.hash(key, mask);
 
             Object mappedValue;
-            while (null != (mappedValue = values[index]))
-            {
-                if (key == keys[index])
-                {
-                    if (Objects.equals(unmapNullValue(mappedValue), value))
-                    {
+            while (null != (mappedValue = values[index])) {
+                if (key == keys[index]) {
+                    if (Objects.equals(unmapNullValue(mappedValue), value)) {
                         values[index] = null;
                         --size;
 
@@ -724,10 +669,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public void clear()
-    {
-        if (size > 0)
-        {
+    public void clear() {
+        if (size > 0) {
             Arrays.fill(values, null);
             size = 0;
         }
@@ -737,19 +680,17 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * Compact the {@link Map} backing arrays by rehashing with a capacity just larger than current size
      * and giving consideration to the load factor.
      */
-    public void compact()
-    {
-        @DoNotSub final int idealCapacity = (int)Math.round(size() * (1.0d / loadFactor));
+    public void compact() {
+        @DoNotSub
+        final int idealCapacity = (int) Math.round(size() * (1.0d / loadFactor));
         rehash(findNextPositivePowerOfTwo(Math.max(MIN_CAPACITY, idealCapacity)));
     }
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(final Map<? extends Integer, ? extends V> map)
-    {
-        for (final Entry<? extends Integer, ? extends V> entry : map.entrySet())
-        {
+    public void putAll(final Map<? extends Integer, ? extends V> map) {
+        for (final Entry<? extends Integer, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
@@ -759,11 +700,10 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @param map whose value are to be added.
      */
-    public void putAll(final Int2ObjectHashMap<? extends V> map)
-    {
-        final Int2ObjectHashMap<? extends V>.EntryIterator iterator = map.entrySet().iterator();
-        while (iterator.hasNext())
-        {
+    public void putAll(final Int2ObjectHashMap<? extends V> map) {
+        final Int2ObjectHashMap<? extends V>.EntryIterator iterator = map.entrySet()
+            .iterator();
+        while (iterator.hasNext()) {
             iterator.findNext();
             put(iterator.getIntKey(), iterator.getValue());
         }
@@ -775,24 +715,23 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key   with which the specified value is to be associated.
      * @param value to be associated with the specified key.
      * @return the previous value associated with the specified key, or
-     * {@code null} if there was no mapping for the key.
+     *         {@code null} if there was no mapping for the key.
      */
     @SuppressWarnings("unchecked")
-    public V putIfAbsent(final int key, final V value)
-    {
-        final V val = (V)mapNullValue(value);
+    public V putIfAbsent(final int key, final V value) {
+        final V val = (V) mapNullValue(value);
         requireNonNull(val, "value cannot be null");
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedValue;
-        while (null != (mappedValue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (mappedValue = values[index])) {
+            if (key == keys[index]) {
                 break;
             }
 
@@ -800,18 +739,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         }
 
         final V oldValue = unmapNullValue(mappedValue);
-        if (null == oldValue)
-        {
-            if (null == mappedValue)
-            {
+        if (null == oldValue) {
+            if (null == mappedValue) {
                 ++size;
                 keys[index] = key;
             }
 
             values[index] = val;
 
-            if (size > resizeThreshold)
-            {
+            if (size > resizeThreshold) {
                 increaseCapacity();
             }
         }
@@ -822,10 +758,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public KeySet keySet()
-    {
-        if (null == keySet)
-        {
+    public KeySet keySet() {
+        if (null == keySet) {
             keySet = new KeySet();
         }
 
@@ -835,10 +769,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public ValueCollection values()
-    {
-        if (null == valueCollection)
-        {
+    public ValueCollection values() {
+        if (null == valueCollection) {
             valueCollection = new ValueCollection();
         }
 
@@ -848,10 +780,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public EntrySet entrySet()
-    {
-        if (null == entrySet)
-        {
+    public EntrySet entrySet() {
+        if (null == entrySet) {
             entrySet = new EntrySet();
         }
 
@@ -861,10 +791,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
-        if (isEmpty())
-        {
+    public String toString() {
+        if (isEmpty()) {
             return "{}";
         }
 
@@ -872,50 +800,46 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         entryIterator.reset();
 
         final StringBuilder sb = new StringBuilder().append('{');
-        while (true)
-        {
+        while (true) {
             entryIterator.next();
-            sb.append(entryIterator.getIntKey()).append('=').append(unmapNullValue(entryIterator.getValue()));
-            if (!entryIterator.hasNext())
-            {
-                return sb.append('}').toString();
+            sb.append(entryIterator.getIntKey())
+                .append('=')
+                .append(unmapNullValue(entryIterator.getValue()));
+            if (!entryIterator.hasNext()) {
+                return sb.append('}')
+                    .toString();
             }
-            sb.append(',').append(' ');
+            sb.append(',')
+                .append(' ');
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
 
-        if (!(o instanceof Map))
-        {
+        if (!(o instanceof Map)) {
             return false;
         }
 
-        final Map<?, ?> that = (Map<?, ?>)o;
+        final Map<?, ?> that = (Map<?, ?>) o;
 
-        if (size != that.size())
-        {
+        if (size != that.size()) {
             return false;
         }
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        for (@DoNotSub int i = 0, length = values.length; i < length; i++)
-        {
+        for (@DoNotSub
+        int i = 0, length = values.length; i < length; i++) {
             final Object thisValue = values[i];
-            if (null != thisValue)
-            {
+            if (null != thisValue) {
                 final Object thatValue = that.get(keys[i]);
-                if (!thisValue.equals(mapNullValue(thatValue)))
-                {
+                if (!thisValue.equals(mapNullValue(thatValue))) {
                     return false;
                 }
             }
@@ -927,17 +851,17 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    @DoNotSub public int hashCode()
-    {
-        @DoNotSub int result = 0;
+    @DoNotSub
+    public int hashCode() {
+        @DoNotSub
+        int result = 0;
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        for (@DoNotSub int i = 0, length = values.length; i < length; i++)
-        {
+        for (@DoNotSub
+        int i = 0, length = values.length; i < length; i++) {
             final Object value = values[i];
-            if (null != value)
-            {
+            if (null != value) {
                 result += (Integer.hashCode(keys[i]) ^ value.hashCode());
             }
         }
@@ -951,8 +875,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param value value to mask.
      * @return masked value.
      */
-    protected Object mapNullValue(final Object value)
-    {
+    protected Object mapNullValue(final Object value) {
         return value;
     }
 
@@ -963,9 +886,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @return unmasked value.
      */
     @SuppressWarnings("unchecked")
-    protected V unmapNullValue(final Object value)
-    {
-        return (V)value;
+    protected V unmapNullValue(final Object value) {
+        return (V) value;
     }
 
     /**
@@ -974,24 +896,23 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param key   key with which the specified value is associated
      * @param value value to be associated with the specified key
      * @return the previous value associated with the specified key, or
-     * {@code null} if there was no mapping for the key.
+     *         {@code null} if there was no mapping for the key.
      */
     @SuppressWarnings("unchecked")
-    public V replace(final int key, final V value)
-    {
-        final V val = (V)mapNullValue(value);
+    public V replace(final int key, final V value) {
+        final V val = (V) mapNullValue(value);
         requireNonNull(val, "value cannot be null");
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object oldValue;
-        while (null != (oldValue = values[index]))
-        {
-            if (key == keys[index])
-            {
+        while (null != (oldValue = values[index])) {
+            if (key == keys[index]) {
                 values[index] = val;
                 break;
             }
@@ -1011,23 +932,21 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @return {@code true} if the value was replaced
      */
     @SuppressWarnings("unchecked")
-    public boolean replace(final int key, final V oldValue, final V newValue)
-    {
-        final V val = (V)mapNullValue(newValue);
+    public boolean replace(final int key, final V oldValue, final V newValue) {
+        final V val = (V) mapNullValue(newValue);
         requireNonNull(val, "value cannot be null");
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = Hashing.hash(key, mask);
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = Hashing.hash(key, mask);
 
         Object mappedValue;
-        while (null != (mappedValue = values[index]))
-        {
-            if (key == keys[index])
-            {
-                if (Objects.equals(unmapNullValue(mappedValue), oldValue))
-                {
+        while (null != (mappedValue = values[index])) {
+            if (key == keys[index]) {
+                if (Objects.equals(unmapNullValue(mappedValue), oldValue)) {
                     values[index] = val;
                     return true;
                 }
@@ -1043,8 +962,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * {@inheritDoc}
      */
-    public void replaceAll(final BiFunction<? super Integer, ? super V, ? extends V> function)
-    {
+    public void replaceAll(final BiFunction<? super Integer, ? super V, ? extends V> function) {
         replaceAllInt(function::apply);
     }
 
@@ -1057,20 +975,20 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      * @param function the function to apply to each entry.
      */
     @SuppressWarnings("unchecked")
-    public void replaceAllInt(final IntObjectToObjectFunction<? super V, ? extends V> function)
-    {
+    public void replaceAllInt(final IntObjectToObjectFunction<? super V, ? extends V> function) {
         requireNonNull(function);
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int length = values.length;
-        @DoNotSub int remaining = size;
+        @DoNotSub
+        final int length = values.length;
+        @DoNotSub
+        int remaining = size;
 
-        for (@DoNotSub int index = 0; remaining > 0 && index < length; index++)
-        {
+        for (@DoNotSub
+        int index = 0; remaining > 0 && index < length; index++) {
             final Object oldValue = values[index];
-            if (null != oldValue)
-            {
-                final V newVal = (V)mapNullValue(function.apply(keys[index], unmapNullValue(oldValue)));
+            if (null != oldValue) {
+                final V newVal = (V) mapNullValue(function.apply(keys[index], unmapNullValue(oldValue)));
                 requireNonNull(newVal, "value cannot be null");
                 values[index] = newVal;
                 --remaining;
@@ -1078,36 +996,34 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         }
     }
 
-    private void increaseCapacity()
-    {
-        @DoNotSub final int newCapacity = values.length << 1;
-        if (newCapacity < 0)
-        {
+    private void increaseCapacity() {
+        @DoNotSub
+        final int newCapacity = values.length << 1;
+        if (newCapacity < 0) {
             throw new IllegalStateException("max capacity reached at size=" + size);
         }
 
         rehash(newCapacity);
     }
 
-    private void rehash(@DoNotSub final int newCapacity)
-    {
-        @DoNotSub final int mask = newCapacity - 1;
-        /* @DoNotSub */ resizeThreshold = (int)(newCapacity * loadFactor);
+    private void rehash(@DoNotSub final int newCapacity) {
+        @DoNotSub
+        final int mask = newCapacity - 1;
+        /* @DoNotSub */ resizeThreshold = (int) (newCapacity * loadFactor);
 
         final int[] tempKeys = new int[newCapacity];
         final Object[] tempValues = new Object[newCapacity];
 
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        for (@DoNotSub int i = 0, size = values.length; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = values.length; i < size; i++) {
             final Object value = values[i];
-            if (null != value)
-            {
+            if (null != value) {
                 final int key = keys[i];
-                @DoNotSub int index = Hashing.hash(key, mask);
-                while (null != tempValues[index])
-                {
+                @DoNotSub
+                int index = Hashing.hash(key, mask);
+                while (null != tempValues[index]) {
                     index = ++index & mask;
                 }
 
@@ -1121,27 +1037,26 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     }
 
     @SuppressWarnings("FinalParameters")
-    private void compactChain(@DoNotSub int deleteIndex)
-    {
+    private void compactChain(@DoNotSub int deleteIndex) {
         final int[] keys = this.keys;
         final Object[] values = this.values;
-        @DoNotSub final int mask = values.length - 1;
-        @DoNotSub int index = deleteIndex;
-        while (true)
-        {
+        @DoNotSub
+        final int mask = values.length - 1;
+        @DoNotSub
+        int index = deleteIndex;
+        while (true) {
             index = ++index & mask;
             final Object value = values[index];
-            if (null == value)
-            {
+            if (null == value) {
                 break;
             }
 
             final int key = keys[index];
-            @DoNotSub final int hash = Hashing.hash(key, mask);
+            @DoNotSub
+            final int hash = Hashing.hash(key, mask);
 
-            if ((index < hash && (hash <= deleteIndex || deleteIndex <= index)) ||
-                (hash <= deleteIndex && deleteIndex <= index))
-            {
+            if ((index < hash && (hash <= deleteIndex || deleteIndex <= index))
+                || (hash <= deleteIndex && deleteIndex <= index)) {
                 keys[deleteIndex] = key;
                 values[deleteIndex] = value;
 
@@ -1158,18 +1073,16 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Set of keys which supports optionally cached iterators to avoid allocation.
      */
-    public final class KeySet extends AbstractSet<Integer>
-    {
+    public final class KeySet extends AbstractSet<Integer> {
+
         private final KeyIterator keyIterator = shouldAvoidAllocation ? new KeyIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public KeyIterator iterator()
-        {
+        public KeyIterator iterator() {
             KeyIterator keyIterator = this.keyIterator;
-            if (null == keyIterator)
-            {
+            if (null == keyIterator) {
                 keyIterator = new KeyIterator();
             }
 
@@ -1180,16 +1093,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         /**
          * {@inheritDoc}
          */
-        @DoNotSub public int size()
-        {
+        @DoNotSub
+        public int size() {
             return Int2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
+        public boolean contains(final Object o) {
             return Int2ObjectHashMap.this.containsKey(o);
         }
 
@@ -1199,16 +1111,14 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * @param key to check.
          * @return {@code true} if the key is contained in the map.
          */
-        public boolean contains(final int key)
-        {
+        public boolean contains(final int key) {
             return Int2ObjectHashMap.this.containsKey(key);
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean remove(final Object o)
-        {
+        public boolean remove(final Object o) {
             return null != Int2ObjectHashMap.this.remove(o);
         }
 
@@ -1218,16 +1128,14 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * @param key to be removed.
          * @return {@code true} if the mapping was removed.
          */
-        public boolean remove(final int key)
-        {
+        public boolean remove(final int key) {
             return null != Int2ObjectHashMap.this.remove(key);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void clear()
-        {
+        public void clear() {
             Int2ObjectHashMap.this.clear();
         }
 
@@ -1240,14 +1148,11 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * @param filter a predicate to apply.
          * @return {@code true} if at least one key was removed.
          */
-        public boolean removeIfInt(final IntPredicate filter)
-        {
+        public boolean removeIfInt(final IntPredicate filter) {
             boolean removed = false;
             final KeyIterator iterator = iterator();
-            while (iterator.hasNext())
-            {
-                if (filter.test(iterator.nextInt()))
-                {
+            while (iterator.hasNext()) {
+                if (filter.test(iterator.nextInt())) {
                     iterator.remove();
                     removed = true;
                 }
@@ -1259,18 +1164,16 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Collection of values which supports optionally cached iterators to avoid allocation.
      */
-    public final class ValueCollection extends AbstractCollection<V>
-    {
+    public final class ValueCollection extends AbstractCollection<V> {
+
         private final ValueIterator valueIterator = shouldAvoidAllocation ? new ValueIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public ValueIterator iterator()
-        {
+        public ValueIterator iterator() {
             ValueIterator valueIterator = this.valueIterator;
-            if (null == valueIterator)
-            {
+            if (null == valueIterator) {
                 valueIterator = new ValueIterator();
             }
 
@@ -1281,41 +1184,37 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         /**
          * {@inheritDoc}
          */
-        @DoNotSub public int size()
-        {
+        @DoNotSub
+        public int size() {
             return Int2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
+        public boolean contains(final Object o) {
             return Int2ObjectHashMap.this.containsValue(o);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void clear()
-        {
+        public void clear() {
             Int2ObjectHashMap.this.clear();
         }
 
         /**
          * {@inheritDoc}
          */
-        public void forEach(final Consumer<? super V> action)
-        {
-            @DoNotSub int remaining =
-                Int2ObjectHashMap.this.size;
+        public void forEach(final Consumer<? super V> action) {
+            @DoNotSub
+            int remaining = Int2ObjectHashMap.this.size;
 
             final Object[] values = Int2ObjectHashMap.this.values;
-            for (@DoNotSub int i = 0, length = values.length; remaining > 0 && i < length; i++)
-            {
+            for (@DoNotSub
+            int i = 0, length = values.length; remaining > 0 && i < length; i++) {
                 final Object value = values[i];
-                if (null != value)
-                {
+                if (null != value) {
                     action.accept(unmapNullValue(value));
                     --remaining;
                 }
@@ -1326,18 +1225,16 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Set of entries which supports access via an optionally cached iterator to avoid allocation.
      */
-    public final class EntrySet extends AbstractSet<Entry<Integer, V>>
-    {
+    public final class EntrySet extends AbstractSet<Entry<Integer, V>> {
+
         private final EntryIterator entryIterator = shouldAvoidAllocation ? new EntryIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public EntryIterator iterator()
-        {
+        public EntryIterator iterator() {
             EntryIterator entryIterator = this.entryIterator;
-            if (null == entryIterator)
-            {
+            if (null == entryIterator) {
                 entryIterator = new EntryIterator();
             }
 
@@ -1348,31 +1245,28 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         /**
          * {@inheritDoc}
          */
-        @DoNotSub public int size()
-        {
+        @DoNotSub
+        public int size() {
             return Int2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public void clear()
-        {
+        public void clear() {
             Int2ObjectHashMap.this.clear();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
-            if (!(o instanceof Entry))
-            {
+        public boolean contains(final Object o) {
+            if (!(o instanceof Entry)) {
                 return false;
             }
 
-            final Entry<?, ?> entry = (Entry<?, ?>)o;
-            final int key = (Integer)entry.getKey();
+            final Entry<?, ?> entry = (Entry<?, ?>) o;
+            final int key = (Integer) entry.getKey();
             final V value = getMapped(key);
             return null != value && value.equals(mapNullValue(entry.getValue()));
         }
@@ -1386,15 +1280,12 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * @param filter a predicate to apply.
          * @return {@code true} if at least one key was removed.
          */
-        public boolean removeIfInt(final IntObjPredicate<V> filter)
-        {
+        public boolean removeIfInt(final IntObjPredicate<V> filter) {
             boolean removed = false;
             final EntryIterator iterator = iterator();
-            while (iterator.hasNext())
-            {
+            while (iterator.hasNext()) {
                 iterator.findNext();
-                if (filter.test(iterator.getIntKey(), iterator.getValue()))
-                {
+                if (filter.test(iterator.getIntKey(), iterator.getValue())) {
                     iterator.remove();
                     removed = true;
                 }
@@ -1405,8 +1296,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         /**
          * {@inheritDoc}
          */
-        public Object[] toArray()
-        {
+        public Object[] toArray() {
             return toArray(new Object[size()]);
         }
 
@@ -1414,21 +1304,20 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public <T> T[] toArray(final T[] a)
-        {
-            final T[] array = a.length >= size ?
-                a : (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+        public <T> T[] toArray(final T[] a) {
+            final T[] array = a.length >= size ? a
+                : (T[]) java.lang.reflect.Array.newInstance(
+                    a.getClass()
+                        .getComponentType(),
+                    size);
             final EntryIterator it = iterator();
 
-            for (@DoNotSub int i = 0; i < array.length; i++)
-            {
-                if (it.hasNext())
-                {
+            for (@DoNotSub
+            int i = 0; i < array.length; i++) {
+                if (it.hasNext()) {
                     it.next();
-                    array[i] = (T)it.allocateDuplicateEntry();
-                }
-                else
-                {
+                    array[i] = (T) it.allocateDuplicateEntry();
+                } else {
                     array[i] = null;
                     break;
                 }
@@ -1447,11 +1336,14 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
      *
      * @param <T> type of elements.
      */
-    abstract class AbstractIterator<T> implements Iterator<T>
-    {
-        @DoNotSub private int posCounter;
-        @DoNotSub private int stopCounter;
-        @DoNotSub private int remaining;
+    abstract class AbstractIterator<T> implements Iterator<T> {
+
+        @DoNotSub
+        private int posCounter;
+        @DoNotSub
+        private int stopCounter;
+        @DoNotSub
+        private int remaining;
         boolean isPositionValid = false;
 
         /**
@@ -1459,8 +1351,8 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          *
          * @return position of the current element.
          */
-        @DoNotSub protected final int position()
-        {
+        @DoNotSub
+        protected final int position() {
             return posCounter & (values.length - 1);
         }
 
@@ -1469,16 +1361,15 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          *
          * @return number of remaining elements.
          */
-        @DoNotSub public int remaining()
-        {
+        @DoNotSub
+        public int remaining() {
             return remaining;
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return remaining > 0;
         }
 
@@ -1487,21 +1378,20 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          *
          * @throws NoSuchElementException if no more elements.
          */
-        protected final void findNext()
-        {
-            if (!hasNext())
-            {
+        protected final void findNext() {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
             final Object[] values = Int2ObjectHashMap.this.values;
-            @DoNotSub final int mask = values.length - 1;
+            @DoNotSub
+            final int mask = values.length - 1;
 
-            for (@DoNotSub int i = posCounter - 1, stop = stopCounter; i >= stop; i--)
-            {
-                @DoNotSub final int index = i & mask;
-                if (null != values[index])
-                {
+            for (@DoNotSub
+            int i = posCounter - 1, stop = stopCounter; i >= stop; i--) {
+                @DoNotSub
+                final int index = i & mask;
+                if (null != values[index]) {
                     posCounter = i;
                     isPositionValid = true;
                     --remaining;
@@ -1521,37 +1411,32 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
         /**
          * {@inheritDoc}
          */
-        public void remove()
-        {
-            if (isPositionValid)
-            {
-                @DoNotSub final int position = position();
+        public void remove() {
+            if (isPositionValid) {
+                @DoNotSub
+                final int position = position();
                 values[position] = null;
                 --size;
 
                 compactChain(position);
 
                 isPositionValid = false;
-            }
-            else
-            {
+            } else {
                 throw new IllegalStateException();
             }
         }
 
-        final void reset()
-        {
+        final void reset() {
             remaining = Int2ObjectHashMap.this.size;
             final Object[] values = Int2ObjectHashMap.this.values;
-            @DoNotSub final int capacity = values.length;
+            @DoNotSub
+            final int capacity = values.length;
 
-            @DoNotSub int i = capacity;
-            if (null != values[capacity - 1])
-            {
-                for (i = 0; i < capacity; i++)
-                {
-                    if (null == values[i])
-                    {
+            @DoNotSub
+            int i = capacity;
+            if (null != values[capacity - 1]) {
+                for (i = 0; i < capacity; i++) {
+                    if (null == values[i]) {
                         break;
                     }
                 }
@@ -1566,13 +1451,12 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Iterator over values.
      */
-    public final class ValueIterator extends AbstractIterator<V>
-    {
+    public final class ValueIterator extends AbstractIterator<V> {
+
         /**
          * {@inheritDoc}
          */
-        public V next()
-        {
+        public V next() {
             findNext();
 
             return unmapNullValue(values[position()]);
@@ -1582,13 +1466,12 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Iterator over keys which supports access to unboxed keys via {@link #nextInt()}.
      */
-    public final class KeyIterator extends AbstractIterator<Integer>
-    {
+    public final class KeyIterator extends AbstractIterator<Integer> {
+
         /**
          * {@inheritDoc}
          */
-        public Integer next()
-        {
+        public Integer next() {
             return nextInt();
         }
 
@@ -1597,8 +1480,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          *
          * @return next key.
          */
-        public int nextInt()
-        {
+        public int nextInt() {
             findNext();
 
             return keys[position()];
@@ -1608,34 +1490,28 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
     /**
      * Iterator over entries which supports access to unboxed keys via {@link #getIntKey()}.
      */
-    public final class EntryIterator
-        extends AbstractIterator<Entry<Integer, V>>
-        implements Entry<Integer, V>
-    {
+    public final class EntryIterator extends AbstractIterator<Entry<Integer, V>> implements Entry<Integer, V> {
+
         /**
          * {@inheritDoc}
          */
-        public Entry<Integer, V> next()
-        {
+        public Entry<Integer, V> next() {
             findNext();
-            if (shouldAvoidAllocation)
-            {
+            if (shouldAvoidAllocation) {
                 return this;
             }
 
             return allocateDuplicateEntry();
         }
 
-        private Entry<Integer, V> allocateDuplicateEntry()
-        {
+        private Entry<Integer, V> allocateDuplicateEntry() {
             return new MapEntry(getIntKey(), getValue());
         }
 
         /**
          * {@inheritDoc}
          */
-        public Integer getKey()
-        {
+        public Integer getKey() {
             return getIntKey();
         }
 
@@ -1644,16 +1520,14 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          *
          * @return key.
          */
-        public int getIntKey()
-        {
+        public int getIntKey() {
             return keys[position()];
         }
 
         /**
          * {@inheritDoc}
          */
-        public V getValue()
-        {
+        public V getValue() {
             return unmapNullValue(values[position()]);
         }
 
@@ -1661,29 +1535,28 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public V setValue(final V value)
-        {
-            final V val = (V)mapNullValue(value);
+        public V setValue(final V value) {
+            final V val = (V) mapNullValue(value);
             requireNonNull(val, "value cannot be null");
 
-            if (!this.isPositionValid)
-            {
+            if (!this.isPositionValid) {
                 throw new IllegalStateException();
             }
 
-            @DoNotSub final int pos = position();
+            @DoNotSub
+            final int pos = position();
             final Object[] values = Int2ObjectHashMap.this.values;
             final Object oldValue = values[pos];
             values[pos] = val;
 
-            return (V)oldValue;
+            return (V) oldValue;
         }
 
         /**
          * An {@link Entry} implementation.
          */
-        public final class MapEntry implements Entry<Integer, V>
-        {
+        public final class MapEntry implements Entry<Integer, V> {
+
             private final int k;
             private final V v;
 
@@ -1691,8 +1564,7 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
              * @param k key.
              * @param v value.
              */
-            public MapEntry(final int k, final V v)
-            {
+            public MapEntry(final int k, final V v) {
                 this.k = k;
                 this.v = v;
             }
@@ -1700,56 +1572,52 @@ public class Int2ObjectHashMap<V> implements Map<Integer, V>
             /**
              * {@inheritDoc}
              */
-            public Integer getKey()
-            {
+            public Integer getKey() {
                 return k;
             }
 
             /**
              * {@inheritDoc}
              */
-            public V getValue()
-            {
+            public V getValue() {
                 return v;
             }
 
             /**
              * {@inheritDoc}
              */
-            public V setValue(final V value)
-            {
+            public V setValue(final V value) {
                 return Int2ObjectHashMap.this.put(k, value);
             }
 
             /**
              * {@inheritDoc}
              */
-            @DoNotSub public int hashCode()
-            {
+            @DoNotSub
+            public int hashCode() {
                 return Integer.hashCode(getIntKey()) ^ (null != v ? v.hashCode() : 0);
             }
 
             /**
              * {@inheritDoc}
              */
-            public boolean equals(final Object o)
-            {
-                if (!(o instanceof Map.Entry))
-                {
+            public boolean equals(final Object o) {
+                if (!(o instanceof Map.Entry)) {
                     return false;
                 }
 
-                final Entry<?, ?> e = (Entry<?, ?>)o;
+                final Entry<?, ?> e = (Entry<?, ?>) o;
 
-                return (e.getKey() != null && e.getKey().equals(k)) &&
-                    ((e.getValue() == null && v == null) || e.getValue().equals(v));
+                return (e.getKey() != null && e.getKey()
+                    .equals(k)) && ((e.getValue() == null && v == null)
+                        || e.getValue()
+                            .equals(v));
             }
 
             /**
              * {@inheritDoc}
              */
-            public String toString()
-            {
+            public String toString() {
                 return k + "=" + v;
             }
         }

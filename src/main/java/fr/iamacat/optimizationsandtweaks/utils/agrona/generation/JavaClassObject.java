@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +12,17 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.generation;
 
-import javax.tools.SimpleJavaFileObject;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import javax.tools.SimpleJavaFileObject;
+
 /**
  * A {@link SimpleJavaFileObject} that is used to store the bytes for a java class in memory.
  */
-public class JavaClassObject extends SimpleJavaFileObject
-{
+public class JavaClassObject extends SimpleJavaFileObject {
+
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     /**
@@ -33,8 +31,7 @@ public class JavaClassObject extends SimpleJavaFileObject
      * @param className name of the class.
      * @param kind      kind of the class.
      */
-    public JavaClassObject(final String className, final Kind kind)
-    {
+    public JavaClassObject(final String className, final Kind kind) {
         super(URI.create("string:///" + className.replace('.', '/') + kind.extension), kind);
     }
 
@@ -43,24 +40,21 @@ public class JavaClassObject extends SimpleJavaFileObject
      *
      * @return the raw bytes for a class file.
      */
-    public byte[] getBytes()
-    {
+    public byte[] getBytes() {
         return baos.toByteArray();
     }
 
     /**
      * {@inheritDoc}
      */
-    public OutputStream openOutputStream()
-    {
+    public OutputStream openOutputStream() {
         return baos;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Kind getKind()
-    {
+    public Kind getKind() {
         return Kind.CLASS;
     }
 }

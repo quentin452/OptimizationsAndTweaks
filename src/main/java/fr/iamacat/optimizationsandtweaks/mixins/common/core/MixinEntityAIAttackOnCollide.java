@@ -119,7 +119,7 @@ public class MixinEntityAIAttackOnCollide extends EntityAIBase {
      */
     @Overwrite
     public void updateTask() {
-      EntityLivingBase target = this.attacker.getAttackTarget();
+        EntityLivingBase target = this.attacker.getAttackTarget();
         if (target == null) {
             return;
         }
@@ -135,14 +135,15 @@ public class MixinEntityAIAttackOnCollide extends EntityAIBase {
 
         --this.field_75445_i;
 
-        if ((this.longMemory || this.attacker.getEntitySenses().canSee(target)) && shouldUpdate(target)) {
+        if ((this.longMemory || this.attacker.getEntitySenses()
+            .canSee(target)) && shouldUpdate(target)) {
             updatePositionVariables(targetX, targetY, targetZ, distanceSquared, target);
 
             double penaltyDistance = 6;
             double penaltyFactor = 1.5;
 
             double distance = this.attacker.getDistanceToEntity(target);
-            // lags here caused by   if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
+            // lags here caused by if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
             if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
                 this.field_75445_i += (int) (distance / penaltyDistance) * penaltyFactor;
             }

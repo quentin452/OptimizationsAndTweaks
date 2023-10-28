@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +24,8 @@ import java.util.Arrays;
  * <p>
  * In all cases reference equality is used.
  */
-public final class ArrayUtil
-{
+public final class ArrayUtil {
+
     /**
      * Constant indicating an invalid/unknown array index.
      */
@@ -89,9 +86,7 @@ public final class ArrayUtil
      */
     public static final int MAX_CAPACITY = Integer.MAX_VALUE - 8;
 
-    private ArrayUtil()
-    {
-    }
+    private ArrayUtil() {}
 
     /**
      * Add an element to an array resulting in a new array.
@@ -101,8 +96,7 @@ public final class ArrayUtil
      * @param <T>          type of the array.
      * @return a new array that is one bigger and containing the new element at the end.
      */
-    public static <T> T[] add(final T[] oldElements, final T elementToAdd)
-    {
+    public static <T> T[] add(final T[] oldElements, final T elementToAdd) {
         final int length = oldElements.length;
         final T[] newElements = Arrays.copyOf(oldElements, length + 1);
         newElements[length] = elementToAdd;
@@ -120,15 +114,12 @@ public final class ArrayUtil
      * @param <T>             type of the array.
      * @return a new array without the element if found otherwise the original array.
      */
-    public static <T> T[] remove(final T[] oldElements, final T elementToRemove)
-    {
+    public static <T> T[] remove(final T[] oldElements, final T elementToRemove) {
         final int length = oldElements.length;
         int index = UNKNOWN_INDEX;
 
-        for (int i = 0; i < length; i++)
-        {
-            if (oldElements[i] == elementToRemove)
-            {
+        for (int i = 0; i < length; i++) {
+            if (oldElements[i] == elementToRemove) {
                 index = i;
             }
         }
@@ -147,10 +138,8 @@ public final class ArrayUtil
      * @param <T>         type of the array.
      * @return a new array without the element if the index is inside the array otherwise the original array.
      */
-    public static <T> T[] remove(final T[] oldElements, final int index)
-    {
-        if (index == UNKNOWN_INDEX)
-        {
+    public static <T> T[] remove(final T[] oldElements, final int index) {
+        if (index == UNKNOWN_INDEX) {
             return oldElements;
         }
 
@@ -158,10 +147,8 @@ public final class ArrayUtil
         final int newLength = oldLength - 1;
         final T[] newElements = newArray(oldElements, newLength);
 
-        for (int i = 0, j = 0; i < oldLength; i++)
-        {
-            if (index != i)
-            {
+        for (int i = 0, j = 0; i < oldLength; i++) {
+            if (index != i) {
                 newElements[j++] = oldElements[i];
             }
         }
@@ -178,9 +165,11 @@ public final class ArrayUtil
      * @return the new array of requested length.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] newArray(final T[] oldElements, final int length)
-    {
-        return (T[])Array.newInstance(oldElements.getClass().getComponentType(), length);
+    public static <T> T[] newArray(final T[] oldElements, final int length) {
+        return (T[]) Array.newInstance(
+            oldElements.getClass()
+                .getComponentType(),
+            length);
     }
 
     /**
@@ -191,12 +180,10 @@ public final class ArrayUtil
      * @param <T>            type of the array.
      * @return an array of the required length.
      */
-    public static <T> T[] ensureCapacity(final T[] oldElements, final int requiredLength)
-    {
+    public static <T> T[] ensureCapacity(final T[] oldElements, final int requiredLength) {
         T[] result = oldElements;
 
-        if (oldElements.length < requiredLength)
-        {
+        if (oldElements.length < requiredLength) {
             result = Arrays.copyOf(oldElements, requiredLength);
         }
 

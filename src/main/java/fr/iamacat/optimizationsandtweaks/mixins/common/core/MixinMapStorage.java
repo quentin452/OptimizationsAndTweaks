@@ -16,8 +16,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(MapStorage.class)
 public class MixinMapStorage {
 
@@ -26,27 +24,27 @@ public class MixinMapStorage {
 
     @Inject(method = "saveData", at = @At("HEAD"), remap = false, cancellable = true)
     private void saveData(WorldSavedData p_75747_1_, CallbackInfo ci) {
-            if (this.saveHandler != null) {
-                try {
-                    File file1 = this.saveHandler.getMapFileFromName(p_75747_1_.mapName);
+        if (this.saveHandler != null) {
+            try {
+                File file1 = this.saveHandler.getMapFileFromName(p_75747_1_.mapName);
 
-                    if (file1 != null) {
-                        NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                        NBTTagList nbtList = new NBTTagList();
-                        NBTTagCompound nbttagcompound = new NBTTagCompound();
-                        p_75747_1_.writeToNBT(nbttagcompound);
-                        nbtList.appendTag(nbttagcompound);
-                        nbttagcompound1.setTag("data", nbtList);
+                if (file1 != null) {
+                    NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                    NBTTagList nbtList = new NBTTagList();
+                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+                    p_75747_1_.writeToNBT(nbttagcompound);
+                    nbtList.appendTag(nbttagcompound);
+                    nbttagcompound1.setTag("data", nbtList);
 
-                        // Compress and save the data to the file
-                        FileOutputStream fileoutputstream = new FileOutputStream(file1);
-                        CompressedStreamTools.writeCompressed(nbttagcompound1, fileoutputstream);
-                        fileoutputstream.close();
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                    // Compress and save the data to the file
+                    FileOutputStream fileoutputstream = new FileOutputStream(file1);
+                    CompressedStreamTools.writeCompressed(nbttagcompound1, fileoutputstream);
+                    fileoutputstream.close();
                 }
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
+        }
         ci.cancel();
     }
 }

@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +12,6 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-
 import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 
 /**
@@ -23,14 +19,12 @@ import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
  *
  * @param <V> type of values stored in the {@link java.util.Map}
  */
-public class Int2NullableObjectHashMap<V> extends Int2ObjectHashMap<V>
-{
+public class Int2NullableObjectHashMap<V> extends Int2ObjectHashMap<V> {
+
     /**
      * Constructs map with default settings.
      */
-    public Int2NullableObjectHashMap()
-    {
-    }
+    public Int2NullableObjectHashMap() {}
 
     /**
      * Constructs map with given initial capacity and load factory and enables caching of iterators.
@@ -38,9 +32,7 @@ public class Int2NullableObjectHashMap<V> extends Int2ObjectHashMap<V>
      * @param initialCapacity for the backing array.
      * @param loadFactor      limit for resizing on puts.
      */
-    public Int2NullableObjectHashMap(
-        @DoNotSub final int initialCapacity, final float loadFactor)
-    {
+    public Int2NullableObjectHashMap(@DoNotSub final int initialCapacity, final float loadFactor) {
         super(initialCapacity, loadFactor);
     }
 
@@ -51,9 +43,8 @@ public class Int2NullableObjectHashMap<V> extends Int2ObjectHashMap<V>
      * @param loadFactor            limit for resizing on puts
      * @param shouldAvoidAllocation should allocation be avoided by caching iterators and map entries.
      */
-    public Int2NullableObjectHashMap(
-        @DoNotSub final int initialCapacity, final float loadFactor, final boolean shouldAvoidAllocation)
-    {
+    public Int2NullableObjectHashMap(@DoNotSub final int initialCapacity, final float loadFactor,
+        final boolean shouldAvoidAllocation) {
         super(initialCapacity, loadFactor, shouldAvoidAllocation);
     }
 
@@ -62,19 +53,16 @@ public class Int2NullableObjectHashMap<V> extends Int2ObjectHashMap<V>
      *
      * @param mapToCopy for construction.
      */
-    public Int2NullableObjectHashMap(final Int2ObjectHashMap<V> mapToCopy)
-    {
+    public Int2NullableObjectHashMap(final Int2ObjectHashMap<V> mapToCopy) {
         super(mapToCopy);
     }
 
-    protected Object mapNullValue(final Object value)
-    {
+    protected Object mapNullValue(final Object value) {
         return null == value ? NullReference.INSTANCE : value;
     }
 
     @SuppressWarnings("unchecked")
-    protected V unmapNullValue(final Object value)
-    {
-        return NullReference.INSTANCE == value ? null : (V)value;
+    protected V unmapNullValue(final Object value) {
+        return NullReference.INSTANCE == value ? null : (V) value;
     }
 }

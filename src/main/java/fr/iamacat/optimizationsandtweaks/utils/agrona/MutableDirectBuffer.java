@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +21,8 @@ import java.nio.ByteOrder;
  * {@link ByteOrder} of a wrapped buffer is not applied to the {@link MutableDirectBuffer}.
  * To control {@link ByteOrder} use the appropriate method with a {@link ByteOrder} overload.
  */
-public interface MutableDirectBuffer extends DirectBuffer
-{
+public interface MutableDirectBuffer extends DirectBuffer {
+
     /**
      * Is this buffer expandable to accommodate putting data into it beyond the current capacity?
      *
@@ -101,9 +98,9 @@ public interface MutableDirectBuffer extends DirectBuffer
      * pre-padded with zeros, if the value takes up more space than the allowed length then a
      * <code>{@link NumberFormatException}</code> will be thrown.
      *
-     * @param index the offset to start encoding at.
+     * @param index  the offset to start encoding at.
      * @param length the maximum length to encode.
-     * @param value the value to encode.
+     * @param value  the value to encode.
      * @throws NumberFormatException if the value won't fit within the length.
      */
     void putNaturalPaddedIntAscii(int index, int length, int value) throws NumberFormatException;
@@ -230,7 +227,7 @@ public interface MutableDirectBuffer extends DirectBuffer
     void putBytes(int index, byte[] src, int offset, int length);
 
     /**
-     * Put bytes into the underlying buffer for the view.  Bytes will be copied from current
+     * Put bytes into the underlying buffer for the view. Bytes will be copied from current
      * {@link ByteBuffer#position()} for a given length.
      * <p>
      * The source buffer will have its {@link ByteBuffer#position()} advanced as a result.
@@ -338,7 +335,8 @@ public interface MutableDirectBuffer extends DirectBuffer
      * @param index       at which the CharSequence begins.
      * @param value       of the CharSequence to be encoded.
      * @param valueOffset in the value CharSequence to begin.
-     * @param length      of the value CharSequence to encode. If this is greater than valueOffset - value length then the
+     * @param length      of the value CharSequence to encode. If this is greater than valueOffset - value length then
+     *                    the
      *                    lesser will be used.
      * @return the number of bytes encoded.
      */

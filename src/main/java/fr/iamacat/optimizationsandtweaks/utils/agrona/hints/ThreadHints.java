@@ -1,13 +1,10 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
  * Copyright 2016 Gil Tene
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,12 +13,12 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.hints;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.SystemUtil;
+import static java.lang.invoke.MethodType.methodType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 
-import static java.lang.invoke.MethodType.methodType;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.SystemUtil;
 
 /**
  * This class captures possible hints that may be used by some
@@ -30,8 +27,8 @@ import static java.lang.invoke.MethodType.methodType;
  * {@link Thread} class in some Java SE versions, but missing in prior
  * versions.
  */
-public final class ThreadHints
-{
+public final class ThreadHints {
+
     /**
      * Set this system property to true to disable {@link #onSpinWait()}.
      */
@@ -39,49 +36,35 @@ public final class ThreadHints
 
     private static final MethodHandle ON_SPIN_WAIT_METHOD_HANDLE;
 
-    static
-    {
+    static {
         MethodHandle methodHandle = null;
 
-        if (!"true".equals(SystemUtil.getProperty(DISABLE_ON_SPIN_WAIT_PROP_NAME)))
-        {
-            try
-            {
+        if (!"true".equals(SystemUtil.getProperty(DISABLE_ON_SPIN_WAIT_PROP_NAME))) {
+            try {
                 final MethodHandles.Lookup lookup = MethodHandles.lookup();
                 methodHandle = lookup.findStatic(Thread.class, "onSpinWait", methodType(void.class));
-            }
-            catch (final Exception ignore)
-            {
-            }
+            } catch (final Exception ignore) {}
         }
 
         ON_SPIN_WAIT_METHOD_HANDLE = methodHandle;
     }
 
-    private ThreadHints()
-    {
-    }
+    private ThreadHints() {}
 
     /**
      * Indicates that the caller is momentarily unable to progress, until the
-     * occurrence of one or more actions on the part of other activities.  By
+     * occurrence of one or more actions on the part of other activities. By
      * invoking this method within each iteration of a spin-wait loop construct,
      * the calling thread indicates to the runtime that it is busy-waiting. The runtime
      * may take action to improve the performance of invoking spin-wait loop constructions.
      */
-    public static void onSpinWait()
-    {
+    public static void onSpinWait() {
         // Call java.lang.Thread.onSpinWait() on Java SE versions that support it. Do nothing otherwise.
         // This should optimize away to either nothing or to an inlining of java.lang.Thread.onSpinWait()
-        if (null != ON_SPIN_WAIT_METHOD_HANDLE)
-        {
-            try
-            {
+        if (null != ON_SPIN_WAIT_METHOD_HANDLE) {
+            try {
                 ON_SPIN_WAIT_METHOD_HANDLE.invokeExact();
-            }
-            catch (final Throwable ignore)
-            {
-            }
+            } catch (final Throwable ignore) {}
         }
     }
 }

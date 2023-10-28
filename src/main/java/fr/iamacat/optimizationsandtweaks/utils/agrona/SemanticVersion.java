@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,11 +15,9 @@ package fr.iamacat.optimizationsandtweaks.utils.agrona;
 /**
  * Store and extract a semantic version in a 4 byte integer.
  */
-public final class SemanticVersion
-{
-    private SemanticVersion()
-    {
-    }
+public final class SemanticVersion {
+
+    private SemanticVersion() {}
 
     /**
      * Compose a 4-byte integer with major, minor, and patch version stored in the least significant 3 bytes.
@@ -34,25 +29,20 @@ public final class SemanticVersion
      * @return the semantic version made from the three components.
      * @throws IllegalArgumentException if the values are outside acceptable range.
      */
-    public static int compose(final int major, final int minor, final int patch)
-    {
-        if (major < 0 || major > 255)
-        {
+    public static int compose(final int major, final int minor, final int patch) {
+        if (major < 0 || major > 255) {
             throw new IllegalArgumentException("major must be 0-255: " + major);
         }
 
-        if (minor < 0 || minor > 255)
-        {
+        if (minor < 0 || minor > 255) {
             throw new IllegalArgumentException("minor must be 0-255: " + minor);
         }
 
-        if (patch < 0 || patch > 255)
-        {
+        if (patch < 0 || patch > 255) {
             throw new IllegalArgumentException("patch must be 0-255: " + patch);
         }
 
-        if (major + minor + patch == 0)
-        {
+        if (major + minor + patch == 0) {
             throw new IllegalArgumentException("all parts cannot be zero");
         }
 
@@ -65,8 +55,7 @@ public final class SemanticVersion
      * @param version as a composite from which to extract the major version.
      * @return the major version value.
      */
-    public static int major(final int version)
-    {
+    public static int major(final int version) {
         return (version >> 16) & 0xFF;
     }
 
@@ -76,8 +65,7 @@ public final class SemanticVersion
      * @param version as a composite from which to extract the minor version.
      * @return the minor version value.
      */
-    public static int minor(final int version)
-    {
+    public static int minor(final int version) {
         return (version >> 8) & 0xFF;
     }
 
@@ -87,8 +75,7 @@ public final class SemanticVersion
      * @param version as a composite from which to extract the patch version.
      * @return the patch version value.
      */
-    public static int patch(final int version)
-    {
+    public static int patch(final int version) {
         return version & 0xFF;
     }
 
@@ -98,8 +85,7 @@ public final class SemanticVersion
      * @param version to be converted to a string.
      * @return the {@link String} representation of the semantic version in the format {@code major.minor.patch}.
      */
-    public static String toString(final int version)
-    {
+    public static String toString(final int version) {
         return major(version) + "." + minor(version) + "." + patch(version);
     }
 }

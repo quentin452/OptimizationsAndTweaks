@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +16,8 @@ package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
  * Holder for a long value that is mutable. Useful for being a counter in a {@link java.util.Map} or for passing by
  * reference.
  */
-public class MutableLong extends Number implements Comparable<MutableLong>
-{
+public class MutableLong extends Number implements Comparable<MutableLong> {
+
     private static final long serialVersionUID = -3537098518545563995L;
     /**
      * The value. Default value is {@code 0}.
@@ -30,17 +27,14 @@ public class MutableLong extends Number implements Comparable<MutableLong>
     /**
      * Default constructor.
      */
-    public MutableLong()
-    {
-    }
+    public MutableLong() {}
 
     /**
      * Creates an instance with a value.
      *
      * @param value to assign.
      */
-    public MutableLong(final long value)
-    {
+    public MutableLong(final long value) {
         this.value = value;
     }
 
@@ -49,8 +43,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return the value.
      */
-    public long get()
-    {
+    public long get() {
         return value;
     }
 
@@ -59,8 +52,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @param value to be assigned.
      */
-    public void set(final long value)
-    {
+    public void set(final long value) {
         this.value = value;
     }
 
@@ -69,9 +61,8 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code byte}.
      */
-    public byte byteValue()
-    {
-        return (byte)value;
+    public byte byteValue() {
+        return (byte) value;
     }
 
     /**
@@ -79,9 +70,8 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code short}.
      */
-    public short shortValue()
-    {
-        return (short)value;
+    public short shortValue() {
+        return (short) value;
     }
 
     /**
@@ -89,9 +79,8 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code int}.
      */
-    public int intValue()
-    {
-        return (int)value;
+    public int intValue() {
+        return (int) value;
     }
 
     /**
@@ -99,8 +88,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code long}.
      */
-    public long longValue()
-    {
+    public long longValue() {
         return value;
     }
 
@@ -109,9 +97,8 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code float}.
      */
-    public float floatValue()
-    {
-        return (float)value;
+    public float floatValue() {
+        return (float) value;
     }
 
     /**
@@ -119,16 +106,14 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value as {@code double}.
      */
-    public double doubleValue()
-    {
-        return (double)value;
+    public double doubleValue() {
+        return (double) value;
     }
 
     /**
      * Increment the value.
      */
-    public void increment()
-    {
+    public void increment() {
         value++;
     }
 
@@ -137,8 +122,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return the value after increment.
      */
-    public long incrementAndGet()
-    {
+    public long incrementAndGet() {
         return ++value;
     }
 
@@ -147,16 +131,14 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return the value before increment.
      */
-    public long getAndIncrement()
-    {
+    public long getAndIncrement() {
         return value++;
     }
 
     /**
      * Decrement the value.
      */
-    public void decrement()
-    {
+    public void decrement() {
         value--;
     }
 
@@ -165,8 +147,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return value after the decrement.
      */
-    public long decrementAndGet()
-    {
+    public long decrementAndGet() {
         return --value;
     }
 
@@ -175,8 +156,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      *
      * @return the value before the decrement.
      */
-    public long getAndDecrement()
-    {
+    public long getAndDecrement() {
         return value--;
     }
 
@@ -186,8 +166,7 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      * @param delta to add.
      * @return the value before the change.
      */
-    public long getAndAdd(final long delta)
-    {
+    public long getAndAdd(final long delta) {
         final long result = value;
         value += delta;
         return result;
@@ -199,27 +178,23 @@ public class MutableLong extends Number implements Comparable<MutableLong>
      * @param delta to add.
      * @return the value after the change.
      */
-    public long addAndGet(final long delta)
-    {
+    public long addAndGet(final long delta) {
         return value += delta;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        final MutableLong that = (MutableLong)o;
+        final MutableLong that = (MutableLong) o;
 
         return value == that.value;
     }
@@ -227,41 +202,38 @@ public class MutableLong extends Number implements Comparable<MutableLong>
     /**
      * {@inheritDoc}
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
+    public String toString() {
         return Long.toString(value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int compareTo(final MutableLong that)
-    {
+    public int compareTo(final MutableLong that) {
         return compare(this.value, that.value);
     }
 
     /**
      * Compare two long values. Calling this method is equivalent to calling:
+     * 
      * <pre>
-     *     Long.compare(lhs, rhs);
+     * Long.compare(lhs, rhs);
      * </pre>
      *
      * @param lhs first value.
      * @param rhs second value.
      * @return the value {@code 0} if {@code lhs == rhs};
-     * a value less than {@code 0} if {@code lhs < rhs}; and
-     * a value greater than {@code 0} if {@code lhs > rhs}
+     *         a value less than {@code 0} if {@code lhs < rhs}; and
+     *         a value greater than {@code 0} if {@code lhs > rhs}
      */
-    public static int compare(final long lhs, final long rhs)
-    {
+    public static int compare(final long lhs, final long rhs) {
         return Long.compare(lhs, rhs);
     }
 }

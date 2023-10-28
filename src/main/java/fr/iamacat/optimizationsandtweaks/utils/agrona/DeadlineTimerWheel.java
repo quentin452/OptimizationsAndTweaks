@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Tony Lauck's paper,
  * <a href="http://cseweb.ucsd.edu/users/varghese/PAPERS/twheel.ps.Z">'Hashed
  * and Hierarchical Timing Wheels: data structures to efficiently implement a
- * timer facility'</a>.  More comprehensive slides are located
+ * timer facility'</a>. More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  * <p>
  * Wheel is backed by arrays. Timer cancellation is O(1). Timer scheduling might be slightly
@@ -40,8 +37,8 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * <b>Note:</b> Not threadsafe.
  */
-public class DeadlineTimerWheel
-{
+public class DeadlineTimerWheel {
+
     /**
      * Represents a deadline not set in the wheel.
      */
@@ -69,8 +66,8 @@ public class DeadlineTimerWheel
      * @see DeadlineTimerWheel#poll(long, TimerHandler, int)
      */
     @FunctionalInterface
-    public interface TimerHandler
-    {
+    public interface TimerHandler {
+
         /**
          * Called when the deadline has expired.
          *
@@ -88,8 +85,8 @@ public class DeadlineTimerWheel
      * @see DeadlineTimerWheel#forEach(TimerConsumer)
      */
     @FunctionalInterface
-    public interface TimerConsumer
-    {
+    public interface TimerConsumer {
+
         /**
          * Called for each timer in the Timer Wheel.
          *
@@ -107,9 +104,8 @@ public class DeadlineTimerWheel
      * @param tickResolution for the wheel, i.e. how many {@link TimeUnit}s per tick.
      * @param ticksPerWheel  or spokes, for the wheel (must be power of 2).
      */
-    public DeadlineTimerWheel(
-        final TimeUnit timeUnit, final long startTime, final long tickResolution, final int ticksPerWheel)
-    {
+    public DeadlineTimerWheel(final TimeUnit timeUnit, final long startTime, final long tickResolution,
+        final int ticksPerWheel) {
         this(timeUnit, startTime, tickResolution, ticksPerWheel, INITIAL_TICK_ALLOCATION);
     }
 
@@ -122,13 +118,8 @@ public class DeadlineTimerWheel
      * @param ticksPerWheel         or spokes, for the wheel (must be power of 2).
      * @param initialTickAllocation space allocated per tick of the wheel (must be power of 2).
      */
-    public DeadlineTimerWheel(
-        final TimeUnit timeUnit,
-        final long startTime,
-        final long tickResolution,
-        final int ticksPerWheel,
-        final int initialTickAllocation)
-    {
+    public DeadlineTimerWheel(final TimeUnit timeUnit, final long startTime, final long tickResolution,
+        final int ticksPerWheel, final int initialTickAllocation) {
         checkTicksPerWheel(ticksPerWheel);
         checkResolution(tickResolution);
         checkInitialTickAllocation(initialTickAllocation);
@@ -151,8 +142,7 @@ public class DeadlineTimerWheel
      *
      * @return time unit for the ticks.
      */
-    public TimeUnit timeUnit()
-    {
+    public TimeUnit timeUnit() {
         return timeUnit;
     }
 
@@ -161,8 +151,7 @@ public class DeadlineTimerWheel
      *
      * @return resolution of a tick of the wheel in {@link #timeUnit()}s.
      */
-    public long tickResolution()
-    {
+    public long tickResolution() {
         return tickResolution;
     }
 
@@ -171,8 +160,7 @@ public class DeadlineTimerWheel
      *
      * @return number of ticks, or spokes, per wheel.
      */
-    public int ticksPerWheel()
-    {
+    public int ticksPerWheel() {
         return ticksPerWheel;
     }
 
@@ -181,8 +169,7 @@ public class DeadlineTimerWheel
      *
      * @return start time tick for the wheel from which it advances.
      */
-    public long startTime()
-    {
+    public long startTime() {
         return startTime;
     }
 
@@ -191,8 +178,7 @@ public class DeadlineTimerWheel
      *
      * @return number of currently scheduled timers.
      */
-    public long timerCount()
-    {
+    public long timerCount() {
         return timerCount;
     }
 
@@ -202,10 +188,8 @@ public class DeadlineTimerWheel
      * @param startTime to set the wheel to.
      * @throws IllegalStateException if wheel has any scheduled timers.
      */
-    public void resetStartTime(final long startTime)
-    {
-        if (timerCount > 0)
-        {
+    public void resetStartTime(final long startTime) {
+        if (timerCount > 0) {
             throw new IllegalStateException("can not reset startTime with active timers");
         }
 
@@ -219,8 +203,7 @@ public class DeadlineTimerWheel
      *
      * @return time of the current tick of the wheel in {@link #timeUnit()}s.
      */
-    public long currentTickTime()
-    {
+    public long currentTickTime() {
         return currentTickTime0();
     }
 
@@ -234,30 +217,24 @@ public class DeadlineTimerWheel
      *
      * @param now current time to advance to or stay at current time.
      */
-    public void currentTickTime(final long now)
-    {
+    public void currentTickTime(final long now) {
         currentTick = Math.max((now - startTime) >> resolutionBitsToShift, currentTick);
     }
 
     /**
      * Clear out all scheduled timers in the wheel.
      */
-    public void clear()
-    {
+    public void clear() {
         long remainingTimers = timerCount;
-        if (0 == remainingTimers)
-        {
+        if (0 == remainingTimers) {
             return;
         }
 
-        for (int i = 0, length = wheel.length; i < length; i++)
-        {
-            if (NULL_DEADLINE != wheel[i])
-            {
+        for (int i = 0, length = wheel.length; i < length; i++) {
+            if (NULL_DEADLINE != wheel[i]) {
                 wheel[i] = NULL_DEADLINE;
 
-                if (--remainingTimers <= 0)
-                {
+                if (--remainingTimers <= 0) {
                     timerCount = 0;
                     return;
                 }
@@ -272,18 +249,15 @@ public class DeadlineTimerWheel
      * @param deadline after which the timer should expire.
      * @return timerId assigned for the scheduled timer.
      */
-    public long scheduleTimer(final long deadline)
-    {
+    public long scheduleTimer(final long deadline) {
         final long deadlineTick = Math.max((deadline - startTime) >> resolutionBitsToShift, currentTick);
-        final int spokeIndex = (int)(deadlineTick & tickMask);
+        final int spokeIndex = (int) (deadlineTick & tickMask);
         final int tickStartIndex = spokeIndex << allocationBitsToShift;
 
-        for (int i = 0; i < tickAllocation; i++)
-        {
+        for (int i = 0; i < tickAllocation; i++) {
             final int index = tickStartIndex + i;
 
-            if (NULL_DEADLINE == wheel[index])
-            {
+            if (NULL_DEADLINE == wheel[index]) {
                 wheel[index] = deadline;
                 timerCount++;
 
@@ -300,16 +274,13 @@ public class DeadlineTimerWheel
      * @param timerId of the timer to cancel.
      * @return true if successful otherwise false if the timerId did not exist.
      */
-    public boolean cancelTimer(final long timerId)
-    {
+    public boolean cancelTimer(final long timerId) {
         final int spokeIndex = tickForTimerId(timerId);
         final int tickIndex = indexInTickArray(timerId);
         final int wheelIndex = (spokeIndex << allocationBitsToShift) + tickIndex;
 
-        if (spokeIndex < ticksPerWheel)
-        {
-            if (tickIndex < tickAllocation && NULL_DEADLINE != wheel[wheelIndex])
-            {
+        if (spokeIndex < ticksPerWheel) {
+            if (tickIndex < tickAllocation && NULL_DEADLINE != wheel[wheelIndex]) {
                 wheel[wheelIndex] = NULL_DEADLINE;
                 timerCount--;
 
@@ -328,27 +299,22 @@ public class DeadlineTimerWheel
      * @param expiryLimit to process in one poll operation.
      * @return count of expired timers as a result of this poll operation.
      */
-    public int poll(final long now, final TimerHandler handler, final int expiryLimit)
-    {
+    public int poll(final long now, final TimerHandler handler, final int expiryLimit) {
         int timersExpired = 0;
 
-        if (timerCount > 0)
-        {
-            final int spokeIndex = (int)currentTick & tickMask;
+        if (timerCount > 0) {
+            final int spokeIndex = (int) currentTick & tickMask;
 
-            for (int i = 0, length = tickAllocation; i < length && expiryLimit > timersExpired; i++)
-            {
+            for (int i = 0, length = tickAllocation; i < length && expiryLimit > timersExpired; i++) {
                 final int wheelIndex = (spokeIndex << allocationBitsToShift) + pollIndex;
                 final long deadline = wheel[wheelIndex];
 
-                if (now >= deadline)
-                {
+                if (now >= deadline) {
                     wheel[wheelIndex] = NULL_DEADLINE;
                     timerCount--;
                     timersExpired++;
 
-                    if (!handler.onTimerExpiry(timeUnit, now, timerIdForSlot(spokeIndex, pollIndex)))
-                    {
+                    if (!handler.onTimerExpiry(timeUnit, now, timerIdForSlot(spokeIndex, pollIndex))) {
                         wheel[wheelIndex] = deadline;
                         timerCount++;
 
@@ -359,18 +325,13 @@ public class DeadlineTimerWheel
                 pollIndex = (pollIndex + 1) >= length ? 0 : (pollIndex + 1);
             }
 
-            if (expiryLimit > timersExpired && now >= currentTickTime0())
-            {
+            if (expiryLimit > timersExpired && now >= currentTickTime0()) {
                 currentTick++;
                 pollIndex = 0;
-            }
-            else if (pollIndex >= tickAllocation)
-            {
+            } else if (pollIndex >= tickAllocation) {
                 pollIndex = 0;
             }
-        }
-        else if (now >= currentTickTime0())
-        {
+        } else if (now >= currentTickTime0()) {
             currentTick++;
             pollIndex = 0;
         }
@@ -383,20 +344,16 @@ public class DeadlineTimerWheel
      *
      * @param consumer to call for each active timer.
      */
-    public void forEach(final TimerConsumer consumer)
-    {
+    public void forEach(final TimerConsumer consumer) {
         long timersRemaining = timerCount;
 
-        for (int i = 0, length = wheel.length; i < length; i++)
-        {
+        for (int i = 0, length = wheel.length; i < length; i++) {
             final long deadline = wheel[i];
 
-            if (NULL_DEADLINE != deadline)
-            {
+            if (NULL_DEADLINE != deadline) {
                 consumer.accept(deadline, timerIdForSlot(i >> allocationBitsToShift, i & tickMask));
 
-                if (--timersRemaining <= 0)
-                {
+                if (--timersRemaining <= 0) {
                     return;
                 }
             }
@@ -409,16 +366,13 @@ public class DeadlineTimerWheel
      * @param timerId of the timer to return the deadline of.
      * @return deadline for the given timerId or {@link #NULL_DEADLINE} if timerId is not scheduled.
      */
-    public long deadline(final long timerId)
-    {
+    public long deadline(final long timerId) {
         final int spokeIndex = tickForTimerId(timerId);
         final int tickIndex = indexInTickArray(timerId);
         final int wheelIndex = (spokeIndex << allocationBitsToShift) + tickIndex;
 
-        if (spokeIndex < ticksPerWheel)
-        {
-            if (tickIndex < tickAllocation)
-            {
+        if (spokeIndex < ticksPerWheel) {
+            if (tickIndex < tickAllocation) {
                 return wheel[wheelIndex];
             }
         }
@@ -426,27 +380,23 @@ public class DeadlineTimerWheel
         return NULL_DEADLINE;
     }
 
-    private long currentTickTime0()
-    {
+    private long currentTickTime0() {
         return ((currentTick + 1L) << resolutionBitsToShift) + startTime;
     }
 
-    private long increaseCapacity(final long deadline, final int spokeIndex)
-    {
+    private long increaseCapacity(final long deadline, final int spokeIndex) {
         final int newTickAllocation = tickAllocation << 1;
         final int newAllocationBitsToShift = Integer.numberOfTrailingZeros(newTickAllocation);
 
-        final long newCapacity = (long)ticksPerWheel * newTickAllocation;
-        if (newCapacity > (1 << 30))
-        {
+        final long newCapacity = (long) ticksPerWheel * newTickAllocation;
+        if (newCapacity > (1 << 30)) {
             throw new IllegalStateException("max capacity reached at tickAllocation=" + tickAllocation);
         }
 
-        final long[] newWheel = new long[(int)newCapacity];
+        final long[] newWheel = new long[(int) newCapacity];
         Arrays.fill(newWheel, NULL_DEADLINE);
 
-        for (int j = 0; j < ticksPerWheel; j++)
-        {
+        for (int j = 0; j < ticksPerWheel; j++) {
             final int oldTickStartIndex = j << allocationBitsToShift;
             final int newTickStartIndex = j << newAllocationBitsToShift;
             System.arraycopy(wheel, oldTickStartIndex, newWheel, newTickStartIndex, tickAllocation);
@@ -463,41 +413,32 @@ public class DeadlineTimerWheel
         return timerId;
     }
 
-    private static long timerIdForSlot(final int tickOnWheel, final int tickArrayIndex)
-    {
-        return ((long)tickOnWheel << 32) | tickArrayIndex;
+    private static long timerIdForSlot(final int tickOnWheel, final int tickArrayIndex) {
+        return ((long) tickOnWheel << 32) | tickArrayIndex;
     }
 
-    private static int tickForTimerId(final long timerId)
-    {
-        return (int)(timerId >> 32);
+    private static int tickForTimerId(final long timerId) {
+        return (int) (timerId >> 32);
     }
 
-    private static int indexInTickArray(final long timerId)
-    {
-        return (int)timerId;
+    private static int indexInTickArray(final long timerId) {
+        return (int) timerId;
     }
 
-    private static void checkTicksPerWheel(final int ticksPerWheel)
-    {
-        if (!BitUtil.isPowerOfTwo(ticksPerWheel))
-        {
+    private static void checkTicksPerWheel(final int ticksPerWheel) {
+        if (!BitUtil.isPowerOfTwo(ticksPerWheel)) {
             throw new IllegalArgumentException("ticks per wheel must be a power of 2: " + ticksPerWheel);
         }
     }
 
-    private static void checkResolution(final long tickResolution)
-    {
-        if (!BitUtil.isPowerOfTwo(tickResolution))
-        {
+    private static void checkResolution(final long tickResolution) {
+        if (!BitUtil.isPowerOfTwo(tickResolution)) {
             throw new IllegalArgumentException("tick resolution must be a power of 2: " + tickResolution);
         }
     }
 
-    private static void checkInitialTickAllocation(final int tickAllocation)
-    {
-        if (!BitUtil.isPowerOfTwo(tickAllocation))
-        {
+    private static void checkInitialTickAllocation(final int tickAllocation) {
+        if (!BitUtil.isPowerOfTwo(tickAllocation)) {
             throw new IllegalArgumentException("tick allocation must be a power of 2: " + tickAllocation);
         }
     }

@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,13 +12,13 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.io;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.DirectBuffer;
-
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteOrder;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.DirectBuffer;
 
 /**
  * A data input implementation that reads from a DirectBuffer. It adheres to the contract defined in {@link DataInput}
@@ -33,8 +30,8 @@ import java.nio.ByteOrder;
  * implementations. Agrona buffers use {@link ByteOrder#LITTLE_ENDIAN} (unless overridden). Use
  * {@link #byteOrder(ByteOrder)} method to switch between JDK and Agrona compatibility.
  */
-public class DirectBufferDataInput implements DataInput
-{
+public class DirectBufferDataInput implements DataInput {
+
     private DirectBuffer buffer;
 
     private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
@@ -48,8 +45,7 @@ public class DirectBufferDataInput implements DataInput
      * @param buffer to wrap.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferDataInput(final DirectBuffer buffer)
-    {
+    public DirectBufferDataInput(final DirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -61,8 +57,7 @@ public class DirectBufferDataInput implements DataInput
      * @param length in bytes.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferDataInput(final DirectBuffer buffer, final int offset, final int length)
-    {
+    public DirectBufferDataInput(final DirectBuffer buffer, final int offset, final int length) {
         wrap(buffer, offset, length);
     }
 
@@ -71,8 +66,7 @@ public class DirectBufferDataInput implements DataInput
      *
      * @param buffer to wrap.
      */
-    public void wrap(final DirectBuffer buffer)
-    {
+    public void wrap(final DirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -83,10 +77,8 @@ public class DirectBufferDataInput implements DataInput
      * @param offset into the buffer.
      * @param length in bytes.
      */
-    public void wrap(final DirectBuffer buffer, final int offset, final int length)
-    {
-        if (null == buffer)
-        {
+    public void wrap(final DirectBuffer buffer, final int offset, final int length) {
+        if (null == buffer) {
             throw new NullPointerException("buffer cannot be null");
         }
 
@@ -105,10 +97,8 @@ public class DirectBufferDataInput implements DataInput
      *
      * @param byteOrder of the underlying buffer.
      */
-    public void byteOrder(final ByteOrder byteOrder)
-    {
-        if (null == byteOrder)
-        {
+    public void byteOrder(final ByteOrder byteOrder) {
+        if (null == byteOrder) {
             throw new IllegalArgumentException("byteOrder cannot be null");
         }
 
@@ -120,18 +110,15 @@ public class DirectBufferDataInput implements DataInput
      *
      * @return the number of bytes remaining.
      */
-    public int remaining()
-    {
+    public int remaining() {
         return length - position;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void readFully(final byte[] destination) throws EOFException
-    {
-        if (destination == null)
-        {
+    public void readFully(final byte[] destination) throws EOFException {
+        if (destination == null) {
             throw new NullPointerException("Destination must not be null");
         }
 
@@ -141,25 +128,20 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public void readFully(final byte[] destination, final int destinationOffset, final int length) throws EOFException
-    {
-        if (destination == null)
-        {
+    public void readFully(final byte[] destination, final int destinationOffset, final int length) throws EOFException {
+        if (destination == null) {
             throw new NullPointerException("Destination must not be null");
         }
 
-        if (destinationOffset < 0)
-        {
+        if (destinationOffset < 0) {
             throw new IndexOutOfBoundsException("invalid destinationOffset: " + destinationOffset);
         }
 
-        if (length < 0)
-        {
+        if (length < 0) {
             throw new IndexOutOfBoundsException("invalid length: " + length);
         }
 
-        if (destinationOffset + length > destination.length)
-        {
+        if (destinationOffset + length > destination.length) {
             throw new IndexOutOfBoundsException(
                 "destinationOffset=" + destinationOffset + " length=" + length + " not valid for length=" + length);
         }
@@ -172,8 +154,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public int skipBytes(final int n)
-    {
+    public int skipBytes(final int n) {
         final int toSkip = Math.min(n, remaining());
         position += toSkip;
 
@@ -183,8 +164,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public boolean readBoolean() throws EOFException
-    {
+    public boolean readBoolean() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_BYTE);
 
         return buffer.getByte(position++) != 0;
@@ -193,8 +173,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public byte readByte() throws EOFException
-    {
+    public byte readByte() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_BYTE);
 
         return buffer.getByte(position++);
@@ -203,8 +182,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public int readUnsignedByte() throws EOFException
-    {
+    public int readUnsignedByte() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_BYTE);
 
         return buffer.getByte(position++) & 0xFF;
@@ -213,8 +191,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public short readShort() throws EOFException
-    {
+    public short readShort() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_SHORT);
 
         final short result = buffer.getShort(position, byteOrder);
@@ -226,8 +203,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public int readUnsignedShort() throws EOFException
-    {
+    public int readUnsignedShort() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_SHORT);
 
         final int result = buffer.getShort(position, byteOrder) & 0xFFFF;
@@ -239,8 +215,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public char readChar() throws EOFException
-    {
+    public char readChar() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_CHAR);
 
         final char result = buffer.getChar(position, byteOrder);
@@ -252,8 +227,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public int readInt() throws EOFException
-    {
+    public int readInt() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_INT);
 
         final int result = buffer.getInt(position, byteOrder);
@@ -265,8 +239,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public long readLong() throws EOFException
-    {
+    public long readLong() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_LONG);
 
         final long result = buffer.getLong(position, byteOrder);
@@ -278,8 +251,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public float readFloat() throws EOFException
-    {
+    public float readFloat() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_FLOAT);
 
         final float result = buffer.getFloat(position, byteOrder);
@@ -291,8 +263,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public double readDouble() throws EOFException
-    {
+    public double readDouble() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_DOUBLE);
 
         final double result = buffer.getDouble(position, byteOrder);
@@ -304,10 +275,8 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public String readLine() throws IOException
-    {
-        if (remaining() == 0)
-        {
+    public String readLine() throws IOException {
+        if (remaining() == 0) {
             return null;
         }
 
@@ -326,25 +295,19 @@ public class DirectBufferDataInput implements DataInput
      * @return number of bytes the stream advanced while reading the line (including line terminators).
      * @throws IOException propagated from {@link Appendable#append(char)}.
      */
-    public int readLine(final Appendable appendable) throws IOException
-    {
+    public int readLine(final Appendable appendable) throws IOException {
         final int startingPosition = position;
 
-        while (remaining() > 0)
-        {
+        while (remaining() > 0) {
             final int nextByte = readByte();
-            if (nextByte == '\n')
-            {
+            if (nextByte == '\n') {
                 return position - startingPosition;
             }
 
-            if (nextByte == '\r')
-            {
-                if (remaining() > 0)
-                {
+            if (nextByte == '\r') {
+                if (remaining() > 0) {
                     final byte peek = readByte();
-                    if (peek != '\n')
-                    {
+                    if (peek != '\n') {
                         skipBytes(-1);
                     }
                 }
@@ -352,7 +315,7 @@ public class DirectBufferDataInput implements DataInput
                 return position - startingPosition;
             }
 
-            appendable.append((char)nextByte);
+            appendable.append((char) nextByte);
         }
 
         return position - startingPosition;
@@ -361,8 +324,7 @@ public class DirectBufferDataInput implements DataInput
     /**
      * {@inheritDoc}
      */
-    public String readUTF() throws EOFException
-    {
+    public String readUTF() throws EOFException {
         boundsCheck0(BitUtil.SIZE_OF_SHORT);
         final short size = readShort();
 
@@ -382,8 +344,7 @@ public class DirectBufferDataInput implements DataInput
      *
      * @return the String as represented by the ASCII encoded bytes.
      */
-    public String readStringUTF8()
-    {
+    public String readStringUTF8() {
         final String stringUtf8 = buffer.getStringUtf8(position, byteOrder);
 
         position += stringUtf8.length();
@@ -399,8 +360,7 @@ public class DirectBufferDataInput implements DataInput
      *
      * @return the String as represented by the ASCII encoded bytes.
      */
-    public String readStringAscii()
-    {
+    public String readStringAscii() {
         final String stringAscii = buffer.getStringAscii(position, byteOrder);
 
         position += stringAscii.length();
@@ -415,38 +375,31 @@ public class DirectBufferDataInput implements DataInput
      * @param appendable to append the chars to.
      * @return the number of bytes copied.
      */
-    public int readStringAscii(final Appendable appendable)
-    {
+    public int readStringAscii(final Appendable appendable) {
         final int bytesRead = buffer.getStringAscii(position, appendable, byteOrder);
         position += bytesRead;
 
         return bytesRead;
     }
 
-    private void boundsCheck0(final int requestedReadBytes) throws EOFException
-    {
+    private void boundsCheck0(final int requestedReadBytes) throws EOFException {
         final long resultingPosition = position + requestedReadBytes;
-        if (resultingPosition > length)
-        {
+        if (resultingPosition > length) {
             throw new EOFException(
                 "position=" + position + " requestedReadBytes=" + requestedReadBytes + " capacity=" + length);
         }
     }
 
-    private static void boundsCheckWrap(final int offset, final int length, final int capacity)
-    {
-        if (offset < 0)
-        {
+    private static void boundsCheckWrap(final int offset, final int length, final int capacity) {
+        if (offset < 0) {
             throw new IllegalArgumentException("invalid offset: " + offset);
         }
 
-        if (length < 0)
-        {
+        if (length < 0) {
             throw new IllegalArgumentException("invalid length: " + length);
         }
 
-        if ((offset > capacity - length) || (length > capacity - offset))
-        {
+        if ((offset > capacity - length) || (length > capacity - offset)) {
             throw new IllegalArgumentException(
                 "offset=" + offset + " length=" + length + " not valid for capacity=" + capacity);
         }

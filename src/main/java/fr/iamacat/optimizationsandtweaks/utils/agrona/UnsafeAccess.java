@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +12,15 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona;
 
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
+
+import sun.misc.Unsafe;
 
 /**
  * Obtain access the {@link Unsafe} class for direct memory operations.
  */
-public final class UnsafeAccess
-{
+public final class UnsafeAccess {
+
     /**
      * Reference to the {@link Unsafe} instance.
      */
@@ -49,24 +46,17 @@ public final class UnsafeAccess
      */
     public static final int MEMSET_HACK_THRESHOLD;
 
-    static
-    {
+    static {
         Unsafe unsafe = null;
-        try
-        {
+        try {
             unsafe = Unsafe.getUnsafe();
-        }
-        catch (final Exception ex)
-        {
-            try
-            {
+        } catch (final Exception ex) {
+            try {
                 final Field f = Unsafe.class.getDeclaredField("theUnsafe");
                 f.setAccessible(true);
 
-                unsafe = (Unsafe)f.get(null);
-            }
-            catch (final Exception ex2)
-            {
+                unsafe = (Unsafe) f.get(null);
+            } catch (final Exception ex2) {
                 LangUtil.rethrowUnchecked(ex);
             }
         }
@@ -75,20 +65,15 @@ public final class UnsafeAccess
         ARRAY_BYTE_BASE_OFFSET = unsafe.arrayBaseOffset(byte[].class);
 
         boolean memsetHackRequired;
-        try
-        {
+        try {
             Class.forName("java.lang.Runtime$Version"); // since JDK 9
             memsetHackRequired = false;
-        }
-        catch (final ClassNotFoundException ex)
-        {
+        } catch (final ClassNotFoundException ex) {
             memsetHackRequired = true;
         }
         MEMSET_HACK_REQUIRED = memsetHackRequired;
         MEMSET_HACK_THRESHOLD = 64;
     }
 
-    private UnsafeAccess()
-    {
-    }
+    private UnsafeAccess() {}
 }

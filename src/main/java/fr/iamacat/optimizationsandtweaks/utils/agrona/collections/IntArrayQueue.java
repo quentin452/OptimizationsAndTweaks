@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +12,15 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-
-import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
-
 import java.util.AbstractQueue;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 
 /**
  * Queue of ints which stores the elements without boxing. Null is represented by a special {@link #nullValue()}.
@@ -33,8 +29,8 @@ import java.util.function.IntConsumer;
  * <p>
  * <b>Note:</b> This class is not threadsafe.
  */
-public class IntArrayQueue extends AbstractQueue<Integer>
-{
+public class IntArrayQueue extends AbstractQueue<Integer> {
+
     /**
      * Default representation of null for an element.
      */
@@ -43,10 +39,12 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * Minimum capacity for the queue which must also be a power of 2.
      */
-    @DoNotSub public static final int MIN_CAPACITY = 8;
+    @DoNotSub
+    public static final int MIN_CAPACITY = 8;
 
     private final boolean shouldAvoidAllocation;
-    @DoNotSub private int head;
+    @DoNotSub
+    private int head;
     @DoNotSub
     private int tail;
     private final int nullValue;
@@ -57,8 +55,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * Construct a new queue defaulting to {@link #MIN_CAPACITY} capacity, {@link #DEFAULT_NULL_VALUE}
      * and cached iterators.
      */
-    public IntArrayQueue()
-    {
+    public IntArrayQueue() {
         this(MIN_CAPACITY, DEFAULT_NULL_VALUE, true);
     }
 
@@ -67,8 +64,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @param nullValue cannot be stored in the queue and used as a sentinel.
      */
-    public IntArrayQueue(final int nullValue)
-    {
+    public IntArrayQueue(final int nullValue) {
         this(MIN_CAPACITY, nullValue, true);
     }
 
@@ -78,10 +74,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @param initialCapacity for the queue which will be rounded up to the nearest power of 2.
      * @param nullValue       which cannot be stored in the queue and used as a sentinel.
      */
-    public IntArrayQueue(
-        @DoNotSub final int initialCapacity,
-        final int nullValue)
-    {
+    public IntArrayQueue(@DoNotSub final int initialCapacity, final int nullValue) {
         this(initialCapacity, nullValue, true);
     }
 
@@ -92,22 +85,18 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @param nullValue             which cannot be stored in the queue and used as a sentinel.
      * @param shouldAvoidAllocation true to cache the iterator otherwise false to allocate a new iterator each time.
      */
-    public IntArrayQueue(
-        @DoNotSub final int initialCapacity,
-        final int nullValue,
-        final boolean shouldAvoidAllocation)
-    {
+    public IntArrayQueue(@DoNotSub final int initialCapacity, final int nullValue,
+        final boolean shouldAvoidAllocation) {
         this.nullValue = nullValue;
         this.shouldAvoidAllocation = shouldAvoidAllocation;
 
-        if (initialCapacity < MIN_CAPACITY)
-        {
+        if (initialCapacity < MIN_CAPACITY) {
             throw new IllegalArgumentException("initial capacity < MIN_INITIAL_CAPACITY : " + initialCapacity);
         }
 
-        @DoNotSub final int capacity = BitUtil.findNextPositivePowerOfTwo(initialCapacity);
-        if (capacity < MIN_CAPACITY)
-        {
+        @DoNotSub
+        final int capacity = BitUtil.findNextPositivePowerOfTwo(initialCapacity);
+        if (capacity < MIN_CAPACITY) {
             throw new IllegalArgumentException("invalid initial capacity: " + initialCapacity);
         }
 
@@ -120,8 +109,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @return value representing a null element.
      */
-    public int nullValue()
-    {
+    public int nullValue() {
         return nullValue;
     }
 
@@ -130,34 +118,31 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @return the current capacity for the collection.
      */
-    @DoNotSub public int capacity()
-    {
+    @DoNotSub
+    public int capacity() {
         return elements.length;
     }
 
     /**
      * {@inheritDoc}
      */
-    @DoNotSub public int size()
-    {
+    @DoNotSub
+    public int size() {
         return (tail - head) & (elements.length - 1);
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return head == tail;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void clear()
-    {
-        if (head != tail)
-        {
+    public void clear() {
+        if (head != tail) {
             Arrays.fill(elements, nullValue);
             head = 0;
             tail = 0;
@@ -167,8 +152,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean offer(final Integer element)
-    {
+    public boolean offer(final Integer element) {
         return offerInt(element);
     }
 
@@ -178,18 +162,15 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @param element to be offered to the queue.
      * @return will always be true as long as the underlying array can be expanded.
      */
-    public boolean offerInt(final int element)
-    {
-        if (nullValue == element)
-        {
+    public boolean offerInt(final int element) {
+        if (nullValue == element) {
             throw new NullPointerException(); // @DoNotSub
         }
 
         elements[tail] = element;
         tail = (tail + 1) & (elements.length - 1);
 
-        if (tail == head)
-        {
+        if (tail == head) {
             increaseCapacity();
         }
 
@@ -199,8 +180,7 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean add(final Integer element)
-    {
+    public boolean add(final Integer element) {
         return offerInt(element);
     }
 
@@ -210,16 +190,14 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @param element to be offered to the queue.
      * @return will always be true as long as the underlying array can be expanded.
      */
-    public boolean addInt(final int element)
-    {
+    public boolean addInt(final int element) {
         return offerInt(element);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Integer peek()
-    {
+    public Integer peek() {
         final int element = elements[head];
 
         return element == nullValue ? null : element;
@@ -230,16 +208,14 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @return the element at the head of the queue without removing it.
      */
-    public int peekInt()
-    {
+    public int peekInt() {
         return elements[head];
     }
 
     /**
      * {@inheritDoc}
      */
-    public Integer poll()
-    {
+    public Integer poll() {
         final int element = pollInt();
 
         return element == nullValue ? null : element;
@@ -250,11 +226,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @return the element at the head of the queue removing it. If empty then {@link #nullValue}.
      */
-    public int pollInt()
-    {
+    public int pollInt() {
         final int element = elements[head];
-        if (nullValue == element)
-        {
+        if (nullValue == element) {
             return nullValue;
         }
 
@@ -267,11 +241,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public Integer remove()
-    {
+    public Integer remove() {
         final int element = pollInt();
-        if (nullValue == element)
-        {
+        if (nullValue == element) {
             throw new NoSuchElementException();
         }
 
@@ -281,11 +253,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public Integer element()
-    {
+    public Integer element() {
         final int element = elements[head];
-        if (nullValue == element)
-        {
+        if (nullValue == element) {
             throw new NoSuchElementException();
         }
 
@@ -298,11 +268,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @return the element at the head of the queue without removing it.
      * @throws NoSuchElementException if the queue is empty.
      */
-    public int elementInt()
-    {
+    public int elementInt() {
         final int element = elements[head];
-        if (nullValue == element)
-        {
+        if (nullValue == element) {
             throw new NoSuchElementException();
         }
 
@@ -315,11 +283,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      * @return the element at the head of the queue.
      * @throws NoSuchElementException if the queue is empty.
      */
-    public int removeInt()
-    {
+    public int removeInt() {
         final int element = pollInt();
-        if (nullValue == element)
-        {
+        if (nullValue == element) {
             throw new NoSuchElementException();
         }
 
@@ -329,19 +295,18 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append('[');
 
-        for (@DoNotSub int i = head; i != tail; )
-        {
-            sb.append(elements[i]).append(", ");
+        for (@DoNotSub
+        int i = head; i != tail;) {
+            sb.append(elements[i])
+                .append(", ");
             i = (i + 1) & (elements.length - 1);
         }
 
-        if (sb.length() > 1)
-        {
+        if (sb.length() > 1) {
             sb.setLength(sb.length() - 2);
         }
 
@@ -353,10 +318,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public void forEach(final Consumer<? super Integer> action)
-    {
-        for (@DoNotSub int i = head; i != tail; )
-        {
+    public void forEach(final Consumer<? super Integer> action) {
+        for (@DoNotSub
+        int i = head; i != tail;) {
             action.accept(elements[i]);
             i = (i + 1) & (elements.length - 1);
         }
@@ -367,10 +331,9 @@ public class IntArrayQueue extends AbstractQueue<Integer>
      *
      * @param action to be taken for each element.
      */
-    public void forEachInt(final IntConsumer action)
-    {
-        for (@DoNotSub int i = head; i != tail; )
-        {
+    public void forEachInt(final IntConsumer action) {
+        for (@DoNotSub
+        int i = head; i != tail;) {
             action.accept(elements[i]);
             i = (i + 1) & (elements.length - 1);
         }
@@ -379,14 +342,11 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * {@inheritDoc}
      */
-    public IntIterator iterator()
-    {
+    public IntIterator iterator() {
         IntIterator iterator = this.iterator;
-        if (null == iterator)
-        {
+        if (null == iterator) {
             iterator = new IntIterator();
-            if (shouldAvoidAllocation)
-            {
+            if (shouldAvoidAllocation) {
                 this.iterator = iterator;
             }
         }
@@ -394,15 +354,17 @@ public class IntArrayQueue extends AbstractQueue<Integer>
         return iterator.reset();
     }
 
-    private void increaseCapacity()
-    {
-        @DoNotSub final int oldHead = head;
-        @DoNotSub final int oldCapacity = elements.length;
-        @DoNotSub final int toEndOfArray = oldCapacity - oldHead;
-        @DoNotSub final int newCapacity = oldCapacity << 1;
+    private void increaseCapacity() {
+        @DoNotSub
+        final int oldHead = head;
+        @DoNotSub
+        final int oldCapacity = elements.length;
+        @DoNotSub
+        final int toEndOfArray = oldCapacity - oldHead;
+        @DoNotSub
+        final int newCapacity = oldCapacity << 1;
 
-        if (newCapacity < MIN_CAPACITY)
-        {
+        if (newCapacity < MIN_CAPACITY) {
             throw new IllegalStateException("max capacity reached");
         }
 
@@ -419,12 +381,12 @@ public class IntArrayQueue extends AbstractQueue<Integer>
     /**
      * Specialised {@link Iterator} from which the value can be retrieved without boxing via {@link #nextValue()}.
      */
-    public final class IntIterator implements Iterator<Integer>
-    {
-        @DoNotSub private int index;
+    public final class IntIterator implements Iterator<Integer> {
 
-        IntIterator reset()
-        {
+        @DoNotSub
+        private int index;
+
+        IntIterator reset() {
             index = IntArrayQueue.this.head;
             return this;
         }
@@ -432,16 +394,14 @@ public class IntArrayQueue extends AbstractQueue<Integer>
         /**
          * {@inheritDoc}
          */
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return index != tail;
         }
 
         /**
          * {@inheritDoc}
          */
-        public Integer next()
-        {
+        public Integer next() {
             return nextValue();
         }
 
@@ -450,10 +410,8 @@ public class IntArrayQueue extends AbstractQueue<Integer>
          *
          * @return the next value from the queue.
          */
-        public int nextValue()
-        {
-            if (index == tail)
-            {
+        public int nextValue() {
+            if (index == tail) {
                 throw new NoSuchElementException();
             }
 

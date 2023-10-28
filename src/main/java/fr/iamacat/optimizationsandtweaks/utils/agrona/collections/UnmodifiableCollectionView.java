@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +23,8 @@ import java.util.function.Function;
  * @param <V> The type of the view.
  * @param <E> The type of the underlying element.
  */
-public class UnmodifiableCollectionView<V, E> extends AbstractCollection<V>
-{
+public class UnmodifiableCollectionView<V, E> extends AbstractCollection<V> {
+
     private final ReusableIterator iterator = new ReusableIterator();
     private final Function<E, V> viewer;
     private final Collection<E> elements;
@@ -38,8 +35,7 @@ public class UnmodifiableCollectionView<V, E> extends AbstractCollection<V>
      * @param viewer   function.
      * @param elements collection to create a view for.
      */
-    public UnmodifiableCollectionView(final Function<E, V> viewer, final Collection<E> elements)
-    {
+    public UnmodifiableCollectionView(final Function<E, V> viewer, final Collection<E> elements) {
         this.viewer = viewer;
         this.elements = elements;
     }
@@ -47,44 +43,39 @@ public class UnmodifiableCollectionView<V, E> extends AbstractCollection<V>
     /**
      * {@inheritDoc}
      */
-    public int size()
-    {
+    public int size() {
         return elements.size();
     }
 
     /**
      * {@inheritDoc}
      */
-    public ReusableIterator iterator()
-    {
+    public ReusableIterator iterator() {
         return iterator.reset();
     }
 
     /**
      * A stateful reusable iterator.
      */
-    public final class ReusableIterator implements Iterator<V>
-    {
+    public final class ReusableIterator implements Iterator<V> {
+
         private Iterator<E> delegate;
 
         /**
          * {@inheritDoc}
          */
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return delegate.hasNext();
         }
 
         /**
          * {@inheritDoc}
          */
-        public V next()
-        {
+        public V next() {
             return viewer.apply(delegate.next());
         }
 
-        private ReusableIterator reset()
-        {
+        private ReusableIterator reset() {
             delegate = elements.iterator();
 
             return this;

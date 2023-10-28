@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Utilities for inspecting the system.
  */
-public final class SystemUtil
-{
+public final class SystemUtil {
+
     /**
      * PID value if a process id could not be determined. This value should be equal to a kernel only process
      * id for the platform so that it does not indicate a real process id.
@@ -57,46 +54,35 @@ public final class SystemUtil
     private static final String OS_ARCH;
     private static final long PID;
 
-    static
-    {
-        OS_NAME = System.getProperty("os.name").toLowerCase();
+    static {
+        OS_NAME = System.getProperty("os.name")
+            .toLowerCase();
         OS_ARCH = System.getProperty("os.arch", "unknown");
 
         long pid = PID_NOT_FOUND;
-        try
-        {
+        try {
             final Class<?> processHandleClass = Class.forName("java.lang.ProcessHandle");
             final Method currentMethod = processHandleClass.getMethod("current");
             final Object processHandle = currentMethod.invoke(null);
             final Method pidMethod = processHandleClass.getMethod("pid");
-            pid = (Long)pidMethod.invoke(processHandle);
-        }
-        catch (final Throwable ignore)
-        {
-            try
-            {
+            pid = (Long) pidMethod.invoke(processHandle);
+        } catch (final Throwable ignore) {
+            try {
                 final String pidPropertyValue = System.getProperty(SUN_PID_PROP_NAME);
-                if (null != pidPropertyValue)
-                {
+                if (null != pidPropertyValue) {
                     pid = Long.parseLong(pidPropertyValue);
-                }
-                else
-                {
-                    final String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+                } else {
+                    final String jvmName = ManagementFactory.getRuntimeMXBean()
+                        .getName();
                     pid = Long.parseLong(jvmName.split("@")[0]);
                 }
-            }
-            catch (final Throwable ignore2)
-            {
-            }
+            } catch (final Throwable ignore2) {}
         }
 
         PID = pid;
     }
 
-    private SystemUtil()
-    {
-    }
+    private SystemUtil() {}
 
     /**
      * Get the name of the operating system as a lower case String.
@@ -105,8 +91,7 @@ public final class SystemUtil
      *
      * @return the name of the operating system as a lower case String.
      */
-    public static String osName()
-    {
+    public static String osName() {
         return OS_NAME;
     }
 
@@ -117,8 +102,7 @@ public final class SystemUtil
      *
      * @return name of the operating system architecture or {@code unknown}.
      */
-    public static String osArch()
-    {
+    public static String osArch() {
         return OS_ARCH;
     }
 
@@ -128,8 +112,7 @@ public final class SystemUtil
      * @return current process id or {@link #PID_NOT_FOUND} if PID was not found.
      * @see #PID_NOT_FOUND
      */
-    public static long getPid()
-    {
+    public static long getPid() {
         return PID;
     }
 
@@ -138,8 +121,7 @@ public final class SystemUtil
      *
      * @return {@code true} if the operating system is likely to be Windows based on {@link #osName()}.
      */
-    public static boolean isWindows()
-    {
+    public static boolean isWindows() {
         return OS_NAME.startsWith("win");
     }
 
@@ -148,8 +130,7 @@ public final class SystemUtil
      *
      * @return {@code true} if the operating system is likely to be Linux based on {@link #osName()}.
      */
-    public static boolean isLinux()
-    {
+    public static boolean isLinux() {
         return OS_NAME.contains("linux");
     }
 
@@ -158,8 +139,7 @@ public final class SystemUtil
      *
      * @return {@code true} if the operating system architecture represents an x86-based system.
      */
-    public static boolean isX64Arch()
-    {
+    public static boolean isX64Arch() {
         return isX64Arch(OS_ARCH);
     }
 
@@ -168,14 +148,11 @@ public final class SystemUtil
      *
      * @return {@code true} if attached otherwise false.
      */
-    public static boolean isDebuggerAttached()
-    {
+    public static boolean isDebuggerAttached() {
         final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
-        for (final String arg : runtimeMXBean.getInputArguments())
-        {
-            if (arg.contains("-agentlib:jdwp"))
-            {
+        for (final String arg : runtimeMXBean.getInputArguments()) {
+            if (arg.contains("-agentlib:jdwp")) {
                 return true;
             }
         }
@@ -188,11 +165,9 @@ public final class SystemUtil
      *
      * @return tmp directory for the runtime.
      */
-    public static String tmpDirName()
-    {
+    public static String tmpDirName() {
         String tmpDirName = System.getProperty("java.io.tmpdir");
-        if (!tmpDirName.endsWith(File.separator))
-        {
+        if (!tmpDirName.endsWith(File.separator)) {
             tmpDirName += File.separator;
         }
 
@@ -204,8 +179,7 @@ public final class SystemUtil
      *
      * @return a formatted dump of all threads with associated state and stack traces.
      */
-    public static String threadDump()
-    {
+    public static String threadDump() {
         final StringBuilder sb = new StringBuilder();
         threadDump(sb);
 
@@ -217,19 +191,19 @@ public final class SystemUtil
      *
      * @param sb to write the thread dump to.
      */
-    public static void threadDump(final StringBuilder sb)
-    {
+    public static void threadDump(final StringBuilder sb) {
         final ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
 
-        for (final ThreadInfo threadInfo : mxBean.getThreadInfo(mxBean.getAllThreadIds(), Integer.MAX_VALUE))
-        {
-            if (null != threadInfo)
-            {
-                sb.append('"').append(threadInfo.getThreadName()).append("\": ").append(threadInfo.getThreadState());
+        for (final ThreadInfo threadInfo : mxBean.getThreadInfo(mxBean.getAllThreadIds(), Integer.MAX_VALUE)) {
+            if (null != threadInfo) {
+                sb.append('"')
+                    .append(threadInfo.getThreadName())
+                    .append("\": ")
+                    .append(threadInfo.getThreadState());
 
-                for (final StackTraceElement stackTraceElement : threadInfo.getStackTrace())
-                {
-                    sb.append("\n    at ").append(stackTraceElement.toString());
+                for (final StackTraceElement stackTraceElement : threadInfo.getStackTrace()) {
+                    sb.append("\n    at ")
+                        .append(stackTraceElement.toString());
                 }
 
                 sb.append("\n\n");
@@ -245,8 +219,7 @@ public final class SystemUtil
      *
      * @param filenameOrUrl that holds properties.
      */
-    public static void loadPropertiesFile(final String filenameOrUrl)
-    {
+    public static void loadPropertiesFile(final String filenameOrUrl) {
         loadPropertiesFile(PropertyAction.REPLACE, filenameOrUrl);
     }
 
@@ -259,39 +232,26 @@ public final class SystemUtil
      * @param propertyAction to take with each loaded property.
      * @param filenameOrUrl  that holds properties.
      */
-    public static void loadPropertiesFile(final PropertyAction propertyAction, final String filenameOrUrl)
-    {
-        final URL resource = ClassLoader.getSystemClassLoader().getResource(filenameOrUrl);
-        if (null != resource)
-        {
-            try (InputStream in = resource.openStream())
-            {
+    public static void loadPropertiesFile(final PropertyAction propertyAction, final String filenameOrUrl) {
+        final URL resource = ClassLoader.getSystemClassLoader()
+            .getResource(filenameOrUrl);
+        if (null != resource) {
+            try (InputStream in = resource.openStream()) {
                 loadProperties(propertyAction, in);
-            }
-            catch (final Exception ignore)
-            {
-            }
+            } catch (final Exception ignore) {}
         }
 
         final File file = new File(filenameOrUrl);
-        if (file.exists())
-        {
-            try (InputStream in = Files.newInputStream(file.toPath()))
-            {
+        if (file.exists()) {
+            try (InputStream in = Files.newInputStream(file.toPath())) {
                 loadProperties(propertyAction, in);
-            }
-            catch (final Exception ignore)
-            {
-            }
+            } catch (final Exception ignore) {}
         }
 
-        try (InputStream in = new URI(filenameOrUrl).toURL().openStream())
-        {
+        try (InputStream in = new URI(filenameOrUrl).toURL()
+            .openStream()) {
             loadProperties(propertyAction, in);
-        }
-        catch (final Exception ignore)
-        {
-        }
+        } catch (final Exception ignore) {}
     }
 
     /**
@@ -300,8 +260,7 @@ public final class SystemUtil
      * @param filenamesOrUrls that holds properties.
      * @see #loadPropertiesFile(String)
      */
-    public static void loadPropertiesFiles(final String... filenamesOrUrls)
-    {
+    public static void loadPropertiesFiles(final String... filenamesOrUrls) {
         loadPropertiesFiles(PropertyAction.REPLACE, filenamesOrUrls);
     }
 
@@ -312,10 +271,8 @@ public final class SystemUtil
      * @param filenamesOrUrls that holds properties.
      * @see #loadPropertiesFile(String)
      */
-    public static void loadPropertiesFiles(final PropertyAction propertyAction, final String... filenamesOrUrls)
-    {
-        for (final String filenameOrUrl : filenamesOrUrls)
-        {
+    public static void loadPropertiesFiles(final PropertyAction propertyAction, final String... filenamesOrUrls) {
+        for (final String filenameOrUrl : filenamesOrUrls) {
             loadPropertiesFile(propertyAction, filenameOrUrl);
         }
     }
@@ -326,10 +283,9 @@ public final class SystemUtil
      *
      * @param propertyName to get the value for.
      * @return the value of a {@link System#getProperty(String)} with the exception that if the value is
-     * {@link #NULL_PROPERTY_VALUE} then return {@code null}.
+     *         {@link #NULL_PROPERTY_VALUE} then return {@code null}.
      */
-    public static String getProperty(final String propertyName)
-    {
+    public static String getProperty(final String propertyName) {
         final String propertyValue = System.getProperty(propertyName);
 
         return NULL_PROPERTY_VALUE.equals(propertyValue) ? null : propertyValue;
@@ -343,14 +299,13 @@ public final class SystemUtil
      * @param propertyName to get the value for.
      * @param defaultValue to use if the property is not set.
      * @return the value of a {@link System#getProperty(String, String)} with the exception that if the value is
-     * {@link #NULL_PROPERTY_VALUE} then return {@code null}, otherwise if the value is not set then return the default
-     * value.
+     *         {@link #NULL_PROPERTY_VALUE} then return {@code null}, otherwise if the value is not set then return the
+     *         default
+     *         value.
      */
-    public static String getProperty(final String propertyName, final String defaultValue)
-    {
+    public static String getProperty(final String propertyName, final String defaultValue) {
         final String propertyValue = System.getProperty(propertyName);
-        if (NULL_PROPERTY_VALUE.equals(propertyValue))
-        {
+        if (NULL_PROPERTY_VALUE.equals(propertyValue)) {
             return null;
         }
 
@@ -366,19 +321,16 @@ public final class SystemUtil
      * @return the int value.
      * @throws NumberFormatException if the value is out of range or mal-formatted.
      */
-    public static int getSizeAsInt(final String propertyName, final int defaultValue)
-    {
+    public static int getSizeAsInt(final String propertyName, final int defaultValue) {
         final String propertyValue = System.getProperty(propertyName);
-        if (propertyValue != null)
-        {
+        if (propertyValue != null) {
             final long value = parseSize(propertyName, propertyValue);
-            if (value < 0 || value > Integer.MAX_VALUE)
-            {
+            if (value < 0 || value > Integer.MAX_VALUE) {
                 throw new NumberFormatException(
                     propertyName + " must positive and less than Integer.MAX_VALUE: " + value);
             }
 
-            return (int)value;
+            return (int) value;
         }
 
         return defaultValue;
@@ -393,14 +345,11 @@ public final class SystemUtil
      * @return the long value.
      * @throws NumberFormatException if the value is out of range or mal-formatted.
      */
-    public static long getSizeAsLong(final String propertyName, final long defaultValue)
-    {
+    public static long getSizeAsLong(final String propertyName, final long defaultValue) {
         final String propertyValue = System.getProperty(propertyName);
-        if (propertyValue != null)
-        {
+        if (propertyValue != null) {
             final long value = parseSize(propertyName, propertyValue);
-            if (value < 0)
-            {
+            if (value < 0) {
                 throw new NumberFormatException(propertyName + " must be positive: " + value);
             }
 
@@ -419,46 +368,39 @@ public final class SystemUtil
      * @return the long value.
      * @throws NumberFormatException if the value is out of range or mal-formatted.
      */
-    public static long parseSize(final String propertyName, final String propertyValue)
-    {
+    public static long parseSize(final String propertyName, final String propertyValue) {
         final int lengthMinusSuffix = propertyValue.length() - 1;
         final char lastCharacter = propertyValue.charAt(lengthMinusSuffix);
-        if (Character.isDigit(lastCharacter))
-        {
+        if (Character.isDigit(lastCharacter)) {
             return Long.parseLong(propertyValue);
         }
 
         final long value = AsciiEncoding.parseLongAscii(propertyValue, 0, lengthMinusSuffix);
 
-        switch (lastCharacter)
-        {
+        switch (lastCharacter) {
             case 'k':
             case 'K':
-                if (value > MAX_K_VALUE)
-                {
+                if (value > MAX_K_VALUE) {
                     throw new NumberFormatException(propertyName + " would overflow a long: " + propertyValue);
                 }
                 return value * 1024;
 
             case 'm':
             case 'M':
-                if (value > MAX_M_VALUE)
-                {
+                if (value > MAX_M_VALUE) {
                     throw new NumberFormatException(propertyName + " would overflow a long: " + propertyValue);
                 }
                 return value * 1024 * 1024;
 
             case 'g':
             case 'G':
-                if (value > MAX_G_VALUE)
-                {
+                if (value > MAX_G_VALUE) {
                     throw new NumberFormatException(propertyName + " would overflow a long: " + propertyValue);
                 }
                 return value * 1024 * 1024 * 1024;
 
             default:
-                throw new NumberFormatException(
-                    propertyName + ": " + propertyValue + " should end with: k, m, or g.");
+                throw new NumberFormatException(propertyName + ": " + propertyValue + " should end with: k, m, or g.");
         }
     }
 
@@ -473,14 +415,11 @@ public final class SystemUtil
      * @return the long value.
      * @throws NumberFormatException if the value is negative or malformed.
      */
-    public static long getDurationInNanos(final String propertyName, final long defaultValue)
-    {
+    public static long getDurationInNanos(final String propertyName, final long defaultValue) {
         final String propertyValue = System.getProperty(propertyName);
-        if (propertyValue != null)
-        {
+        if (propertyValue != null) {
             final long value = parseDuration(propertyName, propertyValue);
-            if (value < 0)
-            {
+            if (value < 0) {
                 throw new NumberFormatException(propertyName + " must be positive: " + value);
             }
 
@@ -501,31 +440,26 @@ public final class SystemUtil
      * @return the long value.
      * @throws NumberFormatException if the value is negative or malformed.
      */
-    public static long parseDuration(final String propertyName, final String propertyValue)
-    {
+    public static long parseDuration(final String propertyName, final String propertyValue) {
         final char lastCharacter = propertyValue.charAt(propertyValue.length() - 1);
-        if (Character.isDigit(lastCharacter))
-        {
+        if (Character.isDigit(lastCharacter)) {
             return Long.parseLong(propertyValue);
         }
 
-        if (lastCharacter != 's' && lastCharacter != 'S')
-        {
+        if (lastCharacter != 's' && lastCharacter != 'S') {
             throw new NumberFormatException(
                 propertyName + ": " + propertyValue + " should end with: s, ms, us, or ns.");
         }
 
         final char secondLastCharacter = propertyValue.charAt(propertyValue.length() - 2);
-        if (Character.isDigit(secondLastCharacter))
-        {
+        if (Character.isDigit(secondLastCharacter)) {
             final long value = AsciiEncoding.parseLongAscii(propertyValue, 0, propertyValue.length() - 1);
             return TimeUnit.SECONDS.toNanos(value);
         }
 
         final long value = AsciiEncoding.parseLongAscii(propertyValue, 0, propertyValue.length() - 2);
 
-        switch (secondLastCharacter)
-        {
+        switch (secondLastCharacter) {
             case 'n':
             case 'N':
                 return value;
@@ -544,34 +478,28 @@ public final class SystemUtil
         }
     }
 
-    static boolean isX64Arch(final String arch)
-    {
+    static boolean isX64Arch(final String arch) {
         return arch.equals("amd64") || arch.equals("x86_64") || arch.equals("x64");
     }
 
-    private static void loadProperties(final PropertyAction propertyAction, final InputStream in) throws IOException
-    {
+    private static void loadProperties(final PropertyAction propertyAction, final InputStream in) throws IOException {
         final Properties systemProperties = System.getProperties();
         final Properties properties = new Properties();
 
         properties.load(in);
-        properties.forEach(
-            (k, v) ->
-            {
-                switch (propertyAction)
-                {
-                    case PRESERVE:
-                        if (!systemProperties.containsKey(k))
-                        {
-                            systemProperties.setProperty((String)k, (String)v);
-                        }
-                        break;
+        properties.forEach((k, v) -> {
+            switch (propertyAction) {
+                case PRESERVE:
+                    if (!systemProperties.containsKey(k)) {
+                        systemProperties.setProperty((String) k, (String) v);
+                    }
+                    break;
 
-                    default:
-                    case REPLACE:
-                        systemProperties.setProperty((String)k, (String)v);
-                        break;
-                }
-            });
+                default:
+                case REPLACE:
+                    systemProperties.setProperty((String) k, (String) v);
+                    break;
+            }
+        });
     }
 }

@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +16,8 @@ package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
  * Holder for an int value that is mutable. Useful for being a counter in a {@link java.util.Map} or for passing by
  * reference.
  */
-public class MutableInteger extends Number implements Comparable<MutableInteger>
-{
+public class MutableInteger extends Number implements Comparable<MutableInteger> {
+
     private static final long serialVersionUID = 985259236882848264L;
     /**
      * The value. Default value is {@code 0}.
@@ -30,17 +27,14 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
     /**
      * Default constructor.
      */
-    public MutableInteger()
-    {
-    }
+    public MutableInteger() {}
 
     /**
      * Creates an instance with a value.
      *
      * @param value to assign.
      */
-    public MutableInteger(final int value)
-    {
+    public MutableInteger(final int value) {
         this.value = value;
     }
 
@@ -49,8 +43,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return the value.
      */
-    public int get()
-    {
+    public int get() {
         return value;
     }
 
@@ -59,8 +52,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @param value to be assigned.
      */
-    public void set(final int value)
-    {
+    public void set(final int value) {
         this.value = value;
     }
 
@@ -69,9 +61,8 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code byte}.
      */
-    public byte byteValue()
-    {
-        return (byte)value;
+    public byte byteValue() {
+        return (byte) value;
     }
 
     /**
@@ -79,9 +70,8 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code short}.
      */
-    public short shortValue()
-    {
-        return (short)value;
+    public short shortValue() {
+        return (short) value;
     }
 
     /**
@@ -89,8 +79,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code int}.
      */
-    public int intValue()
-    {
+    public int intValue() {
         return value;
     }
 
@@ -99,8 +88,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code long}.
      */
-    public long longValue()
-    {
+    public long longValue() {
         return value;
     }
 
@@ -109,9 +97,8 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code float}.
      */
-    public float floatValue()
-    {
-        return (float)value;
+    public float floatValue() {
+        return (float) value;
     }
 
     /**
@@ -119,16 +106,14 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value as {@code double}.
      */
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return value;
     }
 
     /**
      * Increment the value.
      */
-    public void increment()
-    {
+    public void increment() {
         value++;
     }
 
@@ -137,8 +122,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return the value after increment.
      */
-    public int incrementAndGet()
-    {
+    public int incrementAndGet() {
         return ++value;
     }
 
@@ -147,16 +131,14 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return the value before increment.
      */
-    public int getAndIncrement()
-    {
+    public int getAndIncrement() {
         return value++;
     }
 
     /**
      * Decrement the value.
      */
-    public void decrement()
-    {
+    public void decrement() {
         value--;
     }
 
@@ -165,8 +147,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return value after the decrement.
      */
-    public int decrementAndGet()
-    {
+    public int decrementAndGet() {
         return --value;
     }
 
@@ -175,8 +156,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      *
      * @return the value before the decrement.
      */
-    public int getAndDecrement()
-    {
+    public int getAndDecrement() {
         return value--;
     }
 
@@ -186,8 +166,7 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      * @param delta to add.
      * @return the value before the change.
      */
-    public int getAndAdd(final int delta)
-    {
+    public int getAndAdd(final int delta) {
         final int result = value;
         value += delta;
         return result;
@@ -199,27 +178,23 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
      * @param delta to add.
      * @return the value after the change.
      */
-    public int addAndGet(final int delta)
-    {
+    public int addAndGet(final int delta) {
         return value += delta;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        final MutableInteger that = (MutableInteger)o;
+        final MutableInteger that = (MutableInteger) o;
 
         return value == that.value;
     }
@@ -227,40 +202,37 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
     /**
      * {@inheritDoc}
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return Integer.hashCode(value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
+    public String toString() {
         return Integer.toString(value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int compareTo(final MutableInteger that)
-    {
+    public int compareTo(final MutableInteger that) {
         return compare(this.value, that.value);
     }
 
     /**
      * Compare two values. Invoking this method is equivalent to:
+     * 
      * <pre>
-     *     Integer.compare(lhs, rhs);
+     * Integer.compare(lhs, rhs);
      * </pre>
      *
      * @param lhs first value to compare.
      * @param rhs second value to compare.
      * @return zero if values are equal, negative value if {@code lhs} is less than {@code rhs} or
-     * positive value otherwise.
+     *         positive value otherwise.
      */
-    public static int compare(final int lhs, final int rhs)
-    {
+    public static int compare(final int lhs, final int rhs) {
         return Integer.compare(lhs, rhs);
     }
 }

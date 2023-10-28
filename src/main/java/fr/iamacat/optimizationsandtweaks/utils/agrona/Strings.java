@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,11 +15,9 @@ package fr.iamacat.optimizationsandtweaks.utils.agrona;
 /**
  * Utility functions for using Strings.
  */
-public final class Strings
-{
-    private Strings()
-    {
-    }
+public final class Strings {
+
+    private Strings() {}
 
     /**
      * Is a string null or empty?
@@ -30,8 +25,7 @@ public final class Strings
      * @param value to be tested.
      * @return true if the value is null or an empty string.
      */
-    public static boolean isEmpty(final String value)
-    {
+    public static boolean isEmpty(final String value) {
         return null == value || value.isEmpty();
     }
 
@@ -42,10 +36,8 @@ public final class Strings
      * @param defaultValue to be used if the String value is null.
      * @return the int value of the string or the default on null.
      */
-    public static int parseIntOrDefault(final String value, final int defaultValue) throws NumberFormatException
-    {
-        if (null == value)
-        {
+    public static int parseIntOrDefault(final String value, final int defaultValue) throws NumberFormatException {
+        if (null == value) {
             return defaultValue;
         }
 

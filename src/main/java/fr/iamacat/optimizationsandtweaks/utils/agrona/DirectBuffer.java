@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +12,10 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona;
 
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.SIZE_OF_INT;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.SIZE_OF_INT;
 
 /**
  * Abstraction over a range of buffer types that allows fields to be read in native typed fashion.
@@ -26,8 +23,8 @@ import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.SIZE_OF_INT
  * {@link ByteOrder} of a wrapped buffer is not applied to the {@link DirectBuffer};
  * To control {@link ByteOrder} use the appropriate method with the {@link ByteOrder} overload.
  */
-public interface DirectBuffer extends Comparable<DirectBuffer>
-{
+public interface DirectBuffer extends Comparable<DirectBuffer> {
+
     /**
      * Length of the header on strings to denote the length of the string in bytes.
      */
@@ -51,8 +48,7 @@ public interface DirectBuffer extends Comparable<DirectBuffer>
      *
      * @see DirectBuffer#DISABLE_BOUNDS_CHECKS_PROP_NAME
      */
-    boolean SHOULD_BOUNDS_CHECK =
-        !"true".equals(SystemUtil.getProperty(DISABLE_BOUNDS_CHECKS_PROP_NAME));
+    boolean SHOULD_BOUNDS_CHECK = !"true".equals(SystemUtil.getProperty(DISABLE_BOUNDS_CHECKS_PROP_NAME));
 
     /**
      * Attach a view to a {@code byte[]} for providing direct access.

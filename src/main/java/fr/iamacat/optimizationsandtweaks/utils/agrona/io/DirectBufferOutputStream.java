@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +12,16 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.io;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.MutableDirectBuffer;
-
 import java.io.IOException;
 import java.io.OutputStream;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.MutableDirectBuffer;
 
 /**
  * {@link OutputStream} that wraps an underlying {@link MutableDirectBuffer}.
  */
-public class DirectBufferOutputStream extends OutputStream
-{
+public class DirectBufferOutputStream extends OutputStream {
+
     private MutableDirectBuffer buffer;
     private int offset;
     private int length;
@@ -33,9 +30,7 @@ public class DirectBufferOutputStream extends OutputStream
     /**
      * Default constructor.
      */
-    public DirectBufferOutputStream()
-    {
-    }
+    public DirectBufferOutputStream() {}
 
     /**
      * Constructs output stream wrapping the given buffer.
@@ -43,8 +38,7 @@ public class DirectBufferOutputStream extends OutputStream
      * @param buffer to wrap.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferOutputStream(final MutableDirectBuffer buffer)
-    {
+    public DirectBufferOutputStream(final MutableDirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -56,8 +50,7 @@ public class DirectBufferOutputStream extends OutputStream
      * @param length size in bytes to wrap.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferOutputStream(final MutableDirectBuffer buffer, final int offset, final int length)
-    {
+    public DirectBufferOutputStream(final MutableDirectBuffer buffer, final int offset, final int length) {
         wrap(buffer, offset, length);
     }
 
@@ -66,8 +59,7 @@ public class DirectBufferOutputStream extends OutputStream
      *
      * @param buffer to wrap.
      */
-    public void wrap(final MutableDirectBuffer buffer)
-    {
+    public void wrap(final MutableDirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -78,10 +70,8 @@ public class DirectBufferOutputStream extends OutputStream
      * @param offset in the buffer.
      * @param length size in bytes to wrap.
      */
-    public void wrap(final MutableDirectBuffer buffer, final int offset, final int length)
-    {
-        if (null == buffer)
-        {
+    public void wrap(final MutableDirectBuffer buffer, final int offset, final int length) {
+        if (null == buffer) {
             throw new NullPointerException("buffer cannot be null");
         }
 
@@ -96,8 +86,7 @@ public class DirectBufferOutputStream extends OutputStream
      *
      * @return the position in the buffer from the offset up to which has been written.
      */
-    public int position()
-    {
+    public int position() {
         return position;
     }
 
@@ -106,8 +95,7 @@ public class DirectBufferOutputStream extends OutputStream
      *
      * @return offset within the underlying buffer at which to start.
      */
-    public int offset()
-    {
+    public int offset() {
         return offset;
     }
 
@@ -116,8 +104,7 @@ public class DirectBufferOutputStream extends OutputStream
      *
      * @return the underlying buffer being wrapped.
      */
-    public MutableDirectBuffer buffer()
-    {
+    public MutableDirectBuffer buffer() {
         return buffer;
     }
 
@@ -126,8 +113,7 @@ public class DirectBufferOutputStream extends OutputStream
      *
      * @return length of the underlying buffer to use
      */
-    public int length()
-    {
+    public int length() {
         return length;
     }
 
@@ -137,14 +123,12 @@ public class DirectBufferOutputStream extends OutputStream
      * @param b to be written.
      * @throws IllegalStateException if insufficient capacity remains in the buffer.
      */
-    public void write(final int b)
-    {
-        if (position == length)
-        {
+    public void write(final int b) {
+        if (position == length) {
             throw new IllegalStateException("position has reached the end of underlying buffer");
         }
 
-        buffer.putByte(offset + position, (byte)b);
+        buffer.putByte(offset + position, (byte) b);
         ++position;
     }
 
@@ -156,11 +140,9 @@ public class DirectBufferOutputStream extends OutputStream
      * @param length    of the srcBytes to read.
      * @throws IllegalStateException if insufficient capacity remains in the buffer.
      */
-    public void write(final byte[] srcBytes, final int srcOffset, final int length)
-    {
-        final long resultingOffset = position + ((long)length);
-        if (resultingOffset > this.length)
-        {
+    public void write(final byte[] srcBytes, final int srcOffset, final int length) {
+        final long resultingOffset = position + ((long) length);
+        if (resultingOffset > this.length) {
             throw new IllegalStateException("insufficient capacity in the buffer");
         }
 
@@ -174,22 +156,17 @@ public class DirectBufferOutputStream extends OutputStream
      * @param srcBytes to write
      * @throws IllegalStateException if insufficient capacity remains in the buffer.
      */
-    public void write(final byte[] srcBytes)
-    {
+    public void write(final byte[] srcBytes) {
         write(srcBytes, 0, srcBytes.length);
     }
 
     /**
      * Override to remove {@link IOException}. This method does nothing.
      */
-    public void flush()
-    {
-    }
+    public void flush() {}
 
     /**
      * Override to remove {@link IOException}. This method does nothing.
      */
-    public void close()
-    {
-    }
+    public void close() {}
 }

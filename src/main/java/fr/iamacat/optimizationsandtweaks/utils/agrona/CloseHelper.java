@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,28 +18,20 @@ import java.util.Collection;
  * Utility functions to help with using {@link AutoCloseable} resources. If a null exception is passed
  * then it is ignored.
  */
-public final class CloseHelper
-{
-    private CloseHelper()
-    {
-    }
+public final class CloseHelper {
+
+    private CloseHelper() {}
 
     /**
      * Quietly close a {@link AutoCloseable} dealing with nulls and exceptions.
      *
      * @param closeable to be closed.
      */
-    public static void quietClose(final AutoCloseable closeable)
-    {
-        if (null != closeable)
-        {
-            try
-            {
+    public static void quietClose(final AutoCloseable closeable) {
+        if (null != closeable) {
+            try {
                 closeable.close();
-            }
-            catch (final Exception ignore)
-            {
-            }
+            } catch (final Exception ignore) {}
         }
     }
 
@@ -51,21 +40,13 @@ public final class CloseHelper
      *
      * @param closeables to be closed.
      */
-    public static void quietCloseAll(final Collection<? extends AutoCloseable> closeables)
-    {
-        if (null != closeables)
-        {
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+    public static void quietCloseAll(final Collection<? extends AutoCloseable> closeables) {
+        if (null != closeables) {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ignore)
-                    {
-                    }
+                    } catch (final Exception ignore) {}
                 }
             }
         }
@@ -76,21 +57,13 @@ public final class CloseHelper
      *
      * @param closeables to be closed.
      */
-    public static void quietCloseAll(final AutoCloseable... closeables)
-    {
-        if (null != closeables)
-        {
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+    public static void quietCloseAll(final AutoCloseable... closeables) {
+        if (null != closeables) {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ignore)
-                    {
-                    }
+                    } catch (final Exception ignore) {}
                 }
             }
         }
@@ -102,16 +75,11 @@ public final class CloseHelper
      *
      * @param closeable to be closed.
      */
-    public static void close(final AutoCloseable closeable)
-    {
-        if (null != closeable)
-        {
-            try
-            {
+    public static void close(final AutoCloseable closeable) {
+        if (null != closeable) {
+            try {
                 closeable.close();
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 LangUtil.rethrowUnchecked(ex);
             }
         }
@@ -124,36 +92,25 @@ public final class CloseHelper
      *
      * @param closeables to be closed.
      */
-    public static void closeAll(final Collection<? extends AutoCloseable> closeables)
-    {
-        if (null != closeables)
-        {
+    public static void closeAll(final Collection<? extends AutoCloseable> closeables) {
+        if (null != closeables) {
             Exception error = null;
 
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ex)
-                    {
-                        if (null == error)
-                        {
+                    } catch (final Exception ex) {
+                        if (null == error) {
                             error = ex;
-                        }
-                        else
-                        {
+                        } else {
                             error.addSuppressed(ex);
                         }
                     }
                 }
             }
 
-            if (null != error)
-            {
+            if (null != error) {
                 LangUtil.rethrowUnchecked(error);
             }
         }
@@ -166,36 +123,25 @@ public final class CloseHelper
      *
      * @param closeables to be closed.
      */
-    public static void closeAll(final AutoCloseable... closeables)
-    {
-        if (null != closeables)
-        {
+    public static void closeAll(final AutoCloseable... closeables) {
+        if (null != closeables) {
             Exception error = null;
 
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ex)
-                    {
-                        if (error == null)
-                        {
+                    } catch (final Exception ex) {
+                        if (error == null) {
                             error = ex;
-                        }
-                        else
-                        {
+                        } else {
                             error.addSuppressed(ex);
                         }
                     }
                 }
             }
 
-            if (null != error)
-            {
+            if (null != error) {
                 LangUtil.rethrowUnchecked(error);
             }
         }
@@ -207,18 +153,12 @@ public final class CloseHelper
      * @param errorHandler to delegate exceptions to.
      * @param closeable    to be closed.
      */
-    public static void close(final ErrorHandler errorHandler, final AutoCloseable closeable)
-    {
-        if (null != closeable)
-        {
-            try
-            {
+    public static void close(final ErrorHandler errorHandler, final AutoCloseable closeable) {
+        if (null != closeable) {
+            try {
                 closeable.close();
-            }
-            catch (final Exception ex)
-            {
-                if (null == errorHandler)
-                {
+            } catch (final Exception ex) {
+                if (null == errorHandler) {
                     final NullPointerException error = new NullPointerException("errorHandler is null");
                     error.addSuppressed(ex);
                     throw error;
@@ -235,41 +175,29 @@ public final class CloseHelper
      * @param errorHandler to delegate exceptions to.
      * @param closeables   to be closed.
      */
-    public static void closeAll(final ErrorHandler errorHandler, final Collection<? extends AutoCloseable> closeables)
-    {
-        if (null != closeables)
-        {
+    public static void closeAll(final ErrorHandler errorHandler, final Collection<? extends AutoCloseable> closeables) {
+        if (null != closeables) {
             NullPointerException error = null;
 
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ex)
-                    {
-                        if (null == errorHandler)
-                        {
-                            if (null == error)
-                            {
+                    } catch (final Exception ex) {
+                        if (null == errorHandler) {
+                            if (null == error) {
                                 error = new NullPointerException("errorHandler is null");
                             }
 
                             error.addSuppressed(ex);
-                        }
-                        else
-                        {
+                        } else {
                             errorHandler.onError(ex);
                         }
                     }
                 }
             }
 
-            if (null != error)
-            {
+            if (null != error) {
                 LangUtil.rethrowUnchecked(error);
             }
         }
@@ -281,41 +209,29 @@ public final class CloseHelper
      * @param errorHandler to delegate exceptions to.
      * @param closeables   to be closed.
      */
-    public static void closeAll(final ErrorHandler errorHandler, final AutoCloseable... closeables)
-    {
-        if (null != closeables)
-        {
+    public static void closeAll(final ErrorHandler errorHandler, final AutoCloseable... closeables) {
+        if (null != closeables) {
             NullPointerException error = null;
 
-            for (final AutoCloseable closeable : closeables)
-            {
-                if (null != closeable)
-                {
-                    try
-                    {
+            for (final AutoCloseable closeable : closeables) {
+                if (null != closeable) {
+                    try {
                         closeable.close();
-                    }
-                    catch (final Exception ex)
-                    {
-                        if (null == errorHandler)
-                        {
-                            if (null == error)
-                            {
+                    } catch (final Exception ex) {
+                        if (null == errorHandler) {
+                            if (null == error) {
                                 error = new NullPointerException("errorHandler is null");
                             }
 
                             error.addSuppressed(ex);
-                        }
-                        else
-                        {
+                        } else {
                             errorHandler.onError(ex);
                         }
                     }
                 }
             }
 
-            if (null != error)
-            {
+            if (null != error) {
                 LangUtil.rethrowUnchecked(error);
             }
         }

@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +12,9 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.generation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,21 +22,18 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.toList;
-
 /**
  * Specialise classes written for primitive type int for other primitive types by substitution.
  */
-public final class SpecialisationGenerator
-{
+public final class SpecialisationGenerator {
+
     private static final String COLLECTIONS_PACKAGE = "org/agrona/collections";
     private static final String SRC_DIR = "src/main/java/";
     private static final String DST_DIR = "build/generated-src";
     private static final String SUFFIX = ".java";
 
-    private static final List<Substitution> SUBSTITUTIONS = Collections.singletonList(
-        new Substitution("long", "Long", "Long"));
+    private static final List<Substitution> SUBSTITUTIONS = Collections
+        .singletonList(new Substitution("long", "Long", "Long"));
 
     /**
      * Main method.
@@ -44,8 +41,7 @@ public final class SpecialisationGenerator
      * @param args command line args.
      * @throws IOException in case of I/O error.
      */
-    public static void main(final String[] args) throws IOException
-    {
+    public static void main(final String[] args) throws IOException {
         specialise(SUBSTITUTIONS, COLLECTIONS_PACKAGE, "IntIntConsumer", SRC_DIR, DST_DIR);
         specialise(SUBSTITUTIONS, COLLECTIONS_PACKAGE, "IntIntFunction", SRC_DIR, DST_DIR);
         specialise(SUBSTITUTIONS, COLLECTIONS_PACKAGE, "IntIntPredicate", SRC_DIR, DST_DIR);
@@ -78,24 +74,16 @@ public final class SpecialisationGenerator
      * @param dstDirName    for where the generated file should be stored.
      * @throws IOException if an error occurs.
      */
-    public static void specialise(
-        final List<Substitution> substitutions,
-        final String packageName,
-        final String srcClassName,
-        final String srcDirName,
-        final String dstDirName)
-        throws IOException
-    {
+    public static void specialise(final List<Substitution> substitutions, final String packageName,
+        final String srcClassName, final String srcDirName, final String dstDirName) throws IOException {
         final Path inputPath = Paths.get(srcDirName, packageName, srcClassName + SUFFIX);
         final Path outputDirectory = Paths.get(dstDirName, packageName);
         Files.createDirectories(outputDirectory);
 
         final List<String> contents = Files.readAllLines(inputPath, UTF_8);
-        for (final Substitution substitution : substitutions)
-        {
+        for (final Substitution substitution : substitutions) {
             final String substitutedFileName = substitution.substitute(srcClassName);
-            final List<String> substitutedContents = contents
-                .stream()
+            final List<String> substitutedContents = contents.stream()
                 .map(substitution::conditionalSubstitute)
                 .collect(toList());
 
@@ -108,14 +96,13 @@ public final class SpecialisationGenerator
     /**
      * Substitution to be performed on each code line. Lines with {@link DoNotSub} are ignored.
      */
-    public static final class Substitution
-    {
+    public static final class Substitution {
+
         private final String primitiveType;
         private final String boxedType;
         private final String className;
 
-        private Substitution(final String primitiveType, final String boxedType, final String className)
-        {
+        private Substitution(final String primitiveType, final String boxedType, final String className) {
             this.primitiveType = primitiveType;
             this.boxedType = boxedType;
             this.className = className;
@@ -127,10 +114,8 @@ public final class SpecialisationGenerator
          * @param contents original source code.
          * @return modified source code.
          */
-        public String substitute(final String contents)
-        {
-            return contents
-                .replace("int", primitiveType)
+        public String substitute(final String contents) {
+            return contents.replace("int", primitiveType)
                 .replace("Integer", boxedType)
                 .replace("Int", className);
         }
@@ -141,11 +126,10 @@ public final class SpecialisationGenerator
          * @param contents original source code.
          * @return modified source code.
          */
-        public String conditionalSubstitute(final String contents)
-        {
-            return
-                (contents.contains("@DoNotSub") || contents.contains("interface") || contents.contains("Interface")) ?
-                    contents : substitute(contents);
+        public String conditionalSubstitute(final String contents) {
+            return (contents.contains("@DoNotSub") || contents.contains("interface") || contents.contains("Interface"))
+                ? contents
+                : substitute(contents);
         }
     }
 }

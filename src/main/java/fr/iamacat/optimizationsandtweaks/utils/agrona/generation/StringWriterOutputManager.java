@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +22,8 @@ import java.util.Map;
 /**
  * An {@link OutputManager} which can store source files as {@link StringWriter} buy source file name.
  */
-public class StringWriterOutputManager implements DynamicPackageOutputManager
-{
+public class StringWriterOutputManager implements DynamicPackageOutputManager {
+
     private String packageName;
     private String initialPackageName;
     private final HashMap<String, StringWriter> sourceFileByName = new HashMap<>();
@@ -34,19 +31,16 @@ public class StringWriterOutputManager implements DynamicPackageOutputManager
     /**
      * {@inheritDoc}
      */
-    public Writer createOutput(final String name)
-    {
+    public Writer createOutput(final String name) {
         final StringWriter stringWriter = new StringWriter();
         sourceFileByName.put(packageName + "." + name, stringWriter);
 
-        return new FilterWriter(stringWriter)
-        {
-            public void close() throws IOException
-            {
+        return new FilterWriter(stringWriter) {
+
+            public void close() throws IOException {
                 super.close();
 
-                if (null != initialPackageName)
-                {
+                if (null != initialPackageName) {
                     packageName = initialPackageName;
                 }
             }
@@ -58,11 +52,9 @@ public class StringWriterOutputManager implements DynamicPackageOutputManager
      *
      * @param packageName to be used for source files.
      */
-    public void setPackageName(final String packageName)
-    {
+    public void setPackageName(final String packageName) {
         this.packageName = packageName;
-        if (null == initialPackageName)
-        {
+        if (null == initialPackageName) {
             initialPackageName = packageName;
         }
     }
@@ -73,11 +65,9 @@ public class StringWriterOutputManager implements DynamicPackageOutputManager
      * @param name of the source file.
      * @return {@link CharSequence} which represents the source file.
      */
-    public CharSequence getSource(final String name)
-    {
+    public CharSequence getSource(final String name) {
         final StringWriter stringWriter = sourceFileByName.get(name);
-        if (null == stringWriter)
-        {
+        if (null == stringWriter) {
             throw new IllegalArgumentException("unknown source file name: " + name);
         }
 
@@ -89,12 +79,13 @@ public class StringWriterOutputManager implements DynamicPackageOutputManager
      *
      * @return a {@link Map} of all source files.
      */
-    public Map<String, CharSequence> getSources()
-    {
+    public Map<String, CharSequence> getSources() {
         final HashMap<String, CharSequence> sources = new HashMap<>();
-        for (final Map.Entry<String, StringWriter> entry : sourceFileByName.entrySet())
-        {
-            sources.put(entry.getKey(), entry.getValue().toString());
+        for (final Map.Entry<String, StringWriter> entry : sourceFileByName.entrySet()) {
+            sources.put(
+                entry.getKey(),
+                entry.getValue()
+                    .toString());
         }
 
         return sources;
@@ -103,8 +94,7 @@ public class StringWriterOutputManager implements DynamicPackageOutputManager
     /**
      * Clear all source files in this {@link OutputManager} and reset the initial package name.
      */
-    public void clear()
-    {
+    public void clear() {
         initialPackageName = null;
         packageName = "";
         sourceFileByName.clear();

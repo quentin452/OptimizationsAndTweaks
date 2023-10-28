@@ -1,13 +1,10 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
  * Copyright 2018 Gil Tene
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,11 +43,9 @@ import java.lang.ref.Reference;
  * this class, no assumptions, beyond those provided in the documentation below,
  * should be made about their actual implementation.
  */
-public final class References
-{
-    private References()
-    {
-    }
+public final class References {
+
+    private References() {}
 
     /**
      * Indicate whether a {@link Reference} has been cleared.
@@ -58,8 +53,7 @@ public final class References
      * @param ref The {@link Reference} to be tested.
      * @return true if {@link Reference} is cleared, otherwise false.
      */
-    public static boolean isCleared(final Reference<?> ref)
-    {
+    public static boolean isCleared(final Reference<?> ref) {
         return ref.get() == null;
     }
 
@@ -71,8 +65,7 @@ public final class References
      * @param <T> the class of the referent.
      * @return true if the {@link Reference}'s referent is obj, otherwise false.
      */
-    public static <T> boolean isReferringTo(final Reference<T> ref, final T obj)
-    {
+    public static <T> boolean isReferringTo(final Reference<T> ref, final T obj) {
         return ref.get() == obj;
     }
 }

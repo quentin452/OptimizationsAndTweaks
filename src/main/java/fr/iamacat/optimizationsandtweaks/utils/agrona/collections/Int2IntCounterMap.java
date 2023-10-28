@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,26 +12,28 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-
-import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
 
 import java.util.Arrays;
 import java.util.function.IntUnaryOperator;
 
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 
 /**
  * An open-addressing with linear probing hash map specialised for primitive key and counter pairs. A counter map views
  * counters which hit {@link #initialValue} as deleted. This means that changing a counter may impact {@link #size()}.
  */
-public class Int2IntCounterMap
-{
-    @DoNotSub private static final int MIN_CAPACITY = 8;
+public class Int2IntCounterMap {
 
-    @DoNotSub private final float loadFactor;
+    @DoNotSub
+    private static final int MIN_CAPACITY = 8;
+
+    @DoNotSub
+    private final float loadFactor;
     private final int initialValue;
-    @DoNotSub private int resizeThreshold;
+    @DoNotSub
+    private int resizeThreshold;
     @DoNotSub
     private int size = 0;
 
@@ -45,8 +44,7 @@ public class Int2IntCounterMap
      *
      * @param initialValue to be used for each counter.
      */
-    public Int2IntCounterMap(final int initialValue)
-    {
+    public Int2IntCounterMap(final int initialValue) {
         this(MIN_CAPACITY, Hashing.DEFAULT_LOAD_FACTOR, initialValue);
     }
 
@@ -57,11 +55,8 @@ public class Int2IntCounterMap
      * @param loadFactor      applied for resize operations.
      * @param initialValue    to be used for each counter.
      */
-    public Int2IntCounterMap(
-        @DoNotSub final int initialCapacity,
-        @DoNotSub final float loadFactor,
-        final int initialValue)
-    {
+    public Int2IntCounterMap(@DoNotSub final int initialCapacity, @DoNotSub final float loadFactor,
+        final int initialValue) {
         validateLoadFactor(loadFactor);
 
         this.loadFactor = loadFactor;
@@ -75,8 +70,7 @@ public class Int2IntCounterMap
      *
      * @return value to be used as a null marker in the map.
      */
-    public int initialValue()
-    {
+    public int initialValue() {
         return initialValue;
     }
 
@@ -85,8 +79,7 @@ public class Int2IntCounterMap
      *
      * @return the load factor applied for resize operations.
      */
-    public float loadFactor()
-    {
+    public float loadFactor() {
         return loadFactor;
     }
 
@@ -96,8 +89,8 @@ public class Int2IntCounterMap
      *
      * @return the threshold when the map will resize.
      */
-    @DoNotSub public int resizeThreshold()
-    {
+    @DoNotSub
+    public int resizeThreshold() {
         return resizeThreshold;
     }
 
@@ -106,8 +99,8 @@ public class Int2IntCounterMap
      *
      * @return the total capacity for the map.
      */
-    @DoNotSub public int capacity()
-    {
+    @DoNotSub
+    public int capacity() {
         return entries.length >> 1;
     }
 
@@ -116,8 +109,8 @@ public class Int2IntCounterMap
      *
      * @return map size, counters at {@link #initialValue()} are not counted
      */
-    @DoNotSub public int size()
-    {
+    @DoNotSub
+    public int size() {
         return size;
     }
 
@@ -126,8 +119,7 @@ public class Int2IntCounterMap
      *
      * @return size == 0
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return 0 == size;
     }
 
@@ -137,18 +129,17 @@ public class Int2IntCounterMap
      * @param key to lookup.
      * @return counter value associated with key or {@link #initialValue()} if not found.
      */
-    public int get(final int key)
-    {
+    public int get(final int key) {
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int mask = entries.length - 1;
-        @DoNotSub int index = Hashing.evenHash(key, mask);
+        @DoNotSub
+        final int mask = entries.length - 1;
+        @DoNotSub
+        int index = Hashing.evenHash(key, mask);
 
         int value;
-        while (initialValue != (value = entries[index + 1]))
-        {
-            if (key == entries[index])
-            {
+        while (initialValue != (value = entries[index + 1])) {
+            if (key == entries[index]) {
                 break;
             }
 
@@ -166,31 +157,28 @@ public class Int2IntCounterMap
      * @return current counter value associated with key, or {@link #initialValue()} if none found.
      * @throws IllegalArgumentException if value is {@link #initialValue()}.
      */
-    public int put(final int key, final int value)
-    {
+    public int put(final int key, final int value) {
         final int initialValue = this.initialValue;
-        if (initialValue == value)
-        {
+        if (initialValue == value) {
             throw new IllegalArgumentException("cannot accept initialValue");
         }
 
         final int[] entries = this.entries;
-        @DoNotSub final int mask = entries.length - 1;
-        @DoNotSub int index = Hashing.evenHash(key, mask);
+        @DoNotSub
+        final int mask = entries.length - 1;
+        @DoNotSub
+        int index = Hashing.evenHash(key, mask);
 
         int oldValue;
-        while (initialValue != (oldValue = entries[index + 1]))
-        {
-            if (key == entries[index])
-            {
+        while (initialValue != (oldValue = entries[index + 1])) {
+            if (key == entries[index]) {
                 break;
             }
 
             index = next(index, mask);
         }
 
-        if (initialValue == oldValue)
-        {
+        if (initialValue == oldValue) {
             ++size;
             entries[index] = key;
         }
@@ -208,8 +196,7 @@ public class Int2IntCounterMap
      * @param key for the counter.
      * @return the new value.
      */
-    public int incrementAndGet(final int key)
-    {
+    public int incrementAndGet(final int key) {
         return addAndGet(key, 1);
     }
 
@@ -219,8 +206,7 @@ public class Int2IntCounterMap
      * @param key for the counter.
      * @return the new value.
      */
-    public int decrementAndGet(final int key)
-    {
+    public int decrementAndGet(final int key) {
         return addAndGet(key, -1);
     }
 
@@ -233,8 +219,7 @@ public class Int2IntCounterMap
      * @param amount to be added
      * @return the new value associated with the key, or {@link #initialValue()} + amount if no mapping for key.
      */
-    public int addAndGet(final int key, final int amount)
-    {
+    public int addAndGet(final int key, final int amount) {
         return getAndAdd(key, amount) + amount;
     }
 
@@ -244,8 +229,7 @@ public class Int2IntCounterMap
      * @param key for the counter.
      * @return the old value.
      */
-    public int getAndIncrement(final int key)
-    {
+    public int getAndIncrement(final int key) {
         return getAndAdd(key, 1);
     }
 
@@ -255,8 +239,7 @@ public class Int2IntCounterMap
      * @param key for the counter.
      * @return the old value.
      */
-    public int getAndDecrement(final int key)
-    {
+    public int getAndDecrement(final int key) {
         return getAndAdd(key, -1);
     }
 
@@ -269,37 +252,32 @@ public class Int2IntCounterMap
      * @param amount to be added.
      * @return the previous value associated with the key, or {@link #initialValue()} if no mapping for key.
      */
-    public int getAndAdd(final int key, final int amount)
-    {
+    public int getAndAdd(final int key, final int amount) {
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int mask = entries.length - 1;
-        @DoNotSub int index = Hashing.evenHash(key, mask);
+        @DoNotSub
+        final int mask = entries.length - 1;
+        @DoNotSub
+        int index = Hashing.evenHash(key, mask);
 
         int oldValue;
-        while (initialValue != (oldValue = entries[index + 1]))
-        {
-            if (key == entries[index])
-            {
+        while (initialValue != (oldValue = entries[index + 1])) {
+            if (key == entries[index]) {
                 break;
             }
 
             index = next(index, mask);
         }
 
-        if (amount != 0)
-        {
+        if (amount != 0) {
             final int newValue = oldValue + amount;
             entries[index + 1] = newValue;
 
-            if (initialValue == oldValue)
-            {
+            if (initialValue == oldValue) {
                 ++size;
                 entries[index] = key;
                 increaseCapacity();
-            }
-            else if (initialValue == newValue)
-            {
+            } else if (initialValue == newValue) {
                 size--;
                 compactChain(index);
             }
@@ -313,18 +291,18 @@ public class Int2IntCounterMap
      *
      * @param consumer called for each key/value pair in the map.
      */
-    public void forEach(final IntIntConsumer consumer)
-    {
+    public void forEach(final IntIntConsumer consumer) {
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int length = entries.length;
-        @DoNotSub int remaining = size;
+        @DoNotSub
+        final int length = entries.length;
+        @DoNotSub
+        int remaining = size;
 
-        for (@DoNotSub int i = 1; remaining > 0 && i < length; i += 2)
-        {
+        for (@DoNotSub
+        int i = 1; remaining > 0 && i < length; i += 2) {
             final int value = entries[i];
-            if (initialValue != value)
-            {
+            if (initialValue != value) {
                 consumer.accept(entries[i - 1], value);
                 --remaining;
             }
@@ -337,8 +315,7 @@ public class Int2IntCounterMap
      * @param key the key to check.
      * @return true if the map contains the key with a value other than {@link #initialValue()}, false otherwise.
      */
-    public boolean containsKey(final int key)
-    {
+    public boolean containsKey(final int key) {
         return initialValue != get(key);
     }
 
@@ -350,18 +327,16 @@ public class Int2IntCounterMap
      * @param value the key to check.
      * @return true if the map contains value as a mapped value, false otherwise.
      */
-    public boolean containsValue(final int value)
-    {
+    public boolean containsValue(final int value) {
         boolean found = false;
-        if (initialValue != value)
-        {
+        if (initialValue != value) {
             final int[] entries = this.entries;
-            @DoNotSub final int length = entries.length;
+            @DoNotSub
+            final int length = entries.length;
 
-            for (@DoNotSub int i = 1; i < length; i += 2)
-            {
-                if (value == entries[i])
-                {
+            for (@DoNotSub
+            int i = 1; i < length; i += 2) {
+                if (value == entries[i]) {
                     found = true;
                     break;
                 }
@@ -374,10 +349,8 @@ public class Int2IntCounterMap
     /**
      * Clear out all entries.
      */
-    public void clear()
-    {
-        if (size > 0)
-        {
+    public void clear() {
+        if (size > 0) {
             Arrays.fill(entries, initialValue);
             size = 0;
         }
@@ -387,9 +360,9 @@ public class Int2IntCounterMap
      * Compact the backing arrays by rehashing with a capacity just larger than current size
      * and giving consideration to the load factor.
      */
-    public void compact()
-    {
-        @DoNotSub final int idealCapacity = (int)Math.round(size() * (1.0d / loadFactor));
+    public void compact() {
+        @DoNotSub
+        final int idealCapacity = (int) Math.round(size() * (1.0d / loadFactor));
         rehash(findNextPositivePowerOfTwo(Math.max(MIN_CAPACITY, idealCapacity)));
     }
 
@@ -400,14 +373,11 @@ public class Int2IntCounterMap
      * @param mappingFunction to provide a value if the get returns null.
      * @return the value if found otherwise the missing value.
      */
-    public int computeIfAbsent(final int key, final IntUnaryOperator mappingFunction)
-    {
+    public int computeIfAbsent(final int key, final IntUnaryOperator mappingFunction) {
         int value = get(key);
-        if (initialValue == value)
-        {
+        if (initialValue == value) {
             value = mappingFunction.applyAsInt(key);
-            if (initialValue != value)
-            {
+            if (initialValue != value) {
                 put(key, value);
             }
         }
@@ -421,18 +391,17 @@ public class Int2IntCounterMap
      * @param key to be removed
      * @return old value for key
      */
-    public int remove(final int key)
-    {
+    public int remove(final int key) {
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int mask = entries.length - 1;
-        @DoNotSub int keyIndex = Hashing.evenHash(key, mask);
+        @DoNotSub
+        final int mask = entries.length - 1;
+        @DoNotSub
+        int keyIndex = Hashing.evenHash(key, mask);
 
         int oldValue;
-        while (initialValue != (oldValue = entries[keyIndex + 1]))
-        {
-            if (key == entries[keyIndex])
-            {
+        while (initialValue != (oldValue = entries[keyIndex + 1])) {
+            if (key == entries[keyIndex]) {
                 entries[keyIndex + 1] = initialValue;
                 size--;
 
@@ -452,19 +421,18 @@ public class Int2IntCounterMap
      *
      * @return the minimum value stored in the map.
      */
-    public int minValue()
-    {
+    public int minValue() {
         final int initialValue = this.initialValue;
         int min = 0 == size ? initialValue : Integer.MAX_VALUE;
 
         final int[] entries = this.entries;
-        @DoNotSub final int length = entries.length;
+        @DoNotSub
+        final int length = entries.length;
 
-        for (@DoNotSub int i = 1; i < length; i += 2)
-        {
+        for (@DoNotSub
+        int i = 1; i < length; i += 2) {
             final int value = entries[i];
-            if (initialValue != value)
-            {
+            if (initialValue != value) {
                 min = Math.min(min, value);
             }
         }
@@ -477,19 +445,18 @@ public class Int2IntCounterMap
      *
      * @return the maximum value stored in the map.
      */
-    public int maxValue()
-    {
+    public int maxValue() {
         final int initialValue = this.initialValue;
         int max = 0 == size ? initialValue : Integer.MIN_VALUE;
 
         final int[] entries = this.entries;
-        @DoNotSub final int length = entries.length;
+        @DoNotSub
+        final int length = entries.length;
 
-        for (@DoNotSub int i = 1; i < length; i += 2)
-        {
+        for (@DoNotSub
+        int i = 1; i < length; i += 2) {
             final int value = entries[i];
-            if (initialValue != value)
-            {
+            if (initialValue != value) {
                 max = Math.max(max, value);
             }
         }
@@ -500,26 +467,27 @@ public class Int2IntCounterMap
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append('{');
 
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int length = entries.length;
+        @DoNotSub
+        final int length = entries.length;
 
-        for (@DoNotSub int i = 1; i < length; i += 2)
-        {
+        for (@DoNotSub
+        int i = 1; i < length; i += 2) {
             final int value = entries[i];
-            if (initialValue != value)
-            {
-                sb.append(entries[i - 1]).append('=').append(value).append(", ");
+            if (initialValue != value) {
+                sb.append(entries[i - 1])
+                    .append('=')
+                    .append(value)
+                    .append(", ");
             }
         }
 
-        if (sb.length() > 1)
-        {
+        if (sb.length() > 1) {
             sb.setLength(sb.length() - 2);
         }
 
@@ -528,34 +496,33 @@ public class Int2IntCounterMap
         return sb.toString();
     }
 
-    @DoNotSub private static int next(final int index, final int mask)
-    {
+    @DoNotSub
+    private static int next(final int index, final int mask) {
         return (index + 2) & mask;
     }
 
     @SuppressWarnings("FinalParameters")
-    private void compactChain(@DoNotSub int deleteKeyIndex)
-    {
+    private void compactChain(@DoNotSub int deleteKeyIndex) {
         final int initialValue = this.initialValue;
         final int[] entries = this.entries;
-        @DoNotSub final int mask = entries.length - 1;
-        @DoNotSub int index = deleteKeyIndex;
+        @DoNotSub
+        final int mask = entries.length - 1;
+        @DoNotSub
+        int index = deleteKeyIndex;
 
-        while (true)
-        {
+        while (true) {
             index = next(index, mask);
             final int value = entries[index + 1];
-            if (initialValue == value)
-            {
+            if (initialValue == value) {
                 break;
             }
 
             final int key = entries[index];
-            @DoNotSub final int hash = Hashing.evenHash(key, mask);
+            @DoNotSub
+            final int hash = Hashing.evenHash(key, mask);
 
-            if ((index < hash && (hash <= deleteKeyIndex || deleteKeyIndex <= index)) ||
-                (hash <= deleteKeyIndex && deleteKeyIndex <= index))
-            {
+            if ((index < hash && (hash <= deleteKeyIndex || deleteKeyIndex <= index))
+                || (hash <= deleteKeyIndex && deleteKeyIndex <= index)) {
                 entries[deleteKeyIndex] = key;
                 entries[deleteKeyIndex + 1] = value;
                 entries[index + 1] = initialValue;
@@ -564,50 +531,48 @@ public class Int2IntCounterMap
         }
     }
 
-    private void capacity(@DoNotSub final int newCapacity)
-    {
-        @DoNotSub final int entriesLength = newCapacity * 2;
-        if (entriesLength < 0)
-        {
+    private void capacity(@DoNotSub final int newCapacity) {
+        @DoNotSub
+        final int entriesLength = newCapacity * 2;
+        if (entriesLength < 0) {
             throw new IllegalStateException("max capacity reached at size=" + size);
         }
 
-        /*@DoNotSub*/ resizeThreshold = (int)(newCapacity * loadFactor);
+        /* @DoNotSub */ resizeThreshold = (int) (newCapacity * loadFactor);
         entries = new int[entriesLength];
         Arrays.fill(entries, initialValue);
     }
 
-    private void increaseCapacity()
-    {
-        if (size > resizeThreshold)
-        {
+    private void increaseCapacity() {
+        if (size > resizeThreshold) {
             // entries.length = 2 * capacity
-            @DoNotSub final int newCapacity = entries.length;
+            @DoNotSub
+            final int newCapacity = entries.length;
             rehash(newCapacity);
         }
     }
 
-    private void rehash(@DoNotSub final int newCapacity)
-    {
+    private void rehash(@DoNotSub final int newCapacity) {
         final int initialValue = this.initialValue;
         final int[] oldEntries = entries;
-        @DoNotSub final int length = oldEntries.length;
+        @DoNotSub
+        final int length = oldEntries.length;
 
         capacity(newCapacity);
 
         final int[] newEntries = entries;
-        @DoNotSub final int mask = newEntries.length - 1;
+        @DoNotSub
+        final int mask = newEntries.length - 1;
 
-        for (@DoNotSub int valueIndex = 1; valueIndex < length; valueIndex += 2)
-        {
+        for (@DoNotSub
+        int valueIndex = 1; valueIndex < length; valueIndex += 2) {
             final int value = oldEntries[valueIndex];
-            if (initialValue != value)
-            {
+            if (initialValue != value) {
                 final int key = oldEntries[valueIndex - 1];
-                @DoNotSub int newKeyIndex = Hashing.evenHash(key, mask);
+                @DoNotSub
+                int newKeyIndex = Hashing.evenHash(key, mask);
 
-                while (initialValue != newEntries[newKeyIndex + 1])
-                {
+                while (initialValue != newEntries[newKeyIndex + 1]) {
                     newKeyIndex = next(newKeyIndex, mask);
                 }
 

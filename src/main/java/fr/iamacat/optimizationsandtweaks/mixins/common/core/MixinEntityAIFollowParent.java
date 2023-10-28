@@ -12,8 +12,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
 
@@ -53,18 +51,18 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public void updateTask() {
-            if (--this.field_75345_d <= 0) {
-                this.field_75345_d = 10;
+        if (--this.field_75345_d <= 0) {
+            this.field_75345_d = 10;
 
-                if (this.childAnimal != null && this.parentAnimal != null) {
-                    double distance = this.childAnimal.getDistanceSqToEntity(this.parentAnimal);
+            if (this.childAnimal != null && this.parentAnimal != null) {
+                double distance = this.childAnimal.getDistanceSqToEntity(this.parentAnimal);
 
-                    if (distance > 2.0) {
-                        this.childAnimal.getNavigator()
-                            .tryMoveToEntityLiving(this.parentAnimal, this.field_75347_c);
-                    }
+                if (distance > 2.0) {
+                    this.childAnimal.getNavigator()
+                        .tryMoveToEntityLiving(this.parentAnimal, this.field_75347_c);
                 }
             }
+        }
     }
 
     @Unique

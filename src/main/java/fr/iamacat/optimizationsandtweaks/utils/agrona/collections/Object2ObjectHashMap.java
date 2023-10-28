@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +11,10 @@
  * limitations under the License.
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
+
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
+import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
+import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
@@ -27,15 +28,11 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPositivePowerOfTwo;
-import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
-import static java.util.Objects.requireNonNull;
-
 /**
  * An open-addressing with linear probing hash map, same algorithm as {@link Int2IntHashMap}.
  */
-public class Object2ObjectHashMap<K, V> implements Map<K, V>
-{
+public class Object2ObjectHashMap<K, V> implements Map<K, V> {
+
     static final int MIN_CAPACITY = 8;
 
     private final float loadFactor;
@@ -51,8 +48,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * Default constructor, i.e. create a map with {@link #MIN_CAPACITY} and {@link Hashing#DEFAULT_LOAD_FACTOR}.
      */
-    public Object2ObjectHashMap()
-    {
+    public Object2ObjectHashMap() {
         this(MIN_CAPACITY, Hashing.DEFAULT_LOAD_FACTOR);
     }
 
@@ -62,8 +58,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @param initialCapacity for the map to override {@link #MIN_CAPACITY}
      * @param loadFactor      for the map to override {@link Hashing#DEFAULT_LOAD_FACTOR}.
      */
-    public Object2ObjectHashMap(final int initialCapacity, final float loadFactor)
-    {
+    public Object2ObjectHashMap(final int initialCapacity, final float loadFactor) {
         this(initialCapacity, loadFactor, true);
     }
 
@@ -72,8 +67,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @param loadFactor            for the map to override {@link Hashing#DEFAULT_LOAD_FACTOR}.
      * @param shouldAvoidAllocation should allocation be avoided by caching iterators and map entries.
      */
-    public Object2ObjectHashMap(final int initialCapacity, final float loadFactor, final boolean shouldAvoidAllocation)
-    {
+    public Object2ObjectHashMap(final int initialCapacity, final float loadFactor,
+        final boolean shouldAvoidAllocation) {
         validateLoadFactor(loadFactor);
 
         this.loadFactor = loadFactor;
@@ -87,8 +82,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      *
      * @param mapToCopy for construction.
      */
-    public Object2ObjectHashMap(final Object2ObjectHashMap<K, V> mapToCopy)
-    {
+    public Object2ObjectHashMap(final Object2ObjectHashMap<K, V> mapToCopy) {
         this.loadFactor = mapToCopy.loadFactor;
         this.resizeThreshold = mapToCopy.resizeThreshold;
         this.size = mapToCopy.size;
@@ -102,8 +96,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      *
      * @return the load factor applied for resize operations.
      */
-    public float loadFactor()
-    {
+    public float loadFactor() {
         return loadFactor;
     }
 
@@ -113,8 +106,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      *
      * @return the threshold when the map will resize.
      */
-    public int resizeThreshold()
-    {
+    public int resizeThreshold() {
         return resizeThreshold;
     }
 
@@ -123,38 +115,33 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      *
      * @return the total capacity for the map.
      */
-    public int capacity()
-    {
+    public int capacity() {
         return entries.length >> 1;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int size()
-    {
+    public int size() {
         return size;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return size == 0;
     }
 
     /**
      * {@inheritDoc}
      */
-    public V get(final Object key)
-    {
+    public V get(final Object key) {
         return unmapNullValue(getMapped(key));
     }
 
     @SuppressWarnings("unchecked")
-    private V getMapped(final Object key)
-    {
+    private V getMapped(final Object key) {
         Objects.requireNonNull(key);
 
         final Object[] entries = this.entries;
@@ -162,17 +149,15 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object value;
-        while (null != (value = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (value = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
 
             keyIndex = next(keyIndex, mask);
         }
 
-        return (V)value;
+        return (V) value;
     }
 
     /**
@@ -183,8 +168,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @return current value associated with key, or null if none found
      * @throws IllegalArgumentException if value is null
      */
-    public V put(final K key, final V value)
-    {
+    public V put(final K key, final V value) {
         final Object val = mapNullValue(value);
         requireNonNull(val, "value cannot be null");
 
@@ -193,18 +177,15 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object oldValue;
-        while (null != (oldValue = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (oldValue = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
 
             keyIndex = next(keyIndex, mask);
         }
 
-        if (null == oldValue)
-        {
+        if (null == oldValue) {
             ++size;
             entries[keyIndex] = key;
         }
@@ -216,18 +197,15 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         return unmapNullValue(oldValue);
     }
 
-    private void increaseCapacity()
-    {
-        if (size > resizeThreshold)
-        {
+    private void increaseCapacity() {
+        if (size > resizeThreshold) {
             // entries.length = 2 * capacity
             final int newCapacity = entries.length;
             rehash(newCapacity);
         }
     }
 
-    private void rehash(final int newCapacity)
-    {
+    private void rehash(final int newCapacity) {
         final Object[] oldEntries = entries;
         final int length = entries.length;
 
@@ -236,16 +214,13 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         final Object[] newEntries = entries;
         final int mask = entries.length - 1;
 
-        for (int keyIndex = 0; keyIndex < length; keyIndex += 2)
-        {
+        for (int keyIndex = 0; keyIndex < length; keyIndex += 2) {
             final Object value = oldEntries[keyIndex + 1];
-            if (null != value)
-            {
+            if (null != value) {
                 final Object key = oldEntries[keyIndex];
                 int index = Hashing.evenHash(key.hashCode(), mask);
 
-                while (null != newEntries[index + 1])
-                {
+                while (null != newEntries[index + 1]) {
                     index = next(index, mask);
                 }
 
@@ -261,20 +236,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @param value to be tested against contained values.
      * @return true if contained otherwise false.
      */
-    public boolean containsValue(final Object value)
-    {
+    public boolean containsValue(final Object value) {
         final Object val = mapNullValue(value);
         boolean found = false;
-        if (null != val)
-        {
+        if (null != val) {
             final Object[] entries = this.entries;
             final int length = entries.length;
 
-            for (int valueIndex = 1; valueIndex < length; valueIndex += 2)
-            {
+            for (int valueIndex = 1; valueIndex < length; valueIndex += 2) {
                 final Object entry = entries[valueIndex];
-                if (null != entry && Objects.equals(entry, val))
-                {
+                if (null != entry && Objects.equals(entry, val)) {
                     found = true;
                     break;
                 }
@@ -287,10 +258,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public void clear()
-    {
-        if (size > 0)
-        {
+    public void clear() {
+        if (size > 0) {
             Arrays.fill(entries, null);
             size = 0;
         }
@@ -300,9 +269,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * Compact the backing arrays by rehashing with a capacity just larger than current size
      * and giving consideration to the load factor.
      */
-    public void compact()
-    {
-        final int idealCapacity = (int)Math.round(size() * (1.0d / loadFactor));
+    public void compact() {
+        final int idealCapacity = (int) Math.round(size() * (1.0d / loadFactor));
         rehash(findNextPositivePowerOfTwo(Math.max(MIN_CAPACITY, idealCapacity)));
     }
 
@@ -310,17 +278,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public void forEach(final BiConsumer<? super K, ? super V> consumer)
-    {
+    public void forEach(final BiConsumer<? super K, ? super V> consumer) {
         int remaining = size;
         final Object[] entries = this.entries;
 
-        for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2)
-        {
+        for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2) {
             final Object value = entries[i];
-            if (null != value)
-            {
-                consumer.accept((K)entries[i - 1], unmapNullValue(value));
+            if (null != value) {
+                consumer.accept((K) entries[i - 1], unmapNullValue(value));
                 --remaining;
             }
         }
@@ -329,18 +294,15 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public boolean containsKey(final Object key)
-    {
+    public boolean containsKey(final Object key) {
         return null != getMapped(key);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(final Map<? extends K, ? extends V> map)
-    {
-        for (final Entry<? extends K, ? extends V> entry : map.entrySet())
-        {
+    public void putAll(final Map<? extends K, ? extends V> map) {
+        for (final Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
@@ -348,10 +310,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public KeySet keySet()
-    {
-        if (null == keySet)
-        {
+    public KeySet keySet() {
+        if (null == keySet) {
             keySet = new KeySet();
         }
 
@@ -361,10 +321,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public ValueCollection values()
-    {
-        if (null == valueCollection)
-        {
+    public ValueCollection values() {
+        if (null == valueCollection) {
             valueCollection = new ValueCollection();
         }
 
@@ -374,10 +332,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public EntrySet entrySet()
-    {
-        if (null == entrySet)
-        {
+    public EntrySet entrySet() {
+        if (null == entrySet) {
             entrySet = new EntrySet();
         }
 
@@ -387,17 +343,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public V remove(final Object key)
-    {
+    public V remove(final Object key) {
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object value;
-        while (null != (value = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (value = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 entries[keyIndex] = null;
                 entries[keyIndex + 1] = null;
                 size--;
@@ -413,27 +366,23 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     }
 
     @SuppressWarnings("FinalParameters")
-    private void compactChain(int deleteKeyIndex)
-    {
+    private void compactChain(int deleteKeyIndex) {
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = deleteKeyIndex;
 
-        while (true)
-        {
+        while (true) {
             keyIndex = next(keyIndex, mask);
             final Object value = entries[keyIndex + 1];
-            if (null == value)
-            {
+            if (null == value) {
                 break;
             }
 
             final Object key = entries[keyIndex];
             final int hash = Hashing.evenHash(key.hashCode(), mask);
 
-            if ((keyIndex < hash && (hash <= deleteKeyIndex || deleteKeyIndex <= keyIndex)) ||
-                (hash <= deleteKeyIndex && deleteKeyIndex <= keyIndex))
-            {
+            if ((keyIndex < hash && (hash <= deleteKeyIndex || deleteKeyIndex <= keyIndex))
+                || (hash <= deleteKeyIndex && deleteKeyIndex <= keyIndex)) {
                 entries[deleteKeyIndex] = key;
                 entries[deleteKeyIndex + 1] = value;
 
@@ -447,10 +396,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
-        if (isEmpty())
-        {
+    public String toString() {
+        if (isEmpty()) {
             return "{}";
         }
 
@@ -458,15 +405,17 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         entryIterator.reset();
 
         final StringBuilder sb = new StringBuilder().append('{');
-        while (true)
-        {
+        while (true) {
             entryIterator.next();
-            sb.append(entryIterator.getKey()).append('=').append(unmapNullValue(entryIterator.getValue()));
-            if (!entryIterator.hasNext())
-            {
-                return sb.append('}').toString();
+            sb.append(entryIterator.getKey())
+                .append('=')
+                .append(unmapNullValue(entryIterator.getValue()));
+            if (!entryIterator.hasNext()) {
+                return sb.append('}')
+                    .toString();
             }
-            sb.append(',').append(' ');
+            sb.append(',')
+                .append(' ');
         }
     }
 
@@ -474,19 +423,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
 
-        if (!(o instanceof Map))
-        {
+        if (!(o instanceof Map)) {
             return false;
         }
 
-        final Map<K, V> that = (Map<K, V>)o;
+        final Map<K, V> that = (Map<K, V>) o;
 
         return size == that.size() && entrySet().equals(that.entrySet());
     }
@@ -494,25 +440,21 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return entrySet().hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
-    public V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction)
-    {
+    public V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction) {
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object mappedValue;
-        while (null != (mappedValue = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (mappedValue = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
 
@@ -520,11 +462,9 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         }
 
         V value = unmapNullValue(mappedValue);
-        if (value == null && (value = mappingFunction.apply(key)) != null)
-        {
+        if (value == null && (value = mappingFunction.apply(key)) != null) {
             entries[keyIndex + 1] = value;
-            if (mappedValue == null)
-            {
+            if (mappedValue == null) {
                 entries[keyIndex] = key;
                 ++size;
                 increaseCapacity();
@@ -538,17 +478,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * {@inheritDoc}
      */
     @Override
-    public V computeIfPresent(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction)
-    {
+    public V computeIfPresent(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object mappedValue;
-        while (null != (mappedValue = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (mappedValue = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
 
@@ -556,12 +493,10 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         }
 
         V value = unmapNullValue(mappedValue);
-        if (value != null)
-        {
+        if (value != null) {
             value = remappingFunction.apply(key, value);
             entries[keyIndex + 1] = value;
-            if (value == null)
-            {
+            if (value == null) {
                 entries[keyIndex] = null;
                 size--;
                 compactChain(keyIndex);
@@ -575,17 +510,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * {@inheritDoc}
      */
     @Override
-    public V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction)
-    {
+    public V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
 
         Object mappedValue;
-        while (null != (mappedValue = entries[keyIndex + 1]))
-        {
-            if (Objects.equals(entries[keyIndex], key))
-            {
+        while (null != (mappedValue = entries[keyIndex + 1])) {
+            if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
 
@@ -595,19 +527,15 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         final V oldValue = unmapNullValue(mappedValue);
         final V newValue = remappingFunction.apply(key, oldValue);
 
-        if (newValue != null)
-        {
+        if (newValue != null) {
             entries[keyIndex + 1] = newValue;
-            if (mappedValue == null)
-            {
+            if (mappedValue == null) {
                 entries[keyIndex] = key;
                 size++;
                 increaseCapacity();
             }
 
-        }
-        else if (mappedValue != null)
-        {
+        } else if (mappedValue != null) {
             entries[keyIndex] = null;
             entries[keyIndex + 1] = null;
             size--;
@@ -623,8 +551,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @param value value to be handled.
      * @return replacement value.
      */
-    protected Object mapNullValue(final Object value)
-    {
+    protected Object mapNullValue(final Object value) {
         return value;
     }
 
@@ -637,25 +564,21 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
      * @see #mapNullValue(Object)
      */
     @SuppressWarnings("unchecked")
-    protected V unmapNullValue(final Object value)
-    {
-        return (V)value;
+    protected V unmapNullValue(final Object value) {
+        return (V) value;
     }
 
-    private static int next(final int index, final int mask)
-    {
+    private static int next(final int index, final int mask) {
         return (index + 2) & mask;
     }
 
-    private void capacity(final int newCapacity)
-    {
+    private void capacity(final int newCapacity) {
         final int entriesLength = newCapacity * 2;
-        if (entriesLength < 0)
-        {
+        if (entriesLength < 0) {
             throw new IllegalStateException("max capacity reached at size=" + size);
         }
 
-        resizeThreshold = (int)(newCapacity * loadFactor);
+        resizeThreshold = (int) (newCapacity * loadFactor);
         entries = new Object[entriesLength];
     }
 
@@ -664,8 +587,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * Base iterator impl.
      */
-    abstract class AbstractIterator
-    {
+    abstract class AbstractIterator {
+
         /**
          * Is position valid.
          */
@@ -674,20 +597,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         private int positionCounter;
         private int stopCounter;
 
-        final void reset()
-        {
+        final void reset() {
             isPositionValid = false;
             remaining = Object2ObjectHashMap.this.size;
             final Object[] entries = Object2ObjectHashMap.this.entries;
             final int capacity = entries.length;
 
             int keyIndex = capacity;
-            if (null != entries[capacity - 1])
-            {
-                for (int i = 1; i < capacity; i += 2)
-                {
-                    if (null == entries[i])
-                    {
+            if (null != entries[capacity - 1]) {
+                for (int i = 1; i < capacity; i += 2) {
+                    if (null == entries[i]) {
                         keyIndex = i - 1;
                         break;
                     }
@@ -698,8 +617,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
             positionCounter = keyIndex + capacity;
         }
 
-        final int keyPosition()
-        {
+        final int keyPosition() {
             return positionCounter & entries.length - 1;
         }
 
@@ -708,8 +626,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          *
          * @return number of remaining elements.
          */
-        public int remaining()
-        {
+        public int remaining() {
             return remaining;
         }
 
@@ -718,8 +635,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          *
          * @return {@code true} if {@code remaining > 0}.
          */
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return remaining > 0;
         }
 
@@ -728,21 +644,17 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          *
          * @throws NoSuchElementException if no more elements.
          */
-        protected final void findNext()
-        {
-            if (!hasNext())
-            {
+        protected final void findNext() {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
             final Object[] entries = Object2ObjectHashMap.this.entries;
             final int mask = entries.length - 1;
 
-            for (int keyIndex = positionCounter - 2; keyIndex >= stopCounter; keyIndex -= 2)
-            {
+            for (int keyIndex = positionCounter - 2; keyIndex >= stopCounter; keyIndex -= 2) {
                 final int index = keyIndex & mask;
-                if (null != entries[index + 1])
-                {
+                if (null != entries[index + 1]) {
                     isPositionValid = true;
                     positionCounter = keyIndex;
                     --remaining;
@@ -757,10 +669,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public void remove()
-        {
-            if (isPositionValid)
-            {
+        public void remove() {
+            if (isPositionValid) {
                 final int position = keyPosition();
                 final Object[] entries = Object2ObjectHashMap.this.entries;
                 entries[position] = null;
@@ -770,9 +680,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
                 compactChain(position);
 
                 isPositionValid = false;
-            }
-            else
-            {
+            } else {
                 throw new IllegalStateException();
             }
         }
@@ -781,29 +689,27 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * An iterator over keys.
      */
-    public final class KeyIterator extends AbstractIterator implements Iterator<K>
-    {
+    public final class KeyIterator extends AbstractIterator implements Iterator<K> {
+
         /**
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public K next()
-        {
+        public K next() {
             findNext();
-            return (K)entries[keyPosition()];
+            return (K) entries[keyPosition()];
         }
     }
 
     /**
      * An iterator over values.
      */
-    public final class ValueIterator extends AbstractIterator implements Iterator<V>
-    {
+    public final class ValueIterator extends AbstractIterator implements Iterator<V> {
+
         /**
          * {@inheritDoc}
          */
-        public V next()
-        {
+        public V next() {
             findNext();
             return unmapNullValue(entries[keyPosition() + 1]);
         }
@@ -812,24 +718,20 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * An iterator over entries.
      */
-    public final class EntryIterator
-        extends AbstractIterator
-        implements Iterator<Entry<K, V>>, Entry<K, V>
-    {
+    public final class EntryIterator extends AbstractIterator implements Iterator<Entry<K, V>>, Entry<K, V> {
+
         /**
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public K getKey()
-        {
-            return (K)entries[keyPosition()];
+        public K getKey() {
+            return (K) entries[keyPosition()];
         }
 
         /**
          * {@inheritDoc}
          */
-        public V getValue()
-        {
+        public V getValue() {
             return unmapNullValue(entries[keyPosition() + 1]);
         }
 
@@ -837,17 +739,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public V setValue(final V value)
-        {
-            final V val = (V)mapNullValue(value);
+        public V setValue(final V value) {
+            final V val = (V) mapNullValue(value);
 
-            if (!isPositionValid)
-            {
+            if (!isPositionValid) {
                 throw new IllegalStateException();
             }
 
-            if (null == val)
-            {
+            if (null == val) {
                 throw new IllegalArgumentException();
             }
 
@@ -862,46 +761,39 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public Entry<K, V> next()
-        {
+        public Entry<K, V> next() {
             findNext();
 
-            if (shouldAvoidAllocation)
-            {
+            if (shouldAvoidAllocation) {
                 return this;
             }
 
             return allocateDuplicateEntry();
         }
 
-        private Entry<K, V> allocateDuplicateEntry()
-        {
+        private Entry<K, V> allocateDuplicateEntry() {
             return new MapEntry(getKey(), getValue());
         }
 
         /**
          * {@inheritDoc}
          */
-        public int hashCode()
-        {
+        public int hashCode() {
             return getKey().hashCode() ^ Objects.hashCode(getValue());
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean equals(final Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(final Object o) {
+            if (this == o) {
                 return true;
             }
-            if (!(o instanceof Entry))
-            {
+            if (!(o instanceof Entry)) {
                 return false;
             }
 
-            final Entry<?, ?> that = (Entry<?, ?>)o;
+            final Entry<?, ?> that = (Entry<?, ?>) o;
 
             return Objects.equals(getKey(), that.getKey()) && Objects.equals(getValue(), that.getValue());
         }
@@ -909,8 +801,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * An {@link Entry} implementation.
          */
-        public final class MapEntry implements Entry<K, V>
-        {
+        public final class MapEntry implements Entry<K, V> {
+
             private final K k;
             private V v;
 
@@ -918,8 +810,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
              * @param k key.
              * @param v value.
              */
-            public MapEntry(final K k, final V v)
-            {
+            public MapEntry(final K k, final V v) {
                 this.k = k;
                 this.v = v;
             }
@@ -927,24 +818,21 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
             /**
              * {@inheritDoc}
              */
-            public K getKey()
-            {
+            public K getKey() {
                 return k;
             }
 
             /**
              * {@inheritDoc}
              */
-            public V getValue()
-            {
+            public V getValue() {
                 return v;
             }
 
             /**
              * {@inheritDoc}
              */
-            public V setValue(final V value)
-            {
+            public V setValue(final V value) {
                 final V oldValue = Object2ObjectHashMap.this.put(k, value);
                 v = value;
                 return oldValue;
@@ -953,34 +841,29 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
             /**
              * {@inheritDoc}
              */
-            public int hashCode()
-            {
+            public int hashCode() {
                 return k.hashCode() ^ Objects.hashCode(v);
             }
 
             /**
              * {@inheritDoc}
              */
-            public boolean equals(final Object o)
-            {
-                if (this == o)
-                {
+            public boolean equals(final Object o) {
+                if (this == o) {
                     return true;
                 }
-                if (!(o instanceof Entry))
-                {
+                if (!(o instanceof Entry)) {
                     return false;
                 }
 
-                final Entry<?, ?> e = (Entry<?, ?>)o;
+                final Entry<?, ?> e = (Entry<?, ?>) o;
                 return Objects.equals(k, e.getKey()) && Objects.equals(v, e.getValue());
             }
 
             /**
              * {@inheritDoc}
              */
-            public String toString()
-            {
+            public String toString() {
                 return k + "=" + v;
             }
         }
@@ -989,18 +872,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * A key set implementation.
      */
-    public final class KeySet extends AbstractSet<K>
-    {
+    public final class KeySet extends AbstractSet<K> {
+
         private final KeyIterator keyIterator = shouldAvoidAllocation ? new KeyIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public KeyIterator iterator()
-        {
+        public KeyIterator iterator() {
             KeyIterator keyIterator = this.keyIterator;
-            if (null == keyIterator)
-            {
+            if (null == keyIterator) {
                 keyIterator = new KeyIterator();
             }
 
@@ -1011,32 +892,28 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public int size()
-        {
+        public int size() {
             return Object2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean isEmpty()
-        {
+        public boolean isEmpty() {
             return Object2ObjectHashMap.this.isEmpty();
         }
 
         /**
          * {@inheritDoc}
          */
-        public void clear()
-        {
+        public void clear() {
             Object2ObjectHashMap.this.clear();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
+        public boolean contains(final Object o) {
             return containsKey(o);
         }
 
@@ -1044,16 +921,13 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public void forEach(final Consumer<? super K> action)
-        {
+        public void forEach(final Consumer<? super K> action) {
             int remaining = size;
             final Object[] entries = Object2ObjectHashMap.this.entries;
 
-            for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2)
-            {
-                if (null != entries[i])
-                {
-                    action.accept((K)entries[i - 1]);
+            for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2) {
+                if (null != entries[i]) {
+                    action.accept((K) entries[i - 1]);
                     --remaining;
                 }
             }
@@ -1063,18 +937,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * A collection of values.
      */
-    public final class ValueCollection extends AbstractCollection<V>
-    {
+    public final class ValueCollection extends AbstractCollection<V> {
+
         private final ValueIterator valueIterator = shouldAvoidAllocation ? new ValueIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public ValueIterator iterator()
-        {
+        public ValueIterator iterator() {
             ValueIterator valueIterator = this.valueIterator;
-            if (null == valueIterator)
-            {
+            if (null == valueIterator) {
                 valueIterator = new ValueIterator();
             }
 
@@ -1085,32 +957,27 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public int size()
-        {
+        public int size() {
             return Object2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
+        public boolean contains(final Object o) {
             return containsValue(o);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void forEach(final Consumer<? super V> action)
-        {
+        public void forEach(final Consumer<? super V> action) {
             int remaining = size;
             final Object[] entries = Object2ObjectHashMap.this.entries;
 
-            for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2)
-            {
+            for (int i = 1, length = entries.length; remaining > 0 && i < length; i += 2) {
                 final Object entry = entries[i];
-                if (null != entry)
-                {
+                if (null != entry) {
                     action.accept(unmapNullValue(entry));
                     --remaining;
                 }
@@ -1121,18 +988,16 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
     /**
      * An entry set implementation.
      */
-    public final class EntrySet extends AbstractSet<Entry<K, V>>
-    {
+    public final class EntrySet extends AbstractSet<Entry<K, V>> {
+
         private final EntryIterator entryIterator = shouldAvoidAllocation ? new EntryIterator() : null;
 
         /**
          * {@inheritDoc}
          */
-        public EntryIterator iterator()
-        {
+        public EntryIterator iterator() {
             EntryIterator entryIterator = this.entryIterator;
-            if (null == entryIterator)
-            {
+            if (null == entryIterator) {
                 entryIterator = new EntryIterator();
             }
 
@@ -1143,38 +1008,33 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public int size()
-        {
+        public int size() {
             return Object2ObjectHashMap.this.size();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean isEmpty()
-        {
+        public boolean isEmpty() {
             return Object2ObjectHashMap.this.isEmpty();
         }
 
         /**
          * {@inheritDoc}
          */
-        public void clear()
-        {
+        public void clear() {
             Object2ObjectHashMap.this.clear();
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean contains(final Object o)
-        {
-            if (!(o instanceof Entry))
-            {
+        public boolean contains(final Object o) {
+            if (!(o instanceof Entry)) {
                 return false;
             }
 
-            final Entry<?, ?> entry = (Entry<?, ?>)o;
+            final Entry<?, ?> entry = (Entry<?, ?>) o;
             final V value = getMapped(entry.getKey());
             return null != value && Objects.equals(value, mapNullValue(entry.getValue()));
         }
@@ -1182,8 +1042,7 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
         /**
          * {@inheritDoc}
          */
-        public Object[] toArray()
-        {
+        public Object[] toArray() {
             return toArray(new Object[size()]);
         }
 
@@ -1191,21 +1050,19 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V>
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
-        public <T> T[] toArray(final T[] a)
-        {
-            final T[] array = a.length >= size ?
-                a : (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+        public <T> T[] toArray(final T[] a) {
+            final T[] array = a.length >= size ? a
+                : (T[]) java.lang.reflect.Array.newInstance(
+                    a.getClass()
+                        .getComponentType(),
+                    size);
             final EntryIterator it = iterator();
 
-            for (int i = 0; i < array.length; i++)
-            {
-                if (it.hasNext())
-                {
+            for (int i = 0; i < array.length; i++) {
+                if (it.hasNext()) {
                     it.next();
-                    array[i] = (T)it.allocateDuplicateEntry();
-                }
-                else
-                {
+                    array[i] = (T) it.allocateDuplicateEntry();
+                } else {
                     array[i] = null;
                     break;
                 }

@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -23,8 +22,6 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(PathNavigate.class)
@@ -255,7 +252,8 @@ public class MixinPathNavigate {
                 Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
 
                 if (vec3 != null) {
-                    this.theEntity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
+                    this.theEntity.getMoveHelper()
+                        .setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, this.speed);
                 }
             }
         }
@@ -271,7 +269,7 @@ public class MixinPathNavigate {
         int i = this.currentPath.getCurrentPathLength();
 
         for (int j = this.currentPath.getCurrentPathIndex(); j < i; ++j) {
-            if (this.currentPath.getPathPointFromIndex(j).yCoord != (int)vec3.yCoord) {
+            if (this.currentPath.getPathPointFromIndex(j).yCoord != (int) vec3.yCoord) {
                 i = j;
                 break;
             }
@@ -279,7 +277,7 @@ public class MixinPathNavigate {
 
         float entityWidthSquared = this.theEntity.width * this.theEntity.width;
         int ceilingWidth = MathHelper.ceiling_float_int(this.theEntity.width);
-        int entityHeightPlusOne = (int)this.theEntity.height + 1;
+        int entityHeightPlusOne = (int) this.theEntity.height + 1;
 
         for (int k = this.currentPath.getCurrentPathIndex(); k < i; ++k) {
             Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, k);
@@ -292,7 +290,8 @@ public class MixinPathNavigate {
         for (int k = i - 1; k >= this.currentPath.getCurrentPathIndex(); --k) {
             Vec3 pathVector = this.currentPath.getVectorFromIndex(this.theEntity, k);
 
-            if (pathVector != null && isDirectPathBetweenPoints(vec3, pathVector, ceilingWidth, entityHeightPlusOne, ceilingWidth)) {
+            if (pathVector != null
+                && isDirectPathBetweenPoints(vec3, pathVector, ceilingWidth, entityHeightPlusOne, ceilingWidth)) {
                 this.currentPath.setCurrentPathIndex(k);
                 break;
             }
@@ -399,7 +398,8 @@ public class MixinPathNavigate {
      * pos1, pos2, entityXSize, entityYSize, entityZSize
      */
     @Overwrite
-    public boolean isDirectPathBetweenPoints(Vec3 p_75493_1, Vec3 p_75493_2, int p_75493_3, int p_75493_4, int p_75493_5) {
+    public boolean isDirectPathBetweenPoints(Vec3 p_75493_1, Vec3 p_75493_2, int p_75493_3, int p_75493_4,
+        int p_75493_5) {
         int l = MathHelper.floor_double(p_75493_1.xCoord);
         int i1 = MathHelper.floor_double(p_75493_1.zCoord);
 
@@ -465,7 +465,8 @@ public class MixinPathNavigate {
                 i1 += k1;
                 k2 = i2 - i1;
             }
-        } while (this.isSafeToStandAt(l, (int) p_75493_1.yCoord, i1, p_75493_3, p_75493_4, p_75493_5, p_75493_1, d0, d1));
+        } while (this
+            .isSafeToStandAt(l, (int) p_75493_1.yCoord, i1, p_75493_3, p_75493_4, p_75493_5, p_75493_1, d0, d1));
 
         return false;
     }
@@ -475,11 +476,13 @@ public class MixinPathNavigate {
      * xOffset, yOffset, zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    public boolean isSafeToStandAt(int p_75483_1, int p_75483_2, int p_75483_3, int p_75483_4, int p_75483_5, int p_75483_6, Vec3 p_75483_7, double p_75483_8, double p_75483_10) {
+    public boolean isSafeToStandAt(int p_75483_1, int p_75483_2, int p_75483_3, int p_75483_4, int p_75483_5,
+        int p_75483_6, Vec3 p_75483_7, double p_75483_8, double p_75483_10) {
         int k1 = p_75483_1 - p_75483_4 / 2;
         int l1 = p_75483_3 - p_75483_6 / 2;
 
-        if (!this.isPositionClear(k1, p_75483_2, l1, p_75483_4, p_75483_5, p_75483_6, p_75483_7, p_75483_8, p_75483_10)) {
+        if (!this
+            .isPositionClear(k1, p_75483_2, l1, p_75483_4, p_75483_5, p_75483_6, p_75483_7, p_75483_8, p_75483_10)) {
             return false;
         }
 
@@ -521,13 +524,13 @@ public class MixinPathNavigate {
         return true;
     }
 
-
     /**
      * Returns true if an entity does not collide with any solid blocks at the position. Args: xOffset, yOffset,
      * zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    public boolean isPositionClear(int p_75496_1, int p_75496_2, int p_75496_3, int p_75496_4, int p_75496_5, int p_75496_6, Vec3 p_75496_7, double p_75496_8, double p_75496_10) {
+    public boolean isPositionClear(int p_75496_1, int p_75496_2, int p_75496_3, int p_75496_4, int p_75496_5,
+        int p_75496_6, Vec3 p_75496_7, double p_75496_8, double p_75496_10) {
         double centerX = p_75496_7.xCoord + 0.5;
         double centerZ = p_75496_7.zCoord + 0.5;
 

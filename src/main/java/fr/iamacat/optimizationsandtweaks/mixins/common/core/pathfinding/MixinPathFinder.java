@@ -3,11 +3,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core.pathfinding;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Int2ObjectHashMap;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2IntCounterMap;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2IntHashMap;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.ObjectHashSet;
-import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -16,7 +11,6 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.IntHashMap;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -29,6 +23,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Int2ObjectHashMap;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
@@ -60,12 +56,14 @@ public class MixinPathFinder {
     float distanceToTarget;
     @Unique
     PathPoint previous;
+
     /**
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
     @Overwrite
-    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_, PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
+    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_,
+        PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         World world = p_82565_0_.worldObj;
         int entityX = MathHelper.floor_double(p_82565_0_.posX);
         int entityY = MathHelper.floor_double(p_82565_0_.posY);
@@ -115,19 +113,19 @@ public class MixinPathFinder {
                             }
                         } else if (!block.getBlocksMovement(world, x, y, z)
                             && (!p_82565_7_ || block != Blocks.wooden_door)) {
-                            if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                return -3;
+                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                    return -3;
+                                }
+                                if (block == Blocks.trapdoor) {
+                                    return -4;
+                                }
+                                if (material != Material.lava) {
+                                    return 0;
+                                }
+                                if (!p_82565_0_.handleLavaMovement()) {
+                                    return -2;
+                                }
                             }
-                            if (block == Blocks.trapdoor) {
-                                return -4;
-                            }
-                            if (material != Material.lava) {
-                                return 0;
-                            }
-                            if (!p_82565_0_.handleLavaMovement()) {
-                                return -2;
-                            }
-                        }
                     }
                 }
             }
@@ -135,6 +133,7 @@ public class MixinPathFinder {
 
         return isTrapdoorPresent ? 2 : 1;
     }
+
     /**
      * @author iamacatfr
      * @reason optimize openPoint
@@ -155,7 +154,6 @@ public class MixinPathFinder {
 
         return pathpoint;
     }
-
 
     @Unique
     private PathEntity multithreadingandtweaks$createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
@@ -296,7 +294,6 @@ public class MixinPathFinder {
 
         return pathPoint;
     }
-
 
     /**
      * @author

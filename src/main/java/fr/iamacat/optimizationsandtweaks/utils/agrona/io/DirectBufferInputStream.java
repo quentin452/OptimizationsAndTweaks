@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +12,15 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.io;
 
+import java.io.InputStream;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.DirectBuffer;
-
-import java.io.InputStream;
 
 /**
  * An {@link InputStream} that wraps a {@link DirectBuffer}.
  */
-public class DirectBufferInputStream extends InputStream
-{
+public class DirectBufferInputStream extends InputStream {
+
     private DirectBuffer buffer;
     private int offset;
     private int length;
@@ -33,9 +29,7 @@ public class DirectBufferInputStream extends InputStream
     /**
      * Default constructor.
      */
-    public DirectBufferInputStream()
-    {
-    }
+    public DirectBufferInputStream() {}
 
     /**
      * Wrap given {@link DirectBuffer}.
@@ -43,8 +37,7 @@ public class DirectBufferInputStream extends InputStream
      * @param buffer to wrap.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferInputStream(final DirectBuffer buffer)
-    {
+    public DirectBufferInputStream(final DirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -56,8 +49,7 @@ public class DirectBufferInputStream extends InputStream
      * @param length in bytes.
      */
     @SuppressWarnings("this-escape")
-    public DirectBufferInputStream(final DirectBuffer buffer, final int offset, final int length)
-    {
+    public DirectBufferInputStream(final DirectBuffer buffer, final int offset, final int length) {
         wrap(buffer, offset, length);
     }
 
@@ -66,8 +58,7 @@ public class DirectBufferInputStream extends InputStream
      *
      * @param buffer to wrap.
      */
-    public void wrap(final DirectBuffer buffer)
-    {
+    public void wrap(final DirectBuffer buffer) {
         wrap(buffer, 0, buffer.capacity());
     }
 
@@ -78,10 +69,8 @@ public class DirectBufferInputStream extends InputStream
      * @param offset into the buffer.
      * @param length in bytes.
      */
-    public void wrap(final DirectBuffer buffer, final int offset, final int length)
-    {
-        if (null == buffer)
-        {
+    public void wrap(final DirectBuffer buffer, final int offset, final int length) {
+        if (null == buffer) {
             throw new NullPointerException("buffer cannot be null");
         }
 
@@ -96,8 +85,7 @@ public class DirectBufferInputStream extends InputStream
      *
      * @return offset within the underlying buffer at which to start.
      */
-    public int offset()
-    {
+    public int offset() {
         return offset;
     }
 
@@ -106,8 +94,7 @@ public class DirectBufferInputStream extends InputStream
      *
      * @return length of the underlying buffer to use
      */
-    public int length()
-    {
+    public int length() {
         return length;
     }
 
@@ -116,33 +103,29 @@ public class DirectBufferInputStream extends InputStream
      *
      * @return the underlying buffer being wrapped.
      */
-    public DirectBuffer buffer()
-    {
+    public DirectBuffer buffer() {
         return buffer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean markSupported()
-    {
+    public boolean markSupported() {
         return false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int available()
-    {
+    public int available() {
         return length - position;
     }
 
     /**
      * {@inheritDoc}
      */
-    public long skip(final long n)
-    {
-        final int skipped = (int)Math.min(n, available());
+    public long skip(final long n) {
+        final int skipped = (int) Math.min(n, available());
         position += skipped;
 
         return skipped;
@@ -151,11 +134,9 @@ public class DirectBufferInputStream extends InputStream
     /**
      * {@inheritDoc}
      */
-    public int read()
-    {
+    public int read() {
         int b = -1;
-        if (position < length)
-        {
+        if (position < length) {
             b = buffer.getByte(offset + position) & 0xFF;
             ++position;
         }
@@ -166,12 +147,10 @@ public class DirectBufferInputStream extends InputStream
     /**
      * {@inheritDoc}
      */
-    public int read(final byte[] dstBytes, final int dstOffset, final int length)
-    {
+    public int read(final byte[] dstBytes, final int dstOffset, final int length) {
         int bytesRead = -1;
 
-        if (position < this.length)
-        {
+        if (position < this.length) {
             bytesRead = Math.min(length, available());
             buffer.getBytes(offset + position, dstBytes, dstOffset, bytesRead);
             position += bytesRead;
@@ -183,7 +162,5 @@ public class DirectBufferInputStream extends InputStream
     /**
      * {@inheritDoc}
      */
-    public void close()
-    {
-    }
+    public void close() {}
 }

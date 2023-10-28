@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,23 +12,20 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-
-import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil;
+
 /**
  * Utility functions for collection objects.
  */
-public final class CollectionUtil
-{
-    private CollectionUtil()
-    {
-    }
+public final class CollectionUtil {
+
+    private CollectionUtil() {}
 
     /**
      * A getOrDefault that doesn't create garbage if its suppler is non-capturing.
@@ -43,11 +37,9 @@ public final class CollectionUtil
      * @param <V>      type of the value
      * @return the value if found or a new default which as been added to the map.
      */
-    public static <K, V> V getOrDefault(final Map<K, V> map, final K key, final Function<K, V> supplier)
-    {
+    public static <K, V> V getOrDefault(final Map<K, V> map, final K key, final Function<K, V> supplier) {
         V value = map.get(key);
-        if (value == null)
-        {
+        if (value == null) {
             value = supplier.apply(key);
             map.put(key, value);
         }
@@ -65,13 +57,11 @@ public final class CollectionUtil
      * @param <V>      the value to add up
      * @return the sum of all the int values returned for each member of the list.
      */
-    public static <V> int sum(final List<V> values, final ToIntFunction<V> function)
-    {
+    public static <V> int sum(final List<V> values, final ToIntFunction<V> function) {
         int total = 0;
 
         final int size = values.size();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             final V value = values.get(i);
             total += function.applyAsInt(value);
         }
@@ -86,10 +76,8 @@ public final class CollectionUtil
      *
      * @param loadFactor to be validated.
      */
-    public static void validateLoadFactor(final float loadFactor)
-    {
-        if (loadFactor < 0.1f || loadFactor > 0.9f)
-        {
+    public static void validateLoadFactor(final float loadFactor) {
+        if (loadFactor < 0.1f || loadFactor > 0.9f) {
             throw new IllegalArgumentException("load factor must be in the range of 0.1 to 0.9: " + loadFactor);
         }
     }
@@ -99,10 +87,8 @@ public final class CollectionUtil
      *
      * @param value to be validated.
      */
-    public static void validatePositivePowerOfTwo(final int value)
-    {
-        if (!BitUtil.isPowerOfTwo(value))
-        {
+    public static void validatePositivePowerOfTwo(final int value) {
+        if (!BitUtil.isPowerOfTwo(value)) {
             throw new IllegalArgumentException("value must be a positive power of two: " + value);
         }
     }
@@ -117,22 +103,17 @@ public final class CollectionUtil
      * @param <T>       type of the value.
      * @return the number of items remove.
      */
-    public static <T> int removeIf(final List<T> values, final Predicate<T> predicate)
-    {
+    public static <T> int removeIf(final List<T> values, final Predicate<T> predicate) {
         int size = values.size();
         int total = 0;
 
-        for (int i = 0; i < size; )
-        {
+        for (int i = 0; i < size;) {
             final T value = values.get(i);
-            if (predicate.test(value))
-            {
+            if (predicate.test(value)) {
                 values.remove(i);
                 total++;
                 size--;
-            }
-            else
-            {
+            } else {
                 i++;
             }
         }

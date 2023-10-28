@@ -1,12 +1,9 @@
 /*
  * Copyright 2014-2023 Real Logic Limited.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * https://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +12,7 @@
  */
 package fr.iamacat.optimizationsandtweaks.utils.agrona.collections;
 
-
-import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
+import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -29,13 +25,13 @@ import java.util.function.IntConsumer;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
-import static java.util.Objects.requireNonNull;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 
 /**
  * A {@link List} implementation that stores int values with the ability to not have them boxed.
  */
-public class IntArrayList extends AbstractList<Integer> implements List<Integer>, RandomAccess
-{
+public class IntArrayList extends AbstractList<Integer> implements List<Integer>, RandomAccess {
+
     /**
      * The default value that will be used in place of null for an element.
      */
@@ -48,14 +44,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     public static final int INITIAL_CAPACITY = 10;
 
     private final int nullValue;
-    @DoNotSub private int size = 0;
+    @DoNotSub
+    private int size = 0;
     private int[] elements;
 
     /**
      * Constructs a new list with the {@link #INITIAL_CAPACITY} using {@link #DEFAULT_NULL_VALUE}.
      */
-    public IntArrayList()
-    {
+    public IntArrayList() {
         this(INITIAL_CAPACITY, DEFAULT_NULL_VALUE);
     }
 
@@ -65,10 +61,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param initialCapacity for the backing array.
      * @param nullValue       to be used to represent a null element.
      */
-    public IntArrayList(
-        @DoNotSub final int initialCapacity,
-        final int nullValue)
-    {
+    public IntArrayList(@DoNotSub final int initialCapacity, final int nullValue) {
         this.nullValue = nullValue;
         elements = new int[Math.max(initialCapacity, INITIAL_CAPACITY)];
     }
@@ -81,11 +74,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param nullValue       to be used to represent a null element.
      */
     @SuppressWarnings("this-escape")
-    public IntArrayList(
-        final int[] initialElements,
-        @DoNotSub final int initialSize,
-        final int nullValue)
-    {
+    public IntArrayList(final int[] initialElements, @DoNotSub final int initialSize, final int nullValue) {
         wrap(initialElements, initialSize);
         this.nullValue = nullValue;
     }
@@ -98,12 +87,8 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @throws IllegalArgumentException if the initialSize is less than 0 or greater than the length of the
      *                                  initial array.
      */
-    public void wrap(
-        final int[] initialElements,
-        final @DoNotSub int initialSize)
-    {
-        if (initialSize < 0 || initialSize > initialElements.length)
-        {
+    public void wrap(final int[] initialElements, final @DoNotSub int initialSize) {
+        if (initialSize < 0 || initialSize > initialElements.length) {
             throw new IllegalArgumentException(
                 "illegal initial size " + initialSize + " for array length of " + initialElements.length);
         }
@@ -117,16 +102,15 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @return value representing a null element.
      */
-    public int nullValue()
-    {
+    public int nullValue() {
         return nullValue;
     }
 
     /**
      * {@inheritDoc}
      */
-    @DoNotSub public int size()
-    {
+    @DoNotSub
+    public int size() {
         return size;
     }
 
@@ -135,26 +119,23 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @return the current capacity for the collection.
      */
-    @DoNotSub public int capacity()
-    {
+    @DoNotSub
+    public int capacity() {
         return elements.length;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void clear()
-    {
+    public void clear() {
         size = 0;
     }
 
     /**
      * Trim the underlying array to be the current size, or {@link #INITIAL_CAPACITY} if size is less.
      */
-    public void trimToSize()
-    {
-        if (elements.length != size && elements.length > INITIAL_CAPACITY)
-        {
+    public void trimToSize() {
+        if (elements.length != size && elements.length > INITIAL_CAPACITY) {
             elements = Arrays.copyOf(elements, Math.max(INITIAL_CAPACITY, size));
         }
     }
@@ -162,9 +143,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public Integer get(
-        @DoNotSub final int index)
-    {
+    public Integer get(@DoNotSub final int index) {
         final int value = getInt(index);
 
         return nullValue == value ? null : value;
@@ -176,9 +155,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param index to get.
      * @return the unboxed element.
      */
-    public int getInt(
-        @DoNotSub final int index)
-    {
+    public int getInt(@DoNotSub final int index) {
         checkIndex(index);
 
         return elements[index];
@@ -187,8 +164,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean add(final Integer element)
-    {
+    public boolean add(final Integer element) {
         return addInt(null == element ? nullValue : element);
     }
 
@@ -198,8 +174,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param element to be added.
      * @return true
      */
-    public boolean addInt(final int element)
-    {
+    public boolean addInt(final int element) {
         ensureCapacityPrivate(size + 1);
 
         elements[size] = element;
@@ -211,10 +186,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public void add(
-        @DoNotSub final int index,
-        final Integer element)
-    {
+    public void add(@DoNotSub final int index, final Integer element) {
         addInt(index, null == element ? nullValue : element);
     }
 
@@ -224,17 +196,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param index   at which the element should be added.
      * @param element to be added.
      */
-    public void addInt(
-        @DoNotSub final int index,
-        final int element)
-    {
+    public void addInt(@DoNotSub final int index, final int element) {
         checkIndexForAdd(index);
 
-        @DoNotSub final int requiredSize = size + 1;
+        @DoNotSub
+        final int requiredSize = size + 1;
         ensureCapacityPrivate(requiredSize);
 
-        if (index < size)
-        {
+        if (index < size) {
             System.arraycopy(elements, index, elements, index + 1, size - index);
         }
 
@@ -245,10 +214,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public Integer set(
-        @DoNotSub final int index,
-        final Integer element)
-    {
+    public Integer set(@DoNotSub final int index, final Integer element) {
         final int previous = setInt(index, null == element ? nullValue : element);
 
         return nullValue == previous ? null : previous;
@@ -261,10 +227,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param element to be added.
      * @return the previous element at the index.
      */
-    public int setInt(
-        @DoNotSub final int index,
-        final int element)
-    {
+    public int setInt(@DoNotSub final int index, final int element) {
         checkIndex(index);
 
         final int previous = elements[index];
@@ -276,9 +239,8 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean contains(final Object o)
-    {
-        return containsInt(null == o ? nullValue : (int)o);
+    public boolean contains(final Object o) {
+        return containsInt(null == o ? nullValue : (int) o);
     }
 
     /**
@@ -287,8 +249,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param value of the element.
      * @return true if present otherwise false.
      */
-    public boolean containsInt(final int value)
-    {
+    public boolean containsInt(final int value) {
         return -1 != indexOf(value);
     }
 
@@ -298,14 +259,11 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param value for the element.
      * @return the index if found otherwise -1.
      */
-    public @DoNotSub int indexOf(
-        final int value)
-    {
+    public @DoNotSub int indexOf(final int value) {
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
-            if (value == elements[i])
-            {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
+            if (value == elements[i]) {
                 return i;
             }
         }
@@ -319,14 +277,11 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param value for the element.
      * @return the index if found otherwise -1.
      */
-    public @DoNotSub int lastIndexOf(
-        final int value)
-    {
+    public @DoNotSub int lastIndexOf(final int value) {
         final int[] elements = this.elements;
-        for (@DoNotSub int i = size - 1; i >= 0; i--)
-        {
-            if (value == elements[i])
-            {
+        for (@DoNotSub
+        int i = size - 1; i >= 0; i--) {
+            if (value == elements[i]) {
                 return i;
             }
         }
@@ -341,11 +296,10 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param list containing elements to be added to this list.
      * @return {@code true} if this list changed as a result of the call.
      */
-    public boolean addAll(final IntArrayList list)
-    {
-        @DoNotSub final int numElements = list.size;
-        if (numElements > 0)
-        {
+    public boolean addAll(final IntArrayList list) {
+        @DoNotSub
+        final int numElements = list.size;
+        if (numElements > 0) {
             ensureCapacityPrivate(size + numElements);
             System.arraycopy(list.elements, 0, elements, size, numElements);
             size += numElements;
@@ -363,20 +317,18 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param list  containing elements to be added to this list.
      * @return {@code true} if this list changed as a result of the call.
      */
-    public boolean addAll(
-        @DoNotSub final int index,
-        final IntArrayList list)
-    {
+    public boolean addAll(@DoNotSub final int index, final IntArrayList list) {
         checkIndexForAdd(index);
 
-        @DoNotSub final int numElements = list.size;
-        if (numElements > 0)
-        {
-            @DoNotSub final int size = this.size;
+        @DoNotSub
+        final int numElements = list.size;
+        if (numElements > 0) {
+            @DoNotSub
+            final int size = this.size;
             ensureCapacityPrivate(size + numElements);
             final int[] elements = this.elements;
-            for (@DoNotSub int i = size - 1; i >= index; i--)
-            {
+            for (@DoNotSub
+            int i = size - 1; i >= index; i--) {
                 elements[i + numElements] = elements[i];
             }
             System.arraycopy(list.elements, 0, elements, index, numElements);
@@ -392,16 +344,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param list to be checked for containment in this list.
      * @return {@code true} if this list contains all the elements of the specified list.
      */
-    public boolean containsAll(final IntArrayList list)
-    {
+    public boolean containsAll(final IntArrayList list) {
         final int[] listElements = list.elements;
         final int listNullValue = list.nullValue;
         final boolean hasNulls = contains(null);
-        for (@DoNotSub int i = 0, size = list.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = list.size; i < size; i++) {
             final int value = listElements[i];
-            if (!(containsInt(value) || hasNulls && listNullValue == value))
-            {
+            if (!(containsInt(value) || hasNulls && listNullValue == value)) {
                 return false;
             }
         }
@@ -416,14 +366,12 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param list containing elements to be removed from this list.
      * @return {@code true} if this list changed as a result of the call.
      */
-    public boolean retainAll(final IntArrayList list)
-    {
+    public boolean retainAll(final IntArrayList list) {
         final int[] elements = this.elements;
-        @DoNotSub final int size = this.size;
-        if (size > 0)
-        {
-            if (list.isEmpty())
-            {
+        @DoNotSub
+        final int size = this.size;
+        if (size > 0) {
+            if (list.isEmpty()) {
                 this.size = 0;
                 return true;
             }
@@ -431,26 +379,22 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
             final int nullValue = this.nullValue;
             final boolean listHasNulls = list.contains(null);
             int[] filteredElements = null;
-            @DoNotSub int j = -1;
-            for (@DoNotSub int i = 0; i < size; i++)
-            {
+            @DoNotSub
+            int j = -1;
+            for (@DoNotSub
+            int i = 0; i < size; i++) {
                 final int value = elements[i];
-                if (!(list.containsInt(value) || (listHasNulls && nullValue == value)))
-                {
-                    if (null == filteredElements)
-                    {
+                if (!(list.containsInt(value) || (listHasNulls && nullValue == value))) {
+                    if (null == filteredElements) {
                         filteredElements = Arrays.copyOf(elements, size);
                         j = i - 1;
                     }
-                }
-                else if (null != filteredElements)
-                {
+                } else if (null != filteredElements) {
                     filteredElements[++j] = value;
                 }
             }
 
-            if (null != filteredElements)
-            {
+            if (null != filteredElements) {
                 this.elements = filteredElements;
                 this.size = j + 1;
                 return true;
@@ -466,35 +410,30 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param list whose elements are to be removed from this list.
      * @return {@code true} if this list changed as a result of the call.
      */
-    public boolean removeAll(final IntArrayList list)
-    {
+    public boolean removeAll(final IntArrayList list) {
         final int[] elements = this.elements;
-        @DoNotSub final int size = this.size;
-        if (size > 0 && !list.isEmpty())
-        {
+        @DoNotSub
+        final int size = this.size;
+        if (size > 0 && !list.isEmpty()) {
             final int nullValue = this.nullValue;
             final boolean listHasNulls = list.contains(null);
             int[] filteredElements = null;
-            @DoNotSub int j = -1;
-            for (@DoNotSub int i = 0; i < size; i++)
-            {
+            @DoNotSub
+            int j = -1;
+            for (@DoNotSub
+            int i = 0; i < size; i++) {
                 final int value = elements[i];
-                if (list.containsInt(value) || (listHasNulls && nullValue == value))
-                {
-                    if (null == filteredElements)
-                    {
+                if (list.containsInt(value) || (listHasNulls && nullValue == value)) {
+                    if (null == filteredElements) {
                         filteredElements = Arrays.copyOf(elements, size);
                         j = i - 1;
                     }
-                }
-                else if (null != filteredElements)
-                {
+                } else if (null != filteredElements) {
                     filteredElements[++j] = value;
                 }
             }
 
-            if (null != filteredElements)
-            {
+            if (null != filteredElements) {
                 this.elements = filteredElements;
                 this.size = j + 1;
                 return true;
@@ -509,34 +448,29 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param filter a predicate which returns true for elements to be removed.
      * @return {@code true} if any elements were removed.
      */
-    public boolean removeIfInt(final IntPredicate filter)
-    {
+    public boolean removeIfInt(final IntPredicate filter) {
         requireNonNull(filter);
         final int[] elements = this.elements;
-        @DoNotSub final int size = this.size;
-        if (size > 0)
-        {
+        @DoNotSub
+        final int size = this.size;
+        if (size > 0) {
             int[] filteredElements = null;
-            @DoNotSub int j = -1;
-            for (@DoNotSub int i = 0; i < size; i++)
-            {
+            @DoNotSub
+            int j = -1;
+            for (@DoNotSub
+            int i = 0; i < size; i++) {
                 final int value = elements[i];
-                if (filter.test(value))
-                {
-                    if (null == filteredElements)
-                    {
+                if (filter.test(value)) {
+                    if (null == filteredElements) {
                         filteredElements = Arrays.copyOf(elements, size);
                         j = i - 1;
                     }
-                }
-                else if (null != filteredElements)
-                {
+                } else if (null != filteredElements) {
                     filteredElements[++j] = value;
                 }
             }
 
-            if (null != filteredElements)
-            {
+            if (null != filteredElements) {
                 this.elements = filteredElements;
                 this.size = j + 1;
                 return true;
@@ -548,9 +482,8 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean remove(final Object o)
-    {
-        return removeInt(null == o ? nullValue : (int)o);
+    public boolean remove(final Object o) {
+        return removeInt(null == o ? nullValue : (int) o);
     }
 
     /**
@@ -559,9 +492,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param index of the element to be removed.
      * @return the existing value at this index.
      */
-    public Integer remove(
-        @DoNotSub final int index)
-    {
+    public Integer remove(@DoNotSub final int index) {
         final int value = removeAt(index);
         return nullValue == value ? null : value;
     }
@@ -572,16 +503,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param index of the element to be removed.
      * @return the existing value at this index.
      */
-    public int removeAt(
-        @DoNotSub final int index)
-    {
+    public int removeAt(@DoNotSub final int index) {
         checkIndex(index);
 
         final int value = elements[index];
 
-        @DoNotSub final int moveCount = size - index - 1;
-        if (moveCount > 0)
-        {
+        @DoNotSub
+        final int moveCount = size - index - 1;
+        if (moveCount > 0) {
             System.arraycopy(elements, index + 1, elements, index, moveCount);
         }
 
@@ -599,9 +528,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @return the existing value at this index.
      * @throws IndexOutOfBoundsException if index is out of bounds.
      */
-    public int fastUnorderedRemove(
-        @DoNotSub final int index)
-    {
+    public int fastUnorderedRemove(@DoNotSub final int index) {
         checkIndex(index);
 
         final int value = elements[index];
@@ -618,11 +545,10 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param value to be removed.
      * @return true if successful otherwise false.
      */
-    public boolean removeInt(final int value)
-    {
-        @DoNotSub final int index = indexOf(value);
-        if (-1 != index)
-        {
+    public boolean removeInt(final int value) {
+        @DoNotSub
+        final int index = indexOf(value);
+        if (-1 != index) {
             removeAt(index);
 
             return true;
@@ -638,11 +564,10 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param value to be removed.
      * @return true if successful otherwise false.
      */
-    public boolean fastUnorderedRemoveInt(final int value)
-    {
-        @DoNotSub final int index = indexOf(value);
-        if (-1 != index)
-        {
+    public boolean fastUnorderedRemoveInt(final int value) {
+        @DoNotSub
+        final int index = indexOf(value);
+        if (-1 != index) {
             elements[index] = elements[--size];
 
             return true;
@@ -656,8 +581,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @param element to be pushed onto the end of the array.
      */
-    public void pushInt(final int element)
-    {
+    public void pushInt(final int element) {
         ensureCapacityPrivate(size + 1);
 
         elements[size] = element;
@@ -670,10 +594,8 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @return the value at the end of the array.
      * @throws NoSuchElementException if the array is empty.
      */
-    public int popInt()
-    {
-        if (isEmpty())
-        {
+    public int popInt() {
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
 
@@ -685,11 +607,10 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @param action to be taken for each element.
      */
-    public void forEachOrderedInt(final IntConsumer action)
-    {
+    public void forEachOrderedInt(final IntConsumer action) {
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
             action.accept(elements[i]);
         }
     }
@@ -699,8 +620,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @return a {@link IntStream} over the elements of underlying array.
      */
-    public IntStream intStream()
-    {
+    public IntStream intStream() {
         return Arrays.stream(elements, 0, size);
     }
 
@@ -709,8 +629,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @return a copy of the elements.
      */
-    public int[] toIntArray()
-    {
+    public int[] toIntArray() {
         return Arrays.copyOf(elements, size);
     }
 
@@ -720,15 +639,11 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param dst destination array for the copy if it is the correct size.
      * @return a copy of the elements.
      */
-    public int[] toIntArray(final int[] dst)
-    {
-        if (dst.length == size)
-        {
+    public int[] toIntArray(final int[] dst) {
+        if (dst.length == size) {
             System.arraycopy(elements, 0, dst, 0, dst.length);
             return dst;
-        }
-        else
-        {
+        } else {
             return Arrays.copyOf(elements, size);
         }
     }
@@ -738,8 +653,7 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @param requiredCapacity for the backing array.
      */
-    public void ensureCapacity(@DoNotSub final int requiredCapacity)
-    {
+    public void ensureCapacity(@DoNotSub final int requiredCapacity) {
         ensureCapacityPrivate(Math.max(requiredCapacity, INITIAL_CAPACITY));
     }
 
@@ -749,31 +663,27 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      * @param that other list.
      * @return {@code true} if lists are equal.
      */
-    public boolean equals(final IntArrayList that)
-    {
-        if (that == this)
-        {
+    public boolean equals(final IntArrayList that) {
+        if (that == this) {
             return true;
         }
 
         boolean isEqual = false;
 
-        @DoNotSub final int size = this.size;
-        if (size == that.size)
-        {
+        @DoNotSub
+        final int size = this.size;
+        if (size == that.size) {
             isEqual = true;
 
             final int[] elements = this.elements;
             final int[] thatElements = that.elements;
-            for (@DoNotSub int i = 0; i < size; i++)
-            {
+            for (@DoNotSub
+            int i = 0; i < size; i++) {
                 final int thisValue = elements[i];
                 final int thatValue = thatElements[i];
 
-                if (thisValue != thatValue)
-                {
-                    if (thisValue != this.nullValue || thatValue != that.nullValue)
-                    {
+                if (thisValue != thatValue) {
+                    if (thisValue != this.nullValue || thatValue != that.nullValue) {
                         isEqual = false;
                         break;
                     }
@@ -787,37 +697,29 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public boolean equals(final Object other)
-    {
-        if (other == this)
-        {
+    public boolean equals(final Object other) {
+        if (other == this) {
             return true;
         }
 
         boolean isEqual = false;
 
-        if (other instanceof IntArrayList)
-        {
-            return equals((IntArrayList)other);
-        }
-        else if (other instanceof List)
-        {
-            final List<?> that = (List<?>)other;
+        if (other instanceof IntArrayList) {
+            return equals((IntArrayList) other);
+        } else if (other instanceof List) {
+            final List<?> that = (List<?>) other;
 
-            if (size == that.size())
-            {
+            if (size == that.size()) {
                 isEqual = true;
-                @DoNotSub int i = 0;
+                @DoNotSub
+                int i = 0;
 
-                for (final Object o : that)
-                {
-                    if (null == o || o instanceof Integer)
-                    {
+                for (final Object o : that) {
+                    if (null == o || o instanceof Integer) {
                         final Integer thisValue = get(i++);
-                        final Integer thatValue = (Integer)o;
+                        final Integer thatValue = (Integer) o;
 
-                        if (Objects.equals(thisValue, thatValue))
-                        {
+                        if (Objects.equals(thisValue, thatValue)) {
                             continue;
                         }
                     }
@@ -834,13 +736,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    @DoNotSub public int hashCode()
-    {
-        @DoNotSub int hashCode = 1;
+    @DoNotSub
+    public int hashCode() {
+        @DoNotSub
+        int hashCode = 1;
         final int nullValue = this.nullValue;
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
             final int value = elements[i];
             hashCode = 31 * hashCode + (nullValue == value ? 0 : Integer.hashCode(value));
         }
@@ -851,13 +754,12 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public void forEach(final Consumer<? super Integer> action)
-    {
+    public void forEach(final Consumer<? super Integer> action) {
         requireNonNull(action);
         final int nullValue = this.nullValue;
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
             final int value = elements[i];
             action.accept(nullValue != value ? value : null);
         }
@@ -868,12 +770,11 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
      *
      * @param action to be taken for each element.
      */
-    public void forEachInt(final IntConsumer action)
-    {
+    public void forEachInt(final IntConsumer action) {
         requireNonNull(action);
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
             action.accept(elements[i]);
         }
     }
@@ -881,21 +782,20 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
     /**
      * {@inheritDoc}
      */
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append('[');
 
         final int nullValue = this.nullValue;
         final int[] elements = this.elements;
-        for (@DoNotSub int i = 0, size = this.size; i < size; i++)
-        {
+        for (@DoNotSub
+        int i = 0, size = this.size; i < size; i++) {
             final int value = elements[i];
-            sb.append(value != nullValue ? value : null).append(", ");
+            sb.append(value != nullValue ? value : null)
+                .append(", ");
         }
 
-        if (sb.length() > 1)
-        {
+        if (sb.length() > 1) {
             sb.setLength(sb.length() - 2);
         }
 
@@ -904,24 +804,21 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
         return sb.toString();
     }
 
-    private void ensureCapacityPrivate(@DoNotSub final int requiredCapacity)
-    {
-        @DoNotSub final int currentCapacity = elements.length;
-        if (requiredCapacity > currentCapacity)
-        {
-            if (requiredCapacity > ArrayUtil.MAX_CAPACITY)
-            {
+    private void ensureCapacityPrivate(@DoNotSub final int requiredCapacity) {
+        @DoNotSub
+        final int currentCapacity = elements.length;
+        if (requiredCapacity > currentCapacity) {
+            if (requiredCapacity > ArrayUtil.MAX_CAPACITY) {
                 throw new IllegalStateException("max capacity: " + ArrayUtil.MAX_CAPACITY);
             }
 
-            @DoNotSub int newCapacity = currentCapacity > INITIAL_CAPACITY ? currentCapacity : INITIAL_CAPACITY;
+            @DoNotSub
+            int newCapacity = currentCapacity > INITIAL_CAPACITY ? currentCapacity : INITIAL_CAPACITY;
 
-            while (newCapacity < requiredCapacity)
-            {
+            while (newCapacity < requiredCapacity) {
                 newCapacity = newCapacity + (newCapacity >> 1);
 
-                if (newCapacity < 0 || newCapacity >= ArrayUtil.MAX_CAPACITY)
-                {
+                if (newCapacity < 0 || newCapacity >= ArrayUtil.MAX_CAPACITY) {
                     newCapacity = ArrayUtil.MAX_CAPACITY;
                 }
             }
@@ -932,18 +829,14 @@ public class IntArrayList extends AbstractList<Integer> implements List<Integer>
         }
     }
 
-    private void checkIndex(@DoNotSub final int index)
-    {
-        if (index >= size || index < 0)
-        {
+    private void checkIndex(@DoNotSub final int index) {
+        if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException("index=" + index + " size=" + size);
         }
     }
 
-    private void checkIndexForAdd(@DoNotSub final int index)
-    {
-        if (index > size || index < 0)
-        {
+    private void checkIndexForAdd(@DoNotSub final int index) {
+        if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("index=" + index + " size=" + size);
         }
     }
