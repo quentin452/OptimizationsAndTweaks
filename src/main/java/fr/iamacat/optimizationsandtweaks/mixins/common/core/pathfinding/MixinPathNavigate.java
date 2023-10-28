@@ -361,7 +361,7 @@ public class MixinPathNavigate {
      * If on ground or swimming and can swim
      */
     @Overwrite
-    private boolean canNavigate() {
+    public boolean canNavigate() {
         return this.theEntity.onGround || this.canSwim && this.isInLiquid()
             || this.theEntity.isRiding() && this.theEntity instanceof EntityZombie
                 && this.theEntity.ridingEntity instanceof EntityChicken;
@@ -371,7 +371,7 @@ public class MixinPathNavigate {
      * Returns true if the entity is in water or lava, false otherwise
      */
     @Overwrite
-    private boolean isInLiquid() {
+    public boolean isInLiquid() {
         return this.theEntity.isInWater() || this.theEntity.handleLavaMovement();
     }
 
@@ -399,7 +399,7 @@ public class MixinPathNavigate {
      * pos1, pos2, entityXSize, entityYSize, entityZSize
      */
     @Overwrite
-    private boolean isDirectPathBetweenPoints(Vec3 p_75493_1, Vec3 p_75493_2, int p_75493_3, int p_75493_4, int p_75493_5) {
+    public boolean isDirectPathBetweenPoints(Vec3 p_75493_1, Vec3 p_75493_2, int p_75493_3, int p_75493_4, int p_75493_5) {
         int l = MathHelper.floor_double(p_75493_1.xCoord);
         int i1 = MathHelper.floor_double(p_75493_1.zCoord);
 
@@ -475,7 +475,7 @@ public class MixinPathNavigate {
      * xOffset, yOffset, zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    private boolean isSafeToStandAt(int p_75483_1, int p_75483_2, int p_75483_3, int p_75483_4, int p_75483_5, int p_75483_6, Vec3 p_75483_7, double p_75483_8, double p_75483_10) {
+    public boolean isSafeToStandAt(int p_75483_1, int p_75483_2, int p_75483_3, int p_75483_4, int p_75483_5, int p_75483_6, Vec3 p_75483_7, double p_75483_8, double p_75483_10) {
         int k1 = p_75483_1 - p_75483_4 / 2;
         int l1 = p_75483_3 - p_75483_6 / 2;
 
@@ -527,7 +527,7 @@ public class MixinPathNavigate {
      * zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ
      */
     @Overwrite
-    private boolean isPositionClear(int p_75496_1, int p_75496_2, int p_75496_3, int p_75496_4, int p_75496_5, int p_75496_6, Vec3 p_75496_7, double p_75496_8, double p_75496_10) {
+    public boolean isPositionClear(int p_75496_1, int p_75496_2, int p_75496_3, int p_75496_4, int p_75496_5, int p_75496_6, Vec3 p_75496_7, double p_75496_8, double p_75496_10) {
         double centerX = p_75496_7.xCoord + 0.5;
         double centerZ = p_75496_7.zCoord + 0.5;
 
