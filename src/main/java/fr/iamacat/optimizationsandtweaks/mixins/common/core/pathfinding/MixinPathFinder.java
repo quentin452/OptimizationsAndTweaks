@@ -65,9 +65,9 @@ public class MixinPathFinder {
     public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_,
                                    PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         World world = p_82565_0_.worldObj;
-        int entityX = MathHelper.floor_double(p_82565_0_.posX);
-        int entityY = MathHelper.floor_double(p_82565_0_.posY);
-        int entityZ = MathHelper.floor_double(p_82565_0_.posZ);
+        int entityX = (int) p_82565_0_.posX;
+        int entityY = (int) p_82565_0_.posY;
+        int entityZ = (int) p_82565_0_.posZ;
 
         int endX = p_82565_1_ + p_82565_4_.xCoord;
         int endY = p_82565_2_ + p_82565_4_.yCoord;
