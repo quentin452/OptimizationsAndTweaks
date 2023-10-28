@@ -71,15 +71,15 @@ public class MixinPathFinder {
 
         boolean isTrapdoorPresent = false;
 
-        for (int x = p_82565_1_, y = p_82565_2_, z = p_82565_3_; x < endX && y < endY && z < endZ; ++x, ++y, ++z) {
-            int chunkX = x >> 4;
-            int chunkZ = z >> 4;
+        for (int currentX = p_82565_1_, currentY =p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
+            int chunkX = currentX >> 4;
+            int chunkZ = currentZ >> 4;
             Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-            int localX = x & 15;
-            int localZ = z & 15;
+            int localX = currentX & 15;
+            int localZ = currentZ & 15;
 
-            Block block = chunk.getBlock(localX, y, localZ);
+            Block block = chunk.getBlock(localX, currentY, localZ);
             Material material = block.getMaterial();
             int renderType = block.getRenderType();
 
@@ -97,17 +97,10 @@ public class MixinPathFinder {
                     isTrapdoorPresent = true;
                 }
 
-                if (renderType == 9) {
-                    Block currentBlock = world.getBlock(entityX, entityY, entityZ);
-                    Block blockBelow = world.getBlock(entityX, entityY - 1, entityZ);
-                    int currentBlockRenderType = currentBlock.getRenderType();
-                    int blockBelowRenderType = blockBelow.getRenderType();
-                    if (currentBlockRenderType != 9 && blockBelowRenderType != 9) {
-                        return -3;
-                    }
-                } else if (!block.getBlocksMovement(world, x, y, z)
-                    && (!p_82565_7_ || block != Blocks.wooden_door)) {
-                    if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                if (renderType == 9 && !isRenderTypeValid(world, entityX, entityY, entityZ)) {
+                    return -3;
+                } else if (!block.getBlocksMovement(world, currentX, currentY, currentZ) && (!p_82565_7_ || block != Blocks.wooden_door)) {
+                    if (isInvalidMovementBlock(renderType, block)) {
                         return -3;
                     }
                     if (block == Blocks.trapdoor) {
@@ -124,6 +117,20 @@ public class MixinPathFinder {
         }
 
         return isTrapdoorPresent ? 2 : 1;
+    }
+
+    @Unique
+    private static boolean isRenderTypeValid(World world, int x, int y, int z) {
+        Block currentBlock = world.getBlock(x, y, z);
+        Block blockBelow = world.getBlock(x, y - 1, z);
+        int currentBlockRenderType = currentBlock.getRenderType();
+        int blockBelowRenderType = blockBelow.getRenderType();
+        return currentBlockRenderType == 9 || blockBelowRenderType == 9;
+    }
+
+    @Unique
+    private static boolean isInvalidMovementBlock(int renderType, Block block) {
+        return renderType == 11 || block == Blocks.fence_gate || renderType == 32;
     }
 
     /**
