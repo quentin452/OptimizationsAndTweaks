@@ -66,19 +66,20 @@ public class MixinPathFinder {
      */
     @Overwrite
     public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_, PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
-        boolean isTrapdoorPresent = false;
         World world = p_82565_0_.worldObj;
-        int posX = MathHelper.floor_double(p_82565_0_.posX);
-        int posY = MathHelper.floor_double(p_82565_0_.posY);
-        int posZ = MathHelper.floor_double(p_82565_0_.posZ);
+        int entityX = MathHelper.floor_double(p_82565_0_.posX);
+        int entityY = MathHelper.floor_double(p_82565_0_.posY);
+        int entityZ = MathHelper.floor_double(p_82565_0_.posZ);
 
-        int x2 = p_82565_1_ + p_82565_4_.xCoord;
-        int y2 = p_82565_2_ + p_82565_4_.yCoord;
-        int z2 = p_82565_3_ + p_82565_4_.zCoord;
+        int endX = p_82565_1_ + p_82565_4_.xCoord;
+        int endY = p_82565_2_ + p_82565_4_.yCoord;
+        int endZ = p_82565_3_ + p_82565_4_.zCoord;
 
-        for (int x = p_82565_1_; x < x2; ++x) {
-            for (int y = p_82565_2_; y < y2; ++y) {
-                for (int z = p_82565_3_; z < z2; ++z) {
+        boolean isTrapdoorPresent = false;
+
+        for (int x = p_82565_1_; x < endX; ++x) {
+            for (int y = p_82565_2_; y < endY; ++y) {
+                for (int z = p_82565_3_; z < endZ; ++z) {
                     int chunkX = x >> 4;
                     int chunkZ = z >> 4;
                     Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
@@ -88,14 +89,13 @@ public class MixinPathFinder {
 
                     Block block = chunk.getBlock(localX, y, localZ);
                     Material material = block.getMaterial();
-
                     int renderType = block.getRenderType();
 
                     if (material != Material.air) {
                         if (block == Blocks.trapdoor) {
                             isTrapdoorPresent = true;
                         } else if (block != Blocks.flowing_water && block != Blocks.water) {
-                            if (!p_82565_7_ && block == Blocks.wooden_door) {
+                            if (!p_82565_6_ && block == Blocks.wooden_door) {
                                 return 0;
                             }
                         } else {
@@ -106,15 +106,15 @@ public class MixinPathFinder {
                         }
 
                         if (renderType == 9) {
-                            Block currentBlock = world.getBlock(posX, posY, posZ);
-                            Block blockBelow = world.getBlock(posX, posY - 1, posZ);
+                            Block currentBlock = world.getBlock(entityX, entityY, entityZ);
+                            Block blockBelow = world.getBlock(entityX, entityY - 1, entityZ);
                             int currentBlockRenderType = currentBlock.getRenderType();
                             int blockBelowRenderType = blockBelow.getRenderType();
                             if (currentBlockRenderType != 9 && blockBelowRenderType != 9) {
                                 return -3;
                             }
                         } else if (!block.getBlocksMovement(world, x, y, z)
-                            && (!p_82565_6_ || block != Blocks.wooden_door)) {
+                            && (!p_82565_7_ || block != Blocks.wooden_door)) {
                             if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
                                 return -3;
                             }
@@ -135,7 +135,6 @@ public class MixinPathFinder {
 
         return isTrapdoorPresent ? 2 : 1;
     }
-
     /**
      * @author iamacatfr
      * @reason optimize openPoint
