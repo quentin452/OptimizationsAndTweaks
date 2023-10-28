@@ -251,25 +251,25 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    private PathPoint getSafePoint(Entity entity, int x, int y, int z, PathPoint currentPoint, int yOffset) {
-        int verticalOffset = getVerticalOffset(entity, x, y, z, currentPoint);
-        int newOffset = getVerticalOffset(entity, x, y - 1, z, currentPoint);
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
+        int verticalOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+        int newOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
 
         if (verticalOffset == 2 || verticalOffset == 1) {
-            return openPoint(x, y, z);
+            return openPoint(p_75858_2_, p_75858_3_,p_75858_4_);
         }
 
         PathPoint pathPoint = null;
 
-        if (yOffset > 0 && verticalOffset != -3 && verticalOffset != -4) {
-            int newY = y + yOffset;
-            int newVerticalOffset = getVerticalOffset(entity, x, newY, z, currentPoint);
+        if (p_75858_6_ > 0 && verticalOffset != -3 && verticalOffset != -4) {
+            int newY = p_75858_3_ + p_75858_6_;
+            int newVerticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, newY, p_75858_4_, p_75858_5_);
 
             if (newVerticalOffset == 1) {
-                pathPoint = openPoint(x, newY, z);
-                y = newY;
+                pathPoint = openPoint(p_75858_2_, newY, p_75858_4_);
+                p_75858_3_ = newY;
 
-                while (y > 0) {
+                while (p_75858_3_ > 0) {
                     if (isPathingInWater && newOffset == -1) {
                         return null;
                     }
@@ -278,12 +278,12 @@ public class MixinPathFinder {
                         break;
                     }
 
-                    if (y - 1 <= 0) {
+                    if (p_75858_3_ - 1 <= 0) {
                         return null;
                     }
 
-                    y--;
-                    pathPoint = openPoint(x, y, z);
+                    p_75858_3_--;
+                    pathPoint = openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
                 }
 
                 if (newOffset == -2) {
