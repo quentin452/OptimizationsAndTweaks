@@ -5,7 +5,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
@@ -254,11 +253,6 @@ public class MixinPathFinder {
 
         return pathPoint;
     }
-
-    @Unique
-    private boolean isVerticalOffsetValid(int offset) {
-        return offset == 2 || offset == 1;
-    }
     /**
      * @author
      * @reason
@@ -311,4 +305,5 @@ public class MixinPathFinder {
             this.isMovementBlockAllowed,
             this.isWoddenDoorAllowed);
     }
+
 }
