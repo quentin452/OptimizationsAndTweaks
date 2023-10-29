@@ -265,24 +265,27 @@ public class MixinPathFinder {
      */
     @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
-        float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
+                                float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
         int i = 0;
         byte b0 = 0;
 
-        if (this.getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_)
-            == 1) {
+        int verticalOffsetResult = this.getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_);
+        if (verticalOffsetResult == 1) {
             b0 = 1;
         }
 
-        PathPoint[] pathpoints = {
-            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0),
-            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
-            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0),
-            this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0) };
+        PathPoint[] pathpoints = new PathPoint[4];
+        pathpoints[0] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0);
+        pathpoints[1] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
+        pathpoints[2] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
+        pathpoints[3] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0);
 
         for (PathPoint pathpoint : pathpoints) {
-            if (pathpoint != null && !pathpoint.isFirst && pathpoint.distanceTo(p_75860_4_) < p_75860_5_) {
-                this.pathOptions[i++] = pathpoint;
+            if (pathpoint != null && !pathpoint.isFirst) {
+                double distanceSquared = pathpoint.distanceToSquared(p_75860_4_);
+                if (distanceSquared < p_75860_5_ * p_75860_5_) {
+                    this.pathOptions[i++] = pathpoint;
+                }
             }
         }
 
