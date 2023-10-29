@@ -56,6 +56,32 @@ public class MixinPathFinder {
     PathPoint previous;
 
     /**
+     * @author
+     * @reason
+     */
+  //  @Overwrite
+    private PathEntity createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
+
+        int length = 1;
+        while(previous != null) {
+            length++;
+        }
+
+        PathPoint[] pathPoints = new PathPoint[length];
+
+        int i = length-1;
+        PathPoint current = p_75853_2_;
+
+        while(i >= 0) {
+            pathPoints[i] = current;
+            current = previous;
+            i--;
+        }
+
+        return new PathEntity(pathPoints);
+    }
+
+    /**
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
@@ -192,12 +218,13 @@ public class MixinPathFinder {
 
         return pathpoint;
     }
+
     /**
      * @author
      * @reason
      */
 
-    @Overwrite
+   /* @Overwrite
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
         int verticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
         int newOffset = verticalOffset != 0 ? 0 : getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
@@ -254,11 +281,13 @@ public class MixinPathFinder {
 
         return pathPoint;
     }
+
+    */
     /**
      * @author
      * @reason
      */
-    @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
+  /*  @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
                                 float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
 
@@ -290,11 +319,13 @@ public class MixinPathFinder {
         return i;
     }
 
+   */
+
     /**
      * @author
      * @reason
      */
-    @Overwrite
+   @Overwrite
     public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_,
         PathPoint p_75855_5_) {
         return func_82565_a(
@@ -307,5 +338,4 @@ public class MixinPathFinder {
             this.isMovementBlockAllowed,
             this.isWoddenDoorAllowed);
     }
-
 }
