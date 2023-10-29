@@ -1,9 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
@@ -83,7 +82,8 @@ public class MixinPatchSpawnerAnimals {
         }
         return false;
     }
-
+    @Unique
+    private Object2ObjectHashMap<Class<? extends EntityLiving>, Constructor<? extends EntityLiving>> constructorCache = new Object2ObjectHashMap<>();
     /**
      * @author iamacatfr
      * @reason optimize findChunksForSpawning
@@ -144,7 +144,6 @@ public class MixinPatchSpawnerAnimals {
                             multithreadingandtweaks$eligibleChunksForSpawning.keySet());
                         Collections.shuffle(tmp);
                         iterator = tmp.iterator();
-                        label110:
 
                         while (iterator.hasNext()) {
                             ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
@@ -177,10 +176,10 @@ public class MixinPatchSpawnerAnimals {
 
                                         while (true) {
                                             if (j3 < 4) {
-                                                label103: {
-                                                    k2 += p_77192_1_.rand.nextInt(b1) - p_77192_1_.rand.nextInt(b1);
-                                                    l2 += p_77192_1_.rand.nextInt(1) - p_77192_1_.rand.nextInt(1);
-                                                    i3 += p_77192_1_.rand.nextInt(b1) - p_77192_1_.rand.nextInt(b1);
+                                                 {
+                                                    k2 += p_77192_1_.rand.nextInt(b1);
+                                                    l2 += 0;
+                                                    i3 += p_77192_1_.rand.nextInt(b1);
 
                                                     if (canCreatureTypeSpawnAtLocation(
                                                         enumcreaturetype,
@@ -193,7 +192,7 @@ public class MixinPatchSpawnerAnimals {
 
                                                         if (p_77192_1_.getClosestPlayer(f, (float) l2, f2, 24.0D) == null) {
                                                             float f3 = f - (float) chunkcoordinates.posX;
-                                                            float f4 = (float) l2 - (float) chunkcoordinates.posY;
+                                                            float f4 = l2 - (float) chunkcoordinates.posY;
                                                             float f5 = f2 - (float) chunkcoordinates.posZ;
                                                             float f6 = f3 * f3 + f4 * f4 + f5 * f5;
 
@@ -206,19 +205,28 @@ public class MixinPatchSpawnerAnimals {
                                                                         i3);
 
                                                                     if (spawnlistentry == null) {
-                                                                        break label103;
+                                                                        break;
                                                                     }
                                                                 }
 
                                                                 EntityLiving entityliving;
 
-                                                                try {
-                                                                    entityliving = (EntityLiving) spawnlistentry.entityClass
-                                                                        .getConstructor(new Class[] { World.class })
-                                                                        .newInstance(new Object[] { p_77192_1_ });
-                                                                } catch (Exception exception) {
-                                                                    exception.printStackTrace();
-                                                                    return i;
+                                                                if (constructorCache.containsKey(spawnlistentry.entityClass)) {
+                                                                    try {
+                                                                        entityliving = constructorCache.get(spawnlistentry.entityClass).newInstance(p_77192_1_);
+                                                                    } catch (Exception exception) {
+                                                                        exception.printStackTrace();
+                                                                        return i;
+                                                                    }
+                                                                } else {
+                                                                    try {
+                                                                        Constructor<? extends EntityLiving> constructor = spawnlistentry.entityClass.getConstructor(World.class);
+                                                                        entityliving = constructor.newInstance(p_77192_1_);
+                                                                        constructorCache.put(spawnlistentry.entityClass, constructor);
+                                                                    } catch (Exception exception) {
+                                                                        exception.printStackTrace();
+                                                                        return i;
+                                                                    }
                                                                 }
 
                                                                 entityliving.setLocationAndAngles(
@@ -252,7 +260,7 @@ public class MixinPatchSpawnerAnimals {
 
                                                                     if (j2 >= ForgeEventFactory
                                                                         .getMaxSpawnPackSize(entityliving)) {
-                                                                        continue label110;
+                                                                        continue;
                                                                     }
                                                                 }
 
