@@ -5,6 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
@@ -53,6 +54,29 @@ public class MixinPathFinder {
     float distanceToTarget;
     @Unique
     PathPoint previous;
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    private PathEntity createEntityPath(PathPoint startPoint, PathPoint endPoint) {
+        int pathLength = 1;
+        PathPoint currentPoint;
+
+        while (previous != null) {
+            pathLength++;
+        }
+
+        PathPoint[] pathPoints = new PathPoint[pathLength];
+        currentPoint = endPoint;
+
+        for (int i = pathLength - 1; i >= 0; i--) {
+            pathPoints[i] = currentPoint;
+            currentPoint = previous;
+        }
+
+        return new PathEntity(pathPoints);
+    }
 
     /**
      * @author iamacatfr
@@ -196,7 +220,7 @@ public class MixinPathFinder {
      * @reason
      */
 
-   @Overwrite
+    @Overwrite
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
         int verticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
         int newOffset = verticalOffset != 0 ? 0 : getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
@@ -227,7 +251,7 @@ public class MixinPathFinder {
         int verticalOffset = func_82565_a(entity, x, newY, z, originalPoint, isPathingInWater, isMovementBlockAllowed, isWoddenDoorAllowed);
 
         if (verticalOffset == 1) {
-            return calculatePathPointFromNewOffset(entity, x, newY, z, yOffset, newOffset, originalPoint);
+            return calculatePathPointFromNewOffset(x, newY, z, newOffset);
         }
 
         return null;
@@ -235,7 +259,7 @@ public class MixinPathFinder {
 
 
     @Unique
-    private PathPoint calculatePathPointFromNewOffset(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
+    private PathPoint calculatePathPointFromNewOffset(int x, int y, int z, int newOffset) {
         PathPoint pathPoint = openPoint(x, y, z);
 
         while (y > 0) {
@@ -260,6 +284,8 @@ public class MixinPathFinder {
     @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
                                 float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
+
+        cir.cancel();
         int i = 0;
         byte b0 = 0;
 
@@ -283,7 +309,6 @@ public class MixinPathFinder {
             }
         }
 
-        cir.cancel();
         cir.setReturnValue(i);
         return i;
     }
