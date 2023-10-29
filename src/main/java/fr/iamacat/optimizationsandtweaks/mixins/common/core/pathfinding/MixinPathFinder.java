@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Int2ObjectHashMap;
 
+import java.util.concurrent.CompletableFuture;
+
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
 
@@ -190,50 +192,48 @@ public class MixinPathFinder {
 
         return pathpoint;
     }
-
     /**
      * @author
      * @reason
      */
-    @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
-        int verticalOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
-        int newOffset = getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
 
-        if (isVerticalOffsetValid(verticalOffset)) {
+   @Overwrite
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
+        int verticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+        int newOffset = verticalOffset != 0 ? 0 : getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
+
+        if (verticalOffset == 0 && newOffset == -2) {
+            CompletableFuture<PathPoint> future = calculatePathPointAsync(p_75858_1_, p_75858_2_, p_75858_3_,p_75858_4_, p_75858_6_, newOffset, p_75858_5_);
+
+            try {
+                return future.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (verticalOffset > 0) {
             return openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
         }
 
-        return multithreadingandtweaks$calculatePathPoint(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_6_, verticalOffset, newOffset, p_75858_5_);
+        return null;
     }
-
     @Unique
-    private PathPoint multithreadingandtweaks$calculatePathPoint(Entity entity, int x, int y, int z, int yOffset, int verticalOffset, int newOffset, PathPoint originalPoint) {
-        PathPoint pathPoint = null;
-
-        if (shouldCalculatePathPoint(yOffset, verticalOffset, newOffset)) {
-            pathPoint = calculatePathPointInternal(entity, x, y, z, yOffset, newOffset, originalPoint);
-        }
-
-        return pathPoint;
-    }
-
-    @Unique
-    private boolean shouldCalculatePathPoint(int yOffset, int verticalOffset, int newOffset) {
-        return yOffset > 0 && isVerticalOffsetValid(verticalOffset) && newOffset == -2;
+    private CompletableFuture<PathPoint> calculatePathPointAsync(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
+        return CompletableFuture.supplyAsync(() -> calculatePathPointInternal(entity, x, y, z, yOffset, newOffset, originalPoint));
     }
 
     @Unique
     private PathPoint calculatePathPointInternal(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
         int newY = y + yOffset;
-        int newVerticalOffset = getVerticalOffset(entity, x, newY, z, originalPoint);
 
-        if (newVerticalOffset == 1) {
+        int verticalOffset = func_82565_a(entity, x, newY, z, originalPoint, isPathingInWater, isMovementBlockAllowed, isWoddenDoorAllowed);
+
+        if (verticalOffset == 1) {
             return calculatePathPointFromNewOffset(entity, x, newY, z, yOffset, newOffset, originalPoint);
         }
 
         return null;
     }
+
 
     @Unique
     private PathPoint calculatePathPointFromNewOffset(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
