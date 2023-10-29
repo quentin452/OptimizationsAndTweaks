@@ -54,29 +54,6 @@ public class MixinPathFinder {
     float distanceToTarget;
     @Unique
     PathPoint previous;
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private PathEntity createEntityPath(PathPoint startPoint, PathPoint endPoint) {
-        int pathLength = 1;
-        PathPoint currentPoint;
-
-        while (previous != null) {
-            pathLength++;
-        }
-
-        PathPoint[] pathPoints = new PathPoint[pathLength];
-        currentPoint = endPoint;
-
-        for (int i = pathLength - 1; i >= 0; i--) {
-            pathPoints[i] = currentPoint;
-            currentPoint = previous;
-        }
-
-        return new PathEntity(pathPoints);
-    }
 
     /**
      * @author iamacatfr
