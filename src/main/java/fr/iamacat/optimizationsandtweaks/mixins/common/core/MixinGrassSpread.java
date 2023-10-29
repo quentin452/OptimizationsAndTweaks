@@ -40,7 +40,7 @@ public abstract class MixinGrassSpread {
                     if (worldIn.getBlock(i1, j1, k1) == Blocks.dirt && worldIn.getBlockMetadata(i1, j1, k1) == 0
                         && worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4
                         && worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
-                        EXECUTOR_SERVICE.submit(() -> multithreadingandtweaks$processGrassBlock(worldIn, i1, j1, k1));
+                        EXECUTOR_SERVICE.submit(() -> optimizationsAndTweaks$processGrassBlock(worldIn, i1, j1, k1));
                     }
                 }
             }
@@ -48,7 +48,7 @@ public abstract class MixinGrassSpread {
     }
 
     @Unique
-    private void multithreadingandtweaks$processGrassBlock(World worldIn, int x, int y, int z) {
+    private void optimizationsAndTweaks$processGrassBlock(World worldIn, int x, int y, int z) {
         worldIn.setBlock(x, y, z, Blocks.grass);
     }
 }

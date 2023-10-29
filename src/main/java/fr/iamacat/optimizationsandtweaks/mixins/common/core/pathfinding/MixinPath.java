@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding.PathPoint2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.entity.pathfinding.PathPoint2;
 
 @Mixin(Path.class)
 public class MixinPath {

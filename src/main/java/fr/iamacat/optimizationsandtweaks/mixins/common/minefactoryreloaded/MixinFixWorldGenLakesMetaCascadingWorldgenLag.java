@@ -11,31 +11,28 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import powercrystals.minefactoryreloaded.world.WorldGenLakesMeta;
 
 @Mixin(WorldGenLakesMeta.class)
 public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerator {
-
+    @Shadow
+    private Block _block;
     @Unique
-    private Block multithreading1_7_10$_block; // Declare _block variable at the class level
-
-    @Unique
-    private static int multithreading1_7_10$lakeGenerationCounter = 0;
+    private static int optimizationsAndTweaks$lakeGenerationCounter = 0;
     @Unique
     private static final int MAX_LAKE_GENERATIONS_PER_TICK = 5; // Adjust this value as needed
 
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
-        if (OptimizationsandTweaksConfig.enableMixinFixWorldGenLakesMetaMinefactoryReloadedCascadingWorldgenFix) {
-            if (multithreading1_7_10$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {
+            if (optimizationsAndTweaks$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {
                 // Limit lake generation to prevent cascading issues
                 return false;
             }
 
-            multithreading1_7_10$lakeGenerationCounter++;
+            optimizationsAndTweaks$lakeGenerationCounter++;
             // Limit frequency and biome checks
             if (random.nextInt(100) >= 10) {
                 return false;
@@ -100,7 +97,7 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
 
                                 if (i2 < 4 && !material.isSolid()
                                     && !world.getBlock(blockX, blockY, blockZ)
-                                        .equals(multithreading1_7_10$_block)) {
+                                        .equals(_block)) {
                                     return false;
                                 }
                             }
@@ -123,7 +120,5 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
                 }
             }
             return true;
-        }
-        return false;
     }
 }

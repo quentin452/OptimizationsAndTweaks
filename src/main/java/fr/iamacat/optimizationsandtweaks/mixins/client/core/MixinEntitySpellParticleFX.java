@@ -16,7 +16,7 @@ public class MixinEntitySpellParticleFX extends EntityFX {
 
     /** Base spell texture index */
     @Unique
-    private int multithreadingandtweaks$baseSpellTextureIndex = 128;
+    private int optimizationsAndTweaks$baseSpellTextureIndex = 128;
 
     public MixinEntitySpellParticleFX(World p_i1229_1_, double p_i1229_2_, double p_i1229_4_, double p_i1229_6_,
         double p_i1229_8_, double p_i1229_10_, double p_i1229_12_) {
@@ -60,7 +60,7 @@ public class MixinEntitySpellParticleFX extends EntityFX {
             }
 
             this.setParticleTextureIndex(
-                this.multithreadingandtweaks$baseSpellTextureIndex + (7 - this.particleAge * 8 / this.particleMaxAge));
+                this.optimizationsAndTweaks$baseSpellTextureIndex + (7 - this.particleAge * 8 / this.particleMaxAge));
             this.motionY += 0.004D;
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
@@ -84,7 +84,7 @@ public class MixinEntitySpellParticleFX extends EntityFX {
      * Sets the base spell texture index
      */
     @Unique
-    public void multithreadingandtweaks$setBaseSpellTextureIndex(int p_70589_1_) {
-        this.multithreadingandtweaks$baseSpellTextureIndex = p_70589_1_;
+    public void optimizationsAndTweaks$setBaseSpellTextureIndex(int p_70589_1_) {
+        this.optimizationsAndTweaks$baseSpellTextureIndex = p_70589_1_;
     }
 }

@@ -73,9 +73,9 @@ public class MixinEntity {
     }
 
     @Unique
-    private boolean multithreadingandtweaks$cachedIsInWater = false;
+    private boolean optimizationsAndTweaks$cachedIsInWater = false;
     @Unique
-    private long multithreadingandtweaks$lastCheckTime = 0L;
+    private long optimizationsAndTweaks$lastCheckTime = 0L;
     @Unique
     private static final long CACHE_EXPIRATION_TIME = 1000L;
 
@@ -84,12 +84,12 @@ public class MixinEntity {
         if (OptimizationsandTweaksConfig.enableMixinEntity) {
             long currentTime = System.currentTimeMillis();
 
-            if (currentTime - multithreadingandtweaks$lastCheckTime < CACHE_EXPIRATION_TIME) {
-                return multithreadingandtweaks$cachedIsInWater;
+            if (currentTime - optimizationsAndTweaks$lastCheckTime < CACHE_EXPIRATION_TIME) {
+                return optimizationsAndTweaks$cachedIsInWater;
             } else {
                 boolean inWater = this.inWater;
-                multithreadingandtweaks$cachedIsInWater = inWater;
-                multithreadingandtweaks$lastCheckTime = currentTime;
+                optimizationsAndTweaks$cachedIsInWater = inWater;
+                optimizationsAndTweaks$lastCheckTime = currentTime;
                 return inWater;
             }
         } else {
@@ -156,14 +156,14 @@ public class MixinEntity {
     }
 
     @Unique
-    protected ConcurrentHashMap<String, IExtendedEntityProperties> multithreadingandtweaks$extendedProperties;
+    protected ConcurrentHashMap<String, IExtendedEntityProperties> optimizationsAndTweaks$extendedProperties;
 
     @Redirect(
         method = "getExtendedProperties",
         at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;extendedProperties:Ljava/util/Map;"),
         remap = false)
     private Map<String, IExtendedEntityProperties> redirectExtendedProperties(Entity entity) {
-        return multithreadingandtweaks$extendedProperties;
+        return optimizationsAndTweaks$extendedProperties;
     }
 
 }

@@ -188,7 +188,7 @@ public class MixinPathNavigate {
      * ents and stores end coords
      */
     @Unique
-    private Map<PathEntity, Boolean> multithreadingandtweaks$pathCache = new HashMap<>();
+    private Map<PathEntity, Boolean> optimizationsAndTweaks$pathCache = new HashMap<>();
 
     /**
      * @author
@@ -202,14 +202,14 @@ public class MixinPathNavigate {
         }
 
         // Check if the path is already in the cache
-        if (multithreadingandtweaks$pathCache.containsKey(newPath)) {
-            return multithreadingandtweaks$pathCache.get(newPath);
+        if (optimizationsAndTweaks$pathCache.containsKey(newPath)) {
+            return optimizationsAndTweaks$pathCache.get(newPath);
         }
 
         // Check only if the start/end of the path has changed
         if (this.currentPath == null || !this.currentPath.isSamePath(newPath)) {
             this.currentPath = newPath;
-            multithreadingandtweaks$pathCache.put(newPath, true); // Cache the result
+            optimizationsAndTweaks$pathCache.put(newPath, true); // Cache the result
         }
 
         // Calculate position data only once
@@ -228,7 +228,7 @@ public class MixinPathNavigate {
      */
     @Overwrite
     public PathEntity getPath() {
-        if (multithreadingandtweaks$pathCache.containsKey(currentPath)) {
+        if (optimizationsAndTweaks$pathCache.containsKey(currentPath)) {
             return currentPath;
         } else {
             return null;

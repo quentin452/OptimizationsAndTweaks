@@ -54,7 +54,7 @@ public abstract class MixinEntityItem extends Entity {
                 }
             }
 
-            if (this.multithreadingandtweaks$getEntityItem() == null) {
+            if (this.optimizationsAndTweaks$getEntityItem() == null) {
                 this.setDead();
             } else {
                 super.onUpdate();
@@ -87,7 +87,7 @@ public abstract class MixinEntityItem extends Entity {
                     }
 
                     if (!this.worldObj.isRemote) {
-                        this.multithreadingandtweaks$searchForOtherItemsNearby(ci);
+                        this.optimizationsAndTweaks$searchForOtherItemsNearby(ci);
                     }
                 }
 
@@ -144,7 +144,7 @@ public abstract class MixinEntityItem extends Entity {
      * ItemStack containing Block.stone)
      */
     @Unique
-    public ItemStack multithreadingandtweaks$getEntityItem() {
+    public ItemStack optimizationsAndTweaks$getEntityItem() {
         ItemStack itemstack = this.getDataWatcher()
             .getWatchableObjectItemStack(10);
         return itemstack == null ? new ItemStack(Blocks.stone) : itemstack;
@@ -154,7 +154,7 @@ public abstract class MixinEntityItem extends Entity {
      * Looks for other itemstacks nearby and tries to stack them together
      */
     @Unique
-    private void multithreadingandtweaks$searchForOtherItemsNearby(CallbackInfo ci) {
+    private void optimizationsAndTweaks$searchForOtherItemsNearby(CallbackInfo ci) {
         Iterator iterator = this.worldObj
             .getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(0.5D, 0.0D, 0.5D))
             .iterator();
@@ -175,7 +175,7 @@ public abstract class MixinEntityItem extends Entity {
             if (p_70289_1_ == entityItem) {
                 return false;
             } else if (p_70289_1_.isEntityAlive() && this.isEntityAlive()) {
-                ItemStack itemstack = this.multithreadingandtweaks$getEntityItem();
+                ItemStack itemstack = this.optimizationsAndTweaks$getEntityItem();
                 ItemStack itemstack1 = p_70289_1_.getEntityItem();
 
                 if (itemstack1.getItem() != itemstack.getItem()) {

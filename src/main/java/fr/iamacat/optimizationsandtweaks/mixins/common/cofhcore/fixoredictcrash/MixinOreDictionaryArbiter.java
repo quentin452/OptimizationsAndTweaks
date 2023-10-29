@@ -37,7 +37,7 @@ public class MixinOreDictionaryArbiter {
     private static String[] oreNames;
 
     @Unique
-    private static boolean multithreading1_7_10$initialized = false;
+    private static boolean optimizationsAndTweaks$initialized = false;
 
     /**
      * @author iamacatfr
@@ -46,7 +46,7 @@ public class MixinOreDictionaryArbiter {
     @Overwrite
     public static void initialize() {
         if (OptimizationsandTweaksConfig.enableMixinOreDictCofhFix) {
-            if (!multithreading1_7_10$initialized) {
+            if (!optimizationsAndTweaks$initialized) {
                 oreIDs = HashBiMap.create(32);
                 oreStacks = new THashMap<>(32);
                 stackIDs = new THashMap<>(32);
@@ -75,7 +75,7 @@ public class MixinOreDictionaryArbiter {
 
                 ItemHelper.oreProxy = new OreDictionaryArbiterProxy();
 
-                multithreading1_7_10$initialized = true;
+                optimizationsAndTweaks$initialized = true;
             }
         }
 

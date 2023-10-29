@@ -213,7 +213,7 @@ public class MixinModelRenderer {
                             rotationPointZ * p_78785_1_);
                     }
                     GL11.glCallList(this.displayList);
-                    multithreadingandtweaks$renderChildModels(p_78785_1_);
+                    optimizationsAndTweaks$renderChildModels(p_78785_1_);
                     if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F) {
                         GL11.glTranslatef(
                             -rotationPointX * p_78785_1_,
@@ -236,7 +236,7 @@ public class MixinModelRenderer {
                         GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
                     }
                     GL11.glCallList(this.displayList);
-                    multithreadingandtweaks$renderChildModels(p_78785_1_);
+                    optimizationsAndTweaks$renderChildModels(p_78785_1_);
                     GL11.glPopMatrix();
                 }
                 GL11.glTranslatef(-offsetX, -offsetY, -offsetZ);
@@ -246,7 +246,7 @@ public class MixinModelRenderer {
     }
 
     @Unique
-    private void multithreadingandtweaks$renderChildModels(float p_78785_1_) {
+    private void optimizationsAndTweaks$renderChildModels(float p_78785_1_) {
         if (this.childModels != null) {
             for (ModelRenderer childModel : (List<ModelRenderer>) this.childModels) {
                 childModel.render(p_78785_1_);

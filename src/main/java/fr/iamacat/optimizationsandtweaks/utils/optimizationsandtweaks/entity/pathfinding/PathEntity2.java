@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.pathfinding;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.entity.pathfinding;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;

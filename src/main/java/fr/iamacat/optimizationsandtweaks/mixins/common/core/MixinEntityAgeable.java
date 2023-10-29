@@ -31,23 +31,23 @@ public abstract class MixinEntityAgeable extends EntityCreature {
     }
 
     @Unique
-    public int multithreadingandtweaks$getGrowingAge() {
+    public int optimizationsAndTweaks$getGrowingAge() {
         return this.dataWatcher.getWatchableObjectInt(GROWING_AGE_DATA_WATCHER_ID);
     }
 
     @Unique
-    public void multithreadingandtweaks$setGrowingAge(int age) {
+    public void optimizationsAndTweaks$setGrowingAge(int age) {
         this.dataWatcher.updateObject(GROWING_AGE_DATA_WATCHER_ID, age);
-        this.multithreadingandtweaks$setScaleForAge(this.isChild());
+        this.optimizationsAndTweaks$setScaleForAge(this.isChild());
     }
 
     @Unique
-    public void multithreadingandtweaks$setScaleForAge(boolean isChild) {
-        this.multithreadingandtweaks$setScale(isChild ? CHILD_SCALE : ADULT_SCALE);
+    public void optimizationsAndTweaks$setScaleForAge(boolean isChild) {
+        this.optimizationsAndTweaks$setScale(isChild ? CHILD_SCALE : ADULT_SCALE);
     }
 
     @Unique
-    protected final void multithreadingandtweaks$setScale(float scale) {
+    protected final void optimizationsAndTweaks$setScale(float scale) {
         super.setSize(this.field_98056_d * scale, this.field_98057_e * scale);
     }
 
@@ -58,14 +58,14 @@ public abstract class MixinEntityAgeable extends EntityCreature {
     @Overwrite
     public void addGrowth(int p_110195_1_) {
         if (OptimizationsandTweaksConfig.enableMixinEntityAgeable) {
-            int currentAge = multithreadingandtweaks$getGrowingAge();
+            int currentAge = optimizationsAndTweaks$getGrowingAge();
             currentAge += p_110195_1_ * 20;
 
             if (currentAge > 0) {
                 currentAge = 0;
             }
 
-            multithreadingandtweaks$setGrowingAge(currentAge);
+            optimizationsAndTweaks$setGrowingAge(currentAge);
         }
     }
 
@@ -79,22 +79,22 @@ public abstract class MixinEntityAgeable extends EntityCreature {
             super.onLivingUpdate();
 
             if (this.worldObj.isRemote) {
-                multithreadingandtweaks$setScaleForAge(this.isChild());
+                optimizationsAndTweaks$setScaleForAge(this.isChild());
             } else {
-                int currentAge = multithreadingandtweaks$getGrowingAge();
+                int currentAge = optimizationsAndTweaks$getGrowingAge();
 
                 if (currentAge < 0) {
                     ++currentAge;
-                    multithreadingandtweaks$setGrowingAge(currentAge);
+                    optimizationsAndTweaks$setGrowingAge(currentAge);
                 } else if (currentAge > 0) {
                     --currentAge;
-                    multithreadingandtweaks$setGrowingAge(currentAge);
+                    optimizationsAndTweaks$setGrowingAge(currentAge);
                 }
             }
         }
     }
 
     public boolean isChild() {
-        return multithreadingandtweaks$getGrowingAge() < 0;
+        return optimizationsAndTweaks$getGrowingAge() < 0;
     }
 }

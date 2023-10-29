@@ -215,7 +215,7 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     private float friction;
 
     @Unique
-    private final ThreadPoolExecutor multithreadingandtweaks$executorService = new ThreadPoolExecutor(
+    private final ThreadPoolExecutor optimizationsAndTweaks$executorService = new ThreadPoolExecutor(
         OptimizationsandTweaksConfig.numberofcpus,
         OptimizationsandTweaksConfig.numberofcpus,
         60L,

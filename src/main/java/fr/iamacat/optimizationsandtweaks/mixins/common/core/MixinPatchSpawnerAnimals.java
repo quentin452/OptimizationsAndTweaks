@@ -44,7 +44,7 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private Object2ObjectHashMap<ChunkCoordIntPair, Boolean> multithreadingandtweaks$eligibleChunksForSpawning = new Object2ObjectHashMap<>();
+    private Object2ObjectHashMap<ChunkCoordIntPair, Boolean> optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap<>();
 
     /**
      * @author iamacatfr
@@ -96,7 +96,7 @@ public class MixinPatchSpawnerAnimals {
             if (!p_77192_2_ && !p_77192_3_) {
                 return 0;
             } else {
-                this.multithreadingandtweaks$eligibleChunksForSpawning.clear();
+                this.optimizationsAndTweaks$eligibleChunksForSpawning.clear();
                 int i;
                 int k;
 
@@ -112,11 +112,11 @@ public class MixinPatchSpawnerAnimals {
                             ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(l + j, i1 + k);
 
                             if (!flag3) {
-                                this.multithreadingandtweaks$eligibleChunksForSpawning
+                                this.optimizationsAndTweaks$eligibleChunksForSpawning
                                     .put(chunkcoordintpair, Boolean.FALSE);
-                            } else if (!this.multithreadingandtweaks$eligibleChunksForSpawning
+                            } else if (!this.optimizationsAndTweaks$eligibleChunksForSpawning
                                 .containsKey(chunkcoordintpair)) {
-                                    this.multithreadingandtweaks$eligibleChunksForSpawning
+                                    this.optimizationsAndTweaks$eligibleChunksForSpawning
                                         .put(chunkcoordintpair, Boolean.TRUE);
                                 }
                         }
@@ -135,20 +135,20 @@ public class MixinPatchSpawnerAnimals {
                         && (enumcreaturetype.getPeacefulCreature() || p_77192_2_)
                         && (!enumcreaturetype.getAnimal() || p_77192_4_)
                         && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature()
-                            * this.multithreadingandtweaks$eligibleChunksForSpawning.size()
+                            * this.optimizationsAndTweaks$eligibleChunksForSpawning.size()
                             / 256) {
-                        this.multithreadingandtweaks$eligibleChunksForSpawning.keySet()
+                        this.optimizationsAndTweaks$eligibleChunksForSpawning.keySet()
                             .iterator();
                         Iterator<ChunkCoordIntPair> iterator;
                         ArrayList<ChunkCoordIntPair> tmp = new ArrayList<>(
-                            multithreadingandtweaks$eligibleChunksForSpawning.keySet());
+                            optimizationsAndTweaks$eligibleChunksForSpawning.keySet());
                         Collections.shuffle(tmp);
                         iterator = tmp.iterator();
 
                         while (iterator.hasNext()) {
                             ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
 
-                            if (!this.multithreadingandtweaks$eligibleChunksForSpawning.get(chunkcoordintpair1)) {
+                            if (!this.optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkcoordintpair1)) {
                                 ChunkPosition chunkposition = func_151350_a(
                                     p_77192_1_,
                                     chunkcoordintpair1.chunkXPos,
@@ -334,7 +334,7 @@ public class MixinPatchSpawnerAnimals {
      * }
      * @Unique
      * private void clearEligibleChunksForSpawning() {
-     * this.multithreadingandtweaks$eligibleChunksForSpawning.clear();
+     * this.optimizationsAndTweaks$eligibleChunksForSpawning.clear();
      * }
      * @Unique
      * private void handlePlayerForSpawning(WorldServer p_77192_1_, int i) {
@@ -354,9 +354,9 @@ public class MixinPatchSpawnerAnimals {
      * boolean flag3 = l == -8 || l == 8 || i1 == -8 || i1 == 8;
      * ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(l + j, i1 + k);
      * if (!flag3) {
-     * this.multithreadingandtweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.FALSE);
-     * } else if (!this.multithreadingandtweaks$eligibleChunksForSpawning.containsKey(chunkcoordintpair)) {
-     * this.multithreadingandtweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.TRUE);
+     * this.optimizationsAndTweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.FALSE);
+     * } else if (!this.optimizationsAndTweaks$eligibleChunksForSpawning.containsKey(chunkcoordintpair)) {
+     * this.optimizationsAndTweaks$eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.TRUE);
      * }
      * }
      * @Unique
@@ -366,17 +366,17 @@ public class MixinPatchSpawnerAnimals {
      * (creatureType.getPeacefulCreature() || peaceful) &&
      * (!creatureType.getAnimal() || animals) &&
      * p_77192_1_.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature() *
-     * this.multithreadingandtweaks$eligibleChunksForSpawning.size() / 256);
+     * this.optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256);
      * }
      * @Unique
      * private int spawnCreatures(WorldServer p_77192_1_, ChunkCoordinates spawnPoint, EnumCreatureType creatureType) {
      * int spawnedEntities = 0;
      * List<ChunkCoordIntPair> eligibleChunks = new
-     * ArrayList<>(multithreadingandtweaks$eligibleChunksForSpawning.keySet());
+     * ArrayList<>(optimizationsAndTweaks$eligibleChunksForSpawning.keySet());
      * Collections.shuffle(eligibleChunks);
      * // Loop through eligible chunks
      * for (ChunkCoordIntPair chunkcoordintpair1 : eligibleChunks) {
-     * if (!this.multithreadingandtweaks$eligibleChunksForSpawning.get(chunkcoordintpair1)) {
+     * if (!this.optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkcoordintpair1)) {
      * ChunkPosition chunkposition = func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos,
      * chunkcoordintpair1.chunkZPos);
      * int j1 = chunkposition.chunkPosX;

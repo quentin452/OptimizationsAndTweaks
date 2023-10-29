@@ -94,13 +94,13 @@ public class MixinLeaves extends Block {
             if (l1 >= 0) {
                 worldIn.setBlockMetadataWithNotify(x, y, z, l & -9, 4);
             } else {
-                this.multithreadingandtweaks$removeLeaves(worldIn, x, y, z);
+                this.optimizationsAndTweaks$removeLeaves(worldIn, x, y, z);
             }
         }
     }
 
     @Unique
-    private void multithreadingandtweaks$removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_,
+    private void optimizationsAndTweaks$removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_,
         int p_150126_4_) {
         this.dropBlockAsItem(
             p_150126_1_,

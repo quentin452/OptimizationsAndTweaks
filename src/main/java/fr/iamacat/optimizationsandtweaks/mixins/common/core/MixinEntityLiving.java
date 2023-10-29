@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai.EntityAITasks2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.entity.ai.EntityAITasks2;
 
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityLiving extends EntityLivingBase {

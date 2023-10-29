@@ -27,7 +27,7 @@ public class MixinEntityAIWander extends EntityAIBase {
     private double speed;
 
     @Unique
-    private PathEntity multithreadingandtweaks$cachedPath;
+    private PathEntity optimizationsAndTweaks$cachedPath;
 
     public MixinEntityAIWander(EntityCreature p_i1648_1_, double p_i1648_2_) {
         this.entity = p_i1648_1_;
@@ -47,7 +47,7 @@ public class MixinEntityAIWander extends EntityAIBase {
             .nextInt(120) != 0) {
                 return false;
             } else {
-                if (multithreadingandtweaks$cachedPath != null) {
+                if (optimizationsAndTweaks$cachedPath != null) {
                     return true;
                 }
 
@@ -70,15 +70,15 @@ public class MixinEntityAIWander extends EntityAIBase {
     }
 
     public void startExecuting() {
-        if (multithreadingandtweaks$cachedPath != null) {
+        if (optimizationsAndTweaks$cachedPath != null) {
             this.entity.getNavigator()
-                .setPath(multithreadingandtweaks$cachedPath, this.speed);
+                .setPath(optimizationsAndTweaks$cachedPath, this.speed);
         } else {
             PathEntity path = this.entity.getNavigator()
                 .getPathToXYZ(this.xPosition, this.yPosition, this.zPosition);
 
             if (path != null) {
-                multithreadingandtweaks$cachedPath = path;
+                optimizationsAndTweaks$cachedPath = path;
                 this.entity.getNavigator()
                     .setPath(path, this.speed);
             }

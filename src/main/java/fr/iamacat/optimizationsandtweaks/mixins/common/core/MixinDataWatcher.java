@@ -37,9 +37,9 @@ public class MixinDataWatcher {
     @Shadow
     private boolean isBlank = true;
     @Unique
-    private static final ConcurrentHashMap<Class, Integer> multithreadingandtweaks$dataTypes = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class, Integer> optimizationsAndTweaks$dataTypes = new ConcurrentHashMap<>();
     @Unique
-    private final ConcurrentHashMap<Integer, DataWatcher.WatchableObject> multithreadingandtweaks$watchedObjects = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, DataWatcher.WatchableObject> optimizationsAndTweaks$watchedObjects = new ConcurrentHashMap<>();
 
     /** true if one or more object was changed */
     @Shadow
@@ -56,21 +56,21 @@ public class MixinDataWatcher {
     // @Inject(method = "addObject", at = @At("HEAD"), cancellable = true)
     public void addObject(int p_75682_1_, Object p_75682_2_, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
-            Integer integer = multithreadingandtweaks$dataTypes.get(p_75682_2_.getClass());
+            Integer integer = optimizationsAndTweaks$dataTypes.get(p_75682_2_.getClass());
 
             if (integer == null) {
                 throw new IllegalArgumentException("Unknown data type: " + p_75682_2_.getClass());
             } else if (p_75682_1_ > 31) {
                 throw new IllegalArgumentException(
                     "Data value id is too big with " + p_75682_1_ + "! (Max is " + 31 + ")");
-            } else if (this.multithreadingandtweaks$watchedObjects.containsKey(p_75682_1_)) {
+            } else if (this.optimizationsAndTweaks$watchedObjects.containsKey(p_75682_1_)) {
                 throw new IllegalArgumentException("Duplicate id value for " + p_75682_1_ + "!");
             } else {
                 DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(
                     integer,
                     p_75682_1_,
                     p_75682_2_);
-                this.multithreadingandtweaks$watchedObjects.put(p_75682_1_, watchableobject);
+                this.optimizationsAndTweaks$watchedObjects.put(p_75682_1_, watchableobject);
                 this.isBlank = false;
             }
             ci.cancel();
@@ -84,7 +84,7 @@ public class MixinDataWatcher {
     public void addObjectByDataType(int p_82709_1_, int p_82709_2_, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
             DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, null);
-            this.multithreadingandtweaks$watchedObjects.put(p_82709_1_, watchableobject);
+            this.optimizationsAndTweaks$watchedObjects.put(p_82709_1_, watchableobject);
             this.isBlank = false;
             ci.cancel();
         }
@@ -96,7 +96,7 @@ public class MixinDataWatcher {
             DataWatcher.WatchableObject watchableobject;
 
             try {
-                watchableobject = this.multithreadingandtweaks$watchedObjects.get(p_75691_1_);
+                watchableobject = this.optimizationsAndTweaks$watchedObjects.get(p_75691_1_);
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting synched entity data");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Synched entity data");
@@ -117,7 +117,7 @@ public class MixinDataWatcher {
 
             if (this.objectChanged) {
 
-                for (DataWatcher.WatchableObject watchableobject : this.multithreadingandtweaks$watchedObjects
+                for (DataWatcher.WatchableObject watchableobject : this.optimizationsAndTweaks$watchedObjects
                     .values()) {
                     if (watchableobject.isWatched()) {
                         watchableobject.setWatched(false);
@@ -144,8 +144,8 @@ public class MixinDataWatcher {
     public void func_151509_a(PacketBuffer p_151509_1_, CallbackInfo ci) throws IOException {
         if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
 
-            for (DataWatcher.WatchableObject watchableobject : this.multithreadingandtweaks$watchedObjects.values()) {
-                multithreadingandtweaks$writeWatchableObjectToPacketBuffer(p_151509_1_, watchableobject);
+            for (DataWatcher.WatchableObject watchableobject : this.optimizationsAndTweaks$watchedObjects.values()) {
+                optimizationsAndTweaks$writeWatchableObjectToPacketBuffer(p_151509_1_, watchableobject);
             }
 
             p_151509_1_.writeByte(127);
@@ -159,7 +159,7 @@ public class MixinDataWatcher {
             ArrayList<DataWatcher.WatchableObject> arraylist = null;
             DataWatcher.WatchableObject watchableobject;
 
-            for (Iterator<DataWatcher.WatchableObject> iterator = this.multithreadingandtweaks$watchedObjects.values()
+            for (Iterator<DataWatcher.WatchableObject> iterator = this.optimizationsAndTweaks$watchedObjects.values()
                 .iterator(); iterator.hasNext(); arraylist.add(watchableobject)) {
                 watchableobject = iterator.next();
 
@@ -180,7 +180,7 @@ public class MixinDataWatcher {
      */
 
     @Unique
-    private static void multithreadingandtweaks$writeWatchableObjectToPacketBuffer(PacketBuffer p_151510_0_,
+    private static void optimizationsAndTweaks$writeWatchableObjectToPacketBuffer(PacketBuffer p_151510_0_,
         DataWatcher.WatchableObject p_151510_1_) throws IOException {
         int i = (p_151510_1_.getObjectType() << 5 | p_151510_1_.getDataValueId() & 31) & 255;
         p_151510_0_.writeByte(i);
@@ -219,7 +219,7 @@ public class MixinDataWatcher {
         if (OptimizationsandTweaksConfig.enableMixinDataWatcher) {
 
             for (DataWatcher.WatchableObject watchableobject : p_75687_1_) {
-                DataWatcher.WatchableObject watchableobject1 = this.multithreadingandtweaks$watchedObjects
+                DataWatcher.WatchableObject watchableobject1 = this.optimizationsAndTweaks$watchedObjects
                     .get(watchableobject.getDataValueId());
 
                 if (watchableobject1 != null) {
@@ -234,12 +234,12 @@ public class MixinDataWatcher {
     }
 
     static {
-        multithreadingandtweaks$dataTypes.put(Byte.class, 0);
-        multithreadingandtweaks$dataTypes.put(Short.class, 1);
-        multithreadingandtweaks$dataTypes.put(Integer.class, 2);
-        multithreadingandtweaks$dataTypes.put(Float.class, 3);
-        multithreadingandtweaks$dataTypes.put(String.class, 4);
-        multithreadingandtweaks$dataTypes.put(ItemStack.class, 5);
-        multithreadingandtweaks$dataTypes.put(ChunkCoordinates.class, 6);
+        optimizationsAndTweaks$dataTypes.put(Byte.class, 0);
+        optimizationsAndTweaks$dataTypes.put(Short.class, 1);
+        optimizationsAndTweaks$dataTypes.put(Integer.class, 2);
+        optimizationsAndTweaks$dataTypes.put(Float.class, 3);
+        optimizationsAndTweaks$dataTypes.put(String.class, 4);
+        optimizationsAndTweaks$dataTypes.put(ItemStack.class, 5);
+        optimizationsAndTweaks$dataTypes.put(ChunkCoordinates.class, 6);
     }
 }

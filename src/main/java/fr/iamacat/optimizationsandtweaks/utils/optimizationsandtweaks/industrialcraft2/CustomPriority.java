@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.industrialcraft2;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.industrialcraft2;
 
 import ic2.core.util.PriorityExecutor;
 

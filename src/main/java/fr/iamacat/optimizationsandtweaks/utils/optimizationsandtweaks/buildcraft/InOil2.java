@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.buildcraft;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.buildcraft;
 
 public enum InOil2 {
 

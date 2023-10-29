@@ -24,36 +24,36 @@ import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
 public class MixinFixCascadingforMineFactoryReloadedWorldGen {
 
     @Unique
-    private static List<Integer> multithreadingandtweaks$_blacklistedDimensions;
+    private static List<Integer> optimizationsAndTweaks$_blacklistedDimensions;
     @Unique
-    private static List<String> multithreadingandtweaks$_sludgeBiomeList;
+    private static List<String> optimizationsAndTweaks$_sludgeBiomeList;
     @Unique
-    private static List<String> multithreadingandtweaks$_sewageBiomeList;
+    private static List<String> optimizationsAndTweaks$_sewageBiomeList;
     @Unique
-    private static List<String> multithreadingandtweaks$_rubberTreeBiomeList;
+    private static List<String> optimizationsAndTweaks$_rubberTreeBiomeList;
     @Unique
-    private static boolean multithreadingandtweaks$_sludgeLakeMode;
+    private static boolean optimizationsAndTweaks$_sludgeLakeMode;
     @Unique
-    private static boolean multithreadingandtweaks$_sewageLakeMode;
+    private static boolean optimizationsAndTweaks$_sewageLakeMode;
     @Unique
-    private static boolean multithreadingandtweaks$_rubberTreesEnabled;
+    private static boolean optimizationsAndTweaks$_rubberTreesEnabled;
     @Unique
-    private static boolean multithreadingandtweaks$_lakesEnabled;
+    private static boolean optimizationsAndTweaks$_lakesEnabled;
     @Unique
-    private static boolean multithreadingandtweaks$_regenSewage;
+    private static boolean optimizationsAndTweaks$_regenSewage;
     @Unique
-    private static boolean multithreadingandtweaks$_regenSludge;
+    private static boolean optimizationsAndTweaks$_regenSludge;
     @Unique
-    private static boolean multithreadingandtweaks$_regenTrees;
+    private static boolean optimizationsAndTweaks$_regenTrees;
     @Unique
-    private static int multithreadingandtweaks$_sludgeLakeRarity;
+    private static int optimizationsAndTweaks$_sludgeLakeRarity;
     @Unique
-    private static int multithreadingandtweaks$_sewageLakeRarity;
+    private static int optimizationsAndTweaks$_sewageLakeRarity;
 
     public MixinFixCascadingforMineFactoryReloadedWorldGen() {}
 
     @Unique
-    private static boolean multithreadingandtweaks$generateMegaRubberTree(World var0, Random var1, int var2, int var3,
+    private static boolean optimizationsAndTweaks$generateMegaRubberTree(World var0, Random var1, int var2, int var3,
         int var4, boolean var5) {
         return (new WorldGenMassiveTree(false)).setTreeScale((float) (4 + var1.nextInt(3)), 0.8F, 0.7F)
             .setLeafAttenuation(0.6F)
@@ -63,7 +63,7 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
     }
 
     @Unique
-    private static boolean multithreadingandtweaks$generateSacredSpringRubberTree(World var0, Random var1, int var2,
+    private static boolean optimizationsAndTweaks$generateSacredSpringRubberTree(World var0, Random var1, int var2,
         int var3, int var4) {
         return (new WorldGenMassiveTree(false)).setTreeScale((float) (6 + var1.nextInt(4)), 1.0F, 0.9F)
             .setLeafAttenuation(0.35F)
@@ -84,11 +84,11 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
 
     @Overwrite(remap = false)
     public boolean generateFeature(Random var1, int var2, int var3, World var4, boolean var5) {
-        if (multithreadingandtweaks$_blacklistedDimensions == null) {
-            multithreadingandtweaks$buildBlacklistedDimensions();
+        if (optimizationsAndTweaks$_blacklistedDimensions == null) {
+            optimizationsAndTweaks$buildBlacklistedDimensions();
         }
 
-        if (multithreadingandtweaks$_blacklistedDimensions.contains(var4.provider.dimensionId)) {
+        if (optimizationsAndTweaks$_blacklistedDimensions.contains(var4.provider.dimensionId)) {
             return false;
         }
 
@@ -103,13 +103,13 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
         String var9 = var8.biomeName;
 
         // Generate rubber trees
-        if (multithreadingandtweaks$_rubberTreesEnabled && (var5 || multithreadingandtweaks$_regenTrees)
-            && multithreadingandtweaks$_rubberTreeBiomeList.contains(var9)
+        if (optimizationsAndTweaks$_rubberTreesEnabled && (var5 || optimizationsAndTweaks$_regenTrees)
+            && optimizationsAndTweaks$_rubberTreeBiomeList.contains(var9)
             && var1.nextInt(100) < 40) {
             if (var1.nextInt(30) == 0) {
                 String var10 = var9.toLowerCase(Locale.US);
                 if (var10.contains("mega")) {
-                    multithreadingandtweaks$generateMegaRubberTree(
+                    optimizationsAndTweaks$generateMegaRubberTree(
                         var4,
                         var1,
                         var6,
@@ -117,7 +117,7 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
                         var7,
                         false);
                 } else if (var10.contains("sacred") && var1.nextInt(20) == 0) {
-                    multithreadingandtweaks$generateSacredSpringRubberTree(
+                    optimizationsAndTweaks$generateSacredSpringRubberTree(
                         var4,
                         var1,
                         var6,
@@ -130,14 +130,14 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
         }
 
         // Generate lakes
-        if (multithreadingandtweaks$_lakesEnabled && var4.getWorldInfo()
+        if (optimizationsAndTweaks$_lakesEnabled && var4.getWorldInfo()
             .isMapFeaturesEnabled()) {
             int var15;
 
             // Sludge lakes
-            var15 = multithreadingandtweaks$_sludgeLakeRarity;
-            if (var15 > 0 && (var5 || multithreadingandtweaks$_regenSludge)
-                && multithreadingandtweaks$_sludgeBiomeList.contains(var9) == multithreadingandtweaks$_sludgeLakeMode
+            var15 = optimizationsAndTweaks$_sludgeLakeRarity;
+            if (var15 > 0 && (var5 || optimizationsAndTweaks$_regenSludge)
+                && optimizationsAndTweaks$_sludgeBiomeList.contains(var9) == optimizationsAndTweaks$_sludgeLakeMode
                 && var1.nextInt(var15) == 0) {
                 int var11 = var6 - 8 + var1.nextInt(16);
                 int var12 = var1.nextInt(var4.getHeight());
@@ -146,9 +146,9 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
             }
 
             // Sewage lakes
-            var15 = multithreadingandtweaks$_sewageLakeRarity;
-            if (var15 > 0 && (var5 || multithreadingandtweaks$_regenSewage)
-                && multithreadingandtweaks$_sewageBiomeList.contains(var9) == multithreadingandtweaks$_sewageLakeMode
+            var15 = optimizationsAndTweaks$_sewageLakeRarity;
+            if (var15 > 0 && (var5 || optimizationsAndTweaks$_regenSewage)
+                && optimizationsAndTweaks$_sewageBiomeList.contains(var9) == optimizationsAndTweaks$_sewageLakeMode
                 && var1.nextInt(var15) == 0) {
                 int var11 = var6 - 8 + var1.nextInt(16);
                 int var12 = var1.nextInt(var4.getHeight());
@@ -167,19 +167,19 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
     }
 
     @Unique
-    private static void multithreadingandtweaks$buildBlacklistedDimensions() {
-        multithreadingandtweaks$_blacklistedDimensions = Ints.asList(MFRConfig.worldGenDimensionBlacklist.getIntList());
-        multithreadingandtweaks$_rubberTreeBiomeList = MFRRegistry.getRubberTreeBiomes();
-        multithreadingandtweaks$_rubberTreesEnabled = MFRConfig.rubberTreeWorldGen.getBoolean(true);
-        multithreadingandtweaks$_lakesEnabled = MFRConfig.mfrLakeWorldGen.getBoolean(true);
-        multithreadingandtweaks$_sludgeLakeRarity = MFRConfig.mfrLakeSludgeRarity.getInt();
-        multithreadingandtweaks$_sludgeBiomeList = Arrays.asList(MFRConfig.mfrLakeSludgeBiomeList.getStringList());
-        multithreadingandtweaks$_sludgeLakeMode = MFRConfig.mfrLakeSludgeBiomeListToggle.getBoolean(false);
-        multithreadingandtweaks$_sewageLakeRarity = MFRConfig.mfrLakeSewageRarity.getInt();
-        multithreadingandtweaks$_sewageBiomeList = Arrays.asList(MFRConfig.mfrLakeSewageBiomeList.getStringList());
-        multithreadingandtweaks$_sewageLakeMode = MFRConfig.mfrLakeSewageBiomeListToggle.getBoolean(false);
-        multithreadingandtweaks$_regenSewage = MFRConfig.mfrLakeSewageRetrogen.getBoolean(false);
-        multithreadingandtweaks$_regenSludge = MFRConfig.mfrLakeSludgeRetrogen.getBoolean(false);
-        multithreadingandtweaks$_regenTrees = MFRConfig.rubberTreeRetrogen.getBoolean(false);
+    private static void optimizationsAndTweaks$buildBlacklistedDimensions() {
+        optimizationsAndTweaks$_blacklistedDimensions = Ints.asList(MFRConfig.worldGenDimensionBlacklist.getIntList());
+        optimizationsAndTweaks$_rubberTreeBiomeList = MFRRegistry.getRubberTreeBiomes();
+        optimizationsAndTweaks$_rubberTreesEnabled = MFRConfig.rubberTreeWorldGen.getBoolean(true);
+        optimizationsAndTweaks$_lakesEnabled = MFRConfig.mfrLakeWorldGen.getBoolean(true);
+        optimizationsAndTweaks$_sludgeLakeRarity = MFRConfig.mfrLakeSludgeRarity.getInt();
+        optimizationsAndTweaks$_sludgeBiomeList = Arrays.asList(MFRConfig.mfrLakeSludgeBiomeList.getStringList());
+        optimizationsAndTweaks$_sludgeLakeMode = MFRConfig.mfrLakeSludgeBiomeListToggle.getBoolean(false);
+        optimizationsAndTweaks$_sewageLakeRarity = MFRConfig.mfrLakeSewageRarity.getInt();
+        optimizationsAndTweaks$_sewageBiomeList = Arrays.asList(MFRConfig.mfrLakeSewageBiomeList.getStringList());
+        optimizationsAndTweaks$_sewageLakeMode = MFRConfig.mfrLakeSewageBiomeListToggle.getBoolean(false);
+        optimizationsAndTweaks$_regenSewage = MFRConfig.mfrLakeSewageRetrogen.getBoolean(false);
+        optimizationsAndTweaks$_regenSludge = MFRConfig.mfrLakeSludgeRetrogen.getBoolean(false);
+        optimizationsAndTweaks$_regenTrees = MFRConfig.rubberTreeRetrogen.getBoolean(false);
     }
 }

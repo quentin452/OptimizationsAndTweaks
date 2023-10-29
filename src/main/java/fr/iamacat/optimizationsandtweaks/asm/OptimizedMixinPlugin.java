@@ -14,7 +14,7 @@ import lombok.Getter;
 public class OptimizedMixinPlugin implements IMixinPlugin {
 
     @Getter
-    private final Logger logger = IMixinPlugin.createLogger("MultithreadingAndTweaks");
+    private final Logger logger = IMixinPlugin.createLogger("OptimizationsAndTweaks");
 
     public OptimizedMixinPlugin() {
         try {

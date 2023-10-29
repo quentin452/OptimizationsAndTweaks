@@ -34,7 +34,7 @@ public class MixinTickHandler {
     @Shadow
     private static final boolean debugTickCallback = System.getProperty("ic2.debugtickcallback") != null;
     @Unique
-    private static WeakHashMap<ITickCallback, Throwable> multithreadingandtweaks$debugTraces;
+    private static WeakHashMap<ITickCallback, Throwable> optimizationsAndTweaks$debugTraces;
 
     @Shadow
     private static final Field updateEntityTick;
@@ -58,10 +58,10 @@ public class MixinTickHandler {
                 IC2.platform.profilerStartSection("Wind");
                 WorldData.get(world).windSim.updateWind();
                 IC2.platform.profilerEndStartSection("TickCallbacks");
-                multithreadingandtweaks$processTickCallbacks(world);
+                optimizationsAndTweaks$processTickCallbacks(world);
 
                 if (ConfigUtil.getBool(MainConfig.get(), "balance/disableEnderChest")) {
-                    multithreadingandtweaks$removeEnderChests(world);
+                    optimizationsAndTweaks$removeEnderChests(world);
                 }
                 IC2.platform.profilerEndSection();
             } else {
@@ -77,7 +77,7 @@ public class MixinTickHandler {
     }
 
     @Unique
-    private void multithreadingandtweaks$removeEnderChests(World world) {
+    private void optimizationsAndTweaks$removeEnderChests(World world) {
         for (Object obj : world.loadedTileEntityList) {
             if (obj instanceof TileEntity) {
                 TileEntity te = (TileEntity) obj;
@@ -91,14 +91,14 @@ public class MixinTickHandler {
     }
 
     @Unique
-    private static void multithreadingandtweaks$processTickCallbacks(World world) {
+    private static void optimizationsAndTweaks$processTickCallbacks(World world) {
         WorldData worldData = WorldData.get(world);
         IC2.platform.profilerStartSection("SingleTickCallback");
 
         for (ITickCallback tickCallback = worldData.singleTickCallbacks.poll(); tickCallback
             != null; tickCallback = (ITickCallback) worldData.singleTickCallbacks.poll()) {
             if (debugTickCallback) {
-                lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
+                lastDebugTrace = optimizationsAndTweaks$debugTraces.remove(tickCallback);
             }
 
             IC2.platform.profilerStartSection(
@@ -113,7 +113,7 @@ public class MixinTickHandler {
 
         for (ITickCallback tickCallback : worldData.continuousTickCallbacks) {
             if (debugTickCallback) {
-                lastDebugTrace = multithreadingandtweaks$debugTraces.remove(tickCallback);
+                lastDebugTrace = optimizationsAndTweaks$debugTraces.remove(tickCallback);
             }
 
             IC2.platform.profilerStartSection(
@@ -137,7 +137,7 @@ public class MixinTickHandler {
 
     static {
         if (debugTickCallback) {
-            multithreadingandtweaks$debugTraces = new WeakHashMap<>();
+            optimizationsAndTweaks$debugTraces = new WeakHashMap<>();
         }
 
         updateEntityTick = ReflectionUtil.getField(WorldServer.class, "field_80004_Q", "updateEntityTick");

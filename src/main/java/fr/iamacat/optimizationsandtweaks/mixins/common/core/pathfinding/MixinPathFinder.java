@@ -173,7 +173,7 @@ public class MixinPathFinder {
      * @reason optimize openPoint
      */
     @Unique
-    private final Int2ObjectHashMap<PathPoint> multithreadingandtweaks$pointCache = new Int2ObjectHashMap<>();
+    private final Int2ObjectHashMap<PathPoint> optimizationsAndTweaks$pointCache = new Int2ObjectHashMap<>();
 
     /**
      * @author
@@ -183,12 +183,12 @@ public class MixinPathFinder {
     private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
 
-        PathPoint pathpoint = multithreadingandtweaks$pointCache.get(l);
+        PathPoint pathpoint = optimizationsAndTweaks$pointCache.get(l);
 
         if (pathpoint == null) {
             pathpoint = new PathPoint(p_75854_1_, p_75854_2_, p_75854_3_);
 
-            multithreadingandtweaks$pointCache.put(l, pathpoint);
+            optimizationsAndTweaks$pointCache.put(l, pathpoint);
         }
 
         return pathpoint;

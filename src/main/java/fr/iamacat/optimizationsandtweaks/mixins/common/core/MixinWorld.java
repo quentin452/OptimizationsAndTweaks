@@ -46,7 +46,7 @@ public abstract class MixinWorld implements IBlockAccess {
     @Shadow
     public final WorldProvider provider;
     @Unique
-    private World multithreadingandtweaks$world;
+    private World optimizationsAndTweaks$world;
     @Shadow
     public final Profiler theProfiler;
     @Shadow
@@ -61,7 +61,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
     protected MixinWorld(WorldProvider provider, World world, Profiler theProfiler) {
         this.provider = provider;
-        this.multithreadingandtweaks$world = world;
+        this.optimizationsAndTweaks$world = world;
         this.theProfiler = theProfiler;
     }
 
@@ -81,8 +81,8 @@ public abstract class MixinWorld implements IBlockAccess {
 
             for (int chunkX = minXChunk; chunkX <= maxXChunk; ++chunkX) {
                 for (int chunkZ = minZChunk; chunkZ <= maxZChunk; ++chunkZ) {
-                    if (this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
-                        Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ);
+                    if (this.optimizationsAndTweaks$chunkExists(chunkX, chunkZ)) {
+                        Chunk chunk = this.optimizationsAndTweaks$getChunkFromChunkCoords(chunkX, chunkZ);
                         chunk.getEntitiesOfTypeWithinAAAB(clazz, bb, entityList, selector);
                     }
                 }
@@ -97,7 +97,7 @@ public abstract class MixinWorld implements IBlockAccess {
      * Returns whether a chunk exists at chunk coordinates x, y
      */
     @Unique
-    protected boolean multithreadingandtweaks$chunkExists(int p_72916_1_, int p_72916_2_) {
+    protected boolean optimizationsAndTweaks$chunkExists(int p_72916_1_, int p_72916_2_) {
         return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
     }
 
@@ -105,7 +105,7 @@ public abstract class MixinWorld implements IBlockAccess {
      * Returns back a chunk looked up by chunk coordinates Args: x, y
      */
     @Unique
-    public Chunk multithreadingandtweaks$getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_) {
+    public Chunk optimizationsAndTweaks$getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_) {
         return this.chunkProvider.provideChunk(p_72964_1_, p_72964_2_);
     }
 
@@ -153,7 +153,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
             for (int x = MathHelper.floor_double(minX); x < MathHelper.floor_double(maxX); ++x) {
                 for (int z = MathHelper.floor_double(minZ); z < MathHelper.floor_double(maxZ); ++z) {
-                    if (this.multithreadingandtweaks$blockExists(x, 64, z)) {
+                    if (this.optimizationsAndTweaks$blockExists(x, 64, z)) {
                         double blockMinY = Math.max(minY - 1, 0); // Avoid negative values for minY
                         double blockMaxY = Math.min(maxY, 256); // Avoid exceeding world height
 
@@ -174,7 +174,7 @@ public abstract class MixinWorld implements IBlockAccess {
             }
 
             List<Entity> list = this
-                .multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(p_72945_1_, p_72945_2_);
+                .optimizationsAndTweaks$getEntitiesWithinAABBExcludingEntity(p_72945_1_, p_72945_2_);
 
             for (Entity entity : list) {
                 AxisAlignedBB entityAABB = entity.getBoundingBox();
@@ -198,22 +198,22 @@ public abstract class MixinWorld implements IBlockAccess {
      * Returns whether a block exists at world coordinates x, y, z
      */
     @Unique
-    public boolean multithreadingandtweaks$blockExists(int p_72899_1_, int p_72899_2_, int p_72899_3_) {
+    public boolean optimizationsAndTweaks$blockExists(int p_72899_1_, int p_72899_2_, int p_72899_3_) {
         return p_72899_2_ >= 0 && p_72899_2_ < 256
-            && this.multithreadingandtweaks$chunkExists(p_72899_1_ >> 4, p_72899_3_ >> 4);
+            && this.optimizationsAndTweaks$chunkExists(p_72899_1_ >> 4, p_72899_3_ >> 4);
     }
 
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_,
+    public List<Entity> optimizationsAndTweaks$getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_,
         AxisAlignedBB p_72839_2_) {
-        return this.multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(
+        return this.optimizationsAndTweaks$getEntitiesWithinAABBExcludingEntity(
             p_72839_1_,
             p_72839_2_,
             (IEntitySelector) null);
     }
 
     @Unique
-    public List<Entity> multithreadingandtweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_,
+    public List<Entity> optimizationsAndTweaks$getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_,
         AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_) {
         ArrayList<Entity> arraylist = new ArrayList<>();
 
@@ -227,8 +227,8 @@ public abstract class MixinWorld implements IBlockAccess {
 
         for (int i = minChunkX; i <= maxChunkX; ++i) {
             for (int j = minChunkZ; j <= maxChunkZ; ++j) {
-                if (this.multithreadingandtweaks$chunkExists(i, j)) {
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(i, j)
+                if (this.optimizationsAndTweaks$chunkExists(i, j)) {
+                    this.optimizationsAndTweaks$getChunkFromChunkCoords(i, j)
                         .getEntitiesWithinAABBForEntity(p_94576_1_, p_94576_2_, arraylist, p_94576_3_);
                 }
             }
@@ -238,12 +238,12 @@ public abstract class MixinWorld implements IBlockAccess {
     }
 
     @Unique
-    private void multithreadingandtweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ,
+    private void optimizationsAndTweaks$handleChunkChange(Entity entity, int newChunkX, int newChunkZ,
         boolean addedToChunk, int oldChunkX, int oldChunkZ) {
         if (addedToChunk && (newChunkX != oldChunkX || newChunkZ != oldChunkZ)) {
             int oldChunkY = MathHelper.floor_double(entity.posY / 16.0D);
-            Chunk oldChunk = multithreadingandtweaks$getChunkFromChunkCoords(oldChunkX, oldChunkZ);
-            Chunk newChunk = multithreadingandtweaks$getChunkFromChunkCoords(newChunkX, newChunkZ);
+            Chunk oldChunk = optimizationsAndTweaks$getChunkFromChunkCoords(oldChunkX, oldChunkZ);
+            Chunk newChunk = optimizationsAndTweaks$getChunkFromChunkCoords(newChunkX, newChunkZ);
 
             if (oldChunk != null) {
                 oldChunk.removeEntityAtIndex(entity, oldChunkY);
@@ -264,8 +264,8 @@ public abstract class MixinWorld implements IBlockAccess {
      * @return
      */
     @Unique
-    public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> multithreadingandtweaks$getPersistentChunks() {
-        return ForgeChunkManager.getPersistentChunksFor(multithreadingandtweaks$world);
+    public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> optimizationsAndTweaks$getPersistentChunks() {
+        return ForgeChunkManager.getPersistentChunksFor(optimizationsAndTweaks$world);
     }
 
     /**
@@ -283,7 +283,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
                 for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1) {
                     for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1) {
-                        if (!this.multithreadingandtweaks$chunkExists(k1, l1)) {
+                        if (!this.optimizationsAndTweaks$chunkExists(k1, l1)) {
                             return false;
                         }
                     }
@@ -313,10 +313,10 @@ public abstract class MixinWorld implements IBlockAccess {
                 int chunkX = x >> 4;
                 int chunkZ = z >> 4;
 
-                if (!this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
+                if (!this.optimizationsAndTweaks$chunkExists(chunkX, chunkZ)) {
                     return lightType.defaultLightValue;
                 } else {
-                    Chunk chunk = this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ);
+                    Chunk chunk = this.optimizationsAndTweaks$getChunkFromChunkCoords(chunkX, chunkZ);
                     return chunk.getSavedLightValue(lightType, x & 15, y, z & 15);
                 }
             }
@@ -338,7 +338,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
         int x = MathHelper.floor_double(entity.posX);
         int z = MathHelper.floor_double(entity.posZ);
-        boolean isForced = multithreadingandtweaks$getPersistentChunks()
+        boolean isForced = optimizationsAndTweaks$getPersistentChunks()
             .containsKey(new ChunkCoordIntPair(x >> 4, z >> 4));
         byte chunkCheckRadius = isForced ? (byte) 0 : 32;
         boolean canUpdate = !forceUpdate || this.checkChunksExist(
@@ -376,14 +376,14 @@ public abstract class MixinWorld implements IBlockAccess {
 
             if (!entity.addedToChunk || entity.chunkCoordX != chunkX || entity.chunkCoordZ != chunkZ) {
                 if (entity.addedToChunk
-                    && this.multithreadingandtweaks$chunkExists(entity.chunkCoordX, entity.chunkCoordZ)) {
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(entity.chunkCoordX, entity.chunkCoordZ)
+                    && this.optimizationsAndTweaks$chunkExists(entity.chunkCoordX, entity.chunkCoordZ)) {
+                    this.optimizationsAndTweaks$getChunkFromChunkCoords(entity.chunkCoordX, entity.chunkCoordZ)
                         .removeEntityAtIndex(entity, entity.chunkCoordY);
                 }
 
-                if (this.multithreadingandtweaks$chunkExists(chunkX, chunkZ)) {
+                if (this.optimizationsAndTweaks$chunkExists(chunkX, chunkZ)) {
                     entity.addedToChunk = true;
-                    this.multithreadingandtweaks$getChunkFromChunkCoords(chunkX, chunkZ)
+                    this.optimizationsAndTweaks$getChunkFromChunkCoords(chunkX, chunkZ)
                         .addEntity(entity);
                 } else {
                     entity.addedToChunk = false;
@@ -449,7 +449,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
     @Unique
     public ImmutableSetMultimap<ChunkCoordIntPair, ForgeChunkManager.Ticket> getPersistentChunks() {
-        return ForgeChunkManager.getPersistentChunksFor(multithreadingandtweaks$world);
+        return ForgeChunkManager.getPersistentChunksFor(optimizationsAndTweaks$world);
     }
 
     @Shadow

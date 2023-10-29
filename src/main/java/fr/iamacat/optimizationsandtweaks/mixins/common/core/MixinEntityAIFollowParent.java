@@ -25,16 +25,16 @@ public class MixinEntityAIFollowParent {
     private int field_75345_d;
 
     @Unique
-    private List<EntityAnimal> multithreadingandtweaks$cachedEntitiesWithinAABB = null;
+    private List<EntityAnimal> optimizationsAndTweaks$cachedEntitiesWithinAABB = null;
 
     @Unique
-    private List<EntityAnimal> multithreadingandtweaks$getCachedEntitiesWithinAABB() {
-        if (multithreadingandtweaks$cachedEntitiesWithinAABB == null) {
-            multithreadingandtweaks$cachedEntitiesWithinAABB = this.childAnimal.worldObj.getEntitiesWithinAABB(
+    private List<EntityAnimal> optimizationsAndTweaks$getCachedEntitiesWithinAABB() {
+        if (optimizationsAndTweaks$cachedEntitiesWithinAABB == null) {
+            optimizationsAndTweaks$cachedEntitiesWithinAABB = this.childAnimal.worldObj.getEntitiesWithinAABB(
                 this.childAnimal.getClass(),
                 this.childAnimal.boundingBox.expand(8.0D, 4.0D, 8.0D));
         }
-        return multithreadingandtweaks$cachedEntitiesWithinAABB;
+        return optimizationsAndTweaks$cachedEntitiesWithinAABB;
     }
 
     /**
@@ -66,7 +66,7 @@ public class MixinEntityAIFollowParent {
     }
 
     @Unique
-    private Map<EntityAnimal, Integer> multithreadingandtweaks$growingAgeCache = new HashMap<>();
+    private Map<EntityAnimal, Integer> optimizationsAndTweaks$growingAgeCache = new HashMap<>();
 
     /**
      * @author iamacatfr
@@ -75,16 +75,16 @@ public class MixinEntityAIFollowParent {
      */
     @Overwrite
     public boolean shouldExecute() {
-        List<EntityAnimal> nearbyEntities = multithreadingandtweaks$getCachedEntitiesWithinAABB();
+        List<EntityAnimal> nearbyEntities = optimizationsAndTweaks$getCachedEntitiesWithinAABB();
         double minDistanceSq = Double.MAX_VALUE;
         boolean hasValidParent = false;
 
         for (EntityAnimal entity : nearbyEntities) {
-            Integer growingAge = multithreadingandtweaks$growingAgeCache.get(entity);
+            Integer growingAge = optimizationsAndTweaks$growingAgeCache.get(entity);
 
             if (growingAge == null) {
                 growingAge = entity.getGrowingAge();
-                multithreadingandtweaks$growingAgeCache.put(entity, growingAge);
+                optimizationsAndTweaks$growingAgeCache.put(entity, growingAge);
             }
 
             if (growingAge <= 0) {

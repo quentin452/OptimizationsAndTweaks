@@ -26,21 +26,21 @@ public class MixinFixPamsTreesCascadingWorldgenLag implements IWorldGenerator {
         IChunkProvider chunkProvider) {
         switch (world.provider.dimensionId) {
             case 0:
-                this.multithreadingandtweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
+                this.optimizationsAndTweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
             case 6:
                 if (BlockRegistry.enableAroma1997sdimensionalworldfruittreeGen) {
-                    this.multithreadingandtweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
+                    this.optimizationsAndTweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
                 }
             case 7:
                 if (BlockRegistry.enabletwilightforestfruittreeGen) {
-                    this.multithreadingandtweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
+                    this.optimizationsAndTweaks$generateSurface(world, random, chunkX * 16, chunkZ * 16);
                 }
             default:
         }
     }
 
     @Unique
-    public void multithreadingandtweaks$generateSurface(World world, Random rand, int chunkX, int chunkZ) {
+    public void optimizationsAndTweaks$generateSurface(World world, Random rand, int chunkX, int chunkZ) {
         BiomeGenBase biome = world.getWorldChunkManager()
             .getBiomeGenAt(chunkX, chunkZ);
         if (!BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.DEAD)) {

@@ -34,7 +34,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.buildcraft.InOil2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.buildcraft.InOil2;
 
 @Mixin(OilTweakEventHandler.class)
 public class MixinOilTweakEventHandler {

@@ -188,7 +188,7 @@ public class MixinTesselator {
                 }
 
                 int i = this.rawBufferIndex * 4;
-                this.multithreadingandtweaks$reset();
+                this.optimizationsAndTweaks$reset();
                 return i;
             }
         }
@@ -199,7 +199,7 @@ public class MixinTesselator {
      * Clears the tessellator state in preparation for new drawing.
      */
     @Unique
-    private void multithreadingandtweaks$reset() {
+    private void optimizationsAndTweaks$reset() {
         this.vertexCount = 0;
         this.byteBuffer.clear();
         this.rawBufferIndex = 0;

@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.industrialcraft2;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.industrialcraft2;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

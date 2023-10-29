@@ -45,7 +45,7 @@ public class MixinEntityAITasks {
      * Returns whether two EntityAITaskEntries can be executed concurrently
      */
     @Unique
-    private boolean multithreadingandtweaks$areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_,
+    private boolean optimizationsAndTweaks$areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_,
         EntityAITasks.EntityAITaskEntry p_75777_2_) {
         return (p_75777_1_.action.getMutexBits() & p_75777_2_.action.getMutexBits()) == 0;
     }

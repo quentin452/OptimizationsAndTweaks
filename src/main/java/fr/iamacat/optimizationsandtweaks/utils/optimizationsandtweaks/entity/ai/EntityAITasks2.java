@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.multithreadingandtweaks.entity.ai;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.entity.ai;
 
 import java.util.ArrayList;
 import java.util.Iterator;

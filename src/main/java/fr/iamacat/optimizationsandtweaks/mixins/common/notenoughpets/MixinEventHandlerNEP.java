@@ -62,16 +62,16 @@ public class MixinEventHandlerNEP {
                 LogHelper.info(
                     "Village " + village
                         + " cats: "
-                        + multithreadingandtweaks$countEntityAroundVillage(EntityOcelot.class, village, event.world, 32)
+                        + optimizationsAndTweaks$countEntityAroundVillage(EntityOcelot.class, village, event.world, 32)
                         + ", dogs: "
-                        + multithreadingandtweaks$countEntityAroundVillage(EntityWolf.class, village, event.world, 32));
+                        + optimizationsAndTweaks$countEntityAroundVillage(EntityWolf.class, village, event.world, 32));
             }
 
             int catCount = GeneralConfig.enableNECCats
-                ? multithreadingandtweaks$countEntityAroundVillage(EntityOcelotNEP.class, village, event.world, 32)
+                ? optimizationsAndTweaks$countEntityAroundVillage(EntityOcelotNEP.class, village, event.world, 32)
                 : 0;
             int dogCount = GeneralConfig.enableNECDogs
-                ? multithreadingandtweaks$countEntityAroundVillage(EntityWolfNEP.class, village, event.world, 32)
+                ? optimizationsAndTweaks$countEntityAroundVillage(EntityWolfNEP.class, village, event.world, 32)
                 : 0;
             int maxSpawnCount = Math.min(
                 GeneralConfig.strayCapFromVillageRadius ? village.getVillageRadius() * village.getVillageRadius() / 500
@@ -81,7 +81,7 @@ public class MixinEventHandlerNEP {
 
             if ((catCount + dogCount) < maxSpawnCount
                 && event.world.rand.nextInt(100) < GeneralConfig.villageSpawnRatePercent) {
-                multithreadingandtweaks$trySpawnStray(village, event.world);
+                optimizationsAndTweaks$trySpawnStray(village, event.world);
             }
         }
 
@@ -89,7 +89,7 @@ public class MixinEventHandlerNEP {
     }
 
     @Unique
-    private static void multithreadingandtweaks$trySpawnStray(Village village, World world) {
+    private static void optimizationsAndTweaks$trySpawnStray(Village village, World world) {
         int spawnCap;
         Class strayClass;
         float strayFraction;
@@ -122,14 +122,14 @@ public class MixinEventHandlerNEP {
         }
 
         if (spawnCap > 0
-            && multithreadingandtweaks$countEntityAroundVillage(strayClass, village, world, 32) < Math.min(
+            && optimizationsAndTweaks$countEntityAroundVillage(strayClass, village, world, 32) < Math.min(
                 Math.round(
                     GeneralConfig.strayCapFromVillageRadius
                         ? (float) (village.getVillageRadius() * village.getVillageRadius() / 500)
                         : (float) Math.min(village.getNumVillagers(), village.getNumVillageDoors() / 4)
                             * strayFraction),
                 spawnCap)) {
-            Vec3 vec3 = multithreadingandtweaks$tryGetStraySpawningLocation(village, world, 2, 4, 2);
+            Vec3 vec3 = optimizationsAndTweaks$tryGetStraySpawningLocation(village, world, 2, 4, 2);
             if (vec3 != null) {
                 entityStray
                     .setLocationAndAngles(vec3.xCoord, vec3.yCoord, vec3.zCoord, world.rand.nextFloat() * 360.0F, 0.0F);
@@ -142,7 +142,7 @@ public class MixinEventHandlerNEP {
     }
 
     @Unique
-    private static int multithreadingandtweaks$countEntityAroundVillage(Class entityClass, Village village, World world,
+    private static int optimizationsAndTweaks$countEntityAroundVillage(Class entityClass, Village village, World world,
         int villageBuffer) {
         int vilX = village.getCenter().posX;
         int vilY = village.getCenter().posY;
@@ -162,7 +162,7 @@ public class MixinEventHandlerNEP {
     }
 
     @Unique
-    private static Vec3 multithreadingandtweaks$tryGetStraySpawningLocation(Village village, World world, int rangeX,
+    private static Vec3 optimizationsAndTweaks$tryGetStraySpawningLocation(Village village, World world, int rangeX,
         int rangeY, int rangeZ) {
         int vilCenterX = village.getCenter().posX;
         int vilCenterY = village.getCenter().posY;
@@ -173,8 +173,8 @@ public class MixinEventHandlerNEP {
             int tryX = vilCenterX + world.rand.nextInt(2 * vilRadius + 1) - vilRadius;
             int tryY = vilCenterY + world.rand.nextInt(8) - 4;
             int tryZ = vilCenterZ + world.rand.nextInt(2 * vilRadius + 1) - vilRadius;
-            if (multithreadingandtweaks$isInRange(tryX, tryY, tryZ, village)
-                && multithreadingandtweaks$isValidSpawningLocation(tryX, tryY, tryZ, rangeX, rangeY, rangeZ, world)) {
+            if (optimizationsAndTweaks$isInRange(tryX, tryY, tryZ, village)
+                && optimizationsAndTweaks$isValidSpawningLocation(tryX, tryY, tryZ, rangeX, rangeY, rangeZ, world)) {
                 return Vec3.createVectorHelper(tryX, tryY, tryZ);
             }
         }
@@ -183,14 +183,14 @@ public class MixinEventHandlerNEP {
     }
 
     @Unique
-    private static boolean multithreadingandtweaks$isInRange(int x, int y, int z, Village village) {
+    private static boolean optimizationsAndTweaks$isInRange(int x, int y, int z, Village village) {
         return village.getCenter()
             .getDistanceSquared(x, y, z)
             < (float) ((village.getVillageRadius() + 32) * (village.getVillageRadius() + 32));
     }
 
     @Unique
-    private static boolean multithreadingandtweaks$isValidSpawningLocation(int spawnposX, int spawnposY, int spawnposZ,
+    private static boolean optimizationsAndTweaks$isValidSpawningLocation(int spawnposX, int spawnposY, int spawnposZ,
         int xRange, int yRange, int zRange, World world) {
         if (!World.doesBlockHaveSolidTopSurface(world, spawnposX, spawnposY - 1, spawnposZ)) {
             return false;

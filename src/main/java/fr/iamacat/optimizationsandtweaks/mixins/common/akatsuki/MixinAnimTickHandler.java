@@ -20,12 +20,12 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 public class MixinAnimTickHandler {
 
     @Unique
-    private ConcurrentLinkedQueue<IMCAnimatedEntity> multithreadingandtweaks$activeEntities = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<IMCAnimatedEntity> optimizationsAndTweaks$activeEntities = new ConcurrentLinkedQueue<>();
 
     @Inject(method = "addEntity", at = @At("HEAD"), remap = false, cancellable = true)
     public void addEntity(IMCAnimatedEntity entity, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinAnimTickHandler) {
-            this.multithreadingandtweaks$activeEntities.add(entity);
+            this.optimizationsAndTweaks$activeEntities.add(entity);
             ci.cancel();
         }
     }
@@ -33,12 +33,12 @@ public class MixinAnimTickHandler {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinAnimTickHandler) {
-            if (!multithreadingandtweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
-                for (IMCAnimatedEntity entity : multithreadingandtweaks$activeEntities) {
+            if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
+                for (IMCAnimatedEntity entity : optimizationsAndTweaks$activeEntities) {
                     entity.getAnimationHandler()
                         .animationsUpdate();
                     if (((Entity) entity).isDead) {
-                        multithreadingandtweaks$activeEntities.remove(entity);
+                        optimizationsAndTweaks$activeEntities.remove(entity);
                     }
                 }
             }

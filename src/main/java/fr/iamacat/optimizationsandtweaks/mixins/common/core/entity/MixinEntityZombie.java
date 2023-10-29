@@ -32,25 +32,25 @@ public class MixinEntityZombie extends EntityMob {
         if (OptimizationsandTweaksConfig.enableMixinEntityZombie) {
             super.onLivingUpdate();
             // Add a check for the conditions where the entity can catch fire
-            if (multithreadingandtweaks$shouldCatchFire()) {
-                multithreadingandtweaks$catchFire();
+            if (optimizationsAndTweaks$shouldCatchFire()) {
+                optimizationsAndTweaks$catchFire();
             }
 
             // Handle riding logic
-            multithreadingandtweaks$handleRiding();
+            optimizationsAndTweaks$handleRiding();
             ci.cancel();
         }
     }
 
     @Unique
-    private boolean multithreadingandtweaks$shouldCatchFire() {
+    private boolean optimizationsAndTweaks$shouldCatchFire() {
         return worldObj.isDaytime() && !worldObj.isRemote
-            && !multithreadingandtweaks$isChild()
-            && multithreadingandtweaks$shouldCatchFireByBrightness();
+            && !optimizationsAndTweaks$isChild()
+            && optimizationsAndTweaks$shouldCatchFireByBrightness();
     }
 
     @Unique
-    private boolean multithreadingandtweaks$shouldCatchFireByBrightness() {
+    private boolean optimizationsAndTweaks$shouldCatchFireByBrightness() {
         float brightness = getBrightness(1.0F);
         return brightness > 0.5F && rand.nextFloat() * 30.0F < (brightness - 0.4F) * 2.0F
             && worldObj.canBlockSeeTheSky(
@@ -60,10 +60,10 @@ public class MixinEntityZombie extends EntityMob {
     }
 
     @Unique
-    private void multithreadingandtweaks$catchFire() {
+    private void optimizationsAndTweaks$catchFire() {
         ItemStack helmet = getEquipmentInSlot(4);
         if (helmet != null) {
-            if (multithreadingandtweaks$handleDamageableItem(helmet)) {
+            if (optimizationsAndTweaks$handleDamageableItem(helmet)) {
                 return;
             }
         }
@@ -72,7 +72,7 @@ public class MixinEntityZombie extends EntityMob {
     }
 
     @Unique
-    private boolean multithreadingandtweaks$handleDamageableItem(ItemStack itemStack) {
+    private boolean optimizationsAndTweaks$handleDamageableItem(ItemStack itemStack) {
         if (itemStack.isItemStackDamageable()) {
             itemStack.setItemDamage(itemStack.getItemDamageForDisplay() + rand.nextInt(2));
             if (itemStack.getItemDamageForDisplay() >= itemStack.getMaxDamage()) {
@@ -85,7 +85,7 @@ public class MixinEntityZombie extends EntityMob {
     }
 
     @Unique
-    private void multithreadingandtweaks$handleRiding() {
+    private void optimizationsAndTweaks$handleRiding() {
         if (isRiding() && getAttackTarget() != null && ridingEntity instanceof EntityChicken) {
             ((EntityLiving) ridingEntity).getNavigator()
                 .setPath(getNavigator().getPath(), 1.5D);
@@ -96,7 +96,7 @@ public class MixinEntityZombie extends EntityMob {
      * If Animal, checks if the age timer is negative
      */
     @Unique
-    public boolean multithreadingandtweaks$isChild() {
+    public boolean optimizationsAndTweaks$isChild() {
         return this.getDataWatcher()
             .getWatchableObjectByte(12) == 1;
     }

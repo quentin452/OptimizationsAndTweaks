@@ -52,7 +52,7 @@ public class MixinEntityMoveHelper {
                 if (squaredDistance >= 2.500000277905201E-7D) {
                     float newYaw = (float) Math.toDegrees(FastMath.atan2(posZDelta, posXDelta)) - 90.0F;
                     this.entity.rotationYaw = this
-                        .multithreadingandtweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
+                        .optimizationsAndTweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
 
                     double movementSpeed = this.speed
                         * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
@@ -74,7 +74,7 @@ public class MixinEntityMoveHelper {
      */
 
     @Unique
-    private float multithreadingandtweaks$limitAngle(float p_75639_1_, float p_75639_2_, float p_75639_3_) {
+    private float optimizationsAndTweaks$limitAngle(float p_75639_1_, float p_75639_2_, float p_75639_3_) {
 
         float f3 = MathHelper.wrapAngleTo180_float(p_75639_2_ - p_75639_1_);
 

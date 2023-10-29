@@ -130,7 +130,7 @@ public class MixinPatchBlockMagicalLeavesPerformances {
                         if (l1 >= 0) {
                             par1World.setBlockMetadataWithNotify(par2, par3, par4, l & -9, 4);
                         } else {
-                            this.multithreadingandtweaks$removeLeaves(par1World, par2, par3, par4);
+                            this.optimizationsAndTweaks$removeLeaves(par1World, par2, par3, par4);
                         }
                     }
                 }
@@ -140,13 +140,13 @@ public class MixinPatchBlockMagicalLeavesPerformances {
     }
 
     @Unique
-    private void multithreadingandtweaks$removeLeaves(final World par1World, final int par2, final int par3,
+    private void optimizationsAndTweaks$removeLeaves(final World par1World, final int par2, final int par3,
         final int par4) {
         par1World.setBlock(par2, par3, par4, Blocks.air, 0, 2);
     }
 
     @Unique
-    private static boolean multithreadingandtweaks$canSustainLeaves(IBlockAccess world, int x, int y, int z) {
+    private static boolean optimizationsAndTweaks$canSustainLeaves(IBlockAccess world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         return block == ConfigBlocks.blockMagicalLog;
     }

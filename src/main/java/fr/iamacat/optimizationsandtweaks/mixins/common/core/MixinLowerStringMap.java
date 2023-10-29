@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.Unique;
 public class MixinLowerStringMap {
 
     @Unique
-    private final Map multithreadingandtweaks$internalMap = new LinkedHashMap();
+    private final Map optimizationsAndTweaks$internalMap = new LinkedHashMap();
     @Unique
-    private final Map<String, String> multithreadingandtweaks$lowercaseCache = new HashMap<>();
+    private final Map<String, String> optimizationsAndTweaks$lowercaseCache = new HashMap<>();
 
     /**
      * @author
@@ -22,7 +22,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public int size() {
-        return this.multithreadingandtweaks$internalMap.size();
+        return this.optimizationsAndTweaks$internalMap.size();
     }
 
     /**
@@ -31,7 +31,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public boolean isEmpty() {
-        return this.multithreadingandtweaks$internalMap.isEmpty();
+        return this.optimizationsAndTweaks$internalMap.isEmpty();
     }
 
     /**
@@ -40,8 +40,8 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public boolean containsKey(Object p_containsKey_1_) {
-        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_containsKey_1_);
-        return this.multithreadingandtweaks$internalMap.containsKey(lowercaseKey);
+        String lowercaseKey = optimizationsAndTweaks$getLowercaseKey(p_containsKey_1_);
+        return this.optimizationsAndTweaks$internalMap.containsKey(lowercaseKey);
     }
 
     /**
@@ -50,7 +50,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public boolean containsValue(Object p_containsValue_1_) {
-        return this.multithreadingandtweaks$internalMap.containsValue(p_containsValue_1_);
+        return this.optimizationsAndTweaks$internalMap.containsValue(p_containsValue_1_);
     }
 
     /**
@@ -59,8 +59,8 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object get(Object p_get_1_) {
-        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_get_1_);
-        return this.multithreadingandtweaks$internalMap.get(lowercaseKey);
+        String lowercaseKey = optimizationsAndTweaks$getLowercaseKey(p_get_1_);
+        return this.optimizationsAndTweaks$internalMap.get(lowercaseKey);
     }
 
     /**
@@ -69,8 +69,8 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object put(String p_put_1_, Object p_put_2_) {
-        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_put_1_);
-        return this.multithreadingandtweaks$internalMap.put(lowercaseKey, p_put_2_);
+        String lowercaseKey = optimizationsAndTweaks$getLowercaseKey(p_put_1_);
+        return this.optimizationsAndTweaks$internalMap.put(lowercaseKey, p_put_2_);
     }
 
     /**
@@ -79,8 +79,8 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Object remove(Object p_remove_1_) {
-        String lowercaseKey = multithreadingandtweaks$getLowercaseKey(p_remove_1_);
-        return this.multithreadingandtweaks$internalMap.remove(lowercaseKey);
+        String lowercaseKey = optimizationsAndTweaks$getLowercaseKey(p_remove_1_);
+        return this.optimizationsAndTweaks$internalMap.remove(lowercaseKey);
     }
 
     /**
@@ -92,8 +92,8 @@ public class MixinLowerStringMap {
         for (Object obj : p_putAll_1_.entrySet()) {
             if (obj instanceof Map.Entry) {
                 Map.Entry entry = (Map.Entry) obj;
-                String lowercaseKey = multithreadingandtweaks$getLowercaseKey(entry.getKey());
-                this.multithreadingandtweaks$internalMap.put(lowercaseKey, entry.getValue());
+                String lowercaseKey = optimizationsAndTweaks$getLowercaseKey(entry.getKey());
+                this.optimizationsAndTweaks$internalMap.put(lowercaseKey, entry.getValue());
             }
         }
     }
@@ -104,7 +104,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public void clear() {
-        this.multithreadingandtweaks$internalMap.clear();
+        this.optimizationsAndTweaks$internalMap.clear();
     }
 
     /**
@@ -113,7 +113,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Set keySet() {
-        return this.multithreadingandtweaks$internalMap.keySet();
+        return this.optimizationsAndTweaks$internalMap.keySet();
     }
 
     /**
@@ -122,7 +122,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Collection values() {
-        return this.multithreadingandtweaks$internalMap.values();
+        return this.optimizationsAndTweaks$internalMap.values();
     }
 
     /**
@@ -131,7 +131,7 @@ public class MixinLowerStringMap {
      */
     @Overwrite
     public Set entrySet() {
-        return this.multithreadingandtweaks$internalMap.entrySet();
+        return this.optimizationsAndTweaks$internalMap.entrySet();
     }
 
     /**
@@ -144,18 +144,18 @@ public class MixinLowerStringMap {
     }
 
     @Unique
-    private String multithreadingandtweaks$getLowercaseKey(Object key) {
+    private String optimizationsAndTweaks$getLowercaseKey(Object key) {
         if (key instanceof String) {
             String strKey = (String) key;
-            return multithreadingandtweaks$lowercaseCache
-                .computeIfAbsent(strKey, this::multithreadingandtweaks$toLowerCase);
+            return optimizationsAndTweaks$lowercaseCache
+                .computeIfAbsent(strKey, this::optimizationsAndTweaks$toLowerCase);
         } else {
-            return multithreadingandtweaks$toLowerCase(key.toString());
+            return optimizationsAndTweaks$toLowerCase(key.toString());
         }
     }
 
     @Unique
-    private String multithreadingandtweaks$toLowerCase(String str) {
+    private String optimizationsAndTweaks$toLowerCase(String str) {
         return str.toLowerCase(Locale.ROOT);
     }
 }

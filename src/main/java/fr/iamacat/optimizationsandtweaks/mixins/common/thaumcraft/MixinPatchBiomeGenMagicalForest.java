@@ -76,7 +76,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
                 Block block = world.getBlock(posX, posY, posZ);
                 if (block == Blocks.grass && world.getBlock(posX, posY + 1, posZ)
                     .isReplaceable(world, posX, posY + 1, posZ)
-                    && multithreadingandtweaks$isBlockAdjacentToWood(world, posX, posY + 1, posZ)) {
+                    && optimizationsAndTweaks$isBlockAdjacentToWood(world, posX, posY + 1, posZ)) {
                     world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
                 }
             }
@@ -88,7 +88,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
     }
 
     @Unique
-    private boolean multithreadingandtweaks$isBlockAdjacentToWood(IBlockAccess world, int x, int y, int z) {
+    private boolean optimizationsAndTweaks$isBlockAdjacentToWood(IBlockAccess world, int x, int y, int z) {
         for (int xx = -1; xx <= 1; ++xx) {
             for (int yy = -1; yy <= 1; ++yy) {
                 for (int zz = -1; zz <= 1; ++zz) {

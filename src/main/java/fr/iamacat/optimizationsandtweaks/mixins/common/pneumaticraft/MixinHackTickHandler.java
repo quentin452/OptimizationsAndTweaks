@@ -29,10 +29,10 @@ public class MixinHackTickHandler {
     @Shadow
     private final Map<WorldAndCoord, IHackableBlock> hackedBlocks = new HashMap<>();
     @Unique
-    private final Map<Class<? extends IHackableBlock>, Block> multithreadingandtweaks$hackableBlockMap = new HashMap<>();
+    private final Map<Class<? extends IHackableBlock>, Block> optimizationsAndTweaks$hackableBlockMap = new HashMap<>();
 
     @Unique
-    private final Map<Entity, HackableHandler.HackingEntityProperties> multithreadingandtweaks$entityPropertiesMap = new HashMap<>();
+    private final Map<Entity, HackableHandler.HackingEntityProperties> optimizationsAndTweaks$entityPropertiesMap = new HashMap<>();
 
     /**
      * @author iamacatfr
@@ -45,7 +45,7 @@ public class MixinHackTickHandler {
                 .iterator();
             while (iterator.hasNext()) {
                 WorldAndCoord hackedBlock = iterator.next();
-                IHackableBlock hackableBlock = (IHackableBlock) multithreadingandtweaks$hackableBlockMap
+                IHackableBlock hackableBlock = (IHackableBlock) optimizationsAndTweaks$hackableBlockMap
                     .get(hackedBlock.getClass());
                 if (hackableBlock != null && !hackableBlock
                     .afterHackTick((World) hackedBlock.world, hackedBlock.x, hackedBlock.y, hackedBlock.z)) {
@@ -66,7 +66,7 @@ public class MixinHackTickHandler {
             for (Object entityObject : event.world.loadedEntityList) {
                 if (entityObject instanceof Entity) {
                     Entity entity = (Entity) entityObject;
-                    HackableHandler.HackingEntityProperties hackingProps = multithreadingandtweaks$getHackingProperties(
+                    HackableHandler.HackingEntityProperties hackingProps = optimizationsAndTweaks$getHackingProperties(
                         entity);
                     if (hackingProps != null) {
                         hackingProps.update(entity);
@@ -78,13 +78,13 @@ public class MixinHackTickHandler {
     }
 
     @Unique
-    private HackableHandler.HackingEntityProperties multithreadingandtweaks$getHackingProperties(Entity entity) {
-        HackableHandler.HackingEntityProperties hackingProps = multithreadingandtweaks$entityPropertiesMap.get(entity);
+    private HackableHandler.HackingEntityProperties optimizationsAndTweaks$getHackingProperties(Entity entity) {
+        HackableHandler.HackingEntityProperties hackingProps = optimizationsAndTweaks$entityPropertiesMap.get(entity);
         if (hackingProps == null) {
             hackingProps = (HackableHandler.HackingEntityProperties) entity
                 .getExtendedProperties("PneumaticCraftHacking");
             if (hackingProps != null) {
-                multithreadingandtweaks$entityPropertiesMap.put(entity, hackingProps);
+                optimizationsAndTweaks$entityPropertiesMap.put(entity, hackingProps);
             }
         }
         return hackingProps;

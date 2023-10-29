@@ -96,7 +96,7 @@ public class MixinRenderManager {
             return doRender;
         }
 
-        Render render = multithreadingandtweaks$getEntityRenderObject(entity);
+        Render render = optimizationsAndTweaks$getEntityRenderObject(entity);
 
         if (render == null || render.isStaticEntity() && !doRender || render == null || renderEngine == null) {
             return doRender;
@@ -107,7 +107,7 @@ public class MixinRenderManager {
             render.doRenderShadowAndFire(entity, x, y, z, yaw, partialTicks);
 
             if (debugBoundingBox && !entity.isInvisible() && !doRender) {
-                multithreadingandtweaks$renderDebugBoundingBox(entity, x, y, z, yaw, partialTicks);
+                optimizationsAndTweaks$renderDebugBoundingBox(entity, x, y, z, yaw, partialTicks);
             }
         } catch (Throwable throwable) {
             CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Rendering entity in world");
@@ -128,7 +128,7 @@ public class MixinRenderManager {
      * Renders the bounding box around an entity when F3+B is pressed
      */
     @Unique
-    private void multithreadingandtweaks$renderDebugBoundingBox(Entity p_85094_1_, double p_85094_2_, double p_85094_4_,
+    private void optimizationsAndTweaks$renderDebugBoundingBox(Entity p_85094_1_, double p_85094_2_, double p_85094_4_,
         double p_85094_6_, float p_85094_8_, float p_85094_9_) {
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -152,16 +152,16 @@ public class MixinRenderManager {
     }
 
     @Unique
-    public Render multithreadingandtweaks$getEntityRenderObject(Entity p_78713_1_) {
-        return this.multithreadingandtweaks$getEntityClassRenderObject(p_78713_1_.getClass());
+    public Render optimizationsAndTweaks$getEntityRenderObject(Entity p_78713_1_) {
+        return this.optimizationsAndTweaks$getEntityClassRenderObject(p_78713_1_.getClass());
     }
 
     @Unique
-    public Render multithreadingandtweaks$getEntityClassRenderObject(Class p_78715_1_) {
+    public Render optimizationsAndTweaks$getEntityClassRenderObject(Class p_78715_1_) {
         Render render = (Render) this.entityRenderMap.get(p_78715_1_);
 
         if (render == null && p_78715_1_ != Entity.class) {
-            render = this.multithreadingandtweaks$getEntityClassRenderObject(p_78715_1_.getSuperclass());
+            render = this.optimizationsAndTweaks$getEntityClassRenderObject(p_78715_1_.getSuperclass());
             this.entityRenderMap.put(p_78715_1_, render);
         }
 

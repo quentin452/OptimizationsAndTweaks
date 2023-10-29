@@ -20,7 +20,7 @@ public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimal
     private int breeding;
 
     @Unique
-    private static Random multithreadingandtweaks$random = new Random();
+    private static Random optimizationsAndTweaks$random = new Random();
 
     public MixinEntityAnimal(World p_i1578_1_) {
         super(p_i1578_1_);
@@ -44,15 +44,15 @@ public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimal
                 String s = "heart";
 
                 if (this.inLove % 10 == 0) {
-                    double d0 = multithreadingandtweaks$random.nextGaussian() * 0.02D;
-                    double d1 = multithreadingandtweaks$random.nextGaussian() * 0.02D;
-                    double d2 = multithreadingandtweaks$random.nextGaussian() * 0.02D;
+                    double d0 = optimizationsAndTweaks$random.nextGaussian() * 0.02D;
+                    double d1 = optimizationsAndTweaks$random.nextGaussian() * 0.02D;
+                    double d2 = optimizationsAndTweaks$random.nextGaussian() * 0.02D;
                     this.worldObj.spawnParticle(
                         s,
-                        this.posX + (double) (multithreadingandtweaks$random.nextFloat() * this.width * 2.0F)
+                        this.posX + (double) (optimizationsAndTweaks$random.nextFloat() * this.width * 2.0F)
                             - (double) this.width,
-                        this.posY + 0.5D + (double) (multithreadingandtweaks$random.nextFloat() * this.height),
-                        this.posZ + (double) (multithreadingandtweaks$random.nextFloat() * this.width * 2.0F)
+                        this.posY + 0.5D + (double) (optimizationsAndTweaks$random.nextFloat() * this.height),
+                        this.posZ + (double) (optimizationsAndTweaks$random.nextFloat() * this.width * 2.0F)
                             - (double) this.width,
                         d0,
                         d1,
