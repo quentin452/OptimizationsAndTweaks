@@ -1,8 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.profiler.Profiler;
 
@@ -17,14 +19,76 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 public class MixinEntityAITasks {
 
     @Shadow
+    private int tickCount;
+    @Shadow
+    private int tickRate = 3;
+    @Shadow
     private final Profiler theProfiler;
     @Shadow
     public List<EntityAITasks.EntityAITaskEntry> taskEntries = new ArrayList<EntityAITasks.EntityAITaskEntry>();
     @Shadow
-    private List executingTaskEntries = new ArrayList();
+    private List<EntityAITasks.EntityAITaskEntry> executingTaskEntries = new ArrayList<>();
 
     public MixinEntityAITasks(Profiler p_i1628_1_) {
         this.theProfiler = p_i1628_1_;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    private boolean canContinue(EntityAITasks.EntityAITaskEntry p_75773_1_)
+    {
+        this.theProfiler.startSection("canContinue");
+        boolean flag = p_75773_1_.action.continueExecuting();
+        this.theProfiler.endSection();
+        return flag;
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void onUpdateTasks() {
+        Object2ObjectHashMap<EntityAITasks.EntityAITaskEntry, Boolean> toAdd = new Object2ObjectHashMap<>();
+
+        if (this.tickCount++ % this.tickRate == 0) {
+            for (EntityAITasks.EntityAITaskEntry entry : this.taskEntries) {
+                if (this.executingTaskEntries.contains(entry)) {
+                    if (!this.canUse(entry) || !this.canContinue(entry)) {
+                        entry.action.resetTask();
+                        this.executingTaskEntries.remove(entry);
+                    }
+                } else if (this.canUse(entry) && entry.action.shouldExecute()) {
+                    toAdd.put(entry, true);
+                    this.executingTaskEntries.add(entry);
+                }
+            }
+        } else {
+            Iterator<EntityAITasks.EntityAITaskEntry> iterator = this.executingTaskEntries.iterator();
+            while (iterator.hasNext()) {
+                EntityAITasks.EntityAITaskEntry entry = iterator.next();
+                if (!entry.action.continueExecuting()) {
+                    entry.action.resetTask();
+                    iterator.remove();
+                }
+            }
+        }
+
+        this.theProfiler.startSection("goalStart");
+        for (EntityAITasks.EntityAITaskEntry entry : toAdd.keySet()) {
+            this.theProfiler.startSection(entry.action.getClass().getSimpleName());
+            entry.action.startExecuting();
+            this.theProfiler.endSection();
+        }
+        this.theProfiler.endSection();
+
+        this.theProfiler.startSection("goalTick");
+        for (EntityAITasks.EntityAITaskEntry entry : this.executingTaskEntries) {
+            entry.action.updateTask();
+        }
+        this.theProfiler.endSection();
     }
 
     /**
