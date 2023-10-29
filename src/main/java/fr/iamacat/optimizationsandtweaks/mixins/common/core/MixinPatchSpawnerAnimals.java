@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -44,7 +45,7 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap multithreadingandtweaks$eligibleChunksForSpawning = new fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap();
+    private Object2ObjectHashMap<ChunkCoordIntPair, Boolean> multithreadingandtweaks$eligibleChunksForSpawning = new Object2ObjectHashMap<>();
 
     /**
      * @author iamacatfr
@@ -134,9 +135,10 @@ public class MixinPatchSpawnerAnimals {
                         && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature()
                             * this.multithreadingandtweaks$eligibleChunksForSpawning.size()
                             / 256) {
-                        Iterator<ChunkCoordIntPair> iterator = this.multithreadingandtweaks$eligibleChunksForSpawning
+                        this.multithreadingandtweaks$eligibleChunksForSpawning
                             .keySet()
                             .iterator();
+                        Iterator<ChunkCoordIntPair> iterator;
                         ArrayList<ChunkCoordIntPair> tmp = new ArrayList<>(
                             multithreadingandtweaks$eligibleChunksForSpawning.keySet());
                         Collections.shuffle(tmp);
@@ -146,7 +148,7 @@ public class MixinPatchSpawnerAnimals {
                         while (iterator.hasNext()) {
                             ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
 
-                            if (!(Boolean) this.multithreadingandtweaks$eligibleChunksForSpawning
+                            if (!this.multithreadingandtweaks$eligibleChunksForSpawning
                                 .get(chunkcoordintpair1)) {
                                 ChunkPosition chunkposition = func_151350_a(
                                     p_77192_1_,
@@ -185,13 +187,12 @@ public class MixinPatchSpawnerAnimals {
                                                         k2,
                                                         l2,
                                                         i3)) {
-                                                        float f = (float) k2 + 0.5F;
-                                                        float f1 = (float) l2;
-                                                        float f2 = (float) i3 + 0.5F;
+                                                        float f = k2 + 0.5F;
+                                                        float f2 = i3 + 0.5F;
 
-                                                        if (p_77192_1_.getClosestPlayer(f, f1, f2, 24.0D) == null) {
+                                                        if (p_77192_1_.getClosestPlayer(f, (float) l2, f2, 24.0D) == null) {
                                                             float f3 = f - (float) chunkcoordinates.posX;
-                                                            float f4 = f1 - (float) chunkcoordinates.posY;
+                                                            float f4 = (float) l2 - (float) chunkcoordinates.posY;
                                                             float f5 = f2 - (float) chunkcoordinates.posZ;
                                                             float f6 = f3 * f3 + f4 * f4 + f5 * f5;
 
@@ -221,7 +222,7 @@ public class MixinPatchSpawnerAnimals {
 
                                                                 entityliving.setLocationAndAngles(
                                                                     f,
-                                                                    f1,
+                                                                    (float) l2,
                                                                     f2,
                                                                     p_77192_1_.rand.nextFloat() * 360.0F,
                                                                     0.0F);
@@ -231,7 +232,7 @@ public class MixinPatchSpawnerAnimals {
                                                                         entityliving,
                                                                         p_77192_1_,
                                                                         f,
-                                                                        f1,
+                                                                        (float) l2,
                                                                         f2);
                                                                 if (canSpawn == Event.Result.ALLOW
                                                                     || (canSpawn == Event.Result.DEFAULT
@@ -242,7 +243,7 @@ public class MixinPatchSpawnerAnimals {
                                                                         entityliving,
                                                                         p_77192_1_,
                                                                         f,
-                                                                        f1,
+                                                                        (float) l2,
                                                                         f2)) {
                                                                         ientitylivingdata = entityliving
                                                                             .onSpawnWithEgg(ientitylivingdata);
