@@ -56,32 +56,6 @@ public class MixinPathFinder {
     PathPoint previous;
 
     /**
-     * @author
-     * @reason
-     */
-  //  @Overwrite
-    private PathEntity createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_) {
-
-        int length = 1;
-        while(previous != null) {
-            length++;
-        }
-
-        PathPoint[] pathPoints = new PathPoint[length];
-
-        int i = length-1;
-        PathPoint current = p_75853_2_;
-
-        while(i >= 0) {
-            pathPoints[i] = current;
-            current = previous;
-            i--;
-        }
-
-        return new PathEntity(pathPoints);
-    }
-
-    /**
      * @author iamacatfr
      * @reason optimize func_82565_a
      */
@@ -224,70 +198,79 @@ public class MixinPathFinder {
      * @reason
      */
 
-   /* @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_) {
-        int verticalOffset = getVerticalOffset(p_75858_1_,p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
-        int newOffset = verticalOffset != 0 ? 0 : getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1,p_75858_4_, p_75858_5_);
-
-        if (verticalOffset == 0 && newOffset == -2) {
-            CompletableFuture<PathPoint> future = calculatePathPointAsync(p_75858_1_, p_75858_2_, p_75858_3_,p_75858_4_, p_75858_6_, newOffset, p_75858_5_);
-
-            try {
-                return future.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (verticalOffset > 0) {
-            return openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
-        }
-
-        return null;
-    }
-    @Unique
-    private CompletableFuture<PathPoint> calculatePathPointAsync(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
-        return CompletableFuture.supplyAsync(() -> calculatePathPointInternal(entity, x, y, z, yOffset, newOffset, originalPoint));
-    }
-
-    @Unique
-    private PathPoint calculatePathPointInternal(Entity entity, int x, int y, int z, int yOffset, int newOffset, PathPoint originalPoint) {
-        int newY = y + yOffset;
-
-        int verticalOffset = func_82565_a(entity, x, newY, z, originalPoint, isPathingInWater, isMovementBlockAllowed, isWoddenDoorAllowed);
-
-        if (verticalOffset == 1) {
-            return calculatePathPointFromNewOffset(x, newY, z, newOffset);
-        }
-
-        return null;
-    }
-
-
-    @Unique
-    private PathPoint calculatePathPointFromNewOffset(int x, int y, int z, int newOffset) {
-        PathPoint pathPoint = openPoint(x, y, z);
-
-        while (y > 0) {
-            if (isPathingInWater && newOffset == -1) {
-                return null;
-            }
-
-            if (newOffset != 1 || y - 1 <= 0) {
-                return null;
-            }
-
-            y--;
-            pathPoint = openPoint(x, y, z);
-        }
-
-        return pathPoint;
-    }
-
-    */
     /**
      * @author
      * @reason
      */
-  /*  @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
+    @Overwrite
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_)
+    {
+        PathPoint pathpoint1 = null;
+        int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
+
+        if (i1 == 2)
+        {
+            return this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+        }
+        else
+        {
+            if (i1 == 1)
+            {
+                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+            }
+
+            if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4 && this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_) == 1)
+            {
+                pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
+                p_75858_3_ += p_75858_6_;
+            }
+
+            if (pathpoint1 != null)
+            {
+                int j1 = 0;
+                int k1 = 0;
+
+                while (p_75858_3_ > 0)
+                {
+                    k1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ - 1, p_75858_4_, p_75858_5_);
+
+                    if (this.isPathingInWater && k1 == -1)
+                    {
+                        return null;
+                    }
+
+                    if (k1 != 1)
+                    {
+                        break;
+                    }
+
+                    if (j1++ >= p_75858_1_.getMaxSafePointTries())
+                    {
+                        return null;
+                    }
+
+                    --p_75858_3_;
+
+                    if (p_75858_3_ > 0)
+                    {
+                        pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
+                    }
+                }
+
+                if (k1 == -2)
+                {
+                    return null;
+                }
+            }
+
+            return pathpoint1;
+        }
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
                                 float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
 
@@ -318,8 +301,6 @@ public class MixinPathFinder {
         cir.setReturnValue(i);
         return i;
     }
-
-   */
 
     /**
      * @author
