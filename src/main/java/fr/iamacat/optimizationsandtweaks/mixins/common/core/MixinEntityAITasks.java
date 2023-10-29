@@ -1,10 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.profiler.Profiler;
 
@@ -12,8 +10,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityAITasks.class)
 public class MixinEntityAITasks {
@@ -32,19 +28,19 @@ public class MixinEntityAITasks {
     public MixinEntityAITasks(Profiler p_i1628_1_) {
         this.theProfiler = p_i1628_1_;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    private boolean canContinue(EntityAITasks.EntityAITaskEntry p_75773_1_)
-    {
+    private boolean canContinue(EntityAITasks.EntityAITaskEntry p_75773_1_) {
         this.theProfiler.startSection("canContinue");
         boolean flag = p_75773_1_.action.continueExecuting();
         this.theProfiler.endSection();
         return flag;
     }
-    
+
     /**
      * Returns whether two EntityAITaskEntries can be executed concurrently
      */

@@ -136,6 +136,7 @@ public class MixinEntityAITempt {
             .setAvoidsWater(this.field_75286_m);
         decrementActiveFollowers();
     }
+
     @Unique
     private void incrementActiveFollowers() {
         synchronized (followersLock) {

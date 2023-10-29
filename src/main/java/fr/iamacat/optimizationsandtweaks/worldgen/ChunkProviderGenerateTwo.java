@@ -390,7 +390,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
                     double d10 = MathHelper.denormalizeClamp(d7, d8, d9) - d6;
 
                     if (j2 > 29) {
-                        double d11 =(j2 - 29) / 3.0F;
+                        double d11 = (j2 - 29) / 3.0F;
                         d10 = d10 * (1.0D - d11) + -10.0D * d11;
                     }
 

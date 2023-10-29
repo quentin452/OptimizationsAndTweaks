@@ -5,7 +5,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
@@ -21,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Int2ObjectHashMap;
-
-import java.util.concurrent.CompletableFuture;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
@@ -61,7 +58,7 @@ public class MixinPathFinder {
      */
     @Overwrite
     public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_,
-                                   PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
+        PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         World world = p_82565_0_.worldObj;
         int entityX = (int) p_82565_0_.posX;
         int entityY = (int) p_82565_0_.posY;
@@ -73,7 +70,8 @@ public class MixinPathFinder {
 
         boolean isTrapdoorPresent = false;
 
-        for (int currentX = p_82565_1_, currentY = p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
+        for (int currentX = p_82565_1_, currentY = p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY
+            && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
             int chunkX = currentX >> 4;
             int chunkZ = currentZ >> 4;
             Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
@@ -104,7 +102,8 @@ public class MixinPathFinder {
     }
 
     @Unique
-    private static int processBlock(Entity entity, Block block, World world, int entityX, int entityY, int entityZ, boolean p_82565_6, boolean p_82565_7) {
+    private static int processBlock(Entity entity, Block block, World world, int entityX, int entityY, int entityZ,
+        boolean p_82565_6, boolean p_82565_7) {
         Material material = block.getMaterial();
         int renderType = block.getRenderType();
 
@@ -154,6 +153,7 @@ public class MixinPathFinder {
 
         return 1;
     }
+
     @Unique
     private static boolean isRenderTypeValid(World world, int x, int y, int z) {
         Block currentBlock = world.getBlock(x, y, z);
@@ -174,6 +174,7 @@ public class MixinPathFinder {
      */
     @Unique
     private final Int2ObjectHashMap<PathPoint> multithreadingandtweaks$pointCache = new Int2ObjectHashMap<>();
+
     /**
      * @author
      * @reason
@@ -203,8 +204,8 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_, PathPoint p_75858_5_, int p_75858_6_)
- {
+    private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
+        PathPoint p_75858_5_, int p_75858_6_) {
         PathPoint pathpoint1 = null;
         int i1 = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_, p_75858_4_, p_75858_5_);
 
@@ -215,8 +216,9 @@ public class MixinPathFinder {
                 pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_, p_75858_4_);
             }
 
-            if (pathpoint1 == null && p_75858_6_> 0 && i1 != -3 && i1 != -4) {
-                int verticalOffset = this.getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_);
+            if (pathpoint1 == null && p_75858_6_ > 0 && i1 != -3 && i1 != -4) {
+                int verticalOffset = this
+                    .getVerticalOffset(p_75858_1_, p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_, p_75858_5_);
                 if (verticalOffset == 1) {
                     pathpoint1 = this.openPoint(p_75858_2_, p_75858_3_ + p_75858_6_, p_75858_4_);
                     p_75858_3_ += p_75858_6_;
@@ -257,28 +259,34 @@ public class MixinPathFinder {
             return pathpoint1;
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
-                                float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
+        float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
 
         cir.cancel();
         int i = 0;
         byte b0 = 0;
 
-        int verticalOffsetResult = this.getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_);
+        int verticalOffsetResult = this
+            .getVerticalOffset(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord + 1, p_75860_2_.zCoord, p_75860_3_);
         if (verticalOffsetResult == 1) {
             b0 = 1;
         }
 
         PathPoint[] pathpoints = new PathPoint[4];
-        pathpoints[0] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0);
-        pathpoints[1] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
-        pathpoints[2] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
-        pathpoints[3] = this.getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0);
+        pathpoints[0] = this
+            .getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0);
+        pathpoints[1] = this
+            .getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
+        pathpoints[2] = this
+            .getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
+        pathpoints[3] = this
+            .getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0);
 
         for (PathPoint pathpoint : pathpoints) {
             if (pathpoint != null && !pathpoint.isFirst) {
@@ -297,7 +305,7 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-   @Overwrite
+    @Overwrite
     public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_,
         PathPoint p_75855_5_) {
         return func_82565_a(
