@@ -25,9 +25,9 @@ public class MixinEntityAITasks {
     @Shadow
     private final Profiler theProfiler;
     @Shadow
-    public List<EntityAITasks.EntityAITaskEntry> taskEntries = new ArrayList<EntityAITasks.EntityAITaskEntry>();
+    public List taskEntries = new ArrayList();
     @Shadow
-    private List<EntityAITasks.EntityAITaskEntry> executingTaskEntries = new ArrayList<>();
+    private List executingTaskEntries = new ArrayList();
 
     public MixinEntityAITasks(Profiler p_i1628_1_) {
         this.theProfiler = p_i1628_1_;
@@ -44,86 +44,7 @@ public class MixinEntityAITasks {
         this.theProfiler.endSection();
         return flag;
     }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void onUpdateTasks() {
-        Object2ObjectHashMap<EntityAITasks.EntityAITaskEntry, Boolean> toAdd = new Object2ObjectHashMap<>();
-
-        if (this.tickCount++ % this.tickRate == 0) {
-            for (EntityAITasks.EntityAITaskEntry entry : this.taskEntries) {
-                if (this.executingTaskEntries.contains(entry)) {
-                    if (!this.canUse(entry) || !this.canContinue(entry)) {
-                        entry.action.resetTask();
-                        this.executingTaskEntries.remove(entry);
-                    }
-                } else if (this.canUse(entry) && entry.action.shouldExecute()) {
-                    toAdd.put(entry, true);
-                    this.executingTaskEntries.add(entry);
-                }
-            }
-        } else {
-            Iterator<EntityAITasks.EntityAITaskEntry> iterator = this.executingTaskEntries.iterator();
-            while (iterator.hasNext()) {
-                EntityAITasks.EntityAITaskEntry entry = iterator.next();
-                if (!entry.action.continueExecuting()) {
-                    entry.action.resetTask();
-                    iterator.remove();
-                }
-            }
-        }
-
-        this.theProfiler.startSection("goalStart");
-        for (EntityAITasks.EntityAITaskEntry entry : toAdd.keySet()) {
-            this.theProfiler.startSection(entry.action.getClass().getSimpleName());
-            entry.action.startExecuting();
-            this.theProfiler.endSection();
-        }
-        this.theProfiler.endSection();
-
-        this.theProfiler.startSection("goalTick");
-        for (EntityAITasks.EntityAITaskEntry entry : this.executingTaskEntries) {
-            entry.action.updateTask();
-        }
-        this.theProfiler.endSection();
-    }
-
-    /**
-     * Determine if a specific AI Task can be executed, which means that all running higher (= lower int value) priority
-     * tasks are compatible with it or all lower priority tasks can be interrupted.
-     */
-    @Overwrite
-    private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityAITasks) {
-            this.theProfiler.startSection("canUse");
-
-            for (EntityAITasks.EntityAITaskEntry entityaitaskentry : this.taskEntries) {
-                if (entityaitaskentry != p_75775_1_) {
-                    if (p_75775_1_.priority >= entityaitaskentry.priority) {
-                        boolean isExecuting = this.executingTaskEntries.contains(entityaitaskentry);
-                        if (isExecuting && !multithreadingandtweaks$areTasksCompatible(p_75775_1_, entityaitaskentry)) {
-                            this.theProfiler.endSection();
-                            return false;
-                        }
-                    } else {
-                        if (this.executingTaskEntries.contains(entityaitaskentry)
-                            && !entityaitaskentry.action.isInterruptible()) {
-                            this.theProfiler.endSection();
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            this.theProfiler.endSection();
-            return true;
-        }
-        return false;
-    }
-
+    
     /**
      * Returns whether two EntityAITaskEntries can be executed concurrently
      */
