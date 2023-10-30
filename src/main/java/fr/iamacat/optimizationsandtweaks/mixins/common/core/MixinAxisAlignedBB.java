@@ -16,19 +16,14 @@ public class MixinAxisAlignedBB {
     @Shadow
     public double minX;
     @Shadow
-
     public double minY;
     @Shadow
-
     public double minZ;
     @Shadow
-
     public double maxX;
     @Shadow
-
     public double maxY;
     @Shadow
-
     public double maxZ;
 
     protected MixinAxisAlignedBB(double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -51,7 +46,6 @@ public class MixinAxisAlignedBB {
         double d6 = this.maxX + (FastMath.max(x, 0.0D));
         double d7 = this.maxY + (FastMath.max(y, 0.0D));
         double d8 = this.maxZ + (FastMath.max(z, 0.0D));
-
         return AxisAlignedBB.getBoundingBox(d3, d4, d5, d6, d7, d8);
     }
 
@@ -226,120 +220,41 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public MovingObjectPosition calculateIntercept(Vec3 p_72327_1_, Vec3 p_72327_2_) {
-        Vec3 hit;
+        double minX = (this.minX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
+        double maxX = (this.maxX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
+
+        double minY = (this.minY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
+        double maxY = (this.maxY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
+
+        double minZ = (this.minZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
+        double maxZ = (this.maxZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
+
+        double tMin = Math.max(Math.max(Math.min(minX, maxX), Math.min(minY, maxY)), Math.min(minZ, maxZ));
+        double tMax = Math.min(Math.min(Math.max(minX, maxX), Math.max(minY, maxY)), Math.max(minZ, maxZ));
+
+        if (tMax < 0.0 || tMin > tMax) {
+            return null;
+        }
+
+        Vec3 hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord), tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord), tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+
         int sideHit = -1;
-
-        double tMin = (this.minX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
-        double tMax = (this.maxX - p_72327_1_.xCoord) / (p_72327_2_.xCoord - p_72327_1_.xCoord);
-
-        if (tMin > tMax) {
-            double temp = tMin;
-            tMin = tMax;
-            tMax = temp;
-        }
-
-        double tyMin = (this.minY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
-        double tyMax = (this.maxY - p_72327_1_.yCoord) / (p_72327_2_.yCoord - p_72327_1_.yCoord);
-
-        if (tyMin > tyMax) {
-            double temp = tyMin;
-            tyMin = tyMax;
-            tyMax = temp;
-        }
-
-        if ((tMin > tyMax) || (tyMin > tMax)) {
-            return null;
-        }
-
-        if (tyMin > tMin) {
-            tMin = tyMin;
-        }
-
-        if (tyMax < tMax) {
-            tMax = tyMax;
-        }
-
-        double tzMin = (this.minZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
-        double tzMax = (this.maxZ - p_72327_1_.zCoord) / (p_72327_2_.zCoord - p_72327_1_.zCoord);
-
-        if (tzMin > tzMax) {
-            double temp = tzMin;
-            tzMin = tzMax;
-            tzMax = temp;
-        }
-
-        if ((tMin > tzMax) || (tzMin > tMax)) {
-            return null;
-        }
-
-        if (tzMin > tMin) {
-            tMin = tzMin;
-        }
-
-        if (tzMax < tMax) {
-            tMax = tzMax;
-        }
-
-        if (tMax < 0.0) {
-            return null;
-        }
-
-        hit = p_72327_1_.addVector(
-            tMax * (p_72327_2_.xCoord - p_72327_1_.xCoord),
-            tMax * (p_72327_2_.yCoord - p_72327_1_.yCoord),
-            tMax * (p_72327_2_.zCoord - p_72327_1_.zCoord));
-
-        if (tMin > 0.0) {
-            double side;
-
-            if (tMin == tMin) {
-                side = -1;
-            } else {
-                side = 1;
-            }
-
-            if (FastMath.abs(tMin - tyMin) < 1.0E-12) {
-                hit = p_72327_1_.addVector(
-                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
-                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
-                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
-                hit = hit.addVector(side * 1.0E-6, 0, 0);
-            } else if (FastMath.abs(tMin - tyMax) < 1.0E-12) {
-                hit = p_72327_1_.addVector(
-                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
-                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
-                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
-                hit = hit.addVector(side * 1.0E-6, 0, 0);
-            } else if (FastMath.abs(tMin - tzMin) < 1.0E-12) {
-                hit = p_72327_1_.addVector(
-                    tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
-                    tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
-                    tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
-                hit = hit.addVector(0, 0, side * 1.0E-6);
-            }
-        }
-
-        if (hit.xCoord == this.minX) {
+        if (tMin == minX) {
             sideHit = 4;
         }
-
-        if (hit.xCoord == this.maxX) {
+        if (tMin == maxX) {
             sideHit = 5;
         }
-
-        if (hit.yCoord == this.minY) {
+        if (tMin == minY) {
             sideHit = 0;
         }
-
-        if (hit.yCoord == this.maxY) {
+        if (tMin == maxY) {
             sideHit = 1;
         }
-
-        if (hit.zCoord == this.minZ) {
+        if (tMin == minZ) {
             sideHit = 2;
         }
-
-        if (hit.zCoord == this.maxZ) {
+        if (tMin == maxZ) {
             sideHit = 3;
         }
 
@@ -398,17 +313,11 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public String toString() {
-        return "box[" + this.minX
-            + ", "
-            + this.minY
-            + ", "
-            + this.minZ
-            + " -> "
-            + this.maxX
-            + ", "
-            + this.maxY
-            + ", "
-            + this.maxZ
-            + "]";
+        return "box[" + this.minX + ", " +
+            this.minY + ", " +
+            this.minZ + " -> " +
+            this.maxX + ", " +
+            this.maxY + ", " +
+            this.maxZ + "]";
     }
 }

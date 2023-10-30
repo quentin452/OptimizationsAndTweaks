@@ -26,28 +26,40 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    public void getEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB boundingBox, List<Entity> result, IEntitySelector entitySelector) {
-        double minY = (boundingBox.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
-        double maxY = (boundingBox.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
+    public void getEntitiesWithinAABBForEntity(Entity p_76588_1_, AxisAlignedBB p_76588_2_, List p_76588_3_, IEntitySelector p_76588_4_) {
+        double minY = (p_76588_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
+        double maxY = (p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
 
-        int minChunkY = MathHelper.floor_double(minY);
-        int maxChunkY = MathHelper.floor_double(maxY);
+        int minChunkY = (int) Math.floor(minY);
+        int maxChunkY = (int) Math.floor(maxY);
 
-        minChunkY = MathHelper.clamp_int(minChunkY, 0, this.entityLists.length - 1);
-        maxChunkY = MathHelper.clamp_int(maxChunkY, 0, this.entityLists.length - 1);
+        if (minChunkY < 0) {
+            minChunkY = 0;
+        } else if (minChunkY >= this.entityLists.length) {
+            minChunkY = this.entityLists.length - 1;
+        }
+
+        if (maxChunkY < 0) {
+            maxChunkY = 0;
+        } else if (maxChunkY >= this.entityLists.length) {
+            maxChunkY = this.entityLists.length - 1;
+        }
 
         for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
             List<Entity> entityList = this.entityLists[chunkY];
 
-            optimizationsAndTweaks$processEntitiesWithinAABBForEntity(entity, boundingBox, result, entitySelector, entityList);
+            optimizationsAndTweaks$processEntitiesWithinAABBForEntity(p_76588_1_, p_76588_2_, p_76588_3_, p_76588_4_, entityList);
         }
     }
 
+
     @Unique
     private void optimizationsAndTweaks$processEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB boundingBox, List<Entity> result, IEntitySelector entitySelector, List<Entity> entityList) {
-        entityList.stream()
-            .filter(entityInList -> optimizationsAndTweaks$shouldAddEntityToList(entity, entityInList, boundingBox, entitySelector))
-            .forEach(result::add);
+        for (Entity entityInList : entityList) {
+            if (optimizationsAndTweaks$shouldAddEntityToList(entity, entityInList, boundingBox, entitySelector)) {
+                result.add(entityInList);
+            }
+        }
     }
 
     @Unique
@@ -65,11 +77,20 @@ public class MixinChunk {
         double minY = (p_76618_2.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
         double maxY = (p_76618_2.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
 
-        int minChunkY = MathHelper.floor_double(minY);
-        int maxChunkY = MathHelper.floor_double(maxY);
+        int minChunkY = (int) Math.floor(minY);
+        int maxChunkY = (int) Math.floor(maxY);
 
-        minChunkY = MathHelper.clamp_int(minChunkY, 0, this.entityLists.length - 1);
-        maxChunkY = MathHelper.clamp_int(maxChunkY, 0, this.entityLists.length - 1);
+        if (minChunkY < 0) {
+            minChunkY = 0;
+        } else if (minChunkY >= this.entityLists.length) {
+            minChunkY = this.entityLists.length - 1;
+        }
+
+        if (maxChunkY < 0) {
+            maxChunkY = 0;
+        } else if (maxChunkY >= this.entityLists.length) {
+            maxChunkY = this.entityLists.length - 1;
+        }
 
         for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
             List<Entity> entityList = this.entityLists[chunkY];
@@ -80,9 +101,11 @@ public class MixinChunk {
 
     @Unique
     private void optimizationsAndTweaks$processEntityList(Class<?> entityClass, AxisAlignedBB boundingBox, List<Entity> result, IEntitySelector entitySelector, List<Entity> entityList) {
-        entityList.stream()
-            .filter(entityInList -> optimizationsAndTweaks$isEntityOfTypeAndIntersects(entityClass, entityInList, boundingBox, entitySelector))
-            .forEach(result::add);
+        for (Entity entityInList : entityList) {
+            if (optimizationsAndTweaks$isEntityOfTypeAndIntersects(entityClass, entityInList, boundingBox, entitySelector)) {
+                result.add(entityInList);
+            }
+        }
     }
 
     @Unique
