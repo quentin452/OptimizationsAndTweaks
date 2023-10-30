@@ -6,7 +6,7 @@ Optimizations and Tweaks for FPS/TPS - Fix bugs and tweak various things to help
 
 # What this mod have for now?
 
-Go here : [Wiki](https://github.com/quentin452/https://github.com/quentin452/OptimizationsAndTweaks/wiki/wiki)
+Go here : [Wiki](https://github.com/quentin452/https://github.com/quentin452/OptimizationsAndTweaks/wiki)
 
 # Links to descriptions of my projects.
 
