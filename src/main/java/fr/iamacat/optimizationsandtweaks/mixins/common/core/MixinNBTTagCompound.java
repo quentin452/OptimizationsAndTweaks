@@ -24,12 +24,12 @@ import java.util.Set;
 @Mixin(NBTTagCompound.class)
 public abstract class MixinNBTTagCompound extends NBTBase
 {
+    // todo fix conflict(Object2ObjectHashMap) with crafttweaker
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     /** The key-value pairs for the tag. Each key is a UTF string, each value is a tag. */
     @Unique
     private Object2ObjectHashMap optimizationsAndTweaks$tagMap = new Object2ObjectHashMap();
-
 
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes

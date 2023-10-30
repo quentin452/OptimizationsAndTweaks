@@ -21,8 +21,10 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityList,
         "core.MixinEntityList"),
-    common_core_MixinNBTTagCompound(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound,
+   /* common_core_MixinNBTTagCompound(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound,
         "core.MixinNBTTagCompound"),
+
+    */
     common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
         "core.MixinEntityArrowAttack"),
     common_core_MixinEntityAITarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITarget,
