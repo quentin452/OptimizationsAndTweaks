@@ -170,19 +170,15 @@ public class MixinPathFinder {
         return renderType == 11 || block == Blocks.fence_gate || renderType == 32;
     }
 
-    /**
-     * @author iamacatfr
-     * @reason optimize openPoint
-     */
     @Unique
     private final Int2ObjectHashMap<PathPoint> optimizationsAndTweaks$pointCache = new Int2ObjectHashMap<>();
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason optimize openPoint
      */
     @Overwrite
-    private final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
+    public final PathPoint openPoint(int p_75854_1_, int p_75854_2_, int p_75854_3_) {
         int l = PathPoint.makeHash(p_75854_1_, p_75854_2_, p_75854_3_);
 
         PathPoint pathpoint = optimizationsAndTweaks$pointCache.get(l);
@@ -200,7 +196,6 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-
    @Overwrite
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
         PathPoint p_75858_5_, int p_75858_6_) {
@@ -264,7 +259,7 @@ public class MixinPathFinder {
      */
     @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
-        float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
+                                float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
 
         cir.cancel();
         int i = 0;
@@ -277,14 +272,14 @@ public class MixinPathFinder {
         }
 
         PathPoint[] pathpoints = new PathPoint[4];
-        pathpoints[0] = this
-            .getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord + 1, p_75860_3_, b0);
-        pathpoints[1] = this
-            .getSafePoint(p_75860_1_, p_75860_2_.xCoord - 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
-        pathpoints[2] = this
-            .getSafePoint(p_75860_1_, p_75860_2_.xCoord + 1, p_75860_2_.yCoord, p_75860_2_.zCoord, p_75860_3_, b0);
-        pathpoints[3] = this
-            .getSafePoint(p_75860_1_, p_75860_2_.xCoord, p_75860_2_.yCoord, p_75860_2_.zCoord - 1, p_75860_3_, b0);
+        int x = p_75860_2_.xCoord;
+        int y = p_75860_2_.yCoord;
+        int z = p_75860_2_.zCoord;
+
+        pathpoints[0] = this.getSafePoint(p_75860_1_, x, y, z + 1, p_75860_3_, b0);
+        pathpoints[1] = this.getSafePoint(p_75860_1_, x - 1, y, z, p_75860_3_, b0);
+        pathpoints[2] = this.getSafePoint(p_75860_1_, x + 1, y, z, p_75860_3_, b0);
+        pathpoints[3] = this.getSafePoint(p_75860_1_, x, y, z - 1, p_75860_3_, b0);
 
         for (PathPoint pathpoint : pathpoints) {
             if (pathpoint != null && !pathpoint.isFirst) {
@@ -298,6 +293,7 @@ public class MixinPathFinder {
         cir.setReturnValue(i);
         return i;
     }
+
 
     /**
      * @author
