@@ -57,8 +57,7 @@ public class MixinPathFinder {
      * @reason optimize func_82565_a
      */
     @Overwrite
-    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_,
-        PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
+    public static int func_82565_a(Entity p_82565_0_, int p_82565_1_, int p_82565_2_, int p_82565_3_, PathPoint p_82565_4_, boolean p_82565_5_, boolean p_82565_6_, boolean p_82565_7_) {
         World world = p_82565_0_.worldObj;
         int entityX = (int) p_82565_0_.posX;
         int entityY = (int) p_82565_0_.posY;
@@ -70,31 +69,34 @@ public class MixinPathFinder {
 
         boolean isTrapdoorPresent = false;
 
-        for (int currentX = p_82565_1_, currentY = p_82565_2_, currentZ = p_82565_3_; currentX < endX && currentY < endY
-            && currentZ < endZ; ++currentX, ++currentY, ++currentZ) {
-            int chunkX = currentX >> 4;
-            int chunkZ = currentZ >> 4;
-            Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+        for (int currentX = p_82565_1_; currentX != endX; currentX += Integer.signum(endX - p_82565_1_)) {
+            for (int currentY = p_82565_2_; currentY != endY; currentY += Integer.signum(endY - p_82565_2_)) {
+                for (int currentZ = p_82565_3_; currentZ != endZ; currentZ += Integer.signum(endZ - p_82565_3_)) {
+                    int chunkX = currentX >> 4;
+                    int chunkZ = currentZ >> 4;
+                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-            int localX = currentX & 15;
-            int localZ = currentZ & 15;
+                    int localX = currentX & 15;
+                    int localZ = currentZ & 15;
 
-            Block block = chunk.getBlock(localX, currentY, localZ);
+                    Block block = chunk.getBlock(localX, currentY, localZ);
 
-            int result = processBlock(p_82565_0_, block, world, entityX, entityY, entityZ, p_82565_6_, p_82565_7_);
-            if (result == 0) {
-                return 0;
-            } else if (result == -1) {
-                if (p_82565_5_) {
-                    return -1;
+                    int result = processBlock(p_82565_0_, block, world, entityX, entityY, entityZ, p_82565_6_, p_82565_7_);
+                    if (result == 0) {
+                        return 0;
+                    } else if (result == -1) {
+                        if (p_82565_5_) {
+                            return -1;
+                        }
+                        isTrapdoorPresent = true;
+                    } else if (result == -2) {
+                        return -2;
+                    } else if (result == -3) {
+                        return -3;
+                    } else if (result == -4) {
+                        return -4;
+                    }
                 }
-                isTrapdoorPresent = true;
-            } else if (result == -2) {
-                return -2;
-            } else if (result == -3) {
-                return -3;
-            } else if (result == -4) {
-                return -4;
             }
         }
 
@@ -199,11 +201,7 @@ public class MixinPathFinder {
      * @reason
      */
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+   @Overwrite
     private PathPoint getSafePoint(Entity p_75858_1_, int p_75858_2_, int p_75858_3_, int p_75858_4_,
         PathPoint p_75858_5_, int p_75858_6_) {
         PathPoint pathpoint1 = null;

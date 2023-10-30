@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.DataWatcher;
@@ -37,9 +38,9 @@ public class MixinDataWatcher {
     @Shadow
     private boolean isBlank = true;
     @Unique
-    private static final ConcurrentHashMap<Class, Integer> optimizationsAndTweaks$dataTypes = new ConcurrentHashMap<>();
+    private static final Object2ObjectHashMap<Class, Integer> optimizationsAndTweaks$dataTypes = new Object2ObjectHashMap<>();
     @Unique
-    private final ConcurrentHashMap<Integer, DataWatcher.WatchableObject> optimizationsAndTweaks$watchedObjects = new ConcurrentHashMap<>();
+    private final Object2ObjectHashMap<Integer, DataWatcher.WatchableObject> optimizationsAndTweaks$watchedObjects = new Object2ObjectHashMap<>();
 
     /** true if one or more object was changed */
     @Shadow

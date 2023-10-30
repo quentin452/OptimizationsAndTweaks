@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -172,7 +173,6 @@ public class MixinOilTweakEventHandler {
 
     @Unique
     protected InOil2 getInOil(Entity entity) {
-        // Taken from Entity class
         int minX = MathHelper.floor_double(entity.boundingBox.minX + 0.001D);
         int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
         int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
@@ -180,18 +180,17 @@ public class MixinOilTweakEventHandler {
         int maxY = MathHelper.floor_double(entity.boundingBox.maxY - 0.001D);
         int maxZ = MathHelper.floor_double(entity.boundingBox.maxZ - 0.001D);
 
-        if (entity.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ)) {
-            for (int x = minX; x <= maxX; ++x) {
-                for (int y = minY; y <= maxY; ++y) {
-                    for (int z = minZ; z <= maxZ; ++z) {
-                        if (isOil(entity.worldObj.getBlock(x, y, z))) {
-                            return maxY == minY || isOil(entity.worldObj.getBlock(x, maxY, z)) ? InOil2.FULL
-                                : InOil2.HALF;
-                        }
+        for (int x = minX; x <= maxX; ++x) {
+            for (int y = minY; y <= maxY; ++y) {
+                for (int z = minZ; z <= maxZ; ++z) {
+                    Block block = entity.worldObj.getBlock(x, y, z);
+                    if (isOil(block)) {
+                        return maxY == minY || isOil(entity.worldObj.getBlock(x, maxY, z)) ? InOil2.FULL : InOil2.HALF;
                     }
                 }
             }
         }
+
         return InOil2.NONE;
     }
 
@@ -216,25 +215,33 @@ public class MixinOilTweakEventHandler {
         return (OilTweakProperties) ieep;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     private void setNotInOil(EntityLivingBase entity) {
         OilTweakProperties props = getProperties(entity);
-        if (!props.inOil) {
-            return;
+
+        if (props.inOil) {
+            entity.stepHeight = props.realStepHeight;
+            props.inOil = false;
         }
-        entity.stepHeight = props.realStepHeight;
-        props.inOil = false;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     private boolean isOil(Block block) {
         if (block == null || block == Blocks.air) {
             return false;
         }
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        return fluid != null && FluidRegistry.isFluidRegistered(fluid)
+        return FluidRegistry.isFluidRegistered(fluid)
             && fluid.getName() != null
             && fluid.getName()
-                .equalsIgnoreCase("oil");
+            .equalsIgnoreCase("oil");
     }
 }

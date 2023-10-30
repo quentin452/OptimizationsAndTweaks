@@ -171,7 +171,7 @@ public class MixinSteamcraftEventHandler {
                 && (hat.getItem() == SteamcraftItems.tophat || (hat.getItem() == SteamcraftItems.exoArmorHead
                     && ((ItemExosuitArmor) hat.getItem()).hasUpgrade(hat, SteamcraftItems.tophat)))) {
                 hasCustomer = true;
-                if (!nbt.lastHadCustomer) {
+                if (Boolean.FALSE.equals(nbt.lastHadCustomer)) {
                     MerchantRecipeList recipeList = villager.getRecipes(customer);
                     for (Object obj : recipeList) {
                         MerchantRecipe recipe = (MerchantRecipe) obj;
@@ -203,7 +203,7 @@ public class MixinSteamcraftEventHandler {
                 }
             }
 
-            if (!hasCustomer && nbt.lastHadCustomer) {
+            if (!hasCustomer && Boolean.TRUE.equals(nbt.lastHadCustomer)) {
                 MerchantRecipeList recipeList = getMerchantRecipeList(villager);
 
                 if (recipeList != null) {

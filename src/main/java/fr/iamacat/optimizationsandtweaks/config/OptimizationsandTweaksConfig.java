@@ -88,10 +88,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRenderManager;
-    @Config.Comment("Optimize Entity")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntity;
     @Config.Comment("Optimize EntitySpellParticleFX")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -135,7 +131,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
-
+    @Config.Comment("Optimize NBTTagCompound")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNBTTagCompound;
+    @Config.Comment("Optimize EntityList")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityList;
     @Config.Comment("Optimize DataWatcher(Avoid usage of locks and use ConcurrentHashMap)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -345,7 +348,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchWorldGenCloudNine;
-
+    @Config.Comment("Make sure that isLoaded from BuildCraftConfig is calculated only one time to reduce tps lag")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBuildCraftConfig;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

@@ -19,6 +19,10 @@ public enum Mixin implements IMixin {
 
     // OPTIMIZATIONS MIXINS
 
+    common_core_MixinEntityList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityList,
+        "core.MixinEntityList"),
+    common_core_MixinNBTTagCompound(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound,
+        "core.MixinNBTTagCompound"),
     common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
         "core.MixinEntityArrowAttack"),
     common_core_MixinEntityAITarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITarget,
@@ -153,7 +157,9 @@ public enum Mixin implements IMixin {
     common_core_MixinPatchSpawnerAnimals(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals,
         "core.MixinPatchSpawnerAnimals"),
     // BUGFIX MIXINS
-
+    common_buildcraft_addon_oiltweaks_MixinBuildCraftConfig(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinBuildCraftConfig,
+        "buildcraft.addon.oiltweaks.MixinBuildCraftConfig"),
     common_farlanders_MixinEntityEnderGolem(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod,
         "farlanders.MixinEntityEnderGolem"),
@@ -203,7 +209,6 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenBrassTree,
         "steamcraft2.MixinFixCascadingFromWorldGenBrassTree"),
 
-    common_core_MixinEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntity, "core.MixinEntity"),
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinOreDictCofhFix,
         "cofhcore.fixoredictcrash.MixinOreDictionaryArbiter"),

@@ -1,16 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.pneumaticraft;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,13 +25,21 @@ import pneumaticCraft.common.util.WorldAndCoord;
 public class MixinHackTickHandler {
 
     @Final
-    @Shadow
-    private final Map<WorldAndCoord, IHackableBlock> hackedBlocks = new HashMap<>();
     @Unique
-    private final Map<Class<? extends IHackableBlock>, Block> optimizationsAndTweaks$hackableBlockMap = new HashMap<>();
+    private final Object2ObjectHashMap<WorldAndCoord, IHackableBlock> optimizationsAndTweaks$hackedBlocks = new Object2ObjectHashMap<>();
+    @Unique
+    private final Object2ObjectHashMap<Class<? extends IHackableBlock>, Block> optimizationsAndTweaks$hackableBlockMap = new Object2ObjectHashMap<>();
 
     @Unique
-    private final Map<Entity, HackableHandler.HackingEntityProperties> optimizationsAndTweaks$entityPropertiesMap = new HashMap<>();
+    private final Object2ObjectHashMap<Entity, HackableHandler.HackingEntityProperties> optimizationsAndTweaks$entityPropertiesMap = new Object2ObjectHashMap<>();
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
+    public void trackBlock(WorldAndCoord coord, IHackableBlock iHackable) {
+        this.optimizationsAndTweaks$hackedBlocks.put(coord, iHackable);
+    }
 
     /**
      * @author iamacatfr
@@ -41,7 +48,7 @@ public class MixinHackTickHandler {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (event.phase == TickEvent.Phase.END) {
-            Iterator<WorldAndCoord> iterator = hackedBlocks.keySet()
+            Iterator<WorldAndCoord> iterator = optimizationsAndTweaks$hackedBlocks.keySet()
                 .iterator();
             while (iterator.hasNext()) {
                 WorldAndCoord hackedBlock = iterator.next();

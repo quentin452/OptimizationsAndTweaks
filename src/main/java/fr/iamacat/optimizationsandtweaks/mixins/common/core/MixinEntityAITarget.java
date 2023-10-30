@@ -39,10 +39,6 @@ public abstract class MixinEntityAITarget extends EntityAIBase {
     @Shadow
     private int field_75298_g;
 
-    public MixinEntityAITarget(EntityCreature p_i1669_1_, boolean p_i1669_2_) {
-        this(p_i1669_1_, p_i1669_2_, false);
-    }
-
     public MixinEntityAITarget(EntityCreature p_i1670_1_, boolean p_i1670_2_, boolean p_i1670_3_) {
         this.taskOwner = p_i1670_1_;
         this.shouldCheckSight = p_i1670_2_;
