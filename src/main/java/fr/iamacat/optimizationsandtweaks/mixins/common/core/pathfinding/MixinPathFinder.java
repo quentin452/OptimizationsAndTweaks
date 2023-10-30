@@ -257,11 +257,9 @@ public class MixinPathFinder {
      * @author
      * @reason
      */
-    @Inject(method = "findPathOptions", at = @At("HEAD"), cancellable = true)
+    @Overwrite
     private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
-                                float p_75860_5_, CallbackInfoReturnable<Integer> cir) {
-
-        cir.cancel();
+                                float p_75860_5_) {
         int i = 0;
         byte b0 = 0;
 
@@ -290,7 +288,6 @@ public class MixinPathFinder {
             }
         }
 
-        cir.setReturnValue(i);
         return i;
     }
 
