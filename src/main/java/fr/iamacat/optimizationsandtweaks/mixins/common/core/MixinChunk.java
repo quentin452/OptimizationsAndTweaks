@@ -30,28 +30,14 @@ public class MixinChunk {
         double minY = (p_76588_2_.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
         double maxY = (p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
 
-        int minChunkY = (int) Math.floor(minY);
-        int maxChunkY = (int) Math.floor(maxY);
-
-        if (minChunkY < 0) {
-            minChunkY = 0;
-        } else if (minChunkY >= this.entityLists.length) {
-            minChunkY = this.entityLists.length - 1;
-        }
-
-        if (maxChunkY < 0) {
-            maxChunkY = 0;
-        } else if (maxChunkY >= this.entityLists.length) {
-            maxChunkY = this.entityLists.length - 1;
-        }
+        int minChunkY = Math.max(0, (int) Math.floor(minY));
+        int maxChunkY = Math.min(this.entityLists.length - 1, (int) Math.floor(maxY));
 
         for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
             List<Entity> entityList = this.entityLists[chunkY];
-
             optimizationsAndTweaks$processEntitiesWithinAABBForEntity(p_76588_1_, p_76588_2_, p_76588_3_, p_76588_4_, entityList);
         }
     }
-
 
     @Unique
     private void optimizationsAndTweaks$processEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB boundingBox, List<Entity> result, IEntitySelector entitySelector, List<Entity> entityList) {
@@ -77,27 +63,15 @@ public class MixinChunk {
         double minY = (p_76618_2.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
         double maxY = (p_76618_2.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
 
-        int minChunkY = (int) Math.floor(minY);
-        int maxChunkY = (int) Math.floor(maxY);
-
-        if (minChunkY < 0) {
-            minChunkY = 0;
-        } else if (minChunkY >= this.entityLists.length) {
-            minChunkY = this.entityLists.length - 1;
-        }
-
-        if (maxChunkY < 0) {
-            maxChunkY = 0;
-        } else if (maxChunkY >= this.entityLists.length) {
-            maxChunkY = this.entityLists.length - 1;
-        }
+        int minChunkY = (int) Math.floor(Math.max(0, minY));
+        int maxChunkY = (int) Math.floor(Math.min(this.entityLists.length - 1, maxY));
 
         for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY) {
             List<Entity> entityList = this.entityLists[chunkY];
-
             optimizationsAndTweaks$processEntityList(p_76618_1, p_76618_2, p_76618_3, p_76618_4, entityList);
         }
     }
+
 
     @Unique
     private void optimizationsAndTweaks$processEntityList(Class<?> entityClass, AxisAlignedBB boundingBox, List<Entity> result, IEntitySelector entitySelector, List<Entity> entityList) {
