@@ -438,11 +438,7 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
 
         executor.schedule(() -> future.complete(null), Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+
     private void startGame() throws LWJGLException
     {
         this.gameSettings = new GameSettings(theMinecraft, this.mcDataDir);
