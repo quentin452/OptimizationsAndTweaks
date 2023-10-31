@@ -59,7 +59,7 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    public void getEntitiesOfTypeWithinAAAB(Class p_76618_1, AxisAlignedBB p_76618_2, List<Entity> p_76618_3, IEntitySelector p_76618_4) {
+    public void getEntitiesOfTypeWithinAAAB(Class p_76618_1, AxisAlignedBB p_76618_2, List p_76618_3, IEntitySelector p_76618_4) {
         double minY = (p_76618_2.minY - World.MAX_ENTITY_RADIUS) / 16.0D;
         double maxY = (p_76618_2.maxY + World.MAX_ENTITY_RADIUS) / 16.0D;
 
