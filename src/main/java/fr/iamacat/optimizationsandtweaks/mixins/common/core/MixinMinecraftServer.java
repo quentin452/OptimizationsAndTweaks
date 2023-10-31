@@ -48,8 +48,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Mixin(value = MinecraftServer.class,priority = 1001)
 public abstract class MixinMinecraftServer {
@@ -623,5 +622,15 @@ public abstract class MixinMinecraftServer {
     public int getCurrentPlayerCount()
     {
         return this.serverConfigManager.getCurrentPlayerCount();
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void startServerThread() {
+        StartupQuery.reset();
+        new Thread(this::run, "Server thread").start();
     }
 }
