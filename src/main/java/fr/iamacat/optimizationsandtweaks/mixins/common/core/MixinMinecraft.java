@@ -986,6 +986,8 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      * @author
      * @reason
      */
+
+    @Overwrite
     public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
         if (theWorld != null) {
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
@@ -994,6 +996,7 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
         CompletableFuture<Void> shutdownFuture = CompletableFuture.runAsync(() -> {
             if (worldClientIn == null) {
                 NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+
                 if (nethandlerplayclient != null) {
                     nethandlerplayclient.cleanup();
                 }
@@ -1001,61 +1004,83 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
                 if (this.theIntegratedServer != null) {
                     this.theIntegratedServer.initiateShutdown();
                 }
-
-                this.theIntegratedServer = null;
-                this.guiAchievement.func_146257_b();
-                this.entityRenderer.getMapItemRenderer().func_148249_a();
             }
         });
 
         shutdownFuture.thenRun(() -> {
-            if (this.loadingScreen != null) {
-                this.loadingScreen.resetProgressAndMessage(loadingMessage);
-                this.loadingScreen.resetProgresAndWorkingMessage("");
+            if (this.theIntegratedServer != null) {
+                CompletableFuture<Void> serverShutdownFuture = CompletableFuture.runAsync(() -> {
+                    while (!theIntegratedServer.isServerStopped()) {
+                        // Waiting for the server to stop
+                    }
+                });
+
+                try {
+                    serverShutdownFuture.join(); // Wait for the server to stop
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (loadingScreen != null) {
+                    this.loadingScreen.resetProgresAndWorkingMessage(I18n.format("forge.client.shutdown.internal"));
+                }
             }
 
-            if (worldClientIn == null && this.theWorld != null) {
-                if (this.mcResourcePackRepository.func_148530_e() != null) {
-                    this.scheduleResourcesRefresh();
-                }
-
-                this.mcResourcePackRepository.func_148529_f();
-                this.setServerData((ServerData) null);
-                this.integratedServerIsRunning = false;
-                FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
-            }
-
-            this.mcSoundHandler.stopSounds();
-            this.theWorld = worldClientIn;
-
-            if (worldClientIn != null) {
-                if (this.renderGlobal != null) {
-                    this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
-                }
-
-                if (this.effectRenderer != null) {
-                    this.effectRenderer.clearEffects(worldClientIn);
-                }
-
-                if (this.thePlayer == null) {
-                    this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
-                    this.playerController.flipPlayer(this.thePlayer);
-                }
-
-                this.thePlayer.preparePlayerToSpawn();
-                worldClientIn.spawnEntityInWorld(this.thePlayer);
-                this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
-                this.playerController.setPlayerCapabilities(this.thePlayer);
-                renderViewEntity = thePlayer;
-            } else {
-                saveLoader.flushCache();
-                thePlayer = null;
-            }
-
-          //  System.gc();
-            systemTime = 0L;
+            this.theIntegratedServer = null;
+            this.guiAchievement.func_146257_b();
+            this.entityRenderer.getMapItemRenderer().func_148249_a();
         });
+
+        this.renderViewEntity = null;
+        this.myNetworkManager = null;
+
+        if (this.loadingScreen != null) {
+            this.loadingScreen.resetProgressAndMessage(loadingMessage);
+            this.loadingScreen.resetProgresAndWorkingMessage("");
+        }
+
+        if (worldClientIn == null && this.theWorld != null) {
+            if (this.mcResourcePackRepository.func_148530_e() != null) {
+                this.scheduleResourcesRefresh();
+            }
+
+            this.mcResourcePackRepository.func_148529_f();
+            this.setServerData((ServerData) null);
+            this.integratedServerIsRunning = false;
+            FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
+        }
+
+        this.mcSoundHandler.stopSounds();
+        this.theWorld = worldClientIn;
+
+        if (worldClientIn != null) {
+            if (this.renderGlobal != null) {
+                this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
+            }
+
+            if (this.effectRenderer != null) {
+                this.effectRenderer.clearEffects(worldClientIn);
+            }
+
+            if (this.thePlayer == null) {
+                this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
+                this.playerController.flipPlayer(this.thePlayer);
+            }
+
+            this.thePlayer.preparePlayerToSpawn();
+            worldClientIn.spawnEntityInWorld(this.thePlayer);
+            this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
+            this.playerController.setPlayerCapabilities(this.thePlayer);
+            this.renderViewEntity = this.thePlayer;
+        } else {
+            this.saveLoader.flushCache();
+            this.thePlayer = null;
+        }
+
+        // System.gc();
+        this.systemTime = 0L;
     }
+
     @Shadow
     public void setServerData(ServerData serverDataIn)
     {
