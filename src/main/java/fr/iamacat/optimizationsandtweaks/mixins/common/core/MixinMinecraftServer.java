@@ -1,21 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.StartupQuery;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -38,7 +30,6 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import org.apache.commons.lang3.Validate;
@@ -48,16 +39,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(value = MinecraftServer.class,priority = 1001)
 public abstract class MixinMinecraftServer {
@@ -188,84 +180,81 @@ public abstract class MixinMinecraftServer {
      */
     @Overwrite
     public void updateTimeLightAndEntities() {
-        if (OptimizationsandTweaksConfig.enableMixinMinecraftServer) {
-            this.theProfiler.startSection("levels");
-            net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
-            int i;
+        this.theProfiler.startSection("levels");
+        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
+        int i;
 
-            Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
-            for (int id : ids) {
-                long j = System.nanoTime();
+        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
+        for (int id : ids) {
+            long j = System.nanoTime();
 
-                if (id == 0 || this.getAllowNether()) {
-                    WorldServer worldserver = DimensionManager.getWorld(id);
-                    this.theProfiler.startSection(
-                        worldserver.getWorldInfo()
-                            .getWorldName());
-                    this.theProfiler.startSection("pools");
-                    this.theProfiler.endSection();
+            if (id == 0 || this.getAllowNether()) {
+                WorldServer worldserver = DimensionManager.getWorld(id);
+                this.theProfiler.startSection(
+                    worldserver.getWorldInfo()
+                        .getWorldName());
+                this.theProfiler.startSection("pools");
+                this.theProfiler.endSection();
 
-                    if (this.tickCounter % 20 == 0) {
-                        this.theProfiler.startSection("timeSync");
-                        this.serverConfigManager.sendPacketToAllPlayersInDimension(
-                            new S03PacketTimeUpdate(
-                                worldserver.getTotalWorldTime(),
-                                worldserver.getWorldTime(),
-                                worldserver.getGameRules()
-                                    .getGameRuleBooleanValue("doDaylightCycle")),
-                            worldserver.provider.dimensionId);
-                        this.theProfiler.endSection();
-                    }
-
-                    this.theProfiler.startSection("tick");
-                    FMLCommonHandler.instance()
-                        .onPreWorldTick(worldserver);
-                    CrashReport crashreport;
-
-                    try {
-                        worldserver.tick();
-                    } catch (Throwable throwable1) {
-                        crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
-                        worldserver.addWorldInfoToCrashReport(crashreport);
-                        throw new ReportedException(crashreport);
-                    }
-
-                    try {
-                        worldserver.updateEntities();
-                    } catch (Throwable throwable) {
-                        crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
-                        worldserver.addWorldInfoToCrashReport(crashreport);
-                        throw new ReportedException(crashreport);
-                    }
-
-                    FMLCommonHandler.instance()
-                        .onPostWorldTick(worldserver);
-                    this.theProfiler.endSection();
-                    this.theProfiler.startSection("tracker");
-                    worldserver.getEntityTracker()
-                        .updateTrackedEntities();
-                    this.theProfiler.endSection();
+                if (this.tickCounter % 20 == 0) {
+                    this.theProfiler.startSection("timeSync");
+                    this.serverConfigManager.sendPacketToAllPlayersInDimension(
+                        new S03PacketTimeUpdate(
+                            worldserver.getTotalWorldTime(),
+                            worldserver.getWorldTime(),
+                            worldserver.getGameRules()
+                                .getGameRuleBooleanValue("doDaylightCycle")),
+                        worldserver.provider.dimensionId);
                     this.theProfiler.endSection();
                 }
 
-                worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
+                this.theProfiler.startSection("tick");
+                FMLCommonHandler.instance()
+                    .onPreWorldTick(worldserver);
+                CrashReport crashreport;
+
+                try {
+                    worldserver.tick();
+                } catch (Throwable throwable1) {
+                    crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
+                    worldserver.addWorldInfoToCrashReport(crashreport);
+                    throw new ReportedException(crashreport);
+                }
+                try {
+                    worldserver.updateEntities();
+                } catch (Throwable throwable) {
+                    crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
+                    worldserver.addWorldInfoToCrashReport(crashreport);
+                    throw new ReportedException(crashreport);
+                }
+
+                FMLCommonHandler.instance()
+                    .onPostWorldTick(worldserver);
+                this.theProfiler.endSection();
+                this.theProfiler.startSection("tracker");
+                worldserver.getEntityTracker()
+                    .updateTrackedEntities();
+                this.theProfiler.endSection();
+                this.theProfiler.endSection();
             }
 
-            this.theProfiler.endStartSection("dim_unloading");
-            DimensionManager.unloadWorlds(worldTickTimes);
-            this.theProfiler.endStartSection("connection");
-            this.func_147137_ag()
-                .networkTick();
-            this.theProfiler.endStartSection("players");
-            this.serverConfigManager.sendPlayerInfoToAllPlayers();
-            this.theProfiler.endStartSection("tickables");
-
-            for (i = 0; i < this.tickables.size(); ++i) {
-                ((IUpdatePlayerListBox) this.tickables.get(i)).update();
-            }
-
-            this.theProfiler.endSection();
+            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
         }
+
+        this.theProfiler.endStartSection("dim_unloading");
+        DimensionManager.unloadWorlds(worldTickTimes);
+        this.theProfiler.endStartSection("connection");
+        this.func_147137_ag()
+            .networkTick();
+        this.theProfiler.endStartSection("players");
+        this.serverConfigManager.sendPlayerInfoToAllPlayers();
+        this.theProfiler.endStartSection("tickables");
+
+        for (i = 0; i < this.tickables.size(); ++i) {
+            ((IUpdatePlayerListBox) this.tickables.get(i)).update();
+        }
+
+        this.theProfiler.endSection();
     }
 
     @Unique
@@ -301,7 +290,7 @@ public abstract class MixinMinecraftServer {
                     long k = j - i;
 
                     if (k > 2000L && i - this.timeOfLastWarning >= 15000L) {
-                        logger.warn("Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {Long.valueOf(k), Long.valueOf(k / 50L)});
+                        logger.warn("Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {k, k / 50L});
                         k = 2000L;
                         this.timeOfLastWarning = i;
                     }
@@ -454,32 +443,27 @@ public abstract class MixinMinecraftServer {
     @Shadow
     protected void finalTick(CrashReport report) {}
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     protected void saveAllWorlds(boolean dontLog)
     {
         if (!this.worldIsBeingDeleted)
         {
             WorldServer[] aworldserver = this.worldServers;
             if (aworldserver == null) return; //Forge: Just in case, NPE protection as it has been encountered.
-            int i = aworldserver.length;
 
-            for (int j = 0; j < i; ++j)
-            {
-                WorldServer worldserver = aworldserver[j];
-
-                if (worldserver != null)
-                {
-                    if (!dontLog)
-                    {
-                        logger.info("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
+            for (WorldServer worldserver : aworldserver) {
+                if (worldserver != null) {
+                    if (!dontLog) {
+                        logger.info("Saving chunks for level '" + worldserver.getWorldInfo().getWorldName() + "'/" + worldserver.provider.getDimensionName());
                     }
 
-                    try
-                    {
-                        worldserver.saveAllChunks(true, (IProgressUpdate)null);
-                    }
-                    catch (MinecraftException minecraftexception)
-                    {
+                    try {
+                        worldserver.saveAllChunks(true, null);
+                    } catch (MinecraftException minecraftexception) {
                         logger.warn(minecraftexception.getMessage());
                     }
                 }
@@ -515,7 +499,11 @@ public abstract class MixinMinecraftServer {
 
         return report;
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private void func_147138_a(ServerStatusResponse response)
     {
         File file1 = this.getFile("server-icon.png");
@@ -527,15 +515,19 @@ public abstract class MixinMinecraftServer {
             try
             {
                 BufferedImage bufferedimage = ImageIO.read(file1);
-                Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide", new Object[0]);
-                Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high", new Object[0]);
-                ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
+                Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+                Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
+
+                try (ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(bytebuf)) {
+                    ImageIO.write(bufferedimage, "PNG", byteBufOutputStream);
+                }
+
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
-                response.func_151320_a("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
+                response.func_151320_a("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
             }
             catch (Exception exception)
             {
-                logger.error("Couldn\'t load server icon", exception);
+                logger.error("Couldn't load server icon", exception);
             }
             finally
             {
@@ -543,6 +535,7 @@ public abstract class MixinMinecraftServer {
             }
         }
     }
+
     @Shadow
     public File getFile(String fileName)
     {
