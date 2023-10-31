@@ -988,64 +988,56 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      */
 
     @Overwrite
-    public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
+    public void loadWorld(WorldClient worldClientIn, String loadingMessage)
+    {
         if (theWorld != null) {
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
         }
 
-        CompletableFuture<Void> shutdownFuture = CompletableFuture.runAsync(() -> {
-            if (worldClientIn == null) {
-                NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+        if (worldClientIn == null) {
+            NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
 
-                if (nethandlerplayclient != null) {
-                    nethandlerplayclient.cleanup();
-                }
-
-                if (this.theIntegratedServer != null) {
-                    this.theIntegratedServer.initiateShutdown();
-                }
+            if (nethandlerplayclient != null) {
+                nethandlerplayclient.cleanup();
             }
-        });
 
-        shutdownFuture.thenRun(() -> {
             if (this.theIntegratedServer != null) {
-                CompletableFuture<Void> serverShutdownFuture = CompletableFuture.runAsync(() -> {
-                    while (!theIntegratedServer.isServerStopped()) {
-                        // Waiting for the server to stop
-                    }
-                });
-
-                try {
-                    serverShutdownFuture.join(); // Wait for the server to stop
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                this.theIntegratedServer.initiateShutdown();
                 if (loadingScreen != null) {
                     this.loadingScreen.resetProgresAndWorkingMessage(I18n.format("forge.client.shutdown.internal"));
+                }
+                while (!theIntegratedServer.isServerStopped()) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(10);
+                    } catch (InterruptedException ie) {
+
+                    }
                 }
             }
 
             this.theIntegratedServer = null;
             this.guiAchievement.func_146257_b();
             this.entityRenderer.getMapItemRenderer().func_148249_a();
-        });
+        }
 
         this.renderViewEntity = null;
         this.myNetworkManager = null;
 
-        if (this.loadingScreen != null) {
+        if (this.loadingScreen != null)
+        {
             this.loadingScreen.resetProgressAndMessage(loadingMessage);
             this.loadingScreen.resetProgresAndWorkingMessage("");
         }
 
-        if (worldClientIn == null && this.theWorld != null) {
-            if (this.mcResourcePackRepository.func_148530_e() != null) {
+        if (worldClientIn == null && this.theWorld != null)
+        {
+            if (this.mcResourcePackRepository.func_148530_e() != null)
+            {
                 this.scheduleResourcesRefresh();
             }
 
             this.mcResourcePackRepository.func_148529_f();
-            this.setServerData((ServerData) null);
+            this.setServerData(null);
             this.integratedServerIsRunning = false;
             FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
         }
@@ -1053,16 +1045,20 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
         this.mcSoundHandler.stopSounds();
         this.theWorld = worldClientIn;
 
-        if (worldClientIn != null) {
-            if (this.renderGlobal != null) {
+        if (worldClientIn != null)
+        {
+            if (this.renderGlobal != null)
+            {
                 this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
             }
 
-            if (this.effectRenderer != null) {
+            if (this.effectRenderer != null)
+            {
                 this.effectRenderer.clearEffects(worldClientIn);
             }
 
-            if (this.thePlayer == null) {
+            if (this.thePlayer == null)
+            {
                 this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
                 this.playerController.flipPlayer(this.thePlayer);
             }
@@ -1072,12 +1068,14 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
             this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
             this.playerController.setPlayerCapabilities(this.thePlayer);
             this.renderViewEntity = this.thePlayer;
-        } else {
+        }
+        else
+        {
             this.saveLoader.flushCache();
             this.thePlayer = null;
         }
 
-        // System.gc();
+        //System.gc();
         this.systemTime = 0L;
     }
 
