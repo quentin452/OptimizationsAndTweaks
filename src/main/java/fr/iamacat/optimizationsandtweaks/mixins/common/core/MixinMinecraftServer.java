@@ -7,6 +7,9 @@ import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
@@ -274,7 +277,7 @@ public abstract class MixinMinecraftServer {
     public NetworkSystem func_147137_ag() {
         return this.field_147144_o;
     }
-    // todo avoid the usage of Tread.sleep
+
     /**
      * @author
      * @reason
@@ -293,20 +296,17 @@ public abstract class MixinMinecraftServer {
                 this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
                 this.func_147138_a(this.field_147147_p);
 
-                while (this.serverRunning)
-                {
+                while (this.serverRunning) {
                     long j = getSystemTimeMillis();
                     long k = j - i;
 
-                    if (k > 2000L && i - this.timeOfLastWarning >= 15000L)
-                    {
+                    if (k > 2000L && i - this.timeOfLastWarning >= 15000L) {
                         logger.warn("Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {Long.valueOf(k), Long.valueOf(k / 50L)});
                         k = 2000L;
                         this.timeOfLastWarning = i;
                     }
 
-                    if (k < 0L)
-                    {
+                    if (k < 0L) {
                         logger.warn("Time ran backwards! Did the system time change?");
                         k = 0L;
                     }
@@ -314,23 +314,33 @@ public abstract class MixinMinecraftServer {
                     l += k;
                     i = j;
 
-                    if (this.worldServers[0].areAllPlayersAsleep())
-                    {
+                    if (this.worldServers[0].areAllPlayersAsleep()) {
                         this.tick();
                         l = 0L;
-                    }
-                    else
-                    {
-                        while (l > 50L)
-                        {
+                    } else {
+                        while (l > 50L) {
                             l -= 50L;
                             this.tick();
                         }
                     }
 
-                    Thread.sleep(Math.max(1L, 50L - l));
+                    long finalL = l;
+                    CompletableFuture<Void> sleepFuture = CompletableFuture.runAsync(() -> {
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(Math.max(1L, 50L - finalL));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    });
+
+                    try {
+                        sleepFuture.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                    }
+
                     this.serverIsRunning = true;
                 }
+
                 FMLCommonHandler.instance().handleServerStopping();
                 FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
             }

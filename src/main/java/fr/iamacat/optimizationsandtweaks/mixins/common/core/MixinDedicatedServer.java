@@ -8,57 +8,33 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import java.io.File;
 import java.net.Proxy;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Mixin(DedicatedServer.class)
-public abstract class MixinDedicatedServer  extends MinecraftServer implements IServer {
-    // todo avoid the usage of Tread.sleep
-    /**
-     * @author
-     * @reason
-     */
+public abstract class MixinDedicatedServer extends MinecraftServer implements IServer {
+    private long lastTime = System.nanoTime();
 
-    protected MixinDedicatedServer(File workDir)
-    {
+    protected MixinDedicatedServer(File workDir) {
         super(workDir, Proxy.NO_PROXY);
-        Thread thread = new Thread("Server Infinisleeper")
-        {
-            {
-                this.setDaemon(true);
-                this.start();
-            }
-            public void run()
-            {
-                while (true)
-                {
-                    try
-                    {
-                        while (true)
-                        {
-                            Thread.sleep(2147483647L);
-                        }
-                    }
-                    catch (InterruptedException interruptedexception)
-                    {
-                        ;
-                    }
+
+        CompletableFuture.runAsync(() -> {
+            while (true) {
+                try {
+                    CompletableFuture<Void> sleepFuture = new CompletableFuture<>();
+                    sleepFuture.get();
+                } catch (InterruptedException | ExecutionException e) {
                 }
             }
-        };
+        });
     }
-    /**
-     * @author
-     * @reason
-     */
+
     @Overwrite
-    private void func_152369_aG()
-    {
-        try
-        {
-            Thread.sleep(5000L);
-        }
-        catch (InterruptedException interruptedexception)
-        {
-            ;
+    private void func_152369_aG() {
+        long startTime = System.nanoTime();
+        long delay = 5L * 1_000_000_000L;
+
+        while (System.nanoTime() - startTime < delay) {
         }
     }
 }

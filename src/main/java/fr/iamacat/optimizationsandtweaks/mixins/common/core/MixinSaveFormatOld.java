@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(SaveFormatOld.class)
 public class MixinSaveFormatOld {
@@ -32,37 +33,27 @@ public class MixinSaveFormatOld {
      * @reason
      */
     @Overwrite
-    public boolean deleteWorldDirectory(String p_75802_1_)
-    {
+    public boolean deleteWorldDirectory(String p_75802_1_) {
         File file1 = new File(this.savesDirectory, p_75802_1_);
 
-        if (!file1.exists())
-        {
+        if (!file1.exists()) {
             return true;
-        }
-        else
-        {
+        } else {
             logger.info("Deleting level " + p_75802_1_);
 
-            for (int i = 1; i <= 5; ++i)
-            {
+            for (int i = 1; i <= 5; ++i) {
                 logger.info("Attempt " + i + "...");
 
-                if (deleteFiles(file1.listFiles()))
-                {
+                if (deleteFiles(file1.listFiles())) {
                     break;
                 }
 
                 logger.warn("Unsuccessful in deleting contents.");
 
-                if (i < 5)
-                {
-                    try
-                    {
-                        Thread.sleep(500L);
-                    }
-                    catch (InterruptedException interruptedexception)
-                    {
+                if (i < 5) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(500);
+                    } catch (InterruptedException interruptedexception) {
                         ;
                     }
                 }
@@ -71,6 +62,7 @@ public class MixinSaveFormatOld {
             return file1.delete();
         }
     }
+
     @Shadow
     protected static boolean deleteFiles(File[] p_75807_0_)
     {

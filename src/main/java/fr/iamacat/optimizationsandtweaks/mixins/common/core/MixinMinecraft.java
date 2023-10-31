@@ -85,6 +85,10 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(value = Minecraft.class,priority = 999)
 public abstract class MixinMinecraft  implements IPlayerUsage {
@@ -369,30 +373,21 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      * @author
      * @reason
      */
-    @Overwrite
-    private void startTimerHackThread()
-    {
-        Thread thread = new Thread("Timer hack thread")
-        {
-            public void run()
-            {
-                while (running)
-                {
-                    try
-                    {
-                        Thread.sleep(2147483647L);
-                    }
-                    catch (InterruptedException interruptedexception)
-                    {
-                        ;
-                    }
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
-    }
 
+    @Overwrite
+    private void startTimerHackThread() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            while (running) {
+
+            }
+        });
+
+        future.thenRun(() -> running = false);
+
+        executor.schedule(() -> future.complete(null), Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    }
     /**
      * @author
      * @reason
@@ -459,15 +454,6 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
         catch (LWJGLException lwjglexception)
         {
             logger.error("Couldn\'t set pixel format", lwjglexception);
-
-            try
-            {
-                Thread.sleep(1000L);
-            }
-            catch (InterruptedException interruptedexception)
-            {
-                ;
-            }
 
             if (this.fullscreen)
             {
@@ -868,33 +854,28 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      * @reason
      */
     @Overwrite
-    public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn)
-    {
+    public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn) {
         FMLClientHandler.instance().startIntegratedServer(folderName, worldName, worldSettingsIn);
-        this.loadWorld((WorldClient)null);
+        this.loadWorld(null);
         System.gc();
         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
 
-        if (worldinfo == null && worldSettingsIn != null)
-        {
+        if (worldinfo == null && worldSettingsIn != null) {
             worldinfo = new WorldInfo(worldSettingsIn, folderName);
             isavehandler.saveWorldInfo(worldinfo);
         }
 
-        if (worldSettingsIn == null)
-        {
+        if (worldSettingsIn == null) {
+            assert worldinfo != null;
             worldSettingsIn = new WorldSettings(worldinfo);
         }
 
-        try
-        {
+        try {
             this.theIntegratedServer = new IntegratedServer(theMinecraft, folderName, worldName, worldSettingsIn);
             this.theIntegratedServer.startServerThread();
             this.integratedServerIsRunning = true;
-        }
-        catch (Throwable throwable)
-        {
+        } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Starting integrated server");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Starting integrated server");
             crashreportcategory.addCrashSection("Level ID", folderName);
@@ -902,45 +883,43 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
             throw new ReportedException(crashreport);
         }
 
-        this.loadingScreen.displayProgressMessage(I18n.format("menu.loadingLevel", new Object[0]));
+        this.loadingScreen.displayProgressMessage(I18n.format("menu.loadingLevel"));
 
-        while (!this.theIntegratedServer.serverIsInRunLoop())
-        {
-            if (!StartupQuery.check())
-            {
+        while (!this.theIntegratedServer.serverIsInRunLoop()) {
+            if (!StartupQuery.check()) {
                 loadWorld(null);
                 displayGuiScreen(null);
                 return;
             }
             String s2 = this.theIntegratedServer.getUserMessage();
 
-            if (s2 != null)
-            {
-                this.loadingScreen.resetProgresAndWorkingMessage(I18n.format(s2, new Object[0]));
-            }
-            else
-            {
+            if (s2 != null) {
+                this.loadingScreen.resetProgresAndWorkingMessage(I18n.format(s2));
+            } else {
                 this.loadingScreen.resetProgresAndWorkingMessage("");
             }
 
-            try
-            {
-                Thread.sleep(200L);
-            }
-            catch (InterruptedException interruptedexception)
-            {
-                ;
+            long startTime = System.currentTimeMillis();
+            long delay = 200L;
+
+            while (System.currentTimeMillis() - startTime < delay) {
+                if (!StartupQuery.check()) {
+                    loadWorld(null);
+                    displayGuiScreen(null);
+                    return;
+                }
             }
         }
 
-        this.displayGuiScreen((GuiScreen)null);
+        this.displayGuiScreen(null);
         SocketAddress socketaddress = this.theIntegratedServer.func_147137_ag().addLocalEndpoint();
         NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
-        networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, theMinecraft, (GuiScreen)null));
-        networkmanager.scheduleOutboundPacket(new C00Handshake(5, socketaddress.toString(), 0, EnumConnectionState.LOGIN), new GenericFutureListener[0]);
-        networkmanager.scheduleOutboundPacket(new C00PacketLoginStart(this.getSession().func_148256_e()), new GenericFutureListener[0]);
+        networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, theMinecraft, null));
+        networkmanager.scheduleOutboundPacket(new C00Handshake(5, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
+        networkmanager.scheduleOutboundPacket(new C00PacketLoginStart(this.getSession().func_148256_e()));
         this.myNetworkManager = networkmanager;
     }
+
     @Shadow
     public Session getSession()
     {
@@ -957,103 +936,75 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      * @author
      * @reason
      */
-    @Overwrite
-
-    public void loadWorld(WorldClient worldClientIn, String loadingMessage)
-    {
-        if (theWorld != null)
-        {
+    public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
+        if (theWorld != null) {
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
         }
 
-        if (worldClientIn == null)
-        {
-            NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
-
-            if (nethandlerplayclient != null)
-            {
-                nethandlerplayclient.cleanup();
-            }
-
-            if (this.theIntegratedServer != null)
-            {
-                this.theIntegratedServer.initiateShutdown();
-                if (loadingScreen != null)
-                {
-                    this.loadingScreen.resetProgresAndWorkingMessage(I18n.format("forge.client.shutdown.internal"));
+        CompletableFuture<Void> shutdownFuture = CompletableFuture.runAsync(() -> {
+            if (worldClientIn == null) {
+                NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+                if (nethandlerplayclient != null) {
+                    nethandlerplayclient.cleanup();
                 }
-                while (!theIntegratedServer.isServerStopped())
-                {
-                    try
-                    {
-                        Thread.sleep(10);
-                    }
-                    catch (InterruptedException ie) {}
+
+                if (this.theIntegratedServer != null) {
+                    this.theIntegratedServer.initiateShutdown();
                 }
+
+                this.theIntegratedServer = null;
+                this.guiAchievement.func_146257_b();
+                this.entityRenderer.getMapItemRenderer().func_148249_a();
+            }
+        });
+
+        shutdownFuture.thenRun(() -> {
+            if (this.loadingScreen != null) {
+                this.loadingScreen.resetProgressAndMessage(loadingMessage);
+                this.loadingScreen.resetProgresAndWorkingMessage("");
             }
 
-            this.theIntegratedServer = null;
-            this.guiAchievement.func_146257_b();
-            this.entityRenderer.getMapItemRenderer().func_148249_a();
-        }
+            if (worldClientIn == null && this.theWorld != null) {
+                if (this.mcResourcePackRepository.func_148530_e() != null) {
+                    this.scheduleResourcesRefresh();
+                }
 
-        this.renderViewEntity = null;
-        this.myNetworkManager = null;
-
-        if (this.loadingScreen != null)
-        {
-            this.loadingScreen.resetProgressAndMessage(loadingMessage);
-            this.loadingScreen.resetProgresAndWorkingMessage("");
-        }
-
-        if (worldClientIn == null && this.theWorld != null)
-        {
-            if (this.mcResourcePackRepository.func_148530_e() != null)
-            {
-                this.scheduleResourcesRefresh();
+                this.mcResourcePackRepository.func_148529_f();
+                this.setServerData((ServerData) null);
+                this.integratedServerIsRunning = false;
+                FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
             }
 
-            this.mcResourcePackRepository.func_148529_f();
-            this.setServerData((ServerData)null);
-            this.integratedServerIsRunning = false;
-            FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
-        }
+            this.mcSoundHandler.stopSounds();
+            this.theWorld = worldClientIn;
 
-        this.mcSoundHandler.stopSounds();
-        this.theWorld = worldClientIn;
+            if (worldClientIn != null) {
+                if (this.renderGlobal != null) {
+                    this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
+                }
 
-        if (worldClientIn != null)
-        {
-            if (this.renderGlobal != null)
-            {
-                this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
+                if (this.effectRenderer != null) {
+                    this.effectRenderer.clearEffects(worldClientIn);
+                }
+
+                if (this.thePlayer == null) {
+                    this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
+                    this.playerController.flipPlayer(this.thePlayer);
+                }
+
+                this.thePlayer.preparePlayerToSpawn();
+                worldClientIn.spawnEntityInWorld(this.thePlayer);
+                this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
+                this.playerController.setPlayerCapabilities(this.thePlayer);
+                renderViewEntity = thePlayer;
+            } else {
+                saveLoader.flushCache();
+                thePlayer = null;
             }
 
-            if (this.effectRenderer != null)
-            {
-                this.effectRenderer.clearEffects(worldClientIn);
-            }
-
-            if (this.thePlayer == null)
-            {
-                this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
-                this.playerController.flipPlayer(this.thePlayer);
-            }
-
-            this.thePlayer.preparePlayerToSpawn();
-            worldClientIn.spawnEntityInWorld(this.thePlayer);
-            this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
-            this.playerController.setPlayerCapabilities(this.thePlayer);
-            this.renderViewEntity = this.thePlayer;
-        }
-        else
-        {
-            this.saveLoader.flushCache();
-            this.thePlayer = null;
-        }
-
-        System.gc();
-        this.systemTime = 0L;
+            System.gc();
+            systemTime = 0L;
+        });
     }
     @Shadow
     public void setServerData(ServerData serverDataIn)

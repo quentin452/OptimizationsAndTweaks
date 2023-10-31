@@ -29,14 +29,10 @@ public class MixinMinecraftServerGui {
      * @reason
      */
     @Overwrite
-    public static void createServerGui(final DedicatedServer serverIn)
-    {
-        try
-        {
+    public static void createServerGui(final DedicatedServer serverIn) {
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception exception)
-        {
+        } catch (Exception exception) {
             ;
         }
 
@@ -46,21 +42,18 @@ public class MixinMinecraftServerGui {
         jframe.pack();
         jframe.setLocationRelativeTo((Component)null);
         jframe.setVisible(true);
-        jframe.addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent p_windowClosing_1_)
-            {
+        jframe.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent p_windowClosing_1_) {
                 serverIn.initiateShutdown();
 
-                while (!serverIn.isServerStopped())
-                {
-                    try
-                    {
-                        Thread.sleep(100L);
-                    }
-                    catch (InterruptedException interruptedexception)
-                    {
-                        interruptedexception.printStackTrace();
+                while (!serverIn.isServerStopped()) {
+                    long startTime = System.currentTimeMillis();
+                    long delay = 100L;
+
+                    while (System.currentTimeMillis() - startTime < delay) {
+                        if (serverIn.isServerStopped()) {
+                            break;
+                        }
                     }
                 }
 

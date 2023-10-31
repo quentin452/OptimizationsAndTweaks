@@ -9,72 +9,76 @@ import net.minecraft.command.ServerCommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(FMLServerHandler.class)
 public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
-    // todo avoid the usage of Tread.sleep + Thread.interrupted
 
     @Shadow
     private MinecraftServer server;
 
     @Override
-    public void queryUser(StartupQuery query) throws InterruptedException
-    {
-        if (query.getResult() == null)
-        {
+    public void queryUser(StartupQuery query) throws InterruptedException {
+        if (query.getResult() == null) {
             FMLLog.warning("%s", query.getText());
             query.finish();
-        }
-        else
-        {
+        } else {
             String text = query.getText() +
-                "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
+                "\n\nRun the command /fml confirm or /fml cancel to proceed." +
                 "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
             FMLLog.warning("%s", text);
 
-            if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
+            if (!query.isSynchronous()) return;
 
-            boolean done = false;
+            AtomicBoolean done = new AtomicBoolean(false);
 
-            while (!done && server.isServerRunning())
-            {
-                if (Thread.interrupted()) throw new InterruptedException();
+            CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+                while (!done.get() && server.isServerRunning()) {
+                    if (Thread.interrupted()) {
+                        query.finish();
+                        return;
+                    }
 
-                DedicatedServer dedServer = (DedicatedServer) server;
+                    DedicatedServer dedServer = (DedicatedServer) server;
 
-                // rudimentary command processing, check for fml confirm/cancel and stop commands
-                synchronized (dedServer.pendingCommandList)
-                {
-                    for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); )
-                    {
-                        String cmd = it.next().command.trim().toLowerCase();
+                    synchronized (dedServer.pendingCommandList) {
+                        for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); ) {
+                            String cmd = it.next().command.trim().toLowerCase();
 
-                        if (cmd.equals("/fml confirm"))
-                        {
-                            FMLLog.info("confirmed");
-                            query.setResult(true);
-                            done = true;
-                            it.remove();
-                        }
-                        else if (cmd.equals("/fml cancel"))
-                        {
-                            FMLLog.info("cancelled");
-                            query.setResult(false);
-                            done = true;
-                            it.remove();
-                        }
-                        else if (cmd.equals("/stop"))
-                        {
-                            StartupQuery.abort();
+                            if (cmd.equals("/fml confirm")) {
+                                FMLLog.info("confirmed");
+                                query.setResult(true);
+                                done.set(true);
+                                it.remove();
+                            } else if (cmd.equals("/fml cancel")) {
+                                FMLLog.info("cancelled");
+                                query.setResult(false);
+                                done.set(true);
+                                it.remove();
+                            } else if (cmd.equals("/stop")) {
+                                StartupQuery.abort();
+                            }
                         }
                     }
-                }
 
-                Thread.sleep(10L);
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(10);
+                    } catch (InterruptedException e) {
+                        query.finish();
+                    }
+                }
+            });
+
+            try {
+                completableFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
 
             query.finish();
