@@ -333,10 +333,7 @@ public abstract class MixinMinecraftServer {
                         }
                     });
 
-                    try {
-                        sleepFuture.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                    }
+                    sleepFuture.get();
 
                     this.serverIsRunning = true;
                 }
@@ -373,7 +370,7 @@ public abstract class MixinMinecraftServer {
 
             if (crashreport.saveToFile(file1))
             {
-                logger.error("This crash report has been saved to: " + file1.getAbsolutePath());
+                logger.error("This crash report has been saved to: %s", file1.getAbsolutePath());
             }
             else
             {
@@ -557,7 +554,11 @@ public abstract class MixinMinecraftServer {
         return new File(".");
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void tick()
     {
         long i = System.nanoTime();

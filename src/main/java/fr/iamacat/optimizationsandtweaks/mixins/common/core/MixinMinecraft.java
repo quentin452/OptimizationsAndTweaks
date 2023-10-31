@@ -1316,37 +1316,10 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
     @Overwrite
     public void freeMemory()
     {
-        try
-        {
-            memoryReserve = new byte[0];
-            this.renderGlobal.deleteAllDisplayLists();
-        }
-        catch (Throwable throwable2)
-        {
-            ;
-        }
-
-        try
-        {
-           // System.gc();
-        }
-        catch (Throwable throwable1)
-        {
-            ;
-        }
-
-        try
-        {
-          //  System.gc();
-            this.loadWorld((WorldClient)null);
-        }
-        catch (Throwable throwable)
-        {
-            ;
-        }
-
-      //  System.gc();
+        memoryReserve = new byte[0];
+        this.renderGlobal.deleteAllDisplayLists();
     }
+
 @Shadow
 public boolean isFramerateLimitBelowMax()
 {
@@ -1364,82 +1337,26 @@ public int getLimitFramerate()
     @Overwrite
     public CrashReport addGraphicsAndWorldToCrashReport(CrashReport theCrash)
     {
-        theCrash.getCategory().addCrashSectionCallable("Launched Version", new Callable()
-        {
-            public String call()
-            {
-                return launchedVersion;
-            }
+        theCrash.getCategory().addCrashSectionCallable("Launched Version", () -> launchedVersion);
+        theCrash.getCategory().addCrashSectionCallable("LWJGL", Sys::getVersion);
+        theCrash.getCategory().addCrashSectionCallable("OpenGL", () -> GL11.glGetString(GL11.GL_RENDERER) + " GL version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR));
+        theCrash.getCategory().addCrashSectionCallable("GL Caps", OpenGlHelper::func_153172_c);
+        theCrash.getCategory().addCrashSectionCallable("Is Modded", () -> {
+            String s = ClientBrandRetriever.getClientModName();
+            return !s.equals("vanilla") ? "Definitely; Client brand changed to \'" + s + "\'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and client brand is untouched.");
         });
-        theCrash.getCategory().addCrashSectionCallable("LWJGL", new Callable()
-        {
-            public String call()
-            {
-                return Sys.getVersion();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("OpenGL", new Callable()
-        {
-            public String call()
-            {
-                return GL11.glGetString(GL11.GL_RENDERER) + " GL version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("GL Caps", new Callable()
-        {
-            public String call()
-            {
-                return OpenGlHelper.func_153172_c();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Is Modded", new Callable()
-        {
-            public String call()
-            {
-                String s = ClientBrandRetriever.getClientModName();
-                return !s.equals("vanilla") ? "Definitely; Client brand changed to \'" + s + "\'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and client brand is untouched.");
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Type", new Callable()
-        {
-            public String call()
-            {
-                return "Client (map_client.txt)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Resource Packs", new Callable()
-        {
-            public String call()
-            {
-                return gameSettings.resourcePacks.toString();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Current Language", new Callable()
-        {
-            public String call()
-            {
-                return mcLanguageManager.getCurrentLanguage().toString();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Profiler Position", new Callable()
-        {
-            public String call()
-            {
-                return mcProfiler.profilingEnabled ? mcProfiler.getNameOfLastSection() : "N/A (disabled)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Vec3 Pool Size", new Callable()
-        {
-            public String call()
-            {
-                byte b0 = 0;
-                int i = 56 * b0;
-                int j = i / 1024 / 1024;
-                byte b1 = 0;
-                int k = 56 * b1;
-                int l = k / 1024 / 1024;
-                return b0 + " (" + i + " bytes; " + j + " MB) allocated, " + b1 + " (" + k + " bytes; " + l + " MB) used";
-            }
+        theCrash.getCategory().addCrashSectionCallable("Type", () -> "Client (map_client.txt)");
+        theCrash.getCategory().addCrashSectionCallable("Resource Packs", () -> gameSettings.resourcePacks.toString());
+        theCrash.getCategory().addCrashSectionCallable("Current Language", () -> mcLanguageManager.getCurrentLanguage().toString());
+        theCrash.getCategory().addCrashSectionCallable("Profiler Position", () -> mcProfiler.profilingEnabled ? mcProfiler.getNameOfLastSection() : "N/A (disabled)");
+        theCrash.getCategory().addCrashSectionCallable("Vec3 Pool Size", () -> {
+            byte b0 = 0;
+            int i = 56 * b0;
+            int j = i / 1024 / 1024;
+            byte b1 = 0;
+            int k = 56 * b1;
+            int l = k / 1024 / 1024;
+            return b0 + " (" + i + " bytes; " + j + " MB) allocated, " + b1 + " (" + k + " bytes; " + l + " MB) used";
         });
         theCrash.getCategory().addCrashSectionCallable("Anisotropic Filtering", new Callable()
         {
@@ -1486,17 +1403,20 @@ public int getLimitFramerate()
         }
         FMLCommonHandler.instance().handleExit(retVal);
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void runTick()
     {
         this.mcProfiler.startSection("scheduledExecutables");
-        Queue queue = this.field_152351_aB;
 
         synchronized (this.field_152351_aB)
         {
             while (!this.field_152351_aB.isEmpty())
             {
-                ((FutureTask)this.field_152351_aB.poll()).run();
+                ((FutureTask<?>)this.field_152351_aB.poll()).run();
             }
         }
 
@@ -1536,16 +1456,16 @@ public int getLimitFramerate()
         {
             if (this.thePlayer.getHealth() <= 0.0F)
             {
-                this.displayGuiScreen((GuiScreen)null);
+                this.displayGuiScreen(null);
             }
             else if (this.thePlayer.isPlayerSleeping() && this.theWorld != null)
             {
                 this.displayGuiScreen(new GuiSleepMP());
             }
         }
-        else if (this.currentScreen != null && this.currentScreen instanceof GuiSleepMP && !this.thePlayer.isPlayerSleeping())
+        else if (this.currentScreen instanceof GuiSleepMP && !this.thePlayer.isPlayerSleeping())
         {
-            this.displayGuiScreen((GuiScreen)null);
+            this.displayGuiScreen(null);
         }
 
         if (this.currentScreen != null)
@@ -1566,13 +1486,7 @@ public int getLimitFramerate()
             {
                 crashreport = CrashReport.makeCrashReport(throwable1, "Updating screen events");
                 crashreportcategory = crashreport.makeCategory("Affected screen");
-                crashreportcategory.addCrashSectionCallable("Screen name", new Callable()
-                {
-                    public String call()
-                    {
-                        return currentScreen.getClass().getCanonicalName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Screen name", () -> currentScreen.getClass().getCanonicalName());
                 throw new ReportedException(crashreport);
             }
 
@@ -1586,13 +1500,7 @@ public int getLimitFramerate()
                 {
                     crashreport = CrashReport.makeCrashReport(throwable, "Ticking screen");
                     crashreportcategory = crashreport.makeCategory("Affected screen");
-                    crashreportcategory.addCrashSectionCallable("Screen name", new Callable()
-                    {
-                        public String call()
-                        {
-                            return currentScreen.getClass().getCanonicalName();
-                        }
-                    });
+                    crashreportcategory.addCrashSectionCallable("Screen name", () -> currentScreen.getClass().getCanonicalName());
                     throw new ReportedException(crashreport);
                 }
             }
@@ -1637,7 +1545,7 @@ public int getLimitFramerate()
                                 i = -1;
                             }
 
-                            this.gameSettings.noclipRate += (float)i * 0.25F;
+                            this.gameSettings.noclipRate += i * 0.25F;
                         }
                     }
 
@@ -1648,8 +1556,7 @@ public int getLimitFramerate()
                             this.setIngameFocus();
                         }
                     }
-                    else if (this.currentScreen != null)
-                    {
+                    else {
                         this.currentScreen.handleMouseInput();
                     }
                 }
@@ -2005,7 +1912,11 @@ public int getLimitFramerate()
             }
         }
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private void displayDebugInfo(long elapsedTicksTime)
     {
         if (this.mcProfiler.profilingEnabled)
@@ -2016,7 +1927,7 @@ public int getLimitFramerate()
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glEnable(GL11.GL_COLOR_MATERIAL);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0.0D, (double)this.displayWidth, (double)this.displayHeight, 0.0D, 1000.0D, 3000.0D);
+            GL11.glOrtho(0.0D, this.displayWidth, this.displayHeight, 0.0D, 1000.0D, 3000.0D);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
             GL11.glTranslatef(0.0F, 0.0F, -2000.0F);
@@ -2029,10 +1940,10 @@ public int getLimitFramerate()
             GL11.glEnable(GL11.GL_BLEND);
             tessellator.startDrawingQuads();
             tessellator.setColorRGBA_I(0, 200);
-            tessellator.addVertex((double)((float)j - (float)short1 * 1.1F), (double)((float)k - (float)short1 * 0.6F - 16.0F), 0.0D);
-            tessellator.addVertex((double)((float)j - (float)short1 * 1.1F), (double)(k + short1 * 2), 0.0D);
-            tessellator.addVertex((double)((float)j + (float)short1 * 1.1F), (double)(k + short1 * 2), 0.0D);
-            tessellator.addVertex((double)((float)j + (float)short1 * 1.1F), (double)((float)k - (float)short1 * 0.6F - 16.0F), 0.0D);
+            tessellator.addVertex((j - short1 * 1.1F), (k - short1 * 0.6F - 16.0F), 0.0D);
+            tessellator.addVertex((j - short1 * 1.1F), (k + short1 * 2), 0.0D);
+            tessellator.addVertex((j + short1 * 1.1F), (k + short1 * 2), 0.0D);
+            tessellator.addVertex((j + short1 * 1.1F), (k - short1 * 0.6F - 16.0F), 0.0D);
             tessellator.draw();
             GL11.glDisable(GL11.GL_BLEND);
             double d0 = 0.0D;
@@ -2044,7 +1955,7 @@ public int getLimitFramerate()
                 i1 = MathHelper.floor_double(result1.field_76332_a / 4.0D) + 1;
                 tessellator.startDrawing(6);
                 tessellator.setColorOpaque_I(result1.func_76329_a());
-                tessellator.addVertex((double)j, (double)k, 0.0D);
+                tessellator.addVertex(j, k, 0.0D);
                 int j1;
                 float f;
                 float f1;
@@ -2055,7 +1966,7 @@ public int getLimitFramerate()
                     f = (float)((d0 + result1.field_76332_a * (double)j1 / (double)i1) * Math.PI * 2.0D / 100.0D);
                     f1 = MathHelper.sin(f) * (float)short1;
                     f2 = MathHelper.cos(f) * (float)short1 * 0.5F;
-                    tessellator.addVertex((double)((float)j + f1), (double)((float)k - f2), 0.0D);
+                    tessellator.addVertex(j + f1, k - f2, 0.0D);
                 }
 
                 tessellator.draw();
@@ -2067,8 +1978,8 @@ public int getLimitFramerate()
                     f = (float)((d0 + result1.field_76332_a * (double)j1 / (double)i1) * Math.PI * 2.0D / 100.0D);
                     f1 = MathHelper.sin(f) * (float)short1;
                     f2 = MathHelper.cos(f) * (float)short1 * 0.5F;
-                    tessellator.addVertex((double)((float)j + f1), (double)((float)k - f2), 0.0D);
-                    tessellator.addVertex((double)((float)j + f1), (double)((float)k - f2 + 10.0F), 0.0D);
+                    tessellator.addVertex(j + f1, k - f2, 0.0D);
+                    tessellator.addVertex(j + f1, k - f2 + 10.0F, 0.0D);
                 }
 
                 tessellator.draw();

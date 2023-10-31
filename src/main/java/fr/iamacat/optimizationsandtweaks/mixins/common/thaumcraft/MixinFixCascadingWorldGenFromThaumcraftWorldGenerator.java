@@ -280,10 +280,10 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             BiomeGenBase bg = world.getBiomeGenForCoords(x, z);
             int baura = BiomeHandler.getBiomeAura(bg);
             if (type != NodeType.PURE && bg.biomeID == biomeTaint.biomeID) {
-                baura = (int) ((float) baura * 1.5F);
+                baura = (int) (baura * 1.5F);
                 if (random.nextBoolean()) {
                     type = NodeType.TAINTED;
-                    baura = (int) ((float) baura * 1.5F);
+                    baura = (int) (baura * 1.5F);
                 }
             }
 
@@ -402,11 +402,11 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                     spread[a] = 25 + random.nextInt(50);
                 }
 
-                total += (float) spread[a];
+                total += spread[a];
             }
 
             for (a = 0; a < spread.length; ++a) {
-                al.merge(al.getAspectsSorted()[a], (int) ((float) spread[a] / total * (float) value));
+                al.merge(al.getAspectsSorted()[a], (int) (spread[a] / total * value));
             }
 
             createNodeAt(world, x, y, z, type, modifier, al, ci);
@@ -578,8 +578,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         int y = world.getHeightValue(x, z);
         int bio = world.getBiomeGenForCoords(x, z).biomeID;
         if (BiomeHandler.getBiomeSupportsGreatwood(bio) > random.nextFloat()) {
-            boolean t = (new WorldGenGreatwoodTrees(false)).generate(world, random, x, y, z, random.nextInt(8) == 0);
-            return t;
+            return (new WorldGenGreatwoodTrees(false)).generate(world, random, x, y, z, random.nextInt(8) == 0);
         } else {
             return false;
         }
@@ -664,7 +663,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
 
     @Unique
     private static int getBiomeBlacklist(int biome) {
-        return !biomeBlacklist.containsKey(biome) ? -1 : biomeBlacklist.get(biome);
+        return biomeBlacklist.getOrDefault(biome, -1);
     }
 
     @Unique
@@ -679,8 +678,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 && bio.biomeID != BiomeGenBase.birchForestHills.biomeID) {
             return false;
         } else {
-            boolean t = (new WorldGenSilverwoodTrees(false, 7, 4)).func_76484_a(world, random, x, y, z);
-            return t;
+            return (new WorldGenSilverwoodTrees(false, 7, 4)).func_76484_a(world, random, x, y, z);
         }
     }
 }

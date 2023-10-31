@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
-    //todo change the List by a Set but need to redirect some methods from Chunk + AnvilChunkLoader + ForgeChunkManager classes
     @Shadow
     public List[] entityLists;
 
