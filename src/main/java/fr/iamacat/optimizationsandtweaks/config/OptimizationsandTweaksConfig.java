@@ -163,7 +163,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThreadedFileIOBase;
-
+    @Config.Comment("Optimize WorldServer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldServer;
     @Config.Comment("Optimize StatsComponent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
