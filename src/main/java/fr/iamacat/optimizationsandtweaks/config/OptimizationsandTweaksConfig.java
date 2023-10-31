@@ -135,6 +135,34 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
+    @Config.Comment("Optimize DedicatedServer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinDedicatedServer;
+    @Config.Comment("Optimize FMLClientHandler")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFMLClientHandler;
+    @Config.Comment("Optimize FMLServerHandler")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFMLServerHandler;
+    @Config.Comment("Optimize Minecraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMinecraft;
+    @Config.Comment("Optimize MinecraftServerGui")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMinecraftServerGui;
+    @Config.Comment("Optimize SaveFormatOld")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinSaveFormatOld;
+    @Config.Comment("Optimize ThreadedFileIOBase")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinThreadedFileIOBase;
     @Config.Comment("Optimize NBTTagCompound")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

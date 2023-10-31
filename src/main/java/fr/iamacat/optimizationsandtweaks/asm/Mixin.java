@@ -18,6 +18,23 @@ public enum Mixin implements IMixin {
         "minestones.MixinItemMinestone"),
 
     // OPTIMIZATIONS MIXINS
+    common_core_MixinDedicatedServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
+        "core.MixinDedicatedServer"),
+    common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
+        "core.MixinFMLClientHandler"),
+    common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
+        "core.MixinFMLServerHandler"),
+    common_core_MixinMinecraft(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinecraft,
+        "core.MixinMinecraft"),
+    common_core_MixinMinecraftServerGui(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinecraftServerGui,
+        "core.MixinMinecraftServerGui"),
+    common_core_MixinSaveFormatOld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinSaveFormatOld,
+        "core.MixinSaveFormatOld"),
+    common_core_MixinThreadedFileIOBase(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinThreadedFileIOBase,
+        "core.MixinThreadedFileIOBase"),
+
+
+
     common_core_MixinEntityAINearestAttackableTarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAINearestAttackableTarget,
         "core.MixinEntityAINearestAttackableTarget"),
     common_core_MixinEntityList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityList,

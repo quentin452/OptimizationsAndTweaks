@@ -56,7 +56,7 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 import javax.imageio.ImageIO;
 
-@Mixin(MinecraftServer.class)
+@Mixin(value = MinecraftServer.class,priority = 1001)
 public abstract class MixinMinecraftServer {
 
     @Unique
@@ -274,7 +274,7 @@ public abstract class MixinMinecraftServer {
     public NetworkSystem func_147137_ag() {
         return this.field_147144_o;
     }
-
+    // todo avoid the usage of Tread.sleep
     /**
      * @author
      * @reason
