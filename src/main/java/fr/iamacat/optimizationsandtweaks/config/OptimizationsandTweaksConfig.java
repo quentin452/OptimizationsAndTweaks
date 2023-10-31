@@ -88,6 +88,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRenderManager;
+    @Config.Comment("Optimize EntityAINearestAttackableTarget")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAINearestAttackableTarget;
     @Config.Comment("Optimize EntitySpellParticleFX")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
