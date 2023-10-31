@@ -92,7 +92,8 @@ public enum Mixin implements IMixin {
         "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),
     common_core_MixinMinecraftServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinecraftServer,
         "core.MixinMinecraftServer"),
-
+    common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
+        "core.MixinStatsComponent"),
     common_core_MixinChunk(Side.COMMON,
         avoid(TargetedMod.BLENDTRONIC).and(m -> OptimizationsandTweaksConfig.enableMixinChunk), "core.MixinChunk"),
     common_core_MixinMapStorage(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMapStorage,
