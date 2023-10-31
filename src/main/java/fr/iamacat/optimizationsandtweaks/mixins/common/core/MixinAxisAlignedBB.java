@@ -91,25 +91,24 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public double calculateXOffset(AxisAlignedBB other, double p_72316_2_) {
-        if (other.maxY <= this.minY || other.minY >= this.maxY) {
+        if (other.maxY <= this.minY || other.minY >= this.maxY || other.maxZ <= this.minZ || other.minZ >= this.maxZ) {
             return p_72316_2_;
         }
 
-        if (other.maxZ > this.minZ && other.minZ < this.maxZ) {
-            if (p_72316_2_ > 0.0D && other.maxX <= this.minX) {
-                double d1 = this.minX - other.maxX;
-                if (d1 < p_72316_2_) {
-                    p_72316_2_ = d1;
-                }
-            }
-
-            if (p_72316_2_ < 0.0D && other.minX >= this.maxX) {
-                double d1 = this.maxX - other.minX;
-                if (d1 > p_72316_2_) {
-                    p_72316_2_ = d1;
-                }
+        if (p_72316_2_ > 0.0D && other.maxX <= this.minX) {
+            double d1 = this.minX - other.maxX;
+            if (d1 < p_72316_2_) {
+                p_72316_2_ = d1;
             }
         }
+
+        if (p_72316_2_ < 0.0D && other.minX >= this.maxX) {
+            double d1 = this.maxX - other.minX;
+            if (d1 > p_72316_2_) {
+                p_72316_2_ = d1;
+            }
+        }
+
         return p_72316_2_;
     }
 
@@ -119,25 +118,24 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public double calculateYOffset(AxisAlignedBB other, double p_72323_2_) {
-        if (other.maxX <= this.minX || other.minX >= this.maxX) {
+        if (other.maxX <= this.minX || other.minX >= this.maxX || other.maxZ <= this.minZ || other.minZ >= this.maxZ) {
             return p_72323_2_;
         }
 
-        if (other.maxZ > this.minZ && other.minZ < this.maxZ) {
-            if (p_72323_2_ > 0.0D && other.maxY <= this.minY) {
-                double d1 = this.minY - other.maxY;
-                if (d1 < p_72323_2_) {
-                    p_72323_2_ = d1;
-                }
-            }
-
-            if (p_72323_2_ < 0.0D && other.minY >= this.maxY) {
-                double d1 = this.maxY - other.minY;
-                if (d1 > p_72323_2_) {
-                    p_72323_2_ = d1;
-                }
+        if (p_72323_2_ > 0.0D && other.maxY <= this.minY) {
+            double d1 = this.minY - other.maxY;
+            if (d1 < p_72323_2_) {
+                p_72323_2_ = d1;
             }
         }
+
+        if (p_72323_2_ < 0.0D && other.minY >= this.maxY) {
+            double d1 = this.maxY - other.minY;
+            if (d1 > p_72323_2_) {
+                p_72323_2_ = d1;
+            }
+        }
+
         return p_72323_2_;
     }
 
@@ -147,27 +145,24 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public double calculateZOffset(AxisAlignedBB other, double p_72322_2_) {
-        if (other.maxX <= this.minX || other.minX >= this.maxX) {
+        if (other.maxX <= this.minX || other.minX >= this.maxX || other.maxY <= this.minY || other.minY >= this.maxY) {
             return p_72322_2_;
         }
 
-        if (other.maxY <= this.minY || other.minY >= this.maxY) {
-            return p_72322_2_;
-        }
-
-        if (p_72322_2_ > 0.0D && other.maxZ <= this.minZ) {
+        if (p_72322_2_ > 0.0D) {
             double d1 = this.minZ - other.maxZ;
             if (d1 < p_72322_2_) {
                 p_72322_2_ = d1;
             }
         }
 
-        if (p_72322_2_ < 0.0D && other.minZ >= this.maxZ) {
+        if (p_72322_2_ < 0.0D) {
             double d1 = this.maxZ - other.minZ;
             if (d1 > p_72322_2_) {
                 p_72322_2_ = d1;
             }
         }
+
         return p_72322_2_;
     }
 
@@ -176,8 +171,9 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public boolean intersectsWith(AxisAlignedBB other) {
-        return other.maxX > this.minX && other.minX < this.maxX
-            && (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ);
+        return this.maxX > other.minX && this.minX < other.maxX
+            && this.maxY > other.minY && this.minY < other.maxY
+            && this.maxZ > other.minZ && this.minZ < other.maxZ;
     }
 
     /**
@@ -266,32 +262,47 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     private boolean isVecInYZ(Vec3 vec) {
-        return vec != null && vec.yCoord >= this.minY
-            && vec.yCoord <= this.maxY
-            && vec.zCoord >= this.minZ
-            && vec.zCoord <= this.maxZ;
-    }
+        if (vec == null) {
+            return false;
+        }
 
+        if (vec.yCoord < this.minY || vec.yCoord > this.maxY) {
+            return false;
+        }
+
+        return vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
+    }
     /**
      * Checks if the specified vector is within the XZ dimensions of the bounding box. Args: Vec3D
      */
     @Overwrite
     private boolean isVecInXZ(Vec3 vec) {
-        return vec != null && vec.xCoord >= this.minX
-            && vec.xCoord <= this.maxX
-            && vec.zCoord >= this.minZ
-            && vec.zCoord <= this.maxZ;
+        if (vec == null) {
+            return false;
+        }
+
+        if (vec.xCoord < this.minX || vec.xCoord > this.maxX) {
+            return false;
+        }
+
+        return vec.zCoord >= this.minZ && vec.zCoord <= this.maxZ;
     }
 
     /**
-     * Checks if the specified vector is within the XY dimensions of the bounding box. Args: Vec3D
+     * @author
+     * @reason
      */
     @Overwrite
     private boolean isVecInXY(Vec3 vec) {
-        return vec != null && vec.xCoord >= this.minX
-            && vec.xCoord <= this.maxX
-            && vec.yCoord >= this.minY
-            && vec.yCoord <= this.maxY;
+        if (vec == null) {
+            return false;
+        }
+
+        if (vec.xCoord < this.minX || vec.xCoord > this.maxX) {
+            return false;
+        }
+
+        return !(vec.yCoord < this.minY) && !(vec.yCoord > this.maxY);
     }
 
     /**
