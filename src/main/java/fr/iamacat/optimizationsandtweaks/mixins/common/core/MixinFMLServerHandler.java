@@ -20,11 +20,8 @@ public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
 
     @Shadow
     private MinecraftServer server;
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
+
+    @Override
     public void queryUser(StartupQuery query) throws InterruptedException
     {
         if (query.getResult() == null)

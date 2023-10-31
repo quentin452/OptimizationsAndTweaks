@@ -14,11 +14,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 public abstract class MixinFMLClientHandler  implements IFMLSidedHandler {
     // todo avoid the usage of Tread.sleep + Thread.interrupted
     private Minecraft client;
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
+
+    @Override
     public void queryUser(StartupQuery query) throws InterruptedException
     {
         if (query.getResult() == null)
