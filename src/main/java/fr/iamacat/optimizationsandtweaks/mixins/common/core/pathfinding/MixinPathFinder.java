@@ -258,7 +258,7 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    private int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
+    public int findPathOptions(Entity p_75860_1_, PathPoint p_75860_2_, PathPoint p_75860_3_, PathPoint p_75860_4_,
                                 float p_75860_5_) {
         int i = 0;
         byte b0 = 0;
