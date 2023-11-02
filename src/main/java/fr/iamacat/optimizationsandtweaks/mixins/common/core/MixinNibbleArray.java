@@ -34,7 +34,7 @@ public class MixinNibbleArray {
      * @author
      * @reason
      */
-    @Overwrite
+    @Shadow
     public int get(int p_76582_1_, int p_76582_2_, int p_76582_3) {
         int l = (p_76582_2_ << this.depthBitsPlusFour) | (p_76582_3 << this.depthBits) | p_76582_1_;
         int i1 = l >> 1;
