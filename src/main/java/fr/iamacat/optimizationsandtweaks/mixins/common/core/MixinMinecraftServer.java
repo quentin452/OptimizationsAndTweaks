@@ -447,7 +447,7 @@ public abstract class MixinMinecraftServer {
      * @reason
      */
     @Overwrite
-    protected void saveAllWorlds(boolean dontLog)
+    public void saveAllWorlds(boolean dontLog)
     {
         if (!this.worldIsBeingDeleted)
         {
