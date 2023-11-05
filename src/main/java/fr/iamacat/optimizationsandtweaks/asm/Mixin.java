@@ -263,6 +263,9 @@ public enum Mixin implements IMixin {
         "core.MixinGodZillaFix"),
     common_core_MixinStatList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStatList, "core.MixinStatList"),
 
+    common_core_MixinTextureManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinTextureManager,
+        "core.MixinTextureManager"),
+
     // CLIENT MIXINS
 
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,
@@ -279,6 +282,9 @@ public enum Mixin implements IMixin {
         "core.MixinPatchSpawnerAnimals"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
+
+    client_core_MixinFontRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinFontRenderer,
+        "core.MixinFontRenderer"),
 
     // MOD-FILTERED MIXINS
 
