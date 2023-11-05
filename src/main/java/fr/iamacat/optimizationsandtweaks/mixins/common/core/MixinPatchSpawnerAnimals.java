@@ -84,7 +84,7 @@ public class MixinPatchSpawnerAnimals {
 
     @Unique
     private Object2ObjectHashMap<Class<? extends EntityLiving>, Constructor<? extends EntityLiving>> constructorCache = new Object2ObjectHashMap<>();
-
+    // todo fix server freeze with JAS https://github.com/quentin452/OptimizationsAndTweaks/issues/56 / DragonBLockC https://github.com/quentin452/OptimizationsAndTweaks/issues/57 ,probably caused by the constructorCache
     /**
      * @author iamacatfr
      * @reason optimize findChunksForSpawning

@@ -34,6 +34,8 @@ public enum TargetedMod implements ITargetedMod {
     NEI("NotEnoughItems", false, startsWith("nei")),
     ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),
     JAS("JustAnotherSpawner", false, startsWith("JustAnotherSpawner")),
+    DRAGONBLOCKC("DragonBlockC", false, startsWith("DragonBlockC")),
+
     THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
 
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),

@@ -272,7 +272,10 @@ public enum Mixin implements IMixin {
     client_core_MixinTesselator(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinTesselator),
         "core.MixinTesselator"),
-    common_core_MixinPatchSpawnerAnimals(Side.COMMON,  avoid(TargetedMod.JAS).and(m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals),
+    common_core_MixinPatchSpawnerAnimals(Side.COMMON,
+        avoid(TargetedMod.JAS)
+            .and(avoid(TargetedMod.DRAGONBLOCKC))
+            .and(m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals),
         "core.MixinPatchSpawnerAnimals"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
