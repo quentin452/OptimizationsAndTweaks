@@ -33,7 +33,7 @@ public enum TargetedMod implements ITargetedMod {
     OPTIFINE("OptiFine", false, startsWith("Optifine")),
     NEI("NotEnoughItems", false, startsWith("nei")),
     ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),
-
+    JAS("JustAnotherSpawner", false, startsWith("JustAnotherSpawner")),
     THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
 
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
