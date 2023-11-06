@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.ic2;
 import java.lang.reflect.Field;
 import java.util.WeakHashMap;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.world.World;
@@ -47,6 +48,7 @@ public class MixinTickHandler {
      * @reason
      */
     @Inject(method = "onWorldTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void onWorldTickmultiandtweaks(TickEvent.WorldTickEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinTickHandler) {
             World world = event.world;
