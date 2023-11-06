@@ -69,9 +69,9 @@ public class MixinHackTickHandler {
      * @author iamacatfr
      * @reason optimizations
      */
-    @Inject(method = "worldTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @Overwrite(remap = false)
     @SubscribeEvent
-    public void worldTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
+    public void worldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             for (Object entityObject : event.world.loadedEntityList) {
                 if (entityObject instanceof Entity) {
@@ -83,7 +83,6 @@ public class MixinHackTickHandler {
                     }
                 }
             }
-            ci.cancel();
         }
     }
 

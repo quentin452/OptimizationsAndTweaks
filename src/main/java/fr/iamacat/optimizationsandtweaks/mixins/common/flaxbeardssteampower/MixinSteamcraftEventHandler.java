@@ -17,6 +17,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -91,13 +92,13 @@ public class MixinSteamcraftEventHandler {
     @Shadow
     private ArrayList<Material> LEAF_MATERIALS;
 
-    @Inject(method = "updateVillagers", at = @At("HEAD"), cancellable = true, remap = false)
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     @SubscribeEvent
-    public void updateVillagers(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
-        if (!OptimizationsandTweaksConfig.enableMixinSteamcraftEventHandler) {
-            return;
-        }
-
+    public void updateVillagers(LivingEvent.LivingUpdateEvent event) {
         if (!(event.entityLiving instanceof EntityVillager)) {
             return;
         }
@@ -123,8 +124,6 @@ public class MixinSteamcraftEventHandler {
         if (!villager.worldObj.isRemote && buyingListField != null) {
             updateMerchantRecipeList(villager);
         }
-
-        ci.cancel();
     }
 
     @Unique
