@@ -29,6 +29,7 @@ public enum TargetedMod implements ITargetedMod {
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
     EASYBREEDING("easybreading", false, startsWith("easybreading")),
+    PORTALGUN("PortalGun", false, startsWith("PortalGun")),
 
     OPTIFINE("OptiFine", false, startsWith("Optifine")),
     NEI("NotEnoughItems", false, startsWith("nei")),
