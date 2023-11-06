@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.pneumaticraft;
 
 import java.util.Iterator;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -68,6 +69,7 @@ public class MixinHackTickHandler {
      * @reason optimizations
      */
     @Inject(method = "worldTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void worldTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
         if (event.phase == TickEvent.Phase.END) {
             for (Object entityObject : event.world.loadedEntityList) {
