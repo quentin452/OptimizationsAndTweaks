@@ -17,6 +17,11 @@ public enum Mixin implements IMixin {
     common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
 
+    common_minestones_MixinMSConfig(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinestoneSupportDecimalValue,
+        "minestones.MixinMSConfig"),
+    common_minestones_MixinMSEvents(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinestoneSupportDecimalValue,
+        "minestones.MixinMSEvents"),
+
     // OPTIMIZATIONS MIXINS
     common_core_MixinDedicatedServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
         "core.MixinDedicatedServer"),

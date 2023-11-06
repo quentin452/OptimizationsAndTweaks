@@ -71,7 +71,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-
+    @Config.Comment("Add decimal value support to Minestones mod stoneDropRate config")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMinestoneSupportDecimalValue;
     @Config.Comment("Make Minestones item with 64 item stacksize instead of 1")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
