@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.flaxbeardssteampower;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,6 +92,7 @@ public class MixinSteamcraftEventHandler {
     private ArrayList<Material> LEAF_MATERIALS;
 
     @Inject(method = "updateVillagers", at = @At("HEAD"), cancellable = true, remap = false)
+    @SubscribeEvent
     public void updateVillagers(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
         if (!OptimizationsandTweaksConfig.enableMixinSteamcraftEventHandler) {
             return;

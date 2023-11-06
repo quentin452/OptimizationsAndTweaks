@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.akatsuki;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,6 +32,7 @@ public class MixinAnimTickHandler {
     }
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinAnimTickHandler) {
             if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {

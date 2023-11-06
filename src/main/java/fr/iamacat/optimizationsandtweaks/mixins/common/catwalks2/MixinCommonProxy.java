@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -43,6 +44,7 @@ public class MixinCommonProxy {
     public LinkedList<WeakReference<EntityLivingBase>> entities = new LinkedList<>();
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinCommonProxyForCatWalks2) {
 
@@ -189,6 +191,7 @@ public class MixinCommonProxy {
     }
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinCommonProxyForCatWalks2) {
             double catwalkSpeedBonus = CatwalkMod.speedModifier.getAmount()
@@ -227,6 +230,7 @@ public class MixinCommonProxy {
     }
 
     @Inject(method = "blockPlaceEvent", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void blockPlaceEvent(BlockEvent.PlaceEvent event, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinCommonProxyForCatWalks2) {
             if (event.blockSnapshot.replacedBlock instanceof BlockScaffold) {
