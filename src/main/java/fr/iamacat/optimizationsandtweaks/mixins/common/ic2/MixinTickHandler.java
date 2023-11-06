@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,10 +48,9 @@ public class MixinTickHandler {
      * @author
      * @reason
      */
-    @Inject(method = "onWorldTick", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
-    public void onWorldTickmultiandtweaks(TickEvent.WorldTickEvent event, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinTickHandler) {
+    @Overwrite(remap = false)
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
             World world = event.world;
             if (!IC2.platform.isSimulating() || world.isRemote) {
                 return;
@@ -74,8 +74,6 @@ public class MixinTickHandler {
                     .onTickEnd(world);
                 IC2.platform.profilerEndSection();
             }
-            ci.cancel();
-        }
     }
 
     @Unique

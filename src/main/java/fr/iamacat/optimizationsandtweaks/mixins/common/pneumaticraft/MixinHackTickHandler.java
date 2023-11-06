@@ -47,9 +47,9 @@ public class MixinHackTickHandler {
      * @author iamacatfr
      * @reason optimizations
      */
-    @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @Overwrite(remap = false)
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
+    public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             Iterator<WorldAndCoord> iterator = optimizationsAndTweaks$hackedBlocks.keySet()
                 .iterator();
@@ -63,7 +63,6 @@ public class MixinHackTickHandler {
                 }
             }
         }
-        ci.cancel();
     }
 
     /**
