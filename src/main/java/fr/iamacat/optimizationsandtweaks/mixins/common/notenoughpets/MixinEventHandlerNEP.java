@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.notenoughpets;
 import java.util.Arrays;
 import java.util.List;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
@@ -32,6 +33,7 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 public class MixinEventHandlerNEP {
 
     @Inject(method = "spawnStraysWithVillageTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void spawnStraysWithVillageTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
         if (!OptimizationsandTweaksConfig.enableMixinEventHandlerNEP) {
             ci.cancel();

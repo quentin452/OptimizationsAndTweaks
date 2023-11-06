@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
+import org.spongepowered.libraries.com.google.common.eventbus.Subscribe;
 import pneumaticCraft.api.client.pneumaticHelmet.IHackableBlock;
 import pneumaticCraft.client.render.pneumaticArmor.hacking.HackableHandler;
 import pneumaticCraft.common.HackTickHandler;
@@ -47,6 +48,7 @@ public class MixinHackTickHandler {
      * @reason optimizations
      */
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
+    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (event.phase == TickEvent.Phase.END) {
             Iterator<WorldAndCoord> iterator = optimizationsAndTweaks$hackedBlocks.keySet()
