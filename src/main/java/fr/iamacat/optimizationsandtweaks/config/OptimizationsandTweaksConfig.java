@@ -322,6 +322,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinModBlocksGemsNJewels;
+    @Config.Comment("Add oredict to industrialupgrades")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRegisterOreDict;
     @Config.Comment("Fix Exception in server tick loop caused by Portal Gun mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

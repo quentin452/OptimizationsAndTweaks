@@ -97,12 +97,12 @@ dependencies {
     implementation "curse.maven:easy-breeding-236045:2259220-deobf-sources-api"
     implementation "curse.maven:portal-gun-229084:2480016-deobf-sources-api"
     implementation "curse.maven:gems-jewels-392943:2994356-deobf-sources-api"
+    implementation "curse.maven:industrial-upgrade-372007:3592456-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     transformedMod("com.github.GTNewHorizons:BuildCraftOilTweak:1.0.4:dev")
     transformedMod("com.github.GTNewHorizons:Botania:1.10.1-GTNH:dev")
-
 }
 
