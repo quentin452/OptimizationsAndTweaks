@@ -318,7 +318,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStatList;
-
+    @Config.Comment("Add Missing oredict to Gems n jewels ores")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinModBlocksGemsNJewels;
     @Config.Comment("Fix Exception in server tick loop caused by Portal Gun mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

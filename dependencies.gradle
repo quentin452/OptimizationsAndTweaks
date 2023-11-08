@@ -96,6 +96,7 @@ dependencies {
     implementation "curse.maven:minestones-231048:2306961-deobf-sources-api"
     implementation "curse.maven:easy-breeding-236045:2259220-deobf-sources-api"
     implementation "curse.maven:portal-gun-229084:2480016-deobf-sources-api"
+    implementation "curse.maven:gems-jewels-392943:2994356-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

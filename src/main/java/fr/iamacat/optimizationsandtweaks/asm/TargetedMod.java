@@ -38,6 +38,7 @@ public enum TargetedMod implements ITargetedMod {
     DRAGONBLOCKC("DragonBlockC", false, startsWith("DragonBlockC")),
 
     THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
+    GEMSNJEWELS("gemsnjewels", false, startsWith("gemsnjewels")),
 
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),
