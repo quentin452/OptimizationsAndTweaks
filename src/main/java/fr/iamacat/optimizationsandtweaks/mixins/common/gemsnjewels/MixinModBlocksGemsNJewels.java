@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ModBlocks.class)
 public class MixinModBlocksGemsNJewels {
     /**
-     * @reason1 avoid dupplicated emerald in overworld by removing emeraldOreBlock
-     * @reason2 add oredics
+     * @reason1 add oredics to ores
      */
     @Shadow
     public static Block opalOreBlock;
