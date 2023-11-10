@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ModBlocks.class)
 public class MixinModBlocksGemsNJewels {
+
     /**
      * @reason1 add oredics to ores
      */

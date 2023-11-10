@@ -185,6 +185,8 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     // BUGFIX MIXINS
+    common_blocklings_MixinItemBlockling(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinItemBlockling, "blocklings.MixinItemBlockling"),
     common_buildcraft_addon_oiltweaks_MixinBuildCraftConfig(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinBuildCraftConfig,
         "buildcraft.addon.oiltweaks.MixinBuildCraftConfig"),

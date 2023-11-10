@@ -326,6 +326,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRegisterOreDict;
+    @Config.Comment("Fix null Crash when clicking on the Item from blockling ")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemBlockling;
     @Config.Comment("Fix Exception in server tick loop caused by Portal Gun mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
