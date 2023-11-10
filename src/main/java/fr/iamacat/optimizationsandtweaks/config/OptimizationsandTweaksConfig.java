@@ -330,6 +330,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemBlockling;
+
+    @Config.Comment("Fix Crash when using F7 from NEI and using Small Stairs mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldOverlayRenderer;
     @Config.Comment("Fix Exception in server tick loop caused by Portal Gun mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -48,6 +48,7 @@ public enum TargetedMod implements ITargetedMod {
     MINEFACTORYRELOADED2("MinefactoryReloaded", false, startsWith("cofh_mine")),
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),
+    SMALLSTAIRS("Small Stairs", false, startsWith("Small Stairs")),
 
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
