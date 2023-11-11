@@ -314,6 +314,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
+    @Config.Comment("Optimize Utils performances class from Et futurum REQUIEM")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinUtils;
     @Config.Comment("Print stats ids to help to fix duplicated stats i" + "ds crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -117,6 +117,9 @@ public enum Mixin implements IMixin {
         "akatsuki.MixinAnimationHandler"),
     common_aether_MixinPlayerAether(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPlayerAether,
         "aether.MixinPlayerAether"),
+
+    common_etfuturumrequiem_MixinUtils(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinUtils,
+        "etfuturumrequiem.MixinUtils"),
     common_notenoughpets_MixinEventHandlerNEP(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventHandlerNEP,
         "notenoughpets.MixinEventHandlerNEP"),
     common_pneumaticraft_MixinHackTickHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinHackTickHandler,

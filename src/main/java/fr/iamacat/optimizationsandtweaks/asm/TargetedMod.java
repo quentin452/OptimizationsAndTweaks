@@ -39,6 +39,7 @@ public enum TargetedMod implements ITargetedMod {
 
     THAUMCRAFT4("Thaumcraft", false, startsWith("thaumcraft")),
     GEMSNJEWELS("gemsnjewels", false, startsWith("gemsnjewels")),
+    ETFUTURMREQUIEM("Et_Futurum_Requiem", false, startsWith("Et_Futurum_Requiem")),
 
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),

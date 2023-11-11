@@ -99,6 +99,7 @@ dependencies {
     implementation "curse.maven:gems-jewels-392943:2994356-deobf-sources-api"
     implementation "curse.maven:industrial-upgrade-372007:3592456-deobf-sources-api"
     implementation "curse.maven:small-stairs-417155:3099752-deobf-sources-api"
+    implementation "curse.maven:et-futurum-requiem-441392:4769523-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
