@@ -30,4 +30,3 @@ src/main/resources/mixins.*([!.]).json
 *.bat
 *.DS_Store
 !gradlew.bat
-/libs/
