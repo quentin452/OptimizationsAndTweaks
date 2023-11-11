@@ -106,5 +106,10 @@ dependencies {
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     transformedMod("com.github.GTNewHorizons:BuildCraftOilTweak:1.0.4:dev")
     transformedMod("com.github.GTNewHorizons:Botania:1.10.1-GTNH:dev")
+
+    implementation files("libs/FamiliarsAPI-1.7.10.jar")
+    implementation files("libs/FamiliarsDefaultMobPack-1.7.10.jar")
+    implementation files("libs/FamiliarsExtendedFamPack-1.7.10.jar")
+    implementation files("libs/FamiliarsHerobrineFamPack-1.7.10.jar")
 }
 

@@ -334,7 +334,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemBlockling;
-
+    @Config.Comment("Fix https://github.com/quentin452/privates-minecraft-modpack/issues/48 with FamiliarsAPI")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFamiliar;
     @Config.Comment("Fix Crash when using F7 from NEI and using Small Stairs mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
