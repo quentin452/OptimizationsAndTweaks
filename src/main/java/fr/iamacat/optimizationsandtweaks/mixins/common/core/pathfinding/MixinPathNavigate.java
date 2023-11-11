@@ -328,7 +328,7 @@ public class MixinPathNavigate {
      * Gets the safe pathing Y position for the entity depending on if it can path swim or not
      */
     @Overwrite
-    private int getPathableYPos() {
+    public int getPathableYPos() {
         if (this.theEntity.isInWater() && this.canSwim) {
             int i = (int) this.theEntity.boundingBox.minY;
             Block block = this.worldObj.getBlock(
