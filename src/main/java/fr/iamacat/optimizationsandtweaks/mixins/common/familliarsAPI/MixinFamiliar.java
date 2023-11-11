@@ -90,20 +90,24 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
     @Unique
     private void multithreadingandtweaks$handlePlayer() {
         this.fallDistance = 0.0F;
-        if (this.player.isDead && !this.worldObj.isRemote) {
-            this.setDead();
-        } else {
-            if (this.attackTime > 0) {
-                --this.attackTime;
-            }
 
-            this.followPlayer();
-            this.func_70626_be();
-            if (ConfigHandler.abilitiesEnabledGlobal && FamiliarsAPI.proxy.useAbility(this.getOwner())) {
-                this.updateAbility();
-            }
+        if (this.player == null || this.player.isDead || this.worldObj != this.player.worldObj) {
+            this.setDead();
+            return;
+        }
+
+        if (this.attackTime > 0) {
+            --this.attackTime;
+        }
+
+        this.followPlayer();
+        this.func_70626_be();
+
+        if (ConfigHandler.abilitiesEnabledGlobal && FamiliarsAPI.proxy.useAbility(this.getOwner())) {
+            this.updateAbility();
         }
     }
+
 
     @Shadow
     public void updateAbility() {
@@ -157,6 +161,7 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.rotationYawHead = this.rotationYaw;
     }
 
+
     /**
      * @author
      * @reason
@@ -170,6 +175,7 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.setOwner(this.player.getDisplayName());
         this.dimension = p.dimension;
     }
+
 
     /**
      * @author
