@@ -335,7 +335,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemBlockling;
-    @Config.Comment("Fix https://github.com/quentin452/privates-minecraft-modpack/issues/48 with FamiliarsAPI")
+    @Config.Comment("(todo) Fix https://github.com/quentin452/privates-minecraft-modpack/issues/48 with FamiliarsAPI")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFamiliar;
@@ -351,10 +351,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
-    @Config.Comment("Fix Potentials memory leaks from Advanced Genetics")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinFixMemoryLeaksFromAdvancedGenetics;
     @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
