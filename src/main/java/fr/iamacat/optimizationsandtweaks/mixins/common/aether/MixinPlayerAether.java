@@ -280,11 +280,10 @@ public class MixinPlayerAether {
                 && this.player.dimension == AetherConfig.getAetherDimensionID()
                 && this.player.worldObj.getBlock(this.bedLocation.posX, this.bedLocation.posY, this.bedLocation.posZ)
                     != BlocksAether.skyroot_bed) {
-                this.setBedLocation((ChunkCoordinates) null);
+                this.setBedLocation(null);
             }
-            ci.cancel();
         }
-
+        ci.cancel();
     }
 
     @Unique
