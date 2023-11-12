@@ -111,7 +111,7 @@ dependencies {
     implementation files("libs/FamiliarsDefaultMobPack-1.7.10.jar")
     implementation files("libs/FamiliarsExtendedFamPack-1.7.10.jar")
     implementation files("libs/FamiliarsHerobrineFamPack-1.7.10.jar")
-    implementation files("libs/advancedgenetics-1.7.2-1.5.jar")
+    implementation files("libs/Advanced-Genetics-Mod-1.7.10.jar")
 
 }
 
