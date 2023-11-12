@@ -71,6 +71,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
+
     @Config.Comment("Add decimal value support to Minestones mod stoneDropRate config")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -350,7 +351,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
-
+    @Config.Comment("Fix Potentials memory leaks from Advanced Genetics")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFixMemoryLeaksFromAdvancedGenetics;
     @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

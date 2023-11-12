@@ -41,6 +41,7 @@ public enum TargetedMod implements ITargetedMod {
     GEMSNJEWELS("gemsnjewels", false, startsWith("gemsnjewels")),
     ETFUTURMREQUIEM("Et_Futurum_Requiem", false, startsWith("Et_Futurum_Requiem")),
     FAMILIARSAPI("FamiliarsAPI", false, startsWith("FamiliarsAPI")),
+    ADVANCEDGENETICS("advancedgenetics", false, startsWith("advancedgenetics")),
 
     PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),
