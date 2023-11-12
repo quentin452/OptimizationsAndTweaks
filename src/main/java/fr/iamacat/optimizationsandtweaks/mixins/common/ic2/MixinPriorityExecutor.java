@@ -35,13 +35,8 @@ public class MixinPriorityExecutor extends ThreadPoolExecutor {
     @Inject(method = "executeAll", at = @At("HEAD"), remap = false, cancellable = true)
     public void executeAll(List<? extends Runnable> tasks, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinPriorityExecutor) {
-            if (this.isShutdown()) {
-                throw new RejectedExecutionException("Tasks " + tasks + " rejected from " + this + ".");
-            } else {
-                while (this.prestartCoreThread()) {}
-
-                this.getQueue()
-                    .addAll(tasks);
+            if (!this.isShutdown()) {
+                this.getQueue().addAll(tasks);
             }
             ci.cancel();
         }

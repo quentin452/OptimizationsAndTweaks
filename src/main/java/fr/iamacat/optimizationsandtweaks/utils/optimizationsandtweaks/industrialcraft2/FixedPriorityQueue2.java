@@ -11,38 +11,34 @@ import ic2.core.util.PriorityExecutor;
 
 public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements BlockingQueue<E> {
 
-    private final Map<PriorityExecutor.Priority, Queue<E>> queues = new EnumMap(PriorityExecutor.Priority.class);
+    private final Map<PriorityExecutor.Priority, Queue<E>> queues = new EnumMap<>(PriorityExecutor.Priority.class);
 
     public FixedPriorityQueue2() {
         PriorityExecutor.Priority[] var1 = PriorityExecutor.Priority.values();
-        int var2 = var1.length;
-
-        for (int var3 = 0; var3 < var2; ++var3) {
-            PriorityExecutor.Priority priority = var1[var3];
-            this.queues.put(priority, new ConcurrentLinkedQueue<>());
+        for (PriorityExecutor.Priority priority : var1) {
+            this.queues.put(priority, new ArrayDeque<>());
         }
-
     }
 
-    public synchronized E poll() {
-        Iterator var1 = this.queues.values()
+    public E poll() {
+        Iterator<Queue<E>> var1 = this.queues.values()
             .iterator();
 
-        Object ret;
+        E ret;
         do {
             if (!var1.hasNext()) {
                 return null;
             }
 
-            Queue<E> queue = (Queue) var1.next();
+            Queue<E> queue = var1.next();
             ret = queue.poll();
         } while (ret == null);
 
-        return (E) ret;
+        return ret;
     }
 
-    public synchronized E peek() {
-        Iterator var1 = this.queues.values()
+    public E peek() {
+        Iterator<Queue<E>> var1 = this.queues.values()
             .iterator();
 
         Object ret;
@@ -51,42 +47,38 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
                 return null;
             }
 
-            Queue<E> queue = (Queue) var1.next();
+            Queue<E> queue = var1.next();
             ret = queue.peek();
         } while (ret == null);
 
         return (E) ret;
     }
 
-    public synchronized int size() {
+    public int size() {
         int ret = 0;
 
-        Queue queue;
-        for (Iterator var2 = this.queues.values()
+        Queue<E> queue;
+        for (Iterator<Queue<E>> var2 = this.queues.values()
             .iterator(); var2.hasNext(); ret += queue.size()) {
-            queue = (Queue) var2.next();
+            queue = var2.next();
         }
 
         return ret;
     }
 
-    public synchronized Iterator<E> iterator() {
-        List<Iterator<E>> iterators = new ArrayList(this.queues.size());
-        Iterator var2 = this.queues.values()
-            .iterator();
+    public Iterator<E> iterator() {
+        List<Iterator<E>> iterators = new ArrayList<>(this.queues.size());
 
-        while (var2.hasNext()) {
-            Queue<E> queue = (Queue) var2.next();
-            iterators.add(queue.iterator());
+        for (Queue<E> es : this.queues.values()) {
+            iterators.add(es.iterator());
         }
 
         return Iterators.concat(iterators.iterator());
     }
 
-    public synchronized boolean offer(E e) {
-        Queue<E> queue = (Queue) this.queues.get(this.getPriority(e));
+    public boolean offer(E e) {
+        ArrayDeque<E> queue = (ArrayDeque<E>) queues.get(getPriority(e));
         queue.offer(e);
-        this.notify();
         return true;
     }
 
@@ -94,17 +86,17 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
         this.offer(e);
     }
 
-    public boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean offer(E e, long timeout, TimeUnit unit) {
         return this.offer(e);
     }
 
     public synchronized E take() throws InterruptedException {
-        Object ret;
+        E ret;
         for (ret = this.poll(); ret == null; ret = this.poll()) {
             this.wait();
         }
 
-        return (E) ret;
+        return ret;
     }
 
     public synchronized E poll(long timeout, TimeUnit unit) throws InterruptedException {
@@ -136,14 +128,12 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
         return this.drainTo(c, Integer.MAX_VALUE);
     }
 
-    public synchronized int drainTo(Collection<? super E> c, int maxElements) {
+    public int drainTo(Collection<? super E> c, int maxElements) {
         int ret = 0;
-        Iterator var4 = this.queues.values()
-            .iterator();
 
-        while (var4.hasNext()) {
-            for (Queue<E> queue = (Queue) var4.next(); ret < maxElements; ++ret) {
-                E x = queue.poll();
+        for (Queue<E> es : this.queues.values()) {
+            for (; ret < maxElements; ++ret) {
+                E x = es.poll();
                 if (x == null) {
                     break;
                 }
@@ -155,41 +145,35 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
         return ret;
     }
 
-    public synchronized void clear() {
-        Iterator var1 = this.queues.values()
-            .iterator();
+    public void clear() {
 
-        while (var1.hasNext()) {
-            Queue<E> queue = (Queue) var1.next();
-            queue.clear();
+        for (Queue<E> es : this.queues.values()) {
+            es.clear();
         }
 
     }
 
-    public synchronized boolean contains(Object o) {
-        Iterator var2 = this.queues.values()
+    public boolean contains(Object o) {
+        Iterator<Queue<E>> var2 = this.queues.values()
             .iterator();
 
-        Queue queue;
+        Queue<E> queue;
         do {
             if (!var2.hasNext()) {
                 return false;
             }
 
-            queue = (Queue) var2.next();
+            queue = var2.next();
         } while (!queue.contains(o));
 
         return true;
     }
 
-    public synchronized boolean removeAll(Collection<?> c) {
+    public boolean removeAll(Collection<?> c) {
         boolean ret = false;
-        Iterator var3 = this.queues.values()
-            .iterator();
 
-        while (var3.hasNext()) {
-            Queue<E> queue = (Queue) var3.next();
-            if (queue.removeAll(c)) {
+        for (Queue<E> es : this.queues.values()) {
+            if (es.removeAll(c)) {
                 ret = true;
             }
         }
@@ -197,14 +181,11 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
         return ret;
     }
 
-    public synchronized boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<?> c) {
         boolean ret = false;
-        Iterator var3 = this.queues.values()
-            .iterator();
 
-        while (var3.hasNext()) {
-            Queue<E> queue = (Queue) var3.next();
-            if (queue.retainAll(c)) {
+        for (Queue<E> es : this.queues.values()) {
+            if (es.retainAll(c)) {
                 ret = true;
             }
         }
@@ -212,19 +193,19 @@ public class FixedPriorityQueue2<E> extends AbstractQueue<E> implements Blocking
         return ret;
     }
 
-    public synchronized Object[] toArray() {
+    public Object[] toArray() {
         return super.toArray();
     }
 
-    public synchronized <T> T[] toArray(T[] a) {
+    public <T> T[] toArray(T[] a) {
         return super.toArray(a);
     }
 
-    public synchronized String toString() {
+    public String toString() {
         return super.toString();
     }
 
-    public synchronized boolean addAll(Collection<? extends E> c) {
+    public boolean addAll(Collection<? extends E> c) {
         if (c == null) {
             throw new NullPointerException();
         }
