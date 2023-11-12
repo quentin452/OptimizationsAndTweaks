@@ -20,7 +20,10 @@ public class MixinEventHandler {
     @Overwrite(remap = false)
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity != null && !event.entity.worldObj.isRemote && event.entityLiving != null && event.entityLiving.getClass() == EntityWither.class) {
+        if (event.entity != null && !event.entity.worldObj.isRemote
+            && event.entityLiving != null
+            && event.entityLiving.getClass() == EntityWither.class
+            && powerUpManager != null) {
             this.powerUpManager.update((EntityWither) event.entityLiving);
         }
     }
