@@ -261,10 +261,12 @@ public enum Mixin implements IMixin {
     common_familliarsAPI_MixinFamiliar(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFamiliar,
         "familliarsAPI.MixinFamiliar"),
-
     common_pamsharvestcraft_MixinFixPamsTreesCascadingWorldgenLag(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixPamsTreesCascadingWorldgenLag,
         "pamsharvestcraft.MixinFixPamsTreesCascadingWorldgenLag"),
+    common_betterburning_MixinBetterBurning(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinBetterBurning,
+        "betterburning.MixinBetterBurning"),
 
     common_MixinFixCascadingFromShipwreckGen(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromShipwreckGen,
