@@ -16,7 +16,7 @@ public class MixinBetterBurning {
 
     /**
      * @author iamacatfr
-     * @reason fix null crash caused by onLivingTick
+     * @reason fix null crash caused by onLivingTick from Better Burning mod
      */
     @Overwrite(remap = false)
     @SubscribeEvent

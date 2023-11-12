@@ -351,6 +351,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBetterBurning;
+
+    @Config.Comment("Fix Null Crash caused by Hardcore Wither")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventHandler;
     @Config.Comment("Fix Spam logs when minefactory reloaded is installed with several mod(see the mixin to find which")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

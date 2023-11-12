@@ -28,8 +28,9 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
-
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
+
+    HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
     EASYBREEDING("easybreading", false, startsWith("easybreading")),
     PORTALGUN("PortalGun", false, startsWith("PortalGun")),
 
