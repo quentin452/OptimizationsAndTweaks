@@ -1098,55 +1098,7 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
     {
         this.refreshTexturePacksScheduled = true;
     }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void run() {
-        this.running = true;
-        CrashReport crashreport;
 
-        try {
-            this.startGame();
-        } catch (Throwable throwable) {
-            crashreport = CrashReport.makeCrashReport(throwable, "Initializing game");
-            crashreport.makeCategory("Initialization");
-            this.displayCrashReport(this.addGraphicsAndWorldToCrashReport(crashreport));
-            return;
-        }
-
-        while (this.running) {
-            try {
-                if (this.hasCrashed && this.crashReporter != null) {
-                    this.displayCrashReport(this.crashReporter);
-                    return;
-                }
-
-                try {
-                    this.runGameLoop();
-                } catch (OutOfMemoryError outofmemoryerror) {
-                    this.freeMemory();
-                    this.displayGuiScreen(new GuiMemoryErrorScreen());
-                    // System.gc();
-                }
-            } catch (MinecraftError minecrafterror) {
-                // Handle MinecraftError if needed
-            } catch (ReportedException reportedexception) {
-                this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
-                this.freeMemory();
-                logger.fatal("Reported exception thrown!", reportedexception);
-                this.displayCrashReport(reportedexception.getCrashReport());
-            } catch (Throwable throwable1) {
-                crashreport = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
-                this.freeMemory();
-                logger.fatal("Unreported exception thrown!", throwable1);
-                this.displayCrashReport(crashreport);
-            } finally {
-                this.shutdownMinecraftApplet();
-            }
-        }
-    }
     @Shadow
     private void runGameLoop()
     {
