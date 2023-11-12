@@ -1100,73 +1100,48 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
      * @reason
      */
     @Overwrite
-    public void run()
-    {
+    public void run() {
         this.running = true;
         CrashReport crashreport;
 
-        try
-        {
+        try {
             this.startGame();
-        }
-        catch (Throwable throwable)
-        {
+        } catch (Throwable throwable) {
             crashreport = CrashReport.makeCrashReport(throwable, "Initializing game");
             crashreport.makeCategory("Initialization");
             this.displayCrashReport(this.addGraphicsAndWorldToCrashReport(crashreport));
             return;
         }
 
-        while (true)
-        {
-            try
-            {
-                while (this.running)
-                {
-                    if (!this.hasCrashed || this.crashReporter == null)
-                    {
-                        try
-                        {
-                            this.runGameLoop();
-                        }
-                        catch (OutOfMemoryError outofmemoryerror)
-                        {
-                            this.freeMemory();
-                            this.displayGuiScreen(new GuiMemoryErrorScreen());
-                         //   System.gc();
-                        }
-
-                        continue;
-                    }
-
+        while (this.running) {
+            try {
+                if (this.hasCrashed && this.crashReporter != null) {
                     this.displayCrashReport(this.crashReporter);
                     return;
                 }
-            }
-            catch (MinecraftError minecrafterror)
-            {
-                ;
-            }
-            catch (ReportedException reportedexception)
-            {
+
+                try {
+                    this.runGameLoop();
+                } catch (OutOfMemoryError outofmemoryerror) {
+                    this.freeMemory();
+                    this.displayGuiScreen(new GuiMemoryErrorScreen());
+                    // System.gc();
+                }
+            } catch (MinecraftError minecrafterror) {
+                // Handle MinecraftError if needed
+            } catch (ReportedException reportedexception) {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
                 this.freeMemory();
                 logger.fatal("Reported exception thrown!", reportedexception);
                 this.displayCrashReport(reportedexception.getCrashReport());
-            }
-            catch (Throwable throwable1)
-            {
+            } catch (Throwable throwable1) {
                 crashreport = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
                 this.freeMemory();
                 logger.fatal("Unreported exception thrown!", throwable1);
                 this.displayCrashReport(crashreport);
-            }
-            finally
-            {
+            } finally {
                 this.shutdownMinecraftApplet();
             }
-
-            return;
         }
     }
     @Shadow
