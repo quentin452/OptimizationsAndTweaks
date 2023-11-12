@@ -418,7 +418,6 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
         return bytebuffer;
     }
 
-    // todo avoid the usage of Tread.sleep
     /**
      * @author
      * @reason
@@ -430,7 +429,11 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
 
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             while (running) {
-
+                try {
+                    TimeUnit.MILLISECONDS.sleep(Long.MAX_VALUE);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         });
 
