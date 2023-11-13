@@ -267,7 +267,9 @@ public enum Mixin implements IMixin {
     common_hardcorewither_MixinEventHandler(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEventHandler,
         "hardcorewither.MixinEventHandler"),
-
+    common_shincolle_MixinEVENT_BUS_EventHandler(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEVENT_BUS_EventHandler,
+        "shincolle.MixinEVENT_BUS_EventHandler"),
     common_betterburning_MixinBetterBurning(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinBetterBurning,
         "betterburning.MixinBetterBurning"),
