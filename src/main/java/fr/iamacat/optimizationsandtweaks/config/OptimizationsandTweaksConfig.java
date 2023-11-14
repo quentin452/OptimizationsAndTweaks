@@ -359,7 +359,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEVENT_BUS_EventHandler;
-
+    @Config.Comment("Disable gui from Essence of the God mod?")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixindisablingguifromEssenceofthegod;
 
     @Config.Comment("Change name of TileEntities from aeterh to fix dupplicated names")
     @Config.DefaultBoolean(true)

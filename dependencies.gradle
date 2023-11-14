@@ -115,6 +115,7 @@ dependencies {
     implementation files("libs/FamiliarsExtendedFamPack-1.7.10.jar")
     implementation files("libs/FamiliarsHerobrineFamPack-1.7.10.jar")
     implementation files("libs/Advanced-Genetics-Mod-1.7.10.jar")
+    implementation files("libs/Essence_of_the_Gods_1.7.10_1.7.jar")
 
 }
 

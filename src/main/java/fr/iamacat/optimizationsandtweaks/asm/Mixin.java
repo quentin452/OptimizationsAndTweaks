@@ -119,7 +119,10 @@ public enum Mixin implements IMixin {
         "aether.MixinPlayerAether"),
     common_aether_MixinAetherTileEntities(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAetherTileEntities,
         "aether.MixinAetherTileEntities"),
-
+    client_essenceofthegod_MixinBarTickHandler(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
+        "essenceofthegod.MixinBarTickHandler"),
+    client_essenceofthegod_MixinPlayerStats(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
+        "essenceofthegod.MixinPlayerStats"),
     common_etfuturumrequiem_MixinUtils(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinUtils,
         "etfuturumrequiem.MixinUtils"),
     common_notenoughpets_MixinEventHandlerNEP(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventHandlerNEP,
