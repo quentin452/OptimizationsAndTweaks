@@ -311,10 +311,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPathFinding;
-    @Config.Comment("Optimize selectEntitiesWithinAABB")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinWorld;
+
     @Config.Comment("Optimize Utils performances class from Et futurum REQUIEM")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

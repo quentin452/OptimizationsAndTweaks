@@ -160,7 +160,6 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAITasks"),
     common_core_MixinEntityMoveHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMoveHelper,
         "core.MixinEntityMoveHelper"),
-    common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
 
     common_core_MixinLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLeaves, "core.MixinLeaves"),
 
