@@ -51,10 +51,11 @@ public enum TargetedMod implements ITargetedMod {
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
-    MINEFACTORYRELOADED2("MinefactoryReloaded", false, startsWith("cofh_mine")),
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),
     SMALLSTAIRS("Small Stairs", false, startsWith("Small Stairs")),
+    XAEROWORLDMAP("XaerosWorldMap", false, startsWith("XaerosWorldMap")),
+    XAEROMINIMAP("Xaeros_Minimap", false, startsWith("Xaeros_Minimap")),
 
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
@@ -81,6 +82,7 @@ public enum TargetedMod implements ITargetedMod {
     MINESTONES("minestones", false, startsWith("minestones")),
     BLENDTRONIC("blendtronic", false, startsWith("blendtronic")),
     WITCHERY("witchery", false, startsWith("witchery")),
+    JEWELRYCRAFT2("Jewelrycraft2", false, startsWith("Jewelrycraft2")),
 
     AETHER("aether", false, startsWith("aether")),;
 

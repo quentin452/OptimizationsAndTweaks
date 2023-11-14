@@ -102,6 +102,7 @@ dependencies {
     implementation "curse.maven:et-futurum-requiem-441392:4769523-deobf-sources-api"
     implementation "curse.maven:better-burning-353434:2919011-deobf-sources-api"
     implementation "curse.maven:hardcore-wither-237407:2282681-deobf-sources-api"
+    implementation "curse.maven:jewelrycraft-2-229927:2271615-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

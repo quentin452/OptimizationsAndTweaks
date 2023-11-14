@@ -32,7 +32,7 @@ public class MixinBlockLiquid extends Block {
      * Returns a vector indicating the direction and intensity of liquid flow
      */
     @Overwrite
-    private Vec3 getFlowVector(IBlockAccess p_149800_1_, int p_149800_2_, int p_149800_3_, int p_149800_4_) {
+    public Vec3 getFlowVector(IBlockAccess p_149800_1_, int p_149800_2_, int p_149800_3_, int p_149800_4_) {
         Vec3 vec3 = Vec3.createVectorHelper(0.0D, 0.0D, 0.0D);
         int l = this.getEffectiveFlowDecay(p_149800_1_, p_149800_2_, p_149800_3_, p_149800_4_);
         int i1;

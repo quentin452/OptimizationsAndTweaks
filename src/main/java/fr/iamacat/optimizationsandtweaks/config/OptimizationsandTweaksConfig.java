@@ -359,6 +359,16 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEVENT_BUS_EventHandler;
+
+
+    @Config.Comment("Change name of TileEntities from aeterh to fix dupplicated names")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAetherTileEntities;
+    @Config.Comment("Disable the Jewelrycraft2 book when spawning?")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityEventHandler;
     @Config.Comment("Fix Spam logs when minefactory reloaded is installed with several mod(see the mixin to find which")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
