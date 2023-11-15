@@ -360,7 +360,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixindisablingguifromEssenceofthegod;
-
+    @Config.Comment("Fix crash from AppleFuelHandler from GrowthCraft mod")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAppleFuelHandler;
     @Config.Comment("Change name of TileEntities from aeterh to fix dupplicated names")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

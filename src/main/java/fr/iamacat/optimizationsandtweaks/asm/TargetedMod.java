@@ -53,6 +53,7 @@ public enum TargetedMod implements ITargetedMod {
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
     ESSENCEOFTHEGOD("Essence_of_the_Gods", false, startsWith("Essence_of_the_Gods")),
     ESSENCEOFTHEGODFORK("eotg", false, startsWith("eotg")),
+    GROWTHCRAFT("growthcraft", false, startsWith("growthcraft")),
 
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),

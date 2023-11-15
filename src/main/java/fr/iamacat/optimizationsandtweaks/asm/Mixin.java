@@ -131,6 +131,9 @@ public enum Mixin implements IMixin {
         "pneumaticraft.MixinHackTickHandler"),
     common_ic2_MixinPriorityExecutor(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPriorityExecutor,
         "ic2.MixinPriorityExecutor"),
+
+    common_growthcraft_MixinAppleFuelHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAppleFuelHandler,
+        "growthcraft.MixinAppleFuelHandler"),
     common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
         "core.MixinBlockGrass"),
     common_adventurersamulet_MixinEntityEagle(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityEagle,
