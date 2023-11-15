@@ -52,6 +52,7 @@ public enum TargetedMod implements ITargetedMod {
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),
     ESSENCEOFTHEGOD("Essence_of_the_Gods", false, startsWith("Essence_of_the_Gods")),
+    ESSENCEOFTHEGODFORK("eotg", false, startsWith("eotg")),
 
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),
