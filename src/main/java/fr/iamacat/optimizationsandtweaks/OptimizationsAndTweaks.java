@@ -1,7 +1,5 @@
 package fr.iamacat.optimizationsandtweaks;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotr.LOTRConfigBiomeID;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
