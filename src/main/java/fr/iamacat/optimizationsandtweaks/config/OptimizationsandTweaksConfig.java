@@ -376,10 +376,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
-    @Config.Comment("Fix Crash between Endlessids and Lord of the rings mod")
+    @Config.Comment("Fix Crash between Endlessids and Lord of the rings mod(but problem remain , does not support higher id than the vanilla scope(256)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinLOTRDimension;
+    public static boolean MixinLOTRWorldProvider;
     @Config.Comment("Add configs options to change Biome Ids from LOTR mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
