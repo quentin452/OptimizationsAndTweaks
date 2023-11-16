@@ -72,6 +72,7 @@ public enum TargetedMod implements ITargetedMod {
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
     MINERALOGY("Mineralogy", false, startsWith("mineralogy")),
     LORDOFTHERINGS("LOTRMod", false, startsWith("LOTRMod")),
+    ENDLESSIDS("endlessids", false, startsWith("endlessids")),
 
     SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),
     STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),

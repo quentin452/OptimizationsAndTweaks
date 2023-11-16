@@ -376,7 +376,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
-
+    @Config.Comment("Fix Crash between Endlessids and Lord of the rings mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLOTRDimension;
     @Config.Comment("Add configs options to change Biome Ids from LOTR mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

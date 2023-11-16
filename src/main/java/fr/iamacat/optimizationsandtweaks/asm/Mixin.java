@@ -202,6 +202,8 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     // BUGFIX MIXINS
+    common_lotr_MixinLOTRDimension(Side.COMMON,
+        require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.enableMixinLOTRDimension), "lotr.MixinLOTRDimension"),
 
     common_blocklings_MixinItemBlockling(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinItemBlockling, "blocklings.MixinItemBlockling"),
