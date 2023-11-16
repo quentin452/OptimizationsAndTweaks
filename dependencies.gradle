@@ -104,6 +104,7 @@ dependencies {
     implementation "curse.maven:hardcore-wither-237407:2282681-deobf-sources-api"
     implementation "curse.maven:jewelrycraft-2-229927:2271615-deobf-sources-api"
     implementation "curse.maven:growthcraft-community-edition-235092:4464624-deobf-sources-api"
+    implementation "curse.maven:the-lord-of-the-rings-mod-legacy-423748:4091561-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')

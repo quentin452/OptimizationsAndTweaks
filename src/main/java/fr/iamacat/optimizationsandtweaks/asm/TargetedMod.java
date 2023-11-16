@@ -71,6 +71,8 @@ public enum TargetedMod implements ITargetedMod {
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
     MINERALOGY("Mineralogy", false, startsWith("mineralogy")),
+    LORDOFTHERINGS("LOTRMod", false, startsWith("LOTRMod")),
+
     SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),
     STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),
     PNEUMATICRAFT("pneumaticCraft", false, startsWith("pneumaticCraft")),
