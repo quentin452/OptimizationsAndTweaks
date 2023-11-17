@@ -74,6 +74,7 @@ public enum TargetedMod implements ITargetedMod {
     LORDOFTHERINGS("LOTRMod", false, startsWith("LOTRMod")),
     LORDOFTHERINGSFORK("LOTRModfork", false, startsWith("LOTRModfork")),
     LOTRIMPROVEMENTS("LOTR Improvements", false, startsWith("LOTR Improvements")),
+    ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
 
     ENDLESSIDS("endlessids", false, startsWith("endlessids")),
 

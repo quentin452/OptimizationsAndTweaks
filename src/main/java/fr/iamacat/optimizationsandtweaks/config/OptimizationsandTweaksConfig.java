@@ -347,6 +347,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSettings;
+
+    @Config.Comment("Fix eternalfrost biomes ids are hardcoded at 255(by removing it) if endlessids ids is installed")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEFConfiguration;
     @Config.Comment("Fix Null Crash caused by Better Burning")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

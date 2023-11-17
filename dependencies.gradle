@@ -106,6 +106,7 @@ dependencies {
     implementation "curse.maven:growthcraft-community-edition-235092:4464624-deobf-sources-api"
     implementation "curse.maven:the-lord-of-the-rings-mod-legacy-423748:4091561-deobf-sources-api"
     implementation "curse.maven:lotrimprovements-919470:4812149-deobf-sources-api"
+    implementation "curse.maven:legacy-eternal-frost-2-core-of-ice-918431:4777510-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     runtimeOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.39-GTNH:dev')
