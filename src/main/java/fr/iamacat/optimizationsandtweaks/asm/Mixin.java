@@ -14,6 +14,10 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // TWEAKING MIXINS
+    common_lotr_MixinLOTRMod(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS, "lotr.MixinLOTRMod"),
+    common_lotr_MixinLOTRBiome(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS, "lotr.MixinLOTRBiome"),
     common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
 
@@ -198,7 +202,9 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     // BUGFIX MIXINS
-       common_blocklings_MixinItemBlockling(Side.COMMON,
+    common_lotr_MixinLOTRWorldProvider(Side.COMMON,
+        require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.MixinLOTRWorldProvider), "lotr.MixinLOTRWorldProvider"),
+    common_blocklings_MixinItemBlockling(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinItemBlockling, "blocklings.MixinItemBlockling"),
     common_nei_MixinWorldOverlayRenderer(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldOverlayRenderer, "nei.MixinWorldOverlayRenderer"),
