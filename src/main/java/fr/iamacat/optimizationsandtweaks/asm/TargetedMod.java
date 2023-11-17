@@ -72,6 +72,9 @@ public enum TargetedMod implements ITargetedMod {
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
     MINERALOGY("Mineralogy", false, startsWith("mineralogy")),
     LORDOFTHERINGS("LOTRMod", false, startsWith("LOTRMod")),
+    LORDOFTHERINGSFORK("LOTRModfork", false, startsWith("LOTRModfork")),
+    LOTRIMPROVEMENTS("LOTR Improvements", false, startsWith("LOTR Improvements")),
+
     ENDLESSIDS("endlessids", false, startsWith("endlessids")),
 
     SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),

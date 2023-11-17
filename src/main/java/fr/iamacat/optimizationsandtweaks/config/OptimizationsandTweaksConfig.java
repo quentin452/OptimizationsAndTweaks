@@ -71,7 +71,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-
+    @Config.Comment("Disable Attack Indicator from LotrImprovements if Lotr iam a cat fork is enabled")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMain;
     @Config.Comment("Add decimal value support to Minestones mod stoneDropRate config")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
