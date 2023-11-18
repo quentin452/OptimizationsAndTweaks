@@ -456,6 +456,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
+
+    @Config.Comment("Fix Null crash caused by ScanManager from Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinScanManager;
     @Config.Comment("Reduce tps lags caused by SpawnerAnimals on VoidWorld")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
