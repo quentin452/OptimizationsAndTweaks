@@ -204,6 +204,7 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     // BUGFIX MIXINS
+
     common_eternalfrost_MixinEFConfiguration(Side.COMMON,
         require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.enableMixinEFConfiguration), "eternalfrost.MixinEFConfiguration"),
 
@@ -268,10 +269,12 @@ public enum Mixin implements IMixin {
     common_steamcraft2_MixinFixCascadingFromWorldGenBrassTree(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenBrassTree,
         "steamcraft2.MixinFixCascadingFromWorldGenBrassTree"),
-
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinOreDictCofhFix,
         "cofhcore.fixoredictcrash.MixinOreDictionaryArbiter"),
+    common_cofhcore_MixinBlockTickingWater(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinBlockTickingWater,
+        "cofhcore.MixinBlockTickingWater"),
     common_slimecarnage_MixinFixCascadingFromWorldGenSlimeCarnage(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage,
         "slimecarnage.MixinFixCascadingFromWorldGenSlimeCarnage"),

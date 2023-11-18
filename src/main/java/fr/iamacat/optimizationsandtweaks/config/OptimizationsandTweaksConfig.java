@@ -331,7 +331,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRegisterOreDict;
-    @Config.Comment("Fix null Crash when clicking on the Item from blockling ")
+    @Config.Comment("Fix null Crash when clicking on the Item from blockling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemBlockling;
@@ -447,6 +447,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOreDictCofhFix;
+
+    @Config.Comment("Fix Crash while updating neighbours from BlockTickingWater class from Cofh Core")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockTickingWater;
     @Config.Comment("Fix tps lags + reduce fps stutters caused by leaves from Thaumcraft  + add Leaf culling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

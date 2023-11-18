@@ -67,7 +67,7 @@ public enum TargetedMod implements ITargetedMod {
     ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("battletower")),
     SALTYMOD_EXPANDED("Salty Mod Expanded", false, startsWith("SaltMod")),
     BUILDCRAFT("BuildCraft", false, startsWith("BuildCraft|Core")),
-    TCONSTRUCT("Tinkers' Construct", false, startsWith("TConstruct")),
+    TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
     MINERALOGY("Mineralogy", false, startsWith("mineralogy")),
