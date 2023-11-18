@@ -32,6 +32,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityArrowAttack;
+
+    @Config.Comment("Optimize CodecIBXM Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCodecIBXM;
     @Config.Comment("Optimize EntityLiving Update.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
