@@ -492,6 +492,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchWorldGenCloudNine;
+
+    @Config.Comment("Remove Version check from Mal Core mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinVersionInfo;
     @Config.Comment("Make sure that isLoaded from BuildCraftConfig is calculated only one time to reduce tps lag")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -325,6 +325,9 @@ public enum Mixin implements IMixin {
     common_core_MixinTextureManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinTextureManager,
         "core.MixinTextureManager"),
 
+    common_malcore_MixinVersionInfo(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinVersionInfo,
+        "malcore.MixinVersionInfo"),
+
     // CLIENT MIXINS
 
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,

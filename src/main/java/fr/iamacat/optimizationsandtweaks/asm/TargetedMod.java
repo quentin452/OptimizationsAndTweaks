@@ -77,6 +77,7 @@ public enum TargetedMod implements ITargetedMod {
     ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
 
     ENDLESSIDS("endlessids", false, startsWith("endlessids")),
+    MALCORE("MalCore", false, startsWith("MalCore")),
 
     SHIPEWRECK("Shipwrecks!", false, startsWith("shipwrecks")),
     STEAMCRAFT2("Steamcraft", false, startsWith("steamcraft2")),
