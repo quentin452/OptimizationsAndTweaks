@@ -331,6 +331,10 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinEntitySpellParticleFX, "core.MixinEntitySpellParticleFX"),
     client_core_MixinModelRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinModelRenderer,
         "core.MixinModelRenderer"),
+
+    common_core_MixinMain(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinMainclient,
+        "core.MixinMain"),
     client_core_MixinTesselator(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinTesselator),
         "core.MixinTesselator"),
