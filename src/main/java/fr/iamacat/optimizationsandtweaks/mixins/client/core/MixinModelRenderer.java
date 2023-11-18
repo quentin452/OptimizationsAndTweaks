@@ -10,6 +10,7 @@ import net.minecraft.client.model.TextureOffset;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 
+import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -203,16 +204,19 @@ public class MixinModelRenderer {
             (this.rotationPointY - this.offsetY) * partialTicks,
             (this.rotationPointZ - this.offsetZ) * partialTicks);
 
-        if (this.rotateAngleX != 0.0F) {
-            GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
-        }
-        if (this.rotateAngleY != 0.0F) {
-            GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
-        }
-        if (this.rotateAngleZ != 0.0F) {
-            GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
-        }
+        float angleX = this.rotateAngleX + MathHelper.sin(System.currentTimeMillis() * 0.1F) * 0.1F;
+        float angleY = this.rotateAngleY + MathHelper.cos(System.currentTimeMillis() * 0.15F) * 0.1F;
+        float angleZ = this.rotateAngleZ;
 
+        if (angleX != 0.0F) {
+            GL11.glRotatef(angleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+        }
+        if (angleY != 0.0F) {
+            GL11.glRotatef(angleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+        }
+        if (angleZ != 0.0F) {
+            GL11.glRotatef(angleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        }
         if (this.displayList == 0) {
             this.displayList = GL11.glGenLists(1);
             GL11.glNewList(this.displayList, GL11.GL_COMPILE);
