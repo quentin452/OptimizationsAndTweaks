@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,8 +25,8 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(ModelRenderer.class)
 public class MixinModelRenderer {
-
-    private ModelRenderer modelRenderer;
+    @Unique
+    private ModelRenderer multithreadingandtweaks$modelRenderer;
     /** The size of the texture file's width in pixels. */
     @Shadow
     public float textureWidth;
@@ -55,8 +56,6 @@ public class MixinModelRenderer {
     /** The GL display list rendered by the Tessellator for this model */
     @Shadow
     private int displayList;
-    @Shadow
-    public boolean mirror;
     @Shadow
     public boolean showModel;
 
@@ -90,7 +89,7 @@ public class MixinModelRenderer {
     }
 
     public MixinModelRenderer(ModelBase p_i1173_1_) {
-        this(p_i1173_1_, (String) null);
+        this(p_i1173_1_, null);
     }
 
     public MixinModelRenderer(ModelBase p_i1174_1_, int p_i1174_2_, int p_i1174_3_) {
@@ -109,10 +108,11 @@ public class MixinModelRenderer {
         this.childModels.add(p_78792_1_);
     }
 
+    @Unique
     public ModelRenderer setTextureOffset(int p_78784_1_, int p_78784_2_) {
         this.textureOffsetX = p_78784_1_;
         this.textureOffsetY = p_78784_2_;
-        return modelRenderer;
+        return multithreadingandtweaks$modelRenderer;
     }
 
     @Unique
@@ -123,7 +123,7 @@ public class MixinModelRenderer {
         this.setTextureOffset(textureoffset.textureOffsetX, textureoffset.textureOffsetY);
         this.cubeList.add(
             (new ModelBox(
-                modelRenderer,
+                multithreadingandtweaks$modelRenderer,
                 this.textureOffsetX,
                 this.textureOffsetY,
                 p_78786_2_,
@@ -133,7 +133,7 @@ public class MixinModelRenderer {
                 p_78786_6_,
                 p_78786_7_,
                 0.0F)).func_78244_a(p_78786_1_));
-        return modelRenderer;
+        return multithreadingandtweaks$modelRenderer;
     }
 
     @Unique
@@ -141,7 +141,7 @@ public class MixinModelRenderer {
         int p_78789_6_) {
         this.cubeList.add(
             new ModelBox(
-                modelRenderer,
+                multithreadingandtweaks$modelRenderer,
                 this.textureOffsetX,
                 this.textureOffsetY,
                 p_78789_1_,
@@ -151,7 +151,7 @@ public class MixinModelRenderer {
                 p_78789_5_,
                 p_78789_6_,
                 0.0F));
-        return modelRenderer;
+        return multithreadingandtweaks$modelRenderer;
     }
 
     /**
@@ -162,7 +162,7 @@ public class MixinModelRenderer {
         int p_78790_6_, float p_78790_7_) {
         this.cubeList.add(
             new ModelBox(
-                modelRenderer,
+                multithreadingandtweaks$modelRenderer,
                 this.textureOffsetX,
                 this.textureOffsetY,
                 p_78790_1_,
@@ -186,63 +186,37 @@ public class MixinModelRenderer {
      * @reason
      */
     @SideOnly(Side.CLIENT)
-    @Inject(method = "render", at = @At("HEAD"), remap = false, cancellable = true)
-    public void render(float p_78785_1_, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
-            if (this.isHidden) {
-                return;
-            }
-
-            if (this.showModel) {
-                if (!this.compiled) {
-                    this.compileDisplayList(p_78785_1_);
-                }
-
-                float offsetX = this.offsetX;
-                float offsetY = this.offsetY;
-                float offsetZ = this.offsetZ;
-                float rotationPointX = this.rotationPointX;
-                float rotationPointY = this.rotationPointY;
-                float rotationPointZ = this.rotationPointZ;
-
-                if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
-                    if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F) {
-                        GL11.glTranslatef(
-                            rotationPointX * p_78785_1_,
-                            rotationPointY * p_78785_1_,
-                            rotationPointZ * p_78785_1_);
-                    }
-                    GL11.glCallList(this.displayList);
-                    optimizationsAndTweaks$renderChildModels(p_78785_1_);
-                    if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F) {
-                        GL11.glTranslatef(
-                            -rotationPointX * p_78785_1_,
-                            -rotationPointY * p_78785_1_,
-                            -rotationPointZ * p_78785_1_);
-                    }
-                } else {
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(
-                        rotationPointX * p_78785_1_,
-                        rotationPointY * p_78785_1_,
-                        rotationPointZ * p_78785_1_);
-                    if (this.rotateAngleZ != 0.0F) {
-                        GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
-                    }
-                    if (this.rotateAngleY != 0.0F) {
-                        GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
-                    }
-                    if (this.rotateAngleX != 0.0F) {
-                        GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
-                    }
-                    GL11.glCallList(this.displayList);
-                    optimizationsAndTweaks$renderChildModels(p_78785_1_);
-                    GL11.glPopMatrix();
-                }
-                GL11.glTranslatef(-offsetX, -offsetY, -offsetZ);
-            }
-            ci.cancel();
+    @Overwrite
+    public void render(float partialTicks) {
+        if (this.isHidden || !this.showModel) {
+            return;
         }
+
+        if (!this.compiled) {
+            this.compileDisplayList(partialTicks);
+        }
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslatef(
+            (this.rotationPointX - this.offsetX) * partialTicks,
+            (this.rotationPointY - this.offsetY) * partialTicks,
+            (this.rotationPointZ - this.offsetZ) * partialTicks);
+
+        if (this.rotateAngleX != 0.0F) {
+            GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+        }
+        if (this.rotateAngleY != 0.0F) {
+            GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+        }
+        if (this.rotateAngleZ != 0.0F) {
+            GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        }
+
+        GL11.glCallList(this.displayList);
+        optimizationsAndTweaks$renderChildModels(partialTicks);
+
+        GL11.glPopMatrix();
     }
 
     @Unique
@@ -259,11 +233,9 @@ public class MixinModelRenderer {
      * @reason
      */
     @SideOnly(Side.CLIENT)
-    @Inject(method = "renderWithRotation", at = @At("HEAD"), remap = false, cancellable = true)
-    public void renderWithRotation(float p_78791_1_, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
-            if (!this.isHidden) {
-                if (this.showModel) {
+    @Overwrite
+    public void renderWithRotation(float p_78791_1_) {
+            if (!this.isHidden && (this.showModel)) {
                     if (!this.compiled) {
                         this.compileDisplayList(p_78791_1_);
                     }
@@ -288,9 +260,6 @@ public class MixinModelRenderer {
 
                     GL11.glCallList(this.displayList);
                     GL11.glPopMatrix();
-                }
-            }
-            ci.cancel();
         }
     }
 
@@ -298,11 +267,9 @@ public class MixinModelRenderer {
      * Allows the changing of Angles after a box has been rendered
      */
     @SideOnly(Side.CLIENT)
-    @Inject(method = "postRender", at = @At("HEAD"), remap = false, cancellable = true)
-    public void postRender(float p_78794_1_, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinModelRenderer) {
-            if (!this.isHidden) {
-                if (this.showModel) {
+    @Overwrite
+    public void postRender(float p_78794_1_) {
+            if (!this.isHidden && (this.showModel)) {
                     if (!this.compiled) {
                         this.compileDisplayList(p_78794_1_);
                     }
@@ -332,9 +299,6 @@ public class MixinModelRenderer {
                             GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
                         }
                     }
-                }
-            }
-            ci.cancel();
         }
     }
 
@@ -348,8 +312,8 @@ public class MixinModelRenderer {
         GL11.glNewList(this.displayList, GL11.GL_COMPILE);
         Tessellator tessellator = Tessellator.instance;
 
-        for (int i = 0; i < this.cubeList.size(); ++i) {
-            ((ModelBox) this.cubeList.get(i)).render(tessellator, p_78788_1_);
+        for (Object o : this.cubeList) {
+            ((ModelBox) o).render(tessellator, p_78788_1_);
         }
 
         GL11.glEndList();
@@ -361,8 +325,8 @@ public class MixinModelRenderer {
      */
     @Unique
     public ModelRenderer setTextureSize(int p_78787_1_, int p_78787_2_) {
-        this.textureWidth = (float) p_78787_1_;
-        this.textureHeight = (float) p_78787_2_;
-        return modelRenderer;
+        this.textureWidth = p_78787_1_;
+        this.textureHeight = p_78787_2_;
+        return multithreadingandtweaks$modelRenderer;
     }
 }
