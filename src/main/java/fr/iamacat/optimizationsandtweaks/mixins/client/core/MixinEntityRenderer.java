@@ -1950,7 +1950,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
             this.fogColorBlue = f7;
         }
 
-        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(multithreadingandtweaks$entityRenderer, entitylivingbase, block, p_78466_1_, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
+        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(multithreadingandtweaks$entityRenderer, entitylivingbase, block, float1, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
         MinecraftForge.EVENT_BUS.post(event);
 
         this.fogColorRed = event.red;
