@@ -213,6 +213,12 @@ public class MixinModelRenderer {
             GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
         }
 
+        if (this.displayList == 0) {
+            this.displayList = GL11.glGenLists(1);
+            GL11.glNewList(this.displayList, GL11.GL_COMPILE);
+            GL11.glEndList();
+        }
+
         GL11.glCallList(this.displayList);
         optimizationsAndTweaks$renderChildModels(partialTicks);
 
