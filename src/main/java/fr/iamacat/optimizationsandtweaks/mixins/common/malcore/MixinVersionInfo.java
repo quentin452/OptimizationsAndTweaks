@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core.malcore;
+package fr.iamacat.optimizationsandtweaks.mixins.common.malcore;
 
 import mal.core.version.VersionInfo;
 import org.spongepowered.asm.mixin.Mixin;

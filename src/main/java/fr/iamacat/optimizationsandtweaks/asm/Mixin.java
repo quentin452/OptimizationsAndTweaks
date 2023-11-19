@@ -362,9 +362,7 @@ public enum Mixin implements IMixin {
         "core.MixinModelRenderer"),
     client_core_MixinCodecIBXM(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinCodecIBXM,
         "core.MixinCodecIBXM"),
-    common_core_MixinMain(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinMainclient,
-        "core.MixinMain"),
+
     client_core_MixinTesselator(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinTesselator),
         "core.MixinTesselator"),

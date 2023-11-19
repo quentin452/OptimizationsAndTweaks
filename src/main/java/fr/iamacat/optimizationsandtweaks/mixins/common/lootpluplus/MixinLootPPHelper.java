@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core.lootpluplus;
+package fr.iamacat.optimizationsandtweaks.mixins.common.lootpluplus;
 
 import com.tmtravlr.lootplusplus.LootPPHelper;
 import com.tmtravlr.lootplusplus.config.ConfigLoaderEffects;
