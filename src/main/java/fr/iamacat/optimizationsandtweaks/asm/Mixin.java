@@ -212,6 +212,10 @@ public enum Mixin implements IMixin {
     common_matmos_MixinForgeBase(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinForgeBase,
         "matmos.MixinForgeBase"),
+
+    common_thaumcraftminusthaumcraft_MixinUnthaumic(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinUnthaumic,
+        "thaumcraftminusthaumcraft.MixinUnthaumic"),
     common_codechickencore_MixinItemMobSpawner(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinItemMobSpawner,
         "codechickencore.MixinItemMobSpawner"),

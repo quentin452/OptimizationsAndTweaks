@@ -353,6 +353,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMappingThread;
+
+    @Config.Comment("Optimize Unthaumic class from ThaumcraftMinusThaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinUnthaumic;
     @Config.Comment("Print stats ids to help to fix duplicated stats i" + "ds crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
