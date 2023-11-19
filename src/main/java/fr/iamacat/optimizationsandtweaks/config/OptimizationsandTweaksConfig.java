@@ -342,10 +342,10 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinClassDiscoverer;
 
-    @Config.Comment("Optimize ForgeBase class from Matmos")
+    @Config.Comment("Optimize Matmos mod to reduce fps Lags")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinForgeBase;
+    public static boolean enableOptimizeMatmos;
     @Config.Comment("Optimize MappingThread class from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
