@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Random;
 
 @SideOnly(Side.CLIENT)
-@Mixin(EntityRenderer.class)
+@Mixin(value = EntityRenderer.class,priority = 989)
 public class MixinEntityRenderer  implements IResourceManagerReloadListener
 {
     @Unique
@@ -461,7 +461,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Update FOV modifier hand
      */
     @Overwrite
-    private void updateFovModifierHand()
+    public void updateFovModifierHand()
     {
         if (mc.renderViewEntity instanceof EntityPlayerSP)
         {
@@ -490,7 +490,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Changes the field of view of the player depending on if they are underwater or not
      */
     @Overwrite
-    private float getFOVModifier(float p_78481_1_, boolean p_78481_2_)
+    public float getFOVModifier(float p_78481_1_, boolean p_78481_2_)
     {
         if (this.debugViewDirection > 0)
         {
@@ -528,7 +528,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @reason t
      */
     @Overwrite
-    private void hurtCameraEffect(float p_78482_1_)
+    public void hurtCameraEffect(float p_78482_1_)
     {
         EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
         float f1 = (float)entitylivingbase.hurtTime - p_78482_1_;
@@ -555,7 +555,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Setups all the GL settings for view bobbing. Args: partialTickTime
      */
     @Overwrite
-    private void setupViewBobbing(float float1)
+    public void setupViewBobbing(float float1)
     {
         if (this.mc.renderViewEntity instanceof EntityPlayer)
         {
@@ -577,7 +577,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private void orientCamera(float p_78467_1_)
+    public void orientCamera(float p_78467_1_)
     {
         EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
         float f1 = entitylivingbase.yOffset - 1.62F;
@@ -683,7 +683,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private void setupCameraTransform(float p_78479_1_, int p_78479_2_)
+    public void setupCameraTransform(float p_78479_1_, int p_78479_2_)
     {
         this.farPlaneDistance = (float)(this.mc.gameSettings.renderDistanceChunks * 16);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -780,7 +780,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Render player hand
      */
     @Overwrite
-    private void renderHand(float p_78476_1_, int p_78476_2_)
+    public void renderHand(float p_78476_1_, int p_78476_2_)
     {
         if (this.debugViewDirection <= 0)
         {
@@ -887,7 +887,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private void updateTorchFlicker()
+    public void updateTorchFlicker()
     {
         this.torchFlickerDX = (float)(this.torchFlickerDX + (Math.random() - Math.random()) * Math.random() * Math.random());
         this.torchFlickerDY = (float)(this.torchFlickerDY + (Math.random() - Math.random()) * Math.random() * Math.random());
@@ -902,7 +902,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @reason t
      */
     @Overwrite
-    private void updateLightmap(float p_78472_1_)
+    public void updateLightmap(float p_78472_1_)
     {
         WorldClient worldclient = this.mc.theWorld;
 
@@ -1043,7 +1043,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Gets the night vision brightness
      */
     @Overwrite
-    private float getNightVisionBrightness(EntityPlayer p_82830_1_, float p_82830_2_)
+    public float getNightVisionBrightness(EntityPlayer p_82830_1_, float p_82830_2_)
     {
         int i = p_82830_1_.getActivePotionEffect(Potion.nightVision).getDuration();
         return i > 200 ? 1.0F : 0.7F + MathHelper.sin((i - p_82830_2_) * (float)Math.PI * 0.2F) * 0.3F;
@@ -1485,7 +1485,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      */
 
     @Overwrite
-    private void renderCloudsCheck(RenderGlobal p_82829_1_, float p_82829_2_)
+    public void renderCloudsCheck(RenderGlobal p_82829_1_, float p_82829_2_)
     {
         if (this.mc.gameSettings.shouldRenderClouds())
         {
@@ -1504,7 +1504,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @reason t
      */
     @Overwrite
-    private void addRainParticles()
+    public void addRainParticles()
     {
         float f = this.mc.theWorld.getRainStrength(1.0F);
 
@@ -1592,7 +1592,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    protected void renderRainSnow(float p_78474_1_)
+    public void renderRainSnow(float p_78474_1_)
     {
         IRenderHandler renderer;
         if ((renderer = this.mc.theWorld.provider.getWeatherRenderer()) != null)
@@ -1786,7 +1786,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private void updateFogColor(float float1)
+    public void updateFogColor(float float1)
     {
         WorldClient worldclient = this.mc.theWorld;
         EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
@@ -1967,7 +1967,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private void setupFog(int p_78468_1_, float p_78468_2_)
+    public void setupFog(int p_78468_1_, float p_78468_2_)
     {
         EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
         boolean flag = false;
@@ -2124,7 +2124,7 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * @author t
      */
     @Overwrite
-    private FloatBuffer setFogColorBuffer(float p_78469_1_, float p_78469_2_, float p_78469_3_, float p_78469_4_)
+    public FloatBuffer setFogColorBuffer(float p_78469_1_, float p_78469_2_, float p_78469_3_, float p_78469_4_)
     {
         this.fogColorBuffer.clear();
         this.fogColorBuffer.put(p_78469_1_).put(p_78469_2_).put(p_78469_3_).put(p_78469_4_);
