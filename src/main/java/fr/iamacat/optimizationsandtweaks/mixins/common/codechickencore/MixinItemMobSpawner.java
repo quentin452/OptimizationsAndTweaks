@@ -42,4 +42,13 @@ public class MixinItemMobSpawner extends ItemBlock {
     @Overwrite
     public static void loadSpawners(World world) {
     }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public static EntityLiving getEntity(int ID) {
+        return null;
+    }
 }
