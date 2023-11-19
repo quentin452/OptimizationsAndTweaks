@@ -347,6 +347,9 @@ public enum Mixin implements IMixin {
     common_malcore_MixinVersionInfo(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinVersionInfo,
         "malcore.MixinVersionInfo"),
 
+    common_kitchencraft_MixinKitchenCraftMachines(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinKitchenCraftMachines,
+        "kitchencraft.MixinKitchenCraftMachines"),
+
     // CLIENT MIXINS
 
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,

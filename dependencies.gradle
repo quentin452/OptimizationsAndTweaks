@@ -109,12 +109,14 @@ dependencies {
     implementation "curse.maven:legacy-eternal-frost-2-core-of-ice-918431:4777510-deobf-sources-api"
     implementation "curse.maven:malcore-223573:2212170-deobf-sources-api"
     implementation "curse.maven:matmos-366256:4819513-deobf-sources-api"
+    implementation "curse.maven:kitchencraft-226688:2256127-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
     transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
     transformedMod("com.github.GTNewHorizons:BuildCraftOilTweak:1.0.4:dev")
     transformedMod("com.github.GTNewHorizons:Botania:1.10.1-GTNH:dev")
+    transformedMod("com.github.GTNewHorizons:ForbiddenMagic:0.6.7-GTNH:dev")
 
     implementation files("libs/FamiliarsAPI-1.7.10.jar")
     implementation files("libs/FamiliarsDefaultMobPack-1.7.10.jar")
