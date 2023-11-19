@@ -332,6 +332,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUtils;
+
+    @Config.Comment("Optimize MappingThread class from Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMappingThread;
     @Config.Comment("Print stats ids to help to fix duplicated stats i" + "ds crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

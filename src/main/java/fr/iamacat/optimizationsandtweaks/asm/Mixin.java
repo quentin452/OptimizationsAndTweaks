@@ -196,6 +196,10 @@ public enum Mixin implements IMixin {
         "core.MixinEntityLookHelper"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchWorldGenCloudNine, "koto.MixinPatchWorldGenCloudNine"),
+
+    common_thaumcraft_MixinMappingThread(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinMappingThread,
+        "thaumcraft.MixinMappingThread"),
     common_thaumcraft_MixinPatchBiomeGenMagicalForest(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest,
         "thaumcraft.MixinPatchBiomeGenMagicalForest"),
