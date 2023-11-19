@@ -906,7 +906,7 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
     public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn) {
         FMLClientHandler.instance().startIntegratedServer(folderName, worldName, worldSettingsIn);
         this.loadWorld(null);
-        // System.gc();
+      //  System.gc();
         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
 
@@ -934,22 +934,29 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
 
         this.loadingScreen.displayProgressMessage(I18n.format("menu.loadingLevel"));
 
-        long startTime = System.currentTimeMillis();
-        long delay = 200L;
-
         while (!this.theIntegratedServer.serverIsInRunLoop()) {
-            if (System.currentTimeMillis() - startTime > delay || !StartupQuery.check()) {
+            if (!StartupQuery.check()) {
                 loadWorld(null);
                 displayGuiScreen(null);
                 return;
             }
-
             String s2 = this.theIntegratedServer.getUserMessage();
 
             if (s2 != null) {
                 this.loadingScreen.resetProgresAndWorkingMessage(I18n.format(s2));
             } else {
                 this.loadingScreen.resetProgresAndWorkingMessage("");
+            }
+
+            long startTime = System.currentTimeMillis();
+            long delay = 200L;
+
+            while (System.currentTimeMillis() - startTime < delay) {
+                if (!StartupQuery.check()) {
+                    loadWorld(null);
+                    displayGuiScreen(null);
+                    return;
+                }
             }
         }
 
