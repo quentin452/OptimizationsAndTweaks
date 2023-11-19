@@ -108,6 +108,7 @@ dependencies {
     implementation "curse.maven:lotrimprovements-919470:4812149-deobf-sources-api"
     implementation "curse.maven:legacy-eternal-frost-2-core-of-ice-918431:4777510-deobf-sources-api"
     implementation "curse.maven:malcore-223573:2212170-deobf-sources-api"
+    implementation "curse.maven:matmos-366256:4819513-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

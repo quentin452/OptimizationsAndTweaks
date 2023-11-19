@@ -336,6 +336,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinClassDiscoverer;
+
+    @Config.Comment("Optimize ForgeBase class from Matmos")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinForgeBase;
     @Config.Comment("Optimize MappingThread class from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
