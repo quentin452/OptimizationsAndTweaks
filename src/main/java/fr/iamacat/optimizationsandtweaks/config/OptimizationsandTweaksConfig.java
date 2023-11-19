@@ -521,10 +521,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinVersionInfo;
 
-    @Config.Comment("Remove Mob Spawner loading from NEI to reduce cpu time")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinItemMobSpawner;
     @Config.Comment("Remove unecessary println in KitchenCraftMachines class from KitchenCraft Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
