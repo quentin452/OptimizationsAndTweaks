@@ -24,7 +24,7 @@ public class MixinMappingThread {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void run() {
         for (Integer id : this.idMappings.values()) {
             try {

@@ -79,7 +79,7 @@ public abstract class MixinForgeBase implements OperatorCaster {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void onTickLiteLoaderStyle(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock, boolean trueClock) {
         if (trueClock && !this.suClientTick) {
             return;

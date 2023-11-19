@@ -26,7 +26,7 @@ public class MixinUnthaumic {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     @SubscribeEvent
     public void join(EntityJoinWorldEvent event) {
         if (!event.world.isRemote && event.entity instanceof EntityPlayer) {

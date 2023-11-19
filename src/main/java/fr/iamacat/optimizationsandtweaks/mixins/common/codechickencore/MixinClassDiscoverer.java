@@ -60,7 +60,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public ArrayList<Class<?>> findClasses() {
         try {
             findClasspathMods();
@@ -73,7 +73,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void checkAddClass(String resource) {
         try {
             String classname = resource.replace(".class", "").replace("\\", ".").replace("/", ".");
@@ -93,7 +93,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void addClass(String classname) {
         try {
             Class<?> class1 = Class.forName(classname, true, modClassLoader);
@@ -106,7 +106,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void findClasspathMods() {
         List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries())
             .addAll(CoreModManager.getLoadedCoremods()).build();
@@ -141,7 +141,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void readFromZipFile(File file) throws IOException {
         try (FileInputStream fileinputstream = new FileInputStream(file);
              ZipInputStream zipinputstream = new ZipInputStream(fileinputstream)) {
@@ -163,7 +163,7 @@ public class MixinClassDiscoverer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void readFromDirectory(File directory, File basedirectory) {
         for (File child : Objects.requireNonNull(directory.listFiles())) {
             if (child.isDirectory()) {

@@ -11,7 +11,7 @@ public class MixinVersionInfo {
      * @author iamacatfr
      * @reason remove version check from Mal Core mod
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void checkForNewVersion() {
     }
 }
