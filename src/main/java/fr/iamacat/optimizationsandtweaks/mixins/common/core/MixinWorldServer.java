@@ -9,11 +9,28 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.storage.ISaveHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.*;
 
 @Mixin(WorldServer.class)
 public abstract class MixinWorldServer extends World {
+
+    @Shadow
+    private Set pendingTickListEntriesHashSet;
+    /** All work to do in future ticks. */
+    @Shadow
+    private TreeSet pendingTickListEntriesTreeSet;
+
+    @Shadow
+    private List pendingTickListEntriesThisTick = new ArrayList();
+
+    @Shadow
+    private static final Logger logger = LogManager.getLogger();
     protected MixinWorldServer(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_) {
         super(p_i45368_1_, p_i45368_2_, p_i45368_3_, p_i45368_4_, p_i45368_5_);
     }
@@ -97,5 +114,34 @@ public abstract class MixinWorldServer extends World {
         }
 
         this.theProfiler.endSection();
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Override
+    public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean remove) {
+        List<NextTickListEntry> result = new ArrayList<>();
+        ChunkCoordIntPair chunkCoords = chunk.getChunkCoordIntPair();
+        int minX = (chunkCoords.chunkXPos << 4) - 2;
+        int maxX = minX + 16 + 2;
+        int minZ = (chunkCoords.chunkZPos << 4) - 2;
+        int maxZ = minZ + 16 + 2;
+
+        for (Collection tickSet : Arrays.asList(pendingTickListEntriesTreeSet, pendingTickListEntriesThisTick)) {
+            for (Iterator iterator = tickSet.iterator(); iterator.hasNext();) {
+                NextTickListEntry entry = (NextTickListEntry) iterator.next();
+                if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
+                    if (remove) {
+                        pendingTickListEntriesHashSet.remove(entry);
+                        iterator.remove();
+                    }
+                    result.add(entry);
+                }
+            }
+        }
+
+        return result.isEmpty() ? null : result;
     }
 }
