@@ -24,16 +24,16 @@ public class MixinScanManager {
         if (stack.isItemStackDamageable() || !stack.getHasSubtypes()) {
             meta = -1;
         }
-        String hash;
+        StringBuilder hash;
         try {
             GameRegistry.UniqueIdentifier ui = GameRegistry.findUniqueIdentifierFor(item);
             if (ui != null) {
-                hash = ui + ":" + meta;
+                hash = new StringBuilder(ui + ":" + meta);
             } else {
-                hash = stack.getUnlocalizedName() + ":" + meta;
+                hash = new StringBuilder(stack.getUnlocalizedName() + ":" + meta);
             }
         } catch (Exception e) {
-            hash = "oops:" + meta;
+            hash = new StringBuilder("oops:" + meta);
         }
         if (!ThaumcraftApi.objectTags.containsKey(Arrays.asList(item, meta))) {
             for (Map.Entry<List, int[]> entry : ThaumcraftApi.groupedObjectTags.entrySet()) {
@@ -45,19 +45,19 @@ public class MixinScanManager {
                         if (Arrays.binarySearch(range, meta) >= 0) {
                             GameRegistry.UniqueIdentifier ui = GameRegistry.findUniqueIdentifierFor(item);
                             if (ui != null) {
-                                hash = ui.toString();
+                                hash = new StringBuilder(ui.toString());
                             } else {
-                                hash = stack.getUnlocalizedName();
+                                hash = new StringBuilder(stack.getUnlocalizedName());
                             }
                             for (int r : range) {
-                                hash = hash + ":" + r;
+                                hash.append(":").append(r);
                             }
-                            return hash.hashCode();
+                            return hash.toString().hashCode();
                         }
 
                 }
             }
         }
-        return hash.hashCode();
+        return hash.toString().hashCode();
     }
 }
