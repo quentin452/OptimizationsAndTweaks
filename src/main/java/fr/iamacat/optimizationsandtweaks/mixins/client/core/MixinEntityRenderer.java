@@ -573,10 +573,8 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
 
     /**
      * sets up player's eye (or camera in third person mode)
-     * @author iamacatfr
-     * @author t
      */
-    @Overwrite
+    @Shadow
     public void orientCamera(float p_78467_1_)
     {
         EntityLivingBase entitylivingbase = this.mc.renderViewEntity;
@@ -897,11 +895,8 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
         this.torchFlickerY += (this.torchFlickerDY - this.torchFlickerY);
         this.lightmapUpdateNeeded = true;
     }
-    /**
-     * @author iamacatfr
-     * @reason t
-     */
-    @Overwrite
+
+    @Shadow
     public void updateLightmap(float p_78472_1_)
     {
         WorldClient worldclient = this.mc.theWorld;
