@@ -74,7 +74,7 @@ public class MixinBlockFalling extends Block
 
             if (!fallInstantly && world.checkChunksExist(x - maxDistance, y - maxDistance, z - maxDistance, x + maxDistance, y + maxDistance, z + maxDistance)) {
                 if (!world.isRemote) {
-                    EntityFallingBlock fallingBlock = new EntityFallingBlock(world, (double) x + 0.5D, (double) y + 0.5D, (double) z + 0.5D, this, world.getBlockMetadata(x, y, z));
+                    EntityFallingBlock fallingBlock = new EntityFallingBlock(world, x + 0.5D, y + 0.5D, z + 0.5D, this, world.getBlockMetadata(x, y, z));
                     this.func_149829_a(fallingBlock);
                     world.spawnEntityInWorld(fallingBlock);
                 }
@@ -91,7 +91,7 @@ public class MixinBlockFalling extends Block
             }
         }
     }
-    
+
     @Shadow
     protected void func_149829_a(EntityFallingBlock p_149829_1_) {}
 
