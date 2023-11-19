@@ -38,7 +38,7 @@ public class MixinLootPPHelper {
      * @author
      * @reason
      */
-    @Overwrite
+  /*  @Overwrite
     public static void loadRecipesAndSuch(World world) {
         if (generateFiles) {
             generateIDFiles();
@@ -50,10 +50,14 @@ public class MixinLootPPHelper {
         ConfigLoaderEffects.loadItemEffects();
     }
 
+   */
+
     /**
      * @author iamacatfr
      * @reason optimize generateIDFiles
      */
+    // todo fix Incompatible types. Found: 'java.lang.String', required: 'int'
+    /*
     @Overwrite
     public static void generateIDFiles() {
         boolean singlePlayer = MinecraftServer.getServer() != null && MinecraftServer.getServer().isSinglePlayer();
@@ -233,7 +237,7 @@ public class MixinLootPPHelper {
                             return;
                         }
 
-                        key = (int) var25.next();
+                        key = (String) var25.next();
                     } while (Item.itemRegistry.getObject(key) == null);
                 } while (!(Item.itemRegistry.getObject(key) instanceof Item));
 
@@ -279,4 +283,5 @@ public class MixinLootPPHelper {
             System.err.format("IOException: %s%n", var21);
         }
     }
+     */
 }
