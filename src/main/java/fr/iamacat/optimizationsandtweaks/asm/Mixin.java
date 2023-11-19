@@ -202,6 +202,10 @@ public enum Mixin implements IMixin {
     common_codechickencore_MixinClassDiscoverer(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinClassDiscoverer,
         "codechickencore.MixinClassDiscoverer"),
+
+    common_lootpluplus_MixinLootPPHelper(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinLootPPHelper,
+        "lootpluplus.MixinLootPPHelper"),
     common_matmos_MixinForgeBase(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinForgeBase,
         "matmos.MixinForgeBase"),

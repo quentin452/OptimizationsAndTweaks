@@ -327,7 +327,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPathFinding;
-
+    @Config.Comment("Optimize LootPPHelper from Loot++ Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLootPPHelper;
     @Config.Comment("Optimize Utils performances class from Et futurum REQUIEM")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
