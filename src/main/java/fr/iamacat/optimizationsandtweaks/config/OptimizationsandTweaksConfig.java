@@ -332,7 +332,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUtils;
-
+    @Config.Comment("Optimize ClassDiscoverer from CodeChickenCore")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinClassDiscoverer;
     @Config.Comment("Optimize MappingThread class from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
