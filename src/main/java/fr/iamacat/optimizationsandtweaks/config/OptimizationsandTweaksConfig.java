@@ -505,6 +505,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinVersionInfo;
+
+    @Config.Comment("Remove Mob Spawner loading from NEI to reduce cpu time")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemMobSpawner;
     @Config.Comment("Make sure that isLoaded from BuildCraftConfig is calculated only one time to reduce tps lag")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -202,6 +202,10 @@ public enum Mixin implements IMixin {
     common_codechickencore_MixinClassDiscoverer(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinClassDiscoverer,
         "codechickencore.MixinClassDiscoverer"),
+
+    common_codechickencore_MixinItemMobSpawner(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinItemMobSpawner,
+        "codechickencore.MixinItemMobSpawner"),
     common_thaumcraft_MixinPatchBiomeGenMagicalForest(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest,
         "thaumcraft.MixinPatchBiomeGenMagicalForest"),
