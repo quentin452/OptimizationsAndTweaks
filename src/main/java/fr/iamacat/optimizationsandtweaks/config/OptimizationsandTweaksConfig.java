@@ -327,6 +327,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPathFinding;
+
+    @Config.Comment("Optimize BlockFalling")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockFalling;
     @Config.Comment("Optimize LootPPHelper from Loot++ Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

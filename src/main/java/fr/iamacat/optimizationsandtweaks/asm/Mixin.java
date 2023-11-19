@@ -194,6 +194,9 @@ public enum Mixin implements IMixin {
         "core.pathfinding.MixinPathPoint"),
     common_core_MixinEntityLookHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLookHelper,
         "core.MixinEntityLookHelper"),
+
+    common_core_MixinBlockFalling(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFalling,
+        "core.MixinBlockFalling"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchWorldGenCloudNine, "koto.MixinPatchWorldGenCloudNine"),
     common_thaumcraft_MixinMappingThread(Side.COMMON,
