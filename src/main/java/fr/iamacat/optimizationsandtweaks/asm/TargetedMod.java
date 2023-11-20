@@ -22,12 +22,13 @@ public enum TargetedMod implements ITargetedMod {
      * MATTEROVERDRIVE("MatterOverdrive", false, startsWith("matteroverdrive")),
      * PROJECTE("ProjectE", false, startsWith("projecte")),
      * TC4TWEAKS("TC4Tweaks", false, startsWith("thaumcraft4tweaks")),
-     * FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
      * OPTIFINE("OptiFine", false, startsWith("optifine")),
      * MEKANISM("Mekanism", false, startsWith("mekanism")),
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
+
+    FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
 
     HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
