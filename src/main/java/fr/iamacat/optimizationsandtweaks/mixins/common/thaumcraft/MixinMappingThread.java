@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Mixin(MappingThread.class)
+@Mixin(value = MappingThread.class,priority = 999)
 public class MixinMappingThread {
 
     @Shadow
