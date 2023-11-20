@@ -390,8 +390,10 @@ public enum Mixin implements IMixin {
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
     client_core_MixinEntityRenderer(Side.CLIENT,
-        avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer),
+        avoid(TargetedMod.OPTIFINE)
+            .and(avoid(TargetedMod.FASTCRAFT)).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer),
         "core.MixinEntityRenderer"),
+
     client_core_MixinFontRenderer(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer),
         "core.MixinFontRenderer"),

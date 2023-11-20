@@ -25,9 +25,9 @@ public enum TargetedMod implements ITargetedMod {
      * OPTIFINE("OptiFine", false, startsWith("optifine")),
      * MEKANISM("Mekanism", false, startsWith("mekanism")),
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
-     * EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities"))
      */
 
+    EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
 
