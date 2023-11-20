@@ -97,10 +97,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLowerStringMap;
-    @Config.Comment("Optimize ModelRenderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinModelRenderer;
     @Config.Comment("Optimize RenderManager")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

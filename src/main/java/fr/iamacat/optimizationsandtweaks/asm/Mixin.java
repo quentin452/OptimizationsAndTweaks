@@ -371,8 +371,6 @@ public enum Mixin implements IMixin {
 
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,
         m -> OptimizationsandTweaksConfig.enableMixinEntitySpellParticleFX, "core.MixinEntitySpellParticleFX"),
-    client_core_MixinModelRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinModelRenderer,
-        "core.MixinModelRenderer"),
     client_core_MixinCodecIBXM(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinCodecIBXM,
         "core.MixinCodecIBXM"),
 
