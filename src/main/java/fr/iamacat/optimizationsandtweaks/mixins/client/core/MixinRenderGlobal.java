@@ -191,52 +191,46 @@ public class MixinRenderGlobal {
      * @reason
      */
     @Overwrite
-    private int renderSortedRenderers(int p_72724_1_, int p_72724_2_, int p_72724_3_, double p_72724_4_)
-    {
+    private int renderSortedRenderers(int p_72724_1_, int p_72724_2_, int p_72724_3_, double p_72724_4_) {
         this.glRenderLists.clear();
         int l = 0;
         int i1 = p_72724_1_;
         int j1 = p_72724_2_;
         byte b0 = 1;
 
-        if (p_72724_3_ == 1)
-        {
+        if (p_72724_3_ == 1) {
             i1 = this.sortedWorldRenderers.length - 1 - p_72724_1_;
             j1 = this.sortedWorldRenderers.length - 1 - p_72724_2_;
             b0 = -1;
         }
 
-        for (int k1 = i1; k1 != j1; k1 += b0)
-        {
-            if (p_72724_3_ == 0)
-            {
-                ++this.renderersLoaded;
+        WorldRenderer[] sortedRenderers = this.sortedWorldRenderers;
 
-                if (this.sortedWorldRenderers[k1].skipRenderPass[p_72724_3_])
-                {
+        for (int k1 = i1; k1 != j1; k1 += b0) {
+            WorldRenderer currentRenderer = sortedRenderers[k1];
+
+            boolean isPassZero = p_72724_3_ == 0;
+            boolean skipPass = currentRenderer.skipRenderPass[p_72724_3_];
+            boolean isInFrustum = currentRenderer.isInFrustum;
+            boolean isOcclusionEnabled = this.occlusionEnabled && !currentRenderer.isVisible;
+
+            if (isPassZero) {
+                ++this.renderersLoaded;
+                if (skipPass) {
                     ++this.renderersSkippingRenderPass;
-                }
-                else if (!this.sortedWorldRenderers[k1].isInFrustum)
-                {
+                } else if (!isInFrustum) {
                     ++this.renderersBeingClipped;
-                }
-                else if (this.occlusionEnabled && !this.sortedWorldRenderers[k1].isVisible)
-                {
+                } else if (isOcclusionEnabled) {
                     ++this.renderersBeingOccluded;
-                }
-                else
-                {
+                } else {
                     ++this.renderersBeingRendered;
                 }
             }
 
-            if (!this.sortedWorldRenderers[k1].skipRenderPass[p_72724_3_] && this.sortedWorldRenderers[k1].isInFrustum && (!this.occlusionEnabled || this.sortedWorldRenderers[k1].isVisible))
-            {
-                int l1 = this.sortedWorldRenderers[k1].getGLCallListForPass(p_72724_3_);
-
-                if (l1 >= 0)
-                {
-                    this.glRenderLists.add(this.sortedWorldRenderers[k1]);
+            if (!skipPass && isInFrustum && (!this.occlusionEnabled || currentRenderer.isVisible)) {
+                int glCallList = currentRenderer.getGLCallListForPass(p_72724_3_);
+                if (glCallList >= 0) {
+                    this.glRenderLists.add(currentRenderer);
                     ++l;
                 }
             }
@@ -297,9 +291,8 @@ public class MixinRenderGlobal {
     {
         this.mc.entityRenderer.enableLightmap(p_72733_2_);
 
-        for (int j = 0; j < this.allRenderLists.length; ++j)
-        {
-            this.allRenderLists[j].callLists();
+        for (RenderList allRenderList : this.allRenderLists) {
+            allRenderList.callLists();
         }
 
         this.mc.entityRenderer.disableLightmap(p_72733_2_);
