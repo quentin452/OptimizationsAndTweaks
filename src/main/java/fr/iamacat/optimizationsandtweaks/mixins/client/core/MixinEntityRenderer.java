@@ -1048,60 +1048,27 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
      * Will update any inputs that effect the camera angle (mouse) and then render the world and GUI
      */
     @Overwrite
-    public void updateCameraAndRender(float p_78480_1_)
-    {
+    public void updateCameraAndRender(float p_78480_1_) {
         this.mc.mcProfiler.startSection("lightTex");
 
-        if (this.lightmapUpdateNeeded)
-        {
+        if (this.lightmapUpdateNeeded) {
             this.updateLightmap(p_78480_1_);
         }
 
         this.mc.mcProfiler.endSection();
         boolean flag = Display.isActive();
+        long systemTime = Minecraft.getSystemTime();
 
-        if (!flag && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !Mouse.isButtonDown(1)))
-        {
-            if (Minecraft.getSystemTime() - this.prevFrameTime > 500L)
-            {
-                this.mc.displayInGameMenu();
-            }
-        }
-        else
-        {
-            this.prevFrameTime = Minecraft.getSystemTime();
+        if (!flag && this.shouldPauseOnLostFocus(systemTime)) {
+            this.mc.displayInGameMenu();
+        } else {
+            this.prevFrameTime = systemTime;
         }
 
         this.mc.mcProfiler.startSection("mouse");
 
-        if (this.mc.inGameHasFocus && flag)
-        {
-            this.mc.mouseHelper.mouseXYChange();
-            float f1 = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
-            float f2 = f1 * f1 * f1 * 8.0F;
-            float f3 = (float)this.mc.mouseHelper.deltaX * f2;
-            float f4 = (float)this.mc.mouseHelper.deltaY * f2;
-            byte b0 = 1;
-
-            if (this.mc.gameSettings.invertMouse)
-            {
-                b0 = -1;
-            }
-
-            if (this.mc.gameSettings.smoothCamera)
-            {
-                this.smoothCamYaw += f3;
-                this.smoothCamPitch += f4;
-                float f5 = p_78480_1_ - this.smoothCamPartialTicks;
-                this.smoothCamPartialTicks = p_78480_1_;
-                f3 = this.smoothCamFilterX * f5;
-                f4 = this.smoothCamFilterY * f5;
-                this.mc.thePlayer.setAngles(f3, f4 * b0);
-            }
-            else
-            {
-                this.mc.thePlayer.setAngles(f3, f4 * b0);
-            }
+        if (this.mc.inGameHasFocus && flag) {
+            handleMouseInput(p_78480_1_);
         }
 
         this.mc.mcProfiler.endSection();
@@ -1187,6 +1154,41 @@ public class MixinEntityRenderer  implements IResourceManagerReloadListener
             }
         }
     }
+
+    @Unique
+    private boolean shouldPauseOnLostFocus(long systemTime) {
+        return !Display.isActive() && this.mc.gameSettings.pauseOnLostFocus &&
+            (!this.mc.gameSettings.touchscreen || !Mouse.isButtonDown(1)) &&
+            (systemTime - this.prevFrameTime > 500L);
+    }
+
+    @Unique
+    private void handleMouseInput(float p_78467_1_) {
+        this.mc.mouseHelper.mouseXYChange();
+        float f1 = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+        float f2 = f1 * f1 * f1 * 8.0F;
+        float f3 = (float) this.mc.mouseHelper.deltaX * f2;
+        float f4 = (float) this.mc.mouseHelper.deltaY * f2;
+        byte b0 = this.mc.gameSettings.invertMouse ? (byte) -1 : 1;
+
+        if (this.mc.gameSettings.smoothCamera) {
+            this.applySmoothCamera(p_78467_1_, f3, f4, b0);
+        } else {
+            this.mc.thePlayer.setAngles(f3, f4 * b0);
+        }
+    }
+
+    @Unique
+    private void applySmoothCamera(float partialTicks, float deltaX, float deltaY, byte invert) {
+        this.smoothCamYaw += deltaX;
+        this.smoothCamPitch += deltaY;
+        float f5 = partialTicks - this.smoothCamPartialTicks;
+        this.smoothCamPartialTicks = partialTicks;
+        float f3 = this.smoothCamFilterX * f5;
+        float f4 = this.smoothCamFilterY * f5;
+        this.mc.thePlayer.setAngles(f3, f4 * invert);
+    }
+
     /**
      * @author iamacatfr
      * @author t
