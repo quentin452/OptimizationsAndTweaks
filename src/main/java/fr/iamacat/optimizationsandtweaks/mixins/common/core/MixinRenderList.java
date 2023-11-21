@@ -1,13 +1,16 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderList;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
-import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Mixin(RenderList.class)
 public class MixinRenderList {
@@ -26,14 +29,16 @@ public class MixinRenderList {
     @Shadow
     private double cameraZ;
     /** A list of OpenGL render list IDs rendered by this RenderList. */
-    @Shadow
-    private IntBuffer glLists = GLAllocation.createDirectIntBuffer(65536);
+    @Unique
+    private List<Integer> multithreadingandtweaks$glLists = new ArrayList<>();
+
     /** Does this RenderList contain properly-initialized and current data for rendering? */
     @Shadow
     private boolean valid;
     /** Has glLists been flipped to make it ready for reading yet? */
     @Shadow
     private boolean bufferFlipped;
+
     /**
      * @author
      * @reason
@@ -42,7 +47,7 @@ public class MixinRenderList {
     public void setupRenderList(int p_78422_1_, int p_78422_2_, int p_78422_3_, double p_78422_4_, double p_78422_6_, double p_78422_8_)
     {
         this.valid = true;
-        this.glLists.clear();
+        this.multithreadingandtweaks$glLists.clear();
         this.renderChunkX = p_78422_1_;
         this.renderChunkY = p_78422_2_;
         this.renderChunkZ = p_78422_3_;
@@ -52,41 +57,34 @@ public class MixinRenderList {
     }
 
     /**
-     * @author
-     * @reason
+     * Add an OpenGL render list ID to the list.
      */
     @Overwrite
-    public void addGLRenderList(int p_78420_1_)
-    {
-        this.glLists.put(p_78420_1_);
+    public void addGLRenderList(int listID) {
+        this.multithreadingandtweaks$glLists.add(listID);
 
-        if (this.glLists.remaining() == 0)
-        {
+        if (this.multithreadingandtweaks$glLists.size() >= 65536) {
             this.callLists();
         }
     }
+
     /**
-     * @author
-     * @reason
+     * Render all OpenGL lists in the list.
      */
     @Overwrite
     public void callLists()
     {
-        if (this.valid)
+        if (this.valid && !this.multithreadingandtweaks$glLists.isEmpty())
         {
-            if (!this.bufferFlipped)
-            {
-                this.glLists.flip();
-                this.bufferFlipped = true;
+            GL11.glPushMatrix();
+            GL11.glTranslatef((float)(this.renderChunkX - this.cameraX), (float)(this.renderChunkY - this.cameraY), (float)(this.renderChunkZ - this.cameraZ));
+
+            for (int listID : this.multithreadingandtweaks$glLists) {
+                GL11.glCallList(listID);
             }
 
-            if (this.glLists.remaining() > 0)
-            {
-                GL11.glPushMatrix();
-                GL11.glTranslatef((float)(this.renderChunkX - this.cameraX), (float)(this.renderChunkY - this.cameraY), (float)(this.renderChunkZ - this.cameraZ));
-                GL11.glCallLists(this.glLists);
-                GL11.glPopMatrix();
-            }
+            GL11.glPopMatrix();
+            this.multithreadingandtweaks$glLists.clear();
         }
     }
 }
