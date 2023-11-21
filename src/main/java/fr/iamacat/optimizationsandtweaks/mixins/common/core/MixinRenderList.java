@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Mixin(RenderList.class)
 public class MixinRenderList {
@@ -30,7 +32,7 @@ public class MixinRenderList {
     private double cameraZ;
     /** A list of OpenGL render list IDs rendered by this RenderList. */
     @Unique
-    private List<Integer> multithreadingandtweaks$glLists = new ArrayList<>();
+    private ConcurrentSkipListSet<Integer> multithreadingandtweaks$glLists = new ConcurrentSkipListSet<>();
 
     /** Does this RenderList contain properly-initialized and current data for rendering? */
     @Shadow
