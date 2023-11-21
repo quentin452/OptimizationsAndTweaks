@@ -1,5 +1,7 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core;
+package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderList;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
+@SideOnly(Side.CLIENT)
 @Mixin(RenderList.class)
 public class MixinRenderList {
     /** The location of the 16x16x16 render chunk rendered by this RenderList. */
