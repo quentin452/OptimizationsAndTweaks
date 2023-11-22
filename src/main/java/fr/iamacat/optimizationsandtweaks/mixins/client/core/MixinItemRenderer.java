@@ -68,7 +68,7 @@ public class MixinItemRenderer {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void renderItem(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_, IItemRenderer.ItemRenderType type)
     {
         GL11.glPushMatrix();
@@ -76,7 +76,7 @@ public class MixinItemRenderer {
         Item item = p_78443_2_.getItem();
         Block block = Block.getBlockFromItem(item);
 
-        if (p_78443_2_ != null && block != null && block.getRenderBlockPass() != 0)
+        if (block != null && block.getRenderBlockPass() != 0)
         {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_CULL_FACE);
