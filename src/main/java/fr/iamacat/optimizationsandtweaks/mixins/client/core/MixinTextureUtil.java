@@ -35,7 +35,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void func_147954_b(boolean p_147954_0_, boolean p_147954_1_)
+    public static void func_147954_b(boolean p_147954_0_, boolean p_147954_1_)
     {
         if (p_147954_0_)
         {
@@ -53,7 +53,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void func_152778_a(float p_152778_0_)
+    public static void func_152778_a(float p_152778_0_)
     {
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, 34046, p_152778_0_);
     }
