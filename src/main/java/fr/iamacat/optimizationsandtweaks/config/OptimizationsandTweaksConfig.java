@@ -302,6 +302,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureUtil;
+    @Config.Comment("Optimize ItemRenderer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemRenderer;
     @Config.Comment("Optimize TextureManager")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
