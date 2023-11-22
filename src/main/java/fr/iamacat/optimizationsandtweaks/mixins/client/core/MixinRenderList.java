@@ -34,7 +34,7 @@ public class MixinRenderList {
     private double cameraZ;
     /** A list of OpenGL render list IDs rendered by this RenderList. */
     @Unique
-    private ConcurrentSkipListSet<Integer> multithreadingandtweaks$glLists = new ConcurrentSkipListSet<>();
+    private List<Integer> multithreadingandtweaks$glLists = new ArrayList<>();
 
     /** Does this RenderList contain properly-initialized and current data for rendering? */
     @Shadow
