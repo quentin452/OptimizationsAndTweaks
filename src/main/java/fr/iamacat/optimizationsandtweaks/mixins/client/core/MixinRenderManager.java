@@ -17,6 +17,7 @@ import net.minecraft.util.ReportedException;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,12 +52,8 @@ public class MixinRenderManager {
      * @author
      * @reason
      */
-    @Inject(method = "renderEntityStatic", at = @At("HEAD"), cancellable = true)
-    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender, CallbackInfoReturnable cir) {
-        if (!OptimizationsandTweaksConfig.enableMixinRenderManager) {
-            return doRender;
-        }
-
+    @Overwrite
+    public boolean renderEntityStatic(Entity entity, float partialTicks, boolean doRender) {
         if (entity.ticksExisted == 0) {
             entity.lastTickPosX = entity.posX;
             entity.lastTickPosY = entity.posY;
@@ -85,20 +82,19 @@ public class MixinRenderManager {
             interpZ - renderPosZ,
             interpYaw,
             partialTicks,
-            doRender,
-            cir);
+            doRender);
     }
 
-    @Inject(method = "func_147939_a", at = @At("HEAD"), cancellable = true)
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean func_147939_a(Entity entity, double x, double y, double z, float yaw, float partialTicks,
-        boolean doRender, CallbackInfoReturnable cir) {
-        if (!OptimizationsandTweaksConfig.enableMixinRenderManager) {
-            return doRender;
-        }
-
+        boolean doRender) {
         Render render = optimizationsAndTweaks$getEntityRenderObject(entity);
 
-        if (render == null || render.isStaticEntity() && !doRender || render == null || renderEngine == null) {
+        if (render == null || render.isStaticEntity() && !doRender || renderEngine == null) {
             return doRender;
         }
 
@@ -120,7 +116,6 @@ public class MixinRenderManager {
             rendererCategory.addCrashSection("Delta", partialTicks);
             throw new ReportedException(crashReport);
         }
-        cir.setReturnValue(false);
         return true;
     }
 
