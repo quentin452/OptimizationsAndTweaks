@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,22 +111,23 @@ public class MixinModelRenderer {
         }
     }
 
+    @Unique
     private void renderDisplayListAndChildModels(float p_78785_1_) {
         GL11.glCallList(this.displayList);
 
         if (this.childModels != null) {
-            for (int i = 0; i < this.childModels.size(); ++i) {
-                ((ModelRenderer) this.childModels.get(i)).render(p_78785_1_);
+            for (Object childModel : this.childModels) {
+                ((ModelRenderer) childModel).render(p_78785_1_);
             }
         }
     }
-
+    @Unique
     private void renderWithRotationAndOffset(float p_78785_1_) {
         GL11.glTranslatef(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
         renderDisplayListAndChildModels(p_78785_1_);
         GL11.glTranslatef(-this.rotationPointX * p_78785_1_, -this.rotationPointY * p_78785_1_, -this.rotationPointZ * p_78785_1_);
     }
-
+    @Unique
     private void renderWithFullRotation(float p_78785_1_) {
         GL11.glPushMatrix();
         GL11.glTranslatef(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
