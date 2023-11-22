@@ -173,36 +173,36 @@ public class MixinModelRenderer {
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
-    public void renderWithRotation(float p_78791_1_)
-    {
-        if (!this.isHidden && (this.showModel))
-            {
-                if (!this.compiled)
-                {
-                    this.compileDisplayList(p_78791_1_);
-                }
+    public void renderWithRotation(float p_78791_1_) {
+        if (!this.isHidden && this.showModel) {
+            if (!this.compiled) {
+                this.compileDisplayList(p_78791_1_);
+            }
 
+            if (this.rotateAngleY != 0.0F || this.rotateAngleX != 0.0F || this.rotateAngleZ != 0.0F) {
                 GL11.glPushMatrix();
                 GL11.glTranslatef(this.rotationPointX * p_78791_1_, this.rotationPointY * p_78791_1_, this.rotationPointZ * p_78791_1_);
 
-                if (this.rotateAngleY != 0.0F)
-                {
-                    GL11.glRotatef(this.rotateAngleY * (180F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+                if (this.rotateAngleY != 0.0F) {
+                    GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
                 }
 
-                if (this.rotateAngleX != 0.0F)
-                {
-                    GL11.glRotatef(this.rotateAngleX * (180F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+                if (this.rotateAngleX != 0.0F) {
+                    GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
                 }
 
-                if (this.rotateAngleZ != 0.0F)
-                {
-                    GL11.glRotatef(this.rotateAngleZ * (180F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+                if (this.rotateAngleZ != 0.0F) {
+                    GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
                 }
 
                 GL11.glCallList(this.displayList);
                 GL11.glPopMatrix();
-
+            } else {
+                GL11.glPushMatrix();
+                GL11.glTranslatef(this.rotationPointX * p_78791_1_, this.rotationPointY * p_78791_1_, this.rotationPointZ * p_78791_1_);
+                GL11.glCallList(this.displayList);
+                GL11.glPopMatrix();
+            }
         }
     }
 
