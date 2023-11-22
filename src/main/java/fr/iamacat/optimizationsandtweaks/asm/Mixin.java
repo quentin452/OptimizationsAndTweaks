@@ -178,24 +178,11 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
-    common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinding,
-        "core.pathfinding.MixinPathFinder"),
-    common_core_pathfinding_MixinPath(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinding,
-        "core.pathfinding.MixinPath"),
-    // todo WIP
-    /*
-     * common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> MultithreadingandtweaksConfig.enableMixinPathFinding,
-     * "core.pathfinding.MixinPathEntity"),
-     */
 
     common_jewelrycraft2_MixinEntityEventHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityEventHandler,
         "jewelrycraft2.MixinEntityEventHandler"),
     common_portalgun_MixinSettings(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinSettings,
         "portalgun.MixinSettings"),
-    common_core_pathfinding_MixinPathNavigate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinding,
-        "core.pathfinding.MixinPathNavigate"),
-    common_core_pathfinding_MixinPathPoint(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinding,
-        "core.pathfinding.MixinPathPoint"),
     common_core_MixinEntityLookHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLookHelper,
         "core.MixinEntityLookHelper"),
 

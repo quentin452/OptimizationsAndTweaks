@@ -332,11 +332,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
 
-    @Config.Comment("Optimize PathFinding")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinPathFinding;
-
     @Config.Comment("Optimize BlockFalling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
