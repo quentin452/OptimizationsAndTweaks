@@ -112,7 +112,7 @@ public class MixinModelRenderer {
     }
 
     @Unique
-    private void renderDisplayListAndChildModels(float p_78785_1_) {
+    public void renderDisplayListAndChildModels(float p_78785_1_) {
         GL11.glCallList(this.displayList);
 
         if (this.childModels != null) {
@@ -194,7 +194,7 @@ public class MixinModelRenderer {
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
-    private void compileDisplayList(float p_78788_1_)
+    public void compileDisplayList(float p_78788_1_)
     {
         this.displayList = GLAllocation.generateDisplayLists(1);
         GL11.glNewList(this.displayList, GL11.GL_COMPILE);

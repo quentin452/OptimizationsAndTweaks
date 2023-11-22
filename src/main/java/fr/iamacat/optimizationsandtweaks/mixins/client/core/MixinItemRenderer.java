@@ -31,7 +31,7 @@ import java.util.Random;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
 
 @SideOnly(Side.CLIENT)
-@Mixin(ItemRenderer.class)
+@Mixin(value = ItemRenderer.class,priority = 999)
 public class MixinItemRenderer {
     @Shadow
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");

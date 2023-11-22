@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.nio.IntBuffer;
 import java.util.*;
 @SideOnly(Side.CLIENT)
-@Mixin(RenderGlobal.class)
+@Mixin(value = RenderGlobal.class,priority = -3)
 public class MixinRenderGlobal {
     @Shadow
     private static final Logger logger = LogManager.getLogger();
@@ -194,7 +194,7 @@ public class MixinRenderGlobal {
      * @reason
      */
     @Overwrite
-    private int renderSortedRenderers(int p_72724_1_, int p_72724_2_, int p_72724_3_, double p_72724_4_) {
+    public int renderSortedRenderers(int p_72724_1_, int p_72724_2_, int p_72724_3_, double p_72724_4_) {
         this.glRenderLists.clear();
         int l = 0;
         int i1 = p_72724_1_;
@@ -300,232 +300,13 @@ public class MixinRenderGlobal {
 
         this.mc.entityRenderer.disableLightmap(p_72733_2_);
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public int sortAndRender(EntityLivingBase p_72719_1_, int p_72719_2_, double p_72719_3_)
-    {
-        this.theWorld.theProfiler.startSection("sortchunks");
-
-        for (int j = 0; j < 10; ++j)
-        {
-            this.worldRenderersCheckIndex = (this.worldRenderersCheckIndex + 1) % this.worldRenderers.length;
-            WorldRenderer worldrenderer = this.worldRenderers[this.worldRenderersCheckIndex];
-
-            if (worldrenderer.needsUpdate && !this.worldRenderersToUpdate.contains(worldrenderer))
-            {
-                this.worldRenderersToUpdate.add(worldrenderer);
-            }
-        }
-
-        if (this.mc.gameSettings.renderDistanceChunks != this.renderDistanceChunks)
-        {
-            this.loadRenderers();
-        }
-
-        if (p_72719_2_ == 0)
-        {
-            this.renderersLoaded = 0;
-            this.dummyRenderInt = 0;
-            this.renderersBeingClipped = 0;
-            this.renderersBeingOccluded = 0;
-            this.renderersBeingRendered = 0;
-            this.renderersSkippingRenderPass = 0;
-        }
-
-        double d9 = p_72719_1_.lastTickPosX + (p_72719_1_.posX - p_72719_1_.lastTickPosX) * p_72719_3_;
-        double d1 = p_72719_1_.lastTickPosY + (p_72719_1_.posY - p_72719_1_.lastTickPosY) * p_72719_3_;
-        double d2 = p_72719_1_.lastTickPosZ + (p_72719_1_.posZ - p_72719_1_.lastTickPosZ) * p_72719_3_;
-        double d3 = p_72719_1_.posX - this.prevSortX;
-        double d4 = p_72719_1_.posY - this.prevSortY;
-        double d5 = p_72719_1_.posZ - this.prevSortZ;
-
-        if (this.prevChunkSortX != p_72719_1_.chunkCoordX || this.prevChunkSortY != p_72719_1_.chunkCoordY || this.prevChunkSortZ != p_72719_1_.chunkCoordZ || d3 * d3 + d4 * d4 + d5 * d5 > 16.0D)
-        {
-            this.prevSortX = p_72719_1_.posX;
-            this.prevSortY = p_72719_1_.posY;
-            this.prevSortZ = p_72719_1_.posZ;
-            this.prevChunkSortX = p_72719_1_.chunkCoordX;
-            this.prevChunkSortY = p_72719_1_.chunkCoordY;
-            this.prevChunkSortZ = p_72719_1_.chunkCoordZ;
-            this.markRenderersForNewPosition(MathHelper.floor_double(p_72719_1_.posX), MathHelper.floor_double(p_72719_1_.posY), MathHelper.floor_double(p_72719_1_.posZ));
-            Arrays.sort(this.sortedWorldRenderers, new EntitySorter(p_72719_1_));
-        }
-
-        double d6 = p_72719_1_.posX - this.prevRenderSortX;
-        double d7 = p_72719_1_.posY - this.prevRenderSortY;
-        double d8 = p_72719_1_.posZ - this.prevRenderSortZ;
-        int k;
-
-        if (d6 * d6 + d7 * d7 + d8 * d8 > 1.0D)
-        {
-            this.prevRenderSortX = p_72719_1_.posX;
-            this.prevRenderSortY = p_72719_1_.posY;
-            this.prevRenderSortZ = p_72719_1_.posZ;
-
-            for (k = 0; k < 27; ++k)
-            {
-                this.sortedWorldRenderers[k].updateRendererSort(p_72719_1_);
-            }
-        }
-
-        RenderHelper.disableStandardItemLighting();
-        byte b1 = 0;
-
-        if (this.occlusionEnabled && this.mc.gameSettings.advancedOpengl && !this.mc.gameSettings.anaglyph && p_72719_2_ == 0)
-        {
-            byte b0 = 0;
-            int l = 16;
-            this.checkOcclusionQueryResult(b0, l);
-
-            for (int i1 = b0; i1 < l; ++i1)
-            {
-                this.sortedWorldRenderers[i1].isVisible = true;
-            }
-
-            this.theWorld.theProfiler.endStartSection("render");
-            k = b1 + this.renderSortedRenderers(b0, l, p_72719_2_, p_72719_3_);
-
-            do
-            {
-                this.theWorld.theProfiler.endStartSection("occ");
-                int l1 = l;
-                l *= 2;
-
-                if (l > this.sortedWorldRenderers.length)
-                {
-                    l = this.sortedWorldRenderers.length;
-                }
-
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glDisable(GL11.GL_ALPHA_TEST);
-                GL11.glDisable(GL11.GL_FOG);
-                GL11.glColorMask(false, false, false, false);
-                GL11.glDepthMask(false);
-                this.theWorld.theProfiler.startSection("check");
-                this.checkOcclusionQueryResult(l1, l);
-                this.theWorld.theProfiler.endSection();
-                GL11.glPushMatrix();
-                float f9 = 0.0F;
-                float f = 0.0F;
-                float f1 = 0.0F;
-
-                for (int j1 = l1; j1 < l; ++j1)
-                {
-                    if (this.sortedWorldRenderers[j1].skipAllRenderPasses())
-                    {
-                        this.sortedWorldRenderers[j1].isInFrustum = false;
-                    }
-                    else
-                    {
-                        if (!this.sortedWorldRenderers[j1].isInFrustum)
-                        {
-                            this.sortedWorldRenderers[j1].isVisible = true;
-                        }
-
-                        if (this.sortedWorldRenderers[j1].isInFrustum && !this.sortedWorldRenderers[j1].isWaitingOnOcclusionQuery)
-                        {
-                            float f2 = MathHelper.sqrt_float(this.sortedWorldRenderers[j1].distanceToEntitySquared(p_72719_1_));
-                            int k1 = (int)(1.0F + f2 / 128.0F);
-
-                            if (this.cloudTickCounter % k1 == j1 % k1)
-                            {
-                                WorldRenderer worldrenderer1 = this.sortedWorldRenderers[j1];
-                                float f3 = (float)((double)worldrenderer1.posXMinus - d9);
-                                float f4 = (float)((double)worldrenderer1.posYMinus - d1);
-                                float f5 = (float)((double)worldrenderer1.posZMinus - d2);
-                                float f6 = f3 - f9;
-                                float f7 = f4 - f;
-                                float f8 = f5 - f1;
-
-                                if (f6 != 0.0F || f7 != 0.0F || f8 != 0.0F)
-                                {
-                                    GL11.glTranslatef(f6, f7, f8);
-                                    f9 += f6;
-                                    f += f7;
-                                    f1 += f8;
-                                }
-
-                                this.theWorld.theProfiler.startSection("bb");
-                                ARBOcclusionQuery.glBeginQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB, this.sortedWorldRenderers[j1].glOcclusionQuery);
-                                this.sortedWorldRenderers[j1].callOcclusionQueryList();
-                                ARBOcclusionQuery.glEndQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB);
-                                this.theWorld.theProfiler.endSection();
-                                this.sortedWorldRenderers[j1].isWaitingOnOcclusionQuery = true;
-                            }
-                        }
-                    }
-                }
-
-                GL11.glPopMatrix();
-
-                if (this.mc.gameSettings.anaglyph)
-                {
-                    if (EntityRenderer.anaglyphField == 0)
-                    {
-                        GL11.glColorMask(false, true, true, true);
-                    }
-                    else
-                    {
-                        GL11.glColorMask(true, false, false, true);
-                    }
-                }
-                else
-                {
-                    GL11.glColorMask(true, true, true, true);
-                }
-
-                GL11.glDepthMask(true);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_ALPHA_TEST);
-                GL11.glEnable(GL11.GL_FOG);
-                this.theWorld.theProfiler.endStartSection("render");
-                k += this.renderSortedRenderers(l1, l, p_72719_2_, p_72719_3_);
-            }
-            while (l < this.sortedWorldRenderers.length);
-        }
-        else
-        {
-            this.theWorld.theProfiler.endStartSection("render");
-            k = b1 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, p_72719_2_, p_72719_3_);
-        }
-
-        this.theWorld.theProfiler.endSection();
-        return k;
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private void checkOcclusionQueryResult(int p_72720_1_, int p_72720_2_)
-    {
-        for (int k = p_72720_1_; k < p_72720_2_; ++k)
-        {
-            if (this.sortedWorldRenderers[k].isWaitingOnOcclusionQuery)
-            {
-                this.occlusionResult.clear();
-                ARBOcclusionQuery.glGetQueryObjectuARB(this.sortedWorldRenderers[k].glOcclusionQuery, ARBOcclusionQuery.GL_QUERY_RESULT_AVAILABLE_ARB, this.occlusionResult);
-
-                if (this.occlusionResult.get(0) != 0)
-                {
-                    this.sortedWorldRenderers[k].isWaitingOnOcclusionQuery = false;
-                    this.occlusionResult.clear();
-                    ARBOcclusionQuery.glGetQueryObjectuARB(this.sortedWorldRenderers[k].glOcclusionQuery, ARBOcclusionQuery.GL_QUERY_RESULT_ARB, this.occlusionResult);
-                    this.sortedWorldRenderers[k].isVisible = this.occlusionResult.get(0) != 0;
-                }
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private void markRenderersForNewPosition(int p_72722_1_, int p_72722_2_, int p_72722_3_)
+    public void markRenderersForNewPosition(int p_72722_1_, int p_72722_2_, int p_72722_3_)
     {
         p_72722_1_ -= 8;
         p_72722_2_ -= 8;

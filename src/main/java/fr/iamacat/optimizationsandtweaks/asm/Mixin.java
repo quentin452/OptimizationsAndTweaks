@@ -64,7 +64,7 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAITempt"),
     client_core_MixinRenderList(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinRenderList,
         "core.MixinRenderList"),
-    client_core_MixinRenderGlobal(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinRenderList,
+    client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderList),
         "core.MixinRenderGlobal"),
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIEatDroppedFood,
