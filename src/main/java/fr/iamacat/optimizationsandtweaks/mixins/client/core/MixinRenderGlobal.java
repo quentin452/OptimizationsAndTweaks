@@ -6,8 +6,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.util.RenderDistanceSorter;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
@@ -482,5 +484,31 @@ public class MixinRenderGlobal {
     public void onStaticEntitiesChanged()
     {
         this.displayListEntitiesDirty = true;
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void rebuildDisplayListEntities()
+    {
+        this.theWorld.theProfiler.startSection("staticentityrebuild");
+        GL11.glPushMatrix();
+        GL11.glNewList(this.displayListEntities, GL11.GL_COMPILE);
+        List list = this.theWorld.getLoadedEntityList();
+        this.displayListEntitiesDirty = false;
+
+        for (Object o : list) {
+            Entity entity = (Entity) o;
+
+            if (RenderManager.instance.getEntityRenderObject(entity).isStaticEntity()) {
+                this.displayListEntitiesDirty = this.displayListEntitiesDirty || !RenderManager.instance.renderEntityStatic(entity, 0.0F, true);
+            }
+        }
+
+        GL11.glEndList();
+        GL11.glPopMatrix();
+        this.theWorld.theProfiler.endSection();
     }
 }
