@@ -315,6 +315,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGuiNewChat;
+    @Config.Comment("Optimize Gui")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGui;
     @Config.Comment("Optimize TextureUtil")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
