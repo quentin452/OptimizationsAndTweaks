@@ -17,9 +17,12 @@ public enum Mixin implements IMixin {
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain), "lotrimprovements.MixinMain"),
     common_lotr_MixinLOTRMod(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS, "lotr.MixinLOTRMod"),
+        avoid(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS), "lotr.MixinLOTRMod"),
     common_lotr_MixinLOTRBiome(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS, "lotr.MixinLOTRBiome"),
+        avoid(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS), "lotr.MixinLOTRBiome"),
+
+    common_lotr_MixinLOTRWorldProvider(Side.COMMON,
+        avoid(TargetedMod.LORDOFTHERINGSFORK).and(require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.MixinLOTRWorldProvider)), "lotr.MixinLOTRWorldProvider"),
     common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
 
@@ -64,6 +67,7 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAITempt"),
     client_core_MixinRenderList(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinRenderList,
         "core.MixinRenderList"),
+
     client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderList),
         "core.MixinRenderGlobal"),
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON,
@@ -237,8 +241,6 @@ public enum Mixin implements IMixin {
     common_eternalfrost_MixinEFConfiguration(Side.COMMON,
         require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.enableMixinEFConfiguration), "eternalfrost.MixinEFConfiguration"),
 
-    common_lotr_MixinLOTRWorldProvider(Side.COMMON,
-        require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.MixinLOTRWorldProvider), "lotr.MixinLOTRWorldProvider"),
     common_blocklings_MixinItemBlockling(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinItemBlockling, "blocklings.MixinItemBlockling"),
     common_nei_MixinWorldOverlayRenderer(Side.COMMON,
