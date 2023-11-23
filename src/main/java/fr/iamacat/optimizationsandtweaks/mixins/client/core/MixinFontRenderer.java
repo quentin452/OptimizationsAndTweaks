@@ -279,13 +279,13 @@ public class MixinFontRenderer {
                 p_78258_4_ = (p_78258_4_ & 16579836) >> 2 | p_78258_4_ & -16777216;
             }
 
-            this.red = (float)(p_78258_4_ >> 16 & 255) / 255.0F;
-            this.blue = (float)(p_78258_4_ >> 8 & 255) / 255.0F;
-            this.green = (float)(p_78258_4_ & 255) / 255.0F;
-            this.alpha = (float)(p_78258_4_ >> 24 & 255) / 255.0F;
+            this.red = (p_78258_4_ >> 16 & 255) / 255.0F;
+            this.blue = (p_78258_4_ >> 8 & 255) / 255.0F;
+            this.green = (p_78258_4_ & 255) / 255.0F;
+            this.alpha = (p_78258_4_ >> 24 & 255) / 255.0F;
             setColor(this.red, this.blue, this.green, this.alpha);
-            this.posX = (float)p_78258_2_;
-            this.posY = (float)p_78258_3_;
+            this.posX = p_78258_2_;
+            this.posY = p_78258_3_;
             this.renderStringAtPos(p_78258_1_, p_78258_5_);
             return (int)this.posX;
         }
@@ -314,7 +314,7 @@ public class MixinFontRenderer {
                     this.underlineStyle = false;
                     this.italicStyle = false;
 
-                    if (j < 0 || j > 15)
+                    if (j < 0)
                     {
                         j = 15;
                     }
@@ -326,7 +326,7 @@ public class MixinFontRenderer {
 
                     k = this.colorCode[j];
                     this.textColor = k;
-                    setColor((float)(k >> 16) / 255.0F, (float)(k >> 8 & 255) / 255.0F, (float)(k & 255) / 255.0F, this.alpha);
+                    setColor((k >> 16) / 255.0F, (k >> 8 & 255) / 255.0F, (k & 255) / 255.0F, this.alpha);
                 }
                 else if (j == 16)
                 {
@@ -348,8 +348,7 @@ public class MixinFontRenderer {
                 {
                     this.italicStyle = true;
                 }
-                else if (j == 21)
-                {
+                else {
                     this.randomStyle = false;
                     this.boldStyle = false;
                     this.strikethroughStyle = false;
@@ -434,10 +433,10 @@ public class MixinFontRenderer {
                     tessellator = Tessellator.instance;
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     tessellator.startDrawingQuads();
-                    tessellator.addVertex((double)this.posX, (double)(this.posY + (float)(this.FONT_HEIGHT / 2)), 0.0D);
-                    tessellator.addVertex((double)(this.posX + f), (double)(this.posY + (float)(this.FONT_HEIGHT / 2)), 0.0D);
-                    tessellator.addVertex((double)(this.posX + f), (double)(this.posY + (float)(this.FONT_HEIGHT / 2) - 1.0F), 0.0D);
-                    tessellator.addVertex((double)this.posX, (double)(this.posY + (float)(this.FONT_HEIGHT / 2) - 1.0F), 0.0D);
+                    tessellator.addVertex(this.posX, this.posY + ((double) this.FONT_HEIGHT / 2), 0.0D);
+                    tessellator.addVertex(this.posX + f, this.posY + ((double) this.FONT_HEIGHT / 2), 0.0D);
+                    tessellator.addVertex(this.posX + f, this.posY + ((double) this.FONT_HEIGHT / 2) - 1.0F, 0.0D);
+                    tessellator.addVertex(this.posX, this.posY + ((double) this.FONT_HEIGHT / 2) - 1.0F, 0.0D);
                     tessellator.draw();
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
@@ -448,10 +447,10 @@ public class MixinFontRenderer {
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     tessellator.startDrawingQuads();
                     int l = this.underlineStyle ? -1 : 0;
-                    tessellator.addVertex((double)(this.posX + (float)l), (double)(this.posY + (float)this.FONT_HEIGHT), 0.0D);
-                    tessellator.addVertex((double)(this.posX + f), (double)(this.posY + (float)this.FONT_HEIGHT), 0.0D);
-                    tessellator.addVertex((double)(this.posX + f), (double)(this.posY + (float)this.FONT_HEIGHT - 1.0F), 0.0D);
-                    tessellator.addVertex((double)(this.posX + (float)l), (double)(this.posY + (float)this.FONT_HEIGHT - 1.0F), 0.0D);
+                    tessellator.addVertex(this.posX + l, this.posY + this.FONT_HEIGHT, 0.0D);
+                    tessellator.addVertex(this.posX + f, this.posY + this.FONT_HEIGHT, 0.0D);
+                    tessellator.addVertex(this.posX + f, this.posY + this.FONT_HEIGHT - 1.0F, 0.0D);
+                    tessellator.addVertex(this.posX + l, this.posY + this.FONT_HEIGHT - 1.0F, 0.0D);
                     tessellator.draw();
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
