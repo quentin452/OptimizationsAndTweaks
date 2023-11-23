@@ -284,28 +284,27 @@ public abstract class MixinRenderItem extends Render {
      * @reason
      */
     @Overwrite
-    private void renderGlint(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_)
-    {
-        for (int j1 = 0; j1 < 2; ++j1)
-        {
-            OpenGlHelper.glBlendFunc(772, 1, 0, 0);
-            float f = 0.00390625F;
-            float f1 = 0.00390625F;
-            float f2 = (float)(Minecraft.getSystemTime() % (long)(3000 + j1 * 1873)) / (3000.0F + (j1 * 1873)) * 256.0F;
-            float f3 = 0.0F;
-            Tessellator tessellator = Tessellator.instance;
-            float f4 = 4.0F;
+    private void renderGlint(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_) {
+        OpenGlHelper.glBlendFunc(772, 1, 0, 0);
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        long currentTime = Minecraft.getSystemTime();
+        float f4 = 4.0F;
 
-            if (j1 == 1)
-            {
+        for (int j1 = 0; j1 < 2; ++j1) {
+            float f3 = 0.0F;
+            float f2 = (currentTime % (3000 + j1 * 1873)) / (3000.0F + (j1 * 1873)) * 256.0F;
+
+            if (j1 == 1) {
                 f4 = -1.0F;
             }
 
+            Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawingQuads();
-            tessellator.addVertexWithUV((p_77018_2_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_5_ * f4) * f), ((f3 + p_77018_5_) * f1));
-            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_4_ + p_77018_5_ * f4) * f),((f3 + p_77018_5_) * f1));
-            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_),(p_77018_3_), this.zLevel, ((f2 + p_77018_4_) * f), ((f3 + 0.0F) * f1));
-            tessellator.addVertexWithUV((p_77018_2_),(p_77018_3_), this.zLevel, ((f2 + 0.0F) * f), ((f3 + 0.0F) * f1));
+            tessellator.addVertexWithUV((p_77018_2_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_5_ * f) * f), ((f3 + p_77018_5_) * f1));
+            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_4_ + p_77018_5_ * f4) * f), ((f3 + p_77018_5_) * f1));
+            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_), (p_77018_3_), this.zLevel, ((f2 + p_77018_4_) * f), ((f3 + 0.0F) * f1));
+            tessellator.addVertexWithUV((p_77018_2_), (p_77018_3_), this.zLevel, ((f2 + 0.0F) * f), ((f3 + 0.0F) * f1));
             tessellator.draw();
         }
     }
