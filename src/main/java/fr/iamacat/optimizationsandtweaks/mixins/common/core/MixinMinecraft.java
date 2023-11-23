@@ -1099,7 +1099,11 @@ public abstract class MixinMinecraft  implements IPlayerUsage {
         this.refreshTexturePacksScheduled = true;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private void runGameLoop()
     {
         this.mcProfiler.startSection("root");

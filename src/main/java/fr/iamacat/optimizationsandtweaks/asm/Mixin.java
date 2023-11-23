@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum Mixin implements IMixin {
 
     // TWEAKING MIXINS
+
+    common_core_MixinProfiler(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinProfiler, "core.MixinProfiler"),
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain), "lotrimprovements.MixinMain"),
     common_lotr_MixinLOTRMod(Side.COMMON,
