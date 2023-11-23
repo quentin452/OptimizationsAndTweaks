@@ -47,103 +47,58 @@ public class MixinGuiNewChat  extends Gui {
      * @reason
      */
     @Overwrite
-    public void drawChat(int p_146230_1_)
-    {
-        if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN)
-        {
-            int j = this.func_146232_i();
-            boolean flag = false;
-            int k = 0;
-            int l = this.field_146253_i.size();
-            float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
+    public void drawChat(int p_146230_1_) {
+        if (this.mc.gameSettings.chatVisibility == EntityPlayer.EnumChatVisibility.HIDDEN) {
+            return;
+        }
 
-            if (l > 0)
-            {
-                if (this.getChatOpen())
-                {
-                    flag = true;
+        int j = this.func_146232_i();
+        boolean flag = this.getChatOpen();
+        int l = this.field_146253_i.size();
+
+        if (l > 0 && flag) {
+            float f1 = this.func_146244_h();
+            int i1 = MathHelper.ceiling_float_int(this.func_146228_f() / f1);
+
+            GL11.glPushMatrix();
+            GL11.glTranslatef(2.0F, 20.0F, 0.0F);
+            GL11.glScalef(f1, f1, 1.0F);
+
+            for (int j1 = 0; j1 + this.field_146250_j < this.field_146253_i.size() && j1 < j; ++j1) {
+                ChatLine chatline = (ChatLine)this.field_146253_i.get(j1 + this.field_146250_j);
+
+                if (chatline != null) {
+
+                    int i2;
+                    i2 = 255;
+
+                    int j2 = -j1 * 9;
+                    drawRect(0, j2 - 9, i1 + 4, j2, i2 / 2 << 24);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    String s = chatline.func_151461_a().getFormattedText();
+                    this.mc.fontRenderer.drawStringWithShadow(s, 0, j2 - 8, 16777215 + (i2 << 24));
+                    GL11.glDisable(GL11.GL_ALPHA_TEST);
                 }
-
-                float f1 = this.func_146244_h();
-                int i1 = MathHelper.ceiling_float_int((float)this.func_146228_f() / f1);
-                GL11.glPushMatrix();
-                GL11.glTranslatef(2.0F, 20.0F, 0.0F);
-                GL11.glScalef(f1, f1, 1.0F);
-                int j1;
-                int k1;
-                int i2;
-
-                for (j1 = 0; j1 + this.field_146250_j < this.field_146253_i.size() && j1 < j; ++j1)
-                {
-                    ChatLine chatline = (ChatLine)this.field_146253_i.get(j1 + this.field_146250_j);
-
-                    if (chatline != null)
-                    {
-                        k1 = p_146230_1_ - chatline.getUpdatedCounter();
-
-                        if (k1 < 200 || flag)
-                        {
-                            double d0 = (double)k1 / 200.0D;
-                            d0 = 1.0D - d0;
-                            d0 *= 10.0D;
-
-                            if (d0 < 0.0D)
-                            {
-                                d0 = 0.0D;
-                            }
-
-                            if (d0 > 1.0D)
-                            {
-                                d0 = 1.0D;
-                            }
-
-                            d0 *= d0;
-                            i2 = (int)(255.0D * d0);
-
-                            if (flag)
-                            {
-                                i2 = 255;
-                            }
-
-                            i2 = (int)((float)i2 * f);
-                            ++k;
-
-                            if (i2 > 3)
-                            {
-                                byte b0 = 0;
-                                int j2 = -j1 * 9;
-                                drawRect(b0, j2 - 9, b0 + i1 + 4, j2, i2 / 2 << 24);
-                                GL11.glEnable(GL11.GL_BLEND); // FORGE: BugFix MC-36812 Chat Opacity Broken in 1.7.x
-                                String s = chatline.func_151461_a().getFormattedText();
-                                this.mc.fontRenderer.drawStringWithShadow(s, b0, j2 - 8, 16777215 + (i2 << 24));
-                                GL11.glDisable(GL11.GL_ALPHA_TEST);
-                            }
-                        }
-                    }
-                }
-
-                if (flag)
-                {
-                    j1 = this.mc.fontRenderer.FONT_HEIGHT;
-                    GL11.glTranslatef(-3.0F, 0.0F, 0.0F);
-                    int k2 = l * j1 + l;
-                    k1 = k * j1 + k;
-                    int l2 = this.field_146250_j * k1 / l;
-                    int l1 = k1 * k1 / k2;
-
-                    if (k2 != k1)
-                    {
-                        i2 = l2 > 0 ? 170 : 96;
-                        int i3 = this.field_146251_k ? 13382451 : 3355562;
-                        drawRect(0, -l2, 2, -l2 - l1, i3 + (i2 << 24));
-                        drawRect(2, -l2, 1, -l2 - l1, 13421772 + (i2 << 24));
-                    }
-                }
-
-                GL11.glPopMatrix();
             }
+
+            int j1 = this.mc.fontRenderer.FONT_HEIGHT;
+            GL11.glTranslatef(-3.0F, 0.0F, 0.0F);
+            int k2 = l * j1 + l;
+            int l1 = j * j1 + j;
+            int i3 = this.field_146250_j * l1 / l;
+            int l2 = l1 * l1 / k2;
+
+            if (k2 != l1) {
+                int i2 = i3 > 0 ? 170 : 96;
+                int i4 = this.field_146251_k ? 13382451 : 3355562;
+                drawRect(0, -i3, 2, -i3 - l2, i4 + (i2 << 24));
+                drawRect(2, -i3, 1, -i3 - l2, 13421772 + (i2 << 24));
+            }
+
+            GL11.glPopMatrix();
         }
     }
+
     @Shadow
     public int func_146232_i()
     {
@@ -159,7 +114,7 @@ public class MixinGuiNewChat  extends Gui {
     {
         short short1 = 180;
         byte b0 = 20;
-        return MathHelper.floor_float(p_146243_0_ * (float)(short1 - b0) + (float)b0);
+        return MathHelper.floor_float(p_146243_0_ * (short1 - b0) + b0);
     }
     @Shadow
     public boolean getChatOpen()
@@ -181,6 +136,6 @@ public class MixinGuiNewChat  extends Gui {
     {
         short short1 = 320;
         byte b0 = 40;
-        return MathHelper.floor_float(p_146233_0_ * (float)(short1 - b0) + (float)b0);
+        return MathHelper.floor_float(p_146233_0_ * (short1 - b0) + b0);
     }
 }
