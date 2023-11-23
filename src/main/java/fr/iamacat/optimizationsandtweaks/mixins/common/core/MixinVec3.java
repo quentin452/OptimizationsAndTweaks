@@ -70,8 +70,11 @@ public class MixinVec3 {
     {
         return Vec3.createVectorHelper(this.xCoord + x, this.yCoord + y, this.zCoord + z);
     }
+    @Unique
     private double cachedXSquare = Double.NaN;
+    @Unique
     private double cachedYSquare = Double.NaN;
+    @Unique
     private double cachedZSquare = Double.NaN;
     /**
      * Euclidean distance between this and the specified vector, returned as double.
