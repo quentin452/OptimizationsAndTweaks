@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.*;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.server.management.LowerStringMap;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +15,7 @@ public class MixinLowerStringMap {
     @Unique
     private final Map optimizationsAndTweaks$internalMap = new LinkedHashMap();
     @Unique
-    private final Map<String, String> optimizationsAndTweaks$lowercaseCache = new HashMap<>();
+    private final Map<String, String> optimizationsAndTweaks$lowercaseCache = new Object2ObjectHashMap<>();
 
     /**
      * @author
