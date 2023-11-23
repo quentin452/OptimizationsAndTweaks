@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Callable;
 @SideOnly(Side.CLIENT)
@@ -62,7 +63,7 @@ public abstract class MixinRenderItem extends Render {
     public void renderItemIntoGUI(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_, int p_77015_4_, int p_77015_5_, boolean renderEffect)
     {
         int k = p_77015_3_.getItemDamage();
-        Object object = p_77015_3_.getIconIndex();
+        IIcon object = p_77015_3_.getIconIndex();
         int l;
         float f;
         float f3;
@@ -87,16 +88,16 @@ public abstract class MixinRenderItem extends Render {
             }
 
             GL11.glPushMatrix();
-            GL11.glTranslatef((float)(p_77015_4_ - 2), (float)(p_77015_5_ + 3), -3.0F + this.zLevel);
+            GL11.glTranslatef((p_77015_4_ - 2), (p_77015_5_ + 3), -3.0F + this.zLevel);
             GL11.glScalef(10.0F, 10.0F, 10.0F);
             GL11.glTranslatef(1.0F, 0.5F, 1.0F);
             GL11.glScalef(1.0F, 1.0F, -1.0F);
             GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-            l = p_77015_3_.getItem().getColorFromItemStack(p_77015_3_, 0);
-            f3 = (float)(l >> 16 & 255) / 255.0F;
-            f4 = (float)(l >> 8 & 255) / 255.0F;
-            f = (float)(l & 255) / 255.0F;
+            l = Objects.requireNonNull(p_77015_3_.getItem()).getColorFromItemStack(p_77015_3_, 0);
+            f3 = (l >> 16 & 255) / 255.0F;
+            f4 = (l >> 8 & 255) / 255.0F;
+            f = (l & 255) / 255.0F;
 
             if (this.renderWithColor)
             {
@@ -115,7 +116,7 @@ public abstract class MixinRenderItem extends Render {
 
             GL11.glPopMatrix();
         }
-        else if (p_77015_3_.getItem().requiresMultipleRenderPasses())
+        else if (Objects.requireNonNull(p_77015_3_.getItem()).requiresMultipleRenderPasses())
         {
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
@@ -129,10 +130,10 @@ public abstract class MixinRenderItem extends Render {
             Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawingQuads();
             tessellator.setColorOpaque_I(-1);
-            tessellator.addVertex((double)(p_77015_4_ - 2), (double)(p_77015_5_ + 18), (double)this.zLevel);
-            tessellator.addVertex((double)(p_77015_4_ + 18), (double)(p_77015_5_ + 18), (double)this.zLevel);
-            tessellator.addVertex((double)(p_77015_4_ + 18), (double)(p_77015_5_ - 2), (double)this.zLevel);
-            tessellator.addVertex((double)(p_77015_4_ - 2), (double)(p_77015_5_ - 2), (double)this.zLevel);
+            tessellator.addVertex(p_77015_4_ - 2, p_77015_5_ + 18, this.zLevel);
+            tessellator.addVertex(p_77015_4_ + 18, p_77015_5_ + 18, this.zLevel);
+            tessellator.addVertex(p_77015_4_ + 18, p_77015_5_ - 2, this.zLevel);
+            tessellator.addVertex(p_77015_4_ - 2, p_77015_5_ - 2, this.zLevel);
             tessellator.draw();
             GL11.glColorMask(true, true, true, true);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -145,9 +146,9 @@ public abstract class MixinRenderItem extends Render {
                 p_77015_2_.bindTexture(item.getSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
                 IIcon iicon = item.getIcon(p_77015_3_, l);
                 int i1 = p_77015_3_.getItem().getColorFromItemStack(p_77015_3_, l);
-                f = (float)(i1 >> 16 & 255) / 255.0F;
-                float f1 = (float)(i1 >> 8 & 255) / 255.0F;
-                float f2 = (float)(i1 & 255) / 255.0F;
+                f = (i1 >> 16 & 255) / 255.0F;
+                float f1 = (i1 >> 8 & 255) / 255.0F;
+                float f2 = (i1 & 255) / 255.0F;
 
                 if (this.renderWithColor)
                 {
@@ -184,9 +185,9 @@ public abstract class MixinRenderItem extends Render {
             }
 
             l = p_77015_3_.getItem().getColorFromItemStack(p_77015_3_, 0);
-            f3 = (float)(l >> 16 & 255) / 255.0F;
-            f4 = (float)(l >> 8 & 255) / 255.0F;
-            f = (float)(l & 255) / 255.0F;
+            f3 = (l >> 16 & 255) / 255.0F;
+            f4 = (l >> 8 & 255) / 255.0F;
+            f = (l & 255) / 255.0F;
 
             if (this.renderWithColor)
             {
@@ -197,7 +198,7 @@ public abstract class MixinRenderItem extends Render {
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_BLEND);
 
-            this.renderIcon(p_77015_4_, p_77015_5_, (IIcon)object, 16, 16);
+            this.renderIcon(p_77015_4_, p_77015_5_, object, 16, 16);
 
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -236,34 +237,10 @@ public abstract class MixinRenderItem extends Render {
             {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering item");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being rendered");
-                crashreportcategory.addCrashSectionCallable("Item Type", new Callable()
-                {
-                    public String call()
-                    {
-                        return String.valueOf(p_82406_3_.getItem());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("Item Aux", new Callable()
-                {
-                    public String call()
-                    {
-                        return String.valueOf(p_82406_3_.getItemDamage());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("Item NBT", new Callable()
-                {
-                    public String call()
-                    {
-                        return String.valueOf(p_82406_3_.getTagCompound());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("Item Foil", new Callable()
-                {
-                    public String call()
-                    {
-                        return String.valueOf(p_82406_3_.hasEffect());
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Item Type", () -> String.valueOf(p_82406_3_.getItem()));
+                crashreportcategory.addCrashSectionCallable("Item Aux", () -> String.valueOf(p_82406_3_.getItemDamage()));
+                crashreportcategory.addCrashSectionCallable("Item NBT", () -> String.valueOf(p_82406_3_.getTagCompound()));
+                crashreportcategory.addCrashSectionCallable("Item Foil", () -> String.valueOf(p_82406_3_.hasEffect()));
                 throw new ReportedException(crashreport);
             }
 
@@ -296,10 +273,10 @@ public abstract class MixinRenderItem extends Render {
     {
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV((double)(p_94149_1_ + 0), (double)(p_94149_2_ + p_94149_5_), (double)this.zLevel, (double)p_94149_3_.getMinU(), (double)p_94149_3_.getMaxV());
-        tessellator.addVertexWithUV((double)(p_94149_1_ + p_94149_4_), (double)(p_94149_2_ + p_94149_5_), (double)this.zLevel, (double)p_94149_3_.getMaxU(), (double)p_94149_3_.getMaxV());
-        tessellator.addVertexWithUV((double)(p_94149_1_ + p_94149_4_), (double)(p_94149_2_ + 0), (double)this.zLevel, (double)p_94149_3_.getMaxU(), (double)p_94149_3_.getMinV());
-        tessellator.addVertexWithUV((double)(p_94149_1_ + 0), (double)(p_94149_2_ + 0), (double)this.zLevel, (double)p_94149_3_.getMinU(), (double)p_94149_3_.getMinV());
+        tessellator.addVertexWithUV((p_94149_1_), (p_94149_2_ + p_94149_5_), this.zLevel, p_94149_3_.getMinU(), p_94149_3_.getMaxV());
+        tessellator.addVertexWithUV((p_94149_1_ + p_94149_4_), (p_94149_2_ + p_94149_5_), this.zLevel, p_94149_3_.getMaxU(),p_94149_3_.getMaxV());
+        tessellator.addVertexWithUV((p_94149_1_ + p_94149_4_),(p_94149_2_), this.zLevel, p_94149_3_.getMaxU(), p_94149_3_.getMinV());
+        tessellator.addVertexWithUV((p_94149_1_), (p_94149_2_), this.zLevel, p_94149_3_.getMinU(), p_94149_3_.getMinV());
         tessellator.draw();
     }
     /**
@@ -314,7 +291,7 @@ public abstract class MixinRenderItem extends Render {
             OpenGlHelper.glBlendFunc(772, 1, 0, 0);
             float f = 0.00390625F;
             float f1 = 0.00390625F;
-            float f2 = (float)(Minecraft.getSystemTime() % (long)(3000 + j1 * 1873)) / (3000.0F + (float)(j1 * 1873)) * 256.0F;
+            float f2 = (float)(Minecraft.getSystemTime() % (long)(3000 + j1 * 1873)) / (3000.0F + (j1 * 1873)) * 256.0F;
             float f3 = 0.0F;
             Tessellator tessellator = Tessellator.instance;
             float f4 = 4.0F;
@@ -325,10 +302,10 @@ public abstract class MixinRenderItem extends Render {
             }
 
             tessellator.startDrawingQuads();
-            tessellator.addVertexWithUV((double)(p_77018_2_ + 0), (double)(p_77018_3_ + p_77018_5_), (double)this.zLevel, (double)((f2 + (float)p_77018_5_ * f4) * f), (double)((f3 + (float)p_77018_5_) * f1));
-            tessellator.addVertexWithUV((double)(p_77018_2_ + p_77018_4_), (double)(p_77018_3_ + p_77018_5_), (double)this.zLevel, (double)((f2 + (float)p_77018_4_ + (float)p_77018_5_ * f4) * f), (double)((f3 + (float)p_77018_5_) * f1));
-            tessellator.addVertexWithUV((double)(p_77018_2_ + p_77018_4_), (double)(p_77018_3_ + 0), (double)this.zLevel, (double)((f2 + (float)p_77018_4_) * f), (double)((f3 + 0.0F) * f1));
-            tessellator.addVertexWithUV((double)(p_77018_2_ + 0), (double)(p_77018_3_ + 0), (double)this.zLevel, (double)((f2 + 0.0F) * f), (double)((f3 + 0.0F) * f1));
+            tessellator.addVertexWithUV((p_77018_2_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_5_ * f4) * f), ((f3 + p_77018_5_) * f1));
+            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_), (p_77018_3_ + p_77018_5_), this.zLevel, ((f2 + p_77018_4_ + p_77018_5_ * f4) * f),((f3 + p_77018_5_) * f1));
+            tessellator.addVertexWithUV((p_77018_2_ + p_77018_4_),(p_77018_3_), this.zLevel, ((f2 + p_77018_4_) * f), ((f3 + 0.0F) * f1));
+            tessellator.addVertexWithUV((p_77018_2_),(p_77018_3_), this.zLevel, ((f2 + 0.0F) * f), ((f3 + 0.0F) * f1));
             tessellator.draw();
         }
     }
