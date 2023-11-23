@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -8,6 +9,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -161,5 +163,18 @@ public class MixinRenderManager {
         }
 
         return render;
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void updateIcons(IIconRegister p_94178_1_)
+    {
+        for (Object o : this.entityRenderMap.values()) {
+            Render render = (Render) o;
+            render.updateIcons(p_94178_1_);
+        }
     }
 }
