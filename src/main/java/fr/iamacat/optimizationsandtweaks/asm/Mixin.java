@@ -47,7 +47,8 @@ public enum Mixin implements IMixin {
     common_core_MixinThreadedFileIOBase(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinThreadedFileIOBase,
         "core.MixinThreadedFileIOBase"),
 
-
+    common_core_MixinVec3(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinVec3,
+        "core.MixinVec3"),
 
     common_core_MixinEntityAINearestAttackableTarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAINearestAttackableTarget,
         "core.MixinEntityAINearestAttackableTarget"),

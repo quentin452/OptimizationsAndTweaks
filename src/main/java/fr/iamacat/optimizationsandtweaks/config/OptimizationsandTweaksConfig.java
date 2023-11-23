@@ -290,6 +290,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOpenGlHelper;
+
+    @Config.Comment("Optimize Vec3 Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinVec3;
     @Config.Comment("Optimize FontRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
