@@ -65,7 +65,7 @@ public class MixinGuiNewChat  extends Gui {
                 }
 
                 float f1 = this.func_146244_h();
-                int i1 = MathHelper.ceiling_float_int((float)this.func_146228_f() / f1);
+                int i1 = MathHelper.ceiling_float_int(this.func_146228_f() / f1);
                 GL11.glPushMatrix();
                 GL11.glTranslatef(2.0F, 20.0F, 0.0F);
                 GL11.glScalef(f1, f1, 1.0F);
@@ -83,7 +83,7 @@ public class MixinGuiNewChat  extends Gui {
 
                         if (k1 < 200 || flag)
                         {
-                            double d0 = (double)k1 / 200.0D;
+                            double d0 = k1 / 200.0D;
                             d0 = 1.0D - d0;
                             d0 *= 10.0D;
 
@@ -105,7 +105,7 @@ public class MixinGuiNewChat  extends Gui {
                                 i2 = 255;
                             }
 
-                            i2 = (int)((float)i2 * f);
+                            i2 = (int)(i2 * f);
                             ++k;
 
                             if (i2 > 3)
@@ -154,12 +154,16 @@ public class MixinGuiNewChat  extends Gui {
     {
         return func_146243_b(this.getChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public static int func_146243_b(float p_146243_0_)
     {
         short short1 = 180;
         byte b0 = 20;
-        return MathHelper.floor_float(p_146243_0_ * (float)(short1 - b0) + (float)b0);
+        return MathHelper.floor_float(p_146243_0_ * (short1 - b0) + b0);
     }
     @Shadow
     public boolean getChatOpen()
@@ -176,11 +180,15 @@ public class MixinGuiNewChat  extends Gui {
     {
         return func_146233_a(this.mc.gameSettings.chatWidth);
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public static int func_146233_a(float p_146233_0_)
     {
         short short1 = 320;
         byte b0 = 40;
-        return MathHelper.floor_float(p_146233_0_ * (float)(short1 - b0) + (float)b0);
+        return MathHelper.floor_float(p_146233_0_ * (short1 - b0) + b0);
     }
 }
