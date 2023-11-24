@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -24,7 +23,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.MinecraftException;
@@ -48,7 +46,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(value = MinecraftServer.class,priority = 1001)
 public abstract class MixinMinecraftServer {
@@ -256,16 +256,15 @@ public abstract class MixinMinecraftServer {
         this.theProfiler.endSection();
     }
 
-    @Unique
+    @Shadow
     public boolean getAllowNether() {
         return true;
     }
 
-    @Unique
+    @Shadow
     public NetworkSystem func_147137_ag() {
         return this.field_147144_o;
     }
-
     /**
      * @author
      * @reason
@@ -283,8 +282,16 @@ public abstract class MixinMinecraftServer {
                 this.field_147147_p.func_151315_a(new ChatComponentText(this.motd));
                 this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
                 this.func_147138_a(this.field_147147_p);
-
+                final int TICK_TIME = 50;
+                long currentTime = getSystemTimeMillis();
+                long lastTickTime = currentTime;
+                long passedTime = 0;
                 while (this.serverRunning) {
+                    currentTime = getSystemTimeMillis();
+                    long deltaTime = currentTime - lastTickTime;
+                    lastTickTime = currentTime;
+                    passedTime += deltaTime;
+
                     long j = getSystemTimeMillis();
                     long k = j - i;
 
@@ -304,28 +311,16 @@ public abstract class MixinMinecraftServer {
 
                     if (this.worldServers[0].areAllPlayersAsleep()) {
                         this.tick();
-                        l = 0L;
+                        passedTime = 0;
                     } else {
-                        while (l > 50L) {
-                            l -= 50L;
+                        while (passedTime >= TICK_TIME) {
                             this.tick();
+                            passedTime -= TICK_TIME;
                         }
                     }
-
-                    long finalL = l;
-                    CompletableFuture<Void> sleepFuture = CompletableFuture.runAsync(() -> {
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(Math.max(1L, 50L - finalL));
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    });
-
-                    sleepFuture.get();
-
+                    TimeUnit.MILLISECONDS.sleep(Math.max(1L, 50L - l));
                     this.serverIsRunning = true;
                 }
-
                 FMLCommonHandler.instance().handleServerStopping();
                 FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
             }
@@ -387,6 +382,7 @@ public abstract class MixinMinecraftServer {
             }
         }
     }
+
     @Shadow
     public static long getSystemTimeMillis()
     {
