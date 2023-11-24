@@ -82,10 +82,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
 
-    @Config.Comment("Optimize RenderList performances")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinRenderList;
     @Config.Comment("Disable Attack Indicator from LotrImprovements if Lotr iam a cat fork is enabled")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

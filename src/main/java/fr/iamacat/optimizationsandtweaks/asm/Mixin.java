@@ -69,8 +69,6 @@ public enum Mixin implements IMixin {
         "core.MixinAxisAlignedBB"),
     common_core_MixinEntityAITempt(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITempt,
         "core.MixinEntityAITempt"),
-    client_core_MixinRenderList(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinRenderList,
-        "core.MixinRenderList"),
     client_core_MixinGuiNewChat(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGuiNewChat,
         "core.MixinGuiNewChat"),
 
