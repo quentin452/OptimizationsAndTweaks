@@ -1,31 +1,29 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureAttribute;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,8 +49,8 @@ public abstract class MixinEntityLivingUpdate extends Entity {
         2)).setSaved(false);
     @Shadow
     private BaseAttributeMap attributeMap;
-    @Unique
-    private final Object2ObjectHashMap activePotionsMap = new Object2ObjectHashMap();
+    @Shadow
+    private final HashMap activePotionsMap = new HashMap();
     /** The equipment this mob was previously wearing, used for syncing. */
     @Shadow
     private final ItemStack[] previousEquipment = new ItemStack[5];
@@ -277,6 +275,19 @@ public abstract class MixinEntityLivingUpdate extends Entity {
         }
     }
 
+    @Unique
+    public boolean isPotionActive(Potion p_70644_1_) {
+        return this.activePotionsMap.containsKey(p_70644_1_.id);
+    }
+
+    /**
+     * returns the PotionEffect for the supplied Potion if it is active, null otherwise.
+     */
+    @Unique
+    public PotionEffect getActivePotionEffect(Potion p_70660_1_) {
+        return (PotionEffect) this.activePotionsMap.get(Integer.valueOf(p_70660_1_.id));
+    }
+
     /**
      * Dead and sleeping entities cannot move
      */
@@ -378,430 +389,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
             super.updateFallState(distanceFallenThisTick, isOnGround);
             ci.cancel();
-        }
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void writeEntityToNBT(NBTTagCompound tagCompound)
-    {
-        tagCompound.setFloat("HealF", this.getHealth());
-        tagCompound.setShort("Health", (short)((int)Math.ceil((double)this.getHealth())));
-        tagCompound.setShort("HurtTime", (short)this.hurtTime);
-        tagCompound.setShort("DeathTime", (short)this.deathTime);
-        tagCompound.setShort("AttackTime", (short)this.attackTime);
-        tagCompound.setFloat("AbsorptionAmount", this.getAbsorptionAmount());
-        ItemStack[] aitemstack = this.getLastActiveItems();
-        int i = aitemstack.length;
-        int j;
-        ItemStack itemstack;
-
-        for (j = 0; j < i; ++j)
-        {
-            itemstack = aitemstack[j];
-
-            if (itemstack != null)
-            {
-                this.attributeMap.removeAttributeModifiers(itemstack.getAttributeModifiers());
-            }
-        }
-
-        tagCompound.setTag("Attributes", SharedMonsterAttributes.writeBaseAttributeMapToNBT(this.getAttributeMap()));
-        aitemstack = this.getLastActiveItems();
-        i = aitemstack.length;
-
-        for (j = 0; j < i; ++j)
-        {
-            itemstack = aitemstack[j];
-
-            if (itemstack != null)
-            {
-                this.attributeMap.applyAttributeModifiers(itemstack.getAttributeModifiers());
-            }
-        }
-
-        if (!this.activePotionsMap.isEmpty())
-        {
-            NBTTagList nbttaglist = new NBTTagList();
-            Iterator iterator = this.activePotionsMap.values().iterator();
-
-            while (iterator.hasNext())
-            {
-                PotionEffect potioneffect = (PotionEffect)iterator.next();
-                nbttaglist.appendTag(potioneffect.writeCustomPotionEffectToNBT(new NBTTagCompound()));
-            }
-
-            tagCompound.setTag("ActiveEffects", nbttaglist);
-        }
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void readEntityFromNBT(NBTTagCompound tagCompund)
-    {
-        this.setAbsorptionAmount(tagCompund.getFloat("AbsorptionAmount"));
-
-        if (tagCompund.hasKey("Attributes", 9) && this.worldObj != null && !this.worldObj.isRemote)
-        {
-            SharedMonsterAttributes.func_151475_a(this.getAttributeMap(), tagCompund.getTagList("Attributes", 10));
-        }
-
-        if (tagCompund.hasKey("ActiveEffects", 9))
-        {
-            NBTTagList nbttaglist = tagCompund.getTagList("ActiveEffects", 10);
-
-            for (int i = 0; i < nbttaglist.tagCount(); ++i)
-            {
-                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                PotionEffect potioneffect = PotionEffect.readCustomPotionEffectFromNBT(nbttagcompound1);
-
-                if (potioneffect != null)
-                {
-                    this.activePotionsMap.put(Integer.valueOf(potioneffect.getPotionID()), potioneffect);
-                }
-            }
-        }
-
-        if (tagCompund.hasKey("HealF", 99))
-        {
-            this.setHealth(tagCompund.getFloat("HealF"));
-        }
-        else
-        {
-            NBTBase nbtbase = tagCompund.getTag("Health");
-
-            if (nbtbase == null)
-            {
-                this.setHealth(this.getMaxHealth());
-            }
-            else if (nbtbase.getId() == 5)
-            {
-                this.setHealth(((NBTTagFloat)nbtbase).func_150288_h());
-            }
-            else if (nbtbase.getId() == 2)
-            {
-                this.setHealth((float)((NBTTagShort)nbtbase).func_150289_e());
-            }
-        }
-
-        this.hurtTime = tagCompund.getShort("HurtTime");
-        this.deathTime = tagCompund.getShort("DeathTime");
-        this.attackTime = tagCompund.getShort("AttackTime");
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    protected void updatePotionEffects()
-    {
-        Iterator iterator = this.activePotionsMap.keySet().iterator();
-
-        while (iterator.hasNext())
-        {
-            Integer integer = (Integer)iterator.next();
-            PotionEffect potioneffect = (PotionEffect)this.activePotionsMap.get(integer);
-
-            if (!potioneffect.onUpdate(entityLivingBase))
-            {
-                if (!this.worldObj.isRemote)
-                {
-                    iterator.remove();
-                    this.onFinishedPotionEffect(potioneffect);
-                }
-            }
-            else if (potioneffect.getDuration() % 600 == 0)
-            {
-                this.onChangedPotionEffect(potioneffect, false);
-            }
-        }
-
-        int i;
-
-        if (this.potionsNeedUpdate)
-        {
-            if (!this.worldObj.isRemote)
-            {
-                if (this.activePotionsMap.isEmpty())
-                {
-                    this.dataWatcher.updateObject(8, Byte.valueOf((byte)0));
-                    this.dataWatcher.updateObject(7, Integer.valueOf(0));
-                    this.setInvisible(false);
-                }
-                else
-                {
-                    i = PotionHelper.calcPotionLiquidColor(this.activePotionsMap.values());
-                    this.dataWatcher.updateObject(8, Byte.valueOf((byte)(PotionHelper.func_82817_b(this.activePotionsMap.values()) ? 1 : 0)));
-                    this.dataWatcher.updateObject(7, Integer.valueOf(i));
-                    this.setInvisible(this.isPotionActive(Potion.invisibility.id));
-                }
-            }
-
-            this.potionsNeedUpdate = false;
-        }
-
-        i = this.dataWatcher.getWatchableObjectInt(7);
-        boolean flag1 = this.dataWatcher.getWatchableObjectByte(8) > 0;
-
-        if (i > 0)
-        {
-            boolean flag = false;
-
-            if (!this.isInvisible())
-            {
-                flag = this.rand.nextBoolean();
-            }
-            else
-            {
-                flag = this.rand.nextInt(15) == 0;
-            }
-
-            if (flag1)
-            {
-                flag &= this.rand.nextInt(5) == 0;
-            }
-
-            if (flag && i > 0)
-            {
-                double d0 = (double)(i >> 16 & 255) / 255.0D;
-                double d1 = (double)(i >> 8 & 255) / 255.0D;
-                double d2 = (double)(i >> 0 & 255) / 255.0D;
-                this.worldObj.spawnParticle(flag1 ? "mobSpellAmbient" : "mobSpell", this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height - (double)this.yOffset, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, d0, d1, d2);
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void clearActivePotions()
-    {
-        Iterator iterator = this.activePotionsMap.keySet().iterator();
-
-        while (iterator.hasNext())
-        {
-            Integer integer = (Integer)iterator.next();
-            PotionEffect potioneffect = (PotionEffect)this.activePotionsMap.get(integer);
-
-            if (!this.worldObj.isRemote)
-            {
-                iterator.remove();
-                this.onFinishedPotionEffect(potioneffect);
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public Collection getActivePotionEffects()
-    {
-        return this.activePotionsMap.values();
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public boolean isPotionActive(int p_82165_1_)
-    {
-        return this.activePotionsMap.containsKey(Integer.valueOf(p_82165_1_));
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public boolean isPotionActive(Potion p_70644_1_)
-    {
-        return this.activePotionsMap.containsKey(Integer.valueOf(p_70644_1_.id));
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public PotionEffect getActivePotionEffect(Potion p_70660_1_)
-    {
-        return (PotionEffect)this.activePotionsMap.get(Integer.valueOf(p_70660_1_.id));
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void addPotionEffect(PotionEffect p_70690_1_)
-    {
-        if (this.isPotionApplicable(p_70690_1_))
-        {
-            if (this.activePotionsMap.containsKey(Integer.valueOf(p_70690_1_.getPotionID())))
-            {
-                ((PotionEffect)this.activePotionsMap.get(Integer.valueOf(p_70690_1_.getPotionID()))).combine(p_70690_1_);
-                this.onChangedPotionEffect((PotionEffect)this.activePotionsMap.get(Integer.valueOf(p_70690_1_.getPotionID())), true);
-            }
-            else
-            {
-                this.activePotionsMap.put(Integer.valueOf(p_70690_1_.getPotionID()), p_70690_1_);
-                this.onNewPotionEffect(p_70690_1_);
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void removePotionEffectClient(int p_70618_1_)
-    {
-        this.activePotionsMap.remove(Integer.valueOf(p_70618_1_));
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void removePotionEffect(int p_82170_1_)
-    {
-        PotionEffect potioneffect = (PotionEffect)this.activePotionsMap.remove(Integer.valueOf(p_82170_1_));
-
-        if (potioneffect != null)
-        {
-            this.onFinishedPotionEffect(potioneffect);
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public void curePotionEffects(ItemStack curativeItem)
-    {
-        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
-
-        if (worldObj.isRemote)
-        {
-            return;
-        }
-
-        while (potionKey.hasNext())
-        {
-            Integer key = potionKey.next();
-            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
-
-            if (effect.isCurativeItem(curativeItem))
-            {
-                potionKey.remove();
-                onFinishedPotionEffect(effect);
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    protected void onFinishedPotionEffect(PotionEffect p_70688_1_)
-    {
-        this.potionsNeedUpdate = true;
-
-        if (!this.worldObj.isRemote)
-        {
-            Potion.potionTypes[p_70688_1_.getPotionID()].removeAttributesModifiersFromEntity(entityLivingBase, this.getAttributeMap(), p_70688_1_.getAmplifier());
-        }
-    }
-    @Shadow
-    public BaseAttributeMap getAttributeMap()
-    {
-        if (this.attributeMap == null)
-        {
-            this.attributeMap = new ServersideAttributeMap();
-        }
-
-        return this.attributeMap;
-    }
-    @Shadow
-    public float getAbsorptionAmount()
-    {
-        return this.field_110151_bq;
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    protected void onChangedPotionEffect(PotionEffect p_70695_1_, boolean p_70695_2_)
-    {
-        this.potionsNeedUpdate = true;
-
-        if (p_70695_2_ && !this.worldObj.isRemote)
-        {
-            Potion.potionTypes[p_70695_1_.getPotionID()].removeAttributesModifiersFromEntity(entityLivingBase, this.getAttributeMap(), p_70695_1_.getAmplifier());
-            Potion.potionTypes[p_70695_1_.getPotionID()].applyAttributesModifiersToEntity(entityLivingBase, this.getAttributeMap(), p_70695_1_.getAmplifier());
-        }
-    }
-    @Shadow
-    public void setHealth(float p_70606_1_)
-    {
-        this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(p_70606_1_, 0.0F, this.getMaxHealth())));
-    }
-    @Shadow
-    public final float getMaxHealth()
-    {
-        return (float)this.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue();
-    }
-    @Shadow
-    public IAttributeInstance getEntityAttribute(IAttribute p_110148_1_)
-    {
-        return this.getAttributeMap().getAttributeInstance(p_110148_1_);
-    }
-    @Shadow
-    public void setAbsorptionAmount(float p_110149_1_)
-    {
-        if (p_110149_1_ < 0.0F)
-        {
-            p_110149_1_ = 0.0F;
-        }
-
-        this.field_110151_bq = p_110149_1_;
-    }
-    @Shadow
-    public boolean isPotionApplicable(PotionEffect p_70687_1_)
-    {
-        if (this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD)
-        {
-            int i = p_70687_1_.getPotionID();
-
-            if (i == Potion.regeneration.id || i == Potion.poison.id)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    @Shadow
-    public EnumCreatureAttribute getCreatureAttribute()
-    {
-        return EnumCreatureAttribute.UNDEFINED;
-    }
-    @Shadow
-    protected void onNewPotionEffect(PotionEffect p_70670_1_)
-    {
-        this.potionsNeedUpdate = true;
-
-        if (!this.worldObj.isRemote)
-        {
-            Potion.potionTypes[p_70670_1_.getPotionID()].applyAttributesModifiersToEntity(entityLivingBase, this.getAttributeMap(), p_70670_1_.getAmplifier());
         }
     }
 }
