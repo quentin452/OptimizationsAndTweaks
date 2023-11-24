@@ -30,6 +30,7 @@ public enum TargetedMod implements ITargetedMod {
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
+    FALSETWEAKS("Falsetweaks", false, startsWith("Falsetweaks")),
 
     HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
     EASYBREEDING("easybreading", false, startsWith("easybreading")),
