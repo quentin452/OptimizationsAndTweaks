@@ -313,9 +313,8 @@ public abstract class MixinMinecraftServer {
                         this.tick();
                         passedTime = 0;
                     } else {
-                        while (passedTime >= TICK_TIME) {
+                        for (; passedTime >= TICK_TIME; passedTime -= TICK_TIME) {
                             this.tick();
-                            passedTime -= TICK_TIME;
                         }
                     }
                     TimeUnit.MILLISECONDS.sleep(Math.max(1L, 50L - l));
