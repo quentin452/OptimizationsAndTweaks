@@ -319,6 +319,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGui;
+
+    @Config.Comment("Optimize RenderGlobal")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRenderGlobal;
     @Config.Comment("Optimize TextureUtil")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
