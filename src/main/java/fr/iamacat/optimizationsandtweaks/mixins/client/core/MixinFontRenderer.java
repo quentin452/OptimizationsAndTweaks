@@ -122,7 +122,7 @@ public class MixinFontRenderer {
      * Render a single character with the default.png font at current (posX,posY) location...
      */
     @Overwrite
-    protected float renderDefaultChar(int p_78266_1_, boolean p_78266_2_) {
+    public float renderDefaultChar(int p_78266_1_, boolean p_78266_2_) {
         float f = (float)(p_78266_1_ % 16 * 8);
         float f1 = (float)(p_78266_1_ / 16 * 8);
         float f2 = p_78266_2_ ? 1.0F : 0.0F;
@@ -163,7 +163,7 @@ public class MixinFontRenderer {
      * @reason
      */
     @Overwrite
-    protected float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_)
+    public float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_)
     {
         if (this.glyphWidth[p_78277_1_] == 0)
         {
@@ -210,7 +210,7 @@ public class MixinFontRenderer {
     * @reason
     */
    @Overwrite
-   private ResourceLocation getUnicodePageLocation(int p_111271_1_)
+   public ResourceLocation getUnicodePageLocation(int p_111271_1_)
    {
        if (unicodePageLocations[p_111271_1_] == null)
        {
@@ -256,7 +256,7 @@ public class MixinFontRenderer {
      * @reason
      */
     @Overwrite
-    private int renderString(String p_78258_1_, int p_78258_2_, int p_78258_3_, int p_78258_4_, boolean p_78258_5_)
+    public int renderString(String p_78258_1_, int p_78258_2_, int p_78258_3_, int p_78258_4_, boolean p_78258_5_)
     {
         if (p_78258_1_ == null)
         {
@@ -294,7 +294,7 @@ public class MixinFontRenderer {
      * Render a single line string at the current (posX,posY) and update posX
      */
     @Overwrite
-    private void renderStringAtPos(String p_78255_1_, boolean p_78255_2_)
+    public void renderStringAtPos(String p_78255_1_, boolean p_78255_2_)
     {
         for (int i = 0; i < p_78255_1_.length(); ++i)
         {
@@ -422,7 +422,7 @@ public class MixinFontRenderer {
      * @reason
      */
     @Overwrite(remap = false)
-    protected void doDraw(float f)
+    public void doDraw(float f)
     {
         {
             {
@@ -464,7 +464,7 @@ public class MixinFontRenderer {
      * Apply Unicode Bidirectional Algorithm to string and return a new possibly reordered string for visual rendering.
      */
     @Overwrite
-    private String bidiReorder(String p_147647_1_)
+    public String bidiReorder(String p_147647_1_)
     {
         try
         {
