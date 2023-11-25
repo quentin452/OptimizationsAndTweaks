@@ -117,10 +117,10 @@ public abstract class MixinWorldServer extends World {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
-    @Override
+    @Overwrite
     public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean remove) {
         List<NextTickListEntry> result = new ArrayList<>();
         ChunkCoordIntPair chunkCoords = chunk.getChunkCoordIntPair();
@@ -141,7 +141,6 @@ public abstract class MixinWorldServer extends World {
                 }
             }
         }
-
         return result.isEmpty() ? null : result;
     }
 }
