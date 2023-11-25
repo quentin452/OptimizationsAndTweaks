@@ -111,12 +111,10 @@ public class MixinEntityArrowAttack extends EntityAIBase {
                 this.rangedAttackTime = MathHelper.floor_float(f * (this.maxRangedAttackTime - this.field_96561_g) + this.field_96561_g);
             }
         } else {
-            return;
-            /*if (this.rangedAttackTime <= 0) {
-            this.entityHost.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.entityMoveSpeed); this line is disabled because making LARGE LAGS
-            // todo fix it
+            double distance = this.entityHost.getDistanceToEntity(this.attackTarget);
+            if (distance >= 10 && this.rangedAttackTime <= 0) {
+                this.entityHost.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.entityMoveSpeed);
             }
-             */
         }
         this.entityHost.getLookHelper().setLookPositionWithEntity(this.attackTarget, 30.0F, 30.0F);
     }
