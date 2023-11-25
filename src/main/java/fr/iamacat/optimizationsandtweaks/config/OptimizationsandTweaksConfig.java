@@ -544,7 +544,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchWorldGenCloudNine;
-
+    @Config.Comment("Fix a large bottleneck caused by EntityDarkMiresi from The Kingdom of the Overworld")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityDarkMiresi;
     @Config.Comment("Remove Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -205,6 +205,8 @@ public enum Mixin implements IMixin {
         "core.MixinBlockFalling"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchWorldGenCloudNine, "koto.MixinPatchWorldGenCloudNine"),
+    common_koto_MixinEntityDarkMiresi(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityDarkMiresi, "koto.MixinEntityDarkMiresi"),
     common_thaumcraft_MixinMappingThread(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinMappingThread,
         "thaumcraft.MixinMappingThread"),
