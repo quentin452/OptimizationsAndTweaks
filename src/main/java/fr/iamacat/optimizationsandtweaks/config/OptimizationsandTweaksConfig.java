@@ -95,10 +95,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemMinestone;
 
-    @Config.Comment("Disabling Profiler from minecraft")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinProfiler;
     @Config.Comment("Optimize LowerStringMap performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

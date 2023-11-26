@@ -96,7 +96,6 @@ dependencies {
     implementation "curse.maven:minestones-231048:2306961-deobf-sources-api"
     implementation "curse.maven:easy-breeding-236045:2259220-deobf-sources-api"
     implementation "curse.maven:portal-gun-229084:2480016-deobf-sources-api"
-    implementation "curse.maven:gems-jewels-392943:2994356-deobf-sources-api"
     implementation "curse.maven:industrial-upgrade-372007:3592456-deobf-sources-api"
     implementation "curse.maven:small-stairs-417155:3099752-deobf-sources-api"
     implementation "curse.maven:et-futurum-requiem-441392:4769523-deobf-sources-api"
@@ -127,6 +126,7 @@ dependencies {
     implementation files("libs/Advanced-Genetics-Mod-1.7.10.jar")
     implementation files("libs/Essence_of_the_Gods_1.7.10_1.7.jar")
     implementation files("libs/Loot++-0.24_for_1.7.jar")
+    implementation files("libs/gemsnjewels-1.0.9-mc1.7.10.jar")
 
 }
 
