@@ -77,6 +77,8 @@ public enum TargetedMod implements ITargetedMod {
     LORDOFTHERINGS("LOTRMod", false, startsWith("LOTRMod")),
     LORDOFTHERINGSFORK("LOTRModfork", false, startsWith("LOTRModfork")),
     LOTRIMPROVEMENTS("LOTR Improvements", false, startsWith("LOTR Improvements")),
+    ADVANCEDWORLDSELECTION("WorldSelectionAdvanced", false, startsWith("WorldSelectionAdvanced")),
+
     ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
     LOOTPLUSPLUS("Loot++", false, startsWith("Loot++")),
     KITCHENCRAFT("KitchenCraft", false, startsWith("KitchenCraft")),

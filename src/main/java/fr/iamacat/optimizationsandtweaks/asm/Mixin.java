@@ -407,6 +407,10 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer),
         "core.MixinFontRenderer"),
 
+    client_advancedworldselection_MixinGuiWorldSelection(Side.CLIENT,
+        m -> OptimizationsandTweaksConfig.enableMixinGuiWorldSelection,
+        "advancedworldselection.MixinGuiWorldSelection"),
+
     // MOD-FILTERED MIXINS
 
     // The modFilter argument is a predicate, so you can also use the .and(), .or(), and .negate() methods to mix and

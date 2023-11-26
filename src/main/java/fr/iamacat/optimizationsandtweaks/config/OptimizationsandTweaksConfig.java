@@ -445,6 +445,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
+
+    @Config.Comment("Fix https://github.com/quentin452/OptimizationsAndTweaks/issues/77 caused by a conflict between AdvancedWorldSelection and MixinFontRenderer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGuiWorldSelection;
     @Config.Comment("Fix Crash between Endlessids and Lord of the rings mod(but problem remain , does not support higher id than the vanilla scope(256)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
