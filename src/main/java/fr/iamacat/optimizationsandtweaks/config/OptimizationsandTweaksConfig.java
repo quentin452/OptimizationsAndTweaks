@@ -518,7 +518,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockTickingWater;
-    @Config.Comment("Fix tps lags + reduce fps stutters caused by leaves from Thaumcraft  + add Leaf culling")
+    @Config.Comment("Fix tps lags + reduce fps stutters caused by leaves from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
