@@ -275,10 +275,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunk;
-    @Config.Comment("Optimize MapStorage")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinMapStorage;
     @Config.Comment("Optimize BlockGrass Ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
