@@ -71,60 +71,6 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     }
 
     /**
-     * @author
-     * @reason
-     */
-    @Inject(method = "originalLoadChunk", at = @At("HEAD"), remap = false, cancellable = true)
-    public void originalLoadChunk(int p_73158_1_, int p_73158_2_, CallbackInfoReturnable<Chunk> cir) {
-            long k = ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_);
-            this.optimizationsAndTweaks$chunksToUnload.remove(k);
-            Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
-
-            if (chunk == null) {
-                boolean added = loadingChunks.add(k);
-                if (!added) {
-                    cpw.mods.fml.common.FMLLog.bigWarning(
-                        "There is an attempt to load a chunk (%d,%d) in dimension %d that is already being loaded. This will cause weird chunk breakages.",
-                        p_73158_1_,
-                        p_73158_2_,
-                        worldObj.provider.dimensionId);
-                }
-                chunk = ForgeChunkManager.fetchDormantChunk(k, this.worldObj);
-                if (chunk == null) {
-                    chunk = this.safeLoadChunk(p_73158_1_, p_73158_2_);
-                }
-
-                if (chunk == null) {
-                    if (this.currentChunkProvider == null) {
-                        chunk = this.defaultEmptyChunk;
-                    } else {
-                        try {
-                            chunk = this.currentChunkProvider.provideChunk(p_73158_1_, p_73158_2_);
-                        } catch (Throwable throwable) {
-                            CrashReport crashreport = CrashReport
-                                .makeCrashReport(throwable, "Exception generating new chunk");
-                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
-                            crashreportcategory
-                                .addCrashSection("Location", String.format("%d,%d", p_73158_1_, p_73158_2_));
-                            crashreportcategory.addCrashSection("Position hash", k);
-                            crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
-                            throw new ReportedException(crashreport);
-                        }
-                    }
-                }
-
-                this.loadedChunkHashMap.add(k, chunk);
-                this.loadedChunks.add(chunk);
-                loadingChunks.remove(k);
-                chunk.onChunkLoad();
-                chunk.populateChunk(this, this, p_73158_1_, p_73158_2_);
-
-                cir.setReturnValue(chunk);
-                cir.cancel();
-            }
-    }
-
-    /**
      * used by loadChunk, but catches any exceptions if the load fails.
      */
     @Overwrite
