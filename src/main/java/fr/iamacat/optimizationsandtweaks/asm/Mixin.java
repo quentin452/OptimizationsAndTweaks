@@ -360,8 +360,6 @@ public enum Mixin implements IMixin {
         "core.MixinGodZillaFix"),
     common_core_MixinStatList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStatList, "core.MixinStatList"),
 
-    common_core_MixinTextureManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinTextureManager,
-        "core.MixinTextureManager"),
 
     common_malcore_MixinVersionInfo(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinVersionInfo,
         "malcore.MixinVersionInfo"),
@@ -371,6 +369,8 @@ public enum Mixin implements IMixin {
 
     // CLIENT MIXINS
 
+    client_core_MixinTextureManager(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureManager,
+        "core.MixinTextureManager"),
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,
         m -> OptimizationsandTweaksConfig.enableMixinEntitySpellParticleFX, "core.MixinEntitySpellParticleFX"),
     client_core_MixinCodecIBXM(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinCodecIBXM,

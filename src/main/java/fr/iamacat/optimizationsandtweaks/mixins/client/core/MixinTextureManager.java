@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core;
+package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
