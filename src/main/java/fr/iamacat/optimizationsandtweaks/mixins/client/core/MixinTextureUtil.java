@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.nio.IntBuffer;
 
 @SideOnly(Side.CLIENT)
-@Mixin(TextureUtil.class)
+@Mixin(value = TextureUtil.class,priority = 999)
 public class MixinTextureUtil {
     @Shadow
     private static final Logger logger = LogManager.getLogger();
