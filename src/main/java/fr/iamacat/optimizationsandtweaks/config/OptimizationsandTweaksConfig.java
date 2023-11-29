@@ -182,6 +182,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
+
+    @Config.Comment("Optimize PathFinder Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPathFinder;
     @Config.Comment("Optimize StatsComponent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
