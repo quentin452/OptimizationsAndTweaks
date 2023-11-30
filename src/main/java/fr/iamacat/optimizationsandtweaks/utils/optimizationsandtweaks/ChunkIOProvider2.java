@@ -40,7 +40,7 @@ public class ChunkIOProvider2 implements AsynchronousExecutor.CallBackProvider<Q
         queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
         MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // Don't call ChunkDataEvent.Load async
         chunk.lastSaveTime = queuedChunk.provider.worldObj.getTotalWorldTime();
-        Classers.loadedChunkHashMap.put(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z), chunk);
+        Classers.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z), chunk);
         queuedChunk.provider.loadedChunks.add(chunk);
         chunk.onChunkLoad();
 
