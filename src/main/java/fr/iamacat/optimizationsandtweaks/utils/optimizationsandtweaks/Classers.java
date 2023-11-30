@@ -1,6 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
+import net.minecraft.util.LongHashMap;
 import net.minecraft.util.MovingObjectPosition;
+
+import java.util.HashMap;
 
 public class Classers {
     public static final class SwitchMovingObjectType
@@ -28,4 +31,5 @@ public class Classers {
             }
         }
     }
+    public static LongHashMap loadedChunkHashMap = new LongHashMap();
 }

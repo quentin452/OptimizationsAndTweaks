@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ChunkCoordinates;
@@ -49,11 +50,16 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     public IChunkProvider currentChunkProvider;
     @Shadow
     public IChunkLoader currentChunkLoader;
+    /**
+     * used by unload100OldestChunks to iterate the loadedChunkHashMap for unload (underlying assumption, first in,
+     * first out)
+     */
+    @Shadow
+    private Set chunksToUnload = Collections.newSetFromMap(new ConcurrentHashMap());
     /** if this is false, the defaultEmptyChunk will be returned by the provider */
     @Shadow
     public boolean loadChunkOnProvideRequest = true;
-    @Shadow
-    public LongHashMap loadedChunkHashMap = new LongHashMap();
+
     @Shadow
     public List loadedChunks = new ArrayList();
     @Shadow
@@ -146,12 +152,21 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      * @author
      * @reason
      */
+    @Overwrite
+    public boolean chunkExists(int p_73149_1_, int p_73149_2_)
+    {
+        return Classers.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(p_73149_1_, p_73149_2_));
+    }
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite(remap = false)
     public Chunk loadChunk(int par1, int par2, Runnable runnable)
     {
         long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
         this.optimizationsAndTweaks$chunksToUnload.remove(Long.valueOf(k));
-        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
+        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(k);
         AnvilChunkLoader loader = null;
 
         if (this.currentChunkLoader instanceof AnvilChunkLoader)
@@ -185,6 +200,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
 
         return chunk;
     }
+
     /**
      * @author
      * @reason
@@ -194,7 +210,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     {
         long k = ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_);
         this.optimizationsAndTweaks$chunksToUnload.remove(Long.valueOf(k));
-        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
+        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(k);
 
         if (chunk == null)
         {
@@ -233,7 +249,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
                 }
             }
 
-            this.loadedChunkHashMap.add(k, chunk);
+            Classers.loadedChunkHashMap.add(k, chunk);
             this.loadedChunks.add(chunk);
             loadingChunks.remove(k);
             chunk.onChunkLoad();
@@ -246,36 +262,43 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      * @author
      * @reason
      */
-    @Override
-    public boolean unloadQueuedChunks() {
-        if (!this.worldObj.levelSaving) {
-            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet()) {
-                long chunkPos = ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos);
-                this.optimizationsAndTweaks$chunksToUnload.remove(chunkPos);
+    @Overwrite
+    public boolean unloadQueuedChunks()
+    {
+        if (!this.worldObj.levelSaving)
+        {
+            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
+            {
+                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
             }
 
-            Iterator<Object> iterator = this.optimizationsAndTweaks$chunksToUnload.keySet().iterator();
-            for (int i = 0; i < 100 && iterator.hasNext(); ++i) {
-                Long chunkPos = (Long) iterator.next();
-                Chunk chunk = (Chunk) this.optimizationsAndTweaks$chunksToUnload.get(chunkPos);
+            for (int i = 0; i < 100; ++i)
+            {
+                if (!this.chunksToUnload.isEmpty())
+                {
+                    Long olong = (Long)this.chunksToUnload.iterator().next();
+                    Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(olong.longValue());
 
-                if (chunk != null) {
-                    chunk.onChunkUnload();
-                    this.safeSaveChunk(chunk);
-                    this.safeSaveExtraChunkData(chunk);
-                    this.loadedChunks.remove(chunk);
-                    ForgeChunkManager.putDormantChunk(chunkPos, chunk);
-                    if (loadedChunks.isEmpty() && ForgeChunkManager.getPersistentChunksFor(this.worldObj).isEmpty()
-                        && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) {
-                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
-                        return this.currentChunkProvider.unloadQueuedChunks();
+                    if (chunk != null)
+                    {
+                        chunk.onChunkUnload();
+                        this.safeSaveChunk(chunk);
+                        this.safeSaveExtraChunkData(chunk);
+                        this.loadedChunks.remove(chunk);
+                        ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
+                        if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)){
+                            DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
+                            return currentChunkProvider.unloadQueuedChunks();
+                        }
                     }
-                }
 
-                iterator.remove();
+                    this.chunksToUnload.remove(olong);
+                    Classers.loadedChunkHashMap.remove(olong.longValue());
+                }
             }
 
-            if (this.currentChunkLoader != null) {
+            if (this.currentChunkLoader != null)
+            {
                 this.currentChunkLoader.chunkTick();
             }
         }
@@ -287,9 +310,19 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      * @reason
      */
     @Overwrite
+    public Chunk provideChunk(int p_73154_1_, int p_73154_2_)
+    {
+        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
+        return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(p_73154_1_, p_73154_2_)) : chunk;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public String makeString()
     {
-        return "ServerChunkCache: " + this.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.optimizationsAndTweaks$chunksToUnload.size();
+        return "ServerChunkCache: " + Classers.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.optimizationsAndTweaks$chunksToUnload.size();
     }
 
     @Shadow
@@ -312,5 +345,15 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
             }
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getLoadedChunkCount()
+    {
+        return Classers.loadedChunkHashMap.getNumHashElements();
+    }
+
 
 }

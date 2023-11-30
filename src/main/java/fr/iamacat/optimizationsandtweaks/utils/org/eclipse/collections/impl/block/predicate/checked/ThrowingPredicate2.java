@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2022 Goldman Sachs and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Distribution License v. 1.0 which accompany this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ */
+
+package fr.iamacat.optimizationsandtweaks.utils.org.eclipse.collections.impl.block.predicate.checked;
+
+import java.io.Serializable;
+
+/**
+ * A functional interface that can be represented by a Lambda that can throw a CheckedException.
+ */
+@FunctionalInterface
+public interface ThrowingPredicate2<T, P> extends Serializable
+{
+    @SuppressWarnings("ProhibitedExceptionDeclared")
+    boolean safeAccept(T object, P param) throws Exception;
+}
