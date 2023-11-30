@@ -288,14 +288,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
         return (PotionEffect) this.activePotionsMap.get(Integer.valueOf(p_70660_1_.id));
     }
 
-    /**
-     * Dead and sleeping entities cannot move
-     */
-    @Shadow
-    protected boolean isMovementBlocked() {
-        return this.getHealth() <= 0.0F;
-    }
-
     @Shadow
     public final float getHealth() {
         return this.dataWatcher.getWatchableObjectFloat(6);

@@ -417,23 +417,19 @@ public abstract class MixinWorldServer extends World {
 
     @Unique
     private void processTickSet(Collection<NextTickListEntry> tickSet, int minX, int maxX, int minZ, int maxZ, List<NextTickListEntry> result, boolean remove, Chunk chunk) {
-
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return;
         }
-
-        List<NextTickListEntry> filteredEntries = tickSet.stream()
+        List<NextTickListEntry> filteredEntries = tickSet.parallelStream()
             .filter(entry -> entry.xCoord >= minX && entry.xCoord < maxX &&
                 entry.zCoord >= minZ && entry.zCoord < maxZ)
             .collect(Collectors.toList());
 
-        for (NextTickListEntry entry : filteredEntries) {
-            if (remove) {
-                pendingTickListEntriesHashSet.remove(entry);
-            }
-            result.add(entry);
+        if (remove) {
+            pendingTickListEntriesHashSet.removeAll(filteredEntries);
         }
 
+        result.addAll(filteredEntries);
     }
     /**
      * @author
