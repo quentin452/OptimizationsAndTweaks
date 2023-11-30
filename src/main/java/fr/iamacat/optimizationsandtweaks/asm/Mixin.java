@@ -199,7 +199,8 @@ public enum Mixin implements IMixin {
         "portalgun.MixinSettings"),
     common_core_MixinEntityLookHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLookHelper,
         "core.MixinEntityLookHelper"),
-
+    common_core_MixinChunkIOExecutor(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkIOExecutor,
+        "core.MixinChunkIOExecutor"),
     common_core_MixinBlockFalling(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFalling,
         "core.MixinBlockFalling"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,

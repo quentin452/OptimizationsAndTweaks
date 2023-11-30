@@ -342,6 +342,11 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAnimal;
 
+    @Config.Comment("Optimize ChunkIOExecutor")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunkIOExecutor;
+
     @Config.Comment("Optimize EntityAIFollowParent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

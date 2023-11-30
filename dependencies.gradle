@@ -53,8 +53,6 @@ dependencies {
     }
     annotationProcessor("org.projectlombok:lombok:[1.18.24,1.19)")
 
-    implementation("com.falsepattern:falsepatternlib-mc1.7.10:0.12.1:dev")
-
     implementation("org.joml:joml:1.10.5")
 
     implementation 'org.apache.logging.log4j:log4j-core:2.16.0'
@@ -113,6 +111,7 @@ dependencies {
     implementation "curse.maven:extra-utilities-225561:2264383-deobf-sources-api"
     implementation "curse.maven:advanced-world-selection-244464:2580520-deobf-sources-api"
     implementation "curse.maven:streams-229769:2566220-deobf-sources-api"
+    implementation "curse.maven:fplib-665627:4905393-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
