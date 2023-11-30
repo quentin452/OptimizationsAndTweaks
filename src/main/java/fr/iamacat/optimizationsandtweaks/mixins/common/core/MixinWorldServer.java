@@ -379,25 +379,53 @@ public abstract class MixinWorldServer extends World {
     @Overwrite
     public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean remove) {
         List<NextTickListEntry> result = new ArrayList<>();
-        ChunkCoordIntPair chunkCoords = chunk.getChunkCoordIntPair();
-        int minX = (chunkCoords.chunkXPos << 4) - 2;
-        int maxX = minX + 16 + 2;
-        int minZ = (chunkCoords.chunkZPos << 4) - 2;
-        int maxZ = minZ + 16 + 2;
+        ChunkCoordIntPair chunkCoords = getChunkCoordinates(chunk);
+        int minX = calculateMinX(chunkCoords);
+        int maxX = calculateMaxX(minX);
+        int minZ = calculateMinZ(chunkCoords);
+        int maxZ = calculateMaxZ(minZ);
 
         for (Collection tickSet : Arrays.asList(pendingTickListEntriesTreeSet, pendingTickListEntriesThisTick)) {
-            for (Iterator iterator = tickSet.iterator(); iterator.hasNext();) {
-                NextTickListEntry entry = (NextTickListEntry) iterator.next();
-                if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
-                    if (remove) {
-                        pendingTickListEntriesHashSet.remove(entry);
-                        iterator.remove();
-                    }
-                    result.add(entry);
+            processTickSet(tickSet, minX, maxX, minZ, maxZ, result, remove);
+        }
+
+        return result.isEmpty() ? null : result;
+    }
+    @Unique
+    private ChunkCoordIntPair getChunkCoordinates(Chunk chunk) {
+        return chunk.getChunkCoordIntPair();
+    }
+    @Unique
+    private int calculateMinX(ChunkCoordIntPair chunkCoords) {
+        return (chunkCoords.chunkXPos << 4) - 2;
+    }
+
+    @Unique
+    private int calculateMaxX(int minX) {
+        return minX + 16 + 2;
+    }
+    @Unique
+    private int calculateMinZ(ChunkCoordIntPair chunkCoords) {
+        return (chunkCoords.chunkZPos << 4) - 2;
+    }
+
+    @Unique
+    private int calculateMaxZ(int minZ) {
+        return minZ + 16 + 2;
+    }
+
+    @Unique
+    private void processTickSet(Collection tickSet, int minX, int maxX, int minZ, int maxZ, List<NextTickListEntry> result, boolean remove) {
+        for (Iterator iterator = tickSet.iterator(); iterator.hasNext();) {
+            NextTickListEntry entry = (NextTickListEntry) iterator.next();
+            if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
+                if (remove) {
+                    pendingTickListEntriesHashSet.remove(entry);
+                    iterator.remove();
                 }
+                result.add(entry);
             }
         }
-        return result.isEmpty() ? null : result;
     }
     /**
      * @author
