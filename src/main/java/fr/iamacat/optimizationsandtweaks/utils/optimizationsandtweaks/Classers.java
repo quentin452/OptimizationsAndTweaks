@@ -31,5 +31,4 @@ public class Classers {
             }
         }
     }
-    public static LongHashMap loadedChunkHashMap = new LongHashMap();
 }

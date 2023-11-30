@@ -35,7 +35,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChunkProviderServer.class)
 public abstract class MixinChunkProviderServer implements IChunkProvider {
-
+    @Shadow
+    public LongHashMap loadedChunkHashMap = new LongHashMap();
     @Shadow
     private static final Logger logger = LogManager.getLogger();
 
@@ -155,7 +156,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     @Overwrite
     public boolean chunkExists(int p_73149_1_, int p_73149_2_)
     {
-        return Classers.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(p_73149_1_, p_73149_2_));
+        return this.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(p_73149_1_, p_73149_2_));
     }
     /**
      * @author
@@ -166,7 +167,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     {
         long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
         this.optimizationsAndTweaks$chunksToUnload.remove(Long.valueOf(k));
-        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(k);
+        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
         AnvilChunkLoader loader = null;
 
         if (this.currentChunkLoader instanceof AnvilChunkLoader)
@@ -210,7 +211,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     {
         long k = ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_);
         this.optimizationsAndTweaks$chunksToUnload.remove(Long.valueOf(k));
-        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(k);
+        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(k);
 
         if (chunk == null)
         {
@@ -249,7 +250,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
                 }
             }
 
-            Classers.loadedChunkHashMap.add(k, chunk);
+            this.loadedChunkHashMap.add(k, chunk);
             this.loadedChunks.add(chunk);
             loadingChunks.remove(k);
             chunk.onChunkLoad();
@@ -277,7 +278,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
                 if (!this.chunksToUnload.isEmpty())
                 {
                     Long olong = (Long)this.chunksToUnload.iterator().next();
-                    Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(olong.longValue());
+                    Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(olong.longValue());
 
                     if (chunk != null)
                     {
@@ -293,7 +294,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
                     }
 
                     this.chunksToUnload.remove(olong);
-                    Classers.loadedChunkHashMap.remove(olong.longValue());
+                    this.loadedChunkHashMap.remove(olong.longValue());
                 }
             }
 
@@ -312,7 +313,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     @Overwrite
     public Chunk provideChunk(int p_73154_1_, int p_73154_2_)
     {
-        Chunk chunk = (Chunk)Classers.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
+        Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
         return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(p_73154_1_, p_73154_2_)) : chunk;
     }
     /**
@@ -322,7 +323,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     @Overwrite
     public String makeString()
     {
-        return "ServerChunkCache: " + Classers.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.optimizationsAndTweaks$chunksToUnload.size();
+        return "ServerChunkCache: " + this.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.optimizationsAndTweaks$chunksToUnload.size();
     }
 
     @Shadow
@@ -352,7 +353,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     @Overwrite
     public int getLoadedChunkCount()
     {
-        return Classers.loadedChunkHashMap.getNumHashElements();
+        return this.loadedChunkHashMap.getNumHashElements();
     }
 
 
