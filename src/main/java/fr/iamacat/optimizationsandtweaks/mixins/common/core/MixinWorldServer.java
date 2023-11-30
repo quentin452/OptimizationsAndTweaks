@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -35,6 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
@@ -372,65 +375,53 @@ public abstract class MixinWorldServer extends World {
             return !this.pendingTickListEntriesTreeSet.isEmpty();
         }
     }
+    @Unique
+    private final ForkJoinPool commonThreadPool = ForkJoinPool.commonPool();
+
+    @Unique
+    private CompletableFuture<List<NextTickListEntry>> getPendingBlockUpdatesAsync(Chunk p_72920_1_, boolean p_72920_2_) {
+        return CompletableFuture.supplyAsync(() -> {
+            ChunkCoordIntPair chunkCoord = p_72920_1_.getChunkCoordIntPair();
+            int minX = (chunkCoord.chunkXPos << 4) - 2;
+            int maxX = minX + 16 + 2;
+            int minZ = (chunkCoord.chunkZPos << 4) - 2;
+            int maxZ = minZ + 16 + 2;
+
+            ArrayList<NextTickListEntry> arraylist = new ArrayList<>();
+
+            Iterator<NextTickListEntry> iterator = this.pendingTickListEntriesTreeSet.iterator();
+            while (iterator.hasNext()) {
+                NextTickListEntry nextticklistentry = iterator.next();
+
+                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
+                    nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ) {
+                    if (p_72920_2_) {
+                        this.pendingTickListEntriesHashSet.remove(nextticklistentry);
+                        iterator.remove();
+                    }
+
+                    arraylist.add(nextticklistentry);
+                }
+            }
+
+            return arraylist;
+        }, commonThreadPool);
+    }
 
     /**
      * @author iamacatfr
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean remove) {
-        List<NextTickListEntry> result = new ArrayList<>();
-        ChunkCoordIntPair chunkCoords = getChunkCoordinates(chunk);
-        int minX = calculateMinX(chunkCoords);
-        int maxX = calculateMaxX(minX);
-        int minZ = calculateMinZ(chunkCoords);
-        int maxZ = calculateMaxZ(minZ);
-
-        for (Collection tickSet : Arrays.asList(pendingTickListEntriesTreeSet, pendingTickListEntriesThisTick)) {
-            processTickSet(tickSet, minX, maxX, minZ, maxZ, result, remove,chunk);
+    public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
+        try {
+            return getPendingBlockUpdatesAsync(p_72920_1_, p_72920_2_).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-
-        return result.isEmpty() ? null : result;
-    }
-    @Unique
-    private ChunkCoordIntPair getChunkCoordinates(Chunk chunk) {
-        return chunk.getChunkCoordIntPair();
-    }
-    @Unique
-    private int calculateMinX(ChunkCoordIntPair chunkCoords) {
-        return (chunkCoords.chunkXPos << 4) - 2;
     }
 
-    @Unique
-    private int calculateMaxX(int minX) {
-        return minX + 16 + 2;
-    }
-    @Unique
-    private int calculateMinZ(ChunkCoordIntPair chunkCoords) {
-        return (chunkCoords.chunkZPos << 4) - 2;
-    }
-
-    @Unique
-    private int calculateMaxZ(int minZ) {
-        return minZ + 16 + 2;
-    }
-
-    @Unique
-    private void processTickSet(Collection<NextTickListEntry> tickSet, int minX, int maxX, int minZ, int maxZ, List<NextTickListEntry> result, boolean remove, Chunk chunk) {
-        if (!chunk.isChunkLoaded) {
-            return;
-        }
-        List<NextTickListEntry> filteredEntries = tickSet.parallelStream()
-            .filter(entry -> entry.xCoord >= minX && entry.xCoord < maxX &&
-                entry.zCoord >= minZ && entry.zCoord < maxZ)
-            .collect(Collectors.toList());
-
-        if (remove) {
-            pendingTickListEntriesHashSet.removeAll(filteredEntries);
-        }
-
-        result.addAll(filteredEntries);
-    }
     /**
      * @author
      * @reason
