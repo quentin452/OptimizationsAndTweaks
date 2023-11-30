@@ -201,6 +201,9 @@ public enum Mixin implements IMixin {
         "core.MixinEntityLookHelper"),
     common_core_MixinBlockFalling(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFalling,
         "core.MixinBlockFalling"),
+
+    common_core_MixinAnvilChunkLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAnvilChunkLoader,
+        "core.MixinAnvilChunkLoader"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinPatchWorldGenCloudNine, "koto.MixinPatchWorldGenCloudNine"),
     common_koto_MixinEntityDarkMiresi(Side.COMMON,

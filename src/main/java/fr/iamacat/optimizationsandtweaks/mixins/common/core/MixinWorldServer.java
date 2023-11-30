@@ -35,6 +35,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
@@ -386,7 +387,7 @@ public abstract class MixinWorldServer extends World {
         int maxZ = calculateMaxZ(minZ);
 
         for (Collection tickSet : Arrays.asList(pendingTickListEntriesTreeSet, pendingTickListEntriesThisTick)) {
-            processTickSet(tickSet, minX, maxX, minZ, maxZ, result, remove);
+            processTickSet(tickSet, minX, maxX, minZ, maxZ, result, remove,chunk);
         }
 
         return result.isEmpty() ? null : result;
@@ -415,17 +416,24 @@ public abstract class MixinWorldServer extends World {
     }
 
     @Unique
-    private void processTickSet(Collection tickSet, int minX, int maxX, int minZ, int maxZ, List<NextTickListEntry> result, boolean remove) {
-        for (Iterator iterator = tickSet.iterator(); iterator.hasNext();) {
-            NextTickListEntry entry = (NextTickListEntry) iterator.next();
-            if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
-                if (remove) {
-                    pendingTickListEntriesHashSet.remove(entry);
-                    iterator.remove();
-                }
-                result.add(entry);
-            }
+    private void processTickSet(Collection<NextTickListEntry> tickSet, int minX, int maxX, int minZ, int maxZ, List<NextTickListEntry> result, boolean remove, Chunk chunk) {
+
+        if(!chunk.isChunkLoaded) {
+            return;
         }
+
+        List<NextTickListEntry> filteredEntries = tickSet.stream()
+            .filter(entry -> entry.xCoord >= minX && entry.xCoord < maxX &&
+                entry.zCoord >= minZ && entry.zCoord < maxZ)
+            .collect(Collectors.toList());
+
+        for (NextTickListEntry entry : filteredEntries) {
+            if (remove) {
+                pendingTickListEntriesHashSet.remove(entry);
+            }
+            result.add(entry);
+        }
+
     }
     /**
      * @author

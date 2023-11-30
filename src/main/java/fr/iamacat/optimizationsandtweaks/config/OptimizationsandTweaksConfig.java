@@ -11,6 +11,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITarget;
+    @Config.Comment("Optimize AnvilChunkLoader Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAnvilChunkLoader;
     @Config.Comment("Optimize AxisAlignedBB Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
