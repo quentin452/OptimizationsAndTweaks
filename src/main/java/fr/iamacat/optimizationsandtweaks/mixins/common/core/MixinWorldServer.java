@@ -376,6 +376,7 @@ public abstract class MixinWorldServer extends World {
      * @author iamacatfr
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
+    @Overwrite
     public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean remove) {
         List<NextTickListEntry> result = new ArrayList<>();
         ChunkCoordIntPair chunkCoords = chunk.getChunkCoordIntPair();
@@ -384,30 +385,18 @@ public abstract class MixinWorldServer extends World {
         int minZ = (chunkCoords.chunkZPos << 4) - 2;
         int maxZ = minZ + 16 + 2;
 
-        Iterator<NextTickListEntry> iteratorTreeSet = pendingTickListEntriesTreeSet.iterator();
-        while (iteratorTreeSet.hasNext()) {
-            NextTickListEntry entry = iteratorTreeSet.next();
-            if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
-                if (remove) {
-                    pendingTickListEntriesHashSet.remove(entry);
-                    iteratorTreeSet.remove();
+        for (Collection tickSet : Arrays.asList(pendingTickListEntriesTreeSet, pendingTickListEntriesThisTick)) {
+            for (Iterator iterator = tickSet.iterator(); iterator.hasNext();) {
+                NextTickListEntry entry = (NextTickListEntry) iterator.next();
+                if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
+                    if (remove) {
+                        pendingTickListEntriesHashSet.remove(entry);
+                        iterator.remove();
+                    }
+                    result.add(entry);
                 }
-                result.add(entry);
             }
         }
-
-        Iterator<NextTickListEntry> iteratorThisTick = pendingTickListEntriesThisTick.iterator();
-        while (iteratorThisTick.hasNext()) {
-            NextTickListEntry entry = iteratorThisTick.next();
-            if (entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ) {
-                if (remove) {
-                    pendingTickListEntriesHashSet.remove(entry);
-                    iteratorThisTick.remove();
-                }
-                result.add(entry);
-            }
-        }
-
         return result.isEmpty() ? null : result;
     }
     /**
