@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import cpw.mods.fml.common.FMLLog;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Mixin(AnvilChunkLoader.class)
 public class MixinAnvilChunkLoader {
@@ -127,26 +129,23 @@ public class MixinAnvilChunkLoader {
         }
 
         p_75820_3_.setTag("TileEntities", nbttaglist3);
-        List list = p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
+        Object2ObjectHashMap map = (Object2ObjectHashMap) p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
 
-        if (list != null)
-        {
+        if (map != null) {
             long k = p_75820_2_.getTotalWorldTime();
             NBTTagList nbttaglist1 = new NBTTagList();
-            Iterator iterator = list.iterator();
 
-            while (iterator.hasNext())
-            {
-                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
+            map.forEach((key, value) -> {
+                NextTickListEntry nextticklistentry = (NextTickListEntry) value;
                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
                 nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.func_151351_a()));
                 nbttagcompound2.setInteger("x", nextticklistentry.xCoord);
                 nbttagcompound2.setInteger("y", nextticklistentry.yCoord);
                 nbttagcompound2.setInteger("z", nextticklistentry.zCoord);
-                nbttagcompound2.setInteger("t", (int)(nextticklistentry.scheduledTime - k));
+                nbttagcompound2.setInteger("t", (int) (nextticklistentry.scheduledTime - k));
                 nbttagcompound2.setInteger("p", nextticklistentry.priority);
                 nbttaglist1.appendTag(nbttagcompound2);
-            }
+            });
 
             p_75820_3_.setTag("TileTicks", nbttaglist1);
         }
