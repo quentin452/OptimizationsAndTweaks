@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -375,38 +374,6 @@ public abstract class MixinWorldServer extends World {
             return !this.pendingTickListEntriesTreeSet.isEmpty();
         }
     }
-    @Unique
-    private final ForkJoinPool commonThreadPool = ForkJoinPool.commonPool();
-
-    @Unique
-    private CompletableFuture<List<NextTickListEntry>> getPendingBlockUpdatesAsync(Chunk p_72920_1_, boolean p_72920_2_) {
-        return CompletableFuture.supplyAsync(() -> {
-            ChunkCoordIntPair chunkCoord = p_72920_1_.getChunkCoordIntPair();
-            int minX = (chunkCoord.chunkXPos << 4) - 2;
-            int maxX = minX + 16 + 2;
-            int minZ = (chunkCoord.chunkZPos << 4) - 2;
-            int maxZ = minZ + 16 + 2;
-
-            ArrayList<NextTickListEntry> arraylist = new ArrayList<>();
-
-            Iterator iterator = this.pendingTickListEntriesTreeSet.iterator();
-            while (iterator.hasNext()) {
-                NextTickListEntry nextticklistentry = (NextTickListEntry) iterator.next();
-
-                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
-                    nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ) {
-                    if (p_72920_2_) {
-                        this.pendingTickListEntriesHashSet.remove(nextticklistentry);
-                        iterator.remove();
-                    }
-
-                    arraylist.add(nextticklistentry);
-                }
-            }
-
-            return arraylist;
-        }, commonThreadPool);
-    }
 
     /**
      * @author iamacatfr
@@ -414,12 +381,28 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
-        try {
-            return getPendingBlockUpdatesAsync(p_72920_1_, p_72920_2_).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+        ChunkCoordIntPair chunkCoord = p_72920_1_.getChunkCoordIntPair();
+        int minX = (chunkCoord.chunkXPos << 4) - 2;
+        int maxX = minX + 16 + 2;
+        int minZ = (chunkCoord.chunkZPos << 4) - 2;
+        int maxZ = minZ + 16 + 2;
+
+        List<NextTickListEntry> list = (List<NextTickListEntry>) this.pendingTickListEntriesTreeSet.parallelStream()
+            .filter((Object obj) -> {
+                NextTickListEntry nextticklistentry = (NextTickListEntry) obj;
+                return nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
+                    nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ;
+            })
+            .collect(Collectors.toList());
+
+        if (p_72920_2_) {
+            list.forEach(nextticklistentry -> {
+                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
+                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
+            });
         }
+
+        return list;
     }
 
     /**
