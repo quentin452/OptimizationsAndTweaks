@@ -1,18 +1,22 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.hardcorewither;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraftforge.event.entity.living.LivingEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import thor12022.hardcorewither.EventHandler;
 import thor12022.hardcorewither.powerUps.PowerUpManager;
 
 @Mixin(EventHandler.class)
 public class MixinEventHandler {
+
     @Shadow
     private PowerUpManager powerUpManager;
+
     /**
      * @author iamacatfr
      * @reason fix null crash caused by onLivingUpdate from Hardcore Wither mod

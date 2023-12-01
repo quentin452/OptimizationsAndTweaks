@@ -1,27 +1,27 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
 import net.minecraft.world.storage.SaveFormatOld;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
 @Mixin(SaveFormatOld.class)
 public class MixinSaveFormatOld {
+
     // todo avoid the usage of Tread.sleep
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Shadow
     public final File savesDirectory;
 
-    public MixinSaveFormatOld(File p_i2147_1_)
-    {
-        if (!p_i2147_1_.exists())
-        {
+    public MixinSaveFormatOld(File p_i2147_1_) {
+        if (!p_i2147_1_.exists()) {
             p_i2147_1_.mkdirs();
         }
 
@@ -64,21 +64,17 @@ public class MixinSaveFormatOld {
     }
 
     @Shadow
-    protected static boolean deleteFiles(File[] p_75807_0_)
-    {
-        for (int i = 0; i < p_75807_0_.length; ++i)
-        {
+    protected static boolean deleteFiles(File[] p_75807_0_) {
+        for (int i = 0; i < p_75807_0_.length; ++i) {
             File file1 = p_75807_0_[i];
             logger.debug("Deleting " + file1);
 
-            if (file1.isDirectory() && !deleteFiles(file1.listFiles()))
-            {
+            if (file1.isDirectory() && !deleteFiles(file1.listFiles())) {
                 logger.warn("Couldn\'t delete directory " + file1);
                 return false;
             }
 
-            if (!file1.delete())
-            {
+            if (!file1.delete()) {
                 logger.warn("Couldn\'t delete file " + file1);
                 return false;
             }

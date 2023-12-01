@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,13 +28,11 @@ public class MixinVec3 {
         this.vec3 = vec3;
     }
 
-
     /**
      * Returns a new vector with the result of the specified vector minus this.
      */
     @Shadow
-    public Vec3 subtract(Vec3 vec)
-    {
+    public Vec3 subtract(Vec3 vec) {
         return Vec3.createVectorHelper(vec.xCoord - this.xCoord, vec.yCoord - this.yCoord, vec.zCoord - this.zCoord);
     }
 
@@ -41,14 +40,15 @@ public class MixinVec3 {
      * Normalizes the vector to a length of 1 (except if it is the zero vector)
      */
     @Overwrite
-    public Vec3 normalize()
-    {
-        double d0 = MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
-        return d0 < 1.0E-4D ? Vec3.createVectorHelper(0.0D, 0.0D, 0.0D) : Vec3.createVectorHelper(this.xCoord / d0, this.yCoord / d0, this.zCoord / d0);
+    public Vec3 normalize() {
+        double d0 = MathHelper
+            .sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+        return d0 < 1.0E-4D ? Vec3.createVectorHelper(0.0D, 0.0D, 0.0D)
+            : Vec3.createVectorHelper(this.xCoord / d0, this.yCoord / d0, this.zCoord / d0);
     }
+
     @Shadow
-    public double dotProduct(Vec3 vec)
-    {
+    public double dotProduct(Vec3 vec) {
         return this.xCoord * vec.xCoord + this.yCoord * vec.yCoord + this.zCoord * vec.zCoord;
     }
 
@@ -56,9 +56,11 @@ public class MixinVec3 {
      * Returns a new vector with the result of this vector x the specified vector.
      */
     @Shadow
-    public Vec3 crossProduct(Vec3 vec)
-    {
-        return Vec3.createVectorHelper(this.yCoord * vec.zCoord - this.zCoord * vec.yCoord, this.zCoord * vec.xCoord - this.xCoord * vec.zCoord, this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
+    public Vec3 crossProduct(Vec3 vec) {
+        return Vec3.createVectorHelper(
+            this.yCoord * vec.zCoord - this.zCoord * vec.yCoord,
+            this.zCoord * vec.xCoord - this.xCoord * vec.zCoord,
+            this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
     }
 
     /**
@@ -66,16 +68,17 @@ public class MixinVec3 {
      * vector.
      */
     @Shadow
-    public Vec3 addVector(double x, double y, double z)
-    {
+    public Vec3 addVector(double x, double y, double z) {
         return Vec3.createVectorHelper(this.xCoord + x, this.yCoord + y, this.zCoord + z);
     }
+
     @Unique
     private double cachedXSquare = Double.NaN;
     @Unique
     private double cachedYSquare = Double.NaN;
     @Unique
     private double cachedZSquare = Double.NaN;
+
     /**
      * Euclidean distance between this and the specified vector, returned as double.
      */
@@ -91,6 +94,7 @@ public class MixinVec3 {
 
         return MathHelper.sqrt_double(d0 * d0 / xSquare + d1 * d1 / ySquare + d2 * d2 / zSquare);
     }
+
     @Unique
     private double getXSquare() {
         if (Double.isNaN(cachedXSquare)) {
@@ -114,12 +118,12 @@ public class MixinVec3 {
         }
         return cachedZSquare;
     }
+
     /**
      * The square of the Euclidean distance between this and the specified vector.
      */
     @Overwrite
-    public double squareDistanceTo(Vec3 vec)
-    {
+    public double squareDistanceTo(Vec3 vec) {
         double d0 = vec.xCoord - this.xCoord;
         double d1 = vec.yCoord - this.yCoord;
         double d2 = vec.zCoord - this.zCoord;
@@ -130,8 +134,7 @@ public class MixinVec3 {
      * The square of the Euclidean distance between this and the vector of x,y,z components passed in.
      */
     @Overwrite
-    public double squareDistanceTo(double x, double y, double z)
-    {
+    public double squareDistanceTo(double x, double y, double z) {
         double d3 = x - this.xCoord;
         double d4 = y - this.yCoord;
         double d5 = z - this.zCoord;
@@ -142,9 +145,9 @@ public class MixinVec3 {
      * Returns the length of the vector.
      */
     @Overwrite
-    public double lengthVector()
-    {
-        return MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+    public double lengthVector() {
+        return MathHelper
+            .sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
     }
 
     /**
@@ -152,20 +155,18 @@ public class MixinVec3 {
      * passed in vector, or null if not possible.
      */
     @Overwrite
-    public Vec3 getIntermediateWithXValue(Vec3 vec, double x)
-    {
+    public Vec3 getIntermediateWithXValue(Vec3 vec, double x) {
         double d1 = vec.xCoord - this.xCoord;
         double d2 = vec.yCoord - this.yCoord;
         double d3 = vec.zCoord - this.zCoord;
 
-        if (d1 * d1 < 1.0000000116860974E-7D)
-        {
+        if (d1 * d1 < 1.0000000116860974E-7D) {
             return null;
-        }
-        else
-        {
+        } else {
             double d4 = (x - this.xCoord) / d1;
-            return d4 >= 0.0D && d4 <= 1.0D ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
+            return d4 >= 0.0D && d4 <= 1.0D
+                ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4)
+                : null;
         }
     }
 
@@ -174,20 +175,18 @@ public class MixinVec3 {
      * passed in vector, or null if not possible.
      */
     @Overwrite
-    public Vec3 getIntermediateWithYValue(Vec3 vec, double y)
-    {
+    public Vec3 getIntermediateWithYValue(Vec3 vec, double y) {
         double d1 = vec.xCoord - this.xCoord;
         double d2 = vec.yCoord - this.yCoord;
         double d3 = vec.zCoord - this.zCoord;
 
-        if (d2 * d2 < 1.0000000116860974E-7D)
-        {
+        if (d2 * d2 < 1.0000000116860974E-7D) {
             return null;
-        }
-        else
-        {
+        } else {
             double d4 = (y - this.yCoord) / d2;
-            return d4 >= 0.0D && d4 <= 1.0D ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
+            return d4 >= 0.0D && d4 <= 1.0D
+                ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4)
+                : null;
         }
     }
 
@@ -196,25 +195,23 @@ public class MixinVec3 {
      * passed in vector, or null if not possible.
      */
     @Overwrite
-    public Vec3 getIntermediateWithZValue(Vec3 vec, double z)
-    {
+    public Vec3 getIntermediateWithZValue(Vec3 vec, double z) {
         double d1 = vec.xCoord - this.xCoord;
         double d2 = vec.yCoord - this.yCoord;
         double d3 = vec.zCoord - this.zCoord;
 
-        if (d3 * d3 < 1.0000000116860974E-7D)
-        {
+        if (d3 * d3 < 1.0000000116860974E-7D) {
             return null;
-        }
-        else
-        {
+        } else {
             double d4 = (z - this.zCoord) / d3;
-            return d4 >= 0.0D && d4 <= 1.0D ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4) : null;
+            return d4 >= 0.0D && d4 <= 1.0D
+                ? Vec3.createVectorHelper(this.xCoord + d1 * d4, this.yCoord + d2 * d4, this.zCoord + d3 * d4)
+                : null;
         }
     }
+
     @Shadow
-    public String toString()
-    {
+    public String toString() {
         return "(" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + ")";
     }
 
@@ -222,8 +219,7 @@ public class MixinVec3 {
      * Rotates the vector around the x axis by the specified angle.
      */
     @Overwrite
-    public void rotateAroundX(float angle)
-    {
+    public void rotateAroundX(float angle) {
         float f1 = MathHelper.cos(angle);
         float f2 = MathHelper.sin(angle);
         double d0 = this.xCoord;
@@ -236,8 +232,7 @@ public class MixinVec3 {
      * Rotates the vector around the y axis by the specified angle.
      */
     @Overwrite
-    public void rotateAroundY(float angle)
-    {
+    public void rotateAroundY(float angle) {
         float f1 = MathHelper.cos(angle);
         float f2 = MathHelper.sin(angle);
         double d0 = this.xCoord * f1 + this.zCoord * f2;
@@ -250,8 +245,7 @@ public class MixinVec3 {
      * Rotates the vector around the z axis by the specified angle.
      */
     @Overwrite
-    public void rotateAroundZ(float angle)
-    {
+    public void rotateAroundZ(float angle) {
         float f1 = MathHelper.cos(angle);
         float f2 = MathHelper.sin(angle);
         double d0 = this.xCoord * f1 + this.yCoord * f2;
@@ -259,13 +253,13 @@ public class MixinVec3 {
         double d2 = this.zCoord;
         this.setComponents(d0, d1, d2);
     }
-   /**
-    * @author
-    * @reason
-    */
-     @Overwrite
-    protected Vec3 setComponents(double x, double y, double z)
-    {
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    protected Vec3 setComponents(double x, double y, double z) {
         this.xCoord = x;
         this.yCoord = y;
         this.zCoord = z;

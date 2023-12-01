@@ -16,73 +16,73 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractUnmodifiableCollection<E> extends AbstractCollection<E> {
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean add(final E e) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean add(final E e) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean addAll(final Collection<? extends E> c) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean addAll(final Collection<? extends E> c) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public void clear() {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean remove(final Object o) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean remove(final Object o) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean removeAll(final Collection<?> c) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean removeAll(final Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean removeIf(final Predicate<? super E> filter) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean removeIf(final Predicate<? super E> filter) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public boolean retainAll(final Collection<?> list) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public boolean retainAll(final Collection<?> list) {
+        throw new UnsupportedOperationException();
+    }
 }

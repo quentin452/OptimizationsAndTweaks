@@ -1,14 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
-import eu.ha3.matmos.data.scanners.Scan;
-import eu.ha3.matmos.data.scanners.ScanVolumetric;
 import net.minecraft.client.Minecraft;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import eu.ha3.matmos.data.scanners.Scan;
+import eu.ha3.matmos.data.scanners.ScanVolumetric;
+
 @Mixin(ScanVolumetric.class)
 public abstract class MixinScanVolumetric extends Scan {
+
     @Shadow
     private int xstart;
     @Shadow

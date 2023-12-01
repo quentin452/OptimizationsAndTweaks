@@ -2,12 +2,13 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.*;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.server.management.LowerStringMap;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 
 @Mixin(LowerStringMap.class)
 public class MixinLowerStringMap {

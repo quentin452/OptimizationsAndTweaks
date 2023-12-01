@@ -1,8 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.familliarsAPI;
 
-import de.pitman87.FamiliarsAPI.common.ConfigHandler;
-import de.pitman87.FamiliarsAPI.common.FamiliarsAPI;
-import de.pitman87.FamiliarsAPI.common.entity.Familiar;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.IAnimals;
@@ -10,15 +9,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.List;
+import de.pitman87.FamiliarsAPI.common.ConfigHandler;
+import de.pitman87.FamiliarsAPI.common.FamiliarsAPI;
+import de.pitman87.FamiliarsAPI.common.entity.Familiar;
 
 @Mixin(Familiar.class)
 public class MixinFamiliar extends EntityLiving implements IAnimals {
+
     @Unique
     private static final int MAX_AGE = 628;
     @Unique
@@ -58,6 +61,7 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.usesSaveFile = false;
         this.renderDistanceWeight = 10.0;
     }
+
     /**
      * @author
      * @reason
@@ -79,6 +83,7 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
             this.multithreadingandtweaks$handlePlayer();
         }
     }
+
     @Unique
     private void multithreadingandtweaks$checkAndUpdatePlayerFamiliar() {
         if (this.player == null && this.getOwner() != null) {
@@ -108,10 +113,9 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         }
     }
 
-
     @Shadow
-    public void updateAbility() {
-    }
+    public void updateAbility() {}
+
     /**
      * @author
      * @reason
@@ -131,8 +135,8 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.moveFlying(par1, par2, var5);
         var3 = 0.91F;
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        this.motionX *= (double)var3;
-        this.motionZ *= (double)var3;
+        this.motionX *= (double) var3;
+        this.motionZ *= (double) var3;
         this.prevLimbSwingAmount = this.limbSwingAmount;
         double var9 = this.posX - this.prevPosX;
         double var12 = this.posZ - this.prevPosZ;
@@ -144,6 +148,7 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.limbSwingAmount += (var11 - this.limbSwingAmount) * 0.4F;
         this.limbSwing += this.limbSwingAmount;
     }
+
     /**
      * @author
      * @reason
@@ -151,16 +156,17 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
     @Overwrite(remap = false)
     private void updateHeadRotation() {
         if (this.newPosRotationIncrements > 0) {
-            double deltaRotation = this.newRotationYaw - (double)this.rotationYaw;
+            double deltaRotation = this.newRotationYaw - (double) this.rotationYaw;
             deltaRotation = (deltaRotation + 180.0) % 360.0 - 180.0;
-            this.rotationYaw = (float)((double)this.rotationYaw + deltaRotation / (double)this.newPosRotationIncrements);
-            this.rotationPitch = (float)((double)this.rotationPitch + (this.newRotationPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
+            this.rotationYaw = (float) ((double) this.rotationYaw
+                + deltaRotation / (double) this.newPosRotationIncrements);
+            this.rotationPitch = (float) ((double) this.rotationPitch
+                + (this.newRotationPitch - (double) this.rotationPitch) / (double) this.newPosRotationIncrements);
             --this.newPosRotationIncrements;
             this.setRotation(this.rotationYaw, this.rotationPitch);
         }
         this.rotationYawHead = this.rotationYaw;
     }
-
 
     /**
      * @author
@@ -176,32 +182,35 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         this.dimension = p.dimension;
     }
 
-
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     public void followPlayer() {
-        if (this.getDistanceSqToEntity(this.player) > (double)this.maxDistanceToPlayer) {
-            this.setPositionAndUpdate(this.player.posX + 0.5, this.player.posY - (double)this.posYOffset, this.player.posZ + 0.5);
+        if (this.getDistanceSqToEntity(this.player) > (double) this.maxDistanceToPlayer) {
+            this.setPositionAndUpdate(
+                this.player.posX + 0.5,
+                this.player.posY - (double) this.posYOffset,
+                this.player.posZ + 0.5);
         } else {
             float f2 = MathHelper.sin(this.age / 10.0F) * 0.3F + 0.1F;
             float f = this.player.renderYawOffset * 3.141593F / 180.0F - 0.15F;
             double f1 = MathHelper.cos(f);
             double f3 = MathHelper.sin(f);
             double d = this.player.posX;
-            double d1 = this.player.posY - (double)this.posYOffset;
+            double d1 = this.player.posY - (double) this.posYOffset;
             double d2 = this.player.posZ;
             double d4 = (d - this.posX - f1) / 5.0;
-            double d5 = d1 - this.posY + (double)this.player.getEyeHeight() + f2 / 5.0;
+            double d5 = d1 - this.posY + (double) this.player.getEyeHeight() + f2 / 5.0;
             double d6 = (d2 - this.posZ - f3) / 5.0;
             this.moveEntity(d4, d5, d6);
         }
     }
+
     @Shadow
-    public void attackEntity(Entity entity, float f) {
-    }
+    public void attackEntity(Entity entity, float f) {}
+
     /**
      * @author
      * @reason
@@ -212,8 +221,9 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         List<Entity> entities = this.multithreadingandtweaks$getEntitiesWithinAttackRange();
 
         for (Entity entity : entities) {
-            if (this.canSetAsTarget(entity) && (target == null || (this.canEntityBeSeen(entity) && this.getDistanceSqToEntity(entity) < this.getDistanceSqToEntity(target)))) {
-                    target = entity;
+            if (this.canSetAsTarget(entity) && (target == null || (this.canEntityBeSeen(entity)
+                && this.getDistanceSqToEntity(entity) < this.getDistanceSqToEntity(target)))) {
+                target = entity;
 
             }
         }
@@ -223,25 +233,26 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
 
     @Unique
     private List multithreadingandtweaks$getEntitiesWithinAttackRange() {
-        return this.worldObj.getEntitiesWithinAABB(EntityLiving.class, this.multithreadingandtweaks$getBoundingBoxForAttackRange());
+        return this.worldObj
+            .getEntitiesWithinAABB(EntityLiving.class, this.multithreadingandtweaks$getBoundingBoxForAttackRange());
     }
 
     @Unique
     private AxisAlignedBB multithreadingandtweaks$getBoundingBoxForAttackRange() {
         return AxisAlignedBB.getBoundingBox(
-            this.posX - (double)this.attackRangeX,
-            this.posY - (double)this.attackRangeY,
-            this.posZ - (double)this.attackRangeX,
-            this.posX + (double)this.attackRangeX,
-            this.posY + (double)this.attackRangeY,
-            this.posZ + (double)this.attackRangeX
-        );
+            this.posX - (double) this.attackRangeX,
+            this.posY - (double) this.attackRangeY,
+            this.posZ - (double) this.attackRangeX,
+            this.posX + (double) this.attackRangeX,
+            this.posY + (double) this.attackRangeY,
+            this.posZ + (double) this.attackRangeX);
     }
 
     @Shadow
     public boolean canSetAsTarget(Entity entity) {
         return entity instanceof EntityLiving && !(entity instanceof Familiar);
     }
+
     @Shadow
     public void func_70626_be() {
         super.updateEntityActionState();
@@ -269,17 +280,20 @@ public class MixinFamiliar extends EntityLiving implements IAnimals {
         }
 
     }
+
     @Shadow
-    public void attackBlockedEntity(Entity entityToAttack2, float f1) {
-    }
+    public void attackBlockedEntity(Entity entityToAttack2, float f1) {}
+
     @Shadow
     public String getOwnerName() {
         return this.dataWatcher.getWatchableObjectString(17);
     }
+
     @Shadow
     public void setOwner(String par1Str) {
         this.dataWatcher.updateObject(17, par1Str);
     }
+
     @Shadow
     public EntityPlayer getOwner() {
         return this.worldObj.getPlayerEntityByName(this.getOwnerName());

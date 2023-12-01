@@ -1,21 +1,24 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
-import ibxm.IBXM;
-import ibxm.Module;
+import java.util.Arrays;
+
+import javax.sound.sampled.AudioFormat;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import ibxm.IBXM;
+import ibxm.Module;
 import paulscode.sound.ICodec;
 import paulscode.sound.SoundBuffer;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemLogger;
 import paulscode.sound.codecs.CodecIBXM;
 
-import javax.sound.sampled.AudioFormat;
-import java.util.Arrays;
-
 @Mixin(CodecIBXM.class)
-public abstract class MixinCodecIBXM  implements ICodec {
+public abstract class MixinCodecIBXM implements ICodec {
+
     /**
      * Used when a parameter for one of the synchronized boolean-interface methods
      * is not aplicable.
@@ -40,20 +43,20 @@ public abstract class MixinCodecIBXM  implements ICodec {
     @Shadow
     private static final boolean SET = true;
 
-/**
- * Processes status messages, warnings, and error messages.
- */
-@Shadow
+    /**
+     * Processes status messages, warnings, and error messages.
+     */
+    @Shadow
     private SoundSystemLogger logger;
 
     @Shadow
     /**
      * Prints an error message.
+     * 
      * @param message Message to print.
      */
-    private void errorMessage( String message )
-    {
-        logger.errorMessage( "CodecWav", message, 0 );
+    private void errorMessage(String message) {
+        logger.errorMessage("CodecWav", message, 0);
     }
 
     /**

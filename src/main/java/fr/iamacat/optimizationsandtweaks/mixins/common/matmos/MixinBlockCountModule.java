@@ -1,5 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
+import java.util.*;
+
+import net.minecraft.block.Block;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
 import eu.ha3.matmos.core.expansion.ExpansionManager;
 import eu.ha3.matmos.core.sheet.DataPackage;
 import eu.ha3.matmos.core.sheet.SheetDataPackage;
@@ -7,17 +17,10 @@ import eu.ha3.matmos.data.modules.AbstractThingCountModule;
 import eu.ha3.matmos.data.modules.BlockCountModule;
 import eu.ha3.matmos.data.modules.VirtualCountModule;
 import eu.ha3.matmos.util.MAtUtil;
-import net.minecraft.block.Block;
-import org.apache.commons.lang3.tuple.Pair;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
-import java.util.*;
 
 @Mixin(BlockCountModule.class)
-public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block, Integer>> {
+public class MixinBlockCountModule extends AbstractThingCountModule<Pair<Block, Integer>> {
+
     @Shadow
     private static final int INITIAL_SIZE = 4096;
     @Shadow
@@ -45,7 +48,8 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
         this(data, name, doNotUseDelta, null);
     }
 
-    public MixinBlockCountModule(DataPackage data, String name, boolean doNotUseDelta, VirtualCountModule<Pair<Block, Integer>> thousand) {
+    public MixinBlockCountModule(DataPackage data, String name, boolean doNotUseDelta,
+        VirtualCountModule<Pair<Block, Integer>> thousand) {
         super(data, name, doNotUseDelta);
         this.wasZero = new boolean[4096];
         this.counts = new int[4096];
@@ -54,22 +58,27 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
         this.size = 4096;
         this.blocksCounted = 0;
         this.thousand = thousand;
-        data.getSheet(name).setDefaultValue("0");
+        data.getSheet(name)
+            .setDefaultValue("0");
         if (!doNotUseDelta) {
-            data.getSheet(name + "_delta").setDefaultValue("0");
+            data.getSheet(name + "_delta")
+                .setDefaultValue("0");
         }
 
-        this.sheetData = (SheetDataPackage)data;
+        this.sheetData = (SheetDataPackage) data;
     }
+
     @Shadow
     protected void doProcess() {
         this.count();
         this.apply();
     }
+
     @Shadow
     public void increment(Pair<Block, Integer> blockMeta) {
         this.increment(blockMeta, 1);
     }
+
     /**
      * @author
      * @reason
@@ -99,6 +108,7 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
 
         this.blocksCounted += amount;
     }
+
     /**
      * @author
      * @reason
@@ -114,9 +124,10 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
             return meta == -1 ? this.counts[id] : this.metadatas[id].get(meta);
         }
     }
+
     @Shadow
-    public void count() {
-    }
+    public void count() {}
+
     /**
      * @author
      * @reason
@@ -136,10 +147,12 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
 
         resetValues();
     }
+
     @Unique
     private void processCount(int id, int count, boolean isZeroMetadata) {
         if (count > 0 || !this.wasZero[id]) {
-            String name = isZeroMetadata ? MAtUtil.asPowerMeta(Block.getBlockById(id), 0) : MAtUtil.nameOf(Block.getBlockById(id));
+            String name = isZeroMetadata ? MAtUtil.asPowerMeta(Block.getBlockById(id), 0)
+                : MAtUtil.nameOf(Block.getBlockById(id));
             setValue(name, count);
 
             if (this.thousand != null) {
@@ -148,6 +161,7 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
             }
         }
     }
+
     @Unique
     private void processMetadata(int id, Map<Integer, Integer> metadata) {
         for (Map.Entry<Integer, Integer> entry : metadata.entrySet()) {
@@ -163,11 +177,15 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
             }
         }
     }
+
     @Unique
     private boolean isZero(int index) {
-        return this.counts[index] == 0 && this.zeroMetadataCounts[index] == 0 &&
-            (this.metadatas[index] == null || this.metadatas[index].values().stream().allMatch(val -> val == 0));
+        return this.counts[index] == 0 && this.zeroMetadataCounts[index] == 0
+            && (this.metadatas[index] == null || this.metadatas[index].values()
+                .stream()
+                .allMatch(val -> val == 0));
     }
+
     @Unique
     private void resetValues() {
         this.blocksCounted = 0;
@@ -178,14 +196,14 @@ public class MixinBlockCountModule  extends AbstractThingCountModule<Pair<Block,
             .forEach(m -> m.replaceAll((k, v) -> 0));
     }
 
-   /**
-    * @author
-    * @reason
-    */
-   @Overwrite(remap = false)
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     private void resize(int newSize) {
         int stepSize = 1024;
-        newSize = (int)Math.ceil((double)newSize / (double)stepSize) * stepSize;
+        newSize = (int) Math.ceil((double) newSize / (double) stepSize) * stepSize;
         this.wasZero = Arrays.copyOf(this.wasZero, newSize);
         this.counts = Arrays.copyOf(this.counts, newSize);
         this.zeroMetadataCounts = Arrays.copyOf(this.zeroMetadataCounts, newSize);

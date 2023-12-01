@@ -239,9 +239,8 @@ public class MixinOilTweakEventHandler {
             return false;
         }
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        return FluidRegistry.isFluidRegistered(fluid)
-            && fluid.getName() != null
+        return FluidRegistry.isFluidRegistered(fluid) && fluid.getName() != null
             && fluid.getName()
-            .equalsIgnoreCase("oil");
+                .equalsIgnoreCase("oil");
     }
 }

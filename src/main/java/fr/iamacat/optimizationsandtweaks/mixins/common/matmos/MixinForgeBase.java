@@ -1,5 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.profiler.Profiler;
+
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.Haddon;
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.OperatorCaster;
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.forge.ForgeBase;
@@ -7,21 +20,10 @@ import eu.ha3.matmos.lib.eu.ha3.mc.haddon.implem.HaddonUtilityImpl;
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.implem.ProfilerHelper;
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.supporting.*;
 import eu.ha3.matmos.lib.eu.ha3.mc.haddon.supporting.event.BlockChangeEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.profiler.Profiler;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Mixin(ForgeBase.class)
 public abstract class MixinForgeBase implements OperatorCaster {
+
     @Shadow
     private static Logger logger;
     @Shadow
@@ -69,18 +71,21 @@ public abstract class MixinForgeBase implements OperatorCaster {
         this.suSoundSetup = haddon instanceof SupportsSoundSetupEvents;
         this.shouldTick = this.suTick || this.suFrame;
         haddon.setUtility(new HaddonUtilityImpl() {
+
             public long getClientTick() {
                 return getTicks();
             }
         });
         haddon.setOperator(this);
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
-    private void onTickLiteLoaderStyle(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock, boolean trueClock) {
+    private void onTickLiteLoaderStyle(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock,
+        boolean trueClock) {
         if (trueClock && !this.suClientTick) {
             return;
         }
@@ -96,7 +101,9 @@ public abstract class MixinForgeBase implements OperatorCaster {
 
         Profiler p = minecraft.mcProfiler;
         List<String> profilerSections = ProfilerHelper.goToRoot(p);
-        p.startSection(this.haddon.getIdentity().getHaddonName());
+        p.startSection(
+            this.haddon.getIdentity()
+                .getHaddonName());
 
         if ((this.enableTick && this.suClientTick && !trueClock) || (this.enableTick && !this.suClientTick && clock)) {
             if (this.suTick) {
@@ -116,7 +123,9 @@ public abstract class MixinForgeBase implements OperatorCaster {
                 ((SupportsFrameEvents) this.haddon).onFrame(partialTicks);
             }
             if (this.suFrameP) {
-                for (EntityPlayer ply : this.haddon.getUtility().getClient().getAllPlayers()) {
+                for (EntityPlayer ply : this.haddon.getUtility()
+                    .getClient()
+                    .getAllPlayers()) {
                     if (ply != null) {
                         ((SupportsPlayerFrameEvents) this.haddon).onFrame(ply, partialTicks);
                     }

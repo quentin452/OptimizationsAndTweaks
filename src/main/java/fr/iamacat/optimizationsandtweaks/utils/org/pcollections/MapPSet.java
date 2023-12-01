@@ -13,7 +13,8 @@ import java.util.Iterator;
 /**
  * A map-backed persistent set.
  *
- * <p>If the backing map is thread-safe, then this implementation is thread-safe (assuming Java's
+ * <p>
+ * If the backing map is thread-safe, then this implementation is thread-safe (assuming Java's
  * AbstractSet is thread-safe), although its iterators may not be.
  *
  * @author harold
@@ -21,91 +22,93 @@ import java.util.Iterator;
  */
 public final class MapPSet<E> extends AbstractUnmodifiableSet<E> implements PSet<E>, Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  //// STATIC FACTORY METHODS ////
-  /**
-   * @param <E>
-   * @param map
-   * @return a PSet with the elements of map.keySet(), backed by map
-   */
-  @SuppressWarnings("unchecked")
-  public static <E> MapPSet<E> from(final PMap<E, ?> map) {
-    return new MapPSet<E>((PMap<E, Object>) map);
-  }
+    //// STATIC FACTORY METHODS ////
+    /**
+     * @param <E>
+     * @param map
+     * @return a PSet with the elements of map.keySet(), backed by map
+     */
+    @SuppressWarnings("unchecked")
+    public static <E> MapPSet<E> from(final PMap<E, ?> map) {
+        return new MapPSet<E>((PMap<E, Object>) map);
+    }
 
-  /**
-   * @param <E>
-   * @param map
-   * @param e
-   * @return from(map).plus(e)
-   */
-  public static <E> MapPSet<E> from(final PMap<E, ?> map, E e) {
-    return from(map).plus(e);
-  }
+    /**
+     * @param <E>
+     * @param map
+     * @param e
+     * @return from(map).plus(e)
+     */
+    public static <E> MapPSet<E> from(final PMap<E, ?> map, E e) {
+        return from(map).plus(e);
+    }
 
-  /**
-   * @param <E>
-   * @param map
-   * @param list
-   * @return from(map).plusAll(list)
-   */
-  public static <E> MapPSet<E> from(final PMap<E, ?> map, final Collection<? extends E> list) {
-    return from(map).plusAll(list);
-  }
+    /**
+     * @param <E>
+     * @param map
+     * @param list
+     * @return from(map).plusAll(list)
+     */
+    public static <E> MapPSet<E> from(final PMap<E, ?> map, final Collection<? extends E> list) {
+        return from(map).plusAll(list);
+    }
 
-  //// PRIVATE CONSTRUCTORS ////
-  private final PMap<E, Object> map;
-  // not instantiable (or subclassable):
-  private MapPSet(final PMap<E, Object> map) {
-    this.map = map;
-  }
+    //// PRIVATE CONSTRUCTORS ////
+    private final PMap<E, Object> map;
 
-  //// REQUIRED METHODS FROM AbstractSet ////
-  @Override
-  public Iterator<E> iterator() {
-    return map.keySet().iterator();
-  }
+    // not instantiable (or subclassable):
+    private MapPSet(final PMap<E, Object> map) {
+        this.map = map;
+    }
 
-  @Override
-  public int size() {
-    return map.size();
-  }
+    //// REQUIRED METHODS FROM AbstractSet ////
+    @Override
+    public Iterator<E> iterator() {
+        return map.keySet()
+            .iterator();
+    }
 
-  //// OVERRIDDEN METHODS OF AbstractSet ////
-  @Override
-  public boolean contains(final Object e) {
-    return map.containsKey(e);
-  }
+    @Override
+    public int size() {
+        return map.size();
+    }
 
-  //// IMPLEMENTED METHODS OF PSet ////
-  private static enum In {
-    IN
-  }
+    //// OVERRIDDEN METHODS OF AbstractSet ////
+    @Override
+    public boolean contains(final Object e) {
+        return map.containsKey(e);
+    }
 
-  public MapPSet<E> plus(final E e) {
-    if (contains(e)) return this;
-    return new MapPSet<E>(map.plus(e, In.IN));
-  }
+    //// IMPLEMENTED METHODS OF PSet ////
+    private static enum In {
+        IN
+    }
 
-  public MapPSet<E> minus(final Object e) {
-    if (!contains(e)) return this;
-    return new MapPSet<E>(map.minus(e));
-  }
+    public MapPSet<E> plus(final E e) {
+        if (contains(e)) return this;
+        return new MapPSet<E>(map.plus(e, In.IN));
+    }
 
-  public MapPSet<E> plusAll(final Collection<? extends E> list) {
-    PMap<E, Object> map = this.map;
-    for (E e : list) map = map.plus(e, In.IN);
-    return from(map);
-  }
+    public MapPSet<E> minus(final Object e) {
+        if (!contains(e)) return this;
+        return new MapPSet<E>(map.minus(e));
+    }
 
-  public MapPSet<E> minusAll(final Collection<?> list) {
-    PMap<E, Object> map = this.map.minusAll(list);
-    return from(map);
-  }
+    public MapPSet<E> plusAll(final Collection<? extends E> list) {
+        PMap<E, Object> map = this.map;
+        for (E e : list) map = map.plus(e, In.IN);
+        return from(map);
+    }
 
-  @Override
-  public MapPSet<E> intersect(Collection<? extends E> list) {
-    return this.minusAll(this.minusAll(list));
-  }
+    public MapPSet<E> minusAll(final Collection<?> list) {
+        PMap<E, Object> map = this.map.minusAll(list);
+        return from(map);
+    }
+
+    @Override
+    public MapPSet<E> intersect(Collection<? extends E> list) {
+        return this.minusAll(this.minusAll(list));
+    }
 }

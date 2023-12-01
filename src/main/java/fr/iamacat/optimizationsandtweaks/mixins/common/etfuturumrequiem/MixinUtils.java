@@ -1,8 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.etfuturumrequiem;
 
-import ganymedes01.etfuturum.core.utils.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import ganymedes01.etfuturum.core.utils.Utils;
 
 @Mixin(Utils.class)
 public class MixinUtils {

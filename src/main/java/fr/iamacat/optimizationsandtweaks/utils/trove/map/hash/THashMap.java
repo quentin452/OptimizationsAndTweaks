@@ -33,7 +33,6 @@ import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.map.TMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
-import net.minecraft.world.chunk.Chunk;
 
 /**
  * An implementation of the Map interface which uses an open addressed

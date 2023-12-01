@@ -236,7 +236,10 @@ public class MixinAxisAlignedBB {
             return null;
         }
 
-        Vec3 hit = p_72327_1_.addVector(tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord), tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord), tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
+        Vec3 hit = p_72327_1_.addVector(
+            tMin * (p_72327_2_.xCoord - p_72327_1_.xCoord),
+            tMin * (p_72327_2_.yCoord - p_72327_1_.yCoord),
+            tMin * (p_72327_2_.zCoord - p_72327_1_.zCoord));
 
         int sideHit = -1;
         if (tMin == minX) {
@@ -313,11 +316,17 @@ public class MixinAxisAlignedBB {
      */
     @Overwrite
     public String toString() {
-        return "box[" + this.minX + ", " +
-            this.minY + ", " +
-            this.minZ + " -> " +
-            this.maxX + ", " +
-            this.maxY + ", " +
-            this.maxZ + "]";
+        return "box[" + this.minX
+            + ", "
+            + this.minY
+            + ", "
+            + this.minZ
+            + " -> "
+            + this.maxX
+            + ", "
+            + this.maxY
+            + ", "
+            + this.maxZ
+            + "]";
     }
 }

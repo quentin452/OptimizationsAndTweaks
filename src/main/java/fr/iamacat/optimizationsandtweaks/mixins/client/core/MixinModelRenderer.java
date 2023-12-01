@@ -1,20 +1,22 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
+
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.List;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mixin(ModelRenderer.class)
 public class MixinModelRenderer {
@@ -72,8 +74,7 @@ public class MixinModelRenderer {
     @Shadow
     public float offsetZ;
 
-    public MixinModelRenderer(ModelBase p_i1172_1_, String p_i1172_2_)
-    {
+    public MixinModelRenderer(ModelBase p_i1172_1_, String p_i1172_2_) {
         this.textureWidth = 64.0F;
         this.textureHeight = 32.0F;
         this.showModel = true;
@@ -121,16 +122,27 @@ public class MixinModelRenderer {
             }
         }
     }
+
     @Unique
     private void renderWithRotationAndOffset(float p_78785_1_) {
-        GL11.glTranslatef(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
+        GL11.glTranslatef(
+            this.rotationPointX * p_78785_1_,
+            this.rotationPointY * p_78785_1_,
+            this.rotationPointZ * p_78785_1_);
         renderDisplayListAndChildModels(p_78785_1_);
-        GL11.glTranslatef(-this.rotationPointX * p_78785_1_, -this.rotationPointY * p_78785_1_, -this.rotationPointZ * p_78785_1_);
+        GL11.glTranslatef(
+            -this.rotationPointX * p_78785_1_,
+            -this.rotationPointY * p_78785_1_,
+            -this.rotationPointZ * p_78785_1_);
     }
+
     @Unique
     private void renderWithFullRotation(float p_78785_1_) {
         GL11.glPushMatrix();
-        GL11.glTranslatef(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
+        GL11.glTranslatef(
+            this.rotationPointX * p_78785_1_,
+            this.rotationPointY * p_78785_1_,
+            this.rotationPointZ * p_78785_1_);
 
         if (this.rotateAngleZ != 0.0F) {
             GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
@@ -163,7 +175,10 @@ public class MixinModelRenderer {
 
             if (this.rotateAngleY != 0.0F || this.rotateAngleX != 0.0F || this.rotateAngleZ != 0.0F) {
                 GL11.glPushMatrix();
-                GL11.glTranslatef(this.rotationPointX * p_78791_1_, this.rotationPointY * p_78791_1_, this.rotationPointZ * p_78791_1_);
+                GL11.glTranslatef(
+                    this.rotationPointX * p_78791_1_,
+                    this.rotationPointY * p_78791_1_,
+                    this.rotationPointZ * p_78791_1_);
 
                 if (this.rotateAngleY != 0.0F) {
                     GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
@@ -181,7 +196,10 @@ public class MixinModelRenderer {
                 GL11.glPopMatrix();
             } else {
                 GL11.glPushMatrix();
-                GL11.glTranslatef(this.rotationPointX * p_78791_1_, this.rotationPointY * p_78791_1_, this.rotationPointZ * p_78791_1_);
+                GL11.glTranslatef(
+                    this.rotationPointX * p_78791_1_,
+                    this.rotationPointY * p_78791_1_,
+                    this.rotationPointZ * p_78791_1_);
                 GL11.glCallList(this.displayList);
                 GL11.glPopMatrix();
             }
@@ -194,8 +212,7 @@ public class MixinModelRenderer {
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
-    public void compileDisplayList(float p_78788_1_)
-    {
+    public void compileDisplayList(float p_78788_1_) {
         this.displayList = GLAllocation.generateDisplayLists(1);
         GL11.glNewList(this.displayList, GL11.GL_COMPILE);
         Tessellator tessellator = Tessellator.instance;

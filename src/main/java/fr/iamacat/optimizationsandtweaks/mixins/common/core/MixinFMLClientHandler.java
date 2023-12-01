@@ -1,22 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
+import net.minecraft.client.Minecraft;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.GuiConfirmation;
 import cpw.mods.fml.client.GuiNotification;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.StartupQuery;
-import cpw.mods.fml.server.FMLServerHandler;
-import net.minecraft.client.Minecraft;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 @Mixin(FMLClientHandler.class)
 public abstract class MixinFMLClientHandler implements IFMLSidedHandler {
+
     @Shadow
     private Minecraft client;
     @Unique

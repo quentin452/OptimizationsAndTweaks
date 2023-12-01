@@ -1,5 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core.entity;
 
+import java.util.Objects;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -10,14 +12,13 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Objects;
 
 @Mixin(EntityItem.class)
 public abstract class MixinEntityItem extends Entity {
@@ -49,7 +50,8 @@ public abstract class MixinEntityItem extends Entity {
             return;
         }
 
-        if (Objects.requireNonNull(item.getItem()).onEntityItemUpdate(entityItem)) {
+        if (Objects.requireNonNull(item.getItem())
+            .onEntityItemUpdate(entityItem)) {
             return;
         }
 
@@ -66,10 +68,14 @@ public abstract class MixinEntityItem extends Entity {
         this.noClip = this.func_145771_j(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
-        boolean positionChanged = (int) this.prevPosX != (int) this.posX || (int) this.prevPosY != (int) this.posY || (int) this.prevPosZ != (int) this.posZ;
+        boolean positionChanged = (int) this.prevPosX != (int) this.posX || (int) this.prevPosY != (int) this.posY
+            || (int) this.prevPosZ != (int) this.posZ;
 
         if (positionChanged || this.ticksExisted % 25 == 0) {
-            Block block = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
+            Block block = this.worldObj.getBlock(
+                MathHelper.floor_double(this.posX),
+                MathHelper.floor_double(this.posY),
+                MathHelper.floor_double(this.posZ));
             Material material = block.getMaterial();
 
             if (material == Material.lava) {
@@ -87,7 +93,10 @@ public abstract class MixinEntityItem extends Entity {
 
         float slipperiness = 0.98F;
         if (this.onGround) {
-            Block blockUnder = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
+            Block blockUnder = this.worldObj.getBlock(
+                MathHelper.floor_double(this.posX),
+                MathHelper.floor_double(this.boundingBox.minY) - 1,
+                MathHelper.floor_double(this.posZ));
             slipperiness = blockUnder.slipperiness * 0.98F;
         }
 
@@ -103,7 +112,11 @@ public abstract class MixinEntityItem extends Entity {
 
         if (!this.worldObj.isRemote) {
             if (this.age >= lifespan) {
-                ItemExpireEvent event = new ItemExpireEvent(entityItem, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, worldObj)));
+                ItemExpireEvent event = new ItemExpireEvent(
+                    entityItem,
+                    (item.getItem() == null ? 6000
+                        : item.getItem()
+                            .getEntityLifespan(item, worldObj)));
                 if (MinecraftForge.EVENT_BUS.post(event)) {
                     lifespan += event.extraLife;
                 } else {
@@ -158,13 +171,14 @@ public abstract class MixinEntityItem extends Entity {
         ItemStack itemstack = this.optimizationsAndTweaks$getEntityItem();
         ItemStack itemstack1 = p_70289_1_.getEntityItem();
 
-        if (itemstack1.getItem() != itemstack.getItem() ||
-            (itemstack1.hasTagCompound() ^ itemstack.hasTagCompound()) ||
-            (itemstack1.hasTagCompound() && !itemstack1.getTagCompound().equals(itemstack.getTagCompound())) ||
-            itemstack1.getItem() == null ||
-            (itemstack1.getItem().getHasSubtypes() && itemstack1.getItemDamage() != itemstack.getItemDamage()) ||
-            itemstack1.stackSize < itemstack.stackSize ||
-            itemstack1.stackSize + itemstack.stackSize > itemstack1.getMaxStackSize()) {
+        if (itemstack1.getItem() != itemstack.getItem() || (itemstack1.hasTagCompound() ^ itemstack.hasTagCompound())
+            || (itemstack1.hasTagCompound() && !itemstack1.getTagCompound()
+                .equals(itemstack.getTagCompound()))
+            || itemstack1.getItem() == null
+            || (itemstack1.getItem()
+                .getHasSubtypes() && itemstack1.getItemDamage() != itemstack.getItemDamage())
+            || itemstack1.stackSize < itemstack.stackSize
+            || itemstack1.stackSize + itemstack.stackSize > itemstack1.getMaxStackSize()) {
             return false;
         }
 

@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.akatsuki;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
 import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 

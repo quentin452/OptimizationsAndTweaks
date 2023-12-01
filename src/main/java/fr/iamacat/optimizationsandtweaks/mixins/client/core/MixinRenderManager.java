@@ -1,7 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -22,11 +21,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(RenderManager.class)
 public class MixinRenderManager {
@@ -170,8 +164,7 @@ public class MixinRenderManager {
      * @reason
      */
     @Overwrite
-    public void updateIcons(IIconRegister p_94178_1_)
-    {
+    public void updateIcons(IIconRegister p_94178_1_) {
         for (Object o : this.entityRenderMap.values()) {
             Render render = (Render) o;
             render.updateIcons(p_94178_1_);

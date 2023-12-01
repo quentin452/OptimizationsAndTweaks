@@ -1,21 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.codechickencore;
 
-import codechicken.core.ClassDiscoverer;
-import codechicken.core.CommonUtils;
-import codechicken.core.IStringMatcher;
-import codechicken.core.launch.CodeChickenCorePlugin;
-import codechicken.lib.asm.ASMHelper;
-import com.google.common.collect.ImmutableList;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModClassLoader;
-import cpw.mods.fml.relauncher.CoreModManager;
-import net.minecraft.launchwrapper.Launch;
-import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +9,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import net.minecraft.launchwrapper.Launch;
+
+import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+import com.google.common.collect.ImmutableList;
+
+import codechicken.core.ClassDiscoverer;
+import codechicken.core.CommonUtils;
+import codechicken.core.IStringMatcher;
+import codechicken.core.launch.CodeChickenCorePlugin;
+import codechicken.lib.asm.ASMHelper;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModClassLoader;
+import cpw.mods.fml.relauncher.CoreModManager;
 
 @Mixin(ClassDiscoverer.class)
 public class MixinClassDiscoverer {
@@ -41,11 +44,12 @@ public class MixinClassDiscoverer {
     public MixinClassDiscoverer(IStringMatcher matcher, Class<?>... superclasses) {
         this.matcher = matcher;
         this.superclasses = new String[superclasses.length];
-        for (int i = 0; i < superclasses.length; i++)
-            this.superclasses[i] = superclasses[i].getName().replace('.', '/');
+        for (int i = 0; i < superclasses.length; i++) this.superclasses[i] = superclasses[i].getName()
+            .replace('.', '/');
 
         classes = new ArrayList<Class<?>>();
-        modClassLoader = (ModClassLoader) Loader.instance().getModClassLoader();
+        modClassLoader = (ModClassLoader) Loader.instance()
+            .getModClassLoader();
     }
 
     public MixinClassDiscoverer(Class<?>... superclasses) {
@@ -56,6 +60,7 @@ public class MixinClassDiscoverer {
             }
         }, superclasses);
     }
+
     /**
      * @author
      * @reason
@@ -69,6 +74,7 @@ public class MixinClassDiscoverer {
         }
         return classes;
     }
+
     /**
      * @author
      * @reason
@@ -76,7 +82,9 @@ public class MixinClassDiscoverer {
     @Overwrite(remap = false)
     private void checkAddClass(String resource) {
         try {
-            String classname = resource.replace(".class", "").replace("\\", ".").replace("/", ".");
+            String classname = resource.replace(".class", "")
+                .replace("\\", ".")
+                .replace("/", ".");
             byte[] bytes = Launch.classLoader.getClassBytes(classname);
             if (bytes == null) return;
 
@@ -89,6 +97,7 @@ public class MixinClassDiscoverer {
             CodeChickenCorePlugin.logger.error("Unable to load class: " + resource, e);
         }
     }
+
     /**
      * @author
      * @reason
@@ -102,14 +111,17 @@ public class MixinClassDiscoverer {
             CodeChickenCorePlugin.logger.error("Unable to load class: " + classname, t);
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     private void findClasspathMods() {
-        List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries())
-            .addAll(CoreModManager.getLoadedCoremods()).build();
+        List<String> knownLibraries = ImmutableList.<String>builder()
+            .addAll(modClassLoader.getDefaultLibraries())
+            .addAll(CoreModManager.getLoadedCoremods())
+            .build();
         File[] minecraftSources = modClassLoader.getParentSources();
         HashSet<String> searchedSources = new HashSet<String>();
         for (File minecraftSource : minecraftSources) {
@@ -137,6 +149,7 @@ public class MixinClassDiscoverer {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -144,11 +157,12 @@ public class MixinClassDiscoverer {
     @Overwrite(remap = false)
     private void readFromZipFile(File file) throws IOException {
         try (FileInputStream fileinputstream = new FileInputStream(file);
-             ZipInputStream zipinputstream = new ZipInputStream(fileinputstream)) {
+            ZipInputStream zipinputstream = new ZipInputStream(fileinputstream)) {
 
             ZipEntry zipentry;
             while ((zipentry = zipinputstream.getNextEntry()) != null) {
-                String fullname = zipentry.getName().replace('\\', '/');
+                String fullname = zipentry.getName()
+                    .replace('\\', '/');
                 int pos = fullname.lastIndexOf('/');
                 String name = pos == -1 ? fullname : fullname.substring(pos + 1);
                 if (!zipentry.isDirectory() && matcher.matches(name)) {

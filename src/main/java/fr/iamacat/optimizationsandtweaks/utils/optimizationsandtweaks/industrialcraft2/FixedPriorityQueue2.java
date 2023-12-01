@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.industria
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Iterators;

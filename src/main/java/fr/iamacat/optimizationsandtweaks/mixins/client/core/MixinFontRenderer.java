@@ -1,21 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
-import com.ibm.icu.text.ArabicShaping;
-import com.ibm.icu.text.ArabicShapingException;
-import com.ibm.icu.text.Bidi;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import com.ibm.icu.text.ArabicShaping;
+import com.ibm.icu.text.ArabicShapingException;
+import com.ibm.icu.text.Bidi;
 
 @Mixin(FontRenderer.class)
 public class MixinFontRenderer {
@@ -113,36 +115,28 @@ public class MixinFontRenderer {
             return 4.0F;
         } else {
             boolean isSpecialCharacter = SPECIAL_CHARACTERS_SET.contains(p_78278_2_) && !this.unicodeFlag;
-            return isSpecialCharacter ? this.renderDefaultChar(p_78278_1_, p_78278_3_) : this.renderUnicodeChar(p_78278_2_, p_78278_3_);
+            return isSpecialCharacter ? this.renderDefaultChar(p_78278_1_, p_78278_3_)
+                : this.renderUnicodeChar(p_78278_2_, p_78278_3_);
         }
     }
-
 
     /**
      * Render a single character with the default.png font at current (posX,posY) location...
      */
     @Overwrite
     public float renderDefaultChar(int p_78266_1_, boolean p_78266_2_) {
-        float f = (float)(p_78266_1_ % 16 * 8);
-        float f1 = (float)(p_78266_1_ / 16 * 8);
+        float f = (float) (p_78266_1_ % 16 * 8);
+        float f1 = (float) (p_78266_1_ / 16 * 8);
         float f2 = p_78266_2_ ? 1.0F : 0.0F;
-        float f3 = (float)this.charWidth[p_78266_1_] - 0.01F;
+        float f3 = (float) this.charWidth[p_78266_1_] - 0.01F;
 
         // Precompute texture coordinates
-        float[] texCoords = {
-            f / 128.0F, f1 / 128.0F,
-            f / 128.0F, (f1 + 7.99F) / 128.0F,
-            (f + f3 - 1.0F) / 128.0F, f1 / 128.0F,
-            (f + f3 - 1.0F) / 128.0F, (f1 + 7.99F) / 128.0F
-        };
+        float[] texCoords = { f / 128.0F, f1 / 128.0F, f / 128.0F, (f1 + 7.99F) / 128.0F, (f + f3 - 1.0F) / 128.0F,
+            f1 / 128.0F, (f + f3 - 1.0F) / 128.0F, (f1 + 7.99F) / 128.0F };
 
         // Precompute vertices
-        float[] vertices = {
-            this.posX + f2, this.posY, 0.0F,
-            this.posX - f2, this.posY + 7.99F, 0.0F,
-            this.posX + f3 - 1.0F + f2, this.posY, 0.0F,
-            this.posX + f3 - 1.0F - f2, this.posY + 7.99F, 0.0F
-        };
+        float[] vertices = { this.posX + f2, this.posY, 0.0F, this.posX - f2, this.posY + 7.99F, 0.0F,
+            this.posX + f3 - 1.0F + f2, this.posY, 0.0F, this.posX + f3 - 1.0F - f2, this.posY + 7.99F, 0.0F };
 
         bindTexture(this.locationFontTexture);
 
@@ -155,7 +149,7 @@ public class MixinFontRenderer {
 
         GL11.glEnd();
 
-        return (float)this.charWidth[p_78266_1_];
+        return (float) this.charWidth[p_78266_1_];
     }
 
     /**
@@ -163,14 +157,10 @@ public class MixinFontRenderer {
      * @reason
      */
     @Overwrite
-    public float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_)
-    {
-        if (this.glyphWidth[p_78277_1_] == 0)
-        {
+    public float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_) {
+        if (this.glyphWidth[p_78277_1_] == 0) {
             return 0.0F;
-        }
-        else
-        {
+        } else {
             int i = p_78277_1_ / 256;
             this.loadGlyphTexture(i);
             int j = this.glyphWidth[p_78277_1_] >>> 4;
@@ -195,37 +185,34 @@ public class MixinFontRenderer {
     }
 
     @Shadow
-    protected void bindTexture(ResourceLocation location)
-    {
+    protected void bindTexture(ResourceLocation location) {
         renderEngine.bindTexture(location);
     }
+
     @Shadow
-    private void loadGlyphTexture(int p_78257_1_)
-    {
+    private void loadGlyphTexture(int p_78257_1_) {
         bindTexture(this.getUnicodePageLocation(p_78257_1_));
     }
 
-   /**
-    * @author
-    * @reason
-    */
-   @Overwrite
-   public ResourceLocation getUnicodePageLocation(int p_111271_1_)
-   {
-       if (unicodePageLocations[p_111271_1_] == null)
-       {
-           unicodePageLocations[p_111271_1_] = new ResourceLocation(String.format("textures/font/unicode_page_%02x.png", p_111271_1_));
-       }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public ResourceLocation getUnicodePageLocation(int p_111271_1_) {
+        if (unicodePageLocations[p_111271_1_] == null) {
+            unicodePageLocations[p_111271_1_] = new ResourceLocation(
+                String.format("textures/font/unicode_page_%02x.png", p_111271_1_));
+        }
 
-       return unicodePageLocations[p_111271_1_];
-   }
+        return unicodePageLocations[p_111271_1_];
+    }
 
     /**
      * Draws the specified string.
      */
     @Overwrite
-    public int drawString(String text, int x, int y, int color)
-    {
+    public int drawString(String text, int x, int y, int color) {
         return this.drawString(text, x, y, color, false);
     }
 
@@ -233,49 +220,39 @@ public class MixinFontRenderer {
      * Draws the specified string. Args: string, x, y, color, dropShadow
      */
     @Overwrite
-    public int drawString(String text, int x, int y, int color, boolean dropShadow)
-    {
+    public int drawString(String text, int x, int y, int color, boolean dropShadow) {
         enableAlpha();
         this.resetStyles();
         int l;
 
-        if (dropShadow)
-        {
+        if (dropShadow) {
             l = this.renderString(text, x + 1, y + 1, color, true);
             l = Math.max(l, this.renderString(text, x, y, color, false));
-        }
-        else
-        {
+        } else {
             l = this.renderString(text, x, y, color, false);
         }
 
         return l;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public int renderString(String p_78258_1_, int p_78258_2_, int p_78258_3_, int p_78258_4_, boolean p_78258_5_)
-    {
-        if (p_78258_1_ == null)
-        {
+    public int renderString(String p_78258_1_, int p_78258_2_, int p_78258_3_, int p_78258_4_, boolean p_78258_5_) {
+        if (p_78258_1_ == null) {
             return 0;
-        }
-        else
-        {
-            if (this.bidiFlag)
-            {
+        } else {
+            if (this.bidiFlag) {
                 p_78258_1_ = this.bidiReorder(p_78258_1_);
             }
 
-            if ((p_78258_4_ & -67108864) == 0)
-            {
+            if ((p_78258_4_ & -67108864) == 0) {
                 p_78258_4_ |= -16777216;
             }
 
-            if (p_78258_5_)
-            {
+            if (p_78258_5_) {
                 p_78258_4_ = (p_78258_4_ & 16579836) >> 2 | p_78258_4_ & -16777216;
             }
 
@@ -287,68 +264,54 @@ public class MixinFontRenderer {
             this.posX = p_78258_2_;
             this.posY = p_78258_3_;
             this.renderStringAtPos(p_78258_1_, p_78258_5_);
-            return (int)this.posX;
+            return (int) this.posX;
         }
     }
+
     /**
      * Render a single line string at the current (posX,posY) and update posX
      */
     @Overwrite
-    public void renderStringAtPos(String p_78255_1_, boolean p_78255_2_)
-    {
-        for (int i = 0; i < p_78255_1_.length(); ++i)
-        {
+    public void renderStringAtPos(String p_78255_1_, boolean p_78255_2_) {
+        for (int i = 0; i < p_78255_1_.length(); ++i) {
             char c0 = p_78255_1_.charAt(i);
             int j;
             int k;
 
-            if (c0 == 167 && i + 1 < p_78255_1_.length())
-            {
-                j = "0123456789abcdefklmnor".indexOf(p_78255_1_.toLowerCase().charAt(i + 1));
+            if (c0 == 167 && i + 1 < p_78255_1_.length()) {
+                j = "0123456789abcdefklmnor".indexOf(
+                    p_78255_1_.toLowerCase()
+                        .charAt(i + 1));
 
-                if (j < 16)
-                {
+                if (j < 16) {
                     this.randomStyle = false;
                     this.boldStyle = false;
                     this.strikethroughStyle = false;
                     this.underlineStyle = false;
                     this.italicStyle = false;
 
-                    if (j < 0)
-                    {
+                    if (j < 0) {
                         j = 15;
                     }
 
-                    if (p_78255_2_)
-                    {
+                    if (p_78255_2_) {
                         j += 16;
                     }
 
                     k = this.colorCode[j];
                     this.textColor = k;
                     setColor((k >> 16) / 255.0F, (k >> 8 & 255) / 255.0F, (k & 255) / 255.0F, this.alpha);
-                }
-                else if (j == 16)
-                {
+                } else if (j == 16) {
                     this.randomStyle = true;
-                }
-                else if (j == 17)
-                {
+                } else if (j == 17) {
                     this.boldStyle = true;
-                }
-                else if (j == 18)
-                {
+                } else if (j == 18) {
                     this.strikethroughStyle = true;
-                }
-                else if (j == 19)
-                {
+                } else if (j == 19) {
                     this.underlineStyle = true;
-                }
-                else if (j == 20)
-                {
+                } else if (j == 20) {
                     this.italicStyle = true;
-                }
-                else {
+                } else {
                     this.randomStyle = false;
                     this.boldStyle = false;
                     this.strikethroughStyle = false;
@@ -358,18 +321,14 @@ public class MixinFontRenderer {
                 }
 
                 ++i;
-            }
-            else
-            {
-                j = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000".indexOf(c0);
+            } else {
+                j = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000"
+                    .indexOf(c0);
 
-                if (this.randomStyle && j != -1)
-                {
-                    do
-                    {
+                if (this.randomStyle && j != -1) {
+                    do {
                         k = this.fontRandom.nextInt(this.charWidth.length);
-                    }
-                    while (this.charWidth[j] != this.charWidth[k]);
+                    } while (this.charWidth[j] != this.charWidth[k]);
 
                     j = k;
                 }
@@ -377,26 +336,22 @@ public class MixinFontRenderer {
                 float f1 = this.unicodeFlag ? 0.5F : 1.0F;
                 boolean flag1 = (c0 == 0 || j == -1 || this.unicodeFlag) && p_78255_2_;
 
-                if (flag1)
-                {
+                if (flag1) {
                     this.posX -= f1;
                     this.posY -= f1;
                 }
 
                 float f = this.renderCharAtPos(j, c0, this.italicStyle);
 
-                if (flag1)
-                {
+                if (flag1) {
                     this.posX += f1;
                     this.posY += f1;
                 }
 
-                if (this.boldStyle)
-                {
+                if (this.boldStyle) {
                     this.posX += f1;
 
-                    if (flag1)
-                    {
+                    if (flag1) {
                         this.posX -= f1;
                         this.posY -= f1;
                     }
@@ -404,8 +359,7 @@ public class MixinFontRenderer {
                     this.renderCharAtPos(j, c0, this.italicStyle);
                     this.posX -= f1;
 
-                    if (flag1)
-                    {
+                    if (flag1) {
                         this.posX += f1;
                         this.posY += f1;
                     }
@@ -417,19 +371,18 @@ public class MixinFontRenderer {
             }
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
-    public void doDraw(float f)
-    {
+    public void doDraw(float f) {
         {
             {
                 Tessellator tessellator;
 
-                if (this.strikethroughStyle)
-                {
+                if (this.strikethroughStyle) {
                     tessellator = Tessellator.instance;
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     tessellator.startDrawingQuads();
@@ -441,8 +394,7 @@ public class MixinFontRenderer {
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
 
-                if (this.underlineStyle)
-                {
+                if (this.underlineStyle) {
                     tessellator = Tessellator.instance;
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     tessellator.startDrawingQuads();
@@ -455,7 +407,7 @@ public class MixinFontRenderer {
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
 
-                this.posX += (float)((int)f);
+                this.posX += (float) ((int) f);
             }
         }
     }
@@ -464,36 +416,32 @@ public class MixinFontRenderer {
      * Apply Unicode Bidirectional Algorithm to string and return a new possibly reordered string for visual rendering.
      */
     @Overwrite
-    public String bidiReorder(String p_147647_1_)
-    {
-        try
-        {
+    public String bidiReorder(String p_147647_1_) {
+        try {
             Bidi bidi = new Bidi((new ArabicShaping(8)).shape(p_147647_1_), 127);
             bidi.setReorderingMode(0);
             return bidi.writeReordered(2);
-        }
-        catch (ArabicShapingException arabicshapingexception)
-        {
+        } catch (ArabicShapingException arabicshapingexception) {
             return p_147647_1_;
         }
     }
+
     @Shadow
-    protected void enableAlpha()
-    {
+    protected void enableAlpha() {
         GL11.glEnable(GL11.GL_ALPHA_TEST);
     }
+
     @Shadow
-    private void resetStyles()
-    {
+    private void resetStyles() {
         this.randomStyle = false;
         this.boldStyle = false;
         this.italicStyle = false;
         this.underlineStyle = false;
         this.strikethroughStyle = false;
     }
+
     @Shadow
-    protected void setColor(float r, float g, float b, float a)
-    {
+    protected void setColor(float r, float g, float b, float a) {
         GL11.glColor4f(r, g, b, a);
     }
 

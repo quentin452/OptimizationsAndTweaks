@@ -1,9 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.aether;
 
-import com.gildedgames.the_aether.tileentity.*;
-import cpw.mods.fml.common.registry.GameRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import com.gildedgames.the_aether.tileentity.*;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mixin(AetherTileEntities.class)
 public class MixinAetherTileEntities {

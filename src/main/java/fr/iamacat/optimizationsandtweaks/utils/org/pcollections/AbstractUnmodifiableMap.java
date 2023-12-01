@@ -22,115 +22,113 @@ import java.util.function.Function;
  */
 public abstract class AbstractUnmodifiableMap<K, V> extends AbstractMap<K, V> {
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public void clear() {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V compute(final K k, final BiFunction<? super K, ? super V, ? extends V> function) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V compute(final K k, final BiFunction<? super K, ? super V, ? extends V> function) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V computeIfAbsent(final K k, final Function<? super K, ? extends V> function) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V computeIfAbsent(final K k, final Function<? super K, ? extends V> function) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V computeIfPresent(
-      final K k, final BiFunction<? super K, ? super V, ? extends V> function) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V computeIfPresent(final K k, final BiFunction<? super K, ? super V, ? extends V> function) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V merge(
-      final K k, final V v, final BiFunction<? super V, ? super V, ? extends V> function) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V merge(final K k, final V v, final BiFunction<? super V, ? super V, ? extends V> function) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V put(final K k, final V v) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V put(final K k, final V v) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public void putAll(final Map<? extends K, ? extends V> map) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public void putAll(final Map<? extends K, ? extends V> map) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V putIfAbsent(final K k, final V v) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V putIfAbsent(final K k, final V v) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V remove(final Object o) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V remove(final Object o) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public V replace(final K k, final V v) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public V replace(final K k, final V v) {
+        throw new UnsupportedOperationException();
+    }
 
-  /**
-   * @throws UnsupportedOperationException always
-   * @deprecated Unsupported operation.
-   */
-  @Deprecated
-  @Override
-  public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function) {
-    throw new UnsupportedOperationException();
-  }
+    /**
+     * @throws UnsupportedOperationException always
+     * @deprecated Unsupported operation.
+     */
+    @Deprecated
+    @Override
+    public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function) {
+        throw new UnsupportedOperationException();
+    }
 }

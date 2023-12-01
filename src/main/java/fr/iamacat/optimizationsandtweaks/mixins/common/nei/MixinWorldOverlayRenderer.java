@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.nei;
 
-import codechicken.nei.WorldOverlayRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.passive.EntityPig;
@@ -8,16 +7,21 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.chunk.Chunk;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import codechicken.nei.WorldOverlayRenderer;
+
 @Mixin(WorldOverlayRenderer.class)
 public class MixinWorldOverlayRenderer {
+
     @Shadow
     private static final Entity dummyEntity = new EntityPig(null);
     @Shadow
     private static final AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
+
     /**
      * @author
      * @reason
@@ -44,8 +48,8 @@ public class MixinWorldOverlayRenderer {
             return 0;
         }
 
-        if (!chunk.worldObj.getCollidingBoundingBoxes(dummyEntity, aabb).isEmpty()
-            || chunk.worldObj.isAnyLiquid(aabb)) {
+        if (!chunk.worldObj.getCollidingBoundingBoxes(dummyEntity, aabb)
+            .isEmpty() || chunk.worldObj.isAnyLiquid(aabb)) {
             return 0;
         }
 

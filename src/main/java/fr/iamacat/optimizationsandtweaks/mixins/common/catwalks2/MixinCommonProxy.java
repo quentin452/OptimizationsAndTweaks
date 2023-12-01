@@ -4,7 +4,6 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -32,6 +31,7 @@ import com.thecodewarrior.catwalks.block.BlockScaffold;
 import com.thecodewarrior.catwalks.util.*;
 
 import codechicken.lib.vec.BlockCoord;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 

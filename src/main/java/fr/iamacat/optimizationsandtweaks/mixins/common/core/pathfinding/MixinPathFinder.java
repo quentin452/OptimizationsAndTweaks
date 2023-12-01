@@ -8,6 +8,7 @@ import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -19,7 +20,8 @@ public class MixinPathFinder {
      * @reason
      */
     @Overwrite
-    public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean canPassFluids, boolean canOpenDoors, boolean canEnterDoors) {
+    public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean canPassFluids,
+        boolean canOpenDoors, boolean canEnterDoors) {
         boolean hasTrapdoor = false;
 
         World world = entity.worldObj;
@@ -54,28 +56,32 @@ public class MixinPathFinder {
                             int posY = MathHelper.floor_double(entity.posY);
                             int posZ = MathHelper.floor_double(entity.posZ);
 
-                            if (world.getBlock(posX, posY, posZ).getRenderType() != 9 && world.getBlock(posX, posY - 1, posZ).getRenderType() != 9) {
+                            if (world.getBlock(posX, posY, posZ)
+                                .getRenderType() != 9
+                                && world.getBlock(posX, posY - 1, posZ)
+                                    .getRenderType() != 9) {
                                 return -3;
                             }
-                        } else if (!block.getBlocksMovement(world, l, i1, j1) && (!canOpenDoors || block != Blocks.wooden_door)) {
-                            if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
-                                return -3;
-                            }
+                        } else if (!block.getBlocksMovement(world, l, i1, j1)
+                            && (!canOpenDoors || block != Blocks.wooden_door)) {
+                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                    return -3;
+                                }
 
-                            if (block == Blocks.trapdoor) {
-                                return -4;
-                            }
+                                if (block == Blocks.trapdoor) {
+                                    return -4;
+                                }
 
-                            Material material = block.getMaterial();
+                                Material material = block.getMaterial();
 
-                            if (material != Material.lava) {
-                                return 0;
-                            }
+                                if (material != Material.lava) {
+                                    return 0;
+                                }
 
-                            if (!entity.handleLavaMovement()) {
-                                return -2;
+                                if (!entity.handleLavaMovement()) {
+                                    return -2;
+                                }
                             }
-                        }
                     }
                 }
             }

@@ -1,16 +1,16 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.LoaderState;
-import cpw.mods.fml.common.StartupQuery;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.base64.Base64;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkSystem;
@@ -30,6 +30,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,19 +39,20 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import com.mojang.authlib.GameProfile;
 
-@Mixin(value = MinecraftServer.class,priority = 1001)
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.StartupQuery;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.base64.Base64;
+
+@Mixin(value = MinecraftServer.class, priority = 1001)
 public abstract class MixinMinecraftServer {
 
     @Unique
@@ -167,7 +169,10 @@ public abstract class MixinMinecraftServer {
     private long field_147142_T = 0L;
 
     @Shadow
-    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("server", (IPlayerUsage) this, getSystemTimeMillis());
+    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper(
+        "server",
+        (IPlayerUsage) this,
+        getSystemTimeMillis());
 
     public MixinMinecraftServer() {
         this.field_147144_o = new NetworkSystem(minecraftServer);
@@ -265,22 +270,22 @@ public abstract class MixinMinecraftServer {
     public NetworkSystem func_147137_ag() {
         return this.field_147144_o;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void run()
-    {
-        try
-        {
-            if (this.startServer())
-            {
-                FMLCommonHandler.instance().handleServerStarted();
+    public void run() {
+        try {
+            if (this.startServer()) {
+                FMLCommonHandler.instance()
+                    .handleServerStarted();
                 long i = getSystemTimeMillis();
                 long l = 0L;
                 this.field_147147_p.func_151315_a(new ChatComponentText(this.motd));
-                this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
+                this.field_147147_p
+                    .func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
                 this.func_147138_a(this.field_147147_p);
                 final int TICK_TIME = 50;
                 long currentTime = getSystemTimeMillis();
@@ -296,7 +301,9 @@ public abstract class MixinMinecraftServer {
                     long k = j - i;
 
                     if (k > 2000L && i - this.timeOfLastWarning >= 15000L) {
-                        logger.warn("Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {k, k / 50L});
+                        logger.warn(
+                            "Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)",
+                            new Object[] { k, k / 50L });
                         k = 2000L;
                         this.timeOfLastWarning = i;
                     }
@@ -320,62 +327,52 @@ public abstract class MixinMinecraftServer {
                     TimeUnit.MILLISECONDS.sleep(Math.max(1L, 50L - l));
                     this.serverIsRunning = true;
                 }
-                FMLCommonHandler.instance().handleServerStopping();
-                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
-            }
-            else
-            {
-                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+                FMLCommonHandler.instance()
+                    .handleServerStopping();
+                FMLCommonHandler.instance()
+                    .expectServerStopped(); // has to come before finalTick to avoid race conditions
+            } else {
+                FMLCommonHandler.instance()
+                    .expectServerStopped(); // has to come before finalTick to avoid race conditions
                 this.finalTick(null);
             }
-        }
-        catch (StartupQuery.AbortedException e)
-        {
+        } catch (StartupQuery.AbortedException e) {
             // ignore silently
-            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
-        }
-        catch (Throwable throwable1)
-        {
+            FMLCommonHandler.instance()
+                .expectServerStopped(); // has to come before finalTick to avoid race conditions
+        } catch (Throwable throwable1) {
             logger.error("Encountered an unexpected exception", throwable1);
             CrashReport crashreport;
 
-            if (throwable1 instanceof ReportedException)
-            {
-                crashreport = this.addServerInfoToCrashReport(((ReportedException)throwable1).getCrashReport());
-            }
-            else
-            {
-                crashreport = this.addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", throwable1));
+            if (throwable1 instanceof ReportedException) {
+                crashreport = this.addServerInfoToCrashReport(((ReportedException) throwable1).getCrashReport());
+            } else {
+                crashreport = this
+                    .addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", throwable1));
             }
 
-            File file1 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+            File file1 = new File(
+                new File(this.getDataDirectory(), "crash-reports"),
+                "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
 
-            if (crashreport.saveToFile(file1))
-            {
+            if (crashreport.saveToFile(file1)) {
                 logger.error("This crash report has been saved to: %s", file1.getAbsolutePath());
-            }
-            else
-            {
+            } else {
                 logger.error("We were unable to save this crash report to disk.");
             }
 
-            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+            FMLCommonHandler.instance()
+                .expectServerStopped(); // has to come before finalTick to avoid race conditions
             this.finalTick(crashreport);
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 this.stopServer();
                 this.serverStopped = true;
-            }
-            catch (Throwable throwable)
-            {
+            } catch (Throwable throwable) {
                 logger.error("Exception stopping the server", throwable);
-            }
-            finally
-            {
-                FMLCommonHandler.instance().handleServerStopped();
+            } finally {
+                FMLCommonHandler.instance()
+                    .handleServerStopped();
                 this.serverStopped = true;
                 this.systemExitNow();
             }
@@ -383,57 +380,54 @@ public abstract class MixinMinecraftServer {
     }
 
     @Shadow
-    public static long getSystemTimeMillis()
-    {
+    public static long getSystemTimeMillis() {
         return System.currentTimeMillis();
     }
+
     @Shadow
     protected abstract boolean startServer() throws IOException;
 
     @Shadow
-    public void stopServer()
-    {
-        if (!this.worldIsBeingDeleted && Loader.instance().hasReachedState(LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't save twice
+    public void stopServer() {
+        if (!this.worldIsBeingDeleted && Loader.instance()
+            .hasReachedState(LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't
+                                                                            // save twice
         {
             logger.info("Stopping server");
 
-            if (this.func_147137_ag() != null)
-            {
-                this.func_147137_ag().terminateEndpoints();
+            if (this.func_147137_ag() != null) {
+                this.func_147137_ag()
+                    .terminateEndpoints();
             }
 
-            if (this.serverConfigManager != null)
-            {
+            if (this.serverConfigManager != null) {
                 logger.info("Saving players");
                 this.serverConfigManager.saveAllPlayerData();
                 this.serverConfigManager.removeAllPlayers();
             }
 
-            if (this.worldServers != null)
-            {
+            if (this.worldServers != null) {
                 logger.info("Saving worlds");
                 this.saveAllWorlds(false);
 
-                for (int i = 0; i < this.worldServers.length; ++i)
-                {
+                for (int i = 0; i < this.worldServers.length; ++i) {
                     WorldServer worldserver = this.worldServers[i];
                     MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
                     worldserver.flush();
                 }
 
                 WorldServer[] tmp = worldServers;
-                for (WorldServer world : tmp)
-                {
+                for (WorldServer world : tmp) {
                     DimensionManager.setWorld(world.provider.dimensionId, null);
                 }
             }
 
-            if (this.usageSnooper.isSnooperRunning())
-            {
+            if (this.usageSnooper.isSnooperRunning()) {
                 this.usageSnooper.stopSnooper();
             }
         }
     }
+
     @Shadow
     protected void finalTick(CrashReport report) {}
 
@@ -442,17 +436,17 @@ public abstract class MixinMinecraftServer {
      * @reason
      */
     @Overwrite
-    public void saveAllWorlds(boolean dontLog)
-    {
-        if (!this.worldIsBeingDeleted)
-        {
+    public void saveAllWorlds(boolean dontLog) {
+        if (!this.worldIsBeingDeleted) {
             WorldServer[] aworldserver = this.worldServers;
-            if (aworldserver == null) return; //Forge: Just in case, NPE protection as it has been encountered.
+            if (aworldserver == null) return; // Forge: Just in case, NPE protection as it has been encountered.
 
             for (WorldServer worldserver : aworldserver) {
                 if (worldserver != null) {
                     if (!dontLog) {
-                        logger.info("Saving chunks for level '" + worldserver.getWorldInfo().getWorldName() + "'/" + worldserver.provider.getDimensionName());
+                        logger.info(
+                            "Saving chunks for level '" + worldserver.getWorldInfo()
+                                .getWorldName() + "'/" + worldserver.provider.getDimensionName());
                     }
 
                     try {
@@ -464,50 +458,66 @@ public abstract class MixinMinecraftServer {
             }
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public CrashReport addServerInfoToCrashReport(CrashReport report)
-    {
-        report.getCategory().addCrashSectionCallable("Profiler Position", () -> theProfiler.profilingEnabled ? theProfiler.getNameOfLastSection() : "N/A (disabled)");
+    public CrashReport addServerInfoToCrashReport(CrashReport report) {
+        report.getCategory()
+            .addCrashSectionCallable(
+                "Profiler Position",
+                () -> theProfiler.profilingEnabled ? theProfiler.getNameOfLastSection() : "N/A (disabled)");
 
-        if (this.worldServers != null && this.worldServers.length > 0 && this.worldServers[0] != null)
-        {
-            report.getCategory().addCrashSectionCallable("Vec3 Pool Size", () -> {
-                byte b0 = 0;
-                int i = 56 * b0;
-                int j = i / 1024 / 1024;
-                byte b1 = 0;
-                int k = 56 * b1;
-                int l = k / 1024 / 1024;
-                return b0 + " (" + i + " bytes; " + j + " MB) allocated, " + b1 + " (" + k + " bytes; " + l + " MB) used";
-            });
+        if (this.worldServers != null && this.worldServers.length > 0 && this.worldServers[0] != null) {
+            report.getCategory()
+                .addCrashSectionCallable("Vec3 Pool Size", () -> {
+                    byte b0 = 0;
+                    int i = 56 * b0;
+                    int j = i / 1024 / 1024;
+                    byte b1 = 0;
+                    int k = 56 * b1;
+                    int l = k / 1024 / 1024;
+                    return b0 + " ("
+                        + i
+                        + " bytes; "
+                        + j
+                        + " MB) allocated, "
+                        + b1
+                        + " ("
+                        + k
+                        + " bytes; "
+                        + l
+                        + " MB) used";
+                });
         }
 
-        if (this.serverConfigManager != null)
-        {
-            report.getCategory().addCrashSectionCallable("Player Count", () -> serverConfigManager.getCurrentPlayerCount() + " / " + serverConfigManager.getMaxPlayers() + "; " + serverConfigManager.playerEntityList);
+        if (this.serverConfigManager != null) {
+            report.getCategory()
+                .addCrashSectionCallable(
+                    "Player Count",
+                    () -> serverConfigManager.getCurrentPlayerCount() + " / "
+                        + serverConfigManager.getMaxPlayers()
+                        + "; "
+                        + serverConfigManager.playerEntityList);
         }
 
         return report;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    private void func_147138_a(ServerStatusResponse response)
-    {
+    private void func_147138_a(ServerStatusResponse response) {
         File file1 = this.getFile("server-icon.png");
 
-        if (file1.isFile())
-        {
+        if (file1.isFile()) {
             ByteBuf bytebuf = Unpooled.buffer();
 
-            try
-            {
+            try {
                 BufferedImage bufferedimage = ImageIO.read(file1);
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
@@ -518,26 +528,21 @@ public abstract class MixinMinecraftServer {
 
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
                 response.func_151320_a("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
-            }
-            catch (Exception exception)
-            {
+            } catch (Exception exception) {
                 logger.error("Couldn't load server icon", exception);
-            }
-            finally
-            {
+            } finally {
                 bytebuf.release();
             }
         }
     }
 
     @Shadow
-    public File getFile(String fileName)
-    {
+    public File getFile(String fileName) {
         return new File(this.getDataDirectory(), fileName);
     }
+
     @Shadow
-    protected File getDataDirectory()
-    {
+    protected File getDataDirectory() {
         return new File(".");
     }
 
@@ -546,14 +551,13 @@ public abstract class MixinMinecraftServer {
      * @reason
      */
     @Overwrite
-    public void tick()
-    {
+    public void tick() {
         long i = System.nanoTime();
-        FMLCommonHandler.instance().onPreServerTick();
+        FMLCommonHandler.instance()
+            .onPreServerTick();
         ++this.tickCounter;
 
-        if (this.startProfiling)
-        {
+        if (this.startProfiling) {
             this.startProfiling = false;
             this.theProfiler.profilingEnabled = true;
             this.theProfiler.clearProfiling();
@@ -562,24 +566,25 @@ public abstract class MixinMinecraftServer {
         this.theProfiler.startSection("root");
         this.updateTimeLightAndEntities();
 
-        if (i - this.field_147142_T >= 5000000000L)
-        {
+        if (i - this.field_147142_T >= 5000000000L) {
             this.field_147142_T = i;
-            this.field_147147_p.func_151319_a(new ServerStatusResponse.PlayerCountData(this.getMaxPlayers(), this.getCurrentPlayerCount()));
+            this.field_147147_p.func_151319_a(
+                new ServerStatusResponse.PlayerCountData(this.getMaxPlayers(), this.getCurrentPlayerCount()));
             GameProfile[] agameprofile = new GameProfile[Math.min(this.getCurrentPlayerCount(), 12)];
-            int j = MathHelper.getRandomIntegerInRange(this.field_147146_q, 0, this.getCurrentPlayerCount() - agameprofile.length);
+            int j = MathHelper
+                .getRandomIntegerInRange(this.field_147146_q, 0, this.getCurrentPlayerCount() - agameprofile.length);
 
-            for (int k = 0; k < agameprofile.length; ++k)
-            {
-                agameprofile[k] = ((EntityPlayerMP)this.serverConfigManager.playerEntityList.get(j + k)).getGameProfile();
+            for (int k = 0; k < agameprofile.length; ++k) {
+                agameprofile[k] = ((EntityPlayerMP) this.serverConfigManager.playerEntityList.get(j + k))
+                    .getGameProfile();
             }
 
             Collections.shuffle(Arrays.asList(agameprofile));
-            this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
+            this.field_147147_p.func_151318_b()
+                .func_151330_a(agameprofile);
         }
 
-        if (this.tickCounter % 900 == 0)
-        {
+        if (this.tickCounter % 900 == 0) {
             this.theProfiler.startSection("save");
             this.serverConfigManager.saveAllPlayerData();
             this.saveAllWorlds(true);
@@ -591,31 +596,30 @@ public abstract class MixinMinecraftServer {
         this.theProfiler.endSection();
         this.theProfiler.startSection("snooper");
 
-        if (!this.usageSnooper.isSnooperRunning() && this.tickCounter > 100)
-        {
+        if (!this.usageSnooper.isSnooperRunning() && this.tickCounter > 100) {
             this.usageSnooper.startSnooper();
         }
 
-        if (this.tickCounter % 6000 == 0)
-        {
+        if (this.tickCounter % 6000 == 0) {
             this.usageSnooper.addMemoryStatsToSnooper();
         }
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
-        FMLCommonHandler.instance().onPostServerTick();
+        FMLCommonHandler.instance()
+            .onPostServerTick();
     }
-     @Shadow
-     protected void systemExitNow() {}
 
     @Shadow
-    public int getMaxPlayers()
-    {
+    protected void systemExitNow() {}
+
+    @Shadow
+    public int getMaxPlayers() {
         return this.serverConfigManager.getMaxPlayers();
     }
+
     @Shadow
-    public int getCurrentPlayerCount()
-    {
+    public int getCurrentPlayerCount() {
         return this.serverConfigManager.getCurrentPlayerCount();
     }
 

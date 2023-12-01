@@ -1,18 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import net.minecraft.network.rcon.IServer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-
 import java.io.File;
 import java.net.Proxy;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import net.minecraft.network.rcon.IServer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
 @Mixin(DedicatedServer.class)
 public abstract class MixinDedicatedServer extends MinecraftServer implements IServer {
+
     private long lastTime = System.nanoTime();
 
     protected MixinDedicatedServer(File workDir) {
@@ -23,8 +25,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer implements IS
                 try {
                     CompletableFuture<Void> sleepFuture = new CompletableFuture<>();
                     sleepFuture.get();
-                } catch (InterruptedException | ExecutionException e) {
-                }
+                } catch (InterruptedException | ExecutionException e) {}
             }
         });
     }
@@ -34,7 +35,6 @@ public abstract class MixinDedicatedServer extends MinecraftServer implements IS
         long startTime = System.nanoTime();
         long delay = 5L * 1_000_000_000L;
 
-        while (System.nanoTime() - startTime < delay) {
-        }
+        while (System.nanoTime() - startTime < delay) {}
     }
 }

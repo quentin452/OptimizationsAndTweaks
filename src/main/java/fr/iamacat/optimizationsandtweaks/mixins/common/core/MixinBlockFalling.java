@@ -1,31 +1,30 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Random;
-
 @Mixin(BlockFalling.class)
-public class MixinBlockFalling extends Block
-{   @Shadow
+public class MixinBlockFalling extends Block {
+
+    @Shadow
     public static boolean fallInstantly;
 
-    public MixinBlockFalling()
-    {
+    public MixinBlockFalling() {
         super(Material.sand);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
-    public MixinBlockFalling(Material p_i45405_1_)
-    {
+    public MixinBlockFalling(Material p_i45405_1_) {
         super(p_i45405_1_);
     }
 
@@ -33,8 +32,7 @@ public class MixinBlockFalling extends Block
      * Called whenever the block is added into the world. Args: world, x, y, z
      */
     @Shadow
-    public void onBlockAdded(World worldIn, int x, int y, int z)
-    {
+    public void onBlockAdded(World worldIn, int x, int y, int z) {
         worldIn.scheduleBlockUpdate(x, y, z, this, this.tickRate(worldIn));
     }
 
@@ -43,8 +41,7 @@ public class MixinBlockFalling extends Block
      * their own) Args: x, y, z, neighbor Block
      */
     @Shadow
-    public void onNeighborBlockChange(World worldIn, int x, int y, int z, Block neighbor)
-    {
+    public void onNeighborBlockChange(World worldIn, int x, int y, int z, Block neighbor) {
         worldIn.scheduleBlockUpdate(x, y, z, this, this.tickRate(worldIn));
     }
 
@@ -56,13 +53,12 @@ public class MixinBlockFalling extends Block
      * @reason
      */
     @Overwrite
-    public void updateTick(World worldIn, int x, int y, int z, Random random)
-    {
-        if (!worldIn.isRemote)
-        {
+    public void updateTick(World worldIn, int x, int y, int z, Random random) {
+        if (!worldIn.isRemote) {
             this.func_149830_m(worldIn, x, y, z);
         }
     }
+
     /**
      * @author
      * @reason
@@ -72,9 +68,21 @@ public class MixinBlockFalling extends Block
         if (BlockFalling.func_149831_e(world, x, y - 1, z) && y >= 0) {
             int maxDistance = 32;
 
-            if (!fallInstantly && world.checkChunksExist(x - maxDistance, y - maxDistance, z - maxDistance, x + maxDistance, y + maxDistance, z + maxDistance)) {
+            if (!fallInstantly && world.checkChunksExist(
+                x - maxDistance,
+                y - maxDistance,
+                z - maxDistance,
+                x + maxDistance,
+                y + maxDistance,
+                z + maxDistance)) {
                 if (!world.isRemote) {
-                    EntityFallingBlock fallingBlock = new EntityFallingBlock(world, x + 0.5D, y + 0.5D, z + 0.5D, this, world.getBlockMetadata(x, y, z));
+                    EntityFallingBlock fallingBlock = new EntityFallingBlock(
+                        world,
+                        x + 0.5D,
+                        y + 0.5D,
+                        z + 0.5D,
+                        this,
+                        world.getBlockMetadata(x, y, z));
                     this.func_149829_a(fallingBlock);
                     world.spawnEntityInWorld(fallingBlock);
                 }

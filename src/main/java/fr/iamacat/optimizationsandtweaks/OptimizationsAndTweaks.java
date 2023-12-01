@@ -1,7 +1,5 @@
 package fr.iamacat.optimizationsandtweaks;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotr.LOTRConfigBiomeID;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -22,8 +20,7 @@ public class OptimizationsAndTweaks {
     public static Configuration config;
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent event) {
-    }
+    public static void preInit(FMLPreInitializationEvent event) {}
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {}

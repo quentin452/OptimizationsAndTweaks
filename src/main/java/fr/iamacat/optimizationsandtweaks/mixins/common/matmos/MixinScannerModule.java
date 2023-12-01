@@ -1,8 +1,19 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import net.minecraft.block.Block;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import eu.ha3.matmos.core.sheet.DataPackage;
 import eu.ha3.matmos.data.modules.*;
-import eu.ha3.matmos.data.modules.Module;
 import eu.ha3.matmos.data.scanners.Progress;
 import eu.ha3.matmos.data.scanners.Scan;
 import eu.ha3.matmos.data.scanners.ScanOperations;
@@ -10,19 +21,10 @@ import eu.ha3.matmos.data.scanners.ScannerModule;
 import eu.ha3.matmos.util.BlockPos;
 import eu.ha3.matmos.util.IDontKnowHowToCode;
 import eu.ha3.matmos.util.MAtUtil;
-import net.minecraft.block.Block;
-import org.apache.commons.lang3.tuple.Pair;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Mixin(ScannerModule.class)
-public abstract class MixinScannerModule  implements PassOnceModule, ScanOperations, Progress {
+public abstract class MixinScannerModule implements PassOnceModule, ScanOperations, Progress {
+
     @Shadow
     public static final String THOUSAND_SUFFIX = "_p1k";
     @Shadow
@@ -87,7 +89,8 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
      * @reason
      */
     @Overwrite(remap = false)
-    private eu.ha3.matmos.data.modules.Module initSubmodule(ScannerModule.Submodule sm, String baseName, DataPackage data) {
+    private eu.ha3.matmos.data.modules.Module initSubmodule(ScannerModule.Submodule sm, String baseName,
+        DataPackage data) {
         boolean useExternalStringCountModule = false;
 
         if (sm != ScannerModule.Submodule.BASE && !this.requiredSubmodules.contains(sm)) {
@@ -99,15 +102,13 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
 
         switch (sm) {
             case BASE:
-                result = useExternalStringCountModule ?
-                    new ExternalStringCountModule(data, baseName, true) :
-                    new BlockCountModule(data, baseName, true, (VirtualCountModule) this.thousand);
+                result = useExternalStringCountModule ? new ExternalStringCountModule(data, baseName, true)
+                    : new BlockCountModule(data, baseName, true, (VirtualCountModule) this.thousand);
                 break;
             case THOUSAND:
                 submoduleName = baseName + "_p1k";
-                result = useExternalStringCountModule ?
-                    new ThousandStringCountModule(data, submoduleName, true) :
-                    new VirtualCountModule<>(data, submoduleName, true);
+                result = useExternalStringCountModule ? new ThousandStringCountModule(data, submoduleName, true)
+                    : new VirtualCountModule<>(data, submoduleName, true);
                 break;
             case WEIGHTED:
                 submoduleName = baseName + "_w";
@@ -125,13 +126,16 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
 
         if (result != null) {
             this.subModules.add(submoduleName);
-            data.getSheet(submoduleName).setDefaultValue("0");
+            data.getSheet(submoduleName)
+                .setDefaultValue("0");
         }
 
         return result;
     }
 
-    private MixinScannerModule(Class<? extends Scan> scannerClass, Object scannerArgument, boolean hasScannerArgument, DataPackage data, String passOnceName, String baseName, List<ScannerModule.Submodule> requiredSubmodules, int movement, int passivePulse, int pulse, int xS, int yS, int zS, int blocksPerCall) {
+    private MixinScannerModule(Class<? extends Scan> scannerClass, Object scannerArgument, boolean hasScannerArgument,
+        DataPackage data, String passOnceName, String baseName, List<ScannerModule.Submodule> requiredSubmodules,
+        int movement, int passivePulse, int pulse, int xS, int yS, int zS, int blocksPerCall) {
         this.subModules = new HashSet();
         this.lastScanTime = -1;
         this.dimension = Integer.MIN_VALUE;
@@ -147,20 +151,22 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
         this.yS = yS;
         this.zS = zS;
         this.blocksPerCall = blocksPerCall;
-        this.thousand = (AbstractThingCountModule)this.initSubmodule(ScannerModule.Submodule.THOUSAND, baseName, data);
-        this.weighted = (BlockCountModule)this.initSubmodule(ScannerModule.Submodule.WEIGHTED, baseName, data);
-        this.base = (AbstractThingCountModule)this.initSubmodule(ScannerModule.Submodule.BASE, baseName, data);
-        this.above = (BlockCountModule)this.initSubmodule(ScannerModule.Submodule.ABOVE, baseName, data);
-        this.below = (BlockCountModule)this.initSubmodule(ScannerModule.Submodule.BELOW, baseName, data);
+        this.thousand = (AbstractThingCountModule) this.initSubmodule(ScannerModule.Submodule.THOUSAND, baseName, data);
+        this.weighted = (BlockCountModule) this.initSubmodule(ScannerModule.Submodule.WEIGHTED, baseName, data);
+        this.base = (AbstractThingCountModule) this.initSubmodule(ScannerModule.Submodule.BASE, baseName, data);
+        this.above = (BlockCountModule) this.initSubmodule(ScannerModule.Submodule.ABOVE, baseName, data);
+        this.below = (BlockCountModule) this.initSubmodule(ScannerModule.Submodule.BELOW, baseName, data);
         Scan theScanner = null;
 
         try {
             if (hasScannerArgument) {
-                theScanner = scannerClass.getConstructor(Object.class).newInstance(scannerArgument);
+                theScanner = scannerClass.getConstructor(Object.class)
+                    .newInstance(scannerArgument);
             } else {
                 theScanner = scannerClass.newInstance();
             }
-        } catch (InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException var17) {
+        } catch (InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException
+            | IllegalAccessException | IllegalArgumentException var17) {
             var17.printStackTrace();
         }
 
@@ -169,6 +175,7 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
         this.ticksSinceBoot = 0;
         this.firstScan = true;
     }
+
     /**
      * @author
      * @reason
@@ -192,7 +199,9 @@ public abstract class MixinScannerModule  implements PassOnceModule, ScanOperati
         if (this.weighted != null) {
             this.weighted.increment(Pair.of(block, meta), weight);
         } else if (weight != 1) {
-            IDontKnowHowToCode.warnOnce("Module " + this.getName() + " doesn't have a weighted counter, but the scanner tried to input a block with a weight.");
+            IDontKnowHowToCode.warnOnce(
+                "Module " + this.getName()
+                    + " doesn't have a weighted counter, but the scanner tried to input a block with a weight.");
         }
 
         if ((this.above != null && y >= this.yy) || (this.below != null && y < this.yy)) {

@@ -3,7 +3,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.ic2;
 import java.lang.reflect.Field;
 import java.util.WeakHashMap;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.world.World;
@@ -13,12 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import ic2.core.IC2;
 import ic2.core.ITickCallback;
 import ic2.core.TickHandler;
@@ -51,29 +47,29 @@ public class MixinTickHandler {
     @SubscribeEvent
     @Overwrite(remap = false)
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-            World world = event.world;
-            if (!IC2.platform.isSimulating() || world.isRemote) {
-                return;
-            }
+        World world = event.world;
+        if (!IC2.platform.isSimulating() || world.isRemote) {
+            return;
+        }
 
-            if (event.phase == TickEvent.Phase.START) {
-                IC2.platform.profilerStartSection("Wind");
-                WorldData.get(world).windSim.updateWind();
-                IC2.platform.profilerEndStartSection("TickCallbacks");
-                optimizationsAndTweaks$processTickCallbacks(world);
+        if (event.phase == TickEvent.Phase.START) {
+            IC2.platform.profilerStartSection("Wind");
+            WorldData.get(world).windSim.updateWind();
+            IC2.platform.profilerEndStartSection("TickCallbacks");
+            optimizationsAndTweaks$processTickCallbacks(world);
 
-                if (ConfigUtil.getBool(MainConfig.get(), "balance/disableEnderChest")) {
-                    optimizationsAndTweaks$removeEnderChests(world);
-                }
-                IC2.platform.profilerEndSection();
-            } else {
-                IC2.platform.profilerStartSection("EnergyNet");
-                EnergyNetGlobal.onTickEnd(world);
-                IC2.platform.profilerEndStartSection("Networking");
-                IC2.network.get()
-                    .onTickEnd(world);
-                IC2.platform.profilerEndSection();
+            if (ConfigUtil.getBool(MainConfig.get(), "balance/disableEnderChest")) {
+                optimizationsAndTweaks$removeEnderChests(world);
             }
+            IC2.platform.profilerEndSection();
+        } else {
+            IC2.platform.profilerStartSection("EnergyNet");
+            EnergyNetGlobal.onTickEnd(world);
+            IC2.platform.profilerEndStartSection("Networking");
+            IC2.network.get()
+                .onTickEnd(world);
+            IC2.platform.profilerEndSection();
+        }
     }
 
     @Unique

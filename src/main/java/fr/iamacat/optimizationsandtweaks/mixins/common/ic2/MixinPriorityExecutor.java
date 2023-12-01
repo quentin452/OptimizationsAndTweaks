@@ -1,7 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.ic2;
 
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +35,8 @@ public class MixinPriorityExecutor extends ThreadPoolExecutor {
     public void executeAll(List<? extends Runnable> tasks, CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinPriorityExecutor) {
             if (!this.isShutdown()) {
-                this.getQueue().addAll(tasks);
+                this.getQueue()
+                    .addAll(tasks);
             }
             ci.cancel();
         }

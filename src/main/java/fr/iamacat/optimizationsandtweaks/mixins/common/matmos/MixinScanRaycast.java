@@ -1,12 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
-import eu.ha3.matmos.data.scanners.Scan;
-import eu.ha3.matmos.data.scanners.ScanAir;
-import eu.ha3.matmos.data.scanners.ScanRaycast;
-import eu.ha3.matmos.data.scanners.ScannerModule;
-import eu.ha3.matmos.util.BlockPos;
-import eu.ha3.matmos.util.MAtUtil;
-import eu.ha3.matmos.util.Vec3d;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLeaves;
@@ -15,17 +13,22 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import eu.ha3.matmos.data.scanners.Scan;
+import eu.ha3.matmos.data.scanners.ScanAir;
+import eu.ha3.matmos.data.scanners.ScanRaycast;
+import eu.ha3.matmos.data.scanners.ScannerModule;
+import eu.ha3.matmos.util.BlockPos;
+import eu.ha3.matmos.util.MAtUtil;
+import eu.ha3.matmos.util.Vec3d;
 
 @Mixin(ScanRaycast.class)
-public abstract class MixinScanRaycast  extends Scan {
+public abstract class MixinScanRaycast extends Scan {
+
     @Shadow
     private static final Random rnd = new Random();
     @Shadow
@@ -64,6 +67,7 @@ public abstract class MixinScanRaycast  extends Scan {
     private Vec3d[] rays;
     @Shadow
     private Set<BlockPos> scanned;
+
     /**
      * @author
      * @reason
@@ -84,13 +88,14 @@ public abstract class MixinScanRaycast  extends Scan {
             rnd.setSeed(1L);
             this.rays = new Vec3d[this.raysToCast];
 
-            for(int i = 0; i < this.raysToCast; ++i) {
+            for (int i = 0; i < this.raysToCast; ++i) {
                 double vx = 0.0;
                 double vy = 0.0;
 
                 double vz;
                 double squareDist;
-                for(vz = 0.0; (squareDist = vx * vx + vy * vy + vz * vz) < 0.01 || squareDist > 1.0; vz = 2.0 * (rnd.nextDouble() - 0.5)) {
+                for (vz = 0.0; (squareDist = vx * vx + vy * vy + vz * vz) < 0.01
+                    || squareDist > 1.0; vz = 2.0 * (rnd.nextDouble() - 0.5)) {
                     vx = 2.0 * (rnd.nextDouble() - 0.5);
                     vy = 2.0 * (rnd.nextDouble() - 0.5);
                 }
@@ -112,10 +117,12 @@ public abstract class MixinScanRaycast  extends Scan {
         this.THRESHOLD_INDIRECT_SCORE = 10;
         this.scanned.clear();
     }
+
     @Shadow
     private Vec3d getRay(int index) {
         return this.rays[index];
     }
+
     /**
      * @author
      * @reason
@@ -143,6 +150,7 @@ public abstract class MixinScanRaycast  extends Scan {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -169,6 +177,7 @@ public abstract class MixinScanRaycast  extends Scan {
 
         return true;
     }
+
     /**
      * @author
      * @reason
@@ -194,14 +203,19 @@ public abstract class MixinScanRaycast  extends Scan {
         double infNorm = Math.max(Math.abs(delta.xCoord), Math.max(Math.abs(delta.yCoord), Math.abs(delta.zCoord)));
         delta = delta.scale(0.01 / infNorm);
 
-        while (result != null && result.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK &&
-            ScanAir.isTransparentToSound(MAtUtil.getBlockAt(new BlockPos(result.blockX, result.blockY, result.blockZ)),
-                MAtUtil.getMetaAt(new BlockPos(result.hitVec), -1), world, new BlockPos(result.hitVec), true)) {
+        while (result != null && result.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+            && ScanAir.isTransparentToSound(
+                MAtUtil.getBlockAt(new BlockPos(result.blockX, result.blockY, result.blockZ)),
+                MAtUtil.getMetaAt(new BlockPos(result.hitVec), -1),
+                world,
+                new BlockPos(result.hitVec),
+                true)) {
             result = world.func_147447_a(delta.add(result.hitVec), end, true, true, true);
         }
 
         return result;
     }
+
     /**
      * @author
      * @reason
@@ -238,14 +252,21 @@ public abstract class MixinScanRaycast  extends Scan {
                         int dz = this.startZ - pos[2];
 
                         if (direct) {
-                            ((ScannerModule) this.pipeline).inputAndReturnBlockMeta(pos[0], pos[1], pos[2], this.calculateWeight(dx, dy, dz, this.maxRange), blockBuf, metaBuf);
+                            ((ScannerModule) this.pipeline).inputAndReturnBlockMeta(
+                                pos[0],
+                                pos[1],
+                                pos[2],
+                                this.calculateWeight(dx, dy, dz, this.maxRange),
+                                blockBuf,
+                                metaBuf);
                         } else {
                             blockBuf[0] = MAtUtil.getBlockAt(blockPos);
                             metaBuf[0] = MAtUtil.getMetaAt(blockPos, -1);
                         }
 
                         Block block = blockBuf[0];
-                        AxisAlignedBB collisionBox = block.getCollisionBoundingBoxFromPool(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                        AxisAlignedBB collisionBox = block
+                            .getCollisionBoundingBoxFromPool(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
                         boolean solid = collisionBox != null && !(block instanceof BlockLeaves);
 
                         if (solid && offset == 0 && scanDir == 0) {
@@ -271,6 +292,7 @@ public abstract class MixinScanRaycast  extends Scan {
 
         return foundSky;
     }
+
     /**
      * @author
      * @reason
@@ -284,10 +306,12 @@ public abstract class MixinScanRaycast  extends Scan {
             boolean foundSky = this.scanNearRayHit(result, 2, true);
 
             if (!foundSky) {
-                Vec3d normal = this.getNormalVector(result).orElse(Vec3d.ZERO);
+                Vec3d normal = this.getNormalVector(result)
+                    .orElse(Vec3d.ZERO);
 
                 if (!normal.equals(Vec3d.ZERO)) {
-                    Vec3d otherSide = normal.scale(-1.1).add(result.hitVec);
+                    Vec3d otherSide = normal.scale(-1.1)
+                        .add(result.hitVec);
                     MovingObjectPosition continuedResult = rayTraceNonSolid(otherSide, end);
 
                     if (continuedResult != null) {

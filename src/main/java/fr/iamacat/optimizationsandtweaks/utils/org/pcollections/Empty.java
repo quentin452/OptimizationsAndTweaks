@@ -10,7 +10,8 @@ import java.util.Comparator;
 
 /* Mike Klein, 2/27/2009 */
 
-/* Empty remembers which classes implement the interface you want,
+/*
+ * Empty remembers which classes implement the interface you want,
  * so you don't have to.
  */
 
@@ -20,54 +21,55 @@ import java.util.Comparator;
  * @author mtklein
  */
 public final class Empty {
-  // non-instantiable:
-  private Empty() {}
 
-  public static <E> PStack<E> stack() {
-    return ConsPStack.empty();
-  }
+    // non-instantiable:
+    private Empty() {}
 
-  public static <E> PQueue<E> queue() {
-    return AmortizedPQueue.empty();
-  }
+    public static <E> PStack<E> stack() {
+        return ConsPStack.empty();
+    }
 
-  public static <E> PVector<E> vector() {
-    return TreePVector.empty();
-  }
+    public static <E> PQueue<E> queue() {
+        return AmortizedPQueue.empty();
+    }
 
-  public static <E> PSet<E> set() {
-    return HashTreePSet.empty();
-  }
+    public static <E> PVector<E> vector() {
+        return TreePVector.empty();
+    }
 
-  public static <K, V> PMap<K, V> orderedMap() {
-    return OrderedPMap.empty();
-  }
+    public static <E> PSet<E> set() {
+        return HashTreePSet.empty();
+    }
 
-  public static <E> PSet<E> orderedSet() {
-    return OrderedPSet.empty();
-  }
+    public static <K, V> PMap<K, V> orderedMap() {
+        return OrderedPMap.empty();
+    }
 
-  public static <E> PBag<E> bag() {
-    return HashTreePBag.empty();
-  }
+    public static <E> PSet<E> orderedSet() {
+        return OrderedPSet.empty();
+    }
 
-  public static <K, V> PMap<K, V> map() {
-    return HashTreePMap.empty();
-  }
+    public static <E> PBag<E> bag() {
+        return HashTreePBag.empty();
+    }
 
-  public static <E extends Comparable<? super E>> PSortedSet<E> sortedSet() {
-    return TreePSet.empty();
-  }
+    public static <K, V> PMap<K, V> map() {
+        return HashTreePMap.empty();
+    }
 
-  public static <E> PSortedSet<E> sortedSet(final Comparator<? super E> comparator) {
-    return TreePSet.empty(comparator);
-  }
+    public static <E extends Comparable<? super E>> PSortedSet<E> sortedSet() {
+        return TreePSet.empty();
+    }
 
-  public static <K extends Comparable<? super K>, V> PSortedMap<K, V> sortedMap() {
-    return TreePMap.empty();
-  }
+    public static <E> PSortedSet<E> sortedSet(final Comparator<? super E> comparator) {
+        return TreePSet.empty(comparator);
+    }
 
-  public static <K, V> PSortedMap<K, V> sortedMap(final Comparator<? super K> comparator) {
-    return TreePMap.empty(comparator);
-  }
+    public static <K extends Comparable<? super K>, V> PSortedMap<K, V> sortedMap() {
+        return TreePMap.empty();
+    }
+
+    public static <K, V> PSortedMap<K, V> sortedMap(final Comparator<? super K> comparator) {
+        return TreePMap.empty(comparator);
+    }
 }

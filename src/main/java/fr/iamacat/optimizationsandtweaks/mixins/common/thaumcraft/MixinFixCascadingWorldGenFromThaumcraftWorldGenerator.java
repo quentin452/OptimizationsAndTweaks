@@ -17,7 +17,6 @@ import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 import net.minecraftforge.common.BiomeDictionary;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -475,9 +474,10 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
         }
         return auraGen;
     }
+
     @Unique
     private boolean generateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen,
-                                  CallbackInfo ci) {
+        CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
             if (Config.genStructure && (world.provider.dimensionId == 0 || world.provider.dimensionId == 1)
                 && newGen

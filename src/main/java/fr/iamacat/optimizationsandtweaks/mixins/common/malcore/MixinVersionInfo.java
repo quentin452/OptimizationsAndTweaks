@@ -1,8 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.malcore;
 
-import mal.core.version.VersionInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import mal.core.version.VersionInfo;
 
 @Mixin(VersionInfo.class)
 public class MixinVersionInfo {
@@ -12,6 +13,5 @@ public class MixinVersionInfo {
      * @reason remove version check from Mal Core mod
      */
     @Overwrite(remap = false)
-    public void checkForNewVersion() {
-    }
+    public void checkForNewVersion() {}
 }

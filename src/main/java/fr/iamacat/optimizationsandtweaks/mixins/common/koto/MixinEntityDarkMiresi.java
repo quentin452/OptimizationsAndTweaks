@@ -1,6 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.koto;
 
-import com.ani.koto.EntityDarkMiresi;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.EntityAIArrowAttack;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
@@ -8,13 +10,13 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.ani.koto.EntityDarkMiresi;
 
 @Mixin(EntityDarkMiresi.class)
 public abstract class MixinEntityDarkMiresi extends EntityMob implements IRangedAttackMob {
@@ -50,7 +52,8 @@ public abstract class MixinEntityDarkMiresi extends EntityMob implements IRanged
 
         boolean isHealthAboveThreshold = getHealth() <= 15.0F;
 
-        if (healthDecisions.isEmpty() || Boolean.TRUE.equals(Boolean.TRUE.equals(isHealthAboveThreshold != healthDecisions.get(healthDecisions.size() - 1)))) {
+        if (healthDecisions.isEmpty() || Boolean.TRUE
+            .equals(Boolean.TRUE.equals(isHealthAboveThreshold != healthDecisions.get(healthDecisions.size() - 1)))) {
             healthDecisions.add(isHealthAboveThreshold);
 
             if (isHealthAboveThreshold) {

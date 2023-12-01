@@ -5,14 +5,12 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
-import java.util.PriorityQueue;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-
 import net.minecraft.client.shader.TesselatorVertexState;
-import net.minecraft.client.util.QuadComparator;
+
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -216,7 +214,14 @@ public class MixinTesselator {
      */
     @Overwrite
     public TesselatorVertexState getVertexState(float p_147564_1_, float p_147564_2_, float p_147564_3_) {
-        return new TesselatorVertexState(Arrays.copyOf(this.rawBuffer, this.rawBufferIndex), this.rawBufferIndex, this.vertexCount, this.hasTexture, this.hasBrightness, this.hasNormals, this.hasColor);
+        return new TesselatorVertexState(
+            Arrays.copyOf(this.rawBuffer, this.rawBufferIndex),
+            this.rawBufferIndex,
+            this.vertexCount,
+            this.hasTexture,
+            this.hasBrightness,
+            this.hasNormals,
+            this.hasColor);
     }
 
     /**

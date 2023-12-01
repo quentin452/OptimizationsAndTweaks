@@ -1,13 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.kitchencraft;
 
-import cpw.mods.fml.common.ModAPIManager;
 import net.minecraft.block.Block;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.wyldmods.kitchencraft.machines.KitchenCraftMachines;
+
+import cpw.mods.fml.common.ModAPIManager;
 
 @Mixin(KitchenCraftMachines.class)
 public class MixinKitchenCraftMachines {
