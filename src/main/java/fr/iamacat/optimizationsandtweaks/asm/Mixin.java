@@ -21,10 +21,10 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS), "lotr.MixinLOTRMod"),
     common_lotr_MixinLOTRBiome(Side.COMMON,
         avoid(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForLOTRBIOMEIDS), "lotr.MixinLOTRBiome"),
-
     common_lotr_MixinLOTRWorldProvider(Side.COMMON,
         avoid(TargetedMod.LORDOFTHERINGSFORK).and(require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.MixinLOTRWorldProvider)), "lotr.MixinLOTRWorldProvider"),
-    common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
+
+      common_minestones_MixinItemMinestone(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinItemMinestone,
         "minestones.MixinItemMinestone"),
 
     common_minestones_MixinMSConfig(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinestoneSupportDecimalValue,
@@ -187,7 +187,8 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAITasks"),
     common_core_MixinEntityMoveHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMoveHelper,
         "core.MixinEntityMoveHelper"),
-
+    common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
+        "core.MixinWorldGenMinable"),
     common_core_MixinLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLeaves, "core.MixinLeaves"),
 
     common_core_MixinEntityAIFollowParent(Side.COMMON,

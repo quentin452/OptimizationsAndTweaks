@@ -178,6 +178,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSaveFormatOld;
+
+    @Config.Comment("Optimize WorldGenMinable")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenMinable;
     @Config.Comment("Optimize ThreadedFileIOBase")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
