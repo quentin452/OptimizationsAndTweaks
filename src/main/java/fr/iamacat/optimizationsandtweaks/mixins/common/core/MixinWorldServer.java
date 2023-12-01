@@ -389,9 +389,9 @@ public abstract class MixinWorldServer extends World {
 
             ArrayList<NextTickListEntry> arraylist = new ArrayList<>();
 
-            Iterator<NextTickListEntry> iterator = this.pendingTickListEntriesTreeSet.iterator();
+            Iterator iterator = this.pendingTickListEntriesTreeSet.iterator();
             while (iterator.hasNext()) {
-                NextTickListEntry nextticklistentry = iterator.next();
+                NextTickListEntry nextticklistentry = (NextTickListEntry) iterator.next();
 
                 if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
                     nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ) {
