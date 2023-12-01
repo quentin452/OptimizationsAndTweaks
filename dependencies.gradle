@@ -112,6 +112,7 @@ dependencies {
     implementation "curse.maven:advanced-world-selection-244464:2580520-deobf-sources-api"
     implementation "curse.maven:streams-229769:2566220-deobf-sources-api"
     implementation "curse.maven:fplib-665627:4905393-deobf-sources-api"
+    implementation "curse.maven:ragdoll-corpses-229278:2233455-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

@@ -247,6 +247,8 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
     // BUGFIX MIXINS
+    common_ragdollcorpse_MixinEventHandler_Ragdoll(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinRagdollCorpse,
+        "ragdollcorpse.MixinEventHandler_Ragdoll"),
     common_thaumcraft_MixinScanManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinScanManager,
         "thaumcraft.MixinScanManager"),
     common_eternalfrost_MixinEFConfiguration(Side.COMMON,

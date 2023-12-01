@@ -533,7 +533,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOreDictCofhFix;
-
+    @Config.Comment("Fix null Crash during World Exiting from Ragdoll Corpse")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRagdollCorpse;
     @Config.Comment("Fix Crash while updating neighbours from BlockTickingWater class from Cofh Core")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
