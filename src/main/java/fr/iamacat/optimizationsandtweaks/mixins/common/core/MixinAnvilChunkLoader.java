@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +136,8 @@ public class MixinAnvilChunkLoader {
             long k = p_75820_2_.getTotalWorldTime();
             NBTTagList nbttaglist1 = new NBTTagList();
 
+            List<NBTTagCompound> tagList = new ArrayList<>();
+
             map.forEach((key, value) -> {
                 NextTickListEntry nextticklistentry = (NextTickListEntry) value;
                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
@@ -144,8 +147,11 @@ public class MixinAnvilChunkLoader {
                 nbttagcompound2.setInteger("z", nextticklistentry.zCoord);
                 nbttagcompound2.setInteger("t", (int) (nextticklistentry.scheduledTime - k));
                 nbttagcompound2.setInteger("p", nextticklistentry.priority);
-                nbttaglist1.appendTag(nbttagcompound2);
+
+                tagList.add(nbttagcompound2);
             });
+
+            tagList.forEach(nbttaglist1::appendTag);
 
             p_75820_3_.setTag("TileTicks", nbttaglist1);
         }
