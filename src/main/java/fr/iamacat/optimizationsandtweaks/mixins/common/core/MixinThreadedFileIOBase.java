@@ -25,40 +25,26 @@ public class MixinThreadedFileIOBase {
     private volatile long savedIOCounter;
     @Shadow
     private volatile boolean isThreadWaiting;
-
+    @Unique
+    private final Object queueLock = new Object();
     /**
      * @author
      * @reason
      */
     @Overwrite
     private void processQueue() {
-        for (int i = 0; i < this.threadedIOQueue.size(); ++i) {
-            IThreadedFileIO ithreadedfileio = (IThreadedFileIO) this.threadedIOQueue.get(i);
-            boolean flag = ithreadedfileio.writeNextIO();
+        synchronized (queueLock) {
+            while (!threadedIOQueue.isEmpty()) {
+                IThreadedFileIO ithreadedfileio = (IThreadedFileIO) this.threadedIOQueue.get(0);
+                boolean flag = ithreadedfileio.writeNextIO();
 
-            if (!flag) {
-                this.threadedIOQueue.remove(i--);
-                ++this.savedIOCounter;
-            }
-
-            if (!this.isThreadWaiting) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(10L);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                if (!flag) {
+                    this.threadedIOQueue.remove(ithreadedfileio);
+                    ++this.savedIOCounter;
                 }
             }
         }
-
-        if (this.threadedIOQueue.isEmpty()) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(25L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
     }
-
     /**
      * @author
      * @reason
