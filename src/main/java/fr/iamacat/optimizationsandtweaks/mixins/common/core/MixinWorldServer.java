@@ -5,6 +5,7 @@ import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -413,7 +414,7 @@ public abstract class MixinWorldServer extends World {
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
+    public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
         ChunkCoordIntPair chunkCoord = p_72920_1_.getChunkCoordIntPair();
         int minX = (chunkCoord.chunkXPos << 4) - 2;
         int maxX = minX + 16 + 2;
@@ -429,15 +430,28 @@ public abstract class MixinWorldServer extends World {
             })
             .collect(Collectors.toList());
 
+
         if (p_72920_2_) {
             list.forEach(nextticklistentry -> {
                 this.pendingTickListEntriesHashSet.remove(nextticklistentry);
                 this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
+                if (OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
+                    System.out.println("Block removed at (" + nextticklistentry.xCoord + ", " + nextticklistentry.yCoord + ", " + nextticklistentry.zCoord + ") " +
+                        "UnlocalizedName: " + nextticklistentry.func_151351_a().getUnlocalizedName());
+                }
             });
+        } else {
+            if (OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
+                list.forEach(nextticklistentry -> {
+                    System.out.println("Block present at (" + nextticklistentry.xCoord + ", " + nextticklistentry.yCoord + ", " + nextticklistentry.zCoord + ") " +
+                        "UnlocalizedName: " + nextticklistentry.func_151351_a().getUnlocalizedName());
+                });
+            }
         }
 
         return list;
     }
+
 
     /**
      * @author

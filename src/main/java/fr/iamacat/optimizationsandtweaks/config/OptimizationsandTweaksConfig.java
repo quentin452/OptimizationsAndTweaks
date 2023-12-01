@@ -15,6 +15,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAnvilChunkLoader;
+
+    @Config.Comment("Enabling Block Name Debugger for getPendingBlockUpdates from WorldServer Class?.")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enablegetPendingBlockUpdatesDebugger;
     @Config.Comment("Optimize AxisAlignedBB Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
