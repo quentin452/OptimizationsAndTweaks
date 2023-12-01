@@ -421,31 +421,26 @@ public abstract class MixinWorldServer extends World {
         int minZ = (chunkCoord.chunkZPos << 4) - 2;
         int maxZ = minZ + 16 + 2;
 
-        List<NextTickListEntry> list = (List<NextTickListEntry>) this.pendingTickListEntriesTreeSet.parallelStream()
-            .filter((Object obj) -> {
+        List<NextTickListEntry> list = new ArrayList<>();
+        Iterator<Object> iterator = this.pendingTickListEntriesTreeSet.iterator();
+        while (iterator.hasNext()) {
+            Object obj = iterator.next();
+            if (obj instanceof NextTickListEntry) {
                 NextTickListEntry nextticklistentry = (NextTickListEntry) obj;
-                return nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX
-                    && nextticklistentry.zCoord >= minZ
-                    && nextticklistentry.zCoord < maxZ;
-            })
-            .collect(Collectors.toList());
-
-
-        if (p_72920_2_) {
-            list.forEach(nextticklistentry -> {
-                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
-                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
-                if (OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
-                    System.out.println("Block removed at (" + nextticklistentry.xCoord + ", " + nextticklistentry.yCoord + ", " + nextticklistentry.zCoord + ") " +
-                        "UnlocalizedName: " + nextticklistentry.func_151351_a().getUnlocalizedName());
+                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
+                    nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ) {
+                    list.add(nextticklistentry);
+                    if (p_72920_2_) {
+                        iterator.remove();
+                    }
                 }
-            });
-        } else {
-            if (OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
-                list.forEach(nextticklistentry -> {
-                    System.out.println("Block present at (" + nextticklistentry.xCoord + ", " + nextticklistentry.yCoord + ", " + nextticklistentry.zCoord + ") " +
-                        "UnlocalizedName: " + nextticklistentry.func_151351_a().getUnlocalizedName());
-                });
+            }
+        }
+
+        if (!p_72920_2_ && OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
+            for (NextTickListEntry entry : list) {
+                System.out.println("Block present at (" + entry.xCoord + ", " + entry.yCoord + ", " + entry.zCoord + ") " +
+                    "UnlocalizedName: " + entry.func_151351_a().getUnlocalizedName());
             }
         }
 
