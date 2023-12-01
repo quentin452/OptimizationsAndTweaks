@@ -123,7 +123,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static int func_147943_a(int p_147943_0_, int p_147943_1_, int p_147943_2_, int p_147943_3_,
+    public static int func_147943_a(int p_147943_0_, int p_147943_1_, int p_147943_2_, int p_147943_3_,
         boolean p_147943_4_) {
         if (!p_147943_4_) {
             int i2 = func_147944_a(p_147943_0_, p_147943_1_, p_147943_2_, p_147943_3_, 24);
@@ -173,7 +173,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static int func_147944_a(int p_147944_0_, int p_147944_1_, int p_147944_2_, int p_147944_3_,
+    public static int func_147944_a(int p_147944_0_, int p_147944_1_, int p_147944_2_, int p_147944_3_,
         int p_147944_4_) {
         float f = (float) Math.pow((double) ((float) (p_147944_0_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
         float f1 = (float) Math.pow((double) ((float) (p_147944_1_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
@@ -210,7 +210,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void uploadTextureSub(int p_147947_0_, int[] p_147947_1_, int p_147947_2_, int p_147947_3_,
+    public static void uploadTextureSub(int p_147947_0_, int[] p_147947_1_, int p_147947_2_, int p_147947_3_,
         int p_147947_4_, int p_147947_5_, boolean p_147947_6_, boolean p_147947_7_, boolean p_147947_8_) {
         int j1 = 4194304 / p_147947_2_;
         func_147954_b(p_147947_6_, p_147947_8_);
@@ -297,7 +297,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void uploadTextureImageSubImpl(BufferedImage p_110993_0_, int p_110993_1_, int p_110993_2_,
+    public static void uploadTextureImageSubImpl(BufferedImage p_110993_0_, int p_110993_1_, int p_110993_2_,
         boolean p_110993_3_, boolean p_110993_4_) {
         int k = p_110993_0_.getWidth();
         int l = p_110993_0_.getHeight();
@@ -330,7 +330,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void setTextureClamped(boolean p_110997_0_) {
+    public static void setTextureClamped(boolean p_110997_0_) {
         if (p_110997_0_) {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
@@ -411,7 +411,7 @@ public class MixinTextureUtil {
      * @reason
      */
     @Overwrite
-    private static void copyToBufferPos(int[] p_110994_0_, int p_110994_1_, int p_110994_2_) {
+    public static void copyToBufferPos(int[] p_110994_0_, int p_110994_1_, int p_110994_2_) {
         int[] aint1 = p_110994_0_;
 
         if (Minecraft.getMinecraft().gameSettings.anaglyph) {
