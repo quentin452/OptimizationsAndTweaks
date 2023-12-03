@@ -26,6 +26,7 @@ public enum TargetedMod implements ITargetedMod {
      * MEKANISM("Mekanism", false, startsWith("mekanism")),
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      */
+    MANAMETAL("manametalmod", false, startsWith("manametalmod")),
 
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
