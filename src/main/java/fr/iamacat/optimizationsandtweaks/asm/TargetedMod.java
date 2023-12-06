@@ -27,6 +27,8 @@ public enum TargetedMod implements ITargetedMod {
      * BOTANIA("Botania", false, startsWith("botania+").or(startsWith("botania-")).or(startsWith("botania "))),
      */
     MANAMETAL("manametalmod", false, startsWith("manametalmod")),
+    SMOOTHFONT("SmoothFont", false, startsWith("SmoothFont")),
+
 
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),

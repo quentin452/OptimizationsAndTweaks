@@ -403,7 +403,7 @@ public enum Mixin implements IMixin {
         "core.MixinItemRenderer"),
     client_core_MixinFontRenderer(
         Side.CLIENT,
-        avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer),
+        avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer).and(avoid(TargetedMod.SMOOTHFONT)),
         "core.MixinFontRenderer"
     ),
 
