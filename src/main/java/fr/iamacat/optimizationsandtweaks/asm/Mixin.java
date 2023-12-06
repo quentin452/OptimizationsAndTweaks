@@ -403,15 +403,9 @@ public enum Mixin implements IMixin {
         "core.MixinItemRenderer"),
     client_core_MixinFontRenderer(
         Side.CLIENT,
-        avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer)
-            .and(avoid(TargetedMod.MANAMETAL)),
+        avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinFontRenderer),
         "core.MixinFontRenderer"
     ),
-
-
-    client_advancedworldselection_MixinGuiWorldSelection(Side.CLIENT,
-        m -> OptimizationsandTweaksConfig.enableMixinGuiWorldSelection,
-        "advancedworldselection.MixinGuiWorldSelection"),
 
     // MOD-FILTERED MIXINS
 
