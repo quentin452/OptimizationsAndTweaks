@@ -90,7 +90,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-
+    @Config.Comment("Add better logging to Exception getting block type in world")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorld;
     @Config.Comment("Disable Attack Indicator from LotrImprovements if Lotr iam a cat fork is enabled")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
