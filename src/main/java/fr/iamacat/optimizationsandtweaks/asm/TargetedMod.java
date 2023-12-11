@@ -106,6 +106,7 @@ public enum TargetedMod implements ITargetedMod {
     WITCHERY("witchery", false, startsWith("witchery")),
     JEWELRYCRAFT2("Jewelrycraft2", false, startsWith("Jewelrycraft2")),
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),
+    OPIS("Opis", false, startsWith("Opis")),
 
     AETHER("aether", false, startsWith("aether")),;
 

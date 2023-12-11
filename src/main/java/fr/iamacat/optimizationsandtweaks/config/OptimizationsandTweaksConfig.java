@@ -350,6 +350,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
+
+    @Config.Comment("Fix Crash when terminating profiler when using Opis")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinopisProfilerEvent;
     @Config.Comment("Optimize EntityMoveHelper Performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
