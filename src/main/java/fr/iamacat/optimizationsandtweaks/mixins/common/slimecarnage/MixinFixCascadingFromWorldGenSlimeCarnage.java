@@ -1,22 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.slimecarnage;
 
-import java.util.Random;
-
+import cpw.mods.fml.common.IWorldGenerator;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraft.world.biome.BiomeGenPlains;
 import net.minecraft.world.chunk.IChunkProvider;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import com.lulan.shincolle.utility.LogHelper;
-
-import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import supremopete.SlimeCarnage.worldgen.*;
-import supremopete.SlimeCarnage.worldgen.WorldGenSlimeCarnage;
+
+import java.util.Random;
 
 @Mixin(WorldGenSlimeCarnage.class)
 public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerator {
@@ -79,7 +74,6 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
         int Zcoord2 = chunkZ + rand.nextInt(16);
         if ((new WorldGenSewers().func_76484_a(world, rand, Xcoord2, Ycoord2, Zcoord2))) {
             ++this.oldCave;
-            LogHelper.info("Cave at: " + Xcoord2 + " " + Ycoord2 + " " + Zcoord2);
             return true;
         }
         return false;
