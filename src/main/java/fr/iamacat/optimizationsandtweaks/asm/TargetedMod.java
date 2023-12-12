@@ -72,7 +72,7 @@ public enum TargetedMod implements ITargetedMod {
 
     ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
-    SLIMECARNAGE("Slime Carnage", false, startsWith("slimecarnage")),
+    SLIMECARNAGE("SlimeCarnage", false, startsWith("SlimeCarnage")),
     ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("battletower")),
     SALTYMOD_EXPANDED("Salty Mod Expanded", false, startsWith("SaltMod")),
     BUILDCRAFT("BuildCraft", false, startsWith("BuildCraft|Core")),
