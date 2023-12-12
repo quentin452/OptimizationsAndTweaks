@@ -18,28 +18,30 @@ import java.util.Random;
 public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGenerator {
     @Shadow
     Block plantBlock;
-    /**
-     * @author
-     * @reason
-     */
+
+    private boolean canGenerate(World world, int x, int y, int z) {
+        if (y <= 0 || y >= world.getHeight() - 1) {
+            return false;
+        }
+
+        Block block = world.getBlock(x, y, z);
+        return (block.isLeaves(world, x, y, z) || block.isAir(world, x, y, z));
+    }
+
     @Override
     public boolean generate(World world, Random rand, int x, int y, int z) {
-        do {
-            Block block = world.getBlock(x, y, z);
-            if (!block.isLeaves(world, x, y, z) && !block.isAir(world, x, y, z)) {
-                break;
-            }
-
+        while (canGenerate(world, x, y, z)) {
             --y;
-        } while(y > 0);
+        }
 
         int range = 5;
 
-        for(int l = 0; l < 32; ++l) {
+        for (int l = 0; l < 32; ++l) {
             int x1 = x + rand.nextInt(range) - rand.nextInt(range);
             int y1 = y + rand.nextInt(4) - rand.nextInt(4);
             int z1 = z + rand.nextInt(range) - rand.nextInt(range);
             int level = 1 + rand.nextInt(7);
+
             if (world.isAirBlock(x1, y1, z1) && (!world.provider.hasNoSky || y1 < 255) && this.plantBlock.canBlockStay(world, x1, y1, z1)) {
                 world.setBlock(x1, y1, z1, this.plantBlock, level, 2);
             }
@@ -47,6 +49,7 @@ public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGen
 
         return true;
     }
+
     /**
      * @author
      * @reason
@@ -55,12 +58,13 @@ public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGen
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
         int x = chunkX * 16;
         int z = chunkZ * 16;
-        BiomeGenBase biome = world.getWorldChunkManager().getBiomeGenAt(x, z);
-        if (!BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.COLD) && !BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.NETHER) && !BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.WET) && !BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.WASTELAND) && !BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.SNOWY)) {
-            if (BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.SANDY)) {
-                if (random.nextInt(10) <= 0) {
-                    this.generate(world, random, x, world.getActualHeight() - 1, z);
-                }
+        BiomeGenBase biome = world.getBiomeGenForCoords(x + 8, z + 8);
+
+        if (BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.SANDY) && random.nextInt(10) == 0) {
+            int y = world.getTopSolidOrLiquidBlock(x, z);
+
+            if (y > 0) {
+                generate(world, random, x + 8, y - 1, z + 8);
             }
         }
     }
