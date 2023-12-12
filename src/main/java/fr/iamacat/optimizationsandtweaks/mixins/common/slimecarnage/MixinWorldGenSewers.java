@@ -26,6 +26,10 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
     protected Block[] GetValidSpawnBlocks() {
         return new Block[]{Blocks.grass};
     }
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
         int distanceToAir = 0;
@@ -42,10 +46,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             Block blockIDAbove = world.getBlock(i, j + 1, k);
             Block blockIDBelow = world.getBlock(i, j - 1, k);
             Block[] var10 = this.GetValidSpawnBlocks();
-            int var11 = var10.length;
 
-            for(int var12 = 0; var12 < var11; ++var12) {
-                Block x = var10[var12];
+            for (Block x : var10) {
                 if (blockIDAbove != Blocks.air) {
                     return false;
                 }
@@ -134,8 +136,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            world.setBlock(i + 0, j + 1, k + 2, Blocks.stonebrick);
-            world.setBlock(i + 1, j + 0, k + 2, Blocks.air);
+            world.setBlock(i, j + 1, k + 2, Blocks.stonebrick);
+            world.setBlock(i + 1, j, k + 2, Blocks.air);
             world.setBlock(i + 1, j - 10, k + 1, Blocks.air);
             world.setBlock(i + 3, j - 10, k + 2, Blocks.air);
             world.setBlock(i + 1, j - 10, k + 3, Blocks.air);
@@ -152,8 +154,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             world.setBlock(i + 2, j - 9, k + 3, Blocks.air);
             world.setBlock(i + 3, j - 9, k + 1, Blocks.air);
             world.setBlock(i + 3, j - 9, k + 3, Blocks.air);
-            world.setBlock(i + 2, j - 14, k - 0, Blocks.air);
-            world.setBlock(i + 2, j - 14, k - 0, Blocks.water);
+            world.setBlock(i + 2, j - 14, k, Blocks.air);
+            world.setBlock(i + 2, j - 14, k, Blocks.water);
             world.setBlock(i + 2, j - 14, k - 1, Blocks.air);
             world.setBlock(i + 2, j - 14, k - 1, Blocks.water);
             world.setBlock(i + 2, j - 13, k - 2, Blocks.air);
@@ -172,8 +174,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            world.setBlock(i + 19, j - 14, k - 0, Blocks.air);
-            world.setBlock(i + 19, j - 14, k - 0, Blocks.water);
+            world.setBlock(i + 19, j - 14, k, Blocks.air);
+            world.setBlock(i + 19, j - 14, k, Blocks.water);
             world.setBlock(i + 19, j - 14, k - 1, Blocks.air);
             world.setBlock(i + 19, j - 14, k - 1, Blocks.water);
             world.setBlock(i + 19, j - 13, k - 2, Blocks.air);
@@ -219,8 +221,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             world.setBlock(i + 10, j - 13, k - 2, Blocks.iron_bars);
             world.setBlock(i + 11, j - 13, k - 2, Blocks.iron_bars);
             world.setBlock(i + 12, j - 13, k - 2, Blocks.iron_bars);
-            world.setBlock(i + 11, j - 14, k - 0, Blocks.air);
-            world.setBlock(i + 11, j - 14, k - 0, Blocks.water);
+            world.setBlock(i + 11, j - 14, k, Blocks.air);
+            world.setBlock(i + 11, j - 14, k, Blocks.water);
             world.setBlock(i + 11, j - 14, k - 1, Blocks.air);
             world.setBlock(i + 11, j - 14, k - 1, Blocks.water);
             world.setBlock(i + 11, j - 14, k - 2, Blocks.air);
@@ -386,16 +388,16 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             world.setBlock(i + 22, j - 11, k + 22, Blocks.stonebrick, 2, 2);
             if (!world.isRemote) {
                 EntityLeonardoSlime leoslime = new EntityLeonardoSlime(world);
-                leoslime.setLocationAndAngles((double)(i + 17), (double)(j - 12), (double)(k + 24), 0.0F, 0.0F);
+                leoslime.setLocationAndAngles((i + 17), j - 12, k + 24, 0.0F, 0.0F);
                 world.spawnEntityInWorld(leoslime);
                 EntityDonatelloSlime donslime = new EntityDonatelloSlime(world);
-                donslime.setLocationAndAngles((double)(i + 21), (double)(j - 12), (double)(k + 24), 0.0F, 0.0F);
+                donslime.setLocationAndAngles(i + 21, j - 12, k + 24, 0.0F, 0.0F);
                 world.spawnEntityInWorld(donslime);
                 EntityRaphaelSlime raphslime = new EntityRaphaelSlime(world);
-                raphslime.setLocationAndAngles((double)(i + 17), (double)(j - 12), (double)(k + 26), 0.0F, 0.0F);
+                raphslime.setLocationAndAngles(i + 17, j - 12, k + 26, 0.0F, 0.0F);
                 world.spawnEntityInWorld(raphslime);
                 EntityMichelangeloSlime micslime = new EntityMichelangeloSlime(world);
-                micslime.setLocationAndAngles((double)(i + 21), (double)(j - 12), (double)(k + 26), 0.0F, 0.0F);
+                micslime.setLocationAndAngles(i + 21, j - 12, k + 26, 0.0F, 0.0F);
                 world.spawnEntityInWorld(micslime);
             }
 
