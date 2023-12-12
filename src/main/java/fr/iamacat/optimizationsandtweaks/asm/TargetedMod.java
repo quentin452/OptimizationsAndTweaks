@@ -43,9 +43,9 @@ public enum TargetedMod implements ITargetedMod {
     NEI("NotEnoughItems", false, startsWith("nei")),
     ADVENTURERS_AMULETS("Adventurer's Amulets", false, startsWith("AdventurersAmulets")),
     JAS("JustAnotherSpawner", false, startsWith("JustAnotherSpawner")),
-    DRAGONBLOCKC("GardenStuff", false, startsWith("GardenStuff")),
+    GARDENSTUFF("GardenStuff", false, startsWith("GardenStuff")),
 
-    GARDENSTUFF("DragonBlockC", false, startsWith("DragonBlockC")),
+    DRAGONBLOCKC("DragonBlockC", false, startsWith("DragonBlockC")),
 
     UNTHAUMIC("Thaumcraft Minus Thaumcraft", false, startsWith("Thaumcraft Minus Thaumcraft")),
 
