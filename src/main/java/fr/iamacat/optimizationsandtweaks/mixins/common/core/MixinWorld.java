@@ -23,33 +23,34 @@ public class MixinWorld {
      * @reason
      */
     @Overwrite
-    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256) {
+    public Block getBlock(int x, int y, int z) {
+        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256) {
             try {
-                Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
+                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
                 if (chunk != null) {
-                    Block block = chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
+                    Block block = chunk.getBlock(x & 15, y, z & 15);
                     if (block != null) {
                         return block;
                     } else {
-                        Block blockAtCoordinates = chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
-                        OptimizationsLogger.LOGGER.error("Block is null at coordinates - x: {}, y: {}, z: {}", p_147439_1_, p_147439_2_, p_147439_3_);
-                        OptimizationsLogger.LOGGER.error("Block type: {}", blockAtCoordinates.getUnlocalizedName());
-                        OptimizationsLogger.LOGGER.error("Chunk: {}", chunk);
+                        Block blockAtCoordinates = chunk.getBlock(x & 15, y, z & 15);
+                        System.out.println("Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+                        System.out.println("Block type: " + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
+                        System.out.println("Chunk: " + chunk);
                     }
                 } else {
-                    OptimizationsLogger.LOGGER.error("Chunk is null at coordinates - x: {}, z: {}", p_147439_1_ >> 4, p_147439_3_ >> 4);
+                    System.out.println("Chunk is null at coordinates - x: " + (x >> 4) + ", z: " + (z >> 4));
                 }
                 return Blocks.air;
             } catch (Throwable throwable) {
-                OptimizationsLogger.LOGGER.error("Exception getting block type in world at coordinates - x: {}, y: {}, z: {}", p_147439_1_, p_147439_2_, p_147439_3_);
-               OptimizationsLogger.LOGGER.error("Exception details: ", throwable);
+                System.out.println("Exception getting block type in world at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+                System.out.println("Exception details: " + throwable);
             }
         } else {
-            return Blocks.air;
+            System.out.println("Coordinates out of bounds - x: " + x + ", y: " + y + ", z: " + z);
         }
-        return null;
+        return Blocks.air;
     }
+
     /**
      * Returns back a chunk looked up by chunk coordinates Args: x, y
      */
