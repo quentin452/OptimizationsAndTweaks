@@ -327,6 +327,10 @@ public enum Mixin implements IMixin {
     common_slimecarnage_MixinFixCascadingFromWorldGenSlimeCarnage(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage,
         "slimecarnage.MixinFixCascadingFromWorldGenSlimeCarnage"),
+
+    common_slimecarnage_MixinWorldGenSewers(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage,
+        "slimecarnage.MixinWorldGenSewers"),
     common_familliarsAPI_MixinFamiliar(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFamiliar,
         "familliarsAPI.MixinFamiliar"),
     common_pamsharvestcraft_MixinFixPamsTreesCascadingWorldgenLag(Side.COMMON,
