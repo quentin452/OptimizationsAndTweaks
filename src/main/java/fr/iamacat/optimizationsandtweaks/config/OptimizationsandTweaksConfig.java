@@ -504,6 +504,11 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromShinColleWorldGen;
 
+    @Config.Comment("Fix Some Cascading Worldgen caused by Garden Stuff mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenCandelilla;
+
     @Config.Comment("Fix Completly Cascading Worldgen caused by Shipwreck Gen from Shipwreck Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
