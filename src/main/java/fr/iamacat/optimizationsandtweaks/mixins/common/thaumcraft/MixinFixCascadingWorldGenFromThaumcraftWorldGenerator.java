@@ -1,7 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
-import java.util.*;
-
+import cpw.mods.fml.common.IWorldGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -15,15 +14,10 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 import net.minecraftforge.common.BiomeDictionary;
-
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.nodes.NodeModifier;
@@ -37,17 +31,18 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Random;
+
 @Mixin(ThaumcraftWorldGenerator.class)
-public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
+public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {
 
     @Shadow
     public static BiomeGenBase biomeTaint;
     @Shadow
-    public static BiomeGenBase biomeEerie;
-    @Shadow
     public static BiomeGenBase biomeMagicalForest;
-    @Shadow
-    public static BiomeGenBase biomeEldritchLands;
     @Shadow
     static Collection<Aspect> c;
     @Shadow
@@ -58,22 +53,25 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     public static HashMap<Integer, Integer> dimensionBlacklist;
     @Shadow
     public static HashMap<Integer, Integer> biomeBlacklist;
-    @Shadow
-    HashMap<Integer, Boolean> structureNode = new HashMap();
+    @Unique
+    HashMap<Integer, Boolean> optimizationsAndTweaks$structureNode = new HashMap<>();
 
-    @Inject(method = "generate", at = @At("HEAD"), remap = false, cancellable = true)
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite(remap = false)
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
-        IChunkProvider chunkProvider, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
-            this.worldGeneration(random, chunkX, chunkZ, world, true, ci);
-            ci.cancel();
-        }
-
+        IChunkProvider chunkProvider) {
+            this.worldGeneration(random, chunkX, chunkZ, world, true);
     }
 
-    @Inject(method = "worldGeneration", at = @At("HEAD"), remap = false, cancellable = true)
-    public void worldGeneration(Random random, int chunkX, int chunkZ, World world, boolean newGen, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite(remap = false)
+    public void worldGeneration(Random random, int chunkX, int chunkZ, World world, boolean newGen) {
             if (world.provider.dimensionId == Config.dimensionOuterId) {
                 MazeHandler.generateEldritch(world, random, chunkX, chunkZ);
                 world.getChunkFromChunkCoords(chunkX, chunkZ)
@@ -81,12 +79,12 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             } else {
                 switch (world.provider.dimensionId) {
                     case -1:
-                        this.generateNether(world, random, chunkX, chunkZ, newGen, ci);
+                        this.generateNether(world, random, chunkX, chunkZ, newGen);
                         break;
                     case 1:
                         break;
                     default:
-                        this.generateSurface(world, random, chunkX, chunkZ, newGen, ci);
+                        this.generateSurface(world, random, chunkX, chunkZ, newGen);
                         break;
                 }
 
@@ -95,45 +93,48 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                         .setChunkModified();
                 }
             }
-            ci.cancel();
-        }
     }
 
-    @Inject(method = "generateNether", at = @At("HEAD"), remap = false, cancellable = true)
-    private void generateNether(World world, Random random, int chunkX, int chunkZ, boolean newGen, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite(remap = false)
+    private void generateNether(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
             boolean auraGen = false;
             if (!world.getWorldInfo()
                 .getTerrainType()
                 .getWorldTypeName()
                 .startsWith("flat") && (newGen || Config.regenStructure)) {
-                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen, ci);
+                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
             }
 
             if (newGen || Config.regenAura) {
-                this.generateWildNodes(world, random, chunkX, chunkZ, auraGen, newGen, ci);
+                this.generateWildNodes(world, random, chunkX, chunkZ, auraGen);
             }
-            ci.cancel();
-        }
-
     }
 
-    @Inject(method = "generateSurface", at = @At("HEAD"), remap = false, cancellable = true)
-    private void generateSurface(World world, Random random, int chunkX, int chunkZ, boolean newGen, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite(remap = false)
+    private void generateSurface(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
             boolean auraGen = false;
-            int blacklist = getDimBlacklist(world.provider.dimensionId);
+            int blacklist = optimizationsAndTweaks$getDimBlacklist(world.provider.dimensionId);
             if (blacklist == -1 && Config.genTrees
                 && !world.getWorldInfo()
                     .getTerrainType()
                     .getWorldTypeName()
                     .startsWith("flat")
                 && (newGen || Config.regenTrees)) {
-                this.generateVegetation(world, random, chunkX, chunkZ, newGen);
+                this.optimizationsAndTweaks$generateVegetation(world, random, chunkX, chunkZ);
             }
 
             if (blacklist != 0 && blacklist != 2) {
-                this.generateOres(world, random, chunkX, chunkZ, newGen);
+                this.optimizationsAndTweaks$generateOres(world, random, chunkX, chunkZ, newGen);
             }
 
             if (blacklist != 0 && blacklist != 2 && Config.genAura && (newGen || Config.regenAura)) {
@@ -142,9 +143,9 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                     chunkX * 16 + 8,
                     world.getHeightValue(chunkX * 16 + 8, chunkZ * 16 + 8),
                     chunkZ * 16 + 8);
-                if (var7 != null && !this.structureNode.containsKey(var7.hashCode())) {
+                if (var7 != null && !this.optimizationsAndTweaks$structureNode.containsKey(var7.hashCode())) {
                     auraGen = true;
-                    this.structureNode.put(var7.hashCode(), true);
+                    this.optimizationsAndTweaks$structureNode.put(var7.hashCode(), true);
                     createRandomNodeAt(
                         world,
                         var7.chunkPosX,
@@ -153,11 +154,10 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                         random,
                         false,
                         false,
-                        false,
-                        ci);
+                        false);
                 }
 
-                auraGen = this.generateWildNodes(world, random, chunkX, chunkZ, auraGen, newGen, ci);
+                auraGen = this.generateWildNodes(world, random, chunkX, chunkZ, auraGen);
             }
 
             if (blacklist == -1 && Config.genStructure
@@ -172,8 +172,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 int randPosY = world.getHeightValue(randPosX, randPosZ) - 9;
                 if (randPosY < world.getActualHeight()) {
                     world.getChunkFromBlockCoords(
-                        MathHelper.floor_double((double) randPosX),
-                        MathHelper.floor_double((double) randPosZ));
+                        MathHelper.floor_double(randPosX),
+                        MathHelper.floor_double(randPosZ));
                     WorldGenerator mound = new WorldGenMound();
                     if (random.nextInt(150) == 0) {
                         if (mound.generate(world, random, randPosX, randPosY, randPosZ)) {
@@ -187,8 +187,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                                 random,
                                 false,
                                 true,
-                                false,
-                                ci);
+                                false);
                         }
                     } else if (random.nextInt(66) == 0) {
                         WorldGenEldritchRing stonering = new WorldGenEldritchRing();
@@ -201,7 +200,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                         stonering.height = h;
                         if (stonering.func_76484_a(world, random, randPosX, randPosY, randPosZ)) {
                             auraGen = true;
-                            createRandomNodeAt(world, randPosX, randPosY + 2, randPosZ, random, false, true, false, ci);
+                            createRandomNodeAt(world, randPosX, randPosY + 2, randPosZ, random, false, true, false);
                             Thread t = new Thread(new MazeThread(chunkX, chunkZ, w, h, random.nextLong()));
                             t.start();
                         }
@@ -210,22 +209,23 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                         WorldGenerator hilltopStones = new WorldGenHilltopStones();
                         if (hilltopStones.generate(world, random, randPosX, randPosY, randPosZ)) {
                             auraGen = true;
-                            createRandomNodeAt(world, randPosX, randPosY + 5, randPosZ, random, false, true, false, ci);
+                            createRandomNodeAt(world, randPosX, randPosY + 5, randPosZ, random, false, true, false);
                         }
                     }
                 }
 
-                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen, ci);
+                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
             }
-            ci.cancel();
-        }
     }
 
-    @Inject(method = "createRandomNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
-    private static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood,
-        boolean eerie, boolean small, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
-            if (basicAspects.size() == 0) {
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite
+    public static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood,
+                                          boolean eerie, boolean small) {
+            if (basicAspects.isEmpty()) {
 
                 for (Aspect as : c) {
                     if (as.getComponents() != null) {
@@ -297,9 +297,9 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             if (ra != null) {
                 al.add(ra, 2);
             } else {
-                Aspect aa = (Aspect) complexAspects.get(random.nextInt(complexAspects.size()));
+                Aspect aa = complexAspects.get(random.nextInt(complexAspects.size()));
                 al.add(aa, 1);
-                aa = (Aspect) basicAspects.get(random.nextInt(basicAspects.size()));
+                aa = basicAspects.get(random.nextInt(basicAspects.size()));
                 al.add(aa, 1);
             }
 
@@ -308,10 +308,10 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 if (random.nextBoolean()) {
                     Aspect aa;
                     if (random.nextInt(Config.specialNodeRarity) == 0) {
-                        aa = (Aspect) complexAspects.get(random.nextInt(complexAspects.size()));
+                        aa = complexAspects.get(random.nextInt(complexAspects.size()));
                         al.merge(aa, 1);
                     } else {
-                        aa = (Aspect) basicAspects.get(random.nextInt(basicAspects.size()));
+                        aa = basicAspects.get(random.nextInt(basicAspects.size()));
                         al.merge(aa, 1);
                     }
                 }
@@ -369,11 +369,11 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                                 if (bi.isFoliage(world, x + xx, y + yy, z + a)) {
                                     ++foliage;
                                 }
-                            } catch (Exception var23) {}
+                            } catch (Exception ignored) {}
                         }
                     }
                 }
-            } catch (Exception var24) {}
+            } catch (Exception ignored) {}
 
             if (water > 100) {
                 al.merge(Aspect.WATER, 1);
@@ -409,15 +409,16 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 al.merge(al.getAspectsSorted()[a], (int) (spread[a] / total * value));
             }
 
-            createNodeAt(world, x, y, z, type, modifier, al, ci);
-            ci.cancel();
-        }
+            createNodeAt(world, x, y, z, type, modifier, al);
     }
 
-    @Inject(method = "createNodeAt", at = @At("HEAD"), remap = false, cancellable = true)
-    private static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al,
-        CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+
+    /**
+     * @author t
+     * @reason t
+     */
+    @Overwrite
+    public static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al) {
             if (world.isAirBlock(x, y, z)) {
                 world.setBlock(x, y, z, ConfigBlocks.blockAiry, 0, 0);
             }
@@ -430,14 +431,10 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             }
 
             world.markBlockForUpdate(x, y, z);
-            ci.cancel();
-        }
     }
 
     @Unique
-    private boolean generateWildNodes(World world, Random random, int chunkX, int chunkZ, boolean auraGen,
-        boolean newGen, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+    private boolean generateWildNodes(World world, Random random, int chunkX, int chunkZ, boolean auraGen) {
             if (Config.genAura && random.nextInt(Config.nodeRarity) == 0 && !auraGen) {
                 int x = chunkX * 16 + random.nextInt(16);
                 int z = chunkZ * 16 + random.nextInt(16);
@@ -465,20 +462,16 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 if (q > world.getActualHeight()) {
                     return false;
                 } else {
-                    createRandomNodeAt(world, x, q, z, random, false, false, false, ci);
+                    createRandomNodeAt(world, x, q, z, random, false, false, false);
                     return true;
                 }
             } else {
                 return false;
             }
-        }
-        return auraGen;
     }
 
     @Unique
-    private boolean generateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen,
-        CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator) {
+    private boolean generateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen) {
             if (Config.genStructure && (world.provider.dimensionId == 0 || world.provider.dimensionId == 1)
                 && newGen
                 && !auraGen
@@ -521,7 +514,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                             world.setBlock(x, topy + count, z, ConfigBlocks.blockCosmeticSolid, 0, 3);
                             if (count > 1 && random.nextInt(4) == 0) {
                                 world.setBlock(x, topy + count, z, ConfigBlocks.blockCosmeticSolid, 8, 3);
-                                createRandomNodeAt(world, x, topy + count, z, random, false, true, false, ci);
+                                createRandomNodeAt(world, x, topy + count, z, random, false, true, false);
                                 count = 5;
                                 auraGen = true;
                             }
@@ -529,29 +522,26 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                             ++count;
                             if (count >= 5 && !auraGen) {
                                 world.setBlock(x, topy + 5, z, ConfigBlocks.blockCosmeticSolid, 8, 3);
-                                createRandomNodeAt(world, x, topy + 5, z, random, false, true, false, ci);
+                                createRandomNodeAt(world, x, topy + 5, z, random, false, true, false);
                             }
                         }
                     }
                 }
             }
-
             return false;
-        }
-        return auraGen;
     }
 
     @Unique
-    private static int getDimBlacklist(int dim) {
-        return !dimensionBlacklist.containsKey(dim) ? -1 : dimensionBlacklist.get(dim);
+    private static int optimizationsAndTweaks$getDimBlacklist(int dim) {
+        return dimensionBlacklist.getOrDefault(dim, -1);
     }
 
     @Unique
-    private void generateVegetation(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
+    private void optimizationsAndTweaks$generateVegetation(World world, Random random, int chunkX, int chunkZ) {
         BiomeGenBase bgb = world.getBiomeGenForCoords(chunkX * 16 + 8, chunkZ * 16 + 8);
-        if (getBiomeBlacklist(bgb.biomeID) == -1) {
+        if (optimizationsAndTweaks$getBiomeBlacklist(bgb.biomeID) == -1) {
             if (random.nextInt(60) == 3) {
-                generateSilverwood(world, random, chunkX, chunkZ);
+                optimizationsAndTweaks$generateSilverwood(world, random, chunkX, chunkZ);
             }
 
             if (random.nextInt(25) == 7) {
@@ -565,7 +555,7 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
                 if (world.getBiomeGenForCoords(randPosX, randPosZ).topBlock == Blocks.sand
                     && world.getBiomeGenForCoords(randPosX, randPosZ).temperature > 1.0F
                     && random.nextInt(30) == 0) {
-                    generateFlowers(world, random, randPosX, randPosY, randPosZ, 3);
+                    optimizationsAndTweaks$generateFlowers(world, random, randPosX, randPosY, randPosZ);
                 }
 
             }
@@ -586,15 +576,15 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     }
 
     @Unique
-    private static boolean generateFlowers(World world, Random random, int x, int y, int z, int flower) {
-        WorldGenerator flowers = new WorldGenCustomFlowers(ConfigBlocks.blockCustomPlant, flower);
-        return flowers.generate(world, random, x, y, z);
+    private static void optimizationsAndTweaks$generateFlowers(World world, Random random, int x, int y, int z) {
+        WorldGenerator flowers = new WorldGenCustomFlowers(ConfigBlocks.blockCustomPlant, 3);
+        flowers.generate(world, random, x, y, z);
     }
 
     @Unique
-    private void generateOres(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
+    private void optimizationsAndTweaks$generateOres(World world, Random random, int chunkX, int chunkZ, boolean newGen) {
         BiomeGenBase bgb = world.getBiomeGenForCoords(chunkX * 16 + 8, chunkZ * 16 + 8);
-        if (getBiomeBlacklist(bgb.biomeID) != 0 && getBiomeBlacklist(bgb.biomeID) != 2) {
+        if (optimizationsAndTweaks$getBiomeBlacklist(bgb.biomeID) != 0 && optimizationsAndTweaks$getBiomeBlacklist(bgb.biomeID) != 2) {
             int i;
             int randPosX;
             int randPosZ;
@@ -663,12 +653,12 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
     }
 
     @Unique
-    private static int getBiomeBlacklist(int biome) {
+    private static int optimizationsAndTweaks$getBiomeBlacklist(int biome) {
         return biomeBlacklist.getOrDefault(biome, -1);
     }
 
     @Unique
-    private static boolean generateSilverwood(World world, Random random, int chunkX, int chunkZ) {
+    private static void optimizationsAndTweaks$generateSilverwood(World world, Random random, int chunkX, int chunkZ) {
         int x = chunkX * 16 + random.nextInt(16);
         int z = chunkZ * 16 + random.nextInt(16);
         int y = world.getHeightValue(x, z);
@@ -677,9 +667,8 @@ public class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator {
             || !BiomeDictionary.isBiomeOfType(bio, BiomeDictionary.Type.MAGICAL)
                 && bio.biomeID != BiomeGenBase.forestHills.biomeID
                 && bio.biomeID != BiomeGenBase.birchForestHills.biomeID) {
-            return false;
         } else {
-            return (new WorldGenSilverwoodTrees(false, 7, 4)).func_76484_a(world, random, x, y, z);
+            (new WorldGenSilverwoodTrees(false, 7, 4)).func_76484_a(world, random, x, y, z);
         }
     }
 }
