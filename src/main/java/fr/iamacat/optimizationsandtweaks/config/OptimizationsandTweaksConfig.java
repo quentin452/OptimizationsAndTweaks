@@ -540,6 +540,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenSilverwoodTrees;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenEldritchRing from Thaumcraft4 mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenEldritchRing;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenPamFruitTree from Pam's Harvestcraft mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
