@@ -389,42 +389,18 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
 
     @Unique
     private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type, NodeModifier modifier) {
-        int water = 0;
-        int lava = 0;
-        int stone = 0;
-        int foliage = 0;
         int a;
+        int water = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Material.water);
+        int lava = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Material.lava);
+        int stone = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Blocks.stone.getMaterial());
+        int foliage = optimizationsAndTweaks$countFoliageAround(world, x, y, z);
+
+        AspectList al = new AspectList();
+
         final int THRESHOLD_WATER = 100;
         final int THRESHOLD_LAVA = 100;
         final int THRESHOLD_STONE = 500;
         final int THRESHOLD_FOLIAGE = 100;
-
-        for (int xx = -5; xx <= 5; ++xx) {
-            for (int yy = -5; yy <= 5; ++yy) {
-                for (a = -5; a <= 5; ++a) {
-                    int blockX = x + xx;
-                    int blockY = y + yy;
-                    int blockZ = z + a;
-
-                    Block block = world.getBlock(blockX, blockY, blockZ);
-                    Material material = block.getMaterial();
-
-                    if (material == Material.water) {
-                        ++water;
-                    } else if (material == Material.lava) {
-                        ++lava;
-                    } else if (block == Blocks.stone) {
-                        ++stone;
-                    }
-
-                    if (block.isFoliage(world, blockX, blockY, blockZ)) {
-                        ++foliage;
-                    }
-                }
-            }
-        }
-
-        AspectList al = new AspectList();
 
         if (water > THRESHOLD_WATER) {
             al.merge(Aspect.WATER, 1);
@@ -461,6 +437,41 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         }
 
         createNodeAt(world, x, y, z, type, modifier, al);
+    }
+    @Unique
+    private static int optimizationsAndTweaks$countBlocksAround(World world, int x, int y, int z, Material material) {
+        int count = 0;
+        final int SEARCH_RADIUS = 5;
+
+        for (int xx = -SEARCH_RADIUS; xx <= SEARCH_RADIUS; ++xx) {
+            for (int yy = -SEARCH_RADIUS; yy <= SEARCH_RADIUS; ++yy) {
+                for (int zz = -SEARCH_RADIUS; zz <= SEARCH_RADIUS; ++zz) {
+                    if (world.getBlock(x + xx, y + yy, z + zz).getMaterial() == material) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    @Unique
+    private static int optimizationsAndTweaks$countFoliageAround(World world, int x, int y, int z) {
+        int count = 0;
+        final int SEARCH_RADIUS = 5;
+
+        for (int xx = -SEARCH_RADIUS; xx <= SEARCH_RADIUS; ++xx) {
+            for (int yy = -SEARCH_RADIUS; yy <= SEARCH_RADIUS; ++yy) {
+                for (int zz = -SEARCH_RADIUS; zz <= SEARCH_RADIUS; ++zz) {
+                    if (world.getBlock(x + xx, y + yy, z + zz).isFoliage(world, x + xx, y + yy, z + zz)) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
     }
 
     /**
