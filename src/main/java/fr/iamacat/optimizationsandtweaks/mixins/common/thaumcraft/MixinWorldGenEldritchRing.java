@@ -43,38 +43,32 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
     public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
         int distanceToAir = 0;
 
-        for(Block checkID = world.getBlock(i, j, k); checkID != Blocks.air; checkID = world.getBlock(i, j + distanceToAir, k)) {
+        // Count the distance to air blocks
+        for (Block checkID = world.getBlock(i, j, k); checkID != Blocks.air; checkID = world.getBlock(i, j + distanceToAir, k)) {
             ++distanceToAir;
         }
 
-        if (distanceToAir > 2) {
-            return false;
-        } else {
+        if (distanceToAir <= 2) {
             j += distanceToAir - 1;
             Block blockID = world.getBlock(i, j, k);
             Block blockIDAbove = world.getBlock(i, j + 1, k);
             Block blockIDBelow = world.getBlock(i, j - 1, k);
-            Block[] arr$ = this.GetValidSpawnBlocks();
-            int len$ = arr$.length;
+            Block[] validSpawnBlocks = this.GetValidSpawnBlocks();
 
-            for(int i$ = 0; i$ < len$; ++i$) {
-                Block x = arr$[i$];
+            // Check conditions for valid spawn location
+            for (Block x : validSpawnBlocks) {
                 if (blockIDAbove != Blocks.air) {
                     return false;
                 }
 
-                if (blockID == x) {
-                    return true;
-                }
-
-                if ((blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x) {
+                if (blockID == x || (blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x) {
                     return true;
                 }
             }
-
-            return false;
         }
+        return false;
     }
+
 
     @Override
     public boolean generate(World world, Random rand, int i, int j, int k) {
