@@ -56,9 +56,9 @@ import io.netty.handler.codec.base64.Base64;
 public abstract class MixinMinecraftServer {
 
     @Unique
-    private MinecraftServer minecraftServer;
-    @Shadow
-    private static final Logger logger = LogManager.getLogger();
+    private MinecraftServer optimizationsAndTweaks$minecraftServer;
+    @Unique
+    private static final Logger optimizationsAndTweaks$logger = LogManager.getLogger();
     @Shadow
     public static final File field_152367_a = new File("usercache.json");
 
@@ -175,7 +175,7 @@ public abstract class MixinMinecraftServer {
         getSystemTimeMillis());
 
     public MixinMinecraftServer() {
-        this.field_147144_o = new NetworkSystem(minecraftServer);
+        this.field_147144_o = new NetworkSystem(optimizationsAndTweaks$minecraftServer);
     }
 
     /**
@@ -301,7 +301,7 @@ public abstract class MixinMinecraftServer {
                     long k = j - i;
 
                     if (k > 2000L && i - this.timeOfLastWarning >= 15000L) {
-                        logger.warn(
+                        optimizationsAndTweaks$logger.warn(
                             "Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)",
                             new Object[] { k, k / 50L });
                         k = 2000L;
@@ -309,7 +309,7 @@ public abstract class MixinMinecraftServer {
                     }
 
                     if (k < 0L) {
-                        logger.warn("Time ran backwards! Did the system time change?");
+                        optimizationsAndTweaks$logger.warn("Time ran backwards! Did the system time change?");
                         k = 0L;
                     }
 
@@ -341,7 +341,7 @@ public abstract class MixinMinecraftServer {
             FMLCommonHandler.instance()
                 .expectServerStopped(); // has to come before finalTick to avoid race conditions
         } catch (Throwable throwable1) {
-            logger.error("Encountered an unexpected exception", throwable1);
+            optimizationsAndTweaks$logger.error("Encountered an unexpected exception", throwable1);
             CrashReport crashreport;
 
             if (throwable1 instanceof ReportedException) {
@@ -356,9 +356,9 @@ public abstract class MixinMinecraftServer {
                 "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
 
             if (crashreport.saveToFile(file1)) {
-                logger.error("This crash report has been saved to: %s", file1.getAbsolutePath());
+                optimizationsAndTweaks$logger.error("This crash report has been saved to: %s", file1.getAbsolutePath());
             } else {
-                logger.error("We were unable to save this crash report to disk.");
+                optimizationsAndTweaks$logger.error("We were unable to save this crash report to disk.");
             }
 
             FMLCommonHandler.instance()
@@ -369,7 +369,7 @@ public abstract class MixinMinecraftServer {
                 this.stopServer();
                 this.serverStopped = true;
             } catch (Throwable throwable) {
-                logger.error("Exception stopping the server", throwable);
+                optimizationsAndTweaks$logger.error("Exception stopping the server", throwable);
             } finally {
                 FMLCommonHandler.instance()
                     .handleServerStopped();
@@ -393,7 +393,7 @@ public abstract class MixinMinecraftServer {
             .hasReachedState(LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't
                                                                             // save twice
         {
-            logger.info("Stopping server");
+            optimizationsAndTweaks$logger.info("Stopping server");
 
             if (this.func_147137_ag() != null) {
                 this.func_147137_ag()
@@ -401,13 +401,13 @@ public abstract class MixinMinecraftServer {
             }
 
             if (this.serverConfigManager != null) {
-                logger.info("Saving players");
+                optimizationsAndTweaks$logger.info("Saving players");
                 this.serverConfigManager.saveAllPlayerData();
                 this.serverConfigManager.removeAllPlayers();
             }
 
             if (this.worldServers != null) {
-                logger.info("Saving worlds");
+                optimizationsAndTweaks$logger.info("Saving worlds");
                 this.saveAllWorlds(false);
 
                 for (int i = 0; i < this.worldServers.length; ++i) {
@@ -444,7 +444,7 @@ public abstract class MixinMinecraftServer {
             for (WorldServer worldserver : aworldserver) {
                 if (worldserver != null) {
                     if (!dontLog) {
-                        logger.info(
+                        optimizationsAndTweaks$logger.info(
                             "Saving chunks for level '" + worldserver.getWorldInfo()
                                 .getWorldName() + "'/" + worldserver.provider.getDimensionName());
                     }
@@ -452,7 +452,7 @@ public abstract class MixinMinecraftServer {
                     try {
                         worldserver.saveAllChunks(true, null);
                     } catch (MinecraftException minecraftexception) {
-                        logger.warn(minecraftexception.getMessage());
+                        optimizationsAndTweaks$logger.warn(minecraftexception.getMessage());
                     }
                 }
             }
@@ -529,7 +529,7 @@ public abstract class MixinMinecraftServer {
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
                 response.func_151320_a("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
             } catch (Exception exception) {
-                logger.error("Couldn't load server icon", exception);
+                optimizationsAndTweaks$logger.error("Couldn't load server icon", exception);
             } finally {
                 bytebuf.release();
             }
