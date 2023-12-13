@@ -10,6 +10,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -390,10 +391,10 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Unique
     private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type, NodeModifier modifier) {
         int a;
-        int water = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Material.water);
-        int lava = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Material.lava);
-        int stone = optimizationsAndTweaks$countBlocksAround(world, x, y, z, Blocks.stone.getMaterial());
-        int foliage = optimizationsAndTweaks$countFoliageAround(world, x, y, z);
+        int water = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.water);
+        int lava = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.lava);
+        int stone = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());
+        int foliage = optimizationsAndTweaks$countFoliageAroundPlayer(world, x, y, z);
 
         AspectList al = new AspectList();
 
@@ -439,38 +440,52 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         createNodeAt(world, x, y, z, type, modifier, al);
     }
     @Unique
-    private static int optimizationsAndTweaks$countBlocksAround(World world, int x, int y, int z, Material material) {
+    private static int optimizationsAndTweaks$countBlocksAroundPlayer(World world, int x, int y, int z, Material material) {
         int count = 0;
         final int SEARCH_RADIUS = 5;
-
-        for (int xx = -SEARCH_RADIUS; xx <= SEARCH_RADIUS; ++xx) {
-            for (int yy = -SEARCH_RADIUS; yy <= SEARCH_RADIUS; ++yy) {
-                for (int zz = -SEARCH_RADIUS; zz <= SEARCH_RADIUS; ++zz) {
-                    if (world.getBlock(x + xx, y + yy, z + zz).getMaterial() == material) {
-                        count++;
+        for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
+            for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
+                int chunkX = (x + xOffset) >> 4;
+                int chunkZ = (z + zOffset) >> 4;
+                if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+                    for (int xx = 0; xx < 16; ++xx) {
+                        for (int yy = 0; yy < world.getHeight(); ++yy) {
+                            for (int zz = 0; zz < 16; ++zz) {
+                                if (chunk.getBlock(xx, yy, zz).getMaterial() == material) {
+                                    count++;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
         return count;
     }
 
     @Unique
-    private static int optimizationsAndTweaks$countFoliageAround(World world, int x, int y, int z) {
+    private static int optimizationsAndTweaks$countFoliageAroundPlayer(World world, int x, int y, int z) {
         int count = 0;
         final int SEARCH_RADIUS = 5;
-
-        for (int xx = -SEARCH_RADIUS; xx <= SEARCH_RADIUS; ++xx) {
-            for (int yy = -SEARCH_RADIUS; yy <= SEARCH_RADIUS; ++yy) {
-                for (int zz = -SEARCH_RADIUS; zz <= SEARCH_RADIUS; ++zz) {
-                    if (world.getBlock(x + xx, y + yy, z + zz).isFoliage(world, x + xx, y + yy, z + zz)) {
-                        count++;
+        for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
+            for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
+                int chunkX = (x + xOffset) >> 4;
+                int chunkZ = (z + zOffset) >> 4;
+                if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+                    for (int xx = 0; xx < 16; ++xx) {
+                        for (int yy = 0; yy < world.getHeight(); ++yy) {
+                            for (int zz = 0; zz < 16; ++zz) {
+                                if (chunk.getBlock(xx, yy, zz).isFoliage(world, chunk.xPosition * 16 + xx, yy, chunk.zPosition * 16 + zz)) {
+                                    count++;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
         return count;
     }
 
@@ -480,18 +495,20 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
      */
     @Overwrite
     public static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al) {
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
             if (world.isAirBlock(x, y, z)) {
                 world.setBlock(x, y, z, ConfigBlocks.blockAiry, 0, 0);
+                TileEntity te = world.getTileEntity(x, y, z);
+                if (te instanceof TileNode) {
+                    ((TileNode) te).setNodeType(nt);
+                    ((TileNode) te).setNodeModifier(nm);
+                    ((TileNode) te).setAspects(al);
+                }
+                world.markBlockForUpdate(x, y, z);
             }
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if (te instanceof TileNode) {
-                ((TileNode) te).setNodeType(nt);
-                ((TileNode) te).setNodeModifier(nm);
-                ((TileNode) te).setAspects(al);
-            }
-
-            world.markBlockForUpdate(x, y, z);
+        }
     }
 
     @Unique
