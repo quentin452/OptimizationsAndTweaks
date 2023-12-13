@@ -62,7 +62,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public int checkBlockLine(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger) {
         int[] var3 = new int[]{0, 0, 0};
         byte var4 = 0;
@@ -115,7 +115,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void generateLeafNodeList() {
         this.height = (int)(this.heightLimit * this.heightAttenuation);
         if (this.height >= this.heightLimit) {
@@ -186,7 +186,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5, boolean spiders) {
         this.worldObj = par1World;
         long var6 = par2Random.nextLong();
@@ -266,7 +266,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     float layerSize(int par1) {
         if (par1 < (this.heightLimit) * 0.3) {
             return -1.618F;
@@ -341,7 +341,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     void genTreeLayer(int par1, int par2, int par3, float par4, byte par5, Block par6) {
         int var7 = (int)(par4 + 0.618D);
         byte var8 = otherCoordPairs[par5];
@@ -394,7 +394,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     boolean leafNodeNeedsBase(int par1) {
         return par1 >= this.heightLimit * 0.2;
     }
@@ -402,7 +402,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     void placeBlockLine(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger, Block par3) {
         int[] var4 = new int[]{0, 0, 0};
         byte var5 = 0;

@@ -31,7 +31,7 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     protected Block[] GetValidSpawnBlocks() {
         return new Block[]{Blocks.stone, Blocks.sand, Blocks.packed_ice, Blocks.grass, Blocks.gravel, Blocks.dirt};
     }
@@ -39,7 +39,7 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
         int distanceToAir = 0;
 
