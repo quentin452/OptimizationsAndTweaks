@@ -78,16 +78,24 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
         }
     }
     @Unique
+    private static final int[][] PROBABLE_POSITIONS = {
+        {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 0, -1},
+        {1, 0, 1}, {-1, 0, 1}, {-1, 0, -1}, {1, 0, -1},
+        {0, 1, 0}, {0, -1, 0}
+    };
+
+    @Unique
     private void optimizationsAndTweaks$generateCustomPlants(World world, Random random, int x, int z) {
         for (int i = 0; i < 8; ++i) {
             int posX = x + random.nextInt(16);
             int posZ = z + random.nextInt(16);
             int posY = world.getHeightValue(posX, posZ);
+
             for (; posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass; --posY) {}
 
-            Block block = world.getBlock(posX, posY, posZ);
-            if (block == Blocks.grass && world.getBlock(posX, posY + 1, posZ).isReplaceable(world, posX, posY + 1, posZ)
-                && optimizationsAndTweaks$isAdjacentToWood(world, posX, posY + 1, posZ)) {
+            if (world.getBlock(posX, posY, posZ) == Blocks.grass &&
+                world.getBlock(posX, posY + 1, posZ).isReplaceable(world, posX, posY + 1, posZ) &&
+                optimizationsAndTweaks$isAdjacentToWood(world, posX, posY + 1, posZ)) {
                 world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
             }
         }
@@ -95,29 +103,14 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
 
     @Unique
     private boolean optimizationsAndTweaks$isAdjacentToWood(IBlockAccess world, int x, int y, int z) {
-        Map<String, Block> checkedBlocks = new HashMap<>();
+        for (int[] pos : PROBABLE_POSITIONS) {
+            int xx = pos[0] + x;
+            int yy = pos[1] + y;
+            int zz = pos[2] + z;
 
-        int[][] probablePositions = {
-            {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 0, -1},
-            {1, 0, 1}, {-1, 0, 1}, {-1, 0, -1}, {1, 0, -1},
-            {0, 1, 0}, {0, -1, 0}
-        };
+            Block block = world.getBlock(xx, yy, zz);
 
-        for (int[] pos : probablePositions) {
-            int xx = pos[0];
-            int yy = pos[1];
-            int zz = pos[2];
-
-            String key = xx + "," + yy + "," + zz;
-            Block block;
-            if (checkedBlocks.containsKey(key)) {
-                block = checkedBlocks.get(key);
-            } else {
-                block = world.getBlock(xx + x, yy + y, zz + z);
-                checkedBlocks.put(key, block);
-            }
-
-            if (block != null && block.isWood(world, xx + x, yy + y, zz + z)) {
+            if (block != null && block.isWood(world, xx, yy, zz)) {
                 return true;
             }
         }
@@ -126,15 +119,6 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
     }
 
 
-    @Unique
-    private boolean optimizationsAndTweaks$isNonCenteredPosition(int xx, int yy, int zz) {
-        return xx != 0 || yy != 0 || zz != 0;
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isWoodBlock(IBlockAccess world, Block block, int x, int y, int z) {
-        return block != null && block.isWood(world, x, y, z);
-    }
 
     static {
         blobs = new WorldGenBlockBlob(Blocks.mossy_cobblestone, 0);
