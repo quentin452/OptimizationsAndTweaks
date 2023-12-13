@@ -440,19 +440,26 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         createNodeAt(world, x, y, z, type, modifier, al);
     }
     @Unique
+    private static final int SEARCH_RADIUS = 5;
+
+    @Unique
     private static int optimizationsAndTweaks$countBlocksAroundPlayer(World world, int x, int y, int z, Material material) {
         int count = 0;
-        final int SEARCH_RADIUS = 5;
+        int worldHeight = world.getHeight();
+
         for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
             for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
                 int chunkX = (x + xOffset) >> 4;
                 int chunkZ = (z + zOffset) >> 4;
+
                 if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
                     Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+
                     for (int xx = 0; xx < 16; ++xx) {
-                        for (int yy = 0; yy < world.getHeight(); ++yy) {
+                        for (int yy = 0; yy < worldHeight; ++yy) {
                             for (int zz = 0; zz < 16; ++zz) {
-                                if (chunk.getBlock(xx, yy, zz).getMaterial() == material) {
+                                Block blockState = chunk.getBlock(xx, yy, zz);
+                                if (blockState.getMaterial() == material) {
                                     count++;
                                 }
                             }
@@ -464,20 +471,29 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         return count;
     }
 
+
     @Unique
+    private static final int SEARCH_RADIUS2 = 5;
+
     private static int optimizationsAndTweaks$countFoliageAroundPlayer(World world, int x, int y, int z) {
         int count = 0;
-        final int SEARCH_RADIUS = 5;
-        for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
-            for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
+
+        for (int xOffset = -SEARCH_RADIUS2; xOffset <= SEARCH_RADIUS2; ++xOffset) {
+            for (int zOffset = -SEARCH_RADIUS2; zOffset <= SEARCH_RADIUS2; ++zOffset) {
                 int chunkX = (x + xOffset) >> 4;
                 int chunkZ = (z + zOffset) >> 4;
+
                 if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
                     Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+
                     for (int xx = 0; xx < 16; ++xx) {
-                        for (int yy = 0; yy < world.getHeight(); ++yy) {
-                            for (int zz = 0; zz < 16; ++zz) {
-                                if (chunk.getBlock(xx, yy, zz).isFoliage(world, chunk.xPosition * 16 + xx, yy, chunk.zPosition * 16 + zz)) {
+                        for (int zz = 0; zz < 16; ++zz) {
+                            for (int yy = 0; yy < world.getActualHeight(); ++yy) {
+                                Block block = chunk.getBlock(xx, yy, zz);
+                                int worldX = chunk.xPosition * 16 + xx;
+                                int worldZ = chunk.zPosition * 16 + zz;
+
+                                if (block != null && block.isLeaves(world, worldX, yy, worldZ)) {
                                     count++;
                                 }
                             }
@@ -488,6 +504,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         }
         return count;
     }
+
 
     /**
      * @author t
