@@ -1,7 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -91,15 +89,18 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             int posZ = z + random.nextInt(16);
             int posY = world.getHeightValue(posX, posZ);
 
-            for (; posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass; --posY) {}
+            while (posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass) {
+                posY--;
+            }
 
             if (world.getBlock(posX, posY, posZ) == Blocks.grass &&
-                world.getBlock(posX, posY + 1, posZ).isReplaceable(world, posX, posY + 1, posZ) &&
+                world.getBlock(posX, posY + 1, posZ).isAir(world, posX, posY + 1, posZ) &&
                 optimizationsAndTweaks$isAdjacentToWood(world, posX, posY + 1, posZ)) {
                 world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
             }
         }
     }
+
 
     @Unique
     private boolean optimizationsAndTweaks$isAdjacentToWood(IBlockAccess world, int x, int y, int z) {
