@@ -33,20 +33,18 @@ public class MixinWorld {
                         return block;
                     } else {
                         Block blockAtCoordinates = chunk.getBlock(x & 15, y, z & 15);
-                        System.out.println("Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
-                        System.out.println("Block type: " + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
-                        System.out.println("Chunk: " + chunk);
+                        System.out.println("(Optimizationsandtweaks logging)Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+                        System.out.println("(Optimizationsandtweaks logging)Block type: " + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
+                        System.out.println("(Optimizationsandtweaks logging)Chunk: " + chunk);
                     }
                 } else {
-                    System.out.println("Chunk is null at coordinates - x: " + (x >> 4) + ", z: " + (z >> 4));
+                    System.out.println("(Optimizationsandtweaks logging)Chunk is null at coordinates - x: " + (x >> 4) + ", z: " + (z >> 4));
                 }
                 return Blocks.air;
             } catch (Throwable throwable) {
-                System.out.println("Exception getting block type in world at coordinates - x: " + x + ", y: " + y + ", z: " + z);
-                System.out.println("Exception details: " + throwable);
+                System.out.println("(Optimizationsandtweaks logging)Exception getting block type in world at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+                System.out.println("(Optimizationsandtweaks logging)Exception details: " + throwable);
             }
-        } else {
-            System.out.println("Coordinates out of bounds - x: " + x + ", y: " + y + ", z: " + z);
         }
         return Blocks.air;
     }
