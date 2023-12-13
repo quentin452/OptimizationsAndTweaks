@@ -10,7 +10,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -390,18 +389,17 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
 
     @Unique
     private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type, NodeModifier modifier) {
-        int a;
         int water = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.water);
         int lava = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.lava);
         int stone = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());
         int foliage = optimizationsAndTweaks$countFoliageAroundPlayer(world, x, y, z);
 
-        AspectList al = new AspectList();
-
         final int THRESHOLD_WATER = 100;
         final int THRESHOLD_LAVA = 100;
         final int THRESHOLD_STONE = 500;
         final int THRESHOLD_FOLIAGE = 100;
+
+        AspectList al = new AspectList();
 
         if (water > THRESHOLD_WATER) {
             al.merge(Aspect.WATER, 1);
@@ -420,21 +418,19 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             al.merge(Aspect.PLANT, 1);
         }
 
-        int[] spread = new int[al.size()];
-        float total = 0.0F;
+        int totalAmount = al.size();
+        int[] spread = new int[totalAmount];
+        float totalSpread = 0.0F;
 
-        for (a = 0; a < spread.length; ++a) {
-            if (al.getAmount(al.getAspectsSorted()[a]) == 2) {
-                spread[a] = 50 + random.nextInt(25);
-            } else {
-                spread[a] = 25 + random.nextInt(50);
-            }
-
-            total += spread[a];
+        for (int a = 0; a < totalAmount; ++a) {
+            int aspectAmount = al.getAmount(al.getAspectsSorted()[a]);
+            spread[a] = (aspectAmount == 2) ? 50 + random.nextInt(25) : 25 + random.nextInt(50);
+            totalSpread += spread[a];
         }
 
-        for (a = 0; a < spread.length; ++a) {
-            al.merge(al.getAspectsSorted()[a], (int) (spread[a] / total * value));
+        for (int a = 0; a < totalAmount; ++a) {
+            float spreadValue = spread[a] / totalSpread * value;
+            al.merge(al.getAspectsSorted()[a], (int) spreadValue);
         }
 
         createNodeAt(world, x, y, z, type, modifier, al);
@@ -445,65 +441,40 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Unique
     private static int optimizationsAndTweaks$countBlocksAroundPlayer(World world, int x, int y, int z, Material material) {
         int count = 0;
-        int worldHeight = world.getHeight();
 
         for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
-            for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
-                int chunkX = (x + xOffset) >> 4;
-                int chunkZ = (z + zOffset) >> 4;
-
-                if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
-                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-                    for (int xx = 0; xx < 16; ++xx) {
-                        for (int yy = 0; yy < worldHeight; ++yy) {
-                            for (int zz = 0; zz < 16; ++zz) {
-                                Block blockState = chunk.getBlock(xx, yy, zz);
-                                if (blockState.getMaterial() == material) {
-                                    count++;
-                                }
-                            }
-                        }
+            for (int yOffset = -SEARCH_RADIUS; yOffset <= SEARCH_RADIUS; ++yOffset) {
+                for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
+                    if (world.getBlock(x + xOffset, y + yOffset, z + zOffset).getMaterial() == material) {
+                        count++;
                     }
                 }
             }
         }
+
         return count;
     }
-
 
     @Unique
     private static final int SEARCH_RADIUS2 = 5;
 
+    @Unique
     private static int optimizationsAndTweaks$countFoliageAroundPlayer(World world, int x, int y, int z) {
         int count = 0;
 
         for (int xOffset = -SEARCH_RADIUS2; xOffset <= SEARCH_RADIUS2; ++xOffset) {
-            for (int zOffset = -SEARCH_RADIUS2; zOffset <= SEARCH_RADIUS2; ++zOffset) {
-                int chunkX = (x + xOffset) >> 4;
-                int chunkZ = (z + zOffset) >> 4;
-
-                if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
-                    Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-                    for (int xx = 0; xx < 16; ++xx) {
-                        for (int zz = 0; zz < 16; ++zz) {
-                            for (int yy = 0; yy < world.getActualHeight(); ++yy) {
-                                Block block = chunk.getBlock(xx, yy, zz);
-                                int worldX = chunk.xPosition * 16 + xx;
-                                int worldZ = chunk.zPosition * 16 + zz;
-
-                                if (block != null && block.isLeaves(world, worldX, yy, worldZ)) {
-                                    count++;
-                                }
-                            }
-                        }
+            for (int yOffset = -SEARCH_RADIUS2; yOffset <= SEARCH_RADIUS2; ++yOffset) {
+                for (int zOffset = -SEARCH_RADIUS2; zOffset <= SEARCH_RADIUS2; ++zOffset) {
+                    if (world.getBlock(x + xOffset, y + yOffset, z + zOffset).isLeaves(world, x + xOffset, y + yOffset, z + zOffset)) {
+                        count++;
                     }
                 }
             }
         }
+
         return count;
     }
+
 
 
     /**
