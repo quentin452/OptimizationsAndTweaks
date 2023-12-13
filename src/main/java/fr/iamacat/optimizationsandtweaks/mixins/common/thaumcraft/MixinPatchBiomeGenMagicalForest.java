@@ -11,6 +11,7 @@ import net.minecraft.world.gen.feature.WorldGenBigMushroom;
 import net.minecraft.world.gen.feature.WorldGenBlockBlob;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,8 +38,8 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
      * @author iamacatfr
      * @reason reduce tps lags caused by func_76728_a
      */
-    @Inject(method = "func_76728_a", at = @At("HEAD"), remap = false, cancellable = true)
-    public void decorate(World world, Random random, int x, int z, CallbackInfo ci) {
+    @Override
+    public void decorate(World world, Random random, int x, int z) {
         if (OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest) {
             for (int i = 0; i < 3; ++i) {
                 int posX = x + random.nextInt(16) + 8;
@@ -80,11 +81,8 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
                     world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
                 }
             }
-
             super.decorate(world, random, x, z);
-            ci.cancel();
         }
-
     }
 
     @Unique
