@@ -497,18 +497,39 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     public static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al) {
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
-        if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
-            if (world.isAirBlock(x, y, z)) {
-                world.setBlock(x, y, z, ConfigBlocks.blockAiry, 0, 0);
-                TileEntity te = world.getTileEntity(x, y, z);
-                if (te instanceof TileNode) {
-                    ((TileNode) te).setNodeType(nt);
-                    ((TileNode) te).setNodeModifier(nm);
-                    ((TileNode) te).setAspects(al);
-                }
-                world.markBlockForUpdate(x, y, z);
-            }
+
+        if (optimizationsAndTweaks$isChunkLoaded(world, chunkX, chunkZ) && optimizationsAndTweaks$isAirBlock(world, x, y, z)) {
+            optimizationsAndTweaks$setBlockAiry(world, x, y, z);
+            optimizationsAndTweaks$updateTileEntity(world, x, y, z, nt, nm, al);
+            optimizationsAndTweaks$markBlockForUpdate(world, x, y, z);
         }
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$isChunkLoaded(World world, int chunkX, int chunkZ) {
+        return world.getChunkProvider().chunkExists(chunkX, chunkZ);
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$isAirBlock(World world, int x, int y, int z) {
+        return world.isAirBlock(x, y, z);
+    }
+    @Unique
+    private static void optimizationsAndTweaks$setBlockAiry(World world, int x, int y, int z) {
+        world.setBlock(x, y, z, ConfigBlocks.blockAiry, 0, 0);
+    }
+    @Unique
+    private static void optimizationsAndTweaks$updateTileEntity(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof TileNode) {
+            ((TileNode) te).setNodeType(nt);
+            ((TileNode) te).setNodeModifier(nm);
+            ((TileNode) te).setAspects(al);
+        }
+    }
+    @Unique
+    private static void optimizationsAndTweaks$markBlockForUpdate(World world, int x, int y, int z) {
+        world.markBlockForUpdate(x, y, z);
     }
 
     @Unique
