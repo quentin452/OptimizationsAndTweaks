@@ -65,50 +65,52 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      */
     @Overwrite(remap = false)
     public int checkBlockLine(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger) {
-        int[] var3 = new int[]{0, 0, 0};
-        byte var4 = 0;
-
-        byte var5;
-        for(var5 = 0; var4 < 3; ++var4) {
-            var3[var4] = par2ArrayOfInteger[var4] - par1ArrayOfInteger[var4];
-            if (Math.abs(var3[var4]) > Math.abs(var3[var5])) {
-                var5 = var4;
-            }
-        }
+        int[] var3 = optimizationsAndTweaks$initializeArray();
+        byte var5 = optimizationsAndTweaks$findLargestDifference(par1ArrayOfInteger, par2ArrayOfInteger, var3);
 
         if (var3[var5] == 0) {
             return -1;
         } else {
-            byte var6 = otherCoordPairs[var5];
-            byte var7 = otherCoordPairs[var5 + 3];
-            byte var8;
-            if (var3[var5] > 0) {
-                var8 = 1;
-            } else {
-                var8 = -1;
+            return optimizationsAndTweaks$checkBlocksAlongLine(par1ArrayOfInteger, var3, var5);
+        }
+    }
+    @Unique
+    private int[] optimizationsAndTweaks$initializeArray() {
+        return new int[]{0, 0, 0};
+    }
+    @Unique
+    private int optimizationsAndTweaks$checkBlocksAlongLine(int[] par1, int[] var3, byte var5) {
+        byte var6 = otherCoordPairs[var5];
+        byte var7 = otherCoordPairs[var5 + 3];
+        byte var8 = (byte) ((var3[var5] > 0) ? 1 : -1);
+
+        double var9 = (double) var3[var6] / (double) var3[var5];
+        double var11 = (double) var3[var7] / (double) var3[var5];
+
+        int[] var13 = new int[]{0, 0, 0};
+        int var14 = 0;
+
+        int var15 = var3[var5] + var8;
+        for (; var14 != var15; var14 += var8) {
+            var13[var5] = par1[var5] + var14;
+            var13[var6] = MathHelper.floor_double(par1[var6] + var14 * var9);
+            var13[var7] = MathHelper.floor_double(par1[var7] + var14 * var11);
+
+            if (!optimizationsAndTweaks$checkBlockAtPosition(var13)) {
+                break;
             }
+        }
 
-            double var9 = (double)var3[var6] / (double)var3[var5];
-            double var11 = (double)var3[var7] / (double)var3[var5];
-            int[] var13 = new int[]{0, 0, 0};
-            int var14 = 0;
+        return (var14 == var15) ? -1 : Math.abs(var14);
+    }
 
-            int var15;
-            for(var15 = var3[var5] + var8; var14 != var15; var14 += var8) {
-                var13[var5] = par1ArrayOfInteger[var5] + var14;
-                var13[var6] = MathHelper.floor_double((double)par1ArrayOfInteger[var6] + (double)var14 * var9);
-                var13[var7] = MathHelper.floor_double((double)par1ArrayOfInteger[var7] + (double)var14 * var11);
-
-                try {
-                    Block var16 = this.worldObj.getBlock(var13[0], var13[1], var13[2]);
-                    if (var16 != Blocks.air && var16 != ConfigBlocks.blockMagicalLeaves) {
-                        break;
-                    }
-                } catch (Exception var17) {
-                }
-            }
-
-            return var14 == var15 ? -1 : Math.abs(var14);
+    @Unique
+    private boolean optimizationsAndTweaks$checkBlockAtPosition(int[] position) {
+        try {
+            Block var16 = this.worldObj.getBlock(position[0], position[1], position[2]);
+            return (var16 == Blocks.air || var16 == ConfigBlocks.blockMagicalLeaves);
+        } catch (Exception var17) {
+            return false;
         }
     }
 
