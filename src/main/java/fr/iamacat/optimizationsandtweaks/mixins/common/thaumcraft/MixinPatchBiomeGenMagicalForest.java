@@ -84,22 +84,25 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
 
     @Unique
     private void optimizationsAndTweaks$generateCustomPlants(World world, Random random, int x, int z) {
+        int worldHeight = world.getHeightValue(x, z);
+
         for (int i = 0; i < 8; ++i) {
             int posX = x + random.nextInt(16);
             int posZ = z + random.nextInt(16);
-            int posY = world.getHeightValue(posX, posZ);
 
-            while (posY > 50 && world.getBlock(posX, posY, posZ) != Blocks.grass) {
-                posY--;
+            while (worldHeight > 50 && world.getBlock(posX, worldHeight, posZ) != Blocks.grass) {
+                worldHeight--;
             }
 
-            if (world.getBlock(posX, posY, posZ) == Blocks.grass &&
-                world.getBlock(posX, posY + 1, posZ).isAir(world, posX, posY + 1, posZ) &&
-                optimizationsAndTweaks$isAdjacentToWood(world, posX, posY + 1, posZ)) {
-                world.setBlock(posX, posY + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
+            if (world.getBlock(posX, worldHeight, posZ) == Blocks.grass &&
+                world.isAirBlock(posX, worldHeight + 1, posZ) &&
+                optimizationsAndTweaks$isAdjacentToWood(world, posX, worldHeight + 1, posZ)) {
+
+                world.setBlock(posX, worldHeight + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
             }
         }
     }
+
 
 
     @Unique
