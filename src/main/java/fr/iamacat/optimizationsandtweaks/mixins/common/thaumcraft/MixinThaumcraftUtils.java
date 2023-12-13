@@ -5,6 +5,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.common.items.equipment.ItemElementalAxe;
 import thaumcraft.common.lib.utils.Utils;
 
@@ -19,14 +20,22 @@ public class MixinThaumcraftUtils {
      */
     @Overwrite
     public static boolean isWoodLog(IBlockAccess world, int x, int y, int z) {
-        Block bi = world.getBlock(x, y, z);
-        int md = world.getBlockMetadata(x, y, z);
-        if (bi == Blocks.air) {
+        Block block = world.getBlock(x, y, z);
+        int metadata = world.getBlockMetadata(x, y, z);
+
+        if (block == Blocks.air) {
             return false;
-        } else if (bi.canSustainLeaves(world, x, y, z)) {
-            return true;
-        } else {
-            return ItemElementalAxe.oreDictLogs.contains(Arrays.asList(bi, md));
         }
+
+        if (block.canSustainLeaves(world, x, y, z)) {
+            return true;
+        }
+
+        return optimizationsAndTweaks$isBlockInOreDictLogs(block, metadata);
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$isBlockInOreDictLogs(Block block, int metadata) {
+        return ItemElementalAxe.oreDictLogs.contains(Arrays.asList(block, metadata));
     }
 }
