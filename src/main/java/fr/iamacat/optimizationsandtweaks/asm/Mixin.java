@@ -313,7 +313,9 @@ public enum Mixin implements IMixin {
     common_thaumcraft_MixinFixCascadingWorldGenFromThaumcraftWorldGenerator(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinFixCascadingWorldGenFromThaumcraftWorldGenerator,
         "thaumcraft.MixinFixCascadingWorldGenFromThaumcraftWorldGenerator"),
-
+    common_thaumcraft_MixinWorldGenGreatwoodTrees(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinWorldGenGreatwoodTrees,
+        "thaumcraft.MixinWorldGenGreatwoodTrees"),
     common_gardenstuff_MixinWorldGenCandelilla(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldGenCandelilla,
         "gardenstuff.MixinWorldGenCandelilla"),
