@@ -107,8 +107,8 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
     @Unique
     private boolean optimizationsAndTweaks$checkBlockAtPosition(int[] position) {
         try {
-            Block var16 = this.worldObj.getBlock(position[0], position[1], position[2]);
-            return (var16 == Blocks.air || var16 == ConfigBlocks.blockMagicalLeaves);
+            Block block = this.worldObj.getBlock(position[0], position[1], position[2]);
+            return (block.isAir(this.worldObj, position[0], position[1], position[2]) || block == ConfigBlocks.blockMagicalLeaves);
         } catch (Exception var17) {
             return false;
         }
