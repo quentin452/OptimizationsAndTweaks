@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.lib.world.WorldGenGreatwoodTrees;
@@ -406,51 +407,53 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
     void placeBlockLine(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger, Block par3) {
         int[] var4 = new int[]{0, 0, 0};
         byte var5 = 0;
+        byte var6 = optimizationsAndTweaks$findLargestDifference(par1ArrayOfInteger, par2ArrayOfInteger, var4);
 
-        byte var6;
-        for(var6 = 0; var5 < 3; ++var5) {
+        if (var4[var6] != 0) {
+            byte var7 = otherCoordPairs[var6];
+            byte var8 = otherCoordPairs[var6 + 3];
+            byte var9 = (byte) (var4[var6] > 0 ? 1 : -1);
+            double var10 = (double) var4[var7] / (double) var4[var6];
+            double var12 = (double) var4[var8] / (double) var4[var6];
+            int[] var14 = new int[]{0, 0, 0};
+            int var15 = 0;
+
+            for (int var16 = var4[var6] + var9; var15 != var16; var15 += var9) {
+                var14[var6] = MathHelper.floor_double((par1ArrayOfInteger[var6] + var15) + 0.5);
+                var14[var7] = MathHelper.floor_double(par1ArrayOfInteger[var7] + var15 * var10 + 0.5);
+                var14[var8] = MathHelper.floor_double(par1ArrayOfInteger[var8] + var15 * var12 + 0.5);
+                byte var17 = optimizationsAndTweaks$calculateDirection(var14, par1ArrayOfInteger);
+                this.setBlockAndNotifyAdequately(this.worldObj, var14[0], var14[1], var14[2], par3, var17);
+            }
+        }
+    }
+    @Unique
+    byte optimizationsAndTweaks$findLargestDifference(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger, int[] var4) {
+        byte var6 = 0;
+        for (byte var5 = 0; var5 < 3; ++var5) {
             var4[var5] = par2ArrayOfInteger[var5] - par1ArrayOfInteger[var5];
             if (Math.abs(var4[var5]) > Math.abs(var4[var6])) {
                 var6 = var5;
             }
         }
-
-        if (var4[var6] != 0) {
-            byte var7 = otherCoordPairs[var6];
-            byte var8 = otherCoordPairs[var6 + 3];
-            byte var9;
-            if (var4[var6] > 0) {
-                var9 = 1;
-            } else {
-                var9 = -1;
-            }
-
-            double var10 = (double)var4[var7] / (double)var4[var6];
-            double var12 = (double)var4[var8] / (double)var4[var6];
-            int[] var14 = new int[]{0, 0, 0};
-            int var15 = 0;
-
-            for(int var16 = var4[var6] + var9; var15 != var16; var15 += var9) {
-                var14[var6] = MathHelper.floor_double((par1ArrayOfInteger[var6] + var15) + 0.5);
-                var14[var7] = MathHelper.floor_double(par1ArrayOfInteger[var7] + var15 * var10 + 0.5);
-                var14[var8] = MathHelper.floor_double(par1ArrayOfInteger[var8] + var15 * var12 + 0.5);
-                byte var17 = 0;
-                int var18 = Math.abs(var14[0] - par1ArrayOfInteger[0]);
-                int var19 = Math.abs(var14[2] - par1ArrayOfInteger[2]);
-                int var20 = Math.max(var18, var19);
-                if (var20 > 0) {
-                    if (var18 == var20) {
-                        var17 = 4;
-                    } else if (var19 == var20) {
-                        var17 = 8;
-                    }
-                }
-
-                this.setBlockAndNotifyAdequately(this.worldObj, var14[0], var14[1], var14[2], par3, var17);
+        return var6;
+    }
+    @Unique
+    byte optimizationsAndTweaks$calculateDirection(int[] var14, int[] par1ArrayOfInteger) {
+        byte var17 = 0;
+        int var18 = Math.abs(var14[0] - par1ArrayOfInteger[0]);
+        int var19 = Math.abs(var14[2] - par1ArrayOfInteger[2]);
+        int var20 = Math.max(var18, var19);
+        if (var20 > 0) {
+            if (var18 == var20) {
+                var17 = 4;
+            } else if (var19 == var20) {
+                var17 = 8;
             }
         }
-
+        return var17;
     }
+
     @Shadow
     void generateTrunk() {
         int var1 = this.basePos[0];
