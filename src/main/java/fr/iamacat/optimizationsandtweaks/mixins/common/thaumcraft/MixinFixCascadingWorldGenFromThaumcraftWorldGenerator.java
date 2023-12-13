@@ -1,11 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
 import cpw.mods.fml.common.IWorldGenerator;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.Thaumcraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -32,10 +32,7 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 @Mixin(ThaumcraftWorldGenerator.class)
 public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {
@@ -225,14 +222,41 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Overwrite
     public static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood,
                                           boolean eerie, boolean small) {
-        for (Aspect as : c) {
+        List<Aspect> complexAspects = new ArrayList<>();
+        List<Aspect> basicAspects = new ArrayList<>();
+
+        optimizationsAndTweaks$sortAspects(c, complexAspects, basicAspects);
+
+        NodeType type = optimizationsAndTweaks$determineNodeType(random, silverwood, eerie);
+
+        NodeModifier modifier = optimizationsAndTweaks$determineNodeModifier(random);
+        BiomeGenBase bg = world.getBiomeGenForCoords(x, z);
+        Thaumcraft.BiomeAuraResult result = optimizationsAndTweaks$calculateBiomeAura(bg, type, silverwood, small, random);
+        int baura = result.getBaura();
+        type = result.getType();
+
+        AspectList al = optimizationsAndTweaks$generateAspectList(random, complexAspects, basicAspects, bg, type);
+
+        int value = random.nextInt(baura / 2) + baura / 2;
+
+        optimizationsAndTweaks$applyThresholds(world, x, y, z, random, value, type, modifier);
+
+        createNodeAt(world, x, y, z, type, modifier, al);
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$sortAspects(Collection<Aspect> aspects, List<Aspect> complexAspects, List<Aspect> basicAspects) {
+        for (Aspect as : aspects) {
             if (as.getComponents() != null) {
                 complexAspects.add(as);
             } else {
                 basicAspects.add(as);
             }
         }
+    }
 
+    @Unique
+    private static NodeType optimizationsAndTweaks$determineNodeType(Random random, boolean silverwood, boolean eerie) {
         NodeType type = NodeType.NORMAL;
 
         if (silverwood) {
@@ -262,7 +286,10 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                     break;
             }
         }
-
+        return type;
+    }
+    @Unique
+    private static NodeModifier optimizationsAndTweaks$determineNodeModifier(Random random) {
         NodeModifier modifier = null;
         if (random.nextInt(Config.specialNodeRarity / 2) == 0) {
             int randomModifier = random.nextInt(3);
@@ -278,8 +305,10 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                     break;
             }
         }
-
-        BiomeGenBase bg = world.getBiomeGenForCoords(x, z);
+        return modifier;
+    }
+    @Unique
+    private static Thaumcraft.BiomeAuraResult optimizationsAndTweaks$calculateBiomeAura(BiomeGenBase bg, NodeType type, boolean silverwood, boolean small, Random random) {
         int baura = BiomeHandler.getBiomeAura(bg);
 
         if (type != NodeType.PURE && bg.biomeID == biomeTaint.biomeID) {
@@ -294,10 +323,14 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             baura /= 4;
         }
 
-        int value = random.nextInt(baura / 2) + baura / 2;
+        return new Thaumcraft.BiomeAuraResult(baura, type);
+    }
+
+    @Unique
+    private static AspectList optimizationsAndTweaks$generateAspectList(Random random, List<Aspect> complexAspects, List<Aspect> basicAspects, BiomeGenBase bg, NodeType type) {
+        AspectList al = new AspectList();
 
         Aspect ra = BiomeHandler.getRandomBiomeTag(bg.biomeID, random);
-        AspectList al = new AspectList();
         if (ra != null) {
             al.add(ra, 2);
         } else {
@@ -307,55 +340,60 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             al.add(aa, 1);
         }
 
-            int water;
-            for (water = 0; water < 3; ++water) {
-                if (random.nextBoolean()) {
-                    Aspect aa;
-                    if (random.nextInt(Config.specialNodeRarity) == 0) {
-                        aa = complexAspects.get(random.nextInt(complexAspects.size()));
-                        al.merge(aa, 1);
-                    } else {
-                        aa = basicAspects.get(random.nextInt(basicAspects.size()));
-                        al.merge(aa, 1);
-                    }
-                }
-            }
-
-            if (type == NodeType.HUNGRY) {
-                al.merge(Aspect.HUNGER, 2);
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.GREED, 1);
-                }
-            } else if (type == NodeType.PURE) {
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.LIFE, 2);
+        int water;
+        for (water = 0; water < 3; ++water) {
+            if (random.nextBoolean()) {
+                Aspect aa;
+                if (random.nextInt(Config.specialNodeRarity) == 0) {
+                    aa = complexAspects.get(random.nextInt(complexAspects.size()));
+                    al.merge(aa, 1);
                 } else {
-                    al.merge(Aspect.ORDER, 2);
-                }
-            } else if (type == NodeType.DARK) {
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.DEATH, 1);
-                }
-
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.UNDEAD, 1);
-                }
-
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.ENTROPY, 1);
-                }
-
-                if (random.nextBoolean()) {
-                    al.merge(Aspect.DARKNESS, 1);
+                    aa = basicAspects.get(random.nextInt(basicAspects.size()));
+                    al.merge(aa, 1);
                 }
             }
+        }
 
-        int a;
-        water = 0;
+        if (type == NodeType.HUNGRY) {
+            al.merge(Aspect.HUNGER, 2);
+            if (random.nextBoolean()) {
+                al.merge(Aspect.GREED, 1);
+            }
+        } else if (type == NodeType.PURE) {
+            if (random.nextBoolean()) {
+                al.merge(Aspect.LIFE, 2);
+            } else {
+                al.merge(Aspect.ORDER, 2);
+            }
+        } else if (type == NodeType.DARK) {
+            if (random.nextBoolean()) {
+                al.merge(Aspect.DEATH, 1);
+            }
+
+            if (random.nextBoolean()) {
+                al.merge(Aspect.UNDEAD, 1);
+            }
+
+            if (random.nextBoolean()) {
+                al.merge(Aspect.ENTROPY, 1);
+            }
+
+            if (random.nextBoolean()) {
+                al.merge(Aspect.DARKNESS, 1);
+            }
+        }
+
+
+        return al;
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type, NodeModifier modifier) {
+        int water = 0;
         int lava = 0;
         int stone = 0;
         int foliage = 0;
-
+        int a;
         final int THRESHOLD_WATER = 100;
         final int THRESHOLD_LAVA = 100;
         final int THRESHOLD_STONE = 500;
@@ -386,7 +424,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             }
         }
 
-        al = new AspectList();
+        AspectList al = new AspectList();
 
         if (water > THRESHOLD_WATER) {
             al.merge(Aspect.WATER, 1);
@@ -405,24 +443,24 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             al.merge(Aspect.PLANT, 1);
         }
 
-            int[] spread = new int[al.size()];
-            float total = 0.0F;
+        int[] spread = new int[al.size()];
+        float total = 0.0F;
 
-            for (a = 0; a < spread.length; ++a) {
-                if (al.getAmount(al.getAspectsSorted()[a]) == 2) {
-                    spread[a] = 50 + random.nextInt(25);
-                } else {
-                    spread[a] = 25 + random.nextInt(50);
-                }
-
-                total += spread[a];
+        for (a = 0; a < spread.length; ++a) {
+            if (al.getAmount(al.getAspectsSorted()[a]) == 2) {
+                spread[a] = 50 + random.nextInt(25);
+            } else {
+                spread[a] = 25 + random.nextInt(50);
             }
 
-            for (a = 0; a < spread.length; ++a) {
-                al.merge(al.getAspectsSorted()[a], (int) (spread[a] / total * value));
-            }
+            total += spread[a];
+        }
 
-            createNodeAt(world, x, y, z, type, modifier, al);
+        for (a = 0; a < spread.length; ++a) {
+            al.merge(al.getAspectsSorted()[a], (int) (spread[a] / total * value));
+        }
+
+        createNodeAt(world, x, y, z, type, modifier, al);
     }
 
     /**
