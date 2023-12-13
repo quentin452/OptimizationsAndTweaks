@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -107,11 +108,11 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                 .getTerrainType()
                 .getWorldTypeName()
                 .startsWith("flat") && (newGen || Config.regenStructure)) {
-                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
+                this.optimizationsAndTweaks$generateGreatwoodgenerateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
             }
 
             if (newGen || Config.regenAura) {
-                this.generateWildNodes(world, random, chunkX, chunkZ, auraGen);
+                this.optimizationsAndTweaks$generateWildNodes(world, random, chunkX, chunkZ, auraGen);
             }
     }
 
@@ -157,7 +158,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                         false);
                 }
 
-                auraGen = this.generateWildNodes(world, random, chunkX, chunkZ, auraGen);
+                auraGen = this.optimizationsAndTweaks$generateWildNodes(world, random, chunkX, chunkZ, auraGen);
             }
 
             if (blacklist == -1 && Config.genStructure
@@ -178,7 +179,6 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                     if (random.nextInt(150) == 0) {
                         if (mound.generate(world, random, randPosX, randPosY, randPosZ)) {
                             auraGen = true;
-                            int value = random.nextInt(200) + 400;
                             createRandomNodeAt(
                                 world,
                                 randPosX + 9,
@@ -214,7 +214,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                     }
                 }
 
-                this.generateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
+                this.optimizationsAndTweaks$generateGreatwoodgenerateTotem(world, random, chunkX, chunkZ, auraGen, newGen);
             }
     }
 
@@ -225,83 +225,87 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Overwrite
     public static void createRandomNodeAt(World world, int x, int y, int z, Random random, boolean silverwood,
                                           boolean eerie, boolean small) {
-            if (basicAspects.isEmpty()) {
-
-                for (Aspect as : c) {
-                    if (as.getComponents() != null) {
-                        complexAspects.add(as);
-                    } else {
-                        basicAspects.add(as);
-                    }
-                }
-            }
-
-            NodeType type = NodeType.NORMAL;
-            if (silverwood) {
-                type = NodeType.PURE;
-            } else if (eerie) {
-                type = NodeType.DARK;
-            } else if (random.nextInt(Config.specialNodeRarity) == 0) {
-                switch (random.nextInt(10)) {
-                    case 0:
-                    case 1:
-                    case 2:
-                        type = NodeType.DARK;
-                        break;
-                    case 3:
-                    case 4:
-                    case 5:
-                        type = NodeType.UNSTABLE;
-                        break;
-                    case 6:
-                    case 7:
-                    case 8:
-                        type = NodeType.PURE;
-                        break;
-                    case 9:
-                        type = NodeType.HUNGRY;
-                }
-            }
-
-            NodeModifier modifier = null;
-            if (random.nextInt(Config.specialNodeRarity / 2) == 0) {
-                switch (random.nextInt(3)) {
-                    case 0:
-                        modifier = NodeModifier.BRIGHT;
-                        break;
-                    case 1:
-                        modifier = NodeModifier.PALE;
-                        break;
-                    case 2:
-                        modifier = NodeModifier.FADING;
-                }
-            }
-
-            BiomeGenBase bg = world.getBiomeGenForCoords(x, z);
-            int baura = BiomeHandler.getBiomeAura(bg);
-            if (type != NodeType.PURE && bg.biomeID == biomeTaint.biomeID) {
-                baura = (int) (baura * 1.5F);
-                if (random.nextBoolean()) {
-                    type = NodeType.TAINTED;
-                    baura = (int) (baura * 1.5F);
-                }
-            }
-
-            if (silverwood || small) {
-                baura /= 4;
-            }
-
-            int value = random.nextInt(baura / 2) + baura / 2;
-            Aspect ra = BiomeHandler.getRandomBiomeTag(bg.biomeID, random);
-            AspectList al = new AspectList();
-            if (ra != null) {
-                al.add(ra, 2);
+        for (Aspect as : c) {
+            if (as.getComponents() != null) {
+                complexAspects.add(as);
             } else {
-                Aspect aa = complexAspects.get(random.nextInt(complexAspects.size()));
-                al.add(aa, 1);
-                aa = basicAspects.get(random.nextInt(basicAspects.size()));
-                al.add(aa, 1);
+                basicAspects.add(as);
             }
+        }
+
+        NodeType type = NodeType.NORMAL;
+
+        if (silverwood) {
+            type = NodeType.PURE;
+        } else if (eerie) {
+            type = NodeType.DARK;
+        } else if (random.nextInt(Config.specialNodeRarity) == 0) {
+            int randomType = random.nextInt(10);
+            switch (randomType) {
+                case 0:
+                case 1:
+                case 2:
+                    type = NodeType.DARK;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    type = NodeType.UNSTABLE;
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                    type = NodeType.PURE;
+                    break;
+                case 9:
+                    type = NodeType.HUNGRY;
+                    break;
+            }
+        }
+
+        NodeModifier modifier = null;
+        if (random.nextInt(Config.specialNodeRarity / 2) == 0) {
+            int randomModifier = random.nextInt(3);
+            switch (randomModifier) {
+                case 0:
+                    modifier = NodeModifier.BRIGHT;
+                    break;
+                case 1:
+                    modifier = NodeModifier.PALE;
+                    break;
+                case 2:
+                    modifier = NodeModifier.FADING;
+                    break;
+            }
+        }
+
+        BiomeGenBase bg = world.getBiomeGenForCoords(x, z);
+        int baura = BiomeHandler.getBiomeAura(bg);
+
+        if (type != NodeType.PURE && bg.biomeID == biomeTaint.biomeID) {
+            baura = (int) (baura * 1.5F);
+            if (random.nextBoolean()) {
+                type = NodeType.TAINTED;
+                baura = (int) (baura * 1.5F);
+            }
+        }
+
+        if (silverwood || small) {
+            baura /= 4;
+        }
+
+        int value = random.nextInt(baura / 2) + baura / 2;
+
+        Aspect ra = BiomeHandler.getRandomBiomeTag(bg.biomeID, random);
+        AspectList al = new AspectList();
+        if (ra != null) {
+            al.add(ra, 2);
+        } else {
+            Aspect aa = complexAspects.get(random.nextInt(complexAspects.size()));
+            al.add(aa, 1);
+            aa = basicAspects.get(random.nextInt(basicAspects.size()));
+            al.add(aa, 1);
+        }
 
             int water;
             for (water = 0; water < 3; ++water) {
@@ -346,51 +350,60 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                 }
             }
 
-            water = 0;
-            int lava = 0;
-            int stone = 0;
-            int foliage = 0;
+        int a;
+        water = 0;
+        int lava = 0;
+        int stone = 0;
+        int foliage = 0;
 
-            int a;
-            try {
-                for (int xx = -5; xx <= 5; ++xx) {
-                    for (int yy = -5; yy <= 5; ++yy) {
-                        for (a = -5; a <= 5; ++a) {
-                            try {
-                                Block bi = world.getBlock(x + xx, y + yy, z + a);
-                                if (bi.getMaterial() == Material.water) {
-                                    ++water;
-                                } else if (bi.getMaterial() == Material.lava) {
-                                    ++lava;
-                                } else if (bi == Blocks.stone) {
-                                    ++stone;
-                                }
+        final int THRESHOLD_WATER = 100;
+        final int THRESHOLD_LAVA = 100;
+        final int THRESHOLD_STONE = 500;
+        final int THRESHOLD_FOLIAGE = 100;
 
-                                if (bi.isFoliage(world, x + xx, y + yy, z + a)) {
-                                    ++foliage;
-                                }
-                            } catch (Exception ignored) {}
-                        }
+        for (int xx = -5; xx <= 5; ++xx) {
+            for (int yy = -5; yy <= 5; ++yy) {
+                for (a = -5; a <= 5; ++a) {
+                    int blockX = x + xx;
+                    int blockY = y + yy;
+                    int blockZ = z + a;
+
+                    Block block = world.getBlock(blockX, blockY, blockZ);
+                    Material material = block.getMaterial();
+
+                    if (material == Material.water) {
+                        ++water;
+                    } else if (material == Material.lava) {
+                        ++lava;
+                    } else if (block == Blocks.stone) {
+                        ++stone;
+                    }
+
+                    if (block.isFoliage(world, blockX, blockY, blockZ)) {
+                        ++foliage;
                     }
                 }
-            } catch (Exception ignored) {}
-
-            if (water > 100) {
-                al.merge(Aspect.WATER, 1);
             }
+        }
 
-            if (lava > 100) {
-                al.merge(Aspect.FIRE, 1);
-                al.merge(Aspect.EARTH, 1);
-            }
+        al = new AspectList();
 
-            if (stone > 500) {
-                al.merge(Aspect.EARTH, 1);
-            }
+        if (water > THRESHOLD_WATER) {
+            al.merge(Aspect.WATER, 1);
+        }
 
-            if (foliage > 100) {
-                al.merge(Aspect.PLANT, 1);
-            }
+        if (lava > THRESHOLD_LAVA) {
+            al.merge(Aspect.FIRE, 1);
+            al.merge(Aspect.EARTH, 1);
+        }
+
+        if (stone > THRESHOLD_STONE) {
+            al.merge(Aspect.EARTH, 1);
+        }
+
+        if (foliage > THRESHOLD_FOLIAGE) {
+            al.merge(Aspect.PLANT, 1);
+        }
 
             int[] spread = new int[al.size()];
             float total = 0.0F;
@@ -411,7 +424,6 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
 
             createNodeAt(world, x, y, z, type, modifier, al);
     }
-
 
     /**
      * @author t
@@ -434,7 +446,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     }
 
     @Unique
-    private boolean generateWildNodes(World world, Random random, int chunkX, int chunkZ, boolean auraGen) {
+    private boolean optimizationsAndTweaks$generateWildNodes(World world, Random random, int chunkX, int chunkZ, boolean auraGen) {
             if (Config.genAura && random.nextInt(Config.nodeRarity) == 0 && !auraGen) {
                 int x = chunkX * 16 + random.nextInt(16);
                 int z = chunkZ * 16 + random.nextInt(16);
@@ -471,7 +483,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     }
 
     @Unique
-    private boolean generateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen) {
+    private boolean optimizationsAndTweaks$generateGreatwoodgenerateTotem(World world, Random random, int chunkX, int chunkZ, boolean auraGen, boolean newGen) {
             if (Config.genStructure && (world.provider.dimensionId == 0 || world.provider.dimensionId == 1)
                 && newGen
                 && !auraGen
@@ -499,10 +511,12 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                     || world.getBlock(x, topy, z) == Blocks.dirt
                     || world.getBlock(x, topy, z) == Blocks.stone
                     || world.getBlock(x, topy, z) == Blocks.netherrack) {
-                    int count;
-                    for (count = 1; (world.isAirBlock(x, topy + count, z)
+                    int count = 1;
+                    while ((world.isAirBlock(x, topy + count, z)
                         || world.getBlock(x, topy + count, z) == Blocks.snow_layer
-                        || world.getBlock(x, topy + count, z) == Blocks.tallgrass) && count < 3; ++count) {}
+                        || world.getBlock(x, topy + count, z) == Blocks.tallgrass) && count < 3) {
+                        count++;
+                    }
 
                     if (count >= 2) {
                         world.setBlock(x, topy, z, ConfigBlocks.blockCosmeticSolid, 1, 3);
@@ -545,25 +559,22 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
             }
 
             if (random.nextInt(25) == 7) {
-                generateGreatwood(world, random, chunkX, chunkZ);
+                optimizationsAndTweaks$generateGreatwood(world, random, chunkX, chunkZ);
             }
 
             int randPosX = chunkX * 16 + random.nextInt(16);
             int randPosZ = chunkZ * 16 + random.nextInt(16);
             int randPosY = world.getHeightValue(randPosX, randPosZ);
-            if (randPosY <= world.getActualHeight()) {
-                if (world.getBiomeGenForCoords(randPosX, randPosZ).topBlock == Blocks.sand
+            if (randPosY <= world.getActualHeight() && (world.getBiomeGenForCoords(randPosX, randPosZ).topBlock == Blocks.sand
                     && world.getBiomeGenForCoords(randPosX, randPosZ).temperature > 1.0F
-                    && random.nextInt(30) == 0) {
+                    && random.nextInt(30) == 0)) {
                     optimizationsAndTweaks$generateFlowers(world, random, randPosX, randPosY, randPosZ);
-                }
-
             }
         }
     }
 
     @Unique
-    private static boolean generateGreatwood(World world, Random random, int chunkX, int chunkZ) {
+    private static boolean optimizationsAndTweaks$generateGreatwood(World world, Random random, int chunkX, int chunkZ) {
         int x = chunkX * 16 + random.nextInt(16);
         int z = chunkZ * 16 + random.nextInt(16);
         int y = world.getHeightValue(x, z);
@@ -639,16 +650,10 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
                             md = 6;
                         }
                     }
-
-                    try {
-                        (new WorldGenMinable(ConfigBlocks.blockCustomOre, md, 6, Blocks.stone))
-                            .generate(world, random, randPosX, randPosY, randPosZ);
-                    } catch (Exception var13) {
-                        var13.printStackTrace();
-                    }
+                    (new WorldGenMinable(ConfigBlocks.blockCustomOre, md, 6, Blocks.stone))
+                        .generate(world, random, randPosX, randPosY, randPosZ);
                 }
             }
-
         }
     }
 
@@ -663,12 +668,18 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         int z = chunkZ * 16 + random.nextInt(16);
         int y = world.getHeightValue(x, z);
         BiomeGenBase bio = world.getBiomeGenForCoords(x, z);
-        if (bio.equals(biomeMagicalForest) || bio.equals(biomeTaint)
-            || !BiomeDictionary.isBiomeOfType(bio, BiomeDictionary.Type.MAGICAL)
-                && bio.biomeID != BiomeGenBase.forestHills.biomeID
-                && bio.biomeID != BiomeGenBase.birchForestHills.biomeID) {
-        } else {
+
+        if(optimizationsAndTweaks$shouldGenerateSilverwoodTree(bio)) {
             (new WorldGenSilverwoodTrees(false, 7, 4)).func_76484_a(world, random, x, y, z);
         }
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$shouldGenerateSilverwoodTree(BiomeGenBase bio) {
+        return !bio.equals(biomeMagicalForest)
+            && !bio.equals(biomeTaint)
+            && !BiomeDictionary.isBiomeOfType(bio, BiomeDictionary.Type.MAGICAL)
+            && bio.biomeID != BiomeGenBase.forestHills.biomeID
+            && bio.biomeID != BiomeGenBase.birchForestHills.biomeID;
     }
 }
