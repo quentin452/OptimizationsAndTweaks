@@ -40,7 +40,6 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
      */
     @Override
     public void decorate(World world, Random random, int x, int z) {
-        if (OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest) {
             for (int i = 0; i < 3; ++i) {
                 int posX = x + random.nextInt(16) + 8;
                 int posZ = z + random.nextInt(16) + 8;
@@ -82,7 +81,6 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
                 }
             }
             super.decorate(world, random, x, z);
-        }
     }
 
     @Unique
