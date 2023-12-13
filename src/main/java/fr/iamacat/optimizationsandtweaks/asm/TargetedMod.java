@@ -63,6 +63,7 @@ public enum TargetedMod implements ITargetedMod {
     ESSENCEOFTHEGOD("Essence_of_the_Gods", false, startsWith("Essence_of_the_Gods")),
     ESSENCEOFTHEGODFORK("eotg", false, startsWith("eotg")),
     GROWTHCRAFT("growthcraft", false, startsWith("growthcraft")),
+    DISEASECRAFT("DiseaseCraft", false, startsWith("DiseaseCraft")),
 
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),

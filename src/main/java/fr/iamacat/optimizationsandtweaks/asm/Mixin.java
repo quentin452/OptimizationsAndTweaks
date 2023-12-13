@@ -266,6 +266,10 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinBuildCraftConfig,
         "buildcraft.addon.oiltweaks.MixinBuildCraftConfig"),
 
+    common_diseasecraft_MixinMedUtils(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinMedUtils,
+        "diseasecraft.MixinMedUtils"),
+
     common_industrialupgrade_MixinRegisterOreDict(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinRegisterOreDict, "industrialupgrade.MixinRegisterOreDict"),
     common_gemsnjewels_MixinModBlocksGemsNJewels(Side.COMMON,

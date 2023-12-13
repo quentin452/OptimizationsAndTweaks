@@ -269,6 +269,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPriorityExecutor;
+
+    @Config.Comment("Optimize MedUtils from DiseaseCraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMedUtils;
     @Config.Comment("Optimize PlayerAether from Aether")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -473,7 +478,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixNoSuchMethodException;
-
     @Config.Comment("Fix Crash between Endlessids and Lord of the rings mod(but problem remain , does not support higher id than the vanilla scope(256)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
