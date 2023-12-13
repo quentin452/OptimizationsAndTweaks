@@ -324,6 +324,10 @@ public enum Mixin implements IMixin {
     common_thaumcraft_MixinWorldGenEldritchRing(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldGenEldritchRing,
         "thaumcraft.MixinWorldGenEldritchRing"),
+
+    common_thaumcraft_MixinWorldGenCustomFlowersSide(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinWorldGenCustomFlowers,
+        "thaumcraft.MixinWorldGenCustomFlowers"),
     common_gardenstuff_MixinWorldGenCandelilla(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldGenCandelilla,
         "gardenstuff.MixinWorldGenCandelilla"),
