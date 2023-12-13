@@ -96,74 +96,70 @@ public class MixinWorldGenSilverwoodTrees extends WorldGenAbstractTree {
     }
     @Unique
     private void optimizationsAndTweaks$generateLogBlocks(World world, Random random, int x, int y, int z, int height, int k2, int chance, boolean lastblock) {
-        Block block2 = world.getBlock(x, y + k2, z);
-        if (block2.isAir(world, x, y + k2, z) || block2.isLeaves(world, x, y + k2, z) || block2.isReplaceable(world, x, y + k2, z)) {
-            if (k2 > 0 && !lastblock && random.nextInt(chance) == 0) {
-                this.setBlockAndNotifyAdequately(world, x, y + k2, z, ConfigBlocks.blockMagicalLog, 2);
-                ThaumcraftWorldGenerator.createRandomNodeAt(world, x, y + k2, z, random, true, false, false);
-            } else {
-                this.setBlockAndNotifyAdequately(world, x, y + k2, z, ConfigBlocks.blockMagicalLog, 1);
+        Block magicalLog = ConfigBlocks.blockMagicalLog;
+
+        for (int xOffset = -2; xOffset <= 2; xOffset++) {
+            for (int zOffset = -2; zOffset <= 2; zOffset++) {
+                if (Math.abs(xOffset) == 2 || Math.abs(zOffset) == 2) {
+                    int logMeta = (Math.abs(xOffset) == 2 && Math.abs(zOffset) == 2) ? 5 : 9;
+                    this.setBlockAndNotifyAdequately(world, x + xOffset, y, z + zOffset, magicalLog, logMeta);
+                    this.setBlockAndNotifyAdequately(world, x + xOffset, y - 1, z + zOffset, magicalLog, 1);
+                }
             }
-
-            this.setBlockAndNotifyAdequately(world, x - 1, y + k2, z, ConfigBlocks.blockMagicalLog, 1);
-            this.setBlockAndNotifyAdequately(world, x + 1, y + k2, z, ConfigBlocks.blockMagicalLog, 1);
-            this.setBlockAndNotifyAdequately(world, x, y + k2, z - 1, ConfigBlocks.blockMagicalLog, 1);
-            this.setBlockAndNotifyAdequately(world, x, y + k2, z + 1, ConfigBlocks.blockMagicalLog, 1);
         }
 
-        this.setBlockAndNotifyAdequately(world, x, y + k2, z, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x - 1, y, z - 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x + 1, y, z + 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x - 1, y, z + 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x + 1, y, z - 1, ConfigBlocks.blockMagicalLog, 1);
-        if (random.nextInt(3) != 0) {
-            this.setBlockAndNotifyAdequately(world, x - 1, y + 1, z - 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+        for (int yOffset = 0; yOffset < height; yOffset++) {
+            Block block = world.getBlock(x, y + yOffset, z);
 
-        if (random.nextInt(3) != 0) {
-            this.setBlockAndNotifyAdequately(world, x + 1, y + 1, z + 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+            if (block.isAir(world, x, y + yOffset, z) || block.isLeaves(world, x, y + yOffset, z) || block.isReplaceable(world, x, y + yOffset, z)) {
+                boolean generateNode = k2 > 0 && !lastblock && random.nextInt(chance) == 0;
 
-        if (random.nextInt(3) != 0) {
-            this.setBlockAndNotifyAdequately(world, x - 1, y + 1, z + 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                if (generateNode) {
+                    this.setBlockAndNotifyAdequately(world, x, y + yOffset, z, magicalLog, 2);
+                    ThaumcraftWorldGenerator.createRandomNodeAt(world, x, y + yOffset, z, random, true, false, false);
+                } else {
+                    this.setBlockAndNotifyAdequately(world, x, y + yOffset, z, magicalLog, 1);
+                }
 
-        if (random.nextInt(3) != 0) {
-            this.setBlockAndNotifyAdequately(world, x + 1, y + 1, z - 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                // Place logs around the central log if the conditions are met
+                if (yOffset > 0) {
+                    if (random.nextInt(3) != 0) {
+                        this.setBlockAndNotifyAdequately(world, x - 1, y + yOffset, z - 1, magicalLog, 1);
+                    }
 
-        this.setBlockAndNotifyAdequately(world, x - 2, y, z, ConfigBlocks.blockMagicalLog, 5);
-        this.setBlockAndNotifyAdequately(world, x + 2, y, z, ConfigBlocks.blockMagicalLog, 5);
-        this.setBlockAndNotifyAdequately(world, x, y, z - 2, ConfigBlocks.blockMagicalLog, 9);
-        this.setBlockAndNotifyAdequately(world, x, y, z + 2, ConfigBlocks.blockMagicalLog, 9);
-        this.setBlockAndNotifyAdequately(world, x - 2, y - 1, z, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x + 2, y - 1, z, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x, y - 1, z - 2, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x, y - 1, z + 2, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x - 1, y + (height - 4), z - 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x + 1, y + (height - 4), z + 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x - 1, y + (height - 4), z + 1, ConfigBlocks.blockMagicalLog, 1);
-        this.setBlockAndNotifyAdequately(world, x + 1, y + (height - 4), z - 1, ConfigBlocks.blockMagicalLog, 1);
-        if (random.nextInt(3) == 0) {
-            this.setBlockAndNotifyAdequately(world, x - 1, y + (height - 5), z - 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                    if (random.nextInt(3) != 0) {
+                        this.setBlockAndNotifyAdequately(world, x + 1, y + yOffset, z + 1, magicalLog, 1);
+                    }
 
-        if (random.nextInt(3) == 0) {
-            this.setBlockAndNotifyAdequately(world, x + 1, y + (height - 5), z + 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                    if (random.nextInt(3) != 0) {
+                        this.setBlockAndNotifyAdequately(world, x - 1, y + yOffset, z + 1, magicalLog, 1);
+                    }
 
-        if (random.nextInt(3) == 0) {
-            this.setBlockAndNotifyAdequately(world, x - 1, y + (height - 5), z + 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                    if (random.nextInt(3) != 0) {
+                        this.setBlockAndNotifyAdequately(world, x + 1, y + yOffset, z - 1, magicalLog, 1);
+                    }
+                }
 
-        if (random.nextInt(3) == 0) {
-            this.setBlockAndNotifyAdequately(world, x + 1, y + (height - 5), z - 1, ConfigBlocks.blockMagicalLog, 1);
-        }
+                // Place additional logs near the top if conditions are met
+                if (yOffset >= height - 4) {
+                    if (random.nextInt(3) == 0) {
+                        this.setBlockAndNotifyAdequately(world, x - 1, y + yOffset, z - 1, magicalLog, 1);
+                    }
 
-        this.setBlockAndNotifyAdequately(world, x - 2, y + (height - 4), z, ConfigBlocks.blockMagicalLog, 5);
-        this.setBlockAndNotifyAdequately(world, x + 2, y + (height - 4), z, ConfigBlocks.blockMagicalLog, 5);
-        this.setBlockAndNotifyAdequately(world, x, y + (height - 4), z - 2, ConfigBlocks.blockMagicalLog, 9);
-        this.setBlockAndNotifyAdequately(world, x, y + (height - 4), z + 2, ConfigBlocks.blockMagicalLog, 9);
+                    if (random.nextInt(3) == 0) {
+                        this.setBlockAndNotifyAdequately(world, x + 1, y + yOffset, z + 1, magicalLog, 1);
+                    }
+
+                    if (random.nextInt(3) == 0) {
+                        this.setBlockAndNotifyAdequately(world, x - 1, y + yOffset, z + 1, magicalLog, 1);
+                    }
+
+                    if (random.nextInt(3) == 0) {
+                        this.setBlockAndNotifyAdequately(world, x + 1, y + yOffset, z - 1, magicalLog, 1);
+                    }
+                }
+            }
+        }
     }
 
     @Unique
