@@ -20,9 +20,8 @@ public class MixinLongHashMap {
     @Shadow
     private int capacity = 12;
     @Shadow
-    private static int getHashIndex(int p_76158_0_, int p_76158_1_)
-    {
-        return p_76158_0_ & p_76158_1_ - 1;
+    private static int getHashIndex(int p_76158_0_, int p_76158_1_) {
+        return p_76158_0_ % p_76158_1_;
     }
     /**
      * @author
@@ -49,9 +48,18 @@ public class MixinLongHashMap {
      * @reason
      */
     @Overwrite
-    public boolean containsItem(long p_76161_1_)
-    {
-        return this.getEntry(p_76161_1_) != null;
+    public boolean containsItem(long p_76161_1_) {
+        int hashIndex = getHashIndex(Classers.Entry.getHashedKey(p_76161_1_), this.hashArray.length);
+        Classers.Entry entry = this.hashArray[hashIndex];
+
+        while (entry != null) {
+            if (entry.key == p_76161_1_) {
+                return true;
+            }
+            entry = entry.nextEntry;
+        }
+
+        return false;
     }
     public final Classers.Entry getEntry(long p_76160_1_)
     {
