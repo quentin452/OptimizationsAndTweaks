@@ -50,10 +50,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityLivingUpdate;
-    @Config.Comment("Optimize Chunk Provider Server")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkProviderServer;
     @Config.Comment("Optimize EntityRenderer Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
