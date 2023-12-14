@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 @Mixin(value = World.class,priority = 999)
 public class MixinWorld {
@@ -92,10 +91,22 @@ public class MixinWorld {
     public void updateEntities() {
         this.theProfiler.startSection("entities");
         this.theProfiler.startSection("global");
+
+        updateWeatherEffects();
+        optimizationsAndTweaks$removeEntitiesFromChunks();
+        optimizationsAndTweaks$updateLoadedEntities();
+        optimizationsAndTweaks$updateBlockEntities();
+        optimizationsAndTweaks$handlePendingBlockEntities();
+
+        this.theProfiler.endSection();
+        this.theProfiler.endSection();
+    }
+
+    @Unique
+    private void updateWeatherEffects() {
+        this.theProfiler.startSection("weatherEffects");
         List<Entity> entitiesToRemove = new ArrayList<>();
 
-        this.theProfiler.startSection("weatherEffects");
-        // Update weather effects
         Iterator<Entity> weatherEffectsIterator = this.weatherEffects.iterator();
         while (weatherEffectsIterator.hasNext()) {
             Entity entity = weatherEffectsIterator.next();
@@ -112,11 +123,15 @@ public class MixinWorld {
                 entitiesToRemove.add(entity);
             }
         }
-        this.theProfiler.startSection("removeFromChunks");
-        this.weatherEffects.removeAll(entitiesToRemove);
 
-        // Remove entities from chunks
-        this.theProfiler.startSection("loadedEntities");
+        this.weatherEffects.removeAll(entitiesToRemove);
+        this.theProfiler.endSection();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$removeEntitiesFromChunks() {
+        this.theProfiler.startSection("removeFromChunks");
+
         for (Object unloadedEntityObj : this.unloadedEntityList) {
             if (unloadedEntityObj instanceof Entity) {
                 Entity unloadedEntity = (Entity) unloadedEntityObj;
@@ -126,20 +141,20 @@ public class MixinWorld {
         }
 
         this.unloadedEntityList.clear();
+        this.theProfiler.endSection();
+    }
 
-        // Update loaded entities
+    @Unique
+    private void optimizationsAndTweaks$updateLoadedEntities() {
+        this.theProfiler.startSection("loadedEntities");
         List<Entity> entitiesToRemoveLoadedList = new ArrayList<>();
+
         for (Object loadedEntityObj : this.loadedEntityList) {
             if (loadedEntityObj instanceof Entity) {
                 Entity loadedEntity = (Entity) loadedEntityObj;
 
                 if (loadedEntity != null) {
-                    if (loadedEntity.ridingEntity != null && (loadedEntity.ridingEntity.isDead || loadedEntity.ridingEntity.riddenByEntity != loadedEntity)) {
-                        loadedEntity.ridingEntity.riddenByEntity = null;
-                        loadedEntity.ridingEntity = null;
-                    }
-                    this.theProfiler.startSection("tick");
-
+                    // Update ridingEntity and perform tick
                     try {
                         this.updateEntity(loadedEntity);
                     } catch (Throwable throwable1) {
@@ -149,9 +164,6 @@ public class MixinWorld {
                         }
                     }
 
-
-        this.theProfiler.endSection();
-        this.theProfiler.startSection("remove");
                     if (loadedEntity.isDead) {
                         if (loadedEntity != null) {
                             optimizationsAndTweaks$removeEntityFromChunk(loadedEntity);
@@ -159,20 +171,25 @@ public class MixinWorld {
                             onEntityRemoved(loadedEntity);
                         }
                     }
-                    this.theProfiler.endSection();
                 }
             }
         }
 
         this.loadedEntityList.removeAll(entitiesToRemoveLoadedList);
-        this.theProfiler.endStartSection("blockEntities");
-        // Update block entities
+        this.theProfiler.endSection();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$updateBlockEntities() {
+        this.theProfiler.startSection("blockEntities");
         List<TileEntity> tileEntitiesToRemove = new ArrayList<>();
         Iterator<TileEntity> tileEntityIterator = this.loadedTileEntityList.iterator();
+
         while (tileEntityIterator.hasNext()) {
             TileEntity tileEntity = tileEntityIterator.next();
 
             try {
+                // Update block entity
                 if (!tileEntity.isInvalid() && tileEntity.hasWorldObj() && this.blockExists(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord)) {
                     tileEntity.updateEntity();
                 }
@@ -180,14 +197,16 @@ public class MixinWorld {
                 optimizationsAndTweaks$handleTileEntityThrowable(tileEntity, throwable);
                 tileEntitiesToRemove.add(tileEntity);
             }
-            this.theProfiler.endStartSection("pendingBlockEntities");
-            if (tileEntity.isInvalid()) {
-                tileEntityIterator.remove();
-                optimizationsAndTweaks$removeInvalidTileEntity(tileEntity);
-            }
         }
 
-        // Handle pending block entities
+        this.loadedTileEntityList.removeAll(tileEntitiesToRemove);
+        this.theProfiler.endSection();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$handlePendingBlockEntities() {
+        this.theProfiler.startSection("pendingBlockEntities");
+
         for (Object addedTileEntityObj : this.addedTileEntityList) {
             if (addedTileEntityObj instanceof TileEntity) {
                 TileEntity addedTileEntity = (TileEntity) addedTileEntityObj;
@@ -201,12 +220,10 @@ public class MixinWorld {
                 }
             }
         }
-        this.addedTileEntityList.clear();
 
-        this.theProfiler.endSection();
+        this.addedTileEntityList.clear();
         this.theProfiler.endSection();
     }
-
     @Unique
     private void optimizationsAndTweaks$handleEntityThrowable(Entity entity, Throwable throwable) {
         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
