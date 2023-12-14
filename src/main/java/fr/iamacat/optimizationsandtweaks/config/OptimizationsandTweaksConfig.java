@@ -11,10 +11,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITarget;
-    @Config.Comment("Optimize AnvilChunkLoader Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinAnvilChunkLoader;
 
     @Config.Comment("Enabling Block Name Debugger for getPendingBlockUpdates from WorldServer Class?.")
     @Config.DefaultBoolean(false)
