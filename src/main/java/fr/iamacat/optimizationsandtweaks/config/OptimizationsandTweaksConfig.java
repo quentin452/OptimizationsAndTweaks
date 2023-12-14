@@ -365,11 +365,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAnimal;
 
-    @Config.Comment("Optimize LongHashMap")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLongHashMap;
-
     @Config.Comment("Optimize EntityAIFollowParent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
