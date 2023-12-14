@@ -88,7 +88,6 @@ public class MixinWorld {
      * @reason
      */
 
-    // TODO add PROFILERS
     @Overwrite
     public void updateEntities() {
         this.theProfiler.startSection("entities");
