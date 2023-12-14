@@ -107,7 +107,15 @@ public class MixinPlayerAether {
     private UUID uuid = UUID.fromString("df6eabe7-6947-4a56-9099-002f90370706");
     @Shadow
     private AttributeModifier healthModifier;
+    @Unique
+    private boolean getIsJumping() {
+        return this.isJumping;
+    }
 
+    @Unique
+    private void setIsJumping(boolean isJumping) {
+        this.isJumping = isJumping;
+    }
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinPlayerAether) {
@@ -174,11 +182,8 @@ public class MixinPlayerAether {
             this.wingSinage += this.getEntity().onGround ? 0.15F : 0.75F;
             this.wingSinage %= 6.283186F;
 
-            boolean hasJumped = ReflectionHelper.getPrivateValue(
-                EntityLivingBase.class,
-                this.getEntity(),
-                new String[] { "isJumping", "field_70703_bu" });
-            this.setJumping(hasJumped);
+            boolean hasJumped = this.getIsJumping();
+            this.setIsJumping(hasJumped);
 
             this.getEntity().worldObj.theProfiler.startSection("portal");
             if (this.getEntity().dimension == AetherConfig.getAetherDimensionID() && this.getEntity().posY < -2.0) {
