@@ -672,11 +672,8 @@ public class MixinWorld {
         this.notifyBlockOfNeighborChange(p_147459_1_, p_147459_2_, p_147459_3_ - 1, p_147459_4_);
         this.notifyBlockOfNeighborChange(p_147459_1_, p_147459_2_, p_147459_3_ + 1, p_147459_4_);
     }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+
+    @Shadow
     public void notifyBlockOfNeighborChange(int p_147460_1_, int p_147460_2_, int p_147460_3_, final Block p_147460_4_)
     {
         if (!this.isRemote)
