@@ -135,6 +135,9 @@ public enum Mixin implements IMixin {
         "core.MixinWorldServer"),
     common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
         "core.MixinStatsComponent"),
+
+    common_core_MixinLongHashMap(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinLongHashMap,
+        "core.MixinLongHashMap"),
     common_core_MixinChunk(Side.COMMON,
         avoid(TargetedMod.BLENDTRONIC).and(m -> OptimizationsandTweaksConfig.enableMixinChunk), "core.MixinChunk"),
     common_akatsuki_MixinEntitySasori(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri,
