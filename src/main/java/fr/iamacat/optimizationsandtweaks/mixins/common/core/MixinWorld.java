@@ -87,236 +87,169 @@ public class MixinWorld {
      * @author
      * @reason
      */
+
+    // TODO add PROFILERS
     @Overwrite
-    public void updateEntities()
-    {
-        this.theProfiler.startSection("entities");
-        this.theProfiler.startSection("global");
-        int i;
-        Entity entity;
-        CrashReport crashreport;
-        CrashReportCategory crashreportcategory;
+    public void updateEntities() {
+        List<Entity> entitiesToRemove = new ArrayList<>();
 
-        for (i = 0; i < this.weatherEffects.size(); ++i)
-        {
-            entity = (Entity)this.weatherEffects.get(i);
+        // Update weather effects
+        Iterator<Entity> weatherEffectsIterator = this.weatherEffects.iterator();
+        while (weatherEffectsIterator.hasNext()) {
+            Entity entity = weatherEffectsIterator.next();
 
-            try
-            {
+            try {
                 ++entity.ticksExisted;
                 entity.onUpdate();
-            }
-            catch (Throwable throwable2)
-            {
-                crashreport = CrashReport.makeCrashReport(throwable2, "Ticking entity");
-                crashreportcategory = crashreport.makeCategory("Entity being ticked");
-
-                if (entity == null)
-                {
-                    crashreportcategory.addCrashSection("Entity", "~~NULL~~");
-                }
-                else
-                {
-                    entity.addEntityCrashInfo(crashreportcategory);
-                }
-
-                if (ForgeModContainer.removeErroringEntities)
-                {
-                    FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-                    removeEntity(entity);
-                }
-                else
-                {
-                    throw new ReportedException(crashreport);
-                }
+            } catch (Throwable throwable2) {
+                optimizationsAndTweaks$handleEntityThrowable(entity, throwable2);
+                entitiesToRemove.add(entity);
             }
 
-            if (entity.isDead)
-            {
-                this.weatherEffects.remove(i--);
+            if (entity.isDead) {
+                entitiesToRemove.add(entity);
             }
         }
+        this.weatherEffects.removeAll(entitiesToRemove);
 
-        this.theProfiler.endStartSection("remove");
-        this.loadedEntityList.removeAll(this.unloadedEntityList);
-        int j;
-        int l;
-
-        for (i = 0; i < this.unloadedEntityList.size(); ++i)
-        {
-            entity = (Entity)this.unloadedEntityList.get(i);
-            j = entity.chunkCoordX;
-            l = entity.chunkCoordZ;
-
-            if (entity.addedToChunk && this.chunkExists(j, l))
-            {
-                this.getChunkFromChunkCoords(j, l).removeEntity(entity);
+        // Remove entities from chunks
+        for (Object unloadedEntityObj : this.unloadedEntityList) {
+            if (unloadedEntityObj instanceof Entity) {
+                Entity unloadedEntity = (Entity) unloadedEntityObj;
+                optimizationsAndTweaks$removeEntityFromChunk(unloadedEntity);
+                onEntityRemoved(unloadedEntity);
             }
-        }
-
-        for (i = 0; i < this.unloadedEntityList.size(); ++i)
-        {
-            this.onEntityRemoved((Entity)this.unloadedEntityList.get(i));
         }
 
         this.unloadedEntityList.clear();
-        this.theProfiler.endStartSection("regular");
 
-        for (i = 0; i < this.loadedEntityList.size(); ++i)
-        {
-            entity = (Entity)this.loadedEntityList.get(i);
+        // Update loaded entities
+        List<Entity> entitiesToRemoveLoadedList = new ArrayList<>();
+        for (Object loadedEntityObj : this.loadedEntityList) {
+            if (loadedEntityObj instanceof Entity) {
+                Entity loadedEntity = (Entity) loadedEntityObj;
 
-            if (entity.ridingEntity != null)
-            {
-                if (!entity.ridingEntity.isDead && entity.ridingEntity.riddenByEntity == entity)
-                {
-                    continue;
-                }
-
-                entity.ridingEntity.riddenByEntity = null;
-                entity.ridingEntity = null;
-            }
-
-            this.theProfiler.startSection("tick");
-
-            if (!entity.isDead)
-            {
-                try
-                {
-                    this.updateEntity(entity);
-                }
-                catch (Throwable throwable1)
-                {
-                    crashreport = CrashReport.makeCrashReport(throwable1, "Ticking entity");
-                    crashreportcategory = crashreport.makeCategory("Entity being ticked");
-                    entity.addEntityCrashInfo(crashreportcategory);
-
-                    if (ForgeModContainer.removeErroringEntities)
-                    {
-                        FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-                        removeEntity(entity);
+                if (loadedEntity != null) {
+                    if (loadedEntity.ridingEntity != null && (loadedEntity.ridingEntity.isDead || loadedEntity.ridingEntity.riddenByEntity != loadedEntity)) {
+                        loadedEntity.ridingEntity.riddenByEntity = null;
+                        loadedEntity.ridingEntity = null;
                     }
-                    else
-                    {
-                        throw new ReportedException(crashreport);
+
+                    try {
+                        this.updateEntity(loadedEntity);
+                    } catch (Throwable throwable1) {
+                        if (loadedEntity != null) {
+                            optimizationsAndTweaks$handleEntityThrowable(loadedEntity, throwable1);
+                            entitiesToRemoveLoadedList.add(loadedEntity);
+                        }
                     }
-                }
-            }
 
-            this.theProfiler.endSection();
-            this.theProfiler.startSection("remove");
-
-            if (entity.isDead)
-            {
-                j = entity.chunkCoordX;
-                l = entity.chunkCoordZ;
-
-                if (entity.addedToChunk && this.chunkExists(j, l))
-                {
-                    this.getChunkFromChunkCoords(j, l).removeEntity(entity);
-                }
-
-                this.loadedEntityList.remove(i--);
-                this.onEntityRemoved(entity);
-            }
-
-            this.theProfiler.endSection();
-        }
-
-        this.theProfiler.endStartSection("blockEntities");
-        this.field_147481_N = true;
-        Iterator iterator = this.loadedTileEntityList.iterator();
-
-        while (iterator.hasNext())
-        {
-            TileEntity tileentity = (TileEntity)iterator.next();
-
-            if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
-            {
-                try
-                {
-                    tileentity.updateEntity();
-                }
-                catch (Throwable throwable)
-                {
-                    crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
-                    crashreportcategory = crashreport.makeCategory("Block entity being ticked");
-                    tileentity.func_145828_a(crashreportcategory);
-                    if (ForgeModContainer.removeErroringTileEntities)
-                    {
-                        FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-                        tileentity.invalidate();
-                        setBlockToAir(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
-                    }
-                    else
-                    {
-                        throw new ReportedException(crashreport);
-                    }
-                }
-            }
-
-            if (tileentity.isInvalid())
-            {
-                iterator.remove();
-
-                if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
-                {
-                    Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-
-                    if (chunk != null)
-                    {
-                        chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
-                    }
-                }
-            }
-        }
-
-        if (!this.field_147483_b.isEmpty())
-        {
-            for (Object tile : field_147483_b)
-            {
-                ((TileEntity)tile).onChunkUnload();
-            }
-            this.loadedTileEntityList.removeAll(this.field_147483_b);
-            this.field_147483_b.clear();
-        }
-
-        this.field_147481_N = false;
-
-        this.theProfiler.endStartSection("pendingBlockEntities");
-
-        if (!this.addedTileEntityList.isEmpty())
-        {
-            for (int k = 0; k < this.addedTileEntityList.size(); ++k)
-            {
-                TileEntity tileentity1 = (TileEntity)this.addedTileEntityList.get(k);
-
-                if (!tileentity1.isInvalid())
-                {
-                    if (!this.loadedTileEntityList.contains(tileentity1))
-                    {
-                        this.loadedTileEntityList.add(tileentity1);
-                    }
-                }
-                else
-                {
-                    if (this.chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
-                    {
-                        Chunk chunk1 = this.getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
-
-                        if (chunk1 != null)
-                        {
-                            chunk1.removeInvalidTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15);
+                    if (loadedEntity.isDead) {
+                        if (loadedEntity != null) {
+                            optimizationsAndTweaks$removeEntityFromChunk(loadedEntity);
+                            entitiesToRemoveLoadedList.add(loadedEntity);
+                            onEntityRemoved(loadedEntity);
                         }
                     }
                 }
             }
+        }
+        this.loadedEntityList.removeAll(entitiesToRemoveLoadedList);
 
-            this.addedTileEntityList.clear();
+        // Update block entities
+        List<TileEntity> tileEntitiesToRemove = new ArrayList<>();
+        Iterator<TileEntity> tileEntityIterator = this.loadedTileEntityList.iterator();
+        while (tileEntityIterator.hasNext()) {
+            TileEntity tileEntity = tileEntityIterator.next();
+
+            try {
+                if (!tileEntity.isInvalid() && tileEntity.hasWorldObj() && this.blockExists(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord)) {
+                    tileEntity.updateEntity();
+                }
+            } catch (Throwable throwable) {
+                optimizationsAndTweaks$handleTileEntityThrowable(tileEntity, throwable);
+                tileEntitiesToRemove.add(tileEntity);
+            }
+
+            if (tileEntity.isInvalid()) {
+                tileEntityIterator.remove();
+                optimizationsAndTweaks$removeInvalidTileEntity(tileEntity);
+            }
         }
 
-        this.theProfiler.endSection();
-        this.theProfiler.endSection();
+        // Handle pending block entities
+        for (Object addedTileEntityObj : this.addedTileEntityList) {
+            if (addedTileEntityObj instanceof TileEntity) {
+                TileEntity addedTileEntity = (TileEntity) addedTileEntityObj;
+
+                if (!addedTileEntity.isInvalid()) {
+                    if (!this.loadedTileEntityList.contains(addedTileEntity)) {
+                        this.loadedTileEntityList.add(addedTileEntity);
+                    }
+                } else {
+                    optimizationsAndTweaks$removeInvalidTileEntity(addedTileEntity);
+                }
+            }
+        }
+        this.addedTileEntityList.clear();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$handleEntityThrowable(Entity entity, Throwable throwable) {
+        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
+        CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being ticked");
+
+        if (entity == null) {
+            crashreportcategory.addCrashSection("Entity", "~~NULL~~");
+
+            if (ForgeModContainer.removeErroringEntities) {
+                FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
+            } else {
+                throw new ReportedException(crashreport);
+            }
+        } else {
+            entity.addEntityCrashInfo(crashreportcategory);
+
+            if (ForgeModContainer.removeErroringEntities) {
+                FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
+                removeEntity(entity);
+            } else {
+                throw new ReportedException(crashreport);
+            }
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$handleTileEntityThrowable(TileEntity tileEntity, Throwable throwable) {
+        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+        CrashReportCategory crashreportcategory = crashreport.makeCategory("Block entity being ticked");
+        tileEntity.func_145828_a(crashreportcategory);
+        if (ForgeModContainer.removeErroringTileEntities) {
+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
+            tileEntity.invalidate();
+            setBlockToAir(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+        } else {
+            throw new ReportedException(crashreport);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$removeEntityFromChunk(Entity entity) {
+        int j = entity.chunkCoordX;
+        int l = entity.chunkCoordZ;
+        if (entity.addedToChunk && this.chunkExists(j, l)) {
+            this.getChunkFromChunkCoords(j, l).removeEntity(entity);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$removeInvalidTileEntity(TileEntity tileEntity) {
+        if (this.chunkExists(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4)) {
+            Chunk chunk = this.getChunkFromChunkCoords(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4);
+            if (chunk != null) {
+                chunk.removeInvalidTileEntity(tileEntity.xCoord & 15, tileEntity.yCoord, tileEntity.zCoord & 15);
+            }
+        }
     }
 
     @Shadow
