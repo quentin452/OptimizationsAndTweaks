@@ -91,8 +91,11 @@ public class MixinWorld {
     // TODO add PROFILERS
     @Overwrite
     public void updateEntities() {
+        this.theProfiler.startSection("entities");
+        this.theProfiler.startSection("global");
         List<Entity> entitiesToRemove = new ArrayList<>();
 
+        this.theProfiler.startSection("weatherEffects");
         // Update weather effects
         Iterator<Entity> weatherEffectsIterator = this.weatherEffects.iterator();
         while (weatherEffectsIterator.hasNext()) {
@@ -110,9 +113,11 @@ public class MixinWorld {
                 entitiesToRemove.add(entity);
             }
         }
+        this.theProfiler.startSection("removeFromChunks");
         this.weatherEffects.removeAll(entitiesToRemove);
 
         // Remove entities from chunks
+        this.theProfiler.startSection("loadedEntities");
         for (Object unloadedEntityObj : this.unloadedEntityList) {
             if (unloadedEntityObj instanceof Entity) {
                 Entity unloadedEntity = (Entity) unloadedEntityObj;
@@ -134,6 +139,7 @@ public class MixinWorld {
                         loadedEntity.ridingEntity.riddenByEntity = null;
                         loadedEntity.ridingEntity = null;
                     }
+                    this.theProfiler.startSection("tick");
 
                     try {
                         this.updateEntity(loadedEntity);
@@ -144,6 +150,9 @@ public class MixinWorld {
                         }
                     }
 
+
+        this.theProfiler.endSection();
+        this.theProfiler.startSection("remove");
                     if (loadedEntity.isDead) {
                         if (loadedEntity != null) {
                             optimizationsAndTweaks$removeEntityFromChunk(loadedEntity);
@@ -151,11 +160,13 @@ public class MixinWorld {
                             onEntityRemoved(loadedEntity);
                         }
                     }
+                    this.theProfiler.endSection();
                 }
             }
         }
-        this.loadedEntityList.removeAll(entitiesToRemoveLoadedList);
 
+        this.loadedEntityList.removeAll(entitiesToRemoveLoadedList);
+        this.theProfiler.endStartSection("blockEntities");
         // Update block entities
         List<TileEntity> tileEntitiesToRemove = new ArrayList<>();
         Iterator<TileEntity> tileEntityIterator = this.loadedTileEntityList.iterator();
@@ -170,7 +181,7 @@ public class MixinWorld {
                 optimizationsAndTweaks$handleTileEntityThrowable(tileEntity, throwable);
                 tileEntitiesToRemove.add(tileEntity);
             }
-
+            this.theProfiler.endStartSection("pendingBlockEntities");
             if (tileEntity.isInvalid()) {
                 tileEntityIterator.remove();
                 optimizationsAndTweaks$removeInvalidTileEntity(tileEntity);
@@ -192,6 +203,9 @@ public class MixinWorld {
             }
         }
         this.addedTileEntityList.clear();
+
+        this.theProfiler.endSection();
+        this.theProfiler.endSection();
     }
 
     @Unique
