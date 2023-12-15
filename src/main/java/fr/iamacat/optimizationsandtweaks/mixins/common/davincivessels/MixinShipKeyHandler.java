@@ -37,7 +37,7 @@ public class MixinShipKeyHandler {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     @SubscribeEvent
     public void updateControl(TickEvent.PlayerTickEvent e) {
         if (!isValidUpdateEvent(e)) {
