@@ -101,6 +101,10 @@ public class MixinPathFinder {
         return hasTrapdoor ? 2 : 1;
     }
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     private PathPoint getSafePoint(Entity entity, int x, int y, int z, PathPoint currentPoint, int yOffset) {
         int verticalOffset = this.getVerticalOffset(entity, x, y, z, currentPoint);
