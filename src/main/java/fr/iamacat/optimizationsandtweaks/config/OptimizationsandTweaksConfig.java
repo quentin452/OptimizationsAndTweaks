@@ -20,6 +20,32 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAxisAlignedBB;
+
+    @Config.Comment("Optimize IntCache Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinIntCache;
+    @Config.Comment("Optimize EntityTrackerEntry Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityTrackerEntry;
+
+    @Config.Comment("Optimize EntityTracker Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityTracker;
+    @Config.Comment("Optimize NetworkManager Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNetworkManager;
+    @Config.Comment("Optimize ModifiableAttributeInstance Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinModifiableAttributeInstance;
+    @Config.Comment("Optimize DimensionManager Class.")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinDimensionManager;
     @Config.Comment("Optimize RandomPositionGenerator Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -82,7 +108,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-    @Config.Comment("Add better logging to Exception getting block type in world")
+    @Config.Comment("Optimiz World Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
@@ -111,6 +137,19 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAINearestAttackableTarget;
+    @Config.Comment("Optimize Block Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlock;
+
+    @Config.Comment("Optimize BlockDynamicLiquid Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockDynamicLiquid;
+    @Config.Comment("Optimize Entity Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntity;
     @Config.Comment("Optimize EntitySpellParticleFX")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -378,6 +417,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLootPPHelper;
+
+    @Config.Comment("Optimize HooksCore from CofhCore Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinHooksCore;
     @Config.Comment("Optimize Utils performances class from Et futurum REQUIEM")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

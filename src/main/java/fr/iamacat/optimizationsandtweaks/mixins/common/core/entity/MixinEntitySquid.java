@@ -59,7 +59,6 @@ public class MixinEntitySquid extends EntityWaterMob {
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (OptimizationsandTweaksConfig.enableMixinEntitySquid) {
             super.onLivingUpdate();
             this.prevSquidPitch = this.squidPitch;
             this.prevSquidYaw = this.squidYaw;
@@ -84,7 +83,7 @@ public class MixinEntitySquid extends EntityWaterMob {
                     f = this.squidRotation / (float) Math.PI;
                     this.tentacleAngle = MathHelper.sin(f * f * (float) Math.PI) * (float) Math.PI * 0.25F;
 
-                    if ((double) f > 0.75D) {
+                    if (f > 0.75D) {
                         this.randomMotionSpeed = 1.0F;
                         this.field_70871_bB = 1.0F;
                     } else {
@@ -119,8 +118,7 @@ public class MixinEntitySquid extends EntityWaterMob {
                     this.motionZ = 0.0D;
                 }
 
-                this.squidPitch = (float) ((double) this.squidPitch + (double) (-90.0F - this.squidPitch) * 0.02D);
+                this.squidPitch = (float) (this.squidPitch + (-90.0F - this.squidPitch) * 0.02D);
             }
-        }
     }
 }

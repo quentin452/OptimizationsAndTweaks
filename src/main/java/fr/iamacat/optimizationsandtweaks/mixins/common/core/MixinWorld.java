@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import com.google.common.collect.ImmutableSetMultimap;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -11,9 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Facing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ReportedException;
+import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -325,30 +324,51 @@ public class MixinWorld {
      */
     @Overwrite
     public Block getBlock(int x, int y, int z) {
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256) {
-            try {
-                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-                if (chunk != null) {
-                    Block block = chunk.getBlock(x & 15, y, z & 15);
-                    if (block != null) {
-                        return block;
-                    } else {
-                        Block blockAtCoordinates = chunk.getBlock(x & 15, y, z & 15);
-                        System.out.println("(Optimizationsandtweaks logging)Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
-                        System.out.println("(Optimizationsandtweaks logging)Block type: " + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
-                        System.out.println("(Optimizationsandtweaks logging)Chunk: " + chunk);
-                    }
-                } else {
-                    System.out.println("(Optimizationsandtweaks logging)Chunk is null at coordinates - x: " + (x >> 4) + ", z: " + (z >> 4));
-                }
-                return Blocks.air;
-            } catch (Throwable throwable) {
-                System.out.println("(Optimizationsandtweaks logging)Exception getting block type in world at coordinates - x: " + x + ", y: " + y + ", z: " + z);
-                System.out.println("(Optimizationsandtweaks logging)Exception details: " + throwable);
-            }
+        if (!optimizationsAndTweaks$isValidCoordinates(x, y, z)) {
+            return Blocks.air;
         }
+
+        try {
+            Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+            if (chunk == null) {
+                System.out.println("(Optimizationsandtweaks logging)Chunk is null at coordinates - x: " + (x >> 4) + ", z: " + (z >> 4));
+                return Blocks.air;
+            }
+
+            Block block = chunk.getBlock(x & 15, y, z & 15);
+            if (block == null) {
+                optimizationsAndTweaks$logNullBlockDetails(x, y, z, chunk);
+                return Blocks.air;
+            }
+
+            return block;
+        } catch (Throwable throwable) {
+            optimizationsAndTweaks$logExceptionDetails(x, y, z, throwable);
+        }
+
         return Blocks.air;
     }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isValidCoordinates(int x, int y, int z) {
+        return x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$logNullBlockDetails(int x, int y, int z, Chunk chunk) {
+        Block blockAtCoordinates = chunk.getBlock(x & 15, y, z & 15);
+        System.out.println("(Optimizationsandtweaks logging)Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+        System.out.println("(Optimizationsandtweaks logging)Block type: " + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
+        System.out.println("(Optimizationsandtweaks logging)Chunk: " + chunk);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$logExceptionDetails(int x, int y, int z, Throwable throwable) {
+        System.out.println("(Optimizationsandtweaks logging)Exception getting block type in world at coordinates - x: " + x + ", y: " + y + ", z: " + z);
+        System.out.println("(Optimizationsandtweaks logging)Exception details: " + throwable);
+    }
+
+
     @Shadow
     public boolean blockExists(int p_72899_1_, int p_72899_2_, int p_72899_3_)
     {
@@ -369,62 +389,58 @@ public class MixinWorld {
     {
         return this.setBlock(x, y, z, Blocks.air, 0, 3);
     }
-    @Shadow
-    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags)
-    {
-        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
-        {
-            if (y < 0)
-            {
-                return false;
-            }
-            else if (y >= 256)
-            {
-                return false;
-            }
-            else
-            {
-                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-                Block block1 = null;
-                net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
-
-                if ((flags & 1) != 0)
-                {
-                    block1 = chunk.getBlock(x & 15, y, z & 15);
-                }
-
-                if (this.captureBlockSnapshots && !this.isRemote)
-                {
-                    blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
-                    this.capturedBlockSnapshots.add(blockSnapshot);
-                }
-
-                boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
-
-                if (!flag && blockSnapshot != null)
-                {
-                    this.capturedBlockSnapshots.remove(blockSnapshot);
-                    blockSnapshot = null;
-                }
-
-                this.theProfiler.startSection("checkLight");
-                this.func_147451_t(x, y, z);
-                this.theProfiler.endSection();
-
-                if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
-                {
-                    // Modularize client and physic updates
-                    this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
-                }
-
-                return flag;
-            }
-        }
-        else
-        {
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags) {
+        if (!optimizationsAndTweaks$isValidCoordinates(x, y, z)) {
             return false;
         }
+
+        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+        Block block1 = null;
+        net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
+
+        if ((flags & 1) != 0) {
+            block1 = chunk.getBlock(x & 15, y, z & 15);
+        }
+
+        if (this.captureBlockSnapshots && !this.isRemote) {
+            blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
+            this.capturedBlockSnapshots.add(blockSnapshot);
+        }
+
+        boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
+
+        if (!flag && blockSnapshot != null) {
+            this.capturedBlockSnapshots.remove(blockSnapshot);
+            blockSnapshot = null;
+        }
+
+        optimizationsAndTweaks$handleLightingUpdates(x, y, z);
+
+        if (flag && blockSnapshot == null) {
+            optimizationsAndTweaks$handleBlockUpdates(x, y, z, chunk, block1, blockIn, flags);
+        }
+
+        return flag;
     }
+
+    @Unique
+    private void optimizationsAndTweaks$handleLightingUpdates(int x, int y, int z) {
+        this.theProfiler.startSection("checkLight");
+        this.func_147451_t(x, y, z);
+        this.theProfiler.endSection();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$handleBlockUpdates(int x, int y, int z, Chunk chunk, Block block1, Block blockIn, int flags) {
+        this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
+    }
+
+
     @Shadow
     public void markAndNotifyBlock(int x, int y, int z, Chunk chunk, Block oldBlock, Block newBlock, int flag)
     {
@@ -443,12 +459,15 @@ public class MixinWorld {
             }
         }
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void markBlockForUpdate(int p_147471_1_, int p_147471_2_, int p_147471_3_)
     {
-        for (int l = 0; l < this.worldAccesses.size(); ++l)
-        {
-            ((IWorldAccess)this.worldAccesses.get(l)).markBlockForUpdate(p_147471_1_, p_147471_2_, p_147471_3_);
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).markBlockForUpdate(p_147471_1_, p_147471_2_, p_147471_3_);
         }
     }
 
@@ -1008,5 +1027,56 @@ public class MixinWorld {
 
         // Check if the block's material has a solid top surface
         return material.blocksMovement() && material.isSolid();
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean isMaterialInBB(AxisAlignedBB bb, Material material) {
+        int minX = MathHelper.floor_double(bb.minX);
+        int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
+        int minY = MathHelper.floor_double(bb.minY);
+        int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
+        int minZ = MathHelper.floor_double(bb.minZ);
+        int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+        for (int x = minX; x < maxX; ++x) {
+            for (int y = minY; y < maxY; ++y) {
+                for (int z = minZ; z < maxZ; ++z) {
+                    Block block = this.getBlock(x, y, z);
+                    if (block.getMaterial() == material) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
+        double closestDistanceSq = -1.0D;
+        EntityPlayer closestPlayer = null;
+
+        for (Object entity : this.playerEntities) {
+            if (!(entity instanceof EntityPlayer)) {
+                continue;
+            }
+
+            EntityPlayer entityPlayer = (EntityPlayer) entity;
+            double playerDistanceSq = entityPlayer.getDistanceSq(x, y, z);
+
+            if ((distance < 0.0D || playerDistanceSq < distance * distance) &&
+                (closestDistanceSq == -1.0D || playerDistanceSq < closestDistanceSq)) {
+                closestDistanceSq = playerDistanceSq;
+                closestPlayer = entityPlayer;
+            }
+        }
+
+        return closestPlayer;
     }
 }

@@ -9,6 +9,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,8 +28,8 @@ public class MixinEntityZombie extends EntityMob {
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    @Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
-    public void onLivingUpdate(CallbackInfo ci) {
+    @Overwrite
+    public void onLivingUpdate() {
         if (OptimizationsandTweaksConfig.enableMixinEntityZombie) {
             super.onLivingUpdate();
             // Add a check for the conditions where the entity can catch fire
@@ -38,7 +39,6 @@ public class MixinEntityZombie extends EntityMob {
 
             // Handle riding logic
             optimizationsAndTweaks$handleRiding();
-            ci.cancel();
         }
     }
 
@@ -62,10 +62,9 @@ public class MixinEntityZombie extends EntityMob {
     @Unique
     private void optimizationsAndTweaks$catchFire() {
         ItemStack helmet = getEquipmentInSlot(4);
-        if (helmet != null) {
-            if (optimizationsAndTweaks$handleDamageableItem(helmet)) {
+        if (helmet != null && (optimizationsAndTweaks$handleDamageableItem(helmet))) {
                 return;
-            }
+
         }
 
         setFire(8);
