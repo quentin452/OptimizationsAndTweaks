@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mixin(DataWatcher.class)
+@Mixin(value = DataWatcher.class,priority = 999)
 public class MixinDataWatcher {
     @Shadow
     private final Entity field_151511_a;
