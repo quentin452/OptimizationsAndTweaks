@@ -400,6 +400,10 @@ public class MixinWorld {
         }
 
         Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+        if (chunk == null) {
+            return false;
+        }
+
         Block block1 = null;
         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
 
@@ -408,10 +412,16 @@ public class MixinWorld {
         }
 
         if (this.captureBlockSnapshots && !this.isRemote) {
-            blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
-            this.capturedBlockSnapshots.add(blockSnapshot);
+            blockSnapshot = null;
+            try {
+                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
+                if (blockSnapshot != null) {
+                    this.capturedBlockSnapshots.add(blockSnapshot);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
         boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
 
         if (!flag && blockSnapshot != null) {
@@ -429,15 +439,16 @@ public class MixinWorld {
     }
 
     @Unique
+    private void optimizationsAndTweaks$handleBlockUpdates(int x, int y, int z, Chunk chunk, Block block1, Block blockIn, int flags) {
+        this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
+    }
+
+
+    @Unique
     private void optimizationsAndTweaks$handleLightingUpdates(int x, int y, int z) {
         this.theProfiler.startSection("checkLight");
         this.func_147451_t(x, y, z);
         this.theProfiler.endSection();
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$handleBlockUpdates(int x, int y, int z, Chunk chunk, Block block1, Block blockIn, int flags) {
-        this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
     }
 
 
