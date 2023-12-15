@@ -34,6 +34,8 @@ public enum TargetedMod implements ITargetedMod {
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
     FALSETWEAKS("Falsetweaks", false, startsWith("Falsetweaks")),
+    DAVINCIVESSELS("archimedesshipsplus", false, startsWith("archimedesshipsplus")),
+    MOVINGWORLD("movingworld", false, startsWith("movingworld")),
 
     HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
     EASYBREEDING("easybreading", false, startsWith("easybreading")),

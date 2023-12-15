@@ -309,6 +309,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPlayerAether;
+
+    @Config.Comment("Optimize ShipKeyHandler Class from Davinci vessels")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinShipKeyHandler;
     @Config.Comment("Optimize AnimTickHandler from Akatsuki mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

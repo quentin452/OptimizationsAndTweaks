@@ -115,6 +115,8 @@ dependencies {
     implementation "curse.maven:ragdoll-corpses-229278:2233455-deobf-sources-api"
     implementation "curse.maven:garden-stuff-225903:2269692-deobf-sources-api"
     implementation "curse.maven:diseasecraft-223623:2329593-deobf-sources-api"
+    implementation "curse.maven:davincis-vessels-228029:2282145-deobf-sources-api"
+    implementation "curse.maven:movingworld-230495:2282144-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
