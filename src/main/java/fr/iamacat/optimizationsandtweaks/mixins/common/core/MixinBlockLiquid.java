@@ -32,56 +32,52 @@ public class MixinBlockLiquid extends Block {
      * Returns a vector indicating the direction and intensity of liquid flow
      */
     @Overwrite
-    public Vec3 getFlowVector(IBlockAccess p_149800_1_, int p_149800_2_, int p_149800_3_, int p_149800_4_) {
+    public Vec3 getFlowVector(IBlockAccess blockAccess, int x, int y, int z) {
         Vec3 vec3 = Vec3.createVectorHelper(0.0D, 0.0D, 0.0D);
-        int l = this.getEffectiveFlowDecay(p_149800_1_, p_149800_2_, p_149800_3_, p_149800_4_);
-        int i1;
+        int decay = getEffectiveFlowDecay(blockAccess, x, y, z);
 
-        for (i1 = 0; i1 < 4; ++i1) {
-            int j1 = p_149800_2_;
-            int k1 = p_149800_4_;
+        for (int i = 0; i < 4; ++i) {
+            int xOffset = x;
+            int zOffset = z;
 
-            if (i1 == 0) j1 = p_149800_2_ - 1;
-            if (i1 == 1) k1 = p_149800_4_ - 1;
-            if (i1 == 2) ++j1;
-            if (i1 == 3) ++k1;
+            if (i == 0) xOffset = x - 1;
+            if (i == 1) zOffset = z - 1;
+            if (i == 2) ++xOffset;
+            if (i == 3) ++zOffset;
 
-            int l1 = this.getEffectiveFlowDecay(p_149800_1_, j1, p_149800_3_, k1);
-            int i2;
+            int neighborDecay = getEffectiveFlowDecay(blockAccess, xOffset, y, zOffset);
+            int diff;
 
-            if (l1 < 0) {
-                if (!p_149800_1_.getBlock(j1, p_149800_3_, k1)
-                    .getMaterial()
-                    .blocksMovement()) {
-                    l1 = this.getEffectiveFlowDecay(p_149800_1_, j1, p_149800_3_ - 1, k1);
+            if (neighborDecay < 0) {
+                if (!blockAccess.getBlock(xOffset, y, zOffset).getMaterial().blocksMovement()) {
+                    neighborDecay = getEffectiveFlowDecay(blockAccess, xOffset, y - 1, zOffset);
 
-                    if (l1 >= 0) {
-                        i2 = l1 - (l - 8);
-                        vec3 = vec3.addVector((j1 - p_149800_2_) * i2, 0, (k1 - p_149800_4_) * i2);
+                    if (neighborDecay >= 0) {
+                        diff = neighborDecay - (decay - 8);
+                        vec3 = vec3.addVector((xOffset - x) * diff, 0, (zOffset - z) * diff);
                     }
                 }
             } else {
-                i2 = l1 - l;
-                vec3 = vec3.addVector((j1 - p_149800_2_) * i2, 0, (k1 - p_149800_4_) * i2);
+                diff = neighborDecay - decay;
+                vec3 = vec3.addVector((xOffset - x) * diff, 0, (zOffset - z) * diff);
             }
         }
 
-        if (p_149800_1_.getBlockMetadata(p_149800_2_, p_149800_3_, p_149800_4_) >= 8) {
-            boolean flag = false;
+        if (blockAccess.getBlockMetadata(x, y, z) >= 8) {
+            boolean solidBlock = false;
 
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
-                    if (this.isBlockSolid(p_149800_1_, p_149800_2_ + i, p_149800_3_, p_149800_4_ + j, i1)) {
-                        flag = true;
+                    if (isBlockSolid(blockAccess, x + i, y, z + j, i)) {
+                        solidBlock = true;
                         break;
                     }
                 }
-                if (flag) break;
+                if (solidBlock) break;
             }
 
-            if (flag) {
-                vec3 = vec3.normalize()
-                    .addVector(0.0D, -6.0D, 0.0D);
+            if (solidBlock) {
+                vec3 = vec3.normalize().addVector(0.0D, -6.0D, 0.0D);
             }
         }
 
@@ -105,15 +101,15 @@ public class MixinBlockLiquid extends Block {
      * value of zero
      */
     @Overwrite
-    protected int getEffectiveFlowDecay(IBlockAccess p_149800_1_, int p_149800_2_, int p_149800_3_, int p_149800_4_) {
-        Block block = p_149800_1_.getBlock(p_149800_2_, p_149800_3_, p_149800_4_);
+    protected int getEffectiveFlowDecay(IBlockAccess blockAccess, int x, int y, int z) {
+        Block block = blockAccess.getBlock(x, y, z);
+        int metadata = blockAccess.getBlockMetadata(x, y, z);
 
-        if (block.getMaterial() != this.blockMaterial) {
-            return -1;
+        if (block.getMaterial() == this.blockMaterial && metadata >= 8) {
+            return metadata;
         }
 
-        int metadata = p_149800_1_.getBlockMetadata(p_149800_2_, p_149800_3_, p_149800_4_);
-
-        return metadata >= 8 ? 0 : metadata;
+        return -1;
     }
+
 }
