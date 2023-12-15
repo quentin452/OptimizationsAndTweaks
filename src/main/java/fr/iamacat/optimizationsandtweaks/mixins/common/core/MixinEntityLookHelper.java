@@ -74,39 +74,50 @@ public class MixinEntityLookHelper {
      */
     @Overwrite
     public void onUpdateLook() {
-        if (OptimizationsandTweaksConfig.enableMixinEntityLookHelper) {
-            this.entity.rotationPitch = 0.0F;
+        this.entity.rotationPitch = 0.0F;
 
-            if (this.isLooking) {
-                this.isLooking = false;
-                double d0 = this.posX - this.entity.posX;
-                double d1 = this.posY - (this.entity.posY + (double) this.entity.getEyeHeight());
-                double d2 = this.posZ - this.entity.posZ;
+        if (this.isLooking) {
+            optimizationsAndTweaks$updateEntityLooking();
+        } else {
+            optimizationsAndTweaks$updateEntityNonLooking();
+        }
 
-                double angleToDegrees = 180.0D / Math.PI;
+        optimizationsAndTweaks$limitEntityRotation();
+    }
 
-                double atan2Result = FastMath.atan2(d2, d0);
-                float f = (float) (atan2Result * angleToDegrees) - 90.0F;
-                float f1 = (float) (-FastMath.atan2(d1, Math.sqrt(d0 * d0 + d2 * d2)) * angleToDegrees);
+    @Unique
+    private void optimizationsAndTweaks$updateEntityLooking() {
+        this.isLooking = false;
+        double dX = this.posX - this.entity.posX;
+        double dY = this.posY - (this.entity.posY + (double) this.entity.getEyeHeight());
+        double dZ = this.posZ - this.entity.posZ;
 
-                this.entity.rotationPitch = this.updateRotation(this.entity.rotationPitch, f1, this.deltaLookPitch);
-                this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, f, this.deltaLookYaw);
-            } else {
-                this.entity.rotationYawHead = this
-                    .updateRotation(this.entity.rotationYawHead, this.entity.renderYawOffset, 10.0F);
+        double angleToDegrees = 180.0D / Math.PI;
+
+        double atan2Result = FastMath.atan2(dZ, dX);
+        float yaw = (float) (atan2Result * angleToDegrees) - 90.0F;
+        float pitch = (float) (-FastMath.atan2(dY, Math.sqrt(dX * dX + dZ * dZ)) * angleToDegrees);
+
+        this.entity.rotationPitch = this.updateRotation(this.entity.rotationPitch, pitch, this.deltaLookPitch);
+        this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, yaw, this.deltaLookYaw);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$updateEntityNonLooking() {
+        this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, this.entity.renderYawOffset, 10.0F);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$limitEntityRotation() {
+        float yawDifference = MathHelper.wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
+
+        if (!this.entity.getNavigator().noPath()) {
+            if (yawDifference < -75.0F) {
+                this.entity.rotationYawHead = this.entity.renderYawOffset - 75.0F;
             }
 
-            float f2 = MathHelper.wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
-
-            if (!this.entity.getNavigator()
-                .noPath()) {
-                if (f2 < -75.0F) {
-                    this.entity.rotationYawHead = this.entity.renderYawOffset - 75.0F;
-                }
-
-                if (f2 > 75.0F) {
-                    this.entity.rotationYawHead = this.entity.renderYawOffset + 75.0F;
-                }
+            if (yawDifference > 75.0F) {
+                this.entity.rotationYawHead = this.entity.renderYawOffset + 75.0F;
             }
         }
     }
