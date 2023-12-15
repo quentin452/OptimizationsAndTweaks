@@ -19,11 +19,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -259,23 +261,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
     }
 
     @Unique
-    protected void collideWithNearbyEntities() {
-        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(
-            this,
-            this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-
-        if (list != null && !list.isEmpty()) {
-            for (int i = 0; i < list.size(); ++i) {
-                Entity entity = (Entity) list.get(i);
-
-                if (entity.canBePushed()) {
-                    this.collideWithEntity(entity);
-                }
-            }
-        }
-    }
-
-    @Unique
     public boolean isPotionActive(Potion p_70644_1_) {
         return this.activePotionsMap.containsKey(p_70644_1_.id);
     }
@@ -381,6 +366,22 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
             super.updateFallState(distanceFallenThisTick, isOnGround);
             ci.cancel();
+        }
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    protected void collideWithNearbyEntities() {
+        AxisAlignedBB expandedBox = this.boundingBox.expand(0.2D, 0.0D, 0.2D);
+        List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, expandedBox);
+
+        if (list != null && !list.isEmpty()) {
+            list.stream()
+                .filter(Entity::canBePushed)
+                .forEach(this::collideWithEntity);
         }
     }
 }
