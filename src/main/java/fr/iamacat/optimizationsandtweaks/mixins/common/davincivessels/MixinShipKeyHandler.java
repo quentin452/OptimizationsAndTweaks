@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @SideOnly(Side.CLIENT)
 @Mixin(ShipKeyHandler.class)
@@ -40,26 +41,26 @@ public class MixinShipKeyHandler {
     @Overwrite(remap = false)
     @SubscribeEvent
     public void updateControl(TickEvent.PlayerTickEvent e) {
-        if (!isValidUpdateEvent(e)) {
+        if (!optimizationsAndTweaks$isValidUpdateEvent(e)) {
             return;
         }
 
-        handleShipGuiKeyPress();
-        handleDisassembleKeyPress(e);
+        optimizationsAndTweaks$handleShipGuiKeyPress();
+        optimizationsAndTweaks$handleDisassembleKeyPress(e);
 
         EntityShip ship = (EntityShip) e.player.ridingEntity;
-        int heightControl = calculateHeightControl();
-        updateShipControl(ship, e.player, heightControl);
+        int heightControl = optimizationsAndTweaks$calculateHeightControl();
+        optimizationsAndTweaks$updateShipControl(ship, e.player, heightControl);
     }
-
-    private boolean isValidUpdateEvent(TickEvent.PlayerTickEvent e) {
+    @Unique
+    private boolean optimizationsAndTweaks$isValidUpdateEvent(TickEvent.PlayerTickEvent e) {
         return e.phase == TickEvent.Phase.START &&
             e.side == Side.CLIENT &&
             e.player == FMLClientHandler.instance().getClientPlayerEntity() &&
             e.player.ridingEntity instanceof EntityShip;
     }
-
-    private void handleShipGuiKeyPress() {
+    @Unique
+    private void optimizationsAndTweaks$handleShipGuiKeyPress() {
         boolean shipGuiKeyPressed = config.kbShipInv.getIsKeyPressed();
         if (shipGuiKeyPressed && !kbShipGuiPrevState) {
             ClientOpenGuiMessage msg = new ClientOpenGuiMessage(2);
@@ -67,8 +68,8 @@ public class MixinShipKeyHandler {
         }
         kbShipGuiPrevState = shipGuiKeyPressed;
     }
-
-    private void handleDisassembleKeyPress(TickEvent.PlayerTickEvent e) {
+    @Unique
+    private void optimizationsAndTweaks$handleDisassembleKeyPress(TickEvent.PlayerTickEvent e) {
         if (!(e.player instanceof EntityPlayer)) {
             return;
         }
@@ -76,17 +77,16 @@ public class MixinShipKeyHandler {
         EntityPlayer player = e.player;
         boolean disassembleKeyPressed = config.kbDisassemble.getIsKeyPressed();
 
-        if (disassembleKeyPressed && !kbDisassemblePrevState) {
-            if (player.ridingEntity instanceof EntityShip) {
+        if (disassembleKeyPressed && !kbDisassemblePrevState && (player.ridingEntity instanceof EntityShip)) {
                 EntityShip ship = (EntityShip) player.ridingEntity;
                 MovingWorldClientActionMessage msg = new MovingWorldClientActionMessage(ship, MovingWorldClientActionMessage.Action.DISASSEMBLE);
                 MovingWorld.instance.network.sendToServer(msg);
-            }
+
         }
         kbDisassemblePrevState = disassembleKeyPressed;
     }
-
-    private int calculateHeightControl() {
+    @Unique
+    private int optimizationsAndTweaks$calculateHeightControl() {
         if (config.kbAlign.getIsKeyPressed()) {
             return 4;
         } else if (config.kbBrake.getIsKeyPressed()) {
@@ -99,7 +99,8 @@ public class MixinShipKeyHandler {
         }
     }
 
-    private void updateShipControl(EntityShip ship, EntityPlayer player, int heightControl) {
+    @Unique
+    private void optimizationsAndTweaks$updateShipControl(EntityShip ship, EntityPlayer player, int heightControl) {
         if (heightControl != ship.getController().getShipControl()) {
             ship.getController().updateControl(ship, player, heightControl);
         }
