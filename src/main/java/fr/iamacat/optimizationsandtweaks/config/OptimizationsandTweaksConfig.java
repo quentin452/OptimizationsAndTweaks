@@ -137,6 +137,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAINearestAttackableTarget;
+
+    @Config.Comment("Optimize EntityAIAvoidEntity")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityAIAvoidEntity;
     @Config.Comment("Optimize Block Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -64,6 +64,9 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityAINearestAttackableTarget(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAINearestAttackableTarget,
         "core.MixinEntityAINearestAttackableTarget"),
+    common_core_MixinEntityAIAvoidEntity(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityAIAvoidEntity,
+        "core.MixinEntityAIAvoidEntity"),
     common_core_MixinEntityList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityList,
         "core.MixinEntityList"),
     /*
