@@ -13,6 +13,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
@@ -52,8 +53,8 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    public void getEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB aabb, List listToFill,
-        IEntitySelector entitySelector) {
+    public void getEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB aabb, List<Entity> listToFill,
+                                               IEntitySelector entitySelector) {
         int minY = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
         int maxY = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
         minY = MathHelper.clamp_int(minY, 0, this.entityLists.length - 1);
@@ -63,23 +64,34 @@ public class MixinChunk {
             for (Object entityObj : this.entityLists[y]) {
                 Entity targetEntity = (Entity) entityObj;
 
-                if (targetEntity != entity && targetEntity.boundingBox.intersectsWith(aabb)
-                    && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity))) {
+                if (optimizationsAndTweaks$isTargetEntityValid(entity, targetEntity, aabb, entitySelector)) {
                     listToFill.add(targetEntity);
-                    Entity[] parts = targetEntity.getParts();
-
-                    if (parts != null) {
-                        for (Entity partEntity : parts) {
-                            if (partEntity != entity && partEntity.boundingBox.intersectsWith(aabb)
-                                && (entitySelector == null || entitySelector.isEntityApplicable(partEntity))) {
-                                listToFill.add(partEntity);
-                            }
-                        }
-                    }
+                    optimizationsAndTweaks$addPartsIfValid(entity, aabb, entitySelector, listToFill, targetEntity);
                 }
             }
         }
     }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity, AxisAlignedBB aabb,
+                                                               IEntitySelector entitySelector) {
+        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb) &&
+            (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb, IEntitySelector entitySelector,
+                                                        List<Entity> listToFill, Entity targetEntity) {
+        Entity[] parts = targetEntity.getParts();
+        if (parts != null) {
+            for (Entity partEntity : parts) {
+                if (optimizationsAndTweaks$isTargetEntityValid(sourceEntity, partEntity, aabb, entitySelector)) {
+                    listToFill.add(partEntity);
+                }
+            }
+        }
+    }
+
 
     /**
      * @author
