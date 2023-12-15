@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.davincivessels;
+package fr.iamacat.optimizationsandtweaks.mixins.client.davincivessels;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

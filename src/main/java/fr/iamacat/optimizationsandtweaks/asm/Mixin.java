@@ -211,7 +211,7 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntityItem"),
     common_ic2_MixinTickHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinTickHandler,
         "ic2.MixinTickHandler"),
-    common_davincivessels_MixinShipKeyHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinShipKeyHandler,
+    client_davincivessels_MixinShipKeyHandler(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinShipKeyHandler,
         "davincivessels.MixinShipKeyHandler"),
 
     common_core_entity_MixinEntityAnimal(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAnimal,
