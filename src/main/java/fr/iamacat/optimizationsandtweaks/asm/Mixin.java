@@ -340,10 +340,6 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinWorldGenGreatwoodTrees,
         "thaumcraft.MixinWorldGenGreatwoodTrees"),
 
-    common_thaumcraft_MixinWorldGenSilverwoodTrees(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinWorldGenSilverwoodTrees,
-        "thaumcraft.MixinWorldGenSilverwoodTrees"),
-
     common_thaumcraft_MixinWorldGenEldritchRing(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldGenEldritchRing,
         "thaumcraft.MixinWorldGenEldritchRing"),
