@@ -88,7 +88,9 @@ public class MixinWorld {
      * @reason
      */
 
-    @Overwrite
+    // todo fix concurrentModificationExceptions when enabled
+
+  /*  @Overwrite
     public void updateEntities() {
         this.theProfiler.startSection("entities");
         this.theProfiler.startSection("global");
@@ -102,6 +104,8 @@ public class MixinWorld {
         this.theProfiler.endSection();
         this.theProfiler.endSection();
     }
+
+   */
 
     @Unique
     private void updateWeatherEffects() {
