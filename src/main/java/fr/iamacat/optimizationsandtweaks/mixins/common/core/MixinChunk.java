@@ -9,6 +9,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,6 +19,33 @@ public class MixinChunk {
 
     @Shadow
     public List[] entityLists;
+
+    @Shadow
+    private ExtendedBlockStorage[] storageArrays;
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getTopFilledSegment() {
+        int low = 0;
+        int high = this.storageArrays.length - 1;
+        int topFilledSegment = 0;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1; // Equivalent to (low + high) / 2 but more efficient
+
+            if (this.storageArrays[mid] != null) {
+                topFilledSegment = this.storageArrays[mid].getYLocation();
+                low = mid + 1; // Continue search in the upper half
+            } else {
+                high = mid - 1; // Continue search in the lower half
+            }
+        }
+
+        return topFilledSegment;
+    }
 
     /**
      * @author
