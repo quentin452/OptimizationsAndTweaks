@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.util.MathHelper;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,9 +38,8 @@ public class MixinEntityMoveHelper {
      * @author iamacatfr
      * @reason optimize tps
      */
-    @Inject(at = @At("HEAD"), method = "onUpdateMoveHelper", cancellable = true)
-    public void onUpdateMoveHelper(CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityMoveHelper) {
+    @Overwrite
+    public void onUpdateMoveHelper() {
             this.entity.setMoveForward(0.0F);
 
             if (this.update) {
@@ -65,8 +65,6 @@ public class MixinEntityMoveHelper {
                     }
                 }
             }
-            ci.cancel();
-        }
     }
 
     /**
