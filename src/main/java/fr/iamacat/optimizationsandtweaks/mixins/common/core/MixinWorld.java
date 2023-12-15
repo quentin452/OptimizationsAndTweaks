@@ -1,9 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import com.google.common.collect.ImmutableSetMultimap;
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -11,13 +9,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Facing;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -27,7 +26,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Mixin(value = World.class,priority = 999)
@@ -80,212 +78,6 @@ public class MixinWorld {
         this.provider = provider;
         this.theProfiler = theProfiler;
     }
-
-
-    /**
-     * @author
-     * @reason
-     */
-
-    // todo fix concurrentModificationExceptions when enabled
-
-  /*  @Overwrite
-    public void updateEntities() {
-        this.theProfiler.startSection("entities");
-        this.theProfiler.startSection("global");
-
-        updateWeatherEffects();
-        optimizationsAndTweaks$removeEntitiesFromChunks();
-        optimizationsAndTweaks$updateLoadedEntities();
-        optimizationsAndTweaks$updateBlockEntities();
-        optimizationsAndTweaks$handlePendingBlockEntities();
-
-        this.theProfiler.endSection();
-        this.theProfiler.endSection();
-    }
-
-   */
-
-    @Unique
-    private void updateWeatherEffects() {
-        this.theProfiler.startSection("weatherEffects");
-        List<Entity> entitiesToRemove = new ArrayList<>();
-
-        Iterator<Entity> weatherEffectsIterator = this.weatherEffects.iterator();
-        while (weatherEffectsIterator.hasNext()) {
-            Entity entity = weatherEffectsIterator.next();
-
-            try {
-                ++entity.ticksExisted;
-                entity.onUpdate();
-            } catch (Throwable throwable2) {
-                optimizationsAndTweaks$handleEntityThrowable(entity, throwable2);
-                entitiesToRemove.add(entity);
-            }
-
-            if (entity.isDead) {
-                entitiesToRemove.add(entity);
-            }
-        }
-
-        this.weatherEffects.removeAll(entitiesToRemove);
-        this.theProfiler.endSection();
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$removeEntitiesFromChunks() {
-        this.theProfiler.startSection("removeFromChunks");
-
-        for (Object unloadedEntityObj : this.unloadedEntityList) {
-            if (unloadedEntityObj instanceof Entity) {
-                Entity unloadedEntity = (Entity) unloadedEntityObj;
-                optimizationsAndTweaks$removeEntityFromChunk(unloadedEntity);
-                onEntityRemoved(unloadedEntity);
-            }
-        }
-
-        this.unloadedEntityList.clear();
-        this.theProfiler.endSection();
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$updateLoadedEntities() {
-        this.theProfiler.startSection("loadedEntities");
-        List<Entity> entitiesToRemoveLoadedList = new ArrayList<>();
-
-        for (Object loadedEntityObj : this.loadedEntityList) {
-            if (loadedEntityObj instanceof Entity) {
-                Entity loadedEntity = (Entity) loadedEntityObj;
-
-                if (loadedEntity != null) {
-                    // Update ridingEntity and perform tick
-                    try {
-                        this.updateEntity(loadedEntity);
-                    } catch (Throwable throwable1) {
-                        if (loadedEntity != null) {
-                            optimizationsAndTweaks$handleEntityThrowable(loadedEntity, throwable1);
-                            entitiesToRemoveLoadedList.add(loadedEntity);
-                        }
-                    }
-
-                    if (loadedEntity.isDead) {
-                        if (loadedEntity != null) {
-                            optimizationsAndTweaks$removeEntityFromChunk(loadedEntity);
-                            entitiesToRemoveLoadedList.add(loadedEntity);
-                            onEntityRemoved(loadedEntity);
-                        }
-                    }
-                }
-            }
-        }
-
-        this.loadedEntityList.removeAll(entitiesToRemoveLoadedList);
-        this.theProfiler.endSection();
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$updateBlockEntities() {
-        this.theProfiler.startSection("blockEntities");
-        List<TileEntity> tileEntitiesToRemove = new ArrayList<>();
-        Iterator<TileEntity> tileEntityIterator = this.loadedTileEntityList.iterator();
-
-        while (tileEntityIterator.hasNext()) {
-            TileEntity tileEntity = tileEntityIterator.next();
-
-            try {
-                // Update block entity
-                if (!tileEntity.isInvalid() && tileEntity.hasWorldObj() && this.blockExists(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord)) {
-                    tileEntity.updateEntity();
-                }
-            } catch (Throwable throwable) {
-                optimizationsAndTweaks$handleTileEntityThrowable(tileEntity, throwable);
-                tileEntitiesToRemove.add(tileEntity);
-            }
-        }
-
-        this.loadedTileEntityList.removeAll(tileEntitiesToRemove);
-        this.theProfiler.endSection();
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$handlePendingBlockEntities() {
-        this.theProfiler.startSection("pendingBlockEntities");
-
-        for (Object addedTileEntityObj : this.addedTileEntityList) {
-            if (addedTileEntityObj instanceof TileEntity) {
-                TileEntity addedTileEntity = (TileEntity) addedTileEntityObj;
-
-                if (!addedTileEntity.isInvalid()) {
-                    if (!this.loadedTileEntityList.contains(addedTileEntity)) {
-                        this.loadedTileEntityList.add(addedTileEntity);
-                    }
-                } else {
-                    optimizationsAndTweaks$removeInvalidTileEntity(addedTileEntity);
-                }
-            }
-        }
-
-        this.addedTileEntityList.clear();
-        this.theProfiler.endSection();
-    }
-    @Unique
-    private void optimizationsAndTweaks$handleEntityThrowable(Entity entity, Throwable throwable) {
-        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
-        CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being ticked");
-
-        if (entity == null) {
-            crashreportcategory.addCrashSection("Entity", "~~NULL~~");
-
-            if (ForgeModContainer.removeErroringEntities) {
-                FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-            } else {
-                throw new ReportedException(crashreport);
-            }
-        } else {
-            entity.addEntityCrashInfo(crashreportcategory);
-
-            if (ForgeModContainer.removeErroringEntities) {
-                FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-                removeEntity(entity);
-            } else {
-                throw new ReportedException(crashreport);
-            }
-        }
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$handleTileEntityThrowable(TileEntity tileEntity, Throwable throwable) {
-        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
-        CrashReportCategory crashreportcategory = crashreport.makeCategory("Block entity being ticked");
-        tileEntity.func_145828_a(crashreportcategory);
-        if (ForgeModContainer.removeErroringTileEntities) {
-            FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
-            tileEntity.invalidate();
-            setBlockToAir(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-        } else {
-            throw new ReportedException(crashreport);
-        }
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$removeEntityFromChunk(Entity entity) {
-        int j = entity.chunkCoordX;
-        int l = entity.chunkCoordZ;
-        if (entity.addedToChunk && this.chunkExists(j, l)) {
-            this.getChunkFromChunkCoords(j, l).removeEntity(entity);
-        }
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$removeInvalidTileEntity(TileEntity tileEntity) {
-        if (this.chunkExists(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4)) {
-            Chunk chunk = this.getChunkFromChunkCoords(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4);
-            if (chunk != null) {
-                chunk.removeInvalidTileEntity(tileEntity.xCoord & 15, tileEntity.yCoord, tileEntity.zCoord & 15);
-            }
-        }
-    }
-
     @Shadow
     public void onEntityRemoved(Entity p_72847_1_)
     {
@@ -383,60 +175,6 @@ public class MixinWorld {
 
     @Shadow
     public void updateAllPlayersSleepingFlag() {}
-
-    @Shadow
-    public boolean setBlockToAir(int x, int y, int z)
-    {
-        return this.setBlock(x, y, z, Blocks.air, 0, 3);
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags) {
-        if (!optimizationsAndTweaks$isValidCoordinates(x, y, z)) {
-            return false;
-        }
-
-        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-        if (chunk == null) {
-            return false;
-        }
-
-        Block block1 = null;
-        net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
-
-        if ((flags & 1) != 0) {
-            block1 = chunk.getBlock(x & 15, y, z & 15);
-        }
-
-        if (this.captureBlockSnapshots && !this.isRemote) {
-            blockSnapshot = null;
-            try {
-                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
-                if (blockSnapshot != null) {
-                    this.capturedBlockSnapshots.add(blockSnapshot);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
-
-        if (!flag && blockSnapshot != null) {
-            this.capturedBlockSnapshots.remove(blockSnapshot);
-            blockSnapshot = null;
-        }
-
-        optimizationsAndTweaks$handleLightingUpdates(x, y, z);
-
-        if (flag && blockSnapshot == null) {
-            optimizationsAndTweaks$handleBlockUpdates(x, y, z, chunk, block1, blockIn, flags);
-        }
-
-        return flag;
-    }
 
     @Unique
     private void optimizationsAndTweaks$handleBlockUpdates(int x, int y, int z, Chunk chunk, Block block1, Block blockIn, int flags) {
