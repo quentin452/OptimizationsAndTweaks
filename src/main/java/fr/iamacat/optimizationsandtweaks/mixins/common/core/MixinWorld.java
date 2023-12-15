@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import com.google.common.collect.ImmutableSetMultimap;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -991,5 +992,17 @@ public class MixinWorld {
     public Chunk getChunkFromChunkCoords(int p_72964_1_, int p_72964_2_)
     {
         return this.chunkProvider.provideChunk(p_72964_1_, p_72964_2_);
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public static boolean doesBlockHaveSolidTopSurface(IBlockAccess worldIn, int x, int y, int z) {
+        Block block = worldIn.getBlock(x, y, z);
+        Material material = block.getMaterial();
+
+        // Check if the block's material has a solid top surface
+        return material.blocksMovement() && material.isSolid();
     }
 }
