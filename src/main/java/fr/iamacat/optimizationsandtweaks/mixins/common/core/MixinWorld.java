@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import com.google.common.collect.ImmutableSetMultimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -37,6 +38,12 @@ public class MixinWorld {
     private World world;
     @Shadow
     public boolean isRemote;
+
+    @Shadow
+    public static double MAX_ENTITY_RADIUS = 2.0D;
+
+    @Shadow
+    private ArrayList collidingBoundingBoxes;
 
     @Shadow
     public final WorldProvider provider;
@@ -827,5 +834,101 @@ public class MixinWorld {
         }
 
         return closestPlayer;
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+   // @Overwrite
+    public List<AxisAlignedBB> getCollidingBoundingBoxes(Entity entity, AxisAlignedBB axisAlignedBB) {
+        optimizationsAndTweaks$resetCollidingBoxes();
+
+        int minX = MathHelper.floor_double(axisAlignedBB.minX);
+        int maxX = MathHelper.floor_double(axisAlignedBB.maxX + 1.0D);
+        int minY = MathHelper.floor_double(axisAlignedBB.minY);
+        int maxY = MathHelper.floor_double(axisAlignedBB.maxY + 1.0D);
+        int minZ = MathHelper.floor_double(axisAlignedBB.minZ);
+        int maxZ = MathHelper.floor_double(axisAlignedBB.maxZ + 1.0D);
+
+        for (int x = minX; x < maxX; ++x) {
+            for (int z = minZ; z < maxZ; ++z) {
+                if (optimizationsAndTweaks$blockExistsWithinBounds(x, z)) {
+                    optimizationsAndTweaks$checkCollisionBoxesForBlock(x, minY, maxY, z, axisAlignedBB, entity);
+                }
+            }
+        }
+
+        double expandBy = 0.25D;
+        List<Entity> entities = getEntitiesWithinAABBExcludingEntity(entity, axisAlignedBB.expand(expandBy, expandBy, expandBy));
+
+        for (Entity e : entities) {
+            optimizationsAndTweaks$addEntityCollisionBox(entity, axisAlignedBB, e);
+        }
+
+        return collidingBoundingBoxes;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$resetCollidingBoxes() {
+        collidingBoundingBoxes.clear();
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$blockExistsWithinBounds(int x, int z) {
+        return (x >= -30000000 && x < 30000000 && z >= -30000000 && z < 30000000);
+    }
+    @Unique
+    private void optimizationsAndTweaks$checkCollisionBoxesForBlock(int x, int minY, int maxY, int z, AxisAlignedBB axisAlignedBB, Entity entity) {
+        for (int y = minY - 1; y < maxY; ++y) {
+            Block block = optimizationsAndTweaks$getBlockWithinBounds(x, y, z);
+            block.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, collidingBoundingBoxes, entity);
+        }
+    }
+    @Unique
+    private Block optimizationsAndTweaks$getBlockWithinBounds(int x, int y, int z) {
+        return optimizationsAndTweaks$blockExistsWithinBounds(x, z) ? getBlock(x, y, z) : Blocks.stone;
+    }
+    @Unique
+    private void optimizationsAndTweaks$addEntityCollisionBox(Entity entity, AxisAlignedBB axisAlignedBB, Entity entityToCheck) {
+        AxisAlignedBB entityAABB = entityToCheck.getBoundingBox();
+
+        if (entityAABB != null && entityAABB.intersectsWith(axisAlignedBB)) {
+            collidingBoundingBoxes.add(entityAABB);
+        }
+
+        AxisAlignedBB collisionBox = entity.getCollisionBox(entityToCheck);
+
+        if (collisionBox != null && collisionBox.intersectsWith(axisAlignedBB)) {
+            collidingBoundingBoxes.add(collisionBox);
+        }
+    }
+
+    @Shadow
+    public List getEntitiesWithinAABBExcludingEntity(Entity p_72839_1_, AxisAlignedBB p_72839_2_)
+    {
+        return this.getEntitiesWithinAABBExcludingEntity(p_72839_1_, p_72839_2_, (IEntitySelector)null);
+    }
+    @Shadow
+    public List getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
+    {
+        ArrayList arraylist = new ArrayList();
+        int i = MathHelper.floor_double((p_94576_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
+        int j = MathHelper.floor_double((p_94576_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+        int k = MathHelper.floor_double((p_94576_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+        int l = MathHelper.floor_double((p_94576_2_.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+
+        for (int i1 = i; i1 <= j; ++i1)
+        {
+            for (int j1 = k; j1 <= l; ++j1)
+            {
+                if (this.chunkExists(i1, j1))
+                {
+                    this.getChunkFromChunkCoords(i1, j1).getEntitiesWithinAABBForEntity(p_94576_1_, p_94576_2_, arraylist, p_94576_3_);
+                }
+            }
+        }
+
+        return arraylist;
     }
 }
