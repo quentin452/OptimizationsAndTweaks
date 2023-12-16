@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
-@Mixin(value = EntityLivingBase.class, priority = 999)
+@Mixin(value = EntityLivingBase.class, priority = 1100)
 public abstract class MixinEntityLivingUpdate extends Entity {
 
     @Unique
