@@ -78,15 +78,7 @@ public enum Mixin implements IMixin {
         "core.MixinAxisAlignedBB"),
     common_core_MixinEntityAITempt(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITempt,
         "core.MixinEntityAITempt"),
-    client_core_MixinGuiNewChat(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGuiNewChat,
-        "core.MixinGuiNewChat"),
 
-    client_core_MixinGui(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGui, "core.MixinGui"),
-    client_core_MixinRenderItem(Side.CLIENT,
-        avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderItem),
-        "core.MixinRenderItem"),
-    client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
-        .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIEatDroppedFood,
         "easybreeding.MixinEntityAIEatDroppedFood"),
@@ -99,9 +91,6 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
 
-    client_core_MixinRenderManager(Side.CLIENT,
-        avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
-        "core.MixinRenderManager"),
     common_core_MixinServersideAttributeMap(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap, "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
@@ -111,8 +100,6 @@ public enum Mixin implements IMixin {
     common_core_MixinDataWatcher(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDataWatcher,
         "core.MixinDataWatcher"),
 
-    client_practicallogistics_MixinEventRegistry(Side.CLIENT,
-        m -> OptimizationsandTweaksConfig.enableMixinEventRegistry, "practicallogistics.MixinEventRegistry"),
     common_core_MixinNibbleArray(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNibbleArray,
         "core.MixinNibbleArray"),
     common_blocklings_MixinEntityBlockling(Side.COMMON,
@@ -137,6 +124,9 @@ public enum Mixin implements IMixin {
 
     common_core_MixinBlock(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlock,
         "core.MixinBlock"),
+
+    common_core_MixinStringTranslate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStringTranslate,
+        "core.MixinStringTranslate"),
     common_core_MixinBlockDynamicLiquid(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockDynamicLiquid,
         "core.MixinBlockDynamicLiquid"),
     common_core_MixinModifiableAttributeInstance(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinModifiableAttributeInstance,
@@ -174,12 +164,6 @@ public enum Mixin implements IMixin {
         "cofhcore.MixinHooksCore"),
     common_aether_MixinAetherTileEntities(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAetherTileEntities,
         "aether.MixinAetherTileEntities"),
-    client_essenceofthegod_MixinBarTickHandler(Side.CLIENT,
-        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
-        "essenceofthegod.MixinBarTickHandler"),
-    client_essenceofthegod_MixinPlayerStats(Side.CLIENT,
-        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
-        "essenceofthegod.MixinPlayerStats"),
     common_etfuturumrequiem_MixinUtils(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinUtils,
         "etfuturumrequiem.MixinUtils"),
     common_notenoughpets_MixinEventHandlerNEP(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventHandlerNEP,
@@ -211,8 +195,6 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntityItem"),
     common_ic2_MixinTickHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinTickHandler,
         "ic2.MixinTickHandler"),
-    client_davincivessels_MixinShipKeyHandler(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinShipKeyHandler,
-        "davincivessels.MixinShipKeyHandler"),
 
     common_core_entity_MixinEntityAnimal(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAnimal,
         "core.entity.MixinEntityAnimal"),
@@ -425,6 +407,31 @@ public enum Mixin implements IMixin {
 
     // CLIENT MIXINS
 
+    client_core_MixinGuiNewChat(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGuiNewChat,
+        "core.MixinGuiNewChat"),
+    client_instrumentus_MixinPlayerSpecials(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinPlayerSpecials,
+        "instrumentus.MixinPlayerSpecials"),
+
+    client_core_MixinGui(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGui, "core.MixinGui"),
+    client_core_MixinRenderItem(Side.CLIENT,
+        avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderItem),
+        "core.MixinRenderItem"),
+    client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
+        .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
+    client_core_MixinRenderManager(Side.CLIENT,
+        avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
+        "core.MixinRenderManager"),
+    client_essenceofthegod_MixinBarTickHandler(Side.CLIENT,
+        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
+        "essenceofthegod.MixinBarTickHandler"),
+    client_essenceofthegod_MixinPlayerStats(Side.CLIENT,
+        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
+        "essenceofthegod.MixinPlayerStats"),
+
+    client_davincivessels_MixinShipKeyHandler(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinShipKeyHandler,
+        "davincivessels.MixinShipKeyHandler"),
+    client_practicallogistics_MixinEventRegistry(Side.CLIENT,
+        m -> OptimizationsandTweaksConfig.enableMixinEventRegistry, "practicallogistics.MixinEventRegistry"),
     client_core_MixinTextureManager(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureManager,
         "core.MixinTextureManager"),
     client_core_MixinEntitySpellParticleFX(Side.CLIENT,

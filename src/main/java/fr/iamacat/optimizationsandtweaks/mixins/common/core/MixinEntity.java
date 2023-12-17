@@ -4,16 +4,22 @@ import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Entity.class)
 public class MixinEntity {
+
+    @Unique
+    private Entity entity;
     @Shadow
     public final AxisAlignedBB boundingBox;
     @Shadow
@@ -43,7 +49,8 @@ public class MixinEntity {
     @Shadow
     public float width;
 
-    public MixinEntity() {
+    public MixinEntity(Entity entity) {
+        this.entity = entity;
         this.boundingBox = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     }
 

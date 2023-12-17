@@ -449,7 +449,17 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUnthaumic;
-    @Config.Comment("Print stats ids to help to fix duplicated stats i" + "ds crash")
+
+    @Config.Comment("Optimize StringTranslate class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinStringTranslate;
+
+    @Config.Comment("Optimize PlayerSpecials class from Instrumentus mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPlayerSpecials;
+    @Config.Comment("Print stats ids to help to fix duplicated Stat list ids crash")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStatList;

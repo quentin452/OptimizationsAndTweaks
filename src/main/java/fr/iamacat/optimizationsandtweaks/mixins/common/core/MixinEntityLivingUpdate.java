@@ -260,9 +260,24 @@ public abstract class MixinEntityLivingUpdate extends Entity {
         ForgeHooks.onLivingJump(entityLivingBase);
     }
 
-    @Unique
-    public boolean isPotionActive(Potion p_70644_1_) {
-        return this.activePotionsMap.containsKey(p_70644_1_.id);
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean isPotionActive(int potionId) {
+        return this.isPotionActive(Potion.potionTypes[potionId]);
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean isPotionActive(Potion potion) {
+        if (potion == null) {
+            return false;
+        }
+        return this.activePotionsMap.containsKey(potion.id);
     }
 
     /**

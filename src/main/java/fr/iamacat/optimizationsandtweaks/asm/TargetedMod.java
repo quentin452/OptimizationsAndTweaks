@@ -29,8 +29,9 @@ public enum TargetedMod implements ITargetedMod {
     MANAMETAL("manametalmod", false, startsWith("manametalmod")),
     SMOOTHFONT("SmoothFont", false, startsWith("SmoothFont")),
 
-
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
+
+    INSTRUMENTUS("Instrumentus", false, startsWith("Instrumentus")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
     BETTERBURNING("BetterBurning", false, startsWith("BetterBurning")),
     FALSETWEAKS("Falsetweaks", false, startsWith("Falsetweaks")),
