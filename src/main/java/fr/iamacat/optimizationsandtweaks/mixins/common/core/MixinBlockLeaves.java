@@ -125,7 +125,6 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     }
 
     @Shadow
-    @Override
     public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
     {
         ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
