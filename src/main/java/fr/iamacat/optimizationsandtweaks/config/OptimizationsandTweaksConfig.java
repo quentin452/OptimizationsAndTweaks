@@ -150,6 +150,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeCache;
+
+    @Config.Comment("Optimize RenderBlocks Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinRenderBlocks;
     @Config.Comment("Optimize BlockDynamicLiquid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
