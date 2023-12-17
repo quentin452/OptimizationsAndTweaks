@@ -141,7 +141,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlock;
-
+    @Config.Comment("Optimize BlockLeaves Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockLeaves;
     @Config.Comment("Optimize BlockDynamicLiquid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
