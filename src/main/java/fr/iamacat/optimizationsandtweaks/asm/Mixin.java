@@ -126,6 +126,9 @@ public enum Mixin implements IMixin {
         "core.MixinBlock"),
     common_core_MixinBlockLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockLeaves,
         "core.MixinBlockLeaves"),
+
+    common_core_MixinBiomeCache(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBiomeCache,
+        "core.MixinBiomeCache"),
     common_core_MixinStringTranslate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinStringTranslate,
         "core.MixinStringTranslate"),
     common_core_MixinBlockDynamicLiquid(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockDynamicLiquid,

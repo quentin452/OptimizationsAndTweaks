@@ -145,6 +145,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockLeaves;
+
+    @Config.Comment("Optimize BiomeCache Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBiomeCache;
     @Config.Comment("Optimize BlockDynamicLiquid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
