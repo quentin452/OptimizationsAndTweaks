@@ -13,6 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(RenderBlocks.class)
 public class MixinRenderBlocks {
@@ -254,7 +255,857 @@ public class MixinRenderBlocks {
     public MixinRenderBlocks(Minecraft minecraftRB) {
         this.minecraftRB = Minecraft.getMinecraft();
     }
-    // todo refactor
+    @Unique
+    boolean flag2renderStandardBlockWithAmbientOcclusionPartial;
+    @Unique
+    boolean flag3renderStandardBlockWithAmbientOcclusionPartial;
+    @Unique
+    boolean flag4renderStandardBlockWithAmbientOcclusionPartial;
+    @Unique
+    boolean flag5renderStandardBlockWithAmbientOcclusionPartial;
+    @Unique
+    boolean flagrenderStandardBlockWithAmbientOcclusionPartial = false;
+    @Unique
+    float f3renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+    @Unique
+    float f4renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+    @Unique
+    float f5renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+    @Unique
+    float f6renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+    @Unique
+    boolean flag1renderStandardBlockWithAmbientOcclusionPartial = true;
+    @Unique
+    int i1renderStandardBlockWithAmbientOcclusionPartial;
+    @Unique
+    float f7renderStandardBlockWithAmbientOcclusionPartial;
+
+    IIcon iiconrenderStandardBlockWithAmbientOcclusionPartial;
+
+    float f8;
+    float f9;
+    float f10;
+    float f11;
+    int j1;
+    int k1;
+    int l1;
+    int i2;
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial(Block block, int x, int y, int z) {
+        return this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMinY <= 0.0D)
+        {
+            --p_147808_3_;
+        }
+
+        this.aoBrightnessXYNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessYZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
+        this.aoBrightnessYZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
+        this.aoBrightnessXYPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
+        this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getCanBlockGrass();
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1);
+        }
+
+        if (this.renderMinY <= 0.0D)
+        {
+            ++p_147808_3_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMinY <= 0.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+        f3renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f6renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusionPartial = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZNN) / 4.0F;
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
+
+        if (flag1renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.5F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.5F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.5F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.renderFaceYNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 0));
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial2(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_) {
+        return this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_, 1);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial2(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMaxY >= 1.0D)
+        {
+            ++p_147808_3_;
+        }
+
+        this.aoBrightnessXYNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessXYPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessYZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
+        this.aoBrightnessYZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
+        this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getCanBlockGrass();
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1);
+        }
+
+        if (this.renderMaxY >= 1.0D)
+        {
+            --p_147808_3_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMaxY >= 1.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+        f6renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusionPartial = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN) / 4.0F;
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_;
+        this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_;
+        this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_;
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.renderFaceYPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 1));
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial3(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_) {
+        return this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1, 2);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial3(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMinZ <= 0.0D)
+        {
+            --p_147808_4_;
+        }
+
+        this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessYZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
+        this.aoBrightnessYZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
+        this.aoBrightnessXZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_);
+        }
+
+        if (this.renderMinZ <= 0.0D)
+        {
+            ++p_147808_4_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMinZ <= 0.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+        f8 = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN) / 4.0F;
+        f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
+        f10 = (this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
+        f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
+        j1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        k1 = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        l1 = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        i2 = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopLeft = this.mixAoBrightness(j1, k1, l1, i2, this.renderMaxY * (1.0D - this.renderMinX), this.renderMaxY * this.renderMinX, (1.0D - this.renderMaxY) * this.renderMinX, (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
+        this.brightnessBottomLeft = this.mixAoBrightness(j1, k1, l1, i2, this.renderMaxY * (1.0D - this.renderMaxX), this.renderMaxY * this.renderMaxX, (1.0D - this.renderMaxY) * this.renderMaxX, (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
+        this.brightnessBottomRight = this.mixAoBrightness(j1, k1, l1, i2, this.renderMinY * (1.0D - this.renderMaxX), this.renderMinY * this.renderMaxX, (1.0D - this.renderMinY) * this.renderMaxX, (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
+        this.brightnessTopRight = this.mixAoBrightness(j1, k1, l1, i2, this.renderMinY * (1.0D - this.renderMinX), this.renderMinY * this.renderMinX, (1.0D - this.renderMinY) * this.renderMinX, (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
+
+        if (flag1renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.8F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 2);
+        this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147808_5_;
+            this.colorRedBottomLeft *= p_147808_5_;
+            this.colorRedBottomRight *= p_147808_5_;
+            this.colorRedTopRight *= p_147808_5_;
+            this.colorGreenTopLeft *= p_147808_6_;
+            this.colorGreenBottomLeft *= p_147808_6_;
+            this.colorGreenBottomRight *= p_147808_6_;
+            this.colorGreenTopRight *= p_147808_6_;
+            this.colorBlueTopLeft *= p_147808_7_;
+            this.colorBlueBottomLeft *= p_147808_7_;
+            this.colorBlueBottomRight *= p_147808_7_;
+            this.colorBlueTopRight *= p_147808_7_;
+            this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial4(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_) {
+        return this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1, 3);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial4(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMaxZ >= 1.0D)
+        {
+            ++p_147808_4_;
+        }
+
+        this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessXZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
+        this.aoBrightnessYZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
+        this.aoBrightnessYZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_);
+        }
+
+        if (this.renderMaxZ >= 1.0D)
+        {
+            --p_147808_4_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMaxZ >= 1.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+        f8 = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPP) / 4.0F;
+        f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+        f10 = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
+        f11 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
+        j1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        k1 = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        l1 = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        i2 = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopLeft = this.mixAoBrightness(j1, i2, l1, k1, this.renderMaxY * (1.0D - this.renderMinX), (1.0D - this.renderMaxY) * (1.0D - this.renderMinX), (1.0D - this.renderMaxY) * this.renderMinX, this.renderMaxY * this.renderMinX);
+        this.brightnessBottomLeft = this.mixAoBrightness(j1, i2, l1, k1, this.renderMinY * (1.0D - this.renderMinX), (1.0D - this.renderMinY) * (1.0D - this.renderMinX), (1.0D - this.renderMinY) * this.renderMinX, this.renderMinY * this.renderMinX);
+        this.brightnessBottomRight = this.mixAoBrightness(j1, i2, l1, k1, this.renderMinY * (1.0D - this.renderMaxX), (1.0D - this.renderMinY) * (1.0D - this.renderMaxX), (1.0D - this.renderMinY) * this.renderMaxX, this.renderMinY * this.renderMaxX);
+        this.brightnessTopRight = this.mixAoBrightness(j1, i2, l1, k1, this.renderMaxY * (1.0D - this.renderMaxX), (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX), (1.0D - this.renderMaxY) * this.renderMaxX, this.renderMaxY * this.renderMaxX);
+
+        if (flag1renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.8F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 3);
+        this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147808_5_;
+            this.colorRedBottomLeft *= p_147808_5_;
+            this.colorRedBottomRight *= p_147808_5_;
+            this.colorRedTopRight *= p_147808_5_;
+            this.colorGreenTopLeft *= p_147808_6_;
+            this.colorGreenBottomLeft *= p_147808_6_;
+            this.colorGreenBottomRight *= p_147808_6_;
+            this.colorGreenTopRight *= p_147808_6_;
+            this.colorBlueTopLeft *= p_147808_7_;
+            this.colorBlueBottomLeft *= p_147808_7_;
+            this.colorBlueBottomRight *= p_147808_7_;
+            this.colorBlueTopRight *= p_147808_7_;
+            this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial5(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_) {
+        return this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_, 4);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial5(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMinX <= 0.0D)
+        {
+            --p_147808_2_;
+        }
+
+        this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXYNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
+        this.aoBrightnessXZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
+        this.aoBrightnessXZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
+        this.aoBrightnessXYNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1);
+        }
+
+        if (this.renderMinX <= 0.0D)
+        {
+            ++p_147808_2_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMinX <= 0.0D || !this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        f8 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZNP) / 4.0F;
+        f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
+        f10 = (this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
+        f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMaxZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ);
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMinZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ);
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMinZ + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMinZ);
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMaxZ + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ);
+        j1 = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        k1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        l1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        i2 = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopLeft = this.mixAoBrightness(k1, l1, i2, j1, this.renderMaxY * this.renderMaxZ, this.renderMaxY * (1.0D - this.renderMaxZ), (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ), (1.0D - this.renderMaxY) * this.renderMaxZ);
+        this.brightnessBottomLeft = this.mixAoBrightness(k1, l1, i2, j1, this.renderMaxY * this.renderMinZ, this.renderMaxY * (1.0D - this.renderMinZ), (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ), (1.0D - this.renderMaxY) * this.renderMinZ);
+        this.brightnessBottomRight = this.mixAoBrightness(k1, l1, i2, j1, this.renderMinY * this.renderMinZ, this.renderMinY * (1.0D - this.renderMinZ), (1.0D - this.renderMinY) * (1.0D - this.renderMinZ), (1.0D - this.renderMinY) * this.renderMinZ);
+        this.brightnessTopRight = this.mixAoBrightness(k1, l1, i2, j1, this.renderMinY * this.renderMaxZ, this.renderMinY * (1.0D - this.renderMaxZ), (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ), (1.0D - this.renderMinY) * this.renderMaxZ);
+
+        if (flag1renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.6F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 4);
+        this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147808_5_;
+            this.colorRedBottomLeft *= p_147808_5_;
+            this.colorRedBottomRight *= p_147808_5_;
+            this.colorRedTopRight *= p_147808_5_;
+            this.colorGreenTopLeft *= p_147808_6_;
+            this.colorGreenBottomLeft *= p_147808_6_;
+            this.colorGreenBottomRight *= p_147808_6_;
+            this.colorGreenTopRight *= p_147808_6_;
+            this.colorBlueTopLeft *= p_147808_7_;
+            this.colorBlueBottomLeft *= p_147808_7_;
+            this.colorBlueBottomRight *= p_147808_7_;
+            this.colorBlueTopRight *= p_147808_7_;
+            this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSidesPartial6(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_) {
+        return this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_, 5);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlaterPartial6(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_, int lrenderStandardBlockWithAmbientOcclusionPartial) {
+        if (this.renderMaxX >= 1.0D)
+        {
+            ++p_147808_2_;
+        }
+
+        this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXYPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
+        this.aoBrightnessXZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
+        this.aoBrightnessXZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
+        this.aoBrightnessXYPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
+        flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1);
+        }
+
+        if (this.renderMaxX >= 1.0D)
+        {
+            --p_147808_2_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
+
+        if (this.renderMaxX >= 1.0D || !this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
+        f8 = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZPP) / 4.0F;
+        f9 = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
+        f10 = (this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
+        f11 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMinY * this.renderMaxZ);
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMinY * this.renderMinZ);
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMaxY * this.renderMinZ);
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMaxY * this.renderMaxZ);
+        j1 = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        k1 = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        l1 = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusionPartial);
+        i2 = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
+        this.brightnessTopLeft = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMinY) * this.renderMaxZ, (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ), this.renderMinY * (1.0D - this.renderMaxZ), this.renderMinY * this.renderMaxZ);
+        this.brightnessBottomLeft = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMinY) * this.renderMinZ, (1.0D - this.renderMinY) * (1.0D - this.renderMinZ), this.renderMinY * (1.0D - this.renderMinZ), this.renderMinY * this.renderMinZ);
+        this.brightnessBottomRight = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMaxY) * this.renderMinZ, (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ), this.renderMaxY * (1.0D - this.renderMinZ), this.renderMaxY * this.renderMinZ);
+        this.brightnessTopRight = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMaxY) * this.renderMaxZ, (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ), this.renderMaxY * (1.0D - this.renderMaxZ), this.renderMaxY * this.renderMaxZ);
+
+        if (flag1renderStandardBlockWithAmbientOcclusionPartial)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.6F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
+        iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 5);
+        this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147808_5_;
+            this.colorRedBottomLeft *= p_147808_5_;
+            this.colorRedBottomRight *= p_147808_5_;
+            this.colorRedTopRight *= p_147808_5_;
+            this.colorGreenTopLeft *= p_147808_6_;
+            this.colorGreenBottomLeft *= p_147808_6_;
+            this.colorGreenBottomRight *= p_147808_6_;
+            this.colorGreenTopRight *= p_147808_6_;
+            this.colorBlueTopLeft *= p_147808_7_;
+            this.colorBlueBottomLeft *= p_147808_7_;
+            this.colorBlueBottomRight *= p_147808_7_;
+            this.colorBlueTopRight *= p_147808_7_;
+            this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusionPartial = true;
+    }
     /**
      * @author
      * @reason
@@ -263,12 +1114,6 @@ public class MixinRenderBlocks {
     public boolean renderStandardBlockWithAmbientOcclusionPartial(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_)
     {
         this.enableAO = true;
-        boolean flagrenderStandardBlockWithAmbientOcclusionPartial = false;
-        float f3renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
-        float f4renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
-        float f5renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
-        float f6renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
-        boolean flag1renderStandardBlockWithAmbientOcclusionPartial = true;
         int lrenderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_);
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(983055);
@@ -282,814 +1127,855 @@ public class MixinRenderBlocks {
             flag1renderStandardBlockWithAmbientOcclusionPartial = false;
         }
 
-        boolean flag2renderStandardBlockWithAmbientOcclusionPartial;
-        boolean flag3renderStandardBlockWithAmbientOcclusionPartial;
-        boolean flag4renderStandardBlockWithAmbientOcclusionPartial;
-        boolean flag5renderStandardBlockWithAmbientOcclusionPartial;
-        int i1renderStandardBlockWithAmbientOcclusionPartial;
-        float f7renderStandardBlockWithAmbientOcclusionPartial;
 
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_, 0))
-        {
-            if (this.renderMinY <= 0.0D)
-            {
-                --p_147808_3_;
-            }
-
-            this.aoBrightnessXYNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessYZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
-            this.aoBrightnessYZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
-            this.aoBrightnessXYPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
-            this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getCanBlockGrass();
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1);
-            }
-
-            if (this.renderMinY <= 0.0D)
-            {
-                ++p_147808_3_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMinY <= 0.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-            f3renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f6renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusionPartial = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZNN) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
-
-            if (flag1renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.5F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.renderFaceYNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 0));
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_, 1))
-        {
-            if (this.renderMaxY >= 1.0D)
-            {
-                ++p_147808_3_;
-            }
-
-            this.aoBrightnessXYNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessXYPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessYZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
-            this.aoBrightnessYZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
-            this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getCanBlockGrass();
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1);
-            }
-
-            if (this.renderMaxY >= 1.0D)
-            {
-                --p_147808_3_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMaxY >= 1.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-            f6renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusionPartial = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusionPartial = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN) / 4.0F;
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_;
-            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_;
-            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_;
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.renderFaceYPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 1));
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial2(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial2(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
-        float f8;
-        float f9;
-        float f10;
-        float f11;
-        int j1;
-        int k1;
-        int l1;
-        int i2;
-        IIcon iicon;
-
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1, 2))
-        {
-            if (this.renderMinZ <= 0.0D)
-            {
-                --p_147808_4_;
-            }
-
-            this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessYZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
-            this.aoBrightnessYZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
-            this.aoBrightnessXZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_);
-            }
-
-            if (this.renderMinZ <= 0.0D)
-            {
-                ++p_147808_4_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMinZ <= 0.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-            f8 = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN) / 4.0F;
-            f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f10 = (this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
-            f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
-            f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
-            f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
-            f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
-            j1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            k1 = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            l1 = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            i2 = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopLeft = this.mixAoBrightness(j1, k1, l1, i2, this.renderMaxY * (1.0D - this.renderMinX), this.renderMaxY * this.renderMinX, (1.0D - this.renderMaxY) * this.renderMinX, (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
-            this.brightnessBottomLeft = this.mixAoBrightness(j1, k1, l1, i2, this.renderMaxY * (1.0D - this.renderMaxX), this.renderMaxY * this.renderMaxX, (1.0D - this.renderMaxY) * this.renderMaxX, (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
-            this.brightnessBottomRight = this.mixAoBrightness(j1, k1, l1, i2, this.renderMinY * (1.0D - this.renderMaxX), this.renderMinY * this.renderMaxX, (1.0D - this.renderMinY) * this.renderMaxX, (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
-            this.brightnessTopRight = this.mixAoBrightness(j1, k1, l1, i2, this.renderMinY * (1.0D - this.renderMinX), this.renderMinY * this.renderMinX, (1.0D - this.renderMinY) * this.renderMinX, (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
-
-            if (flag1renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            iicon = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 2);
-            this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147808_5_;
-                this.colorRedBottomLeft *= p_147808_5_;
-                this.colorRedBottomRight *= p_147808_5_;
-                this.colorRedTopRight *= p_147808_5_;
-                this.colorGreenTopLeft *= p_147808_6_;
-                this.colorGreenBottomLeft *= p_147808_6_;
-                this.colorGreenBottomRight *= p_147808_6_;
-                this.colorGreenTopRight *= p_147808_6_;
-                this.colorBlueTopLeft *= p_147808_7_;
-                this.colorBlueBottomLeft *= p_147808_7_;
-                this.colorBlueBottomRight *= p_147808_7_;
-                this.colorBlueTopRight *= p_147808_7_;
-                this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial3(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial3(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1, 3))
-        {
-            if (this.renderMaxZ >= 1.0D)
-            {
-                ++p_147808_4_;
-            }
-
-            this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessXZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
-            this.aoBrightnessYZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
-            this.aoBrightnessYZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_);
-            }
-
-            if (this.renderMaxZ >= 1.0D)
-            {
-                --p_147808_4_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMaxZ >= 1.0D || !this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-            f8 = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPP) / 4.0F;
-            f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            f10 = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
-            f11 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
-            f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
-            f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
-            f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
-            j1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            k1 = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            l1 = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            i2 = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopLeft = this.mixAoBrightness(j1, i2, l1, k1, this.renderMaxY * (1.0D - this.renderMinX), (1.0D - this.renderMaxY) * (1.0D - this.renderMinX), (1.0D - this.renderMaxY) * this.renderMinX, this.renderMaxY * this.renderMinX);
-            this.brightnessBottomLeft = this.mixAoBrightness(j1, i2, l1, k1, this.renderMinY * (1.0D - this.renderMinX), (1.0D - this.renderMinY) * (1.0D - this.renderMinX), (1.0D - this.renderMinY) * this.renderMinX, this.renderMinY * this.renderMinX);
-            this.brightnessBottomRight = this.mixAoBrightness(j1, i2, l1, k1, this.renderMinY * (1.0D - this.renderMaxX), (1.0D - this.renderMinY) * (1.0D - this.renderMaxX), (1.0D - this.renderMinY) * this.renderMaxX, this.renderMinY * this.renderMaxX);
-            this.brightnessTopRight = this.mixAoBrightness(j1, i2, l1, k1, this.renderMaxY * (1.0D - this.renderMaxX), (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX), (1.0D - this.renderMaxY) * this.renderMaxX, this.renderMaxY * this.renderMaxX);
-
-            if (flag1renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            iicon = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 3);
-            this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147808_5_;
-                this.colorRedBottomLeft *= p_147808_5_;
-                this.colorRedBottomRight *= p_147808_5_;
-                this.colorRedTopRight *= p_147808_5_;
-                this.colorGreenTopLeft *= p_147808_6_;
-                this.colorGreenBottomLeft *= p_147808_6_;
-                this.colorGreenBottomRight *= p_147808_6_;
-                this.colorGreenTopRight *= p_147808_6_;
-                this.colorBlueTopLeft *= p_147808_7_;
-                this.colorBlueBottomLeft *= p_147808_7_;
-                this.colorBlueBottomRight *= p_147808_7_;
-                this.colorBlueTopRight *= p_147808_7_;
-                this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial4(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial4(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_, 4))
-        {
-            if (this.renderMinX <= 0.0D)
-            {
-                --p_147808_2_;
-            }
-
-            this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXYNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
-            this.aoBrightnessXZNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
-            this.aoBrightnessXZNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
-            this.aoBrightnessXYNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag3renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusionPartial && !flag2renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1);
-            }
-
-            if (this.renderMinX <= 0.0D)
-            {
-                ++p_147808_2_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMinX <= 0.0D || !this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ - 1, p_147808_3_, p_147808_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ - 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            f8 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZNP) / 4.0F;
-            f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
-            f10 = (this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
-            f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMaxZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ);
-            f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMinZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ);
-            f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMinZ + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMinZ);
-            f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMaxZ + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ);
-            j1 = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            k1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            l1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            i2 = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopLeft = this.mixAoBrightness(k1, l1, i2, j1, this.renderMaxY * this.renderMaxZ, this.renderMaxY * (1.0D - this.renderMaxZ), (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ), (1.0D - this.renderMaxY) * this.renderMaxZ);
-            this.brightnessBottomLeft = this.mixAoBrightness(k1, l1, i2, j1, this.renderMaxY * this.renderMinZ, this.renderMaxY * (1.0D - this.renderMinZ), (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ), (1.0D - this.renderMaxY) * this.renderMinZ);
-            this.brightnessBottomRight = this.mixAoBrightness(k1, l1, i2, j1, this.renderMinY * this.renderMinZ, this.renderMinY * (1.0D - this.renderMinZ), (1.0D - this.renderMinY) * (1.0D - this.renderMinZ), (1.0D - this.renderMinY) * this.renderMinZ);
-            this.brightnessTopRight = this.mixAoBrightness(k1, l1, i2, j1, this.renderMinY * this.renderMaxZ, this.renderMinY * (1.0D - this.renderMaxZ), (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ), (1.0D - this.renderMinY) * this.renderMaxZ);
-
-            if (flag1renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            iicon = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 4);
-            this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147808_5_;
-                this.colorRedBottomLeft *= p_147808_5_;
-                this.colorRedBottomRight *= p_147808_5_;
-                this.colorRedTopRight *= p_147808_5_;
-                this.colorGreenTopLeft *= p_147808_6_;
-                this.colorGreenBottomLeft *= p_147808_6_;
-                this.colorGreenBottomRight *= p_147808_6_;
-                this.colorGreenTopRight *= p_147808_6_;
-                this.colorBlueTopLeft *= p_147808_7_;
-                this.colorBlueBottomLeft *= p_147808_7_;
-                this.colorBlueBottomRight *= p_147808_7_;
-                this.colorBlueTopRight *= p_147808_7_;
-                this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial5(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial5(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
-        if (this.renderAllFaces || p_147808_1_.shouldSideBeRendered(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_, 5))
-        {
-            if (this.renderMaxX >= 1.0D)
-            {
-                ++p_147808_2_;
-            }
-
-            this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXYPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_);
-            this.aoBrightnessXZPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ - 1);
-            this.aoBrightnessXZPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_ + 1);
-            this.aoBrightnessXYPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_);
-            flag2renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ + 1, p_147808_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_ - 1, p_147808_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_ - 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ - 1);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ - 1, p_147808_4_ + 1);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag5renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ - 1);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusionPartial && !flag4renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_ + 1, p_147808_4_ + 1);
-            }
-
-            if (this.renderMaxX >= 1.0D)
-            {
-                --p_147808_2_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusionPartial = lrenderStandardBlockWithAmbientOcclusionPartial;
-
-            if (this.renderMaxX >= 1.0D || !this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_ + 1, p_147808_3_, p_147808_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusionPartial = this.blockAccess.getBlock(p_147808_2_ + 1, p_147808_3_, p_147808_4_).getAmbientOcclusionLightValue();
-            f8 = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZPP) / 4.0F;
-            f9 = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-            f10 = (this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
-            f11 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMinY * this.renderMaxZ);
-            f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMinY * this.renderMinZ);
-            f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMaxY * this.renderMinZ);
-            f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMaxY * this.renderMaxZ);
-            j1 = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            k1 = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            l1 = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusionPartial);
-            i2 = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
-            this.brightnessTopLeft = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMinY) * this.renderMaxZ, (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ), this.renderMinY * (1.0D - this.renderMaxZ), this.renderMinY * this.renderMaxZ);
-            this.brightnessBottomLeft = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMinY) * this.renderMinZ, (1.0D - this.renderMinY) * (1.0D - this.renderMinZ), this.renderMinY * (1.0D - this.renderMinZ), this.renderMinY * this.renderMinZ);
-            this.brightnessBottomRight = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMaxY) * this.renderMinZ, (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ), this.renderMaxY * (1.0D - this.renderMinZ), this.renderMaxY * this.renderMinZ);
-            this.brightnessTopRight = this.mixAoBrightness(j1, i2, l1, k1, (1.0D - this.renderMaxY) * this.renderMaxZ, (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ), this.renderMaxY * (1.0D - this.renderMaxZ), this.renderMaxY * this.renderMaxZ);
-
-            if (flag1renderStandardBlockWithAmbientOcclusionPartial)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147808_5_ * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147808_6_ * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147808_7_ * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-            iicon = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 5);
-            this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147808_5_;
-                this.colorRedBottomLeft *= p_147808_5_;
-                this.colorRedBottomRight *= p_147808_5_;
-                this.colorRedTopRight *= p_147808_5_;
-                this.colorGreenTopLeft *= p_147808_6_;
-                this.colorGreenBottomLeft *= p_147808_6_;
-                this.colorGreenBottomRight *= p_147808_6_;
-                this.colorGreenTopRight *= p_147808_6_;
-                this.colorBlueTopLeft *= p_147808_7_;
-                this.colorBlueBottomLeft *= p_147808_7_;
-                this.colorBlueBottomRight *= p_147808_7_;
-                this.colorBlueTopRight *= p_147808_7_;
-                this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSidesPartial6(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
+            optimizationsAndTweaks$renamethismethodlaterPartial6(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
             flagrenderStandardBlockWithAmbientOcclusionPartial = true;
         }
 
         this.enableAO = false;
         return flagrenderStandardBlockWithAmbientOcclusionPartial;
     }
-    // Todo refactor
+    @Unique
+    boolean flag2renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    boolean flag3renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    boolean flag4renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    boolean flag5renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    int i1renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    float f7renderStandardBlockWithAmbientOcclusion;
+    @Unique
+    float f3renderStandardBlockWithAmbientOcclusion = 0.0F;
+    @Unique
+    float f4renderStandardBlockWithAmbientOcclusion = 0.0F;
+    @Unique
+    float f5renderStandardBlockWithAmbientOcclusion = 0.0F;
+    @Unique
+    float f6renderStandardBlockWithAmbientOcclusion = 0.0F;
+    @Unique
+    boolean flag1renderStandardBlockWithAmbientOcclusion = true;
+    @Unique
+    boolean flagrenderStandardBlockWithAmbientOcclusion = false;
+
+    @Unique
+    IIcon iiconrenderStandardBlockWithAmbientOcclusion;
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides(Block block, int x, int y, int z) {
+        return this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$renamethismethodlater(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_, int lrenderStandardBlockWithAmbientOcclusion) {
+        if (this.renderMinY <= 0.0D)
+        {
+            --p_147751_3_;
+        }
+
+        this.aoBrightnessXYNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessYZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
+        this.aoBrightnessYZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
+        this.aoBrightnessXYPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
+        this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getCanBlockGrass();
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1);
+        }
+
+        if (this.renderMinY <= 0.0D)
+        {
+            ++p_147751_3_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMinY <= 0.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+        f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZNN) / 4.0F;
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusion);
+
+        if (flag1renderStandardBlockWithAmbientOcclusion)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.5F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.5F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.5F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.renderFaceYNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 0));
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides2(Block block, int x, int y, int z) {
+        return this.renderAllFaces || block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1);
+    }
+    @Unique
+    public void optimizationsAndTweaks$renamethismethodlater2(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_,int lrenderStandardBlockWithAmbientOcclusion)
+    {
+        if (this.renderMaxY >= 1.0D)
+        {
+            ++p_147751_3_;
+        }
+
+        this.aoBrightnessXYNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessXYPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessYZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
+        this.aoBrightnessYZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
+        this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getCanBlockGrass();
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1);
+        }
+
+        if (this.renderMaxY >= 1.0D)
+        {
+            --p_147751_3_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMaxY >= 1.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+        f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN) / 4.0F;
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_;
+        this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_;
+        this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_;
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.renderFaceYPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 1));
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides3(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_) {
+        return this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1, 2);
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$renamethismethodlater3(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_,int lrenderStandardBlockWithAmbientOcclusion)
+    {
+        if (this.renderMinZ <= 0.0D)
+        {
+            --p_147751_4_;
+        }
+
+        this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessYZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
+        this.aoBrightnessYZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
+        this.aoBrightnessXZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_);
+        }
+
+        if (this.renderMinZ <= 0.0D)
+        {
+            ++p_147751_4_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMinZ <= 0.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+        f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
+        f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusion);
+
+        if (flag1renderStandardBlockWithAmbientOcclusion)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.8F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 2);
+        this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147751_5_;
+            this.colorRedBottomLeft *= p_147751_5_;
+            this.colorRedBottomRight *= p_147751_5_;
+            this.colorRedTopRight *= p_147751_5_;
+            this.colorGreenTopLeft *= p_147751_6_;
+            this.colorGreenBottomLeft *= p_147751_6_;
+            this.colorGreenBottomRight *= p_147751_6_;
+            this.colorGreenTopRight *= p_147751_6_;
+            this.colorBlueTopLeft *= p_147751_7_;
+            this.colorBlueBottomLeft *= p_147751_7_;
+            this.colorBlueBottomRight *= p_147751_7_;
+            this.colorBlueTopRight *= p_147751_7_;
+            this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides4(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_) {
+        return this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1, 3);
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$renamethismethodlater4(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_,int lrenderStandardBlockWithAmbientOcclusion)
+    {
+        if (this.renderMaxZ >= 1.0D)
+        {
+            ++p_147751_4_;
+        }
+
+        this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessXZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
+        this.aoBrightnessYZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
+        this.aoBrightnessYZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_);
+        }
+
+        if (this.renderMaxZ >= 1.0D)
+        {
+            --p_147751_4_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMaxZ >= 1.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion= this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+        f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPP) / 4.0F;
+        f6renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusion);
+
+        if (flag1renderStandardBlockWithAmbientOcclusion)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.8F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3);
+        this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3));
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147751_5_;
+            this.colorRedBottomLeft *= p_147751_5_;
+            this.colorRedBottomRight *= p_147751_5_;
+            this.colorRedTopRight *= p_147751_5_;
+            this.colorGreenTopLeft *= p_147751_6_;
+            this.colorGreenBottomLeft *= p_147751_6_;
+            this.colorGreenBottomRight *= p_147751_6_;
+            this.colorGreenTopRight *= p_147751_6_;
+            this.colorBlueTopLeft *= p_147751_7_;
+            this.colorBlueBottomLeft *= p_147751_7_;
+            this.colorBlueBottomRight *= p_147751_7_;
+            this.colorBlueTopRight *= p_147751_7_;
+            this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides5(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_) {
+        return this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_, 4);
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$renamethismethodlater5(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_,int lrenderStandardBlockWithAmbientOcclusion)
+    {
+        if (this.renderMinX <= 0.0D)
+        {
+            --p_147751_2_;
+        }
+
+        this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXYNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
+        this.aoBrightnessXZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
+        this.aoBrightnessXZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
+        this.aoBrightnessXYNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1);
+        }
+
+        if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+            this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1);
+        }
+
+        if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+            this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1);
+        }
+
+        if (this.renderMinX <= 0.0D)
+        {
+            ++p_147751_2_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMinX <= 0.0D || !this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZNP) / 4.0F;
+        f3renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1renderStandardBlockWithAmbientOcclusion);
+
+        if (flag1renderStandardBlockWithAmbientOcclusion)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.6F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 4);
+        this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147751_5_;
+            this.colorRedBottomLeft *= p_147751_5_;
+            this.colorRedBottomRight *= p_147751_5_;
+            this.colorRedTopRight *= p_147751_5_;
+            this.colorGreenTopLeft *= p_147751_6_;
+            this.colorGreenBottomLeft *= p_147751_6_;
+            this.colorGreenBottomRight *= p_147751_6_;
+            this.colorGreenTopRight *= p_147751_6_;
+            this.colorBlueTopLeft *= p_147751_7_;
+            this.colorBlueBottomLeft *= p_147751_7_;
+            this.colorBlueBottomRight *= p_147751_7_;
+            this.colorBlueTopRight *= p_147751_7_;
+            this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldRenderBlockSides6(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_) {
+        return this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_, 5);
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$renamethismethodlater6(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_,int lrenderStandardBlockWithAmbientOcclusion)
+    {
+        if (this.renderMaxX >= 1.0D)
+        {
+            ++p_147751_2_;
+        }
+
+        this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+        this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
+        this.aoBrightnessXYPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
+        this.aoBrightnessXZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
+        this.aoBrightnessXZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
+        this.aoBrightnessXYPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
+        flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
+        flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
+        flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
+        flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1);
+        }
+
+        if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+            this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1);
+        }
+
+        if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
+        {
+            this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+            this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+        }
+        else
+        {
+            this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
+            this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1);
+        }
+
+        if (this.renderMaxX >= 1.0D)
+        {
+            --p_147751_2_;
+        }
+
+        i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
+
+        if (this.renderMaxX >= 1.0D || !this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).isOpaqueCube())
+        {
+            i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
+        }
+
+        f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
+        f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZPP) / 4.0F;
+        f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
+        f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
+        f6renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+        this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusion);
+        this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusion);
+
+        if (flag1renderStandardBlockWithAmbientOcclusion)
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.6F;
+        }
+        else
+        {
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+        }
+
+        this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
+        this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
+        this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
+        iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 5);
+        this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+
+        if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+        {
+            this.colorRedTopLeft *= p_147751_5_;
+            this.colorRedBottomLeft *= p_147751_5_;
+            this.colorRedBottomRight *= p_147751_5_;
+            this.colorRedTopRight *= p_147751_5_;
+            this.colorGreenTopLeft *= p_147751_6_;
+            this.colorGreenBottomLeft *= p_147751_6_;
+            this.colorGreenBottomRight *= p_147751_6_;
+            this.colorGreenTopRight *= p_147751_6_;
+            this.colorBlueTopLeft *= p_147751_7_;
+            this.colorBlueBottomLeft *= p_147751_7_;
+            this.colorBlueBottomRight *= p_147751_7_;
+            this.colorBlueTopRight *= p_147751_7_;
+            this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+        }
+
+        flagrenderStandardBlockWithAmbientOcclusion = true;
+    }
     /**
      * @author
      * @reason
@@ -1124,772 +2010,41 @@ public class MixinRenderBlocks {
         int i1renderStandardBlockWithAmbientOcclusion;
         float f7renderStandardBlockWithAmbientOcclusion;
 
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_, 0))
-        {
-            if (this.renderMinY <= 0.0D)
-            {
-                --p_147751_3_;
-            }
-
-            this.aoBrightnessXYNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessYZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
-            this.aoBrightnessYZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
-            this.aoBrightnessXYPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
-            this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getCanBlockGrass();
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1);
-            }
-
-            if (this.renderMinY <= 0.0D)
-            {
-                ++p_147751_3_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMinY <= 0.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-            f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZNN) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusion);
-
-            if (flag1renderStandardBlockWithAmbientOcclusion)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.5F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.renderFaceYNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 0));
+        if (optimizationsAndTweaks$shouldRenderBlockSides(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_, lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_, 1))
-        {
-            if (this.renderMaxY >= 1.0D)
-            {
-                ++p_147751_3_;
-            }
-
-            this.aoBrightnessXYNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessXYPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessYZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
-            this.aoBrightnessYZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
-            this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getCanBlockGrass();
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1);
-            }
-
-            if (this.renderMaxY >= 1.0D)
-            {
-                --p_147751_3_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMaxY >= 1.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-            f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZPP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN) / 4.0F;
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_;
-            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_;
-            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_;
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.renderFaceYPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 1));
+        if (optimizationsAndTweaks$shouldRenderBlockSides2(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater2(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_,lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
-        IIcon iicon;
-
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1, 2))
-        {
-            if (this.renderMinZ <= 0.0D)
-            {
-                --p_147751_4_;
-            }
-
-            this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessYZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
-            this.aoBrightnessYZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
-            this.aoBrightnessXZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_);
-            }
-
-            if (this.renderMinZ <= 0.0D)
-            {
-                ++p_147751_4_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMinZ <= 0.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-            f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
-            f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1renderStandardBlockWithAmbientOcclusion);
-
-            if (flag1renderStandardBlockWithAmbientOcclusion)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            iicon = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 2);
-            this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147751_5_;
-                this.colorRedBottomLeft *= p_147751_5_;
-                this.colorRedBottomRight *= p_147751_5_;
-                this.colorRedTopRight *= p_147751_5_;
-                this.colorGreenTopLeft *= p_147751_6_;
-                this.colorGreenBottomLeft *= p_147751_6_;
-                this.colorGreenBottomRight *= p_147751_6_;
-                this.colorGreenTopRight *= p_147751_6_;
-                this.colorBlueTopLeft *= p_147751_7_;
-                this.colorBlueBottomLeft *= p_147751_7_;
-                this.colorBlueBottomRight *= p_147751_7_;
-                this.colorBlueTopRight *= p_147751_7_;
-                this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSides3(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater3(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_,lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1, 3))
-        {
-            if (this.renderMaxZ >= 1.0D)
-            {
-                ++p_147751_4_;
-            }
-
-            this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchYZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessXZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
-            this.aoBrightnessYZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
-            this.aoBrightnessYZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_);
-            }
-
-            if (this.renderMaxZ >= 1.0D)
-            {
-                --p_147751_4_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMaxZ >= 1.0D || !this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion= this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-            f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPP) / 4.0F;
-            f6renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1renderStandardBlockWithAmbientOcclusion);
-
-            if (flag1renderStandardBlockWithAmbientOcclusion)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            iicon = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3);
-            this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3));
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147751_5_;
-                this.colorRedBottomLeft *= p_147751_5_;
-                this.colorRedBottomRight *= p_147751_5_;
-                this.colorRedTopRight *= p_147751_5_;
-                this.colorGreenTopLeft *= p_147751_6_;
-                this.colorGreenBottomLeft *= p_147751_6_;
-                this.colorGreenBottomRight *= p_147751_6_;
-                this.colorGreenTopRight *= p_147751_6_;
-                this.colorBlueTopLeft *= p_147751_7_;
-                this.colorBlueBottomLeft *= p_147751_7_;
-                this.colorBlueBottomRight *= p_147751_7_;
-                this.colorBlueTopRight *= p_147751_7_;
-                this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSides4(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater4(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_,lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_, 4))
-        {
-            if (this.renderMinX <= 0.0D)
-            {
-                --p_147751_2_;
-            }
-
-            this.aoLightValueScratchXYNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXYNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
-            this.aoBrightnessXZNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
-            this.aoBrightnessXZNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
-            this.aoBrightnessXYNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag3renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1);
-            }
-
-            if (!flag4renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1);
-            }
-
-            if (!flag5renderStandardBlockWithAmbientOcclusion && !flag2renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZNPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1);
-            }
-
-            if (this.renderMinX <= 0.0D)
-            {
-                ++p_147751_2_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMinX <= 0.0D || !this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ - 1, p_147751_3_, p_147751_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ - 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            f6renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZNP) / 4.0F;
-            f3renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1renderStandardBlockWithAmbientOcclusion);
-
-            if (flag1renderStandardBlockWithAmbientOcclusion)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            iicon = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 4);
-            this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147751_5_;
-                this.colorRedBottomLeft *= p_147751_5_;
-                this.colorRedBottomRight *= p_147751_5_;
-                this.colorRedTopRight *= p_147751_5_;
-                this.colorGreenTopLeft *= p_147751_6_;
-                this.colorGreenBottomLeft *= p_147751_6_;
-                this.colorGreenBottomRight *= p_147751_6_;
-                this.colorGreenTopRight *= p_147751_6_;
-                this.colorBlueTopLeft *= p_147751_7_;
-                this.colorBlueBottomLeft *= p_147751_7_;
-                this.colorBlueBottomRight *= p_147751_7_;
-                this.colorBlueTopRight *= p_147751_7_;
-                this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSides5(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater5(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_,lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
-        if (this.renderAllFaces || p_147751_1_.shouldSideBeRendered(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_, 5))
-        {
-            if (this.renderMaxX >= 1.0D)
-            {
-                ++p_147751_2_;
-            }
-
-            this.aoLightValueScratchXYPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXZPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-            this.aoLightValueScratchXYPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_).getAmbientOcclusionLightValue();
-            this.aoBrightnessXYPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_);
-            this.aoBrightnessXZPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ - 1);
-            this.aoBrightnessXZPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_ + 1);
-            this.aoBrightnessXYPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_);
-            flag2renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ + 1, p_147751_4_).getCanBlockGrass();
-            flag3renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_ - 1, p_147751_4_).getCanBlockGrass();
-            flag4renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ + 1).getCanBlockGrass();
-            flag5renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_ - 1).getCanBlockGrass();
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ - 1);
-            }
-
-            if (!flag3renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPNP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ - 1, p_147751_4_ + 1);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag5renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPN = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ - 1);
-            }
-
-            if (!flag2renderStandardBlockWithAmbientOcclusion && !flag4renderStandardBlockWithAmbientOcclusion)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = this.blockAccess.getBlock(p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1).getAmbientOcclusionLightValue();
-                this.aoBrightnessXYZPPP = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_ + 1, p_147751_4_ + 1);
-            }
-
-            if (this.renderMaxX >= 1.0D)
-            {
-                --p_147751_2_;
-            }
-
-            i1renderStandardBlockWithAmbientOcclusion = lrenderStandardBlockWithAmbientOcclusion;
-
-            if (this.renderMaxX >= 1.0D || !this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).isOpaqueCube())
-            {
-                i1renderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_ + 1, p_147751_3_, p_147751_4_);
-            }
-
-            f7renderStandardBlockWithAmbientOcclusion = this.blockAccess.getBlock(p_147751_2_ + 1, p_147751_3_, p_147751_4_).getAmbientOcclusionLightValue();
-            f3renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZPP) / 4.0F;
-            f4renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusion) / 4.0F;
-            f5renderStandardBlockWithAmbientOcclusion = (this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
-            f6renderStandardBlockWithAmbientOcclusion = (f7renderStandardBlockWithAmbientOcclusion + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusion);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusion);
-
-            if (flag1renderStandardBlockWithAmbientOcclusion)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = p_147751_5_ * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = p_147751_6_ * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = p_147751_7_ * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopLeft *= f3renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomLeft *= f4renderStandardBlockWithAmbientOcclusion;
-            this.colorRedBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueBottomRight *= f5renderStandardBlockWithAmbientOcclusion;
-            this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-            iicon = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 5);
-            this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iicon);
-
-            if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= p_147751_5_;
-                this.colorRedBottomLeft *= p_147751_5_;
-                this.colorRedBottomRight *= p_147751_5_;
-                this.colorRedTopRight *= p_147751_5_;
-                this.colorGreenTopLeft *= p_147751_6_;
-                this.colorGreenBottomLeft *= p_147751_6_;
-                this.colorGreenBottomRight *= p_147751_6_;
-                this.colorGreenTopRight *= p_147751_6_;
-                this.colorBlueTopLeft *= p_147751_7_;
-                this.colorBlueBottomLeft *= p_147751_7_;
-                this.colorBlueBottomRight *= p_147751_7_;
-                this.colorBlueTopRight *= p_147751_7_;
-                this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
-            }
-
+        if (optimizationsAndTweaks$shouldRenderBlockSides6(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
+            optimizationsAndTweaks$renamethismethodlater6(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_,lrenderStandardBlockWithAmbientOcclusion);
             flagrenderStandardBlockWithAmbientOcclusion = true;
         }
 
         this.enableAO = false;
         return flagrenderStandardBlockWithAmbientOcclusion;
     }
-    // todo refactor
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+
+    @Shadow
     public boolean renderStandardBlock(Block blockType, int blockX, int blockY, int blockZ)
     {
         int lrenderStandardBlock = blockType.colorMultiplier(this.blockAccess, blockX, blockY, blockZ);
@@ -1909,12 +2064,7 @@ public class MixinRenderBlocks {
 
         return Minecraft.isAmbientOcclusionEnabled() && blockType.getLightValue() == 0 ? (this.partialRenderBounds ? this.renderStandardBlockWithAmbientOcclusionPartial(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock) : this.renderStandardBlockWithAmbientOcclusion(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock)) : this.renderStandardBlockWithColorMultiplier(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock);
     }
-    // todo refactor
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     public void renderFaceXPos(Block p_147764_1_, double p_147764_2_, double p_147764_4_, double p_147764_6_, IIcon p_147764_8_)
     {
         Tessellator tessellator = Tessellator.instance;
