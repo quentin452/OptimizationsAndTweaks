@@ -431,10 +431,10 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
         "core.MixinRenderManager"),
     client_essenceofthegod_MixinBarTickHandler(Side.CLIENT,
-        require(TargetedMod.ESSENCEOFTHEGOD).and(m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod),
+        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
         "essenceofthegod.MixinBarTickHandler"),
     client_essenceofthegod_MixinPlayerStats(Side.CLIENT,
-        require(TargetedMod.ESSENCEOFTHEGOD).and(m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod),
+        m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
         "essenceofthegod.MixinPlayerStats"),
 
     client_davincivessels_MixinShipKeyHandler(Side.CLIENT, require(TargetedMod.DAVINCIVESSELS).and(m -> OptimizationsandTweaksConfig.enableMixinShipKeyHandler),
