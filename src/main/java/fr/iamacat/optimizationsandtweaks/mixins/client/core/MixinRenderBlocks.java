@@ -406,7 +406,7 @@ public class MixinRenderBlocks {
         this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-        this.renderFaceYNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 0));
+        this.renderFaceYNeg(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 0));
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
     }
 
@@ -515,7 +515,7 @@ public class MixinRenderBlocks {
         this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
-        this.renderFaceYPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 1));
+        this.renderFaceYPos(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 1));
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
     }
 
@@ -605,10 +605,10 @@ public class MixinRenderBlocks {
         f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
         f10 = (this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
         f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
-        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
-        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
-        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMaxY * (1.0D - this.renderMinX) + f9 * this.renderMaxY * this.renderMinX + f10 * (1.0D - this.renderMaxY) * this.renderMinX + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMaxY * (1.0D - this.renderMaxX) + f9 * this.renderMaxY * this.renderMaxX + f10 * (1.0D - this.renderMaxY) * this.renderMaxX + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMinY * (1.0D - this.renderMaxX) + f9 * this.renderMinY * this.renderMaxX + f10 * (1.0D - this.renderMinY) * this.renderMaxX + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMinY * (1.0D - this.renderMinX) + f9 * this.renderMinY * this.renderMinX + f10 * (1.0D - this.renderMinY) * this.renderMinX + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
         j1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
         k1 = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1renderStandardBlockWithAmbientOcclusionPartial);
         l1 = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1renderStandardBlockWithAmbientOcclusionPartial);
@@ -644,7 +644,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 2);
-        this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+        this.renderFaceZNeg(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -660,7 +660,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147808_7_;
             this.colorBlueBottomRight *= p_147808_7_;
             this.colorBlueTopRight *= p_147808_7_;
-            this.renderFaceZNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceZNeg(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
@@ -752,10 +752,10 @@ public class MixinRenderBlocks {
         f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
         f10 = (this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
         f11 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMinX) + (double)f9 * this.renderMaxY * this.renderMinX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMinX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
-        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMinX) + (double)f9 * this.renderMinY * this.renderMinX + (double)f10 * (1.0D - this.renderMinY) * this.renderMinX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
-        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMinY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMinY * this.renderMaxX + (double)f10 * (1.0D - this.renderMinY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
-        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * this.renderMaxY * (1.0D - this.renderMaxX) + (double)f9 * this.renderMaxY * this.renderMaxX + (double)f10 * (1.0D - this.renderMaxY) * this.renderMaxX + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMaxY * (1.0D - this.renderMinX) + f9 * this.renderMaxY * this.renderMinX + f10 * (1.0D - this.renderMaxY) * this.renderMinX + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinX));
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMinY * (1.0D - this.renderMinX) + f9 * this.renderMinY * this.renderMinX + f10 * (1.0D - this.renderMinY) * this.renderMinX + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinX));
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMinY * (1.0D - this.renderMaxX) + f9 * this.renderMinY * this.renderMaxX + f10 * (1.0D - this.renderMinY) * this.renderMaxX + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxX));
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * this.renderMaxY * (1.0D - this.renderMaxX) + f9 * this.renderMaxY * this.renderMaxX + f10 * (1.0D - this.renderMaxY) * this.renderMaxX + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxX));
         j1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
         k1 = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
         l1 = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
@@ -791,7 +791,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 3);
-        this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+        this.renderFaceZPos(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -807,7 +807,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147808_7_;
             this.colorBlueBottomRight *= p_147808_7_;
             this.colorBlueTopRight *= p_147808_7_;
-            this.renderFaceZPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceZPos(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
@@ -899,10 +899,10 @@ public class MixinRenderBlocks {
         f9 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
         f10 = (this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
         f11 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
-        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMaxZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ);
-        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMaxY * this.renderMinZ + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ);
-        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMinZ + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMinZ);
-        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f9 * this.renderMinY * this.renderMaxZ + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ);
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)(f9 * this.renderMaxY * this.renderMaxZ + f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + f8 * (1.0D - this.renderMaxY) * this.renderMaxZ);
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)(f9 * this.renderMaxY * this.renderMinZ + f10 * this.renderMaxY * (1.0D - this.renderMinZ) + f11 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + f8 * (1.0D - this.renderMaxY) * this.renderMinZ);
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)(f9 * this.renderMinY * this.renderMinZ + f10 * this.renderMinY * (1.0D - this.renderMinZ) + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + f8 * (1.0D - this.renderMinY) * this.renderMinZ);
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)(f9 * this.renderMinY * this.renderMaxZ + f10 * this.renderMinY * (1.0D - this.renderMaxZ) + f11 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + f8 * (1.0D - this.renderMinY) * this.renderMaxZ);
         j1 = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1renderStandardBlockWithAmbientOcclusionPartial);
         k1 = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1renderStandardBlockWithAmbientOcclusionPartial);
         l1 = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1renderStandardBlockWithAmbientOcclusionPartial);
@@ -938,7 +938,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 4);
-        this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+        this.renderFaceXNeg(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -954,7 +954,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147808_7_;
             this.colorBlueBottomRight *= p_147808_7_;
             this.colorBlueTopRight *= p_147808_7_;
-            this.renderFaceXNeg(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceXNeg(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
@@ -1046,10 +1046,10 @@ public class MixinRenderBlocks {
         f9 = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial) / 4.0F;
         f10 = (this.aoLightValueScratchXZPN + f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
         f11 = (f7renderStandardBlockWithAmbientOcclusionPartial + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-        f3renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMinY * this.renderMaxZ);
-        f4renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMinY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMinY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMinY * this.renderMinZ);
-        f5renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMinZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMinZ) + (double)f11 * this.renderMaxY * this.renderMinZ);
-        f6renderStandardBlockWithAmbientOcclusionPartial = (float)((double)f8 * (1.0D - this.renderMaxY) * this.renderMaxZ + (double)f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + (double)f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + (double)f11 * this.renderMaxY * this.renderMaxZ);
+        f3renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * (1.0D - this.renderMinY) * this.renderMaxZ + f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMaxZ) + f10 * this.renderMinY * (1.0D - this.renderMaxZ) + f11 * this.renderMinY * this.renderMaxZ);
+        f4renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * (1.0D - this.renderMinY) * this.renderMinZ + f9 * (1.0D - this.renderMinY) * (1.0D - this.renderMinZ) + f10 * this.renderMinY * (1.0D - this.renderMinZ) + f11 * this.renderMinY * this.renderMinZ);
+        f5renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * (1.0D - this.renderMaxY) * this.renderMinZ + f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMinZ) + f10 * this.renderMaxY * (1.0D - this.renderMinZ) + f11 * this.renderMaxY * this.renderMinZ);
+        f6renderStandardBlockWithAmbientOcclusionPartial = (float)(f8 * (1.0D - this.renderMaxY) * this.renderMaxZ + f9 * (1.0D - this.renderMaxY) * (1.0D - this.renderMaxZ) + f10 * this.renderMaxY * (1.0D - this.renderMaxZ) + f11 * this.renderMaxY * this.renderMaxZ);
         j1 = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1renderStandardBlockWithAmbientOcclusionPartial);
         k1 = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1renderStandardBlockWithAmbientOcclusionPartial);
         l1 = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1renderStandardBlockWithAmbientOcclusionPartial);
@@ -1085,7 +1085,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusionPartial;
         iiconrenderStandardBlockWithAmbientOcclusionPartial = this.getBlockIcon(p_147808_1_, this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_, 5);
-        this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
+        this.renderFaceXPos(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, iiconrenderStandardBlockWithAmbientOcclusionPartial);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusionPartial.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -1101,7 +1101,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147808_7_;
             this.colorBlueBottomRight *= p_147808_7_;
             this.colorBlueTopRight *= p_147808_7_;
-            this.renderFaceXPos(p_147808_1_, (double)p_147808_2_, (double)p_147808_3_, (double)p_147808_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceXPos(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusionPartial = true;
@@ -1304,7 +1304,7 @@ public class MixinRenderBlocks {
         this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-        this.renderFaceYNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 0));
+        this.renderFaceYNeg(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 0));
         flagrenderStandardBlockWithAmbientOcclusion = true;
     }
 
@@ -1413,7 +1413,7 @@ public class MixinRenderBlocks {
         this.colorRedTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
-        this.renderFaceYPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 1));
+        this.renderFaceYPos(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 1));
         flagrenderStandardBlockWithAmbientOcclusion = true;
     }
 
@@ -1535,7 +1535,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 2);
-        this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+        this.renderFaceZNeg(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -1551,7 +1551,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147751_7_;
             this.colorBlueBottomRight *= p_147751_7_;
             this.colorBlueTopRight *= p_147751_7_;
-            this.renderFaceZNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceZNeg(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusion = true;
@@ -1675,7 +1675,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3);
-        this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3));
+        this.renderFaceZPos(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 3));
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -1691,7 +1691,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147751_7_;
             this.colorBlueBottomRight *= p_147751_7_;
             this.colorBlueTopRight *= p_147751_7_;
-            this.renderFaceZPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceZPos(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusion = true;
@@ -1815,7 +1815,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 4);
-        this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+        this.renderFaceXNeg(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -1831,7 +1831,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147751_7_;
             this.colorBlueBottomRight *= p_147751_7_;
             this.colorBlueTopRight *= p_147751_7_;
-            this.renderFaceXNeg(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceXNeg(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusion = true;
@@ -1955,7 +1955,7 @@ public class MixinRenderBlocks {
         this.colorGreenTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         this.colorBlueTopRight *= f6renderStandardBlockWithAmbientOcclusion;
         iiconrenderStandardBlockWithAmbientOcclusion = this.getBlockIcon(p_147751_1_, this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_, 5);
-        this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
+        this.renderFaceXPos(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, iiconrenderStandardBlockWithAmbientOcclusion);
 
         if (fancyGrass && iiconrenderStandardBlockWithAmbientOcclusion.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
         {
@@ -1971,7 +1971,7 @@ public class MixinRenderBlocks {
             this.colorBlueBottomLeft *= p_147751_7_;
             this.colorBlueBottomRight *= p_147751_7_;
             this.colorBlueTopRight *= p_147751_7_;
-            this.renderFaceXPos(p_147751_1_, (double)p_147751_2_, (double)p_147751_3_, (double)p_147751_4_, BlockGrass.getIconSideOverlay());
+            this.renderFaceXPos(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, BlockGrass.getIconSideOverlay());
         }
 
         flagrenderStandardBlockWithAmbientOcclusion = true;
@@ -2044,13 +2044,17 @@ public class MixinRenderBlocks {
         return flagrenderStandardBlockWithAmbientOcclusion;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean renderStandardBlock(Block blockType, int blockX, int blockY, int blockZ)
     {
         int lrenderStandardBlock = blockType.colorMultiplier(this.blockAccess, blockX, blockY, blockZ);
-        float frenderStandardBlock = (float)(lrenderStandardBlock >> 16 & 255) / 255.0F;
-        float f1renderStandardBlock = (float)(lrenderStandardBlock >> 8 & 255) / 255.0F;
-        float f2renderStandardBlock = (float)(lrenderStandardBlock & 255) / 255.0F;
+        float frenderStandardBlock = (lrenderStandardBlock >> 16 & 255) / 255.0F;
+        float f1renderStandardBlock = (lrenderStandardBlock >> 8 & 255) / 255.0F;
+        float f2renderStandardBlock = (lrenderStandardBlock & 255) / 255.0F;
 
         if (EntityRenderer.anaglyphEnable)
         {
@@ -2064,7 +2068,11 @@ public class MixinRenderBlocks {
 
         return Minecraft.isAmbientOcclusionEnabled() && blockType.getLightValue() == 0 ? (this.partialRenderBounds ? this.renderStandardBlockWithAmbientOcclusionPartial(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock) : this.renderStandardBlockWithAmbientOcclusion(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock)) : this.renderStandardBlockWithColorMultiplier(blockType, blockX, blockY, blockZ, frenderStandardBlock, f1renderStandardBlock, f2renderStandardBlock);
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceXPos(Block p_147764_1_, double p_147764_2_, double p_147764_4_, double p_147764_6_, IIcon p_147764_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2074,17 +2082,17 @@ public class MixinRenderBlocks {
             p_147764_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147764_8_.getInterpolatedU(this.renderMinZ * 16.0D);
-        double d4 = (double)p_147764_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
+        double d3 = p_147764_8_.getInterpolatedU(this.renderMinZ * 16.0D);
+        double d4 = p_147764_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
 
         if (this.field_152631_f)
         {
-            d4 = (double)p_147764_8_.getInterpolatedU((1.0D - this.renderMinZ) * 16.0D);
-            d3 = (double)p_147764_8_.getInterpolatedU((1.0D - this.renderMaxZ) * 16.0D);
+            d4 = p_147764_8_.getInterpolatedU((1.0D - this.renderMinZ) * 16.0D);
+            d3 = p_147764_8_.getInterpolatedU((1.0D - this.renderMaxZ) * 16.0D);
         }
 
-        double d5 = (double)p_147764_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
-        double d6 = (double)p_147764_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
+        double d5 = p_147764_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
+        double d6 = p_147764_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
         double d7;
 
         if (this.flipTexture)
@@ -2096,14 +2104,14 @@ public class MixinRenderBlocks {
 
         if (this.renderMinZ < 0.0D || this.renderMaxZ > 1.0D)
         {
-            d3 = (double)p_147764_8_.getMinU();
-            d4 = (double)p_147764_8_.getMaxU();
+            d3 = p_147764_8_.getMinU();
+            d4 = p_147764_8_.getMaxU();
         }
 
         if (this.renderMinY < 0.0D || this.renderMaxY > 1.0D)
         {
-            d5 = (double)p_147764_8_.getMinV();
-            d6 = (double)p_147764_8_.getMaxV();
+            d5 = p_147764_8_.getMinV();
+            d6 = p_147764_8_.getMaxV();
         }
 
         d7 = d4;
@@ -2113,10 +2121,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateSouth == 2)
         {
-            d3 = (double)p_147764_8_.getInterpolatedU(this.renderMinY * 16.0D);
-            d5 = (double)p_147764_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
-            d4 = (double)p_147764_8_.getInterpolatedU(this.renderMaxY * 16.0D);
-            d6 = (double)p_147764_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
+            d3 = p_147764_8_.getInterpolatedU(this.renderMinY * 16.0D);
+            d5 = p_147764_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
+            d4 = p_147764_8_.getInterpolatedU(this.renderMaxY * 16.0D);
+            d6 = p_147764_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2126,10 +2134,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateSouth == 1)
         {
-            d3 = (double)p_147764_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
-            d5 = (double)p_147764_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
-            d4 = (double)p_147764_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
-            d6 = (double)p_147764_8_.getInterpolatedV(this.renderMinZ * 16.0D);
+            d3 = p_147764_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
+            d5 = p_147764_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
+            d4 = p_147764_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
+            d6 = p_147764_8_.getInterpolatedV(this.renderMinZ * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2139,10 +2147,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateSouth == 3)
         {
-            d3 = (double)p_147764_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
-            d4 = (double)p_147764_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
-            d5 = (double)p_147764_8_.getInterpolatedV(this.renderMaxY * 16.0D);
-            d6 = (double)p_147764_8_.getInterpolatedV(this.renderMinY * 16.0D);
+            d3 = p_147764_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
+            d4 = p_147764_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
+            d5 = p_147764_8_.getInterpolatedV(this.renderMaxY * 16.0D);
+            d6 = p_147764_8_.getInterpolatedV(this.renderMinY * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2186,18 +2194,30 @@ public class MixinRenderBlocks {
     }
 
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public IIcon getBlockIcon(Block p_147793_1_, IBlockAccess p_147793_2_, int p_147793_3_, int p_147793_4_, int p_147793_5_, int p_147793_6_)
     {
         return this.getIconSafe(p_147793_1_.getIcon(p_147793_2_, p_147793_3_, p_147793_4_, p_147793_5_, p_147793_6_));
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public IIcon getBlockIcon(Block p_147745_1_)
     {
         return this.getIconSafe(p_147745_1_.getBlockTextureFromSide(1));
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public IIcon getIconSafe(IIcon p_147758_1_)
     {
         if (p_147758_1_ == null)
@@ -2205,7 +2225,7 @@ public class MixinRenderBlocks {
             p_147758_1_ = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
         }
 
-        return (IIcon)p_147758_1_;
+        return p_147758_1_;
     }
 
     @Shadow
@@ -2234,15 +2254,23 @@ public class MixinRenderBlocks {
 
         return p_147778_1_ + p_147778_2_ + p_147778_3_ + p_147778_4_ >> 2 & 16711935;
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public int mixAoBrightness(int p_147727_1_, int p_147727_2_, int p_147727_3_, int p_147727_4_, double p_147727_5_, double p_147727_7_, double p_147727_9_, double p_147727_11_)
     {
-        int i1 = (int)((double)(p_147727_1_ >> 16 & 255) * p_147727_5_ + (double)(p_147727_2_ >> 16 & 255) * p_147727_7_ + (double)(p_147727_3_ >> 16 & 255) * p_147727_9_ + (double)(p_147727_4_ >> 16 & 255) * p_147727_11_) & 255;
-        int j1 = (int)((double)(p_147727_1_ & 255) * p_147727_5_ + (double)(p_147727_2_ & 255) * p_147727_7_ + (double)(p_147727_3_ & 255) * p_147727_9_ + (double)(p_147727_4_ & 255) * p_147727_11_) & 255;
+        int i1 = (int)((p_147727_1_ >> 16 & 255) * p_147727_5_ + (p_147727_2_ >> 16 & 255) * p_147727_7_ + (p_147727_3_ >> 16 & 255) * p_147727_9_ + (p_147727_4_ >> 16 & 255) * p_147727_11_) & 255;
+        int j1 = (int)((p_147727_1_ & 255) * p_147727_5_ + (p_147727_2_ & 255) * p_147727_7_ + (p_147727_3_ & 255) * p_147727_9_ + (p_147727_4_ & 255) * p_147727_11_) & 255;
         return i1 << 16 | j1;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceZNeg(Block p_147761_1_, double p_147761_2_, double p_147761_4_, double p_147761_6_, IIcon p_147761_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2252,17 +2280,17 @@ public class MixinRenderBlocks {
             p_147761_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147761_8_.getInterpolatedU(this.renderMinX * 16.0D);
-        double d4 = (double)p_147761_8_.getInterpolatedU(this.renderMaxX * 16.0D);
+        double d3 = p_147761_8_.getInterpolatedU(this.renderMinX * 16.0D);
+        double d4 = p_147761_8_.getInterpolatedU(this.renderMaxX * 16.0D);
 
         if (this.field_152631_f)
         {
-            d4 = (double)p_147761_8_.getInterpolatedU((1.0D - this.renderMinX) * 16.0D);
-            d3 = (double)p_147761_8_.getInterpolatedU((1.0D - this.renderMaxX) * 16.0D);
+            d4 = p_147761_8_.getInterpolatedU((1.0D - this.renderMinX) * 16.0D);
+            d3 = p_147761_8_.getInterpolatedU((1.0D - this.renderMaxX) * 16.0D);
         }
 
-        double d5 = (double)p_147761_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
-        double d6 = (double)p_147761_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
+        double d5 = p_147761_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
+        double d6 = p_147761_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
         double d7;
 
         if (this.flipTexture)
@@ -2274,14 +2302,14 @@ public class MixinRenderBlocks {
 
         if (this.renderMinX < 0.0D || this.renderMaxX > 1.0D)
         {
-            d3 = (double)p_147761_8_.getMinU();
-            d4 = (double)p_147761_8_.getMaxU();
+            d3 = p_147761_8_.getMinU();
+            d4 = p_147761_8_.getMaxU();
         }
 
         if (this.renderMinY < 0.0D || this.renderMaxY > 1.0D)
         {
-            d5 = (double)p_147761_8_.getMinV();
-            d6 = (double)p_147761_8_.getMaxV();
+            d5 = p_147761_8_.getMinV();
+            d6 = p_147761_8_.getMaxV();
         }
 
         d7 = d4;
@@ -2291,10 +2319,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateEast == 2)
         {
-            d3 = (double)p_147761_8_.getInterpolatedU(this.renderMinY * 16.0D);
-            d4 = (double)p_147761_8_.getInterpolatedU(this.renderMaxY * 16.0D);
-            d5 = (double)p_147761_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
-            d6 = (double)p_147761_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
+            d3 = p_147761_8_.getInterpolatedU(this.renderMinY * 16.0D);
+            d4 = p_147761_8_.getInterpolatedU(this.renderMaxY * 16.0D);
+            d5 = p_147761_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
+            d6 = p_147761_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2304,10 +2332,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateEast == 1)
         {
-            d3 = (double)p_147761_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
-            d4 = (double)p_147761_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
-            d5 = (double)p_147761_8_.getInterpolatedV(this.renderMaxX * 16.0D);
-            d6 = (double)p_147761_8_.getInterpolatedV(this.renderMinX * 16.0D);
+            d3 = p_147761_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
+            d4 = p_147761_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
+            d5 = p_147761_8_.getInterpolatedV(this.renderMaxX * 16.0D);
+            d6 = p_147761_8_.getInterpolatedV(this.renderMinX * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2317,10 +2345,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateEast == 3)
         {
-            d3 = (double)p_147761_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
-            d4 = (double)p_147761_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
-            d5 = (double)p_147761_8_.getInterpolatedV(this.renderMaxY * 16.0D);
-            d6 = (double)p_147761_8_.getInterpolatedV(this.renderMinY * 16.0D);
+            d3 = p_147761_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
+            d4 = p_147761_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
+            d5 = p_147761_8_.getInterpolatedV(this.renderMaxY * 16.0D);
+            d6 = p_147761_8_.getInterpolatedV(this.renderMinY * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2363,7 +2391,11 @@ public class MixinRenderBlocks {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceXNeg(Block p_147798_1_, double p_147798_2_, double p_147798_4_, double p_147798_6_, IIcon p_147798_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2373,10 +2405,10 @@ public class MixinRenderBlocks {
             p_147798_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147798_8_.getInterpolatedU(this.renderMinZ * 16.0D);
-        double d4 = (double)p_147798_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
-        double d5 = (double)p_147798_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
-        double d6 = (double)p_147798_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
+        double d3 = p_147798_8_.getInterpolatedU(this.renderMinZ * 16.0D);
+        double d4 = p_147798_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
+        double d5 = p_147798_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
+        double d6 = p_147798_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
         double d7;
 
         if (this.flipTexture)
@@ -2388,14 +2420,14 @@ public class MixinRenderBlocks {
 
         if (this.renderMinZ < 0.0D || this.renderMaxZ > 1.0D)
         {
-            d3 = (double)p_147798_8_.getMinU();
-            d4 = (double)p_147798_8_.getMaxU();
+            d3 = p_147798_8_.getMinU();
+            d4 = p_147798_8_.getMaxU();
         }
 
         if (this.renderMinY < 0.0D || this.renderMaxY > 1.0D)
         {
-            d5 = (double)p_147798_8_.getMinV();
-            d6 = (double)p_147798_8_.getMaxV();
+            d5 = p_147798_8_.getMinV();
+            d6 = p_147798_8_.getMaxV();
         }
 
         d7 = d4;
@@ -2405,10 +2437,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateNorth == 1)
         {
-            d3 = (double)p_147798_8_.getInterpolatedU(this.renderMinY * 16.0D);
-            d5 = (double)p_147798_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
-            d4 = (double)p_147798_8_.getInterpolatedU(this.renderMaxY * 16.0D);
-            d6 = (double)p_147798_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
+            d3 = p_147798_8_.getInterpolatedU(this.renderMinY * 16.0D);
+            d5 = p_147798_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
+            d4 = p_147798_8_.getInterpolatedU(this.renderMaxY * 16.0D);
+            d6 = p_147798_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2418,10 +2450,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateNorth == 2)
         {
-            d3 = (double)p_147798_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
-            d5 = (double)p_147798_8_.getInterpolatedV(this.renderMinZ * 16.0D);
-            d4 = (double)p_147798_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
-            d6 = (double)p_147798_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
+            d3 = p_147798_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
+            d5 = p_147798_8_.getInterpolatedV(this.renderMinZ * 16.0D);
+            d4 = p_147798_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
+            d6 = p_147798_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2431,10 +2463,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateNorth == 3)
         {
-            d3 = (double)p_147798_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
-            d4 = (double)p_147798_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
-            d5 = (double)p_147798_8_.getInterpolatedV(this.renderMaxY * 16.0D);
-            d6 = (double)p_147798_8_.getInterpolatedV(this.renderMinY * 16.0D);
+            d3 = p_147798_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
+            d4 = p_147798_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
+            d5 = p_147798_8_.getInterpolatedV(this.renderMaxY * 16.0D);
+            d6 = p_147798_8_.getInterpolatedV(this.renderMinY * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2479,7 +2511,11 @@ public class MixinRenderBlocks {
     /**
      * Renders the given texture to the south (z-positive) face of the block.  Args: block, x, y, z, texture
      */
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceZPos(Block p_147734_1_, double p_147734_2_, double p_147734_4_, double p_147734_6_, IIcon p_147734_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2489,10 +2525,10 @@ public class MixinRenderBlocks {
             p_147734_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147734_8_.getInterpolatedU(this.renderMinX * 16.0D);
-        double d4 = (double)p_147734_8_.getInterpolatedU(this.renderMaxX * 16.0D);
-        double d5 = (double)p_147734_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
-        double d6 = (double)p_147734_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
+        double d3 = p_147734_8_.getInterpolatedU(this.renderMinX * 16.0D);
+        double d4 = p_147734_8_.getInterpolatedU(this.renderMaxX * 16.0D);
+        double d5 = p_147734_8_.getInterpolatedV(16.0D - this.renderMaxY * 16.0D);
+        double d6 = p_147734_8_.getInterpolatedV(16.0D - this.renderMinY * 16.0D);
         double d7;
 
         if (this.flipTexture)
@@ -2504,14 +2540,14 @@ public class MixinRenderBlocks {
 
         if (this.renderMinX < 0.0D || this.renderMaxX > 1.0D)
         {
-            d3 = (double)p_147734_8_.getMinU();
-            d4 = (double)p_147734_8_.getMaxU();
+            d3 = p_147734_8_.getMinU();
+            d4 = p_147734_8_.getMaxU();
         }
 
         if (this.renderMinY < 0.0D || this.renderMaxY > 1.0D)
         {
-            d5 = (double)p_147734_8_.getMinV();
-            d6 = (double)p_147734_8_.getMaxV();
+            d5 = p_147734_8_.getMinV();
+            d6 = p_147734_8_.getMaxV();
         }
 
         d7 = d4;
@@ -2521,10 +2557,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateWest == 1)
         {
-            d3 = (double)p_147734_8_.getInterpolatedU(this.renderMinY * 16.0D);
-            d6 = (double)p_147734_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
-            d4 = (double)p_147734_8_.getInterpolatedU(this.renderMaxY * 16.0D);
-            d5 = (double)p_147734_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
+            d3 = p_147734_8_.getInterpolatedU(this.renderMinY * 16.0D);
+            d6 = p_147734_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
+            d4 = p_147734_8_.getInterpolatedU(this.renderMaxY * 16.0D);
+            d5 = p_147734_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2534,10 +2570,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateWest == 2)
         {
-            d3 = (double)p_147734_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
-            d5 = (double)p_147734_8_.getInterpolatedV(this.renderMinX * 16.0D);
-            d4 = (double)p_147734_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
-            d6 = (double)p_147734_8_.getInterpolatedV(this.renderMaxX * 16.0D);
+            d3 = p_147734_8_.getInterpolatedU(16.0D - this.renderMaxY * 16.0D);
+            d5 = p_147734_8_.getInterpolatedV(this.renderMinX * 16.0D);
+            d4 = p_147734_8_.getInterpolatedU(16.0D - this.renderMinY * 16.0D);
+            d6 = p_147734_8_.getInterpolatedV(this.renderMaxX * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2547,10 +2583,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateWest == 3)
         {
-            d3 = (double)p_147734_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
-            d4 = (double)p_147734_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
-            d5 = (double)p_147734_8_.getInterpolatedV(this.renderMaxY * 16.0D);
-            d6 = (double)p_147734_8_.getInterpolatedV(this.renderMinY * 16.0D);
+            d3 = p_147734_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
+            d4 = p_147734_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
+            d5 = p_147734_8_.getInterpolatedV(this.renderMaxY * 16.0D);
+            d6 = p_147734_8_.getInterpolatedV(this.renderMinY * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2593,7 +2629,11 @@ public class MixinRenderBlocks {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceYNeg(Block p_147768_1_, double p_147768_2_, double p_147768_4_, double p_147768_6_, IIcon p_147768_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2603,21 +2643,21 @@ public class MixinRenderBlocks {
             p_147768_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147768_8_.getInterpolatedU(this.renderMinX * 16.0D);
-        double d4 = (double)p_147768_8_.getInterpolatedU(this.renderMaxX * 16.0D);
-        double d5 = (double)p_147768_8_.getInterpolatedV(this.renderMinZ * 16.0D);
-        double d6 = (double)p_147768_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
+        double d3 = p_147768_8_.getInterpolatedU(this.renderMinX * 16.0D);
+        double d4 = p_147768_8_.getInterpolatedU(this.renderMaxX * 16.0D);
+        double d5 = p_147768_8_.getInterpolatedV(this.renderMinZ * 16.0D);
+        double d6 = p_147768_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
 
         if (this.renderMinX < 0.0D || this.renderMaxX > 1.0D)
         {
-            d3 = (double)p_147768_8_.getMinU();
-            d4 = (double)p_147768_8_.getMaxU();
+            d3 = p_147768_8_.getMinU();
+            d4 = p_147768_8_.getMaxU();
         }
 
         if (this.renderMinZ < 0.0D || this.renderMaxZ > 1.0D)
         {
-            d5 = (double)p_147768_8_.getMinV();
-            d6 = (double)p_147768_8_.getMaxV();
+            d5 = p_147768_8_.getMinV();
+            d6 = p_147768_8_.getMaxV();
         }
 
         double d7 = d4;
@@ -2627,10 +2667,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateBottom == 2)
         {
-            d3 = (double)p_147768_8_.getInterpolatedU(this.renderMinZ * 16.0D);
-            d5 = (double)p_147768_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
-            d4 = (double)p_147768_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
-            d6 = (double)p_147768_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
+            d3 = p_147768_8_.getInterpolatedU(this.renderMinZ * 16.0D);
+            d5 = p_147768_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
+            d4 = p_147768_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
+            d6 = p_147768_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2640,10 +2680,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateBottom == 1)
         {
-            d3 = (double)p_147768_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
-            d5 = (double)p_147768_8_.getInterpolatedV(this.renderMinX * 16.0D);
-            d4 = (double)p_147768_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
-            d6 = (double)p_147768_8_.getInterpolatedV(this.renderMaxX * 16.0D);
+            d3 = p_147768_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
+            d5 = p_147768_8_.getInterpolatedV(this.renderMinX * 16.0D);
+            d4 = p_147768_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
+            d6 = p_147768_8_.getInterpolatedV(this.renderMaxX * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2653,10 +2693,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateBottom == 3)
         {
-            d3 = (double)p_147768_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
-            d4 = (double)p_147768_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
-            d5 = (double)p_147768_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
-            d6 = (double)p_147768_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
+            d3 = p_147768_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
+            d4 = p_147768_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
+            d5 = p_147768_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
+            d6 = p_147768_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2699,7 +2739,11 @@ public class MixinRenderBlocks {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void renderFaceYPos(Block p_147806_1_, double p_147806_2_, double p_147806_4_, double p_147806_6_, IIcon p_147806_8_)
     {
         Tessellator tessellator = Tessellator.instance;
@@ -2709,21 +2753,21 @@ public class MixinRenderBlocks {
             p_147806_8_ = this.overrideBlockTexture;
         }
 
-        double d3 = (double)p_147806_8_.getInterpolatedU(this.renderMinX * 16.0D);
-        double d4 = (double)p_147806_8_.getInterpolatedU(this.renderMaxX * 16.0D);
-        double d5 = (double)p_147806_8_.getInterpolatedV(this.renderMinZ * 16.0D);
-        double d6 = (double)p_147806_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
+        double d3 = p_147806_8_.getInterpolatedU(this.renderMinX * 16.0D);
+        double d4 = p_147806_8_.getInterpolatedU(this.renderMaxX * 16.0D);
+        double d5 = p_147806_8_.getInterpolatedV(this.renderMinZ * 16.0D);
+        double d6 = p_147806_8_.getInterpolatedV(this.renderMaxZ * 16.0D);
 
         if (this.renderMinX < 0.0D || this.renderMaxX > 1.0D)
         {
-            d3 = (double)p_147806_8_.getMinU();
-            d4 = (double)p_147806_8_.getMaxU();
+            d3 = p_147806_8_.getMinU();
+            d4 = p_147806_8_.getMaxU();
         }
 
         if (this.renderMinZ < 0.0D || this.renderMaxZ > 1.0D)
         {
-            d5 = (double)p_147806_8_.getMinV();
-            d6 = (double)p_147806_8_.getMaxV();
+            d5 = p_147806_8_.getMinV();
+            d6 = p_147806_8_.getMaxV();
         }
 
         double d7 = d4;
@@ -2733,10 +2777,10 @@ public class MixinRenderBlocks {
 
         if (this.uvRotateTop == 1)
         {
-            d3 = (double)p_147806_8_.getInterpolatedU(this.renderMinZ * 16.0D);
-            d5 = (double)p_147806_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
-            d4 = (double)p_147806_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
-            d6 = (double)p_147806_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
+            d3 = p_147806_8_.getInterpolatedU(this.renderMinZ * 16.0D);
+            d5 = p_147806_8_.getInterpolatedV(16.0D - this.renderMaxX * 16.0D);
+            d4 = p_147806_8_.getInterpolatedU(this.renderMaxZ * 16.0D);
+            d6 = p_147806_8_.getInterpolatedV(16.0D - this.renderMinX * 16.0D);
             d9 = d5;
             d10 = d6;
             d7 = d3;
@@ -2746,10 +2790,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateTop == 2)
         {
-            d3 = (double)p_147806_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
-            d5 = (double)p_147806_8_.getInterpolatedV(this.renderMinX * 16.0D);
-            d4 = (double)p_147806_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
-            d6 = (double)p_147806_8_.getInterpolatedV(this.renderMaxX * 16.0D);
+            d3 = p_147806_8_.getInterpolatedU(16.0D - this.renderMaxZ * 16.0D);
+            d5 = p_147806_8_.getInterpolatedV(this.renderMinX * 16.0D);
+            d4 = p_147806_8_.getInterpolatedU(16.0D - this.renderMinZ * 16.0D);
+            d6 = p_147806_8_.getInterpolatedV(this.renderMaxX * 16.0D);
             d7 = d4;
             d8 = d3;
             d3 = d4;
@@ -2759,10 +2803,10 @@ public class MixinRenderBlocks {
         }
         else if (this.uvRotateTop == 3)
         {
-            d3 = (double)p_147806_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
-            d4 = (double)p_147806_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
-            d5 = (double)p_147806_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
-            d6 = (double)p_147806_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
+            d3 = p_147806_8_.getInterpolatedU(16.0D - this.renderMinX * 16.0D);
+            d4 = p_147806_8_.getInterpolatedU(16.0D - this.renderMaxX * 16.0D);
+            d5 = p_147806_8_.getInterpolatedV(16.0D - this.renderMinZ * 16.0D);
+            d6 = p_147806_8_.getInterpolatedV(16.0D - this.renderMaxZ * 16.0D);
             d7 = d4;
             d8 = d3;
             d9 = d5;
@@ -2805,7 +2849,11 @@ public class MixinRenderBlocks {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean renderStandardBlockWithColorMultiplier(Block p_147736_1_, int p_147736_2_, int p_147736_3_, int p_147736_4_, float p_147736_5_, float p_147736_6_, float p_147736_7_)
     {
         this.enableAO = false;
@@ -2847,7 +2895,7 @@ public class MixinRenderBlocks {
         {
             tessellator.setBrightness(this.renderMinY > 0.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_, p_147736_3_ - 1, p_147736_4_));
             tessellator.setColorOpaque_F(f10, f13, f16);
-            this.renderFaceYNeg(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 0));
+            this.renderFaceYNeg(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 0));
             flag = true;
         }
 
@@ -2855,7 +2903,7 @@ public class MixinRenderBlocks {
         {
             tessellator.setBrightness(this.renderMaxY < 1.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_, p_147736_3_ + 1, p_147736_4_));
             tessellator.setColorOpaque_F(f7, f8, f9);
-            this.renderFaceYPos(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 1));
+            this.renderFaceYPos(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 1));
             flag = true;
         }
 
@@ -2866,12 +2914,12 @@ public class MixinRenderBlocks {
             tessellator.setBrightness(this.renderMinZ > 0.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_ - 1));
             tessellator.setColorOpaque_F(f11, f14, f17);
             iicon = this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 2);
-            this.renderFaceZNeg(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, iicon);
+            this.renderFaceZNeg(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, iicon);
 
             if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
                 tessellator.setColorOpaque_F(f11 * p_147736_5_, f14 * p_147736_6_, f17 * p_147736_7_);
-                this.renderFaceZNeg(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, BlockGrass.getIconSideOverlay());
+                this.renderFaceZNeg(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, BlockGrass.getIconSideOverlay());
             }
 
             flag = true;
@@ -2882,12 +2930,12 @@ public class MixinRenderBlocks {
             tessellator.setBrightness(this.renderMaxZ < 1.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_ + 1));
             tessellator.setColorOpaque_F(f11, f14, f17);
             iicon = this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 3);
-            this.renderFaceZPos(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, iicon);
+            this.renderFaceZPos(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, iicon);
 
             if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
                 tessellator.setColorOpaque_F(f11 * p_147736_5_, f14 * p_147736_6_, f17 * p_147736_7_);
-                this.renderFaceZPos(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, BlockGrass.getIconSideOverlay());
+                this.renderFaceZPos(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, BlockGrass.getIconSideOverlay());
             }
 
             flag = true;
@@ -2898,12 +2946,12 @@ public class MixinRenderBlocks {
             tessellator.setBrightness(this.renderMinX > 0.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_ - 1, p_147736_3_, p_147736_4_));
             tessellator.setColorOpaque_F(f12, f15, f18);
             iicon = this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 4);
-            this.renderFaceXNeg(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, iicon);
+            this.renderFaceXNeg(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, iicon);
 
             if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
                 tessellator.setColorOpaque_F(f12 * p_147736_5_, f15 * p_147736_6_, f18 * p_147736_7_);
-                this.renderFaceXNeg(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, BlockGrass.getIconSideOverlay());
+                this.renderFaceXNeg(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, BlockGrass.getIconSideOverlay());
             }
 
             flag = true;
@@ -2914,12 +2962,12 @@ public class MixinRenderBlocks {
             tessellator.setBrightness(this.renderMaxX < 1.0D ? l : p_147736_1_.getMixedBrightnessForBlock(this.blockAccess, p_147736_2_ + 1, p_147736_3_, p_147736_4_));
             tessellator.setColorOpaque_F(f12, f15, f18);
             iicon = this.getBlockIcon(p_147736_1_, this.blockAccess, p_147736_2_, p_147736_3_, p_147736_4_, 5);
-            this.renderFaceXPos(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, iicon);
+            this.renderFaceXPos(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, iicon);
 
             if (fancyGrass && iicon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
                 tessellator.setColorOpaque_F(f12 * p_147736_5_, f15 * p_147736_6_, f18 * p_147736_7_);
-                this.renderFaceXPos(p_147736_1_, (double)p_147736_2_, (double)p_147736_3_, (double)p_147736_4_, BlockGrass.getIconSideOverlay());
+                this.renderFaceXPos(p_147736_1_, p_147736_2_, p_147736_3_, p_147736_4_, BlockGrass.getIconSideOverlay());
             }
 
             flag = true;
