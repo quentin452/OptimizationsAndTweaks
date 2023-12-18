@@ -886,11 +886,11 @@ public class MixinWorld {
 
                     if (i > l)
                     {
-                        d0 = l + 1.0D;
+                        d0 = (double)l + 1.0D;
                     }
                     else if (i < l)
                     {
-                        d0 = l + 0.0D;
+                        d0 = (double)l + 0.0D;
                     }
                     else
                     {
@@ -899,11 +899,11 @@ public class MixinWorld {
 
                     if (j > i1)
                     {
-                        d1 = i1 + 1.0D;
+                        d1 = (double)i1 + 1.0D;
                     }
                     else if (j < i1)
                     {
-                        d1 = i1 + 0.0D;
+                        d1 = (double)i1 + 0.0D;
                     }
                     else
                     {
@@ -912,11 +912,11 @@ public class MixinWorld {
 
                     if (k > j1)
                     {
-                        d2 = j1 + 1.0D;
+                        d2 = (double)j1 + 1.0D;
                     }
                     else if (k < j1)
                     {
-                        d2 = j1 + 0.0D;
+                        d2 = (double)j1 + 0.0D;
                     }
                     else
                     {
@@ -995,7 +995,7 @@ public class MixinWorld {
                     }
 
                     Vec3 vec32 = Vec3.createVectorHelper(p_147447_1_.xCoord, p_147447_1_.yCoord, p_147447_1_.zCoord);
-                    l = (int)(vec32.xCoord = MathHelper.floor_double(p_147447_1_.xCoord));
+                    l = (int)(vec32.xCoord = (double)MathHelper.floor_double(p_147447_1_.xCoord));
 
                     if (b0 == 5)
                     {
@@ -1003,7 +1003,7 @@ public class MixinWorld {
                         ++vec32.xCoord;
                     }
 
-                    i1 = (int)(vec32.yCoord = MathHelper.floor_double(p_147447_1_.yCoord));
+                    i1 = (int)(vec32.yCoord = (double)MathHelper.floor_double(p_147447_1_.yCoord));
 
                     if (b0 == 1)
                     {
@@ -1011,7 +1011,7 @@ public class MixinWorld {
                         ++vec32.yCoord;
                     }
 
-                    j1 = (int)(vec32.zCoord = MathHelper.floor_double(p_147447_1_.zCoord));
+                    j1 = (int)(vec32.zCoord = (double)MathHelper.floor_double(p_147447_1_.zCoord));
 
                     if (b0 == 3)
                     {
@@ -1052,4 +1052,5 @@ public class MixinWorld {
             return null;
         }
     }
+
 }
