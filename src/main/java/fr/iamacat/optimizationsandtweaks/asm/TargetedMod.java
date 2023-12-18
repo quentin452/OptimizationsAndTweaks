@@ -37,10 +37,12 @@ public enum TargetedMod implements ITargetedMod {
     FALSETWEAKS("Falsetweaks", false, startsWith("Falsetweaks")),
     DAVINCIVESSELS("archimedesshipsplus", false, startsWith("archimedesshipsplus")),
     MOVINGWORLD("movingworld", false, startsWith("movingworld")),
+    INDUSTRIALCRAFT("industrialcraft", false, startsWith("industrialcraft")),
 
     HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
     EASYBREEDING("easybreading", false, startsWith("easybreading")),
     PORTALGUN("PortalGun", false, startsWith("PortalGun")),
+    CODECHICKENCORE("CodeChickenCore", false, startsWith("CodeChickenCore")),
 
     OPTIFINE("OptiFine", false, startsWith("Optifine")),
     NEI("NotEnoughItems", false, startsWith("nei")),
@@ -58,8 +60,7 @@ public enum TargetedMod implements ITargetedMod {
     FAMILIARSAPI("FamiliarsAPI", false, startsWith("FamiliarsAPI")),
     ADVANCEDGENETICS("advancedgenetics", false, startsWith("advancedgenetics")),
 
-    PAMSHARVESTCRAFTGTNHCOMPAT("Pam's HarvestCraft", false, startsWith("harvestcraft")),
-    PAMSHARVESTCRAFT("Pam's HarvestCraft", false, startsWith("pam")),
+    PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
     MINEFACTORYRELOADED("MinefactoryReloaded", false, startsWith("minefactoryreloaded")),

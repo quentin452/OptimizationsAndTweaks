@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core;
+package fr.iamacat.optimizationsandtweaks.mixins.server.core;
 
 import java.io.File;
 import java.net.Proxy;

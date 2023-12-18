@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core;
+package fr.iamacat.optimizationsandtweaks.mixins.server.core;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
