@@ -35,7 +35,7 @@ public class MixinEntityAITasks {
      * @reason
      */
     @Overwrite
-    private boolean canContinue(EntityAITasks.EntityAITaskEntry p_75773_1_) {
+    public boolean canContinue(EntityAITasks.EntityAITaskEntry p_75773_1_) {
         this.theProfiler.startSection("canContinue");
         boolean flag = p_75773_1_.action.continueExecuting();
         this.theProfiler.endSection();
