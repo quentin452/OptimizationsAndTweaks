@@ -1114,6 +1114,12 @@ public class MixinRenderBlocks {
     public boolean renderStandardBlockWithAmbientOcclusionPartial(Block p_147808_1_, int p_147808_2_, int p_147808_3_, int p_147808_4_, float p_147808_5_, float p_147808_6_, float p_147808_7_)
     {
         this.enableAO = true;
+        flagrenderStandardBlockWithAmbientOcclusionPartial = false;
+        f3renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+        f4renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+        f5renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+        f6renderStandardBlockWithAmbientOcclusionPartial = 0.0F;
+        flag1renderStandardBlockWithAmbientOcclusionPartial = true;
         int lrenderStandardBlockWithAmbientOcclusionPartial = p_147808_1_.getMixedBrightnessForBlock(this.blockAccess, p_147808_2_, p_147808_3_, p_147808_4_);
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(983055);
@@ -1126,7 +1132,6 @@ public class MixinRenderBlocks {
         {
             flag1renderStandardBlockWithAmbientOcclusionPartial = false;
         }
-
 
         if (optimizationsAndTweaks$shouldRenderBlockSidesPartial(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_)) {
             optimizationsAndTweaks$renamethismethodlaterPartial(p_147808_1_, p_147808_2_, p_147808_3_, p_147808_4_, p_147808_5_, p_147808_6_, p_147808_7_,lrenderStandardBlockWithAmbientOcclusionPartial);
@@ -1984,12 +1989,12 @@ public class MixinRenderBlocks {
     public boolean renderStandardBlockWithAmbientOcclusion(Block p_147751_1_, int p_147751_2_, int p_147751_3_, int p_147751_4_, float p_147751_5_, float p_147751_6_, float p_147751_7_)
     {
         this.enableAO = true;
-        boolean flagrenderStandardBlockWithAmbientOcclusion = false;
-        float f3renderStandardBlockWithAmbientOcclusion = 0.0F;
-        float f4renderStandardBlockWithAmbientOcclusion = 0.0F;
-        float f5renderStandardBlockWithAmbientOcclusion = 0.0F;
-        float f6renderStandardBlockWithAmbientOcclusion = 0.0F;
-        boolean flag1renderStandardBlockWithAmbientOcclusion = true;
+        flagrenderStandardBlockWithAmbientOcclusion = false;
+        f3renderStandardBlockWithAmbientOcclusion = 0.0F;
+        f4renderStandardBlockWithAmbientOcclusion = 0.0F;
+        f5renderStandardBlockWithAmbientOcclusion = 0.0F;
+        f6renderStandardBlockWithAmbientOcclusion = 0.0F;
+        flag1renderStandardBlockWithAmbientOcclusion = true;
         int lrenderStandardBlockWithAmbientOcclusion = p_147751_1_.getMixedBrightnessForBlock(this.blockAccess, p_147751_2_, p_147751_3_, p_147751_4_);
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(983055);
@@ -2002,13 +2007,6 @@ public class MixinRenderBlocks {
         {
             flag1renderStandardBlockWithAmbientOcclusion = false;
         }
-
-        boolean flag2renderStandardBlockWithAmbientOcclusion;
-        boolean flag3renderStandardBlockWithAmbientOcclusion;
-        boolean flag4renderStandardBlockWithAmbientOcclusion;
-        boolean flag5renderStandardBlockWithAmbientOcclusion;
-        int i1renderStandardBlockWithAmbientOcclusion;
-        float f7renderStandardBlockWithAmbientOcclusion;
 
         if (optimizationsAndTweaks$shouldRenderBlockSides(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_)) {
             optimizationsAndTweaks$renamethismethodlater(p_147751_1_, p_147751_2_, p_147751_3_, p_147751_4_, p_147751_5_, p_147751_6_, p_147751_7_, lrenderStandardBlockWithAmbientOcclusion);
