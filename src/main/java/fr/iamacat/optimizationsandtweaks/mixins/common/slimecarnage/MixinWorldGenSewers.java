@@ -8,10 +8,12 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import supremopete.SlimeCarnage.commom.SlimeCarnage;
 import supremopete.SlimeCarnage.mobs.EntityDonatelloSlime;
 import supremopete.SlimeCarnage.mobs.EntityLeonardoSlime;
@@ -19,9 +21,7 @@ import supremopete.SlimeCarnage.mobs.EntityMichelangeloSlime;
 import supremopete.SlimeCarnage.mobs.EntityRaphaelSlime;
 import supremopete.SlimeCarnage.worldgen.WorldGenSewers;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 @Mixin(WorldGenSewers.class)
 public abstract class MixinWorldGenSewers extends WorldGenerator {
@@ -35,53 +35,64 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
      */
     @Overwrite(remap = false)
     public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
-        final int maxAirDistance = 3;
-        final int worldHeight = world.getHeight();
-
-        if (world.isAirBlock(i, j, k)) {
+        int distanceToAir = optimizationsAndTweaks$getDistanceToAir(world, i, j, k);
+        if (distanceToAir > 3 || optimizationsAndTweaks$isBlockAboveAir(world, i, j, k)) {
             return false;
         }
 
-        Set<ChunkCoordinates> checkedPositions = new HashSet<>();
+        j += distanceToAir - 1;
+        Block blockID = world.getBlock(i, j, k);
+        Block blockIDBelow = world.getBlock(i, j - 1, k);
+        Block[] validSpawnBlocks = this.GetValidSpawnBlocks();
 
-        for (int distanceToAir = 1; distanceToAir <= maxAirDistance && j + distanceToAir < worldHeight; distanceToAir++) {
-            ChunkCoordinates posToCheck = new ChunkCoordinates(i, j + distanceToAir, k);
+        return optimizationsAndTweaks$isValidSpawnBlock(blockID, blockIDBelow, validSpawnBlocks);
+    }
 
-            if (checkedPositions.contains(posToCheck)) {
-                return false;
-            }
-
-            checkedPositions.add(posToCheck);
-
-            Block block = world.getBlock(i, j + distanceToAir, k);
+    @Unique
+    private int optimizationsAndTweaks$getDistanceToAir(World world, int i, int j, int k) {
+        int maxDistance = 3;
+        int distance = 0;
+        int chunkX = i >> 4;
+        int chunkZ = k >> 4;
+        Chunk chunk = world.getChunkFromBlockCoords(chunkX, chunkZ);
+        if (!chunk.isChunkLoaded) {
+            return distance;
+        }
+        int chunkMinY = Math.max(0, j);
+        int chunkMaxY = Math.min(world.getHeight(), j + maxDistance);
+        for (int y = chunkMinY; y < chunkMaxY; y++) {
+            Block block = chunk.getBlock(i & 15, y, k & 15);
             if (block == Blocks.air) {
-                j += distanceToAir - 1;
-                Block blockID = world.getBlock(i, j, k);
-                Block blockIDAbove = world.getBlock(i, j + 1, k);
-                Block blockIDBelow = world.getBlock(i, j - 1, k);
-                Block[] validSpawnBlocks = GetValidSpawnBlocks();
+                break;
+            }
+            distance++;
+        }
+        return distance;
+    }
 
-                for (Block x : validSpawnBlocks) {
-                    if (blockIDAbove != Blocks.air) {
-                        return false;
-                    }
+    @Unique
+    private boolean optimizationsAndTweaks$isBlockAboveAir(World world, int i, int j, int k) {
+        if (j + 1 < world.getActualHeight()) {
+            Block blockIDAbove = world.getBlock(i, j + 1, k);
+            return blockIDAbove != Blocks.air;
+        }
+        return false;
+    }
 
-                    if (blockID == x) {
-                        return true;
-                    }
-
-                    if (blockID == Blocks.snow && blockIDBelow == x) {
-                        return true;
-                    }
-                }
-                return false;
+    @Unique
+    private boolean optimizationsAndTweaks$isValidSpawnBlock(Block blockID, Block blockIDBelow, Block[] validSpawnBlocks) {
+        for (Block x : validSpawnBlocks) {
+            if (blockID == x || (blockID == Blocks.snow && blockIDBelow == x)) {
+                return true;
             }
         }
         return false;
     }
 
+
     @Override
     public boolean generate(World world, Random rand, int i, int j, int k) {
+        System.out.println("Début de la génération de la structure à i=" + i + ", j=" + j + ", k=" + k);
         if (this.LocationIsValidSpawn(world, i, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k + 4) && this.LocationIsValidSpawn(world, i, j, k + 4)) {
             int j4;
             int j3;
@@ -417,6 +428,7 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 world.spawnEntityInWorld(micslime);
             }
 
+            System.out.println("Fin de la génération de la structure à i=" + i + ", j=" + j + ", k=" + k);
             return true;
         } else {
             return false;

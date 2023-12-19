@@ -8,6 +8,8 @@ import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraft.world.biome.BiomeGenPlains;
 import net.minecraft.world.chunk.IChunkProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import supremopete.SlimeCarnage.worldgen.*;
 
@@ -16,13 +18,13 @@ import java.util.Random;
 @Mixin(WorldGenSlimeCarnage.class)
 public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerator {
 
-    @Unique
-    public int oldCave;
-
-    @Override
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenSlimeCarnage) {
             switch (world.provider.dimensionId) {
                 case -1:
                     generateNether(world, random, chunkX, chunkZ);
@@ -38,49 +40,46 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
 
                 default:
                     break;
-            }
         }
     }
 
-    @Unique
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     private void generateSurface(World world, Random random, int chunkX, int chunkZ) {
-        // Use the same Random instance for consistency
-        Random rand = random;
-
-        if (oldCave == 0 && generateCave(world, rand, chunkX, chunkZ)) {
+        if (optimizationsAndTweaks$generateCave(world, random, chunkX, chunkZ)) {
             return;
         }
 
-        int biomeCheck = getBiomeCheck(world, rand, chunkX, chunkZ);
+        int biomeCheck = optimizationsAndTweaks$getBiomeCheck(world, random, chunkX, chunkZ);
         if (biomeCheck == 1) {
-            generateDesertRuins(world, rand, chunkX, chunkZ);
+            optimizationsAndTweaks$generateDesertRuins(world, random, chunkX, chunkZ);
         } else if (biomeCheck == 2) {
-            generateStoneRuins(world, rand, chunkX, chunkZ);
+            optimizationsAndTweaks$generateStoneRuins(world, random, chunkX, chunkZ);
         }
 
-        if (generateMadLab(rand)) {
-            generateMadLab(world, rand, chunkX, chunkZ);
+        if (optimizationsAndTweaks$generateMadLab(random)) {
+            optimizationsAndTweaks$generateMadLab(world, random, chunkX, chunkZ);
         }
 
-        if (biomeCheck == 1 && generateDesertTomb(rand)) {
-            generateDesertTomb(world, rand, chunkX, chunkZ);
+        if (biomeCheck == 1 && optimizationsAndTweaks$generateDesertTomb(random)) {
+            optimizationsAndTweaks$generateDesertTomb(world, random, chunkX, chunkZ);
         }
     }
 
     @Unique
-    private boolean generateCave(World world, Random rand, int chunkX, int chunkZ) {
+    private boolean optimizationsAndTweaks$generateCave(World world, Random rand, int chunkX, int chunkZ) {
         int Xcoord2 = chunkX + rand.nextInt(16);
         int Ycoord2 = 64 + rand.nextInt(6);
         int Zcoord2 = chunkZ + rand.nextInt(16);
-        if ((new WorldGenSewers().func_76484_a(world, rand, Xcoord2, Ycoord2, Zcoord2))) {
-            ++this.oldCave;
-            return true;
-        }
-        return false;
+
+        return new WorldGenSewers().func_76484_a(world, rand, Xcoord2, Ycoord2, Zcoord2);
     }
 
     @Unique
-    private int getBiomeCheck(World world, Random rand, int chunkX, int chunkZ) {
+    private int optimizationsAndTweaks$getBiomeCheck(World world, Random rand, int chunkX, int chunkZ) {
         BiomeGenBase biomegenbase = world.getBiomeGenForCoords(chunkX * 16, chunkZ * 16);
         if (biomegenbase instanceof BiomeGenDesert) {
             return rand.nextInt(10);
@@ -91,7 +90,7 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
     }
 
     @Unique
-    private void generateDesertRuins(World world, Random rand, int chunkX, int chunkZ) {
+    private void optimizationsAndTweaks$generateDesertRuins(World world, Random rand, int chunkX, int chunkZ) {
         int Xcoord4 = chunkX + rand.nextInt(16);
         int scrub4 = 66 + rand.nextInt(12);
         int Xcoord5 = chunkZ + rand.nextInt(16);
@@ -99,19 +98,19 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
     }
 
     @Unique
-    private void generateStoneRuins(World world, Random rand, int chunkX, int chunkZ) {
+    private void optimizationsAndTweaks$generateStoneRuins(World world, Random rand, int chunkX, int chunkZ) {
         int Xcoord4 = chunkX + rand.nextInt(16);
         int Xcoord5 = chunkZ + rand.nextInt(16);
         (new WorldGenStoneRuins()).func_76484_a(world, rand, Xcoord4, 66 + rand.nextInt(12), Xcoord5);
     }
 
     @Unique
-    private boolean generateMadLab(Random rand) {
+    private boolean optimizationsAndTweaks$generateMadLab(Random rand) {
         return rand.nextInt(16) == 0;
     }
 
     @Unique
-    private void generateMadLab(World world, Random rand, int chunkX, int chunkZ) {
+    private void optimizationsAndTweaks$generateMadLab(World world, Random rand, int chunkX, int chunkZ) {
         int Xcoord4 = chunkX + rand.nextInt(16);
         int scrub5 = 66 + rand.nextInt(6);
         int Xcoord5 = chunkZ + rand.nextInt(16);
@@ -119,21 +118,21 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
     }
 
     @Unique
-    private boolean generateDesertTomb(Random rand) {
+    private boolean optimizationsAndTweaks$generateDesertTomb(Random rand) {
         return rand.nextInt(10) == 0;
     }
 
     @Unique
-    private void generateDesertTomb(World world, Random rand, int chunkX, int chunkZ) {
+    private void optimizationsAndTweaks$generateDesertTomb(World world, Random rand, int chunkX, int chunkZ) {
         int Xcoord5 = chunkX + rand.nextInt(16);
         int Ycoord5 = 64 + rand.nextInt(8);
         int Zcoord5 = chunkZ + rand.nextInt(16);
         (new WorldGenDesertTomb()).func_76484_a(world, rand, Xcoord5, Ycoord5, Zcoord5);
     }
 
-    @Unique
+    @Shadow
     private void generateNether(World world, Random random, int chunkX, int chunkZ) {}
 
-    @Unique
+    @Shadow
     private void generateEnd(World world, Random random, int chunkX, int chunkZ) {}
 }
