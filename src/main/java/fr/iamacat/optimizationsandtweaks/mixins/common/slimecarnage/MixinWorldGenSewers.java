@@ -29,24 +29,29 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
         return new Block[]{Blocks.grass};
     }
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason tried fixing cascadings , but some cascading remains caused by LocationIsValidSpawn and can't fix it
      */
     @Overwrite(remap = false)
     public boolean LocationIsValidSpawn(World world, int posX, int posY, int posZ) {
         int distanceToAir = optimizationsAndTweaks$calculateDistanceToAir(world, posX, posY, posZ);
 
-        if (distanceToAir > 3 || optimizationsAndTweaks$isBlockAboveAir(world, posX, posY, posZ)) {
+        if (distanceToAir > 3) {
             return false;
         }
 
         posY += distanceToAir - 1;
+        if (posY >= world.getHeight()) {
+            return false;
+        }
+
         Block block = world.getBlock(posX, posY, posZ);
         Block blockBelow = world.getBlock(posX, posY - 1, posZ);
         Block[] validSpawnBlocks = GetValidSpawnBlocks();
 
         return optimizationsAndTweaks$isValidSpawnBlock(block, blockBelow, validSpawnBlocks);
     }
+
     @Unique
     private int optimizationsAndTweaks$calculateDistanceToAir(World world, int posX, int posY, int posZ) {
         int maxDistance = 3;
@@ -54,10 +59,6 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
         Chunk chunk = world.getChunkFromBlockCoords(chunkX, chunkZ);
-
-        if (!chunk.isChunkLoaded) {
-            return distance;
-        }
 
         int chunkMinY = Math.max(0, posY);
         int chunkMaxY = Math.min(world.getHeight(), posY + maxDistance);
@@ -72,14 +73,7 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
         }
         return distance;
     }
-    @Unique
-    private boolean optimizationsAndTweaks$isBlockAboveAir(World world, int posX, int posY, int posZ) {
-        if (posY + 1 < world.getActualHeight()) {
-            Block blockAbove = world.getBlock(posX, posY + 1, posZ);
-            return blockAbove != Blocks.air;
-        }
-        return false;
-    }
+
     @Unique
     private boolean optimizationsAndTweaks$isValidSpawnBlock(Block block, Block blockBelow, Block[] validSpawnBlocks) {
         for (Block validBlock : validSpawnBlocks) {
@@ -90,10 +84,8 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
         return false;
     }
 
-
     @Override
     public boolean generate(World world, Random rand, int i, int j, int k) {
-        System.out.println("Début de la génération de la structure à i=" + i + ", j=" + j + ", k=" + k);
         if (this.LocationIsValidSpawn(world, i, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k + 4) && this.LocationIsValidSpawn(world, i, j, k + 4)) {
             int j4;
             int j3;
@@ -429,7 +421,6 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 world.spawnEntityInWorld(micslime);
             }
 
-            System.out.println("Fin de la génération de la structure à i=" + i + ", j=" + j + ", k=" + k);
             return true;
         } else {
             return false;
