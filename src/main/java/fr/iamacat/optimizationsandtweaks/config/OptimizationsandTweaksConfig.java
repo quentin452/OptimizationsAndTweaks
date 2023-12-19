@@ -460,6 +460,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableOptimizeMatmos;
+
+    @Config.Comment("Optimize EventHandlerEntity class from Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventHandlerEntity;
     @Config.Comment("Optimize MappingThread class from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

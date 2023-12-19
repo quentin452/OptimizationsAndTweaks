@@ -236,6 +236,8 @@ public enum Mixin implements IMixin {
         "koto.MixinEntityDarkMiresi"),
     common_thaumcraft_MixinMappingThread(Side.COMMON, require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinMappingThread),
         "thaumcraft.MixinMappingThread"),
+    common_thaumcraft_MixinEventHandlerEntity(Side.COMMON, require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinEventHandlerEntity),
+        "thaumcraft.MixinEventHandlerEntity"),
     common_codechickencore_MixinClassDiscoverer(Side.COMMON,
         require(TargetedMod.CODECHICKENCORE).and(m -> OptimizationsandTweaksConfig.enableMixinClassDiscoverer), "codechickencore.MixinClassDiscoverer"),
 
