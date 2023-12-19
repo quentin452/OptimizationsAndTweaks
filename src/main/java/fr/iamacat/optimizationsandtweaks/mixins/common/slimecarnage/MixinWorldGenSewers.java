@@ -6,7 +6,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -34,55 +33,57 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
      * @reason
      */
     @Overwrite(remap = false)
-    public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
-        int distanceToAir = optimizationsAndTweaks$getDistanceToAir(world, i, j, k);
-        if (distanceToAir > 3 || optimizationsAndTweaks$isBlockAboveAir(world, i, j, k)) {
+    public boolean LocationIsValidSpawn(World world, int posX, int posY, int posZ) {
+        int distanceToAir = optimizationsAndTweaks$calculateDistanceToAir(world, posX, posY, posZ);
+
+        if (distanceToAir > 3 || optimizationsAndTweaks$isBlockAboveAir(world, posX, posY, posZ)) {
             return false;
         }
 
-        j += distanceToAir - 1;
-        Block blockID = world.getBlock(i, j, k);
-        Block blockIDBelow = world.getBlock(i, j - 1, k);
-        Block[] validSpawnBlocks = this.GetValidSpawnBlocks();
+        posY += distanceToAir - 1;
+        Block block = world.getBlock(posX, posY, posZ);
+        Block blockBelow = world.getBlock(posX, posY - 1, posZ);
+        Block[] validSpawnBlocks = GetValidSpawnBlocks();
 
-        return optimizationsAndTweaks$isValidSpawnBlock(blockID, blockIDBelow, validSpawnBlocks);
+        return optimizationsAndTweaks$isValidSpawnBlock(block, blockBelow, validSpawnBlocks);
     }
-
     @Unique
-    private int optimizationsAndTweaks$getDistanceToAir(World world, int i, int j, int k) {
+    private int optimizationsAndTweaks$calculateDistanceToAir(World world, int posX, int posY, int posZ) {
         int maxDistance = 3;
         int distance = 0;
-        int chunkX = i >> 4;
-        int chunkZ = k >> 4;
+        int chunkX = posX >> 4;
+        int chunkZ = posZ >> 4;
         Chunk chunk = world.getChunkFromBlockCoords(chunkX, chunkZ);
+
         if (!chunk.isChunkLoaded) {
             return distance;
         }
-        int chunkMinY = Math.max(0, j);
-        int chunkMaxY = Math.min(world.getHeight(), j + maxDistance);
+
+        int chunkMinY = Math.max(0, posY);
+        int chunkMaxY = Math.min(world.getHeight(), posY + maxDistance);
+
         for (int y = chunkMinY; y < chunkMaxY; y++) {
-            Block block = chunk.getBlock(i & 15, y, k & 15);
-            if (block == Blocks.air) {
+            Block currentBlock = chunk.getBlock(posX & 15, y, posZ & 15);
+
+            if (currentBlock == Blocks.air) {
                 break;
             }
             distance++;
         }
         return distance;
     }
-
     @Unique
-    private boolean optimizationsAndTweaks$isBlockAboveAir(World world, int i, int j, int k) {
-        if (j + 1 < world.getActualHeight()) {
-            Block blockIDAbove = world.getBlock(i, j + 1, k);
-            return blockIDAbove != Blocks.air;
+    private boolean optimizationsAndTweaks$isBlockAboveAir(World world, int posX, int posY, int posZ) {
+        if (posY + 1 < world.getActualHeight()) {
+            Block blockAbove = world.getBlock(posX, posY + 1, posZ);
+            return blockAbove != Blocks.air;
         }
         return false;
     }
-
     @Unique
-    private boolean optimizationsAndTweaks$isValidSpawnBlock(Block blockID, Block blockIDBelow, Block[] validSpawnBlocks) {
-        for (Block x : validSpawnBlocks) {
-            if (blockID == x || (blockID == Blocks.snow && blockIDBelow == x)) {
+    private boolean optimizationsAndTweaks$isValidSpawnBlock(Block block, Block blockBelow, Block[] validSpawnBlocks) {
+        for (Block validBlock : validSpawnBlocks) {
+            if (block == validBlock || (block == Blocks.snow && blockBelow == validBlock)) {
                 return true;
             }
         }
