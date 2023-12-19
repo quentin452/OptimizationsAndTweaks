@@ -1,34 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.nbt.*;
-import net.minecraft.network.play.server.S09PacketHeldItemChange;
-import net.minecraft.util.ReportedException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import java.util.Map;
 
 @Mixin(NBTTagCompound.class)
 public abstract class MixinNBTTagCompound extends NBTBase {
     @Shadow
-    private Map tagMap = new HashMap();
+    private Map tagMap = new Object2ObjectHashMap();
 
     @Shadow
     public boolean hasKey(String key)
@@ -61,5 +45,4 @@ public abstract class MixinNBTTagCompound extends NBTBase {
         NBTBase nbtbase = (NBTBase)this.tagMap.get(key);
         return nbtbase != null ? nbtbase.getId() : 0;
     }
-
 }
