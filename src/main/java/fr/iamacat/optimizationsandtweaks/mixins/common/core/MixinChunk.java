@@ -32,21 +32,22 @@ public class MixinChunk {
     public int getTopFilledSegment() {
         int low = 0;
         int high = this.storageArrays.length - 1;
-        int topFilledSegment = 0;
+        int topFilledSegment = -1;
 
         while (low <= high) {
-            int mid = (low + high) >>> 1; // Equivalent to (low + high) / 2 but more efficient
+            int mid = (low + high) >>> 1;
 
-            if (this.storageArrays[mid] != null) {
+            if (this.storageArrays[mid] != null && this.storageArrays[mid].getYLocation() != -1) {
                 topFilledSegment = this.storageArrays[mid].getYLocation();
-                low = mid + 1; // Continue search in the upper half
+                low = mid + 1;
             } else {
-                high = mid - 1; // Continue search in the lower half
+                high = mid - 1;
             }
         }
 
         return topFilledSegment;
     }
+
 
     /**
      * @author
