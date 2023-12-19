@@ -68,10 +68,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCodecIBXM;
-    @Config.Comment("Optimize EntityLiving Update.")
+    @Config.Comment("Optimize EntityLivingBase.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityLivingUpdate;
+    public static boolean enableMixinEntityLivingBase;
     @Config.Comment("Optimize EntityRenderer Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

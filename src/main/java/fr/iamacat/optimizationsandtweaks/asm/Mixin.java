@@ -94,8 +94,8 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap, "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
         "core.MixinLowerStringMap"),
-    common_core_MixinEntityLivingUpdate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLivingUpdate,
-        "core.MixinEntityLivingUpdate"),
+    common_core_MixinEntityLivingBase(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLivingBase,
+        "core.MixinEntityLivingBase"),
     common_core_MixinDataWatcher(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDataWatcher,
         "core.MixinDataWatcher"),
 

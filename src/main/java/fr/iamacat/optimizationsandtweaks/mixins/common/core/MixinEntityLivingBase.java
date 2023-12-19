@@ -37,7 +37,7 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
-public abstract class MixinEntityLivingUpdate extends Entity {
+public abstract class MixinEntityLivingBase extends Entity {
 
     @Unique
     private EntityLivingBase entityLivingBase;
@@ -194,47 +194,9 @@ public abstract class MixinEntityLivingUpdate extends Entity {
      */
     @Shadow
     private float landMovementFactor;
-    /** Number of ticks since last jump */
-    @Shadow
-    private int jumpTicks;
-    @Shadow
-    private float field_110151_bq;
-    @Unique
-    private EntityLivingBase entityObject;
 
-    @Unique
-    private final int batchSize = OptimizationsandTweaksConfig.batchsize;
-    @Unique
-    private final List<MixinEntityLivingUpdate> batchedEntities = new ArrayList<>();
-    @Unique
-    private final List<CompletableFuture<Void>> updateFutures = new ArrayList<>();
 
-    @Unique
-    private double strafe;
-    @Unique
-    private double forward;
-    @Unique
-    private float friction;
-
-    @Unique
-    private final ThreadPoolExecutor optimizationsAndTweaks$executorService = new ThreadPoolExecutor(
-        OptimizationsandTweaksConfig.numberofcpus,
-        OptimizationsandTweaksConfig.numberofcpus,
-        60L,
-        TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(),
-        r -> {
-            Runnable wrappedRunnable = () -> {
-                try {
-                    r.run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            };
-            return new Thread(wrappedRunnable, "Entity-Living-Update-%d" + MixinEntityLivingUpdate.this.hashCode());
-        });
-
-    public MixinEntityLivingUpdate(World worldIn) {
+    public MixinEntityLivingBase(World worldIn) {
         super(worldIn);
     }
 
@@ -354,7 +316,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
     @Inject(method = "updateFallState", at = @At("HEAD"), cancellable = true)
     protected void updateFallState(double distanceFallenThisTick, boolean isOnGround, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityLivingUpdate) {
             if (!this.isInWater()) {
                 this.handleWaterMovement();
             }
@@ -381,7 +342,6 @@ public abstract class MixinEntityLivingUpdate extends Entity {
 
             super.updateFallState(distanceFallenThisTick, isOnGround);
             ci.cancel();
-        }
     }
 
     /**
