@@ -120,6 +120,7 @@ dependencies {
     implementation "curse.maven:evilnotchlib-290581:2882525-deobf-sources-api"
     implementation "curse.maven:brcore-237591:2315773-deobf-sources-api"
     implementation "curse.maven:instrumentus-231242:2273083-deobf-sources-api"
+    implementation "curse.maven:netherlicious-385860:4363437-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
