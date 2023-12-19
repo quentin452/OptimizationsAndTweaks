@@ -1,5 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.buildcraft.addon.oiltweaks;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -22,9 +24,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import buildcraft.oiltweak.BuildCraftOilTweak;
 import buildcraft.oiltweak.OilTweakEventHandler;
@@ -40,13 +39,17 @@ import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.buildcraft
 @Mixin(OilTweakEventHandler.class)
 public class MixinOilTweakEventHandler {
 
-    @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onLivingUpdate(LivingEvent.LivingUpdateEvent e, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
+    /**
+     * @author
+     * @reason
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @Overwrite(remap = false)
+    public void onLivingUpdate(LivingEvent.LivingUpdateEvent e) {
             if (BuildCraftOilTweak.config.isOilDense()) {
                 EntityLivingBase entity = e.entityLiving;
 
-                if (getInOil(entity).halfOfFull()) {
+                if (optimizationsAndTweaks$getInOil(entity).halfOfFull()) {
                     entity.motionY = Math.min(0.0D, entity.motionY);
                     if (entity.motionY < -0.05D) {
                         entity.motionY *= 0.05D;
@@ -60,18 +63,21 @@ public class MixinOilTweakEventHandler {
                     setNotInOil(entity);
                 }
             }
-            ci.cancel();
-        }
     }
 
-    @Inject(method = "onPlayerUpdate", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onPlayerUpdate(TickEvent.PlayerTickEvent e, CallbackInfo ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @Overwrite(remap = false)
+    public void onPlayerUpdate(TickEvent.PlayerTickEvent e) {
         if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
             EntityPlayer player = e.player;
-            if (!getInOil(player).halfOfFull()) {
+            if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
                 this.setNotInOil(player);
                 return;
             }
@@ -85,13 +91,16 @@ public class MixinOilTweakEventHandler {
             player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
             player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
             setStepHeight(player, 0.0F);
-            ci.cancel();
         }
     }
 
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     @SideOnly(Side.CLIENT)
-    @Inject(method = "onPlayerClientUpdate", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onPlayerClientUpdate(TickEvent.ClientTickEvent e, CallbackInfo ci) {
+    public void onPlayerClientUpdate(TickEvent.ClientTickEvent e) {
         if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
@@ -100,7 +109,7 @@ public class MixinOilTweakEventHandler {
             if (player == null) {
                 return;
             }
-            if (!getInOil(player).halfOfFull()) {
+            if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
                 this.setNotInOil(player);
                 return;
             }
@@ -114,50 +123,62 @@ public class MixinOilTweakEventHandler {
             player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
             player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
             setStepHeight(player, 0.0F);
-            ci.cancel();
         }
     }
 
-    @Inject(method = "onBreakSpeed", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onBreakSpeed(PlayerEvent.BreakSpeed e, CallbackInfo ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @Overwrite(remap = false)
+    public void onBreakSpeed(PlayerEvent.BreakSpeed e) {
         if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
             EntityPlayer player = e.entityPlayer;
-            if (getInOil(player).halfOfFull()) {
+            if (optimizationsAndTweaks$getInOil(player).halfOfFull()) {
                 e.newSpeed = e.originalSpeed <= e.newSpeed ? e.originalSpeed / 3f : e.newSpeed / 3f;
             }
-            ci.cancel();
         }
     }
 
-    @Inject(method = "onTeleportAttempt", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onTeleportAttempt(EnderTeleportEvent e, CallbackInfo ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @Overwrite(remap = false)
+    public void onTeleportAttempt(EnderTeleportEvent e) {
         if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
             EntityLivingBase player = e.entityLiving;
             if (!(player instanceof EntityPlayer && ((EntityPlayer) player).capabilities.isCreativeMode)
-                && getInOil(player).halfOfFull()) {
+                && optimizationsAndTweaks$getInOil(player).halfOfFull()) {
                 e.setCanceled(true);
                 e.setResult(Event.Result.DENY);
 
             }
-            ci.cancel();
         }
     }
 
-    @Inject(method = "onRightClick", at = @At("HEAD"), remap = false, cancellable = true)
-    public void onRightClick(PlayerInteractEvent e, CallbackInfo ci) {
+    /**
+     * @author
+     * @reason
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @Overwrite(remap = false)
+    public void onRightClick(PlayerInteractEvent e) {
         if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (e.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK || !BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
             EntityPlayer player = e.entityPlayer;
             if (!player.capabilities.isCreativeMode && player.getCurrentEquippedItem() != null) {
-                InOil2 inOil = getInOil(player);
+                InOil2 inOil = optimizationsAndTweaks$getInOil(player);
                 if (inOil.halfOfFull() && ((inOil == InOil2.FULL && !(player.getCurrentEquippedItem()
                     .getItem() instanceof ItemBlock)) || OilTweakAPI.INSTANCE.getItemBlacklistRegistry()
                         .isBlacklisted(player, player.getCurrentEquippedItem()))) {
@@ -168,11 +189,10 @@ public class MixinOilTweakEventHandler {
                 }
             }
         }
-        ci.cancel();
     }
 
     @Unique
-    protected InOil2 getInOil(Entity entity) {
+    protected InOil2 optimizationsAndTweaks$getInOil(Entity entity) {
         int minX = MathHelper.floor_double(entity.boundingBox.minX + 0.001D);
         int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
         int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
