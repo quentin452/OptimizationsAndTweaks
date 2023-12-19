@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.DataWatcher;
@@ -62,15 +63,15 @@ public class MixinDataWatcher {
         {
             throw new IllegalArgumentException("Data value id is too big with " + p_75682_1_ + "! (Max is " + 31 + ")");
         }
-        else if (this.watchedObjects.containsKey(Integer.valueOf(p_75682_1_)))
+        else if (this.watchedObjects.containsKey(p_75682_1_))
         {
             throw new IllegalArgumentException("Duplicate id value for " + p_75682_1_ + "!");
         }
         else
         {
-            DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(integer.intValue(), p_75682_1_, p_75682_2_);
+            DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(integer, p_75682_1_, p_75682_2_);
             this.lock.writeLock().lock();
-            this.watchedObjects.put(Integer.valueOf(p_75682_1_), watchableobject);
+            this.watchedObjects.put(p_75682_1_, watchableobject);
             this.lock.writeLock().unlock();
             this.isBlank = false;
         }
@@ -82,9 +83,9 @@ public class MixinDataWatcher {
     @Overwrite
     public void addObjectByDataType(int p_82709_1_, int p_82709_2_)
     {
-        DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, (Object)null);
+        DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, null);
         this.lock.writeLock().lock();
-        this.watchedObjects.put(Integer.valueOf(p_82709_1_), watchableobject);
+        this.watchedObjects.put(p_82709_1_, watchableobject);
         this.lock.writeLock().unlock();
         this.isBlank = false;
     }
@@ -95,7 +96,7 @@ public class MixinDataWatcher {
     @Overwrite
     public byte getWatchableObjectByte(int p_75683_1_)
     {
-        return ((Byte)this.optimizationsAndTweaks$getWatchedObject(p_75683_1_).getObject()).byteValue();
+        return (Byte) this.optimizationsAndTweaks$getWatchedObject(p_75683_1_).getObject();
     }
     /**
      * @author
@@ -104,7 +105,7 @@ public class MixinDataWatcher {
     @Overwrite
     public short getWatchableObjectShort(int p_75693_1_)
     {
-        return ((Short)this.optimizationsAndTweaks$getWatchedObject(p_75693_1_).getObject()).shortValue();
+        return (Short) this.optimizationsAndTweaks$getWatchedObject(p_75693_1_).getObject();
     }
 
     /**
@@ -113,12 +114,12 @@ public class MixinDataWatcher {
     @Overwrite
     public int getWatchableObjectInt(int p_75679_1_)
     {
-        return ((Integer)this.optimizationsAndTweaks$getWatchedObject(p_75679_1_).getObject()).intValue();
+        return (Integer) this.optimizationsAndTweaks$getWatchedObject(p_75679_1_).getObject();
     }
     @Overwrite
     public float getWatchableObjectFloat(int p_111145_1_)
     {
-        return ((Float)this.optimizationsAndTweaks$getWatchedObject(p_111145_1_).getObject()).floatValue();
+        return (Float) this.optimizationsAndTweaks$getWatchedObject(p_111145_1_).getObject();
     }
 
     /**
@@ -143,24 +144,18 @@ public class MixinDataWatcher {
      * is threadsafe, unless it throws an exception, then
      */
     @Unique
-    public DataWatcher.WatchableObject optimizationsAndTweaks$getWatchedObject(int p_75691_1_)
-    {
-        this.lock.readLock().lock();
-        DataWatcher.WatchableObject watchableobject;
+    public DataWatcher.WatchableObject optimizationsAndTweaks$getWatchedObject(int p_75691_1_) {
+        DataWatcher.WatchableObject watchableobject = null;
 
-        try
-        {
-            watchableobject = (DataWatcher.WatchableObject)this.watchedObjects.get(Integer.valueOf(p_75691_1_));
-        }
-        catch (Throwable throwable)
-        {
+        try {
+            watchableobject = (DataWatcher.WatchableObject) this.watchedObjects.get(p_75691_1_);
+        } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting synched entity data");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Synched entity data");
-            crashreportcategory.addCrashSection("Data ID", Integer.valueOf(p_75691_1_));
+            crashreportcategory.addCrashSection("Data ID", p_75691_1_);
             throw new ReportedException(crashreport);
         }
 
-        this.lock.readLock().unlock();
         return watchableobject;
     }
 
@@ -206,11 +201,9 @@ public class MixinDataWatcher {
     {
         if (p_151507_0_ != null)
         {
-            Iterator iterator = p_151507_0_.iterator();
 
-            while (iterator.hasNext())
-            {
-                DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject)iterator.next();
+            for (Object o : p_151507_0_) {
+                DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
                 writeWatchableObjectToPacketBuffer(p_151507_1_, watchableobject);
             }
         }
@@ -229,18 +222,14 @@ public class MixinDataWatcher {
         if (this.objectChanged)
         {
             this.lock.readLock().lock();
-            Iterator iterator = this.watchedObjects.values().iterator();
 
-            while (iterator.hasNext())
-            {
-                DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject)iterator.next();
+            for (Object o : this.watchedObjects.values()) {
+                DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
 
-                if (watchableobject.isWatched())
-                {
+                if (watchableobject.isWatched()) {
                     watchableobject.setWatched(false);
 
-                    if (arraylist == null)
-                    {
+                    if (arraylist == null) {
                         arraylist = new ArrayList();
                     }
 
@@ -262,11 +251,9 @@ public class MixinDataWatcher {
     public void func_151509_a(PacketBuffer p_151509_1_) throws IOException
     {
         this.lock.readLock().lock();
-        Iterator iterator = this.watchedObjects.values().iterator();
 
-        while (iterator.hasNext())
-        {
-            DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject)iterator.next();
+        for (Object o : this.watchedObjects.values()) {
+            DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
             writeWatchableObjectToPacketBuffer(p_151509_1_, watchableobject);
         }
 
@@ -311,16 +298,16 @@ public class MixinDataWatcher {
         switch (p_151510_1_.getObjectType())
         {
             case 0:
-                p_151510_0_.writeByte(((Byte)p_151510_1_.getObject()).byteValue());
+                p_151510_0_.writeByte((Byte) p_151510_1_.getObject());
                 break;
             case 1:
-                p_151510_0_.writeShort(((Short)p_151510_1_.getObject()).shortValue());
+                p_151510_0_.writeShort((Short) p_151510_1_.getObject());
                 break;
             case 2:
-                p_151510_0_.writeInt(((Integer)p_151510_1_.getObject()).intValue());
+                p_151510_0_.writeInt((Integer) p_151510_1_.getObject());
                 break;
             case 3:
-                p_151510_0_.writeFloat(((Float)p_151510_1_.getObject()).floatValue());
+                p_151510_0_.writeFloat((Float) p_151510_1_.getObject());
                 break;
             case 4:
                 p_151510_0_.writeStringToBuffer((String)p_151510_1_.getObject());
@@ -360,16 +347,16 @@ public class MixinDataWatcher {
             switch (i)
             {
                 case 0:
-                    watchableobject = new DataWatcher.WatchableObject(i, j, Byte.valueOf(p_151508_0_.readByte()));
+                    watchableobject = new DataWatcher.WatchableObject(i, j, p_151508_0_.readByte());
                     break;
                 case 1:
-                    watchableobject = new DataWatcher.WatchableObject(i, j, Short.valueOf(p_151508_0_.readShort()));
+                    watchableobject = new DataWatcher.WatchableObject(i, j, p_151508_0_.readShort());
                     break;
                 case 2:
-                    watchableobject = new DataWatcher.WatchableObject(i, j, Integer.valueOf(p_151508_0_.readInt()));
+                    watchableobject = new DataWatcher.WatchableObject(i, j, p_151508_0_.readInt());
                     break;
                 case 3:
-                    watchableobject = new DataWatcher.WatchableObject(i, j, Float.valueOf(p_151508_0_.readFloat()));
+                    watchableobject = new DataWatcher.WatchableObject(i, j, p_151508_0_.readFloat());
                     break;
                 case 4:
                     watchableobject = new DataWatcher.WatchableObject(i, j, p_151508_0_.readStringFromBuffer(32767));
@@ -399,15 +386,12 @@ public class MixinDataWatcher {
     public void updateWatchedObjectsFromList(List p_75687_1_)
     {
         this.lock.writeLock().lock();
-        Iterator iterator = p_75687_1_.iterator();
 
-        while (iterator.hasNext())
-        {
-            DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject)iterator.next();
-            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject)this.watchedObjects.get(Integer.valueOf(watchableobject.getDataValueId()));
+        for (Object o : p_75687_1_) {
+            DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
+            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject) this.watchedObjects.get(watchableobject.getDataValueId());
 
-            if (watchableobject1 != null)
-            {
+            if (watchableobject1 != null) {
                 watchableobject1.setObject(watchableobject.getObject());
                 this.field_151511_a.func_145781_i(watchableobject.getDataValueId());
             }
@@ -430,12 +414,12 @@ public class MixinDataWatcher {
 
     static
     {
-        dataTypes.put(Byte.class, Integer.valueOf(0));
-        dataTypes.put(Short.class, Integer.valueOf(1));
-        dataTypes.put(Integer.class, Integer.valueOf(2));
-        dataTypes.put(Float.class, Integer.valueOf(3));
-        dataTypes.put(String.class, Integer.valueOf(4));
-        dataTypes.put(ItemStack.class, Integer.valueOf(5));
-        dataTypes.put(ChunkCoordinates.class, Integer.valueOf(6));
+        dataTypes.put(Byte.class, 0);
+        dataTypes.put(Short.class, 1);
+        dataTypes.put(Integer.class, 2);
+        dataTypes.put(Float.class, 3);
+        dataTypes.put(String.class, 4);
+        dataTypes.put(ItemStack.class, 5);
+        dataTypes.put(ChunkCoordinates.class, 6);
     }
 }
