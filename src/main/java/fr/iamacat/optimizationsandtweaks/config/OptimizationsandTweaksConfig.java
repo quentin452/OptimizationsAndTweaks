@@ -327,6 +327,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinShipKeyHandler;
+    @Config.Comment("Optimize NetherliciousEventHandler from Netherlicious mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNetherliciousEventHandler;
     @Config.Comment("Optimize AnimTickHandler from Akatsuki mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

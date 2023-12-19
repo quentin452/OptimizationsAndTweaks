@@ -59,6 +59,7 @@ public enum TargetedMod implements ITargetedMod {
     ETFUTURMREQUIEM("Et_Futurum_Requiem", false, startsWith("Et_Futurum_Requiem")),
     FAMILIARSAPI("FamiliarsAPI", false, startsWith("FamiliarsAPI")),
     ADVANCEDGENETICS("advancedgenetics", false, startsWith("advancedgenetics")),
+    NETHERLICIOUS("netherlicious", false, startsWith("netherlicious")),
 
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
