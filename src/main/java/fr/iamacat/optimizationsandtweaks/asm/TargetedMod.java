@@ -111,7 +111,9 @@ public enum TargetedMod implements ITargetedMod {
     SKINPORT("SkinPort", false, startsWith("SkinPort")),
     MINESTONES("minestones", false, startsWith("minestones")),
     BLENDTRONIC("blendtronic", false, startsWith("blendtronic")),
-    WITCHERY("witchery", false, startsWith("witchery")),
+    WITCHERY("witchery-", false, startsWith("witchery-")),
+    WITCHERYY("witchery", false, startsWith("witchery")),
+
     JEWELRYCRAFT2("Jewelrycraft2", false, startsWith("Jewelrycraft2")),
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),
     OPIS("Opis", false, startsWith("Opis")),

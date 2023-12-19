@@ -404,7 +404,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGodZillaFix;
-
+    @Config.Comment("Fix Null Crash when openning some mods manuals when using Witchery(with Ars Magica mods)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGenericEventsWitchery;
     @Config.Comment("Fix Crash when terminating profiler when using Opis")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
