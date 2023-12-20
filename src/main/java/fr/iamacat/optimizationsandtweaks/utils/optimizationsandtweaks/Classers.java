@@ -1,16 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
-import fr.iamacat.optimizationsandtweaks.mixins.common.core.MixinWorldServer;
-import mcp.mobius.opis.data.managers.ChunkManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.LongHashMap;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeCache;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-
-import java.util.ArrayList;
 
 public class Classers {
 

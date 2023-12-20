@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.core;
+package fr.iamacat.optimizationsandtweaks.mixins.server.core;
 
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
