@@ -7,12 +7,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Mixin(NBTTagCompound.class)
 public abstract class MixinNBTTagCompound extends NBTBase {
     @Shadow
-    private Map tagMap = new Object2ObjectHashMap();
+    private Map tagMap = new HashMap();
 
     @Shadow
     public boolean hasKey(String key)
