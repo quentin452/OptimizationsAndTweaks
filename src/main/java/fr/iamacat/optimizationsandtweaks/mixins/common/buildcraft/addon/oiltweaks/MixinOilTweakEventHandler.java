@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -36,6 +37,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.buildcraft.InOil2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Mixin(OilTweakEventHandler.class)
 public class MixinOilTweakEventHandler {
 
@@ -46,7 +50,9 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent e) {
-            if (BuildCraftOilTweak.config.isOilDense()) {
+            if (!BuildCraftOilTweak.config.isOilDense()) {
+                return;
+            }
                 EntityLivingBase entity = e.entityLiving;
 
                 if (optimizationsAndTweaks$getInOil(entity).halfOfFull()) {
@@ -62,7 +68,6 @@ public class MixinOilTweakEventHandler {
                 } else {
                     setNotInOil(entity);
                 }
-            }
     }
 
     /**
@@ -72,7 +77,6 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onPlayerUpdate(TickEvent.PlayerTickEvent e) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -91,7 +95,6 @@ public class MixinOilTweakEventHandler {
             player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
             player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
             setStepHeight(player, 0.0F);
-        }
     }
 
     /**
@@ -172,7 +175,6 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onRightClick(PlayerInteractEvent e) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
             if (e.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK || !BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -187,25 +189,26 @@ public class MixinOilTweakEventHandler {
                             inOil == InOil2.FULL ? "oiltweak.chat.tooDense.use" : "oiltweak.chat.tooDense.use.half"));
                     e.setCanceled(true);
                 }
-            }
         }
     }
 
     @Unique
     protected InOil2 optimizationsAndTweaks$getInOil(Entity entity) {
-        int minX = MathHelper.floor_double(entity.boundingBox.minX + 0.001D);
-        int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
-        int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
-        int maxX = MathHelper.floor_double(entity.boundingBox.maxX - 0.001D);
-        int maxY = MathHelper.floor_double(entity.boundingBox.maxY - 0.001D);
-        int maxZ = MathHelper.floor_double(entity.boundingBox.maxZ - 0.001D);
+        AxisAlignedBB boundingBox = entity.boundingBox;
+        int minX = MathHelper.floor_double(boundingBox.minX);
+        int minY = MathHelper.floor_double(boundingBox.minY);
+        int minZ = MathHelper.floor_double(boundingBox.minZ);
+        int maxX = MathHelper.floor_double(boundingBox.maxX);
+        int maxY = MathHelper.floor_double(boundingBox.maxY);
+        int maxZ = MathHelper.floor_double(boundingBox.maxZ);
 
-        for (int x = minX; x <= maxX; ++x) {
-            for (int y = minY; y <= maxY; ++y) {
-                for (int z = minZ; z <= maxZ; ++z) {
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
                     Block block = entity.worldObj.getBlock(x, y, z);
                     if (isOil(block)) {
-                        return maxY == minY || isOil(entity.worldObj.getBlock(x, maxY, z)) ? InOil2.FULL : InOil2.HALF;
+                        Block blockAtMaxY = entity.worldObj.getBlock(x, maxY, z);
+                        return maxY == minY || isOil(blockAtMaxY) ? InOil2.FULL : InOil2.HALF;
                     }
                 }
             }
@@ -227,7 +230,7 @@ public class MixinOilTweakEventHandler {
     @Shadow
     private OilTweakProperties getProperties(EntityLivingBase entity) {
         IExtendedEntityProperties ieep = entity.getExtendedProperties("oiltweak");
-        if (ieep == null || !(ieep instanceof OilTweakProperties)) {
+        if (!(ieep instanceof OilTweakProperties)) {
             ieep = new OilTweakProperties();
             ieep.init(entity, entity.worldObj);
             entity.registerExtendedProperties("oiltweak", ieep);
@@ -249,18 +252,30 @@ public class MixinOilTweakEventHandler {
         }
     }
 
+    @Unique
+    private final Map<Block, Boolean> optimizationsAndTweaks$oilBlockCache = new HashMap<>();
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     private boolean isOil(Block block) {
-        if (block == null || block == Blocks.air) {
-            return false;
+        if (optimizationsAndTweaks$oilBlockCache.containsKey(block)) {
+            return optimizationsAndTweaks$oilBlockCache.get(block);
         }
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-        return FluidRegistry.isFluidRegistered(fluid) && fluid.getName() != null
-            && fluid.getName()
-                .equalsIgnoreCase("oil");
+
+        boolean isOilBlock = false;
+
+        if (block != null && block != Blocks.air) {
+            Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+            if (FluidRegistry.isFluidRegistered(fluid) && fluid.getName() != null
+                && fluid.getName().equalsIgnoreCase("oil")) {
+                isOilBlock = true;
+            }
+        }
+
+        optimizationsAndTweaks$oilBlockCache.put(block, isOilBlock);
+        return isOilBlock;
     }
 }

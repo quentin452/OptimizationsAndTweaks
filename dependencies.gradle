@@ -121,6 +121,8 @@ dependencies {
     implementation "curse.maven:brcore-237591:2315773-deobf-sources-api"
     implementation "curse.maven:instrumentus-231242:2273083-deobf-sources-api"
     implementation "curse.maven:netherlicious-385860:4363437-deobf-sources-api"
+    implementation "curse.maven:korin-bluebedrock-238494:2277337-deobf-sources-api"
+    implementation "curse.maven:bbrains-umfixes-939770:4914347-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
@@ -140,6 +142,8 @@ dependencies {
     implementation files("libs/Essence_of_the_Gods_1.7.10_1.7.jar")
     implementation files("libs/Loot++-0.24_for_1.7.jar")
     implementation files("libs/gemsnjewels-1.0.9-mc1.7.10.jar")
+    implementation files("libs/OpenBlocks-1.8.2-GTNH-dev.jar")
+    implementation files("libs/OpenModsLibs-1.7.10-0.10.6-dev.jar")
 
 }
 

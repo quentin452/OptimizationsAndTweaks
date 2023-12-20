@@ -322,7 +322,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPlayerAether;
-
+    @Config.Comment("Optimize MixinPlayerAetherEvents from Aether")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPlayerAetherEvents;
     @Config.Comment("Optimize ShipKeyHandler Class from Davinci vessels")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -455,12 +458,18 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinClassDiscoverer;
-
+    @Config.Comment("Optimize WardenicChargeEvents class from Thaumic Revelations")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWardenicChargeEvents;
     @Config.Comment("Optimize Matmos mod to reduce fps Lags")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableOptimizeMatmos;
-
+    @Config.Comment("Optimize KoRINEventHandler class from Korin Blue Bedrock mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinKoRINEventHandler;
     @Config.Comment("Optimize EventHandlerEntity class from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

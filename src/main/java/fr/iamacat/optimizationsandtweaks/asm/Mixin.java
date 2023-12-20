@@ -156,6 +156,10 @@ public enum Mixin implements IMixin {
     common_netherlicious_MixinNetherliciousEventHandler(Side.COMMON, require(TargetedMod.NETHERLICIOUS)
         .and(m -> OptimizationsandTweaksConfig.enableMixinNetherliciousEventHandler),
         "netherlicious.MixinNetherliciousEventHandler"),
+
+    common_KoRIN_MixinKoRINEventHandler(Side.COMMON, require(TargetedMod.KORINBLUEBEDROCK)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinKoRINEventHandler),
+        "KoRIN.MixinKoRINEventHandler"),
     common_akatsuki_MixinEntitySasori(Side.COMMON, require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),
         "akatsuki.MixinEntitySasori"),
     common_akatsuki_MixinEntitySasori2(Side.COMMON, require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri2),
@@ -168,9 +172,12 @@ public enum Mixin implements IMixin {
         "akatsuki.MixinAnimationHandler"),
     common_aether_MixinPlayerAether(Side.COMMON, require(TargetedMod.AETHER).and(m -> OptimizationsandTweaksConfig.enableMixinPlayerAether),
         "aether.MixinPlayerAether"),
-
+    common_aether_MixinPlayerAetherEvents(Side.COMMON, require(TargetedMod.AETHER).and(m -> OptimizationsandTweaksConfig.enableMixinPlayerAetherEvents),
+        "aether.MixinPlayerAetherEvents"),
     common_cofhcore_MixinHooksCore(Side.COMMON, require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinHooksCore),
         "cofhcore.MixinHooksCore"),
+    common_thaumicrevelations_MixinWardenicChargeEvents(Side.COMMON, require(TargetedMod.THAUMICREVELATIONS).and(m -> OptimizationsandTweaksConfig.enableMixinWardenicChargeEvents),
+        "thaumicrevelations.MixinWardenicChargeEvents"),
     common_aether_MixinAetherTileEntities(Side.COMMON, require(TargetedMod.AETHER).and(m -> OptimizationsandTweaksConfig.enableMixinAetherTileEntities),
         "aether.MixinAetherTileEntities"),
     common_etfuturumrequiem_MixinUtils(Side.COMMON, require(TargetedMod.ETFUTURMREQUIEM).and(m -> OptimizationsandTweaksConfig.enableMixinUtils),

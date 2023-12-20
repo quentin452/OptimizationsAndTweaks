@@ -118,6 +118,8 @@ public enum TargetedMod implements ITargetedMod {
     JEWELRYCRAFT2("Jewelrycraft2", false, startsWith("Jewelrycraft2")),
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),
     OPIS("Opis", false, startsWith("Opis")),
+    KORINBLUEBEDROCK("1-7-10-005-KoRIN", false, startsWith("1-7-10-005-KoRIN")),
+    THAUMICREVELATIONS("ThaumicRevelations", false, startsWith("ThaumicRevelations")),
 
     AETHER("aether", false, startsWith("aether")),;
 
