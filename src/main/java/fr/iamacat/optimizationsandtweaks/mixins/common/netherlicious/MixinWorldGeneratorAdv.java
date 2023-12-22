@@ -65,14 +65,37 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
     protected final boolean placeBlock(World worldObj, int x, int y, int z, Block block, int metadata, int mask) {
         optimizationsAndTweaks$incrementBlockCounters();
         Chunk chunk = worldObj.getChunkFromBlockCoords(x, z);
+
         if (chunk != null && chunk.isChunkLoaded) {
-            worldObj.setBlock(x, y, z, block, metadata, mask);
-            return true;
+            Block existingBlock = worldObj.getBlock(x, y, z);
+            int existingMeta = worldObj.getBlockMetadata(x, y, z);
+
+            if (optimizationsAndTweaks$shouldPlaceBlock(existingBlock, existingMeta, block, metadata, worldObj, x, y, z)) {
+                optimizationsAndTweaks$placeNewBlock(worldObj, x, y, z, block, metadata, mask);
+                return true;
+            }
         }
+
         return false;
     }
+    @Unique
+    private boolean optimizationsAndTweaks$shouldPlaceBlock(Block existingBlock, int existingMeta, Block block, int metadata, World world, int x, int y, int z) {
+        return (existingBlock != block || existingMeta != metadata) && optimizationsAndTweaks$canPlaceBlock(world, x, y, z);
+    }
+    @Unique
+    private boolean optimizationsAndTweaks$canPlaceBlock(World world, int x, int y, int z) {
+        return !world.isAirBlock(x, y, z);
+    }
 
-
+    @Unique
+    private void optimizationsAndTweaks$placeNewBlock(World world, int x, int y, int z, Block block, int metadata, int mask) {
+        if (optimizationsAndTweaks$canPlaceBlock(world, x, y, z)) {
+            world.setBlock(x, y, z, block, metadata, mask);
+        } else {
+            world.setBlock(x, y, z, block, metadata | 0x2, mask);
+        }
+    }
+    
     @Unique
     private void optimizationsAndTweaks$incrementBlockCounters() {
         ++this.blockcounttotal;
