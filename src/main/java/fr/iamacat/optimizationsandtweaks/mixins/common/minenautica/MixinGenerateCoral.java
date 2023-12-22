@@ -304,7 +304,7 @@ public class MixinGenerateCoral {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public boolean canStructureSpawn(World world, int x, int y, int z, int length, int width, float maxInvalidBlocksIndex) {
         int invalidBlocks = 0;
 
