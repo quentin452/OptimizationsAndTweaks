@@ -28,6 +28,7 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 import java.util.Random;
@@ -189,26 +190,31 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
             double d0 = 0.03125;
             this.stoneNoise = this.noisePerl.func_151599_a(this.stoneNoise, (double)(par1 * 16), (double)(par2 * 16), 16, 16, d0 * 2.0, d0 * 2.0, 1.0);
 
-            for(int k = 0; k < 16; ++k) {
-                for(int l = 0; l < 16; ++l) {
-                    BiomeGenBase biome = par4ArrayOfBiomeGenBase[l + k * 16];
+            int chunkXStart = par1 * 16;
+            int chunkZStart = par2 * 16;
+            int chunkXEnd = chunkXStart + 16;
+            int chunkZEnd = chunkZStart + 16;
+
+            for (int k = chunkXStart; k < chunkXEnd; ++k) {
+                for (int l = chunkZStart; l < chunkZEnd; ++l) {
+                    BiomeGenBase biome = par4ArrayOfBiomeGenBase[l - chunkZStart + (k - chunkXStart) * 16];
+
                     if (biome instanceof BiomeGenSafeShallows) {
-                        BiomeGenSafeShallows biomegenbase = (BiomeGenSafeShallows)par4ArrayOfBiomeGenBase[l + k * 16];
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, par1 * 16 + k, par2 * 16 + l, this.stoneNoise[l + k * 16]);
+                        BiomeGenSafeShallows biomegenbase = (BiomeGenSafeShallows) biome;
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
                     }
 
                     if (biome instanceof BiomeGenGrassyPlateaus) {
                         BiomeGenGrassyPlateaus biomegenbase = (BiomeGenGrassyPlateaus)par4ArrayOfBiomeGenBase[l + k * 16];
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, par1 * 16 + k, par2 * 16 + l, this.stoneNoise[l + k * 16]);
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
                     }
 
                     if (biome instanceof BiomeGenKelpForest) {
                         BiomeGenKelpForest biomegenbase = (BiomeGenKelpForest)par4ArrayOfBiomeGenBase[l + k * 16];
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, par1 * 16 + k, par2 * 16 + l, this.stoneNoise[l + k * 16]);
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
                     }
                 }
             }
-
         }
     }
     @Shadow
@@ -283,27 +289,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
                 f1 /= f2;
                 f = f * 0.9F + 0.1F;
                 f1 = (f1 * 4.0F - 1.0F) / 8.0F;
-                double d12 = this.noise5[i1] / 8000.0;
-                if (d12 < 0.0) {
-                    d12 = -d12 * 0.3;
-                }
-
-                d12 = d12 * 3.0 - 2.0;
-                if (d12 < 0.0) {
-                    d12 /= 2.0;
-                    if (d12 < -1.0) {
-                        d12 = -1.0;
-                    }
-
-                    d12 /= 1.4;
-                    d12 /= 2.0;
-                } else {
-                    if (d12 > 1.0) {
-                        d12 = 1.0;
-                    }
-
-                    d12 /= 8.0;
-                }
+                double d12 = optimizationsAndTweaks$getD12(i1, this.noise5);
 
                 ++i1;
                 double d13 = (double)f1;
@@ -334,6 +320,33 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
         }
 
     }
+
+    @Unique
+    private static double optimizationsAndTweaks$getD12(int i1, double[] noise5) {
+        double d12 = noise5[i1] / 8000.0;
+        if (d12 < 0.0) {
+            d12 = -d12 * 0.3;
+        }
+
+        d12 = d12 * 3.0 - 2.0;
+        if (d12 < 0.0) {
+            d12 /= 2.0;
+            if (d12 < -1.0) {
+                d12 = -1.0;
+            }
+
+            d12 /= 1.4;
+            d12 /= 2.0;
+        } else {
+            if (d12 > 1.0) {
+                d12 = 1.0;
+            }
+
+            d12 /= 8.0;
+        }
+        return d12;
+    }
+
     @Shadow
     public boolean func_73149_a(int par1, int par2) {
         return true;
