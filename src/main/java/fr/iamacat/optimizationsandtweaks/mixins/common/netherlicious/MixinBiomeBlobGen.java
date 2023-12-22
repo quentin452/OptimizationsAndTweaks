@@ -82,10 +82,9 @@ public abstract class MixinBiomeBlobGen extends WorldGenerator {
     private void optimizationsAndTweaks$processBlock(World world, int var38, int var41, int var44) {
         Block block = world.getBlock(var38, var41, var44);
         if (block != Blocks.air && blockList.contains(block)) {
-            setBlockAndNotifyAdequately(world, var38, var41, var44, splotchBlock, splotchBlockMeta);
+            world.setBlock(var38, var41, var44, splotchBlock, splotchBlockMeta, 2);
         }
     }
-
     /**
      * @author
      * @reason
