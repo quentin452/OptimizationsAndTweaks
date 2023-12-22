@@ -63,7 +63,6 @@ public class MixinAluminumOxideWorldGen implements IWorldGenerator {
      * @author iamacatfr
      * @reason fix infinite loop that cause the server to freeze during generation on my modpack
      */
-    @Overwrite(remap = false)
     private boolean makeVein(World world, int x, int y, int z, int veinSize, Block blockToReplace, Block blockToPlace, Random random) {
         if (world.getBlock(x, y, z) != blockToReplace) {
             return false;
@@ -72,12 +71,24 @@ public class MixinAluminumOxideWorldGen implements IWorldGenerator {
 
             for (int blocksNeeded = veinSize - 1; blocksNeeded > 0; --blocksNeeded) {
                 int[] coords = {x, y, z};
+                boolean blockFound = false;
+
                 for (int i = 0; i < 3; ++i) {
                     int direction = random.nextInt(6);
                     coords[i] += direction % 3 == 0 ? direction - 3 : direction % 3 == 1 ? -1 : 1;
+
+                    if (coords[i] < 0 || coords[i] >= world.getHeight() || coords[i] < 0 || coords[i] >= 256) {
+                        break;
+                    }
                 }
+
                 if (world.getBlock(coords[0], coords[1], coords[2]) == blockToReplace) {
                     world.setBlock(coords[0], coords[1], coords[2], blockToPlace);
+                    blockFound = true;
+                }
+
+                if (!blockFound) {
+                    break;
                 }
             }
             return true;
