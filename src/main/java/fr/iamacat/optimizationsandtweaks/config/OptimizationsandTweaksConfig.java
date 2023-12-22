@@ -571,7 +571,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCrystalFormationHangingBig;
-
+    @Config.Comment("Fix Cascading worldgen caused by CrystalFormationBig class from Netherlicious mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCrystalFormationBig;
     @Config.Comment("Fix Cascading worldgen caused by BiomeBlobGen class from Netherlicious mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
