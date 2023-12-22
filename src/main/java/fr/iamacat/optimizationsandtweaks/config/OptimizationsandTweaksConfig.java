@@ -562,6 +562,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAluminumOxideWorldGen;
+    @Config.Comment("Fix Cascading worldgens caused by CanBlockStay from Minenautica mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCanBlockStay;
     @Config.Comment("Fix Cascading worldgens caused by Bloodgrass from Minenautica mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
