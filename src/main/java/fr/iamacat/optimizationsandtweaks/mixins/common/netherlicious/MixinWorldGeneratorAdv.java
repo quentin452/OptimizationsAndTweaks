@@ -86,16 +86,29 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
     private boolean optimizationsAndTweaks$canPlaceBlock(World world, int x, int y, int z) {
         return !world.isAirBlock(x, y, z);
     }
-
+    @Unique
+    private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
+        for (int i = -1; i <= 1; i++) {
+            for (int k = -1; k <= 1; k++) {
+                if (!world.getChunkProvider().chunkExists(x + i, z + k)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     @Unique
     private void optimizationsAndTweaks$placeNewBlock(World world, int x, int y, int z, Block block, int metadata, int mask) {
+        if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, x >> 4, z >> 4)) {
+            return;
+        }
         if (optimizationsAndTweaks$canPlaceBlock(world, x, y, z)) {
             world.setBlock(x, y, z, block, metadata, mask);
         } else {
             world.setBlock(x, y, z, block, metadata | 0x2, mask);
         }
     }
-    
+
     @Unique
     private void optimizationsAndTweaks$incrementBlockCounters() {
         ++this.blockcounttotal;
