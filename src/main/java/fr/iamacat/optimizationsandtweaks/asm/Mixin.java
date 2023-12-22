@@ -159,6 +159,10 @@ public enum Mixin implements IMixin {
     common_netherlicious_MixinVentGeneratorSingle(Side.COMMON,
         require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinVentGeneratorSingle),
         "netherlicious.MixinVentGeneratorSingle"),
+
+    common_netherlicious_MixinWorldGeneratorAdv(Side.COMMON,
+        require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGeneratorAdv),
+        "netherlicious.MixinWorldGeneratorAdv"),
     common_netherlicious_MixinNetherliciousEventHandler(Side.COMMON,
         require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinNetherliciousEventHandler),
         "netherlicious.MixinNetherliciousEventHandler"),
