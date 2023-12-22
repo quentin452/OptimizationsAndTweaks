@@ -569,7 +569,7 @@ public class OptimizationsandTweaksConfig {
     @Config.Comment("Fix Cascading worldgens caused by BiomeGenKelpForest from Minenautica mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinBiomeGenGrassyPlateaus;
+    public static boolean enableMixinBiomeGenKelpForest;
     @Config.Comment("Fix Cascading worldgens caused by BiomeGenGrassyPlateaus from Minenautica mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
