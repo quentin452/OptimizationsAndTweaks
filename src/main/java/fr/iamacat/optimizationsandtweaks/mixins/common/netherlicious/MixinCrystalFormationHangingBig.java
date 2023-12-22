@@ -10,6 +10,7 @@ import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Random;
 
@@ -29,27 +30,47 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
     int[] crystalbase;
     @Shadow
     int baserange;
+    @Unique
+    private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
+        for (int i = -1; i <= 1; i++) {
+            for (int k = -1; k <= 1; k++) {
+                if (!world.getChunkProvider().chunkExists(x + i, z + k)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * @author
      * @reason
      */
-    @Overwrite(remap = false)
+    @Overwrite
     private void placeRandomBlock(World world, Random random, int i, int j, int k, int mask) {
-        if (world.getBlock(i, j, k) != Blocks.bedrock
-            && world.getBlock(i, j, k) != this.block
-            && world.getBlock(i, j, k) != Blocks.nether_brick
-            && world.getBlock(i, j, k) != Blocks.nether_brick_fence
-            && world.getBlock(i, j, k) != Blocks.mob_spawner) {
-
+        if (!optimizationsAndTweaks$gisInvalidBlock(world, i, j, k)) {
+            if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, i >> 4, k >> 4)) {
+                return;
+            }
             Chunk chunk = world.getChunkFromBlockCoords(i, k);
             if (chunk != null && chunk.isChunkLoaded) {
-                if (random.nextInt(10) == 0) {
-                    this.placeBlock(world, i, j, k, this.block, this.metaBud, mask);
+                int counter = Math.abs(i ^ j ^ k);
+                if (counter % 10 == 0) {
+                    placeBlock(world, i, j, k, block, metaBud, mask);
                 } else {
-                    this.placeBlock(world, i, j, k, this.block, this.metaCrystal, mask);
+                    placeBlock(world, i, j, k, block, metaCrystal, mask);
                 }
             }
         }
+    }
+    @Unique
+    private boolean optimizationsAndTweaks$gisInvalidBlock(World world, int x, int y, int z) {
+        Block blockAtPos = world.getBlock(x, y, z);
+        return blockAtPos == Blocks.bedrock
+            || blockAtPos == block
+            || blockAtPos == Blocks.nether_brick
+            || blockAtPos == Blocks.nether_brick_fence
+            || blockAtPos == Blocks.mob_spawner;
     }
     /**
      * @author
@@ -133,15 +154,10 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
      */
     @Overwrite(remap = false)
     private void setBlock(World world, Random random, int i, int j, int k, int mask) {
-        if (this.worldObj.getBlock(i, j, k) != Blocks.bedrock
-            && this.worldObj.getBlock(i, j, k) != this.block
-            && this.worldObj.getBlock(i, j, k) != Blocks.nether_brick
-            && this.worldObj.getBlock(i, j, k) != Blocks.nether_brick_fence
-            && this.worldObj.getBlock(i, j, k) != Blocks.mob_spawner) {
-
-            Chunk chunk = worldObj.getChunkFromBlockCoords(i, k);
+        if (!optimizationsAndTweaks$gisInvalidBlock(world, i, j, k)) {
+            Chunk chunk = world.getChunkFromBlockCoords(i, k);
             if (chunk != null && chunk.isChunkLoaded) {
-                this.placeBlock(this.worldObj, i, j, k, this.block, this.metaCrystal, mask);
+                placeBlock(world, i, j, k, block, metaCrystal, mask);
             }
         }
     }
