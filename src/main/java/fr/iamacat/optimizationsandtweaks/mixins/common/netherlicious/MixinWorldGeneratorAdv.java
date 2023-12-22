@@ -7,6 +7,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Random;
 
@@ -50,17 +51,25 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
 
         return flag;
     }
+
     @Shadow
     public abstract boolean doGeneration(World var1, Random var2, int var3, int var4, int var5);
+
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     protected final boolean placeBlock(World worldObj, int x, int y, int z, Block block, int metadata, int mask) {
-        ++this.blockcounttotal;
-        ++this.blockcount;
+        optimizationsAndTweaks$incrementBlockCounters();
         worldObj.setBlock(x, y, z, block, metadata, mask);
         return true;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$incrementBlockCounters() {
+        ++this.blockcounttotal;
+        ++this.blockcount;
     }
 }
