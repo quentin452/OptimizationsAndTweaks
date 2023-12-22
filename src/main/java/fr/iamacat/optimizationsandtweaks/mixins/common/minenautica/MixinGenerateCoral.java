@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minenautica;
 
 import com.minenautica.Minenautica.Biomes.GenerateCoral;
+import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
 import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 import com.minenautica.Minenautica.Schematics.*;
 import net.minecraft.block.Block;
@@ -559,7 +560,397 @@ public class MixinGenerateCoral {
                 }
             }
         }
+    }
 
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
+    public void generateKelpForestCoral(World world, Random random, int x1, int y1, int z1) {
+        boolean flag = false;
+        int[] possiblePos = null;
+
+        for (int i = 0; i < 1110; ++i) {
+            int[] coordinates = optimizationsAndTweaks$generateRandomCoordinates(random, x1, y1, z1);
+
+            int i1 = coordinates[0];
+            int j1 = coordinates[1];
+            int k1 = coordinates[2];
+
+            if (optimizationsAndTweaks$isValidPosition(world, random, i1, j1, k1)) {
+                optimizationsAndTweaks$generateFormationsBasedOnRandom(world, random, i1, j1, k1, flag);
+                optimizationsAndTweaks$generateCreepvines(world, random, i1, j1, k1);
+                optimizationsAndTweaks$generateCoralClusters(world, random, i1, j1, k1, possiblePos);
+                optimizationsAndTweaks$generateSandstoneOutcrop(world, random, i1, j1, k1);
+                optimizationsAndTweaks$generateGreenTableCoral(world, random, i1, j1, k1);
+            }
+        }
+
+        if (!flag && random.nextInt(2) == 0 && possiblePos != null) {
+            int i1 = possiblePos[0];
+            int j1 = possiblePos[1];
+            int k1 = possiblePos[2];
+            generateFormations(world, random, i1, i1 - 1, j1);
+        }
+    }
+
+    @Unique
+    private int[] optimizationsAndTweaks$generateRandomCoordinates(Random random, int x1, int y1, int z1) {
+        int i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        int j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        int k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        return new int[]{i1, j1, k1};
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isValidPosition(World world, Random random, int i1, int j1, int k1) {
+        return (world.provider.hasNoSky || j1 < 255)
+            && CanBlockStay.canBelowGroundBlockStay(world, i1, j1, k1)
+            && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateFormationsBasedOnRandom(World world, Random random, int i1, int j1, int k1, boolean flag) {
+        int random2 = random.nextInt(52);
+        if (random2 == 0) {
+            generateFormations(world, random, i1, j1, k1);
+            flag = true;
+        }
+        if (random2 <= 2 && world.getBlock(i1, j1, k1).getMaterial() == Material.water && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+            type = random.nextInt(4) + 2;
+            world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, type, 2);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateCreepvines(World world, Random random, int i1, int j1, int k1) {
+        i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        if (random.nextInt(3) == 0 && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+            random2 = random.nextInt(3);
+            if (random2 == 0) {
+                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.creepvine, BlocksAndItems.creepvineTop, false);
+            }
+
+            if (random2 == 1) {
+                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.creepvineThin, BlocksAndItems.creepvineThinTop, false);
+            }
+
+            if (random2 == 2) {
+                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.seedClusterCreepvineBottom, BlocksAndItems.seedClusterCreepvineTop, true);
+            }
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateCoralClusters(World world, Random random, int i1, int j1, int k1, int[] possiblePos) {
+        i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+            if (possiblePos == null) {
+                int[] array = new int[]{i1, j1, k1};
+                possiblePos = array;
+            }
+
+            random2 = random.nextInt(5);
+            if (random2 == 0) {
+                this.createCoralCluster(world, random, i1, j1 - 1, k1, sandArray, 0.6F, false, true);
+            } else {
+                type = random.nextInt(10);
+                if (type >= 5) {
+                    this.createCoralCluster(world, random, i1, j1 - 1, k1, kelpForestSandArray, 0.6F, true, true);
+                }
+
+                this.createCoralCluster(world, random, i1, j1, k1, kelpForestTypes1, 1.2F, false, false);
+            }
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateSandstoneOutcrop(World world, Random random, int i1, int j1, int k1) {
+        i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water && random.nextInt(60) == 0) {
+            world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+            world.setBlockMetadataWithNotify(i1, j1, k1, random.nextInt(4) + 2, 2);
+        }
+        i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && random.nextInt(10) == 0 && (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water || world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water)) {
+            if (world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water) {
+                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                if (random2 == 1) {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
+                } else {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
+                }
+            } else if (world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water) {
+                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                if (random2 == 1) {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
+                } else {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
+                }
+            } else if (world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water) {
+                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                if (random2 == 1) {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
+                } else {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
+                }
+            } else if (world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water) {
+                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                if (random2 == 1) {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
+                } else {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
+                }
+            }
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateGreenTableCoral(World world, Random random, int x1, int y1, int z1) {
+        int i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        int j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        int k1 = z1 + random.nextInt(8) - random.nextInt(8);
+
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && random.nextInt(10) == 0) {
+            Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
+            Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
+            Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
+            Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
+
+            if (nextBlock1 == BlocksAndItems.kelpForestRock || nextBlock2 == BlocksAndItems.kelpForestRock ||
+                nextBlock3 == BlocksAndItems.kelpForestRock || nextBlock4 == BlocksAndItems.kelpForestRock ||
+                nextBlock1 == BlocksAndItems.kelpForestRockMossy || nextBlock2 == BlocksAndItems.kelpForestRockMossy ||
+                nextBlock3 == BlocksAndItems.kelpForestRockMossy || nextBlock4 == BlocksAndItems.kelpForestRockMossy) {
+
+                world.setBlock(i1, j1, k1, BlocksAndItems.greenTableCoral, this.metadata, 2);
+
+                Block coverBlock;
+                int metadata;
+                boolean cancel;
+                int ypos;
+
+                if (nextBlock1 != BlocksAndItems.kelpForestRock && nextBlock1 != BlocksAndItems.kelpForestRockMossy) {
+                    coverBlock = BlocksAndItems.greenCover;
+                    metadata = 3;
+                } else if (nextBlock2 != BlocksAndItems.kelpForestRock && nextBlock2 != BlocksAndItems.kelpForestRockMossy) {
+                    coverBlock = BlocksAndItems.greenCover;
+                    metadata = 2;
+                } else if (nextBlock3 != BlocksAndItems.kelpForestRock && nextBlock3 != BlocksAndItems.kelpForestRockMossy) {
+                    coverBlock = BlocksAndItems.greenCover;
+                    metadata = 5;
+                } else {
+                    coverBlock = BlocksAndItems.greenCover;
+                    metadata = 4;
+                }
+
+                world.setBlockMetadataWithNotify(i1, j1, k1, metadata, 2);
+                world.setBlock(i1, j1, k1 - 1, coverBlock, metadata, 2);
+                cancel = true;
+                ypos = 1;
+
+                while (cancel && world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRockMossy) {
+                    if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                        world.setBlock(i1, j1 + ypos, k1, BlocksAndItems.greenTableCoral, this.metadata, 2);
+                        world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, metadata, 2);
+                        world.setBlock(i1, j1 + ypos, k1 - 1, coverBlock, metadata, 2);
+                        ypos++;
+                    } else {
+                        cancel = false;
+                    }
+                }
+            }
+        }
+    }
+
+    @Shadow
+    private void generateCreepvine(World world, Random random, int x, int y, int z, Block bottomBlocks, Block topBlock, boolean hasCluster) {
+        boolean hasPlacedSeedCluster = false;
+        boolean startPlacingHigherBlocks = false;
+        int heightRange = random.nextInt(9) + 4;
+        int highestPoint = 0;
+
+        for(int i = y; i < 100; ++i) {
+            if (world.getBlock(x, i + heightRange, z) != BlocksAndItems.saltWater) {
+                highestPoint = i;
+                break;
+            }
+
+            if (!hasCluster) {
+                if (world.getBlock(x, i + heightRange + 1, z) != BlocksAndItems.saltWater) {
+                    world.setBlock(x, i, z, topBlock);
+                } else {
+                    world.setBlock(x, i, z, bottomBlocks);
+                }
+            } else {
+                world.setBlock(x, i, z, bottomBlocks);
+            }
+        }
+
+        if (hasCluster) {
+            float difference = (float)(highestPoint - y);
+            float percent = (float)Math.floor((double)(difference * 0.7F)) + (float)(random.nextInt(5) - 2);
+            world.setBlock(x, (int)((float)y + percent), z, BlocksAndItems.seedClusterCreepvine);
+
+            for(int i = (int)((float)y + percent + 1.0F); i < highestPoint; ++i) {
+                world.setBlock(x, i, z, BlocksAndItems.seedClusterCreepvineThick);
+            }
+
+            world.setBlock(x, highestPoint - 1, z, topBlock);
+        }
+
+    }
+
+    @Shadow
+    private boolean generateFormations(World world, Random random, int i1, int j1, int k1) {
+        int type = random.nextInt(44) + 1;
+        if (type == 1 && this.canStructureSpawn(world, i1, j1, k1, 4, 25, 5.0F)) {
+            formation1.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 2 && this.canStructureSpawn(world, i1, j1, k1, 25, 4, 5.0F)) {
+            formation2.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 3 && this.canStructureSpawn(world, i1, j1, k1, 4, 25, 5.0F)) {
+            formation3.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 4 && this.canStructureSpawn(world, i1, j1, k1, 16, 21, 5.0F)) {
+            formation4.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 5 && this.canStructureSpawn(world, i1, j1, k1, 20, 16, 5.0F)) {
+            formation5.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 6 && this.canStructureSpawn(world, i1, j1, k1, 20, 19, 5.0F)) {
+            formation6.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 7 && this.canStructureSpawn(world, i1, j1, k1, 19, 20, 5.0F)) {
+            formation7.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 8 && this.canStructureSpawn(world, i1, j1, k1, 14, 16, 5.0F)) {
+            formation8.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 9 && this.canStructureSpawn(world, i1, j1, k1, 16, 14, 5.0F)) {
+            formation9.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 10 && this.canStructureSpawn(world, i1, j1, k1, 3, 2, 5.0F)) {
+            formation10.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 11 && this.canStructureSpawn(world, i1, j1, k1, 2, 3, 5.0F)) {
+            formation11.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 12 && this.canStructureSpawn(world, i1, j1, k1, 14, 16, 5.0F)) {
+            formation12.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 13 && this.canStructureSpawn(world, i1, j1, k1, 16, 14, 5.0F)) {
+            formation13.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 14 && this.canStructureSpawn(world, i1, j1, k1, 16, 14, 5.0F)) {
+            formation14.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 15 && this.canStructureSpawn(world, i1, j1, k1, 14, 16, 5.0F)) {
+            formation15.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 16 && this.canStructureSpawn(world, i1, j1, k1, 10, 9, 5.0F)) {
+            formation16.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 17 && this.canStructureSpawn(world, i1, j1, k1, 9, 10, 5.0F)) {
+            formation17.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 18 && this.canStructureSpawn(world, i1, j1, k1, 13, 11, 5.0F)) {
+            formation18.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 19 && this.canStructureSpawn(world, i1, j1, k1, 11, 13, 5.0F)) {
+            formation19.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 20 && this.canStructureSpawn(world, i1, j1, k1, 4, 5, 5.0F)) {
+            formation20.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 21 && this.canStructureSpawn(world, i1, j1, k1, 5, 4, 5.0F)) {
+            formation21.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 22 && this.canStructureSpawn(world, i1, j1, k1, 14, 12, 5.0F)) {
+            formation22.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 23 && this.canStructureSpawn(world, i1, j1, k1, 12, 13, 5.0F)) {
+            formation23.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 24 && this.canStructureSpawn(world, i1, j1, k1, 5, 6, 5.0F)) {
+            formation24.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 25 && this.canStructureSpawn(world, i1, j1, k1, 6, 5, 5.0F)) {
+            formation25.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 26 && this.canStructureSpawn(world, i1, j1, k1, 14, 7, 5.0F)) {
+            formation26.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 27 && this.canStructureSpawn(world, i1, j1, k1, 7, 14, 5.0F)) {
+            formation27.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 28 && this.canStructureSpawn(world, i1, j1, k1, 5, 6, 5.0F)) {
+            formation28.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 29 && this.canStructureSpawn(world, i1, j1, k1, 6, 5, 5.0F)) {
+            formation29.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 30 && this.canStructureSpawn(world, i1, j1, k1, 20, 19, 5.0F)) {
+            formation30.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 31 && this.canStructureSpawn(world, i1, j1, k1, 19, 20, 5.0F)) {
+            formation31.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 32 && this.canStructureSpawn(world, i1, j1, k1, 14, 12, 5.0F)) {
+            formation32.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 33 && this.canStructureSpawn(world, i1, j1, k1, 12, 14, 5.0F)) {
+            formation33.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 34 && this.canStructureSpawn(world, i1, j1, k1, 12, 18, 5.0F)) {
+            formation34.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 35 && this.canStructureSpawn(world, i1, j1, k1, 24, 22, 5.0F)) {
+            formation35.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 36 && this.canStructureSpawn(world, i1, j1, k1, 22, 24, 5.0F)) {
+            formation36.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 37 && this.canStructureSpawn(world, i1, j1, k1, 6, 23, 5.0F)) {
+            formation37.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 38 && this.canStructureSpawn(world, i1, j1, k1, 23, 6, 5.0F)) {
+            formation38.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 39 && this.canStructureSpawn(world, i1, j1, k1, 9, 19, 5.0F)) {
+            formation39.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 40 && this.canStructureSpawn(world, i1, j1, k1, 19, 9, 5.0F)) {
+            formation40.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 41 && this.canStructureSpawn(world, i1, j1, k1, 11, 16, 5.0F)) {
+            formation41.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 42 && this.canStructureSpawn(world, i1, j1, k1, 16, 11, 5.0F)) {
+            formation42.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 43 && this.canStructureSpawn(world, i1, j1, k1, 25, 20, 5.0F)) {
+            formation43.generate(world, random, i1, j1, k1);
+            return true;
+        } else if (type == 44 && this.canStructureSpawn(world, i1, j1, k1, 20, 25, 5.0F)) {
+            formation44.generate(world, random, i1, j1, k1);
+            return true;
+        } else {
+            return false;
+        }
     }
     static {
         sandSubArray = new Block[]{Blocks.sand};
