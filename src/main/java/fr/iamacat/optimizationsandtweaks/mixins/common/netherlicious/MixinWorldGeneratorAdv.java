@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.netherlicious;
 import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -63,9 +64,14 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
     @Overwrite(remap = false)
     protected final boolean placeBlock(World worldObj, int x, int y, int z, Block block, int metadata, int mask) {
         optimizationsAndTweaks$incrementBlockCounters();
-        worldObj.setBlock(x, y, z, block, metadata, mask);
-        return true;
+        Chunk chunk = worldObj.getChunkFromBlockCoords(x, z);
+        if (chunk != null && chunk.isChunkLoaded) {
+            worldObj.setBlock(x, y, z, block, metadata, mask);
+            return true;
+        }
+        return false;
     }
+
 
     @Unique
     private void optimizationsAndTweaks$incrementBlockCounters() {
