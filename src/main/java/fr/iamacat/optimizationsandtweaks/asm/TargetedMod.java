@@ -30,6 +30,9 @@ public enum TargetedMod implements ITargetedMod {
     SMOOTHFONT("SmoothFont", false, startsWith("SmoothFont")),
 
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
+    RUNICDUNGEONS("RunicDungeons", false, startsWith("RunicDungeons")),
+
+    MINENAUTICA("Minenautica", false, startsWith("Minenautica")),
 
     INSTRUMENTUS("Instrumentus", false, startsWith("Instrumentus")),
     FASTCRAFT("FastCraft", false, startsWith("fastcraft")),
@@ -60,7 +63,7 @@ public enum TargetedMod implements ITargetedMod {
     FAMILIARSAPI("FamiliarsAPI", false, startsWith("FamiliarsAPI")),
     ADVANCEDGENETICS("advancedgenetics", false, startsWith("advancedgenetics")),
     NETHERLICIOUS("netherlicious", false, startsWith("netherlicious")),
-
+    CONFIGHELPER("confighelper", false, startsWith("confighelper")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
