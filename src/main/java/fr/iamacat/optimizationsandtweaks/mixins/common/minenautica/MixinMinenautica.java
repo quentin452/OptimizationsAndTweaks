@@ -1,5 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minenautica;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import com.minenautica.Minenautica.Biomes.BiomeRegistry;
 import com.minenautica.Minenautica.Block.WorldGenerator.*;
 import com.minenautica.Minenautica.Blocks.TechneRenderings.AcidMushroom.TileEntityAcidMushroom;
@@ -74,20 +78,16 @@ import com.minenautica.Minenautica.Entity.spinefish.EntitySpinefish;
 import com.minenautica.Minenautica.Entity.warper.EntityWarper;
 import com.minenautica.Minenautica.main.Minenautica;
 import com.minenautica.Minenautica.main.ServerProxy;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minenautica.MinenauticaBiomeIDConfig;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Minenautica.class)
 public class MixinMinenautica {
+
     @Shadow
     public static ServerProxy proxy;
     @Shadow
@@ -106,6 +106,7 @@ public class MixinMinenautica {
     public static int doubleTallHighPlantID = RenderingRegistry.getNextAvailableRenderId();
     @Shadow
     public static int eternalFireID = RenderingRegistry.getNextAvailableRenderId();
+
     /**
      * @author
      * @reason

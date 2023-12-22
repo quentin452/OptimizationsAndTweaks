@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.KoRIN;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.KoRIN.BlueBedRock;
 import net.KoRIN.KoRIN;
 import net.KoRIN.KoRINEventHandler;
@@ -9,11 +8,15 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 @Mixin(KoRINEventHandler.class)
 public class MixinKoRINEventHandler {
+
     /**
      * @author
      * @reason
@@ -31,8 +34,8 @@ public class MixinKoRINEventHandler {
             return;
         }
 
-        if ((event.entity instanceof EntityAnimal && KoRIN.BluebedrockAnimals) ||
-            (event.entity instanceof EntityLivingBase && KoRIN.BluebedrockMonster)) {
+        if ((event.entity instanceof EntityAnimal && KoRIN.BluebedrockAnimals)
+            || (event.entity instanceof EntityLivingBase && KoRIN.BluebedrockMonster)) {
             if (!KoRIN.BluebedrockLoot) {
                 entity.setDead();
             } else {

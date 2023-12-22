@@ -10,7 +10,6 @@ import net.minecraft.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityAITasks.class)
 public class MixinEntityAITasks {
@@ -46,34 +45,30 @@ public class MixinEntityAITasks {
      * Returns whether two EntityAITaskEntries can be executed concurrently
      */
     @Shadow
-    private boolean areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_, EntityAITasks.EntityAITaskEntry p_75777_2_)
-    {
+    private boolean areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_,
+        EntityAITasks.EntityAITaskEntry p_75777_2_) {
         return (p_75777_1_.action.getMutexBits() & p_75777_2_.action.getMutexBits()) == 0;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void onUpdateTasks()
-    {
+    public void onUpdateTasks() {
         ArrayList arraylist = new ArrayList();
         Iterator iterator;
         EntityAITasks.EntityAITaskEntry entityaitaskentry;
 
-        if (this.tickCount++ % this.tickRate == 0)
-        {
+        if (this.tickCount++ % this.tickRate == 0) {
             iterator = this.taskEntries.iterator();
 
-            while (iterator.hasNext())
-            {
-                entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
+            while (iterator.hasNext()) {
+                entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
                 boolean flag = this.executingTaskEntries.contains(entityaitaskentry);
 
-                if (flag)
-                {
-                    if (this.canUse(entityaitaskentry) && this.canContinue(entityaitaskentry))
-                    {
+                if (flag) {
+                    if (this.canUse(entityaitaskentry) && this.canContinue(entityaitaskentry)) {
                         continue;
                     }
 
@@ -81,23 +76,18 @@ public class MixinEntityAITasks {
                     this.executingTaskEntries.remove(entityaitaskentry);
                 }
 
-                if (this.canUse(entityaitaskentry) && entityaitaskentry.action.shouldExecute())
-                {
+                if (this.canUse(entityaitaskentry) && entityaitaskentry.action.shouldExecute()) {
                     arraylist.add(entityaitaskentry);
                     this.executingTaskEntries.add(entityaitaskentry);
                 }
             }
-        }
-        else
-        {
+        } else {
             iterator = this.executingTaskEntries.iterator();
 
-            while (iterator.hasNext())
-            {
-                entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
+            while (iterator.hasNext()) {
+                entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
 
-                if (!entityaitaskentry.action.continueExecuting())
-                {
+                if (!entityaitaskentry.action.continueExecuting()) {
                     entityaitaskentry.action.resetTask();
                     iterator.remove();
                 }
@@ -107,10 +97,11 @@ public class MixinEntityAITasks {
         this.theProfiler.startSection("goalStart");
         iterator = arraylist.iterator();
 
-        while (iterator.hasNext())
-        {
-            entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
-            this.theProfiler.startSection(entityaitaskentry.action.getClass().getSimpleName());
+        while (iterator.hasNext()) {
+            entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
+            this.theProfiler.startSection(
+                entityaitaskentry.action.getClass()
+                    .getSimpleName());
             entityaitaskentry.action.startExecuting();
             this.theProfiler.endSection();
         }
@@ -119,9 +110,8 @@ public class MixinEntityAITasks {
         this.theProfiler.startSection("goalTick");
         iterator = this.executingTaskEntries.iterator();
 
-        while (iterator.hasNext())
-        {
-            entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
+        while (iterator.hasNext()) {
+            entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
             entityaitaskentry.action.updateTask();
         }
 
@@ -129,30 +119,25 @@ public class MixinEntityAITasks {
     }
 
     @Shadow
-    private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_)
-    {
+    private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
         this.theProfiler.startSection("canUse");
         Iterator iterator = this.taskEntries.iterator();
 
-        while (iterator.hasNext())
-        {
-            EntityAITasks.EntityAITaskEntry entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
+        while (iterator.hasNext()) {
+            EntityAITasks.EntityAITaskEntry entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
 
-            if (entityaitaskentry != p_75775_1_)
-            {
-                if (p_75775_1_.priority >= entityaitaskentry.priority)
-                {
-                    if (this.executingTaskEntries.contains(entityaitaskentry) && !this.areTasksCompatible(p_75775_1_, entityaitaskentry))
-                    {
+            if (entityaitaskentry != p_75775_1_) {
+                if (p_75775_1_.priority >= entityaitaskentry.priority) {
+                    if (this.executingTaskEntries.contains(entityaitaskentry)
+                        && !this.areTasksCompatible(p_75775_1_, entityaitaskentry)) {
                         this.theProfiler.endSection();
                         return false;
                     }
-                }
-                else if (this.executingTaskEntries.contains(entityaitaskentry) && !entityaitaskentry.action.isInterruptible())
-                {
-                    this.theProfiler.endSection();
-                    return false;
-                }
+                } else if (this.executingTaskEntries.contains(entityaitaskentry)
+                    && !entityaitaskentry.action.isInterruptible()) {
+                        this.theProfiler.endSection();
+                        return false;
+                    }
             }
         }
 

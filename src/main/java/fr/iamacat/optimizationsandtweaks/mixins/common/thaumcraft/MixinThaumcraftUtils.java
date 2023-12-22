@@ -1,15 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
+import java.util.Arrays;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
 import thaumcraft.common.items.equipment.ItemElementalAxe;
 import thaumcraft.common.lib.utils.Utils;
-
-import java.util.Arrays;
 
 @Mixin(Utils.class)
 public class MixinThaumcraftUtils {

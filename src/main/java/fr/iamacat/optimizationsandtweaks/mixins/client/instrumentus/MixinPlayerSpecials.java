@@ -1,21 +1,24 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.instrumentus;
 
-import info.beanbot.morepaxels.client.player.PlayerSpecials;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumChatFormatting;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import info.beanbot.morepaxels.client.player.PlayerSpecials;
 
 @Mixin(PlayerSpecials.class)
 public class MixinPlayerSpecials {
 
     @Unique
-    private static final Set<String> ALLOWED_NAMES = new HashSet<>(Arrays.asList("Beanxxbot", "TheDiscoCreeper", "Rajecent", "Hermyone"));
+    private static final Set<String> ALLOWED_NAMES = new HashSet<>(
+        Arrays.asList("Beanxxbot", "TheDiscoCreeper", "Rajecent", "Hermyone"));
 
     /**
      * @author

@@ -1,22 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minenautica;
 
-import com.minenautica.Minenautica.Biomes.GenerateCoral;
-import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
-import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
-import com.minenautica.Minenautica.Schematics.*;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import com.minenautica.Minenautica.Biomes.GenerateCoral;
+import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
+import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
+import com.minenautica.Minenautica.Schematics.*;
 
 @Mixin(GenerateCoral.class)
 public class MixinGenerateCoral {
+
     @Shadow
     private Block blockToSet;
     @Shadow
@@ -97,6 +100,7 @@ public class MixinGenerateCoral {
     int random2;
     @Unique
     int type;
+
     /**
      * @author
      * @reason
@@ -191,17 +195,22 @@ public class MixinGenerateCoral {
                     Spire22.generate(world, random, i1, j1, k1);
                 }
 
-                if (type == 18 && this.canStructureSpawn(world, i1, j1, k1, 10, 10, 5.0F) && this.canStructureSpawn(world, i1 + 15, j1, k1, 10, 10, 5.0F)) {
+                if (type == 18 && this.canStructureSpawn(world, i1, j1, k1, 10, 10, 5.0F)
+                    && this.canStructureSpawn(world, i1 + 15, j1, k1, 10, 10, 5.0F)) {
                     Arch1.generate(world, random, i1, j1, k1);
                 }
 
-                if (type == 19 && this.canStructureSpawn(world, i1, j1, k1, 10, 10, 5.0F) && this.canStructureSpawn(world, i1, j1, k1 + 15, 10, 10, 5.0F)) {
+                if (type == 19 && this.canStructureSpawn(world, i1, j1, k1, 10, 10, 5.0F)
+                    && this.canStructureSpawn(world, i1, j1, k1 + 15, 10, 10, 5.0F)) {
                     Arch2.generate(world, random, i1, j1, k1);
                 }
             } else if (random2 == 2) {
                 world.setBlock(i1, j1, k1, BlocksAndItems.furledPapyrus);
             } else if (random2 <= 6) {
-                if (world.getBlock(i1, j1, k1).getMaterial() == Material.water && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+                if (world.getBlock(i1, j1, k1)
+                    .getMaterial() == Material.water
+                    && world.getBlock(i1, j1 - 1, k1)
+                        .getMaterial() != Material.water) {
                     type = random.nextInt(4) + 2;
                     world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, type, 2);
                 }
@@ -215,15 +224,42 @@ public class MixinGenerateCoral {
 
                     int varient = random.nextInt(3);
                     if (varient == 0) {
-                        this.createCoralCluster(world, random, i1, j1, k1, grassyPlateausCoralTypes2, 0.9F, false, true);
+                        this.createCoralCluster(
+                            world,
+                            random,
+                            i1,
+                            j1,
+                            k1,
+                            grassyPlateausCoralTypes2,
+                            0.9F,
+                            false,
+                            true);
                     }
 
                     if (varient == 1) {
-                        this.createCoralCluster(world, random, i1, j1, k1, grassyPlateausCoralTypes3, 1.0F, false, true);
+                        this.createCoralCluster(
+                            world,
+                            random,
+                            i1,
+                            j1,
+                            k1,
+                            grassyPlateausCoralTypes3,
+                            1.0F,
+                            false,
+                            true);
                     }
 
                     if (varient == 2) {
-                        this.createCoralCluster(world, random, i1, j1, k1, grassyPlateausCoralTypes4, 0.7F, false, true);
+                        this.createCoralCluster(
+                            world,
+                            random,
+                            i1,
+                            j1,
+                            k1,
+                            grassyPlateausCoralTypes4,
+                            0.7F,
+                            false,
+                            true);
                     }
                 } else {
                     if (type >= 3) {
@@ -242,7 +278,10 @@ public class MixinGenerateCoral {
         int i1 = x1 + random.nextInt(8) - random.nextInt(8);
         int j1 = y1 + random.nextInt(24) - random.nextInt(24);
         int k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water) {
+        if (world.getBlock(i1, j1 - 1, k1)
+            .getMaterial() != Material.water
+            && world.getBlock(i1, j1, k1)
+                .getMaterial() == Material.water) {
             random2 = random.nextInt(30);
             if (random2 == 0) {
                 world.setBlock(i1, j1, k1, BlocksAndItems.seagrass);
@@ -252,7 +291,10 @@ public class MixinGenerateCoral {
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water) {
+        if (world.getBlock(i1, j1 - 1, k1)
+            .getMaterial() != Material.water
+            && world.getBlock(i1, j1, k1)
+                .getMaterial() == Material.water) {
             random2 = random.nextInt(40);
             if (random2 == 0) {
                 type = random.nextInt(4) + 2;
@@ -263,40 +305,54 @@ public class MixinGenerateCoral {
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && random.nextInt(110) == 0 && (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water || world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water)) {
-            if (world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water) {
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && random.nextInt(110) == 0
+            && (world.getBlock(i1, j1 - 1, k1)
+                .getMaterial() != Material.water
+                || world.getBlock(i1 - 1, j1, k1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1 + 1, j1, k1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1, j1, k1 - 1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1, j1, k1 + 1)
+                    .getMaterial() != Material.water)) {
+            if (world.getBlock(i1 + 1, j1, k1)
+                .getMaterial() != Material.water) {
                 world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
                 if (random2 == 1) {
                     world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
                 } else {
                     world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
                 }
-            } else if (world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
-                }
-            } else if (world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
-                }
-            } else if (world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
-                }
-            }
+            } else if (world.getBlock(i1 - 1, j1, k1)
+                .getMaterial() != Material.water) {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
+                    random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                    if (random2 == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
+                    }
+                } else if (world.getBlock(i1, j1, k1 + 1)
+                    .getMaterial() != Material.water) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
+                        random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                        if (random2 == 1) {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
+                        } else {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
+                        }
+                    } else if (world.getBlock(i1, j1, k1 - 1)
+                        .getMaterial() != Material.water) {
+                            world.setBlock(i1, j1, k1, BlocksAndItems.lithiumOutcrop);
+                            random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                            if (random2 == 1) {
+                                world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
+                            } else {
+                                world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
+                            }
+                        }
         }
     }
 
@@ -305,7 +361,8 @@ public class MixinGenerateCoral {
      * @reason
      */
     @Overwrite(remap = false)
-    public boolean canStructureSpawn(World world, int x, int y, int z, int length, int width, float maxInvalidBlocksIndex) {
+    public boolean canStructureSpawn(World world, int x, int y, int z, int length, int width,
+        float maxInvalidBlocksIndex) {
         int invalidBlocks = 0;
         Block waterBlock = Blocks.water;
 
@@ -321,8 +378,10 @@ public class MixinGenerateCoral {
         float maxInvalidBlocks = (length * width) * (1.0F / maxInvalidBlocksIndex);
         return invalidBlocks <= maxInvalidBlocks;
     }
+
     @Shadow
-    private void createCoralCluster(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
+    private void createCoralCluster(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size,
+        boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
         int[][] storedBlocks = new int[500][3];
         int storedBlocksIndex = 0;
         int blockToSetIndex1 = random.nextInt(coralTypes.length);
@@ -330,11 +389,13 @@ public class MixinGenerateCoral {
         int blockToSetInsideIndex1 = random.nextInt(blockToSetSpawn1.length);
         Block blockToSetInsideSpawn1 = blockToSetSpawn1[blockToSetInsideIndex1];
         world.setBlock(x, y, z, blockToSetInsideSpawn1);
-        int[] positionArray1 = new int[]{x, y, z};
+        int[] positionArray1 = new int[] { x, y, z };
         storedBlocks[storedBlocksIndex] = positionArray1;
         ++storedBlocksIndex;
 
-        for(int i = 0; i < storedBlocks.length && (storedBlocks[i][0] != 0 || storedBlocks[i][1] != 0 || storedBlocks[i][2] != 0) && storedBlocksIndex < 490; ++i) {
+        for (int i = 0; i < storedBlocks.length
+            && (storedBlocks[i][0] != 0 || storedBlocks[i][1] != 0 || storedBlocks[i][2] != 0)
+            && storedBlocksIndex < 490; ++i) {
             int[] positionArray;
             boolean flag;
             int distanceFromCoral;
@@ -346,30 +407,36 @@ public class MixinGenerateCoral {
             int blockToSetInsideIndex;
             Block blockToSetSpawnInside;
             int canSpawnProbibility;
-            if (world.getBlock(storedBlocks[i][0] - 1, storedBlocks[i][1] - 1, storedBlocks[i][2]) != null && world.getBlock(storedBlocks[i][0] - 1, storedBlocks[i][1] - 1, storedBlocks[i][2]).getMaterial() != Material.water) {
-                positionArray = new int[]{storedBlocks[i][0] - 1, storedBlocks[i][1], storedBlocks[i][2]};
+            if (world.getBlock(storedBlocks[i][0] - 1, storedBlocks[i][1] - 1, storedBlocks[i][2]) != null
+                && world.getBlock(storedBlocks[i][0] - 1, storedBlocks[i][1] - 1, storedBlocks[i][2])
+                    .getMaterial() != Material.water) {
+                positionArray = new int[] { storedBlocks[i][0] - 1, storedBlocks[i][1], storedBlocks[i][2] };
                 flag = false;
 
-                for(distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
-                    if (positionArray[0] == storedBlocks[distanceFromCoral][0] && positionArray[1] == storedBlocks[distanceFromCoral][1] && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
+                for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
+                    if (positionArray[0] == storedBlocks[distanceFromCoral][0]
+                        && positionArray[1] == storedBlocks[distanceFromCoral][1]
+                        && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
                         flag = true;
                         break;
                     }
                 }
 
                 if (!flag) {
-                    distanceFromCoral = (int)Math.sqrt(Math.pow((double)(positionArray[0] - storedBlocks[0][0]), 2.0) + Math.pow((double)(positionArray[2] - storedBlocks[0][2]), 2.0));
+                    distanceFromCoral = (int) Math.sqrt(
+                        Math.pow((double) (positionArray[0] - storedBlocks[0][0]), 2.0)
+                            + Math.pow((double) (positionArray[2] - storedBlocks[0][2]), 2.0));
                     chanceOfSpawning = 100.0F;
                     if (distanceFromCoral != 1 || distanceFromCoral != 0) {
-                        percentage = (float)distanceFromCoral / size;
+                        percentage = (float) distanceFromCoral / size;
                         chanceOfSpawning = 100.0F * (1.0F / percentage);
                     }
 
                     canSpawnProbibility = random.nextInt(100);
-                    if ((float)canSpawnProbibility <= chanceOfSpawning) {
+                    if ((float) canSpawnProbibility <= chanceOfSpawning) {
                         flag2 = false;
 
-                        for(blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
+                        for (blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
                             if (storedBlocks[blockToSetIndex] == positionArray) {
                                 flag2 = true;
                             }
@@ -381,49 +448,73 @@ public class MixinGenerateCoral {
                             blockToSetInsideIndex = random.nextInt(blockToSetSpawn.length);
                             blockToSetSpawnInside = blockToSetSpawn[blockToSetInsideIndex];
                             if (doesBlockAboveHaveToBeWater) {
-                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) == BlocksAndItems.saltWater && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != blockToSetSpawnInside) {
-                                    world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
+                                        == BlocksAndItems.saltWater
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
+                                        != blockToSetSpawnInside) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
                                     storedBlocks[storedBlocksIndex] = positionArray;
                                     ++storedBlocksIndex;
                                 }
                             } else if (shouldReplaceBlocks) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                world.setBlock(
+                                    positionArray[0],
+                                    positionArray[1],
+                                    positionArray[2],
+                                    blockToSetSpawnInside);
                                 storedBlocks[storedBlocksIndex] = positionArray;
                                 ++storedBlocksIndex;
-                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2]) == BlocksAndItems.saltWater) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
-                                storedBlocks[storedBlocksIndex] = positionArray;
-                                ++storedBlocksIndex;
-                            }
+                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
+                                == BlocksAndItems.saltWater) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
+                                    storedBlocks[storedBlocksIndex] = positionArray;
+                                    ++storedBlocksIndex;
+                                }
                         }
                     }
                 }
             }
 
-            if (world.getBlock(storedBlocks[i][0] + 1, storedBlocks[i][1] - 1, storedBlocks[i][2]) != null && world.getBlock(storedBlocks[i][0] + 1, storedBlocks[i][1] - 1, storedBlocks[i][2]).getMaterial() != Material.water) {
-                positionArray = new int[]{storedBlocks[i][0] + 1, storedBlocks[i][1], storedBlocks[i][2]};
+            if (world.getBlock(storedBlocks[i][0] + 1, storedBlocks[i][1] - 1, storedBlocks[i][2]) != null
+                && world.getBlock(storedBlocks[i][0] + 1, storedBlocks[i][1] - 1, storedBlocks[i][2])
+                    .getMaterial() != Material.water) {
+                positionArray = new int[] { storedBlocks[i][0] + 1, storedBlocks[i][1], storedBlocks[i][2] };
                 flag = false;
 
-                for(distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
-                    if (positionArray[0] == storedBlocks[distanceFromCoral][0] && positionArray[1] == storedBlocks[distanceFromCoral][1] && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
+                for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
+                    if (positionArray[0] == storedBlocks[distanceFromCoral][0]
+                        && positionArray[1] == storedBlocks[distanceFromCoral][1]
+                        && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
                         flag = true;
                         break;
                     }
                 }
 
                 if (!flag) {
-                    distanceFromCoral = (int)Math.sqrt(Math.pow((double)(positionArray[0] - storedBlocks[0][0]), 2.0) + Math.pow((double)(positionArray[2] - storedBlocks[0][2]), 2.0));
+                    distanceFromCoral = (int) Math.sqrt(
+                        Math.pow((double) (positionArray[0] - storedBlocks[0][0]), 2.0)
+                            + Math.pow((double) (positionArray[2] - storedBlocks[0][2]), 2.0));
                     chanceOfSpawning = 100.0F;
                     if (distanceFromCoral != 1 || distanceFromCoral != 0) {
-                        percentage = (float)distanceFromCoral / size;
+                        percentage = (float) distanceFromCoral / size;
                         chanceOfSpawning = 100.0F * (1.0F / percentage);
                     }
 
                     canSpawnProbibility = random.nextInt(100);
-                    if ((float)canSpawnProbibility <= chanceOfSpawning) {
+                    if ((float) canSpawnProbibility <= chanceOfSpawning) {
                         flag2 = false;
 
-                        for(blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
+                        for (blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
                             if (storedBlocks[blockToSetIndex] == positionArray) {
                                 flag2 = true;
                             }
@@ -435,49 +526,73 @@ public class MixinGenerateCoral {
                             blockToSetInsideIndex = random.nextInt(blockToSetSpawn.length);
                             blockToSetSpawnInside = blockToSetSpawn[blockToSetInsideIndex];
                             if (doesBlockAboveHaveToBeWater) {
-                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) == BlocksAndItems.saltWater && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != blockToSetSpawnInside) {
-                                    world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
+                                        == BlocksAndItems.saltWater
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
+                                        != blockToSetSpawnInside) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
                                     storedBlocks[storedBlocksIndex] = positionArray;
                                     ++storedBlocksIndex;
                                 }
                             } else if (shouldReplaceBlocks) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                world.setBlock(
+                                    positionArray[0],
+                                    positionArray[1],
+                                    positionArray[2],
+                                    blockToSetSpawnInside);
                                 storedBlocks[storedBlocksIndex] = positionArray;
                                 ++storedBlocksIndex;
-                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2]) == BlocksAndItems.saltWater) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
-                                storedBlocks[storedBlocksIndex] = positionArray;
-                                ++storedBlocksIndex;
-                            }
+                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
+                                == BlocksAndItems.saltWater) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
+                                    storedBlocks[storedBlocksIndex] = positionArray;
+                                    ++storedBlocksIndex;
+                                }
                         }
                     }
                 }
             }
 
-            if (world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] - 1) != null && world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] - 1).getMaterial() != Material.water) {
-                positionArray = new int[]{storedBlocks[i][0], storedBlocks[i][1], storedBlocks[i][2] - 1};
+            if (world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] - 1) != null
+                && world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] - 1)
+                    .getMaterial() != Material.water) {
+                positionArray = new int[] { storedBlocks[i][0], storedBlocks[i][1], storedBlocks[i][2] - 1 };
                 flag = false;
 
-                for(distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
-                    if (positionArray[0] == storedBlocks[distanceFromCoral][0] && positionArray[1] == storedBlocks[distanceFromCoral][1] && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
+                for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
+                    if (positionArray[0] == storedBlocks[distanceFromCoral][0]
+                        && positionArray[1] == storedBlocks[distanceFromCoral][1]
+                        && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
                         flag = true;
                         break;
                     }
                 }
 
                 if (!flag) {
-                    distanceFromCoral = (int)Math.sqrt(Math.pow((double)(positionArray[0] - storedBlocks[0][0]), 2.0) + Math.pow((double)(positionArray[2] - storedBlocks[0][2]), 2.0));
+                    distanceFromCoral = (int) Math.sqrt(
+                        Math.pow((double) (positionArray[0] - storedBlocks[0][0]), 2.0)
+                            + Math.pow((double) (positionArray[2] - storedBlocks[0][2]), 2.0));
                     chanceOfSpawning = 100.0F;
                     if (distanceFromCoral != 1 || distanceFromCoral != 0) {
-                        percentage = (float)distanceFromCoral / size;
+                        percentage = (float) distanceFromCoral / size;
                         chanceOfSpawning = 100.0F * (1.0F / percentage);
                     }
 
                     canSpawnProbibility = random.nextInt(100);
-                    if ((float)canSpawnProbibility <= chanceOfSpawning) {
+                    if ((float) canSpawnProbibility <= chanceOfSpawning) {
                         flag2 = false;
 
-                        for(blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
+                        for (blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
                             if (storedBlocks[blockToSetIndex] == positionArray) {
                                 flag2 = true;
                             }
@@ -489,49 +604,73 @@ public class MixinGenerateCoral {
                             blockToSetInsideIndex = random.nextInt(blockToSetSpawn.length);
                             blockToSetSpawnInside = blockToSetSpawn[blockToSetInsideIndex];
                             if (doesBlockAboveHaveToBeWater) {
-                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) == BlocksAndItems.saltWater && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != blockToSetSpawnInside) {
-                                    world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
+                                        == BlocksAndItems.saltWater
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
+                                        != blockToSetSpawnInside) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
                                     storedBlocks[storedBlocksIndex] = positionArray;
                                     ++storedBlocksIndex;
                                 }
                             } else if (shouldReplaceBlocks) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                world.setBlock(
+                                    positionArray[0],
+                                    positionArray[1],
+                                    positionArray[2],
+                                    blockToSetSpawnInside);
                                 storedBlocks[storedBlocksIndex] = positionArray;
                                 ++storedBlocksIndex;
-                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2]) == BlocksAndItems.saltWater) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
-                                storedBlocks[storedBlocksIndex] = positionArray;
-                                ++storedBlocksIndex;
-                            }
+                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
+                                == BlocksAndItems.saltWater) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
+                                    storedBlocks[storedBlocksIndex] = positionArray;
+                                    ++storedBlocksIndex;
+                                }
                         }
                     }
                 }
             }
 
-            if (world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] + 1) != null && world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] + 1).getMaterial() != Material.water) {
-                positionArray = new int[]{storedBlocks[i][0], storedBlocks[i][1], storedBlocks[i][2] + 1};
+            if (world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] + 1) != null
+                && world.getBlock(storedBlocks[i][0], storedBlocks[i][1] - 1, storedBlocks[i][2] + 1)
+                    .getMaterial() != Material.water) {
+                positionArray = new int[] { storedBlocks[i][0], storedBlocks[i][1], storedBlocks[i][2] + 1 };
                 flag = false;
 
-                for(distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
-                    if (positionArray[0] == storedBlocks[distanceFromCoral][0] && positionArray[1] == storedBlocks[distanceFromCoral][1] && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
+                for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
+                    if (positionArray[0] == storedBlocks[distanceFromCoral][0]
+                        && positionArray[1] == storedBlocks[distanceFromCoral][1]
+                        && positionArray[2] == storedBlocks[distanceFromCoral][2]) {
                         flag = true;
                         break;
                     }
                 }
 
                 if (!flag) {
-                    distanceFromCoral = (int)Math.sqrt(Math.pow((double)(positionArray[0] - storedBlocks[0][0]), 2.0) + Math.pow((double)(positionArray[2] - storedBlocks[0][2]), 2.0));
+                    distanceFromCoral = (int) Math.sqrt(
+                        Math.pow((double) (positionArray[0] - storedBlocks[0][0]), 2.0)
+                            + Math.pow((double) (positionArray[2] - storedBlocks[0][2]), 2.0));
                     chanceOfSpawning = 100.0F;
                     if (distanceFromCoral != 0 && distanceFromCoral != 1) {
-                        percentage = (float)distanceFromCoral / size;
+                        percentage = (float) distanceFromCoral / size;
                         chanceOfSpawning = 100.0F * (1.0F / percentage);
                     }
 
                     canSpawnProbibility = random.nextInt(100);
-                    if ((float)canSpawnProbibility <= chanceOfSpawning) {
+                    if ((float) canSpawnProbibility <= chanceOfSpawning) {
                         flag2 = false;
 
-                        for(blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
+                        for (blockToSetIndex = 0; blockToSetIndex < storedBlocks.length; ++blockToSetIndex) {
                             if (storedBlocks[blockToSetIndex] == positionArray) {
                                 flag2 = true;
                             }
@@ -543,20 +682,38 @@ public class MixinGenerateCoral {
                             blockToSetInsideIndex = random.nextInt(blockToSetSpawn.length);
                             blockToSetSpawnInside = blockToSetSpawn[blockToSetInsideIndex];
                             if (doesBlockAboveHaveToBeWater) {
-                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) == BlocksAndItems.saltWater && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != blockToSetSpawnInside) {
-                                    world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
+                                        == BlocksAndItems.saltWater
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
+                                    && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
+                                        != blockToSetSpawnInside) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
                                     storedBlocks[storedBlocksIndex] = positionArray;
                                     ++storedBlocksIndex;
                                 }
                             } else if (shouldReplaceBlocks) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                                world.setBlock(
+                                    positionArray[0],
+                                    positionArray[1],
+                                    positionArray[2],
+                                    blockToSetSpawnInside);
                                 storedBlocks[storedBlocksIndex] = positionArray;
                                 ++storedBlocksIndex;
-                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2]) == BlocksAndItems.saltWater) {
-                                world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
-                                storedBlocks[storedBlocksIndex] = positionArray;
-                                ++storedBlocksIndex;
-                            }
+                            } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
+                                == BlocksAndItems.saltWater) {
+                                    world.setBlock(
+                                        positionArray[0],
+                                        positionArray[1],
+                                        positionArray[2],
+                                        blockToSetSpawnInside);
+                                    storedBlocks[storedBlocksIndex] = positionArray;
+                                    ++storedBlocksIndex;
+                                }
                         }
                     }
                 }
@@ -602,24 +759,27 @@ public class MixinGenerateCoral {
         int i1 = x1 + random.nextInt(8) - random.nextInt(8);
         int j1 = y1 + random.nextInt(24) - random.nextInt(24);
         int k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        return new int[]{i1, j1, k1};
+        return new int[] { i1, j1, k1 };
     }
 
     @Unique
     private boolean optimizationsAndTweaks$isValidPosition(World world, Random random, int i1, int j1, int k1) {
-        return (world.provider.hasNoSky || j1 < 255)
-            && CanBlockStay.canBelowGroundBlockStay(world, i1, j1, k1)
+        return (world.provider.hasNoSky || j1 < 255) && CanBlockStay.canBelowGroundBlockStay(world, i1, j1, k1)
             && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater;
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateFormationsBasedOnRandom(World world, Random random, int i1, int j1, int k1, boolean flag) {
+    private void optimizationsAndTweaks$generateFormationsBasedOnRandom(World world, Random random, int i1, int j1,
+        int k1, boolean flag) {
         int random2 = random.nextInt(52);
         if (random2 == 0) {
             generateFormations(world, random, i1, j1, k1);
             flag = true;
         }
-        if (random2 <= 2 && world.getBlock(i1, j1, k1).getMaterial() == Material.water && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+        if (random2 <= 2 && world.getBlock(i1, j1, k1)
+            .getMaterial() == Material.water
+            && world.getBlock(i1, j1 - 1, k1)
+                .getMaterial() != Material.water) {
             type = random.nextInt(4) + 2;
             world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, type, 2);
         }
@@ -630,30 +790,57 @@ public class MixinGenerateCoral {
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (random.nextInt(3) == 0 && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+        if (random.nextInt(3) == 0 && world.getBlock(i1, j1 - 1, k1)
+            .getMaterial() != Material.water && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
             random2 = random.nextInt(3);
             if (random2 == 0) {
-                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.creepvine, BlocksAndItems.creepvineTop, false);
+                this.generateCreepvine(
+                    world,
+                    random,
+                    i1,
+                    j1,
+                    k1,
+                    BlocksAndItems.creepvine,
+                    BlocksAndItems.creepvineTop,
+                    false);
             }
 
             if (random2 == 1) {
-                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.creepvineThin, BlocksAndItems.creepvineThinTop, false);
+                this.generateCreepvine(
+                    world,
+                    random,
+                    i1,
+                    j1,
+                    k1,
+                    BlocksAndItems.creepvineThin,
+                    BlocksAndItems.creepvineThinTop,
+                    false);
             }
 
             if (random2 == 2) {
-                this.generateCreepvine(world, random, i1, j1, k1, BlocksAndItems.seedClusterCreepvineBottom, BlocksAndItems.seedClusterCreepvineTop, true);
+                this.generateCreepvine(
+                    world,
+                    random,
+                    i1,
+                    j1,
+                    k1,
+                    BlocksAndItems.seedClusterCreepvineBottom,
+                    BlocksAndItems.seedClusterCreepvineTop,
+                    true);
             }
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateCoralClusters(World world, Random random, int i1, int j1, int k1, int[] possiblePos) {
+    private void optimizationsAndTweaks$generateCoralClusters(World world, Random random, int i1, int j1, int k1,
+        int[] possiblePos) {
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 - 1, k1)
+            .getMaterial() != Material.water) {
             if (possiblePos == null) {
-                int[] array = new int[]{i1, j1, k1};
+                int[] array = new int[] { i1, j1, k1 };
                 possiblePos = array;
             }
 
@@ -676,47 +863,67 @@ public class MixinGenerateCoral {
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water && random.nextInt(60) == 0) {
+        if (world.getBlock(i1, j1 - 1, k1)
+            .getMaterial() != Material.water
+            && world.getBlock(i1, j1, k1)
+                .getMaterial() == Material.water
+            && random.nextInt(60) == 0) {
             world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
             world.setBlockMetadataWithNotify(i1, j1, k1, random.nextInt(4) + 2, 2);
         }
         i1 = x1 + random.nextInt(8) - random.nextInt(8);
         j1 = y1 + random.nextInt(24) - random.nextInt(24);
         k1 = z1 + random.nextInt(8) - random.nextInt(8);
-        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && random.nextInt(10) == 0 && (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water || world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water)) {
-            if (world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water) {
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater
+            && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater
+            && random.nextInt(10) == 0
+            && (world.getBlock(i1, j1 - 1, k1)
+                .getMaterial() != Material.water
+                || world.getBlock(i1 - 1, j1, k1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1 + 1, j1, k1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1, j1, k1 - 1)
+                    .getMaterial() != Material.water
+                || world.getBlock(i1, j1, k1 + 1)
+                    .getMaterial() != Material.water)) {
+            if (world.getBlock(i1 + 1, j1, k1)
+                .getMaterial() != Material.water) {
                 world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
                 if (random2 == 1) {
                     world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
                 } else {
                     world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
                 }
-            } else if (world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
-                }
-            } else if (world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
-                }
-            } else if (world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water) {
-                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                random2 = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                if (random2 == 1) {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
-                } else {
-                    world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
-                }
-            }
+            } else if (world.getBlock(i1 - 1, j1, k1)
+                .getMaterial() != Material.water) {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                    if (random2 == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
+                    }
+                } else if (world.getBlock(i1, j1, k1 + 1)
+                    .getMaterial() != Material.water) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                        random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                        if (random2 == 1) {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
+                        } else {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
+                        }
+                    } else if (world.getBlock(i1, j1, k1 - 1)
+                        .getMaterial() != Material.water) {
+                            world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                            random2 = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                            if (random2 == 1) {
+                                world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
+                            } else {
+                                world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
+                            }
+                        }
         }
     }
 
@@ -729,16 +936,21 @@ public class MixinGenerateCoral {
         int j1 = y1 + random.nextInt(24) - random.nextInt(24);
         int k1 = z1 + random.nextInt(8) - random.nextInt(8);
 
-        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && random.nextInt(10) == 0) {
+        if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater
+            && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater
+            && random.nextInt(10) == 0) {
             Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
             Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
             Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
             Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
 
-            if (nextBlock1 == BlocksAndItems.kelpForestRock || nextBlock2 == BlocksAndItems.kelpForestRock ||
-                nextBlock3 == BlocksAndItems.kelpForestRock || nextBlock4 == BlocksAndItems.kelpForestRock ||
-                nextBlock1 == BlocksAndItems.kelpForestRockMossy || nextBlock2 == BlocksAndItems.kelpForestRockMossy ||
-                nextBlock3 == BlocksAndItems.kelpForestRockMossy || nextBlock4 == BlocksAndItems.kelpForestRockMossy) {
+            if (nextBlock1 == BlocksAndItems.kelpForestRock || nextBlock2 == BlocksAndItems.kelpForestRock
+                || nextBlock3 == BlocksAndItems.kelpForestRock
+                || nextBlock4 == BlocksAndItems.kelpForestRock
+                || nextBlock1 == BlocksAndItems.kelpForestRockMossy
+                || nextBlock2 == BlocksAndItems.kelpForestRockMossy
+                || nextBlock3 == BlocksAndItems.kelpForestRockMossy
+                || nextBlock4 == BlocksAndItems.kelpForestRockMossy) {
 
                 world.setBlock(i1, j1, k1, BlocksAndItems.greenTableCoral, this.metadata, 2);
 
@@ -750,24 +962,29 @@ public class MixinGenerateCoral {
                 if (nextBlock1 != BlocksAndItems.kelpForestRock && nextBlock1 != BlocksAndItems.kelpForestRockMossy) {
                     coverBlock = BlocksAndItems.greenCover;
                     metadata = 3;
-                } else if (nextBlock2 != BlocksAndItems.kelpForestRock && nextBlock2 != BlocksAndItems.kelpForestRockMossy) {
-                    coverBlock = BlocksAndItems.greenCover;
-                    metadata = 2;
-                } else if (nextBlock3 != BlocksAndItems.kelpForestRock && nextBlock3 != BlocksAndItems.kelpForestRockMossy) {
-                    coverBlock = BlocksAndItems.greenCover;
-                    metadata = 5;
-                } else {
-                    coverBlock = BlocksAndItems.greenCover;
-                    metadata = 4;
-                }
+                } else if (nextBlock2 != BlocksAndItems.kelpForestRock
+                    && nextBlock2 != BlocksAndItems.kelpForestRockMossy) {
+                        coverBlock = BlocksAndItems.greenCover;
+                        metadata = 2;
+                    } else if (nextBlock3 != BlocksAndItems.kelpForestRock
+                        && nextBlock3 != BlocksAndItems.kelpForestRockMossy) {
+                            coverBlock = BlocksAndItems.greenCover;
+                            metadata = 5;
+                        } else {
+                            coverBlock = BlocksAndItems.greenCover;
+                            metadata = 4;
+                        }
 
                 world.setBlockMetadataWithNotify(i1, j1, k1, metadata, 2);
                 world.setBlock(i1, j1, k1 - 1, coverBlock, metadata, 2);
                 cancel = true;
                 ypos = 1;
 
-                while (cancel && world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRockMossy) {
-                    if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                while (cancel && world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock
+                    || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRockMossy) {
+                    if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand
+                        || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.kelpForestRock)
+                        && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
                         world.setBlock(i1, j1 + ypos, k1, BlocksAndItems.greenTableCoral, this.metadata, 2);
                         world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, metadata, 2);
                         world.setBlock(i1, j1 + ypos, k1 - 1, coverBlock, metadata, 2);
@@ -781,13 +998,14 @@ public class MixinGenerateCoral {
     }
 
     @Shadow
-    private void generateCreepvine(World world, Random random, int x, int y, int z, Block bottomBlocks, Block topBlock, boolean hasCluster) {
+    private void generateCreepvine(World world, Random random, int x, int y, int z, Block bottomBlocks, Block topBlock,
+        boolean hasCluster) {
         boolean hasPlacedSeedCluster = false;
         boolean startPlacingHigherBlocks = false;
         int heightRange = random.nextInt(9) + 4;
         int highestPoint = 0;
 
-        for(int i = y; i < 100; ++i) {
+        for (int i = y; i < 100; ++i) {
             if (world.getBlock(x, i + heightRange, z) != BlocksAndItems.saltWater) {
                 highestPoint = i;
                 break;
@@ -805,11 +1023,11 @@ public class MixinGenerateCoral {
         }
 
         if (hasCluster) {
-            float difference = (float)(highestPoint - y);
-            float percent = (float)Math.floor((double)(difference * 0.7F)) + (float)(random.nextInt(5) - 2);
-            world.setBlock(x, (int)((float)y + percent), z, BlocksAndItems.seedClusterCreepvine);
+            float difference = (float) (highestPoint - y);
+            float percent = (float) Math.floor((double) (difference * 0.7F)) + (float) (random.nextInt(5) - 2);
+            world.setBlock(x, (int) ((float) y + percent), z, BlocksAndItems.seedClusterCreepvine);
 
-            for(int i = (int)((float)y + percent + 1.0F); i < highestPoint; ++i) {
+            for (int i = (int) ((float) y + percent + 1.0F); i < highestPoint; ++i) {
                 world.setBlock(x, i, z, BlocksAndItems.seedClusterCreepvineThick);
             }
 
@@ -957,13 +1175,15 @@ public class MixinGenerateCoral {
             return false;
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
-    public void generateSafeShallowsCoral(World world, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_) {
-        for(int l = 0; l < 1110; ++l) {
+    public void generateSafeShallowsCoral(World world, Random p_76484_2_, int p_76484_3_, int p_76484_4_,
+        int p_76484_5_) {
+        for (int l = 0; l < 1110; ++l) {
             this.blockToSet = BlocksAndItems.seagrass;
             int i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
             int j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
@@ -972,81 +1192,7 @@ public class MixinGenerateCoral {
             int coralTubeType;
             int chance;
             if ((!world.provider.hasNoSky || j1 < 255) && this.blockToSet.canBlockStay(world, i1, j1, k1)) {
-                x = p_76484_2_.nextInt(100);
-                if (x != 0) {
-                    if (x <= 20 && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
-                        if (x == 20) {
-                            this.blockToSet = BlocksAndItems.quartz;
-                            world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
-                        } else if (x == 19) {
-                            if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
-                                coralTubeType = p_76484_2_.nextInt(4) + 2;
-                                world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, coralTubeType, 2);
-                            }
-                        } else if (x <= 10) {
-                            this.createCoralCluster(world, p_76484_2_, i1, j1 - 1, k1, safeShallowsCoralArray, 1.2F, true, true);
-                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes2, 0.6F, false, false);
-                        } else if (x <= 15) {
-                            this.createCoralCluster(world, p_76484_2_, i1, j1 - 1, k1, safeShallowsCoralArray, 1.2F, true, true);
-                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes1, 0.85F, false, false);
-                        } else {
-                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes3, 0.85F, false, true);
-                        }
-                    }
-                } else {
-                    coralTubeType = p_76484_2_.nextInt(21);
-                    if ((coralTubeType == 0 || coralTubeType == 1) && this.canStructureSpawn(world, i1, j1 - 1, k1, 19, 5, 4.0F)) {
-                        Coraltube1.generate(world, i1, j1 - 3, k1);
-                    }
-
-                    if ((coralTubeType == 2 || coralTubeType == 3) && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
-                        Coraltube2.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 4 || coralTubeType == 5) && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 13, 4.0F)) {
-                        Coraltube3.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 6 || coralTubeType == 7) && this.canStructureSpawn(world, i1, j1 - 1, k1, 17, 3, 4.0F)) {
-                        Coraltube4.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 8 || coralTubeType == 9) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
-                        Coraltube5.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 10 || coralTubeType == 11) && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
-                        Coraltube6.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 12 || coralTubeType == 13) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 3, 4.0F)) {
-                        Coraltube7.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 14 || coralTubeType == 15) && this.canStructureSpawn(world, i1, j1 - 1, k1, 5, 17, 4.0F)) {
-                        Coraltube8.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 16 || coralTubeType == 17) && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 16, 4.0F)) {
-                        Coraltube9.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if ((coralTubeType == 18 || coralTubeType == 19) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
-                        Coraltube10.generate(world, i1, j1 - 2, k1);
-                    }
-
-                    if (coralTubeType == 20) {
-                        chance = p_76484_2_.nextInt(2);
-                        if (this.canStructureSpawn(world, i1, j1 - 1, k1, 15, 15, 4.0F)) {
-                            int voxeltubeType = p_76484_2_.nextInt(2);
-                            if (voxeltubeType == 0) {
-                                Voxeltube1.generate(world, i1, j1 - 1, k1);
-                            } else {
-                                Voxeltube2.generate(world, i1, j1 - 1, k1);
-                            }
-                        }
-                    }
-                }
+                optimizationsAndTweaks$SafeShallowsCoral1(world, p_76484_2_, p_76484_3_, p_76484_4_, p_76484_5_);
             }
 
             x = p_76484_2_.nextInt(2);
@@ -1059,179 +1205,20 @@ public class MixinGenerateCoral {
             i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
             j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
             k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
-            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && p_76484_2_.nextInt(4) == 0) {
-                Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
-                Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
-                Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
-                Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
-                if (nextBlock1 == BlocksAndItems.safeShallowsRock || nextBlock2 == BlocksAndItems.safeShallowsRock || nextBlock3 == BlocksAndItems.safeShallowsRock || nextBlock4 == BlocksAndItems.safeShallowsRock) {
-                    world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
-                    boolean cancel;
-                    int ypos;
-                    if (nextBlock1 == BlocksAndItems.safeShallowsRock) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 4, 2);
-                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                            world.setBlock(i1 + 1, j1, k1, BlocksAndItems.orangePolyps, 4, 2);
-                        }
-
-                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                            world.setBlock(i1 + 1, j1, k1, BlocksAndItems.purpleSponge, 4, 2);
-                        }
-
-                        cancel = true;
-                        ypos = 1;
-
-                        label383:
-                        while(true) {
-                            while(true) {
-                                if (!cancel) {
-                                    break label383;
-                                }
-
-                                if ((world.getBlock(i1 + 1, j1 + ypos, k1) == Blocks.sand || world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
-                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
-                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 4, 2);
-                                    if (world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
-                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                                            world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 4, 2);
-                                        }
-
-                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                                            world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 4, 2);
-                                        }
-                                    }
-
-                                    ++ypos;
-                                } else {
-                                    cancel = false;
-                                }
-                            }
-                        }
-                    } else if (nextBlock2 == BlocksAndItems.safeShallowsRock) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 2, 2);
-                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                            world.setBlock(i1 - 1, j1, k1, BlocksAndItems.orangePolyps, 2, 2);
-                        }
-
-                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                            world.setBlock(i1 - 1, j1, k1, BlocksAndItems.purpleSponge, 2, 2);
-                        }
-
-                        cancel = true;
-                        ypos = 1;
-
-                        label397:
-                        while(true) {
-                            while(true) {
-                                if (!cancel) {
-                                    break label397;
-                                }
-
-                                if ((world.getBlock(i1 - 1, j1 + ypos, k1) == Blocks.sand || world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
-                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
-                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 2, 2);
-                                    if (world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
-                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                                            world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 2, 2);
-                                        }
-
-                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                                            world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 2, 2);
-                                        }
-                                    }
-
-                                    ++ypos;
-                                } else {
-                                    cancel = false;
-                                }
-                            }
-                        }
-                    } else if (nextBlock3 == BlocksAndItems.safeShallowsRock) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 5, 2);
-                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                            world.setBlock(i1, j1, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
-                        }
-
-                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                            world.setBlock(i1, j1, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
-                        }
-
-                        cancel = true;
-                        ypos = 1;
-
-                        label411:
-                        while(true) {
-                            while(true) {
-                                if (!cancel) {
-                                    break label411;
-                                }
-
-                                if ((world.getBlock(i1, j1 + ypos, k1 + 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
-                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
-                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 5, 2);
-                                    if (world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock) {
-                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                                            world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
-                                        }
-
-                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                                            world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
-                                        }
-                                    }
-
-                                    ++ypos;
-                                } else {
-                                    cancel = false;
-                                }
-                            }
-                        }
-                    } else if (nextBlock4 == BlocksAndItems.safeShallowsRock) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 3, 2);
-                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                            world.setBlock(i1, j1, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
-                        }
-
-                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                            world.setBlock(i1, j1, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
-                        }
-
-                        cancel = true;
-                        ypos = 1;
-
-                        label426:
-                        while(true) {
-                            while(true) {
-                                if (!cancel) {
-                                    break label426;
-                                }
-
-                                if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
-                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
-                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 3, 2);
-                                    if (world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock) {
-                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
-                                            world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
-                                        }
-
-                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
-                                            world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
-                                        }
-                                    }
-
-                                    ++ypos;
-                                } else {
-                                    cancel = false;
-                                }
-                            }
-                        }
-                    }
-                }
+            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater
+                && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater
+                && p_76484_2_.nextInt(4) == 0) {
+                optimizationsAndTweaks$SafeShallowsCoral2(world, p_76484_2_, p_76484_3_, p_76484_4_, p_76484_5_);
             }
 
             i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
             j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
             k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
-            if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water && p_76484_2_.nextInt(50) == 0) {
+            if (world.getBlock(i1, j1 - 1, k1)
+                .getMaterial() != Material.water
+                && world.getBlock(i1, j1, k1)
+                    .getMaterial() == Material.water
+                && p_76484_2_.nextInt(50) == 0) {
                 if (p_76484_2_.nextInt(2) == 0) {
                     world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
                 } else {
@@ -1244,70 +1231,27 @@ public class MixinGenerateCoral {
             i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
             j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
             k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
-            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && Math.floor(Math.random() * 10.0 + 1.0) == 1.0 && (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water || world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water)) {
-                if (world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water) {
-                    coralTubeType = p_76484_2_.nextInt(2);
-                    if (coralTubeType == 0) {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
-                    } else {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                    }
-
-                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                    if (chance == 1) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
-                    } else {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
-                    }
-                } else if (world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water) {
-                    coralTubeType = p_76484_2_.nextInt(2);
-                    if (coralTubeType == 0) {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
-                    } else {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                    }
-
-                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                    if (chance == 1) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
-                    } else {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
-                    }
-                } else if (world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water) {
-                    coralTubeType = p_76484_2_.nextInt(2);
-                    if (coralTubeType == 0) {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
-                    } else {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                    }
-
-                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                    if (chance == 1) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
-                    } else {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
-                    }
-                } else if (world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water) {
-                    coralTubeType = p_76484_2_.nextInt(2);
-                    if (coralTubeType == 0) {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
-                    } else {
-                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
-                    }
-
-                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
-                    if (chance == 1) {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
-                    } else {
-                        world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
-                    }
-                }
+            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater
+                && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater
+                && Math.floor(Math.random() * 10.0 + 1.0) == 1.0
+                && (world.getBlock(i1, j1 - 1, k1)
+                    .getMaterial() != Material.water
+                    || world.getBlock(i1 - 1, j1, k1)
+                        .getMaterial() != Material.water
+                    || world.getBlock(i1 + 1, j1, k1)
+                        .getMaterial() != Material.water
+                    || world.getBlock(i1, j1, k1 - 1)
+                        .getMaterial() != Material.water
+                    || world.getBlock(i1, j1, k1 + 1)
+                        .getMaterial() != Material.water)) {
+                optimizationsAndTweaks$SafeShallowsCoral3(world, p_76484_2_, p_76484_3_, p_76484_4_, p_76484_5_);
             }
 
             i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
             j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
             k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
-            if (world.getBlock(i1, j1 - 1, k1) == BlocksAndItems.giantCoralTube && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+            if (world.getBlock(i1, j1 - 1, k1) == BlocksAndItems.giantCoralTube
+                && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
                 coralTubeType = p_76484_2_.nextInt(3);
                 if (coralTubeType == 0) {
                     world.setBlock(i1, j1, k1, BlocksAndItems.slantedShellPlate);
@@ -1324,40 +1268,437 @@ public class MixinGenerateCoral {
                 }
             }
         }
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$SafeShallowsCoral1(World world, Random p_76484_2_, int p_76484_3_,
+        int p_76484_4_, int p_76484_5_) {
+        this.blockToSet = BlocksAndItems.seagrass;
+        int i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+        int k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int x;
+        int coralTubeType;
+        int chance;
+        x = p_76484_2_.nextInt(100);
+        if (x != 0) {
+            if (x <= 20 && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+                if (x == 20) {
+                    this.blockToSet = BlocksAndItems.quartz;
+                    world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
+                } else if (x == 19) {
+                    if (world.getBlock(i1, j1 - 1, k1)
+                        .getMaterial() != Material.water) {
+                        coralTubeType = p_76484_2_.nextInt(4) + 2;
+                        world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, coralTubeType, 2);
+                    }
+                } else if (x <= 10) {
+                    this.createCoralCluster(
+                        world,
+                        p_76484_2_,
+                        i1,
+                        j1 - 1,
+                        k1,
+                        safeShallowsCoralArray,
+                        1.2F,
+                        true,
+                        true);
+                    this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes2, 0.6F, false, false);
+                } else if (x <= 15) {
+                    this.createCoralCluster(
+                        world,
+                        p_76484_2_,
+                        i1,
+                        j1 - 1,
+                        k1,
+                        safeShallowsCoralArray,
+                        1.2F,
+                        true,
+                        true);
+                    this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes1, 0.85F, false, false);
+                } else {
+                    this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes3, 0.85F, false, true);
+                }
+            }
+        } else {
+            coralTubeType = p_76484_2_.nextInt(21);
+            if ((coralTubeType == 0 || coralTubeType == 1)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 19, 5, 4.0F)) {
+                Coraltube1.generate(world, i1, j1 - 3, k1);
+            }
+
+            if ((coralTubeType == 2 || coralTubeType == 3)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
+                Coraltube2.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 4 || coralTubeType == 5)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 13, 4.0F)) {
+                Coraltube3.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 6 || coralTubeType == 7)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 17, 3, 4.0F)) {
+                Coraltube4.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 8 || coralTubeType == 9)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
+                Coraltube5.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 10 || coralTubeType == 11)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
+                Coraltube6.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 12 || coralTubeType == 13)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 3, 4.0F)) {
+                Coraltube7.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 14 || coralTubeType == 15)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 5, 17, 4.0F)) {
+                Coraltube8.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 16 || coralTubeType == 17)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 16, 4.0F)) {
+                Coraltube9.generate(world, i1, j1 - 2, k1);
+            }
+
+            if ((coralTubeType == 18 || coralTubeType == 19)
+                && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
+                Coraltube10.generate(world, i1, j1 - 2, k1);
+            }
+
+            if (coralTubeType == 20) {
+                chance = p_76484_2_.nextInt(2);
+                if (this.canStructureSpawn(world, i1, j1 - 1, k1, 15, 15, 4.0F)) {
+                    int voxeltubeType = p_76484_2_.nextInt(2);
+                    if (voxeltubeType == 0) {
+                        Voxeltube1.generate(world, i1, j1 - 1, k1);
+                    } else {
+                        Voxeltube2.generate(world, i1, j1 - 1, k1);
+                    }
+                }
+            }
+        }
 
     }
+
+    @Unique
+    public void optimizationsAndTweaks$SafeShallowsCoral2(World world, Random p_76484_2_, int p_76484_3_,
+        int p_76484_4_, int p_76484_5_) {
+        this.blockToSet = BlocksAndItems.seagrass;
+        int i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+        int k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int x;
+        int coralTubeType;
+        int chance;
+        Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
+        Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
+        Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
+        Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
+        if (nextBlock1 == BlocksAndItems.safeShallowsRock || nextBlock2 == BlocksAndItems.safeShallowsRock
+            || nextBlock3 == BlocksAndItems.safeShallowsRock
+            || nextBlock4 == BlocksAndItems.safeShallowsRock) {
+            world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
+            boolean cancel;
+            int ypos;
+            if (nextBlock1 == BlocksAndItems.safeShallowsRock) {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 4, 2);
+                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                    world.setBlock(i1 + 1, j1, k1, BlocksAndItems.orangePolyps, 4, 2);
+                }
+
+                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                    world.setBlock(i1 + 1, j1, k1, BlocksAndItems.purpleSponge, 4, 2);
+                }
+
+                cancel = true;
+                ypos = 1;
+
+                label383: while (true) {
+                    while (true) {
+                        if (!cancel) {
+                            break label383;
+                        }
+
+                        if ((world.getBlock(i1 + 1, j1 + ypos, k1) == Blocks.sand
+                            || world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock)
+                            && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                            world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                            world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 4, 2);
+                            if (world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
+                                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                    world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 4, 2);
+                                }
+
+                                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                    world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 4, 2);
+                                }
+                            }
+
+                            ++ypos;
+                        } else {
+                            cancel = false;
+                        }
+                    }
+                }
+            } else if (nextBlock2 == BlocksAndItems.safeShallowsRock) {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 2, 2);
+                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                    world.setBlock(i1 - 1, j1, k1, BlocksAndItems.orangePolyps, 2, 2);
+                }
+
+                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                    world.setBlock(i1 - 1, j1, k1, BlocksAndItems.purpleSponge, 2, 2);
+                }
+
+                cancel = true;
+                ypos = 1;
+
+                label397: while (true) {
+                    while (true) {
+                        if (!cancel) {
+                            break label397;
+                        }
+
+                        if ((world.getBlock(i1 - 1, j1 + ypos, k1) == Blocks.sand
+                            || world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock)
+                            && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                            world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                            world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 2, 2);
+                            if (world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
+                                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                    world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 2, 2);
+                                }
+
+                                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                    world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 2, 2);
+                                }
+                            }
+
+                            ++ypos;
+                        } else {
+                            cancel = false;
+                        }
+                    }
+                }
+            } else if (nextBlock3 == BlocksAndItems.safeShallowsRock) {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 5, 2);
+                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                    world.setBlock(i1, j1, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
+                }
+
+                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                    world.setBlock(i1, j1, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
+                }
+
+                cancel = true;
+                ypos = 1;
+
+                label411: while (true) {
+                    while (true) {
+                        if (!cancel) {
+                            break label411;
+                        }
+
+                        if ((world.getBlock(i1, j1 + ypos, k1 + 1) == Blocks.sand
+                            || world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock)
+                            && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                            world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                            world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 5, 2);
+                            if (world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock) {
+                                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                    world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
+                                }
+
+                                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                    world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
+                                }
+                            }
+
+                            ++ypos;
+                        } else {
+                            cancel = false;
+                        }
+                    }
+                }
+            } else if (nextBlock4 == BlocksAndItems.safeShallowsRock) {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 3, 2);
+                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                    world.setBlock(i1, j1, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
+                }
+
+                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                    world.setBlock(i1, j1, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
+                }
+
+                cancel = true;
+                ypos = 1;
+
+                label426: while (true) {
+                    while (true) {
+                        if (!cancel) {
+                            break label426;
+                        }
+
+                        if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand
+                            || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock)
+                            && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                            world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                            world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 3, 2);
+                            if (world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock) {
+                                if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                    world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
+                                }
+
+                                if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                    world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
+                                }
+                            }
+
+                            ++ypos;
+                        } else {
+                            cancel = false;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Unique
+    public void optimizationsAndTweaks$SafeShallowsCoral3(World world, Random p_76484_2_, int p_76484_3_,
+        int p_76484_4_, int p_76484_5_) {
+        this.blockToSet = BlocksAndItems.seagrass;
+        int i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+        int k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+        int x;
+        int coralTubeType;
+        int chance;
+        Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
+        Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
+        Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
+        Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
+        if (world.getBlock(i1 + 1, j1, k1)
+            .getMaterial() != Material.water) {
+            coralTubeType = p_76484_2_.nextInt(2);
+            if (coralTubeType == 0) {
+                world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+            } else {
+                world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+            }
+
+            chance = (int) Math.floor(Math.random() * 2.0 + 1.0);
+            if (chance == 1) {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
+            } else {
+                world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
+            }
+        } else if (world.getBlock(i1 - 1, j1, k1)
+            .getMaterial() != Material.water) {
+                coralTubeType = p_76484_2_.nextInt(2);
+                if (coralTubeType == 0) {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                } else {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                }
+
+                chance = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                if (chance == 1) {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
+                } else {
+                    world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
+                }
+            } else if (world.getBlock(i1, j1, k1 + 1)
+                .getMaterial() != Material.water) {
+                    coralTubeType = p_76484_2_.nextInt(2);
+                    if (coralTubeType == 0) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                    } else {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    }
+
+                    chance = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                    if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
+                    }
+                } else if (world.getBlock(i1, j1, k1 - 1)
+                    .getMaterial() != Material.water) {
+                        coralTubeType = p_76484_2_.nextInt(2);
+                        if (coralTubeType == 0) {
+                            world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                        } else {
+                            world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                        }
+
+                        chance = (int) Math.floor(Math.random() * 2.0 + 1.0);
+                        if (chance == 1) {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
+                        } else {
+                            world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
+                        }
+                    }
+    }
+
     static {
-        sandSubArray = new Block[]{Blocks.sand};
-        sandArray = new Block[][]{sandSubArray};
-        bloodMossSubArray = new Block[]{BlocksAndItems.bloodMoss};
-        bloodMossArray = new Block[][]{bloodMossSubArray};
-        royalBrittleSubArray = new Block[]{BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.royalBrittle};
-        royalBrittleArray = new Block[][]{royalBrittleSubArray};
-        commonGrassyPlateausCoralTypes1 = new Block[]{BlocksAndItems.bloodgrass};
-        uncommonGrassyPlateausCoralTypes1 = new Block[]{BlocksAndItems.doubleBloodgrass};
-        grassyPlateausCoralTypes1 = new Block[][]{commonGrassyPlateausCoralTypes1, commonGrassyPlateausCoralTypes1, uncommonGrassyPlateausCoralTypes1};
-        commonGrassyPlateausCoralTypes2 = new Block[]{BlocksAndItems.blueTangle, BlocksAndItems.writhingWeed};
-        uncommonGrassyPlateausCoralTypes2 = new Block[]{BlocksAndItems.acidMushroom, BlocksAndItems.slantedShellPlate};
-        grassyPlateausCoralTypes2 = new Block[][]{commonGrassyPlateausCoralTypes2, commonGrassyPlateausCoralTypes2, uncommonGrassyPlateausCoralTypes2};
-        commonGrassyPlateausCoralTypes3 = new Block[]{BlocksAndItems.acidMushroom, BlocksAndItems.blueTangle, BlocksAndItems.violetBeau, BlocksAndItems.redWort};
-        grassyPlateausCoralTypes3 = new Block[][]{commonGrassyPlateausCoralTypes3};
-        commonGrassyPlateausCoralTypes4 = new Block[]{BlocksAndItems.veinedNettle, BlocksAndItems.magentaRod};
-        grassyPlateausCoralTypes4 = new Block[][]{commonGrassyPlateausCoralTypes4};
-        safeShallowsCoralSubArray = new Block[]{BlocksAndItems.safeShallowsCoral, BlocksAndItems.royalBrittle, BlocksAndItems.greenCoverBlock, BlocksAndItems.purpleSpongeBlock};
-        safeShallowsCoralArray = new Block[][]{safeShallowsCoralSubArray};
-        commonSafeShallowsTypes1 = new Block[]{BlocksAndItems.acidMushroom};
-        uncommonSafeShallowsTypes1 = new Block[]{BlocksAndItems.writhingWeed, BlocksAndItems.redBranch, BlocksAndItems.redBranch, BlocksAndItems.veinedNettle, BlocksAndItems.doubleWrithingWeed};
-        rareSafeShallowsTypes1 = new Block[]{BlocksAndItems.doubleRedBranch, BlocksAndItems.slantedShellPlate, BlocksAndItems.shellPlate, BlocksAndItems.bluePalm};
-        extraRareSafeShallowsTypes1 = new Block[]{BlocksAndItems.purpleBrainCoral};
-        safeShallowsTypes1 = new Block[][]{commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, rareSafeShallowsTypes1, rareSafeShallowsTypes1, extraRareSafeShallowsTypes1};
-        commonSafeShallowsTypes2 = new Block[]{BlocksAndItems.acidMushroom};
-        common2SafeShallowsTypes2 = new Block[]{BlocksAndItems.writhingWeed};
-        safeShallowsTypes2 = new Block[][]{commonSafeShallowsTypes2, common2SafeShallowsTypes2};
-        commonSafeShallowsTypes3 = new Block[]{BlocksAndItems.seagrass, BlocksAndItems.greenReeds, BlocksAndItems.yellowCoral};
-        safeShallowsTypes3 = new Block[][]{commonSafeShallowsTypes3};
-        kelpForestSandSubArray = new Block[]{BlocksAndItems.kelpForestSand, BlocksAndItems.kelpForestSand, BlocksAndItems.kelpForestSand, Blocks.sand};
-        kelpForestSandArray = new Block[][]{kelpForestSandSubArray};
-        commonKelpForestTypes1 = new Block[]{BlocksAndItems.saltWater, BlocksAndItems.seaMoss, BlocksAndItems.shortGrass, BlocksAndItems.doubleSeagrass};
-        kelpForestTypes1 = new Block[][]{commonKelpForestTypes1};
+        sandSubArray = new Block[] { Blocks.sand };
+        sandArray = new Block[][] { sandSubArray };
+        bloodMossSubArray = new Block[] { BlocksAndItems.bloodMoss };
+        bloodMossArray = new Block[][] { bloodMossSubArray };
+        royalBrittleSubArray = new Block[] { BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss,
+            BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss,
+            BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.bloodMoss, BlocksAndItems.royalBrittle };
+        royalBrittleArray = new Block[][] { royalBrittleSubArray };
+        commonGrassyPlateausCoralTypes1 = new Block[] { BlocksAndItems.bloodgrass };
+        uncommonGrassyPlateausCoralTypes1 = new Block[] { BlocksAndItems.doubleBloodgrass };
+        grassyPlateausCoralTypes1 = new Block[][] { commonGrassyPlateausCoralTypes1, commonGrassyPlateausCoralTypes1,
+            uncommonGrassyPlateausCoralTypes1 };
+        commonGrassyPlateausCoralTypes2 = new Block[] { BlocksAndItems.blueTangle, BlocksAndItems.writhingWeed };
+        uncommonGrassyPlateausCoralTypes2 = new Block[] { BlocksAndItems.acidMushroom,
+            BlocksAndItems.slantedShellPlate };
+        grassyPlateausCoralTypes2 = new Block[][] { commonGrassyPlateausCoralTypes2, commonGrassyPlateausCoralTypes2,
+            uncommonGrassyPlateausCoralTypes2 };
+        commonGrassyPlateausCoralTypes3 = new Block[] { BlocksAndItems.acidMushroom, BlocksAndItems.blueTangle,
+            BlocksAndItems.violetBeau, BlocksAndItems.redWort };
+        grassyPlateausCoralTypes3 = new Block[][] { commonGrassyPlateausCoralTypes3 };
+        commonGrassyPlateausCoralTypes4 = new Block[] { BlocksAndItems.veinedNettle, BlocksAndItems.magentaRod };
+        grassyPlateausCoralTypes4 = new Block[][] { commonGrassyPlateausCoralTypes4 };
+        safeShallowsCoralSubArray = new Block[] { BlocksAndItems.safeShallowsCoral, BlocksAndItems.royalBrittle,
+            BlocksAndItems.greenCoverBlock, BlocksAndItems.purpleSpongeBlock };
+        safeShallowsCoralArray = new Block[][] { safeShallowsCoralSubArray };
+        commonSafeShallowsTypes1 = new Block[] { BlocksAndItems.acidMushroom };
+        uncommonSafeShallowsTypes1 = new Block[] { BlocksAndItems.writhingWeed, BlocksAndItems.redBranch,
+            BlocksAndItems.redBranch, BlocksAndItems.veinedNettle, BlocksAndItems.doubleWrithingWeed };
+        rareSafeShallowsTypes1 = new Block[] { BlocksAndItems.doubleRedBranch, BlocksAndItems.slantedShellPlate,
+            BlocksAndItems.shellPlate, BlocksAndItems.bluePalm };
+        extraRareSafeShallowsTypes1 = new Block[] { BlocksAndItems.purpleBrainCoral };
+        safeShallowsTypes1 = new Block[][] { commonSafeShallowsTypes1, commonSafeShallowsTypes1,
+            commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1,
+            commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1,
+            commonSafeShallowsTypes1, commonSafeShallowsTypes1, commonSafeShallowsTypes1, uncommonSafeShallowsTypes1,
+            uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1,
+            uncommonSafeShallowsTypes1, uncommonSafeShallowsTypes1, rareSafeShallowsTypes1, rareSafeShallowsTypes1,
+            extraRareSafeShallowsTypes1 };
+        commonSafeShallowsTypes2 = new Block[] { BlocksAndItems.acidMushroom };
+        common2SafeShallowsTypes2 = new Block[] { BlocksAndItems.writhingWeed };
+        safeShallowsTypes2 = new Block[][] { commonSafeShallowsTypes2, common2SafeShallowsTypes2 };
+        commonSafeShallowsTypes3 = new Block[] { BlocksAndItems.seagrass, BlocksAndItems.greenReeds,
+            BlocksAndItems.yellowCoral };
+        safeShallowsTypes3 = new Block[][] { commonSafeShallowsTypes3 };
+        kelpForestSandSubArray = new Block[] { BlocksAndItems.kelpForestSand, BlocksAndItems.kelpForestSand,
+            BlocksAndItems.kelpForestSand, Blocks.sand };
+        kelpForestSandArray = new Block[][] { kelpForestSandSubArray };
+        commonKelpForestTypes1 = new Block[] { BlocksAndItems.saltWater, BlocksAndItems.seaMoss,
+            BlocksAndItems.shortGrass, BlocksAndItems.doubleSeagrass };
+        kelpForestTypes1 = new Block[][] { commonKelpForestTypes1 };
     }
 }

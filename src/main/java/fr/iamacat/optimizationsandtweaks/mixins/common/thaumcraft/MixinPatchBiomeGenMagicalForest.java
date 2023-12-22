@@ -51,6 +51,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             blobs.generate(world, random, posX, posY, posZ);
         }
     }
+
     @Unique
     private void optimizationsAndTweaks$generateBigMushrooms(World world, Random random, int x, int z) {
         for (int k = 0; k < 4; ++k) {
@@ -65,6 +66,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             }
         }
     }
+
     @Unique
     private void optimizationsAndTweaks$generateManaPods(World world, Random random, int x, int z) {
         WorldGenManaPods worldgenpods = new WorldGenManaPods();
@@ -75,12 +77,10 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             worldgenpods.func_76484_a(world, random, posX, posY, posZ);
         }
     }
+
     @Unique
-    private static final int[][] PROBABLE_POSITIONS = {
-        {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 0, -1},
-        {1, 0, 1}, {-1, 0, 1}, {-1, 0, -1}, {1, 0, -1},
-        {0, 1, 0}, {0, -1, 0}
-    };
+    private static final int[][] PROBABLE_POSITIONS = { { 1, 0, 0 }, { 0, 0, 1 }, { -1, 0, 0 }, { 0, 0, -1 },
+        { 1, 0, 1 }, { -1, 0, 1 }, { -1, 0, -1 }, { 1, 0, -1 }, { 0, 1, 0 }, { 0, -1, 0 } };
 
     @Unique
     private void optimizationsAndTweaks$generateCustomPlants(World world, Random random, int x, int z) {
@@ -94,16 +94,13 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
                 worldHeight--;
             }
 
-            if (world.getBlock(posX, worldHeight, posZ) == Blocks.grass &&
-                world.isAirBlock(posX, worldHeight + 1, posZ) &&
-                optimizationsAndTweaks$isAdjacentToWood(world, posX, worldHeight + 1, posZ)) {
+            if (world.getBlock(posX, worldHeight, posZ) == Blocks.grass && world.isAirBlock(posX, worldHeight + 1, posZ)
+                && optimizationsAndTweaks$isAdjacentToWood(world, posX, worldHeight + 1, posZ)) {
 
                 world.setBlock(posX, worldHeight + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
             }
         }
     }
-
-
 
     @Unique
     private boolean optimizationsAndTweaks$isAdjacentToWood(IBlockAccess world, int x, int y, int z) {
@@ -121,8 +118,6 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
 
         return false;
     }
-
-
 
     static {
         blobs = new WorldGenBlockBlob(Blocks.mossy_cobblestone, 0);

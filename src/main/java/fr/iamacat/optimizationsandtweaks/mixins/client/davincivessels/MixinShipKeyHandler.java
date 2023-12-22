@@ -1,5 +1,12 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.davincivessels;
 
+import net.minecraft.entity.player.EntityPlayer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -12,11 +19,6 @@ import darkevilmac.archimedes.common.entity.EntityShip;
 import darkevilmac.archimedes.common.network.ClientOpenGuiMessage;
 import darkevilmac.movingworld.MovingWorld;
 import darkevilmac.movingworld.common.network.MovingWorldClientActionMessage;
-import net.minecraft.entity.player.EntityPlayer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 @SideOnly(Side.CLIENT)
 @Mixin(ShipKeyHandler.class)
@@ -52,13 +54,15 @@ public class MixinShipKeyHandler {
         int heightControl = optimizationsAndTweaks$calculateHeightControl();
         optimizationsAndTweaks$updateShipControl(ship, e.player, heightControl);
     }
+
     @Unique
     private boolean optimizationsAndTweaks$isValidUpdateEvent(TickEvent.PlayerTickEvent e) {
-        return e.phase == TickEvent.Phase.START &&
-            e.side == Side.CLIENT &&
-            e.player == FMLClientHandler.instance().getClientPlayerEntity() &&
-            e.player.ridingEntity instanceof EntityShip;
+        return e.phase == TickEvent.Phase.START && e.side == Side.CLIENT
+            && e.player == FMLClientHandler.instance()
+                .getClientPlayerEntity()
+            && e.player.ridingEntity instanceof EntityShip;
     }
+
     @Unique
     private void optimizationsAndTweaks$handleShipGuiKeyPress() {
         boolean shipGuiKeyPressed = config.kbShipInv.getIsKeyPressed();
@@ -68,6 +72,7 @@ public class MixinShipKeyHandler {
         }
         kbShipGuiPrevState = shipGuiKeyPressed;
     }
+
     @Unique
     private void optimizationsAndTweaks$handleDisassembleKeyPress(TickEvent.PlayerTickEvent e) {
         if (!(e.player instanceof EntityPlayer)) {
@@ -78,13 +83,16 @@ public class MixinShipKeyHandler {
         boolean disassembleKeyPressed = config.kbDisassemble.getIsKeyPressed();
 
         if (disassembleKeyPressed && !kbDisassemblePrevState && (player.ridingEntity instanceof EntityShip)) {
-                EntityShip ship = (EntityShip) player.ridingEntity;
-                MovingWorldClientActionMessage msg = new MovingWorldClientActionMessage(ship, MovingWorldClientActionMessage.Action.DISASSEMBLE);
-                MovingWorld.instance.network.sendToServer(msg);
+            EntityShip ship = (EntityShip) player.ridingEntity;
+            MovingWorldClientActionMessage msg = new MovingWorldClientActionMessage(
+                ship,
+                MovingWorldClientActionMessage.Action.DISASSEMBLE);
+            MovingWorld.instance.network.sendToServer(msg);
 
         }
         kbDisassemblePrevState = disassembleKeyPressed;
     }
+
     @Unique
     private int optimizationsAndTweaks$calculateHeightControl() {
         if (config.kbAlign.getIsKeyPressed()) {
@@ -101,9 +109,10 @@ public class MixinShipKeyHandler {
 
     @Unique
     private void optimizationsAndTweaks$updateShipControl(EntityShip ship, EntityPlayer player, int heightControl) {
-        if (heightControl != ship.getController().getShipControl()) {
-            ship.getController().updateControl(ship, player, heightControl);
+        if (heightControl != ship.getController()
+            .getShipControl()) {
+            ship.getController()
+                .updateControl(ship, player, heightControl);
         }
     }
 }
-

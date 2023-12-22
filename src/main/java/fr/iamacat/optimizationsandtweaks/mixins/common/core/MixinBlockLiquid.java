@@ -49,7 +49,9 @@ public class MixinBlockLiquid extends Block {
             int diff;
 
             if (neighborDecay < 0) {
-                if (!blockAccess.getBlock(xOffset, y, zOffset).getMaterial().blocksMovement()) {
+                if (!blockAccess.getBlock(xOffset, y, zOffset)
+                    .getMaterial()
+                    .blocksMovement()) {
                     neighborDecay = getEffectiveFlowDecay(blockAccess, xOffset, y - 1, zOffset);
 
                     if (neighborDecay >= 0) {
@@ -77,7 +79,8 @@ public class MixinBlockLiquid extends Block {
             }
 
             if (solidBlock) {
-                vec3 = vec3.normalize().addVector(0.0D, -6.0D, 0.0D);
+                vec3 = vec3.normalize()
+                    .addVector(0.0D, -6.0D, 0.0D);
             }
         }
 

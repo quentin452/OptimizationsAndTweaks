@@ -1,5 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.slimecarnage;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -9,10 +11,12 @@ import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
 import supremopete.SlimeCarnage.commom.SlimeCarnage;
 import supremopete.SlimeCarnage.mobs.EntityDonatelloSlime;
 import supremopete.SlimeCarnage.mobs.EntityLeonardoSlime;
@@ -20,14 +24,14 @@ import supremopete.SlimeCarnage.mobs.EntityMichelangeloSlime;
 import supremopete.SlimeCarnage.mobs.EntityRaphaelSlime;
 import supremopete.SlimeCarnage.worldgen.WorldGenSewers;
 
-import java.util.Random;
-
 @Mixin(WorldGenSewers.class)
 public abstract class MixinWorldGenSewers extends WorldGenerator {
+
     @Shadow
     protected Block[] GetValidSpawnBlocks() {
-        return new Block[]{Blocks.grass};
+        return new Block[] { Blocks.grass };
     }
+
     /**
      * @author iamacatfr
      * @reason tried fixing cascadings , but some cascading remains caused by LocationIsValidSpawn and can't fix it
@@ -86,14 +90,16 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
 
     @Override
     public boolean generate(World world, Random rand, int i, int j, int k) {
-        if (this.LocationIsValidSpawn(world, i, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k + 4) && this.LocationIsValidSpawn(world, i, j, k + 4)) {
+        if (this.LocationIsValidSpawn(world, i, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k)
+            && this.LocationIsValidSpawn(world, i + 8, j, k + 4)
+            && this.LocationIsValidSpawn(world, i, j, k + 4)) {
             int j4;
             int j3;
             int i3;
             int k3;
-            for(j4 = -15; j4 < 1; ++j4) {
-                for(j3 = 0; j3 < 5; ++j3) {
-                    for(i3 = 0; i3 < 5; ++i3) {
+            for (j4 = -15; j4 < 1; ++j4) {
+                for (j3 = 0; j3 < 5; ++j3) {
+                    for (i3 = 0; i3 < 5; ++i3) {
                         k3 = rand.nextInt(5);
                         if (k3 >= 0 || k3 <= 2) {
                             world.setBlock(i + j3, j + j4, k + i3, Blocks.stonebrick);
@@ -110,17 +116,17 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            for(j4 = -12; j4 < 0; ++j4) {
-                for(j3 = 1; j3 < 4; ++j3) {
-                    for(i3 = 1; i3 < 4; ++i3) {
+            for (j4 = -12; j4 < 0; ++j4) {
+                for (j3 = 1; j3 < 4; ++j3) {
+                    for (i3 = 1; i3 < 4; ++i3) {
                         world.setBlock(i + j3, j + j4, k + i3, Blocks.air);
                     }
                 }
             }
 
-            for(j4 = -15; j4 < -8; ++j4) {
-                for(j3 = 13; j3 < 25; ++j3) {
-                    for(i3 = -4; i3 < 32; ++i3) {
+            for (j4 = -15; j4 < -8; ++j4) {
+                for (j3 = 13; j3 < 25; ++j3) {
+                    for (i3 = -4; i3 < 32; ++i3) {
                         k3 = rand.nextInt(5);
                         if (k3 >= 0 || k3 <= 2) {
                             world.setBlock(i + j3, j + j4, k + i3, Blocks.stonebrick);
@@ -137,9 +143,9 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            for(j4 = -15; j4 < -8; ++j4) {
-                for(j3 = 0; j3 < 23; ++j3) {
-                    for(i3 = -4; i3 < 9; ++i3) {
+            for (j4 = -15; j4 < -8; ++j4) {
+                for (j3 = 0; j3 < 23; ++j3) {
+                    for (i3 = -4; i3 < 9; ++i3) {
                         k3 = rand.nextInt(5);
                         if (k3 >= 0 || k3 <= 2) {
                             world.setBlock(i + j3, j + j4, k + i3, Blocks.stonebrick);
@@ -187,10 +193,11 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             TileEntityChest tileentitychest = new TileEntityChest();
             world.setTileEntity(i + 2, j - 13, k - 4, tileentitychest);
 
-            for(j3 = 0; j3 < 6; ++j3) {
+            for (j3 = 0; j3 < 6; ++j3) {
                 ItemStack itemstack2 = this.pickCheckLootItem(rand);
                 if (itemstack2 != null) {
-                    tileentitychest.setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
+                    tileentitychest
+                        .setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
                 }
             }
 
@@ -205,9 +212,9 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             world.setBlock(i + 19, j - 13, k - 4, Blocks.air);
 
             int j8;
-            for(j3 = -15; j3 < -8; ++j3) {
-                for(i3 = 8; i3 < 15; ++i3) {
-                    for(k3 = -8; k3 < 0; ++k3) {
+            for (j3 = -15; j3 < -8; ++j3) {
+                for (i3 = 8; i3 < 15; ++i3) {
+                    for (k3 = -8; k3 < 0; ++k3) {
                         j8 = rand.nextInt(5);
                         if (j8 >= 0 || j8 <= 2) {
                             world.setBlock(i + i3, j + j3, k + k3, Blocks.stonebrick);
@@ -224,9 +231,9 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            for(j3 = -13; j3 < -10; ++j3) {
-                for(i3 = 10; i3 < 13; ++i3) {
-                    for(k3 = -5; k3 < -2; ++k3) {
+            for (j3 = -13; j3 < -10; ++j3) {
+                for (i3 = 10; i3 < 13; ++i3) {
+                    for (k3 = -5; k3 < -2; ++k3) {
                         world.setBlock(i + i3, j + j3, k + k3, Blocks.air);
                     }
                 }
@@ -258,34 +265,39 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             world.setBlock(i + 11, j - 12, k - 7, Blocks.air);
             world.setBlock(i + 11, j - 12, k - 7, Blocks.iron_bars);
             world.setBlock(i + 8, j - 12, k - 3, Blocks.mob_spawner);
-            TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner)world.getTileEntity(i + 8, j - 12, k - 3);
-            tileentitymobspawner1.func_145881_a().setEntityName("SlimeCarnage.FootSoldierSlime");
+            TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner) world
+                .getTileEntity(i + 8, j - 12, k - 3);
+            tileentitymobspawner1.func_145881_a()
+                .setEntityName("SlimeCarnage.FootSoldierSlime");
             world.setBlock(i + 14, j - 12, k - 3, Blocks.mob_spawner);
-            TileEntityMobSpawner tileentitymobspawner2 = (TileEntityMobSpawner)world.getTileEntity(i + 14, j - 12, k - 3);
-            tileentitymobspawner2.func_145881_a().setEntityName("SlimeCarnage.FootSoldierSlime");
+            TileEntityMobSpawner tileentitymobspawner2 = (TileEntityMobSpawner) world
+                .getTileEntity(i + 14, j - 12, k - 3);
+            tileentitymobspawner2.func_145881_a()
+                .setEntityName("SlimeCarnage.FootSoldierSlime");
             world.setBlock(i + 19, j - 13, k - 4, Blocks.chest);
             TileEntityChest tileentitychest2 = new TileEntityChest();
             world.setTileEntity(i + 19, j - 13, k - 4, tileentitychest2);
 
-            for(j8 = 0; j8 < 6; ++j8) {
+            for (j8 = 0; j8 < 6; ++j8) {
                 ItemStack itemstack2 = this.pickCheckLootItem(rand);
                 if (itemstack2 != null) {
-                    tileentitychest2.setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
+                    tileentitychest2
+                        .setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
                 }
             }
 
             int i8;
-            for(j8 = 16; j8 < 23; ++j8) {
-                for(i8 = 23; i8 < 30; ++i8) {
+            for (j8 = 16; j8 < 23; ++j8) {
+                for (i8 = 23; i8 < 30; ++i8) {
                     world.setBlock(i + j8, j - 10, k + i8, Blocks.air);
                 }
             }
 
             int k8;
             int h;
-            for(j8 = -20; j8 < -10; ++j8) {
-                for(i8 = 21; i8 < 28; ++i8) {
-                    for(k8 = -3; k8 < 8; ++k8) {
+            for (j8 = -20; j8 < -10; ++j8) {
+                for (i8 = 21; i8 < 28; ++i8) {
+                    for (k8 = -3; k8 < 8; ++k8) {
                         h = rand.nextInt(5);
                         if (h >= 0 || h <= 2) {
                             world.setBlock(i + i8, j + j8, k + k8, Blocks.stonebrick);
@@ -302,9 +314,9 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            for(j8 = -20; j8 < -13; ++j8) {
-                for(i8 = 23; i8 < 46; ++i8) {
-                    for(k8 = -4; k8 < 9; ++k8) {
+            for (j8 = -20; j8 < -13; ++j8) {
+                for (i8 = 23; i8 < 46; ++i8) {
+                    for (k8 = -4; k8 < 9; ++k8) {
                         h = rand.nextInt(5);
                         if (h >= 0 || h <= 2) {
                             world.setBlock(i + i8, j + j8, k + k8, Blocks.stonebrick);
@@ -321,66 +333,66 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
                 }
             }
 
-            for(j8 = -14; j8 < -13; ++j8) {
-                for(i8 = 2; i8 < 25; ++i8) {
-                    for(k8 = 1; k8 < 4; ++k8) {
+            for (j8 = -14; j8 < -13; ++j8) {
+                for (i8 = 2; i8 < 25; ++i8) {
+                    for (k8 = 1; k8 < 4; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.water);
                     }
                 }
             }
 
-            for(j8 = -14; j8 < -13; ++j8) {
-                for(i8 = 18; i8 < 21; ++i8) {
-                    for(k8 = 1; k8 < 21; ++k8) {
+            for (j8 = -14; j8 < -13; ++j8) {
+                for (i8 = 18; i8 < 21; ++i8) {
+                    for (k8 = 1; k8 < 21; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.water);
                     }
                 }
             }
 
-            for(j8 = -19; j8 < -18; ++j8) {
-                for(i8 = 23; i8 < 46; ++i8) {
-                    for(k8 = 1; k8 < 4; ++k8) {
+            for (j8 = -19; j8 < -18; ++j8) {
+                for (i8 = 23; i8 < 46; ++i8) {
+                    for (k8 = 1; k8 < 4; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.water);
                     }
                 }
             }
 
-            for(j8 = -13; j8 < -10; ++j8) {
-                for(i8 = 1; i8 < 23; ++i8) {
-                    for(k8 = -1; k8 < 6; ++k8) {
+            for (j8 = -13; j8 < -10; ++j8) {
+                for (i8 = 1; i8 < 23; ++i8) {
+                    for (k8 = -1; k8 < 6; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                     }
                 }
             }
 
-            for(j8 = -13; j8 < -10; ++j8) {
-                for(i8 = 16; i8 < 23; ++i8) {
-                    for(k8 = -1; k8 < 30; ++k8) {
+            for (j8 = -13; j8 < -10; ++j8) {
+                for (i8 = 16; i8 < 23; ++i8) {
+                    for (k8 = -1; k8 < 30; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                     }
                 }
             }
 
-            for(j8 = -18; j8 < -15; ++j8) {
-                for(i8 = 23; i8 < 46; ++i8) {
-                    for(k8 = -1; k8 < 6; ++k8) {
+            for (j8 = -18; j8 < -15; ++j8) {
+                for (i8 = 23; i8 < 46; ++i8) {
+                    for (k8 = -1; k8 < 6; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                     }
                 }
             }
 
-            for(j8 = -18; j8 < -10; ++j8) {
-                for(i8 = 23; i8 < 26; ++i8) {
-                    for(k8 = -1; k8 < 6; ++k8) {
+            for (j8 = -18; j8 < -10; ++j8) {
+                for (i8 = 23; i8 < 26; ++i8) {
+                    for (k8 = -1; k8 < 6; ++k8) {
                         world.setBlock(i + i8, j + j8, k + k8, Blocks.air);
                     }
                 }
             }
 
-            for(j8 = -13; j8 < 1; ++j8) {
+            for (j8 = -13; j8 < 1; ++j8) {
                 world.setBlock(i + 1, j + j8, k + 2, Blocks.ladder);
                 world.setBlockMetadataWithNotify(i + 1, j + j8, k + 2, 5, 2);
             }
@@ -426,6 +438,7 @@ public abstract class MixinWorldGenSewers extends WorldGenerator {
             return false;
         }
     }
+
     @Shadow
     private ItemStack pickCheckLootItem(Random random) {
         int i = random.nextInt(31);

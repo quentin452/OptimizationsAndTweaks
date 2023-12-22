@@ -1,18 +1,13 @@
 package fr.iamacat.optimizationsandtweaks;
 
-import com.minenautica.Minenautica.main.Minenautica;
-import cpw.mods.fml.common.*;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minenautica.MinenauticaBiomeIDConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
+import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {

@@ -1,15 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.world.gen.layer.IntCache;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(IntCache.class)
 public class MixinIntCache {
+
     @Shadow
     private static int intCacheSize = 256;
     /** A list of pre-allocated int[256] arrays that are currently unused and can be returned by getIntCache() */
@@ -30,6 +32,7 @@ public class MixinIntCache {
      */
     @Shadow
     private static List inUseLargeArrays = new ArrayList();
+
     /**
      * @author
      * @reason
@@ -43,6 +46,5 @@ public class MixinIntCache {
         inUseSmallArrays.clear();
 
     }
-
 
 }

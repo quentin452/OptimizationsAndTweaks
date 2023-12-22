@@ -3,9 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.server.core;
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -40,6 +38,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
@@ -427,8 +427,9 @@ public abstract class MixinWorldServer extends World {
             Object obj = iterator.next();
             if (obj instanceof NextTickListEntry) {
                 NextTickListEntry nextticklistentry = (NextTickListEntry) obj;
-                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX &&
-                    nextticklistentry.zCoord >= minZ && nextticklistentry.zCoord < maxZ) {
+                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX
+                    && nextticklistentry.zCoord >= minZ
+                    && nextticklistentry.zCoord < maxZ) {
                     list.add(nextticklistentry);
                     if (p_72920_2_) {
                         iterator.remove();
@@ -439,14 +440,21 @@ public abstract class MixinWorldServer extends World {
 
         if (!p_72920_2_ && OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
             for (NextTickListEntry entry : list) {
-                System.out.println("Block present at (" + entry.xCoord + ", " + entry.yCoord + ", " + entry.zCoord + ") " +
-                    "UnlocalizedName: " + entry.func_151351_a().getUnlocalizedName());
+                System.out.println(
+                    "Block present at (" + entry.xCoord
+                        + ", "
+                        + entry.yCoord
+                        + ", "
+                        + entry.zCoord
+                        + ") "
+                        + "UnlocalizedName: "
+                        + entry.func_151351_a()
+                            .getUnlocalizedName());
             }
         }
 
         return list;
     }
-
 
     /**
      * @author

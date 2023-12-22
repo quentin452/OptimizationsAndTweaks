@@ -1,21 +1,24 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.google.common.collect.Maps;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.BaseAttributeMap;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import com.google.common.collect.Maps;
+
 @Mixin(ModifiableAttributeInstance.class)
 public class MixinModifiableAttributeInstance {
+
     @Unique
     private ModifiableAttributeInstance optimizationsAndTweaks$modifiableAttributeInstance;
     @Shadow
@@ -23,7 +26,6 @@ public class MixinModifiableAttributeInstance {
 
     @Shadow
     private final Map mapByOperation = Maps.newHashMap();
-
 
     @Shadow
     private final Map mapByName = Maps.newHashMap();
@@ -38,7 +40,6 @@ public class MixinModifiableAttributeInstance {
         this.attributeMap = attributeMap;
     }
 
-
     /**
      * @author
      * @reason
@@ -47,6 +48,7 @@ public class MixinModifiableAttributeInstance {
     public AttributeModifier getModifier(UUID id) {
         return (AttributeModifier) this.mapByUUID.get(id);
     }
+
     /**
      * @author
      * @reason
@@ -58,8 +60,10 @@ public class MixinModifiableAttributeInstance {
             throw new IllegalArgumentException("Modifier is already applied on this attribute!");
         }
 
-        Set<AttributeModifier> operationSet = (Set<AttributeModifier>) this.mapByOperation.computeIfAbsent(modifier.getOperation(), k -> new HashSet<>());
-        Set<AttributeModifier> nameSet = (Set<AttributeModifier>) this.mapByName.computeIfAbsent(modifier.getName(), k -> new HashSet<>());
+        Set<AttributeModifier> operationSet = (Set<AttributeModifier>) this.mapByOperation
+            .computeIfAbsent(modifier.getOperation(), k -> new HashSet<>());
+        Set<AttributeModifier> nameSet = (Set<AttributeModifier>) this.mapByName
+            .computeIfAbsent(modifier.getName(), k -> new HashSet<>());
 
         operationSet.add(modifier);
         nameSet.add(modifier);
@@ -94,8 +98,7 @@ public class MixinModifiableAttributeInstance {
     }
 
     @Shadow
-    private void flagForUpdate()
-    {
+    private void flagForUpdate() {
         this.needsUpdate = true;
         this.attributeMap.addAttributeInstance(optimizationsAndTweaks$modifiableAttributeInstance);
     }

@@ -1,19 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.slimecarnage;
 
-import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import java.util.Random;
+
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraft.world.biome.BiomeGenPlains;
 import net.minecraft.world.chunk.IChunkProvider;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import supremopete.SlimeCarnage.worldgen.*;
 
-import java.util.Random;
+import cpw.mods.fml.common.IWorldGenerator;
+import supremopete.SlimeCarnage.worldgen.*;
 
 @Mixin(WorldGenSlimeCarnage.class)
 public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerator {
@@ -25,21 +26,21 @@ public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerato
     @Overwrite(remap = false)
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
-            switch (world.provider.dimensionId) {
-                case -1:
-                    generateNether(world, random, chunkX, chunkZ);
-                    break;
+        switch (world.provider.dimensionId) {
+            case -1:
+                generateNether(world, random, chunkX, chunkZ);
+                break;
 
-                case 0:
-                    generateSurface(world, random, chunkX, chunkZ);
-                    break;
+            case 0:
+                generateSurface(world, random, chunkX, chunkZ);
+                break;
 
-                case 1:
-                    generateEnd(world, random, chunkX, chunkZ);
-                    break;
+            case 1:
+                generateEnd(world, random, chunkX, chunkZ);
+                break;
 
-                default:
-                    break;
+            default:
+                break;
         }
     }
 

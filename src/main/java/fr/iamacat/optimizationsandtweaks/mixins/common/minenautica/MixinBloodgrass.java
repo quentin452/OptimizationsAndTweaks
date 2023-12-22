@@ -1,20 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minenautica;
 
-import com.minenautica.Minenautica.Blocks.Bloodgrass;
-import com.minenautica.Minenautica.Blocks.GroundCoral;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import streams.world.package$;
+
+import com.minenautica.Minenautica.Blocks.Bloodgrass;
+import com.minenautica.Minenautica.Blocks.GroundCoral;
 
 @Mixin(Bloodgrass.class)
-public abstract class MixinBloodgrass extends Block{
+public abstract class MixinBloodgrass extends Block {
+
     private World world;
+
     protected MixinBloodgrass(Material materialIn, World world) {
         super(materialIn);
         this.world = world;
@@ -51,8 +54,10 @@ public abstract class MixinBloodgrass extends Block{
             return true;
         }
 
-        return aboveBlock == currentBlock && aboveMeta == currentMeta || (aboveBlock == Blocks.air && checkWater(aboveBlock2, true));
+        return aboveBlock == currentBlock && aboveMeta == currentMeta
+            || (aboveBlock == Blocks.air && checkWater(aboveBlock2, true));
     }
+
     @Shadow
     public static int getCoralBlockMetadata(World world, int x, int y, int z) {
         int metadata = world.getBlockMetadata(x, y, z);
@@ -63,6 +68,7 @@ public abstract class MixinBloodgrass extends Block{
     public static boolean checkWater(Block block, boolean stationary) {
         return checkWater(block) && block.func_149698_L() == stationary;
     }
+
     @Shadow
     public static boolean checkWater(Block block) {
         return !(block instanceof Bloodgrass) && block.getMaterial() == Material.water;

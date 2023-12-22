@@ -8,8 +8,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,14 +48,13 @@ public class MixinChunk {
         return topFilledSegment;
     }
 
-
     /**
      * @author
      * @reason
      */
     @Overwrite
     public void getEntitiesWithinAABBForEntity(Entity entity, AxisAlignedBB aabb, List<Entity> listToFill,
-                                               IEntitySelector entitySelector) {
+        IEntitySelector entitySelector) {
         int minY = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
         int maxY = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
         minY = MathHelper.clamp_int(minY, 0, this.entityLists.length - 1);
@@ -74,15 +73,15 @@ public class MixinChunk {
     }
 
     @Unique
-    private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity, AxisAlignedBB aabb,
-                                                               IEntitySelector entitySelector) {
-        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb) &&
-            (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
+    private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity,
+        AxisAlignedBB aabb, IEntitySelector entitySelector) {
+        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb)
+            && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
     }
 
     @Unique
-    private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb, IEntitySelector entitySelector,
-                                                        List<Entity> listToFill, Entity targetEntity) {
+    private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb,
+        IEntitySelector entitySelector, List<Entity> listToFill, Entity targetEntity) {
         Entity[] parts = targetEntity.getParts();
         if (parts != null) {
             for (Entity partEntity : parts) {
@@ -92,7 +91,6 @@ public class MixinChunk {
             }
         }
     }
-
 
     /**
      * @author

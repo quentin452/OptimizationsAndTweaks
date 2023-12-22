@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -41,7 +40,6 @@ import com.gildedgames.the_aether.registry.achievements.AchievementsAether;
 import com.gildedgames.the_aether.world.TeleporterAether;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PlayerAether.class)
@@ -107,6 +105,7 @@ public class MixinPlayerAether {
     private UUID uuid = UUID.fromString("df6eabe7-6947-4a56-9099-002f90370706");
     @Shadow
     private AttributeModifier healthModifier;
+
     @Unique
     private boolean getIsJumping() {
         return this.isJumping;
@@ -116,6 +115,7 @@ public class MixinPlayerAether {
     private void setIsJumping(boolean isJumping) {
         this.isJumping = isJumping;
     }
+
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
         if (OptimizationsandTweaksConfig.enableMixinPlayerAether) {

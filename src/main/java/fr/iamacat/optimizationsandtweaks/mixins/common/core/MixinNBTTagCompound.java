@@ -1,23 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Mixin(NBTTagCompound.class)
 public abstract class MixinNBTTagCompound extends NBTBase {
+
     @Shadow
     private Map tagMap = new HashMap();
 
     @Shadow
-    public boolean hasKey(String key)
-    {
+    public boolean hasKey(String key) {
         return this.tagMap.containsKey(key);
     }
 
@@ -41,9 +41,8 @@ public abstract class MixinNBTTagCompound extends NBTBase {
      * @reason
      */
     @Overwrite
-    public byte func_150299_b(String key)
-    {
-        NBTBase nbtbase = (NBTBase)this.tagMap.get(key);
+    public byte func_150299_b(String key) {
+        NBTBase nbtbase = (NBTBase) this.tagMap.get(key);
         return nbtbase != null ? nbtbase.getId() : 0;
     }
 }

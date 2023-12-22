@@ -1,20 +1,24 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minenautica;
 
-import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
-import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
+import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
+
 @Mixin(CanBlockStay.class)
 public class MixinCanBlockStay {
+
     @Shadow
     private static Block[] minenauticaMachinesList = new Block[20];
     @Shadow
     private static Block[] illegalBlockList = new Block[8];
+
     /**
      * @author
      * @reason

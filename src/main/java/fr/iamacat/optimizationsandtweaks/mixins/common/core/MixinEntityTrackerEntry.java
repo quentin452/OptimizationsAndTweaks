@@ -1,5 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,22 +13,19 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S1CPacketEntityMetadata;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 @Mixin(EntityTrackerEntry.class)
 public class MixinEntityTrackerEntry {
+
     @Shadow
     public Set trackingPlayers = new HashSet();
 
     @Shadow
     public Entity myEntity;
-
 
     /**
      * @author
@@ -51,15 +51,12 @@ public class MixinEntityTrackerEntry {
         }
     }
 
-
     @Shadow
-    public void func_151261_b(Packet p_151261_1_)
-    {
+    public void func_151261_b(Packet p_151261_1_) {
         this.func_151259_a(p_151261_1_);
 
-        if (this.myEntity instanceof EntityPlayerMP)
-        {
-            ((EntityPlayerMP)this.myEntity).playerNetServerHandler.sendPacket(p_151261_1_);
+        if (this.myEntity instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) this.myEntity).playerNetServerHandler.sendPacket(p_151261_1_);
         }
     }
 
@@ -68,8 +65,7 @@ public class MixinEntityTrackerEntry {
      * @reason
      */
     @Overwrite
-    public void func_151259_a(Packet p_151259_1_)
-    {
+    public void func_151259_a(Packet p_151259_1_) {
 
         for (Object trackingPlayer : this.trackingPlayers) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) trackingPlayer;

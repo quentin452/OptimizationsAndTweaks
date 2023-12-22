@@ -1,19 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.LongHashMap2;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.LongHashMap;
 import net.minecraft.world.biome.BiomeCache;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.List;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.LongHashMap2;
 
 @Mixin(BiomeCache.class)
 public class MixinBiomeCache {
@@ -58,7 +59,8 @@ public class MixinBiomeCache {
      */
     @Overwrite
     public BiomeGenBase getBiomeGenAt(int p_76837_1_, int p_76837_2_) {
-        return this.optimizationsAndTweaks$getBiomeCacheBlock(p_76837_1_, p_76837_2_).getBiomeGenAt(p_76837_1_, p_76837_2_);
+        return this.optimizationsAndTweaks$getBiomeCacheBlock(p_76837_1_, p_76837_2_)
+            .getBiomeGenAt(p_76837_1_, p_76837_2_);
     }
 
     /**

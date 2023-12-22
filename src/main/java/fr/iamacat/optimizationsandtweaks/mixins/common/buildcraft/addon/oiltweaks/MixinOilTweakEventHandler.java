@@ -1,7 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.buildcraft.addon.oiltweaks;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -31,14 +32,13 @@ import buildcraft.oiltweak.OilTweakEventHandler;
 import buildcraft.oiltweak.OilTweakProperties;
 import buildcraft.oiltweak.api.OilTweakAPI;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.buildcraft.InOil2;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Mixin(OilTweakEventHandler.class)
 public class MixinOilTweakEventHandler {
@@ -50,24 +50,24 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent e) {
-            if (!BuildCraftOilTweak.config.isOilDense()) {
-                return;
+        if (!BuildCraftOilTweak.config.isOilDense()) {
+            return;
+        }
+        EntityLivingBase entity = e.entityLiving;
+
+        if (optimizationsAndTweaks$getInOil(entity).halfOfFull()) {
+            entity.motionY = Math.min(0.0D, entity.motionY);
+            if (entity.motionY < -0.05D) {
+                entity.motionY *= 0.05D;
             }
-                EntityLivingBase entity = e.entityLiving;
 
-                if (optimizationsAndTweaks$getInOil(entity).halfOfFull()) {
-                    entity.motionY = Math.min(0.0D, entity.motionY);
-                    if (entity.motionY < -0.05D) {
-                        entity.motionY *= 0.05D;
-                    }
-
-                    entity.motionX = Math.max(-0.05D, Math.min(0.05D, entity.motionX * 0.05D));
-                    entity.motionY -= 0.05D;
-                    entity.motionZ = Math.max(-0.05D, Math.min(0.05D, entity.motionZ * 0.05D));
-                    setStepHeight(entity, 0.0F);
-                } else {
-                    setNotInOil(entity);
-                }
+            entity.motionX = Math.max(-0.05D, Math.min(0.05D, entity.motionX * 0.05D));
+            entity.motionY -= 0.05D;
+            entity.motionZ = Math.max(-0.05D, Math.min(0.05D, entity.motionZ * 0.05D));
+            setStepHeight(entity, 0.0F);
+        } else {
+            setNotInOil(entity);
+        }
     }
 
     /**
@@ -77,24 +77,24 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onPlayerUpdate(TickEvent.PlayerTickEvent e) {
-            if (!BuildCraftOilTweak.config.isOilDense()) {
-                return;
-            }
-            EntityPlayer player = e.player;
-            if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
-                this.setNotInOil(player);
-                return;
-            }
-            player.motionY = Math.min(0.0D, player.motionY);
-            if (player.motionY < -0.05D) {
-                player.motionY *= 0.05D;
-            }
+        if (!BuildCraftOilTweak.config.isOilDense()) {
+            return;
+        }
+        EntityPlayer player = e.player;
+        if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
+            this.setNotInOil(player);
+            return;
+        }
+        player.motionY = Math.min(0.0D, player.motionY);
+        if (player.motionY < -0.05D) {
+            player.motionY *= 0.05D;
+        }
 
-            player.motionX = Math.max(-0.05D, Math.min(0.05D, player.motionX * 0.05D));
-            player.motionY -= 0.05D;
-            player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
-            player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
-            setStepHeight(player, 0.0F);
+        player.motionX = Math.max(-0.05D, Math.min(0.05D, player.motionX * 0.05D));
+        player.motionY -= 0.05D;
+        player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
+        player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
+        setStepHeight(player, 0.0F);
     }
 
     /**
@@ -175,20 +175,20 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onRightClick(PlayerInteractEvent e) {
-            if (e.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK || !BuildCraftOilTweak.config.isOilDense()) {
-                return;
+        if (e.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK || !BuildCraftOilTweak.config.isOilDense()) {
+            return;
+        }
+        EntityPlayer player = e.entityPlayer;
+        if (!player.capabilities.isCreativeMode && player.getCurrentEquippedItem() != null) {
+            InOil2 inOil = optimizationsAndTweaks$getInOil(player);
+            if (inOil.halfOfFull() && ((inOil == InOil2.FULL && !(player.getCurrentEquippedItem()
+                .getItem() instanceof ItemBlock)) || OilTweakAPI.INSTANCE.getItemBlacklistRegistry()
+                    .isBlacklisted(player, player.getCurrentEquippedItem()))) {
+                player.addChatComponentMessage(
+                    new ChatComponentTranslation(
+                        inOil == InOil2.FULL ? "oiltweak.chat.tooDense.use" : "oiltweak.chat.tooDense.use.half"));
+                e.setCanceled(true);
             }
-            EntityPlayer player = e.entityPlayer;
-            if (!player.capabilities.isCreativeMode && player.getCurrentEquippedItem() != null) {
-                InOil2 inOil = optimizationsAndTweaks$getInOil(player);
-                if (inOil.halfOfFull() && ((inOil == InOil2.FULL && !(player.getCurrentEquippedItem()
-                    .getItem() instanceof ItemBlock)) || OilTweakAPI.INSTANCE.getItemBlacklistRegistry()
-                        .isBlacklisted(player, player.getCurrentEquippedItem()))) {
-                    player.addChatComponentMessage(
-                        new ChatComponentTranslation(
-                            inOil == InOil2.FULL ? "oiltweak.chat.tooDense.use" : "oiltweak.chat.tooDense.use.half"));
-                    e.setCanceled(true);
-                }
         }
     }
 
@@ -270,7 +270,8 @@ public class MixinOilTweakEventHandler {
         if (block != null && block != Blocks.air) {
             Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
             if (FluidRegistry.isFluidRegistered(fluid) && fluid.getName() != null
-                && fluid.getName().equalsIgnoreCase("oil")) {
+                && fluid.getName()
+                    .equalsIgnoreCase("oil")) {
                 isOilBlock = true;
             }
         }

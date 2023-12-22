@@ -1,16 +1,19 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.google.common.collect.Maps;
+import java.util.IllegalFormatException;
+import java.util.Map;
+
 import net.minecraft.util.StringTranslate;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.IllegalFormatException;
-import java.util.Map;
+import com.google.common.collect.Maps;
 
 @Mixin(StringTranslate.class)
 public class MixinStringTranslate {
+
     @Shadow
     private final Map<String, String> languageList = Maps.newHashMap();
 

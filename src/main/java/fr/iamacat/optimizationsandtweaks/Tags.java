@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks;
 
 public class Tags {
+
     public static final String MINENAUTICAMODID = "Minenautica";
     public static final String MODID = "optimizationsandtweaks";
     public static final String MODNAME = "Optimizations and Tweaks";

@@ -1,17 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumicrevelations;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import thaumrev.api.wardenic.WardenicChargeEvents;
 import thaumrev.item.ItemWardenWeapon;
 import thaumrev.item.armor.ItemWardenArmor;
 
 @Mixin(WardenicChargeEvents.class)
 public class MixinWardenicChargeEvents {
+
     /**
      * @author
      * @reason

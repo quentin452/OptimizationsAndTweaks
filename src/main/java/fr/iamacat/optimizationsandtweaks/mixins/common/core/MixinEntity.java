@@ -1,10 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,8 +49,7 @@ public abstract class MixinEntity {
     }
 
     @Shadow
-    public float getEyeHeight()
-    {
+    public float getEyeHeight() {
         return 0.0F;
     }
 
@@ -79,9 +78,8 @@ public abstract class MixinEntity {
         }
 
         String entityName = getEntityString();
-        String translatedName = (entityName != null) ?
-            StatCollector.translateToLocal("entity." + entityName + ".name") :
-            StatCollector.translateToLocal("entity.generic.name");
+        String translatedName = (entityName != null) ? StatCollector.translateToLocal("entity." + entityName + ".name")
+            : StatCollector.translateToLocal("entity.generic.name");
 
         optimizationsAndTweaks$cachedEntityName = translatedName;
 

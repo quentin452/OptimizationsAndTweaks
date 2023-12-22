@@ -1,13 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -33,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(value = EntityLivingBase.class, priority = 1100)
@@ -195,7 +189,6 @@ public abstract class MixinEntityLivingBase extends Entity {
     @Shadow
     private float landMovementFactor;
 
-
     public MixinEntityLivingBase(World worldIn) {
         super(worldIn);
     }
@@ -230,6 +223,7 @@ public abstract class MixinEntityLivingBase extends Entity {
     public boolean isPotionActive(int potionId) {
         return this.isPotionActive(Potion.potionTypes[potionId]);
     }
+
     /**
      * @author
      * @reason
@@ -316,32 +310,32 @@ public abstract class MixinEntityLivingBase extends Entity {
 
     @Inject(method = "updateFallState", at = @At("HEAD"), cancellable = true)
     protected void updateFallState(double distanceFallenThisTick, boolean isOnGround, CallbackInfo ci) {
-            if (!this.isInWater()) {
-                this.handleWaterMovement();
-            }
+        if (!this.isInWater()) {
+            this.handleWaterMovement();
+        }
 
-            if (isOnGround && this.fallDistance > 0.0F) {
-                int i = MathHelper.floor_double(this.posX);
-                int j = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double) this.yOffset);
-                int k = MathHelper.floor_double(this.posZ);
-                Block block = this.worldObj.getBlock(i, j, k);
+        if (isOnGround && this.fallDistance > 0.0F) {
+            int i = MathHelper.floor_double(this.posX);
+            int j = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double) this.yOffset);
+            int k = MathHelper.floor_double(this.posZ);
+            Block block = this.worldObj.getBlock(i, j, k);
 
-                if (block.getMaterial() == Material.air) {
-                    int l = this.worldObj.getBlock(i, j - 1, k)
-                        .getRenderType();
+            if (block.getMaterial() == Material.air) {
+                int l = this.worldObj.getBlock(i, j - 1, k)
+                    .getRenderType();
 
-                    if (l == 11 || l == 32 || l == 21) {
-                        block = this.worldObj.getBlock(i, j - 1, k);
-                    }
-                } else if (!this.worldObj.isRemote && this.fallDistance > 3.0F) {
-                    this.worldObj.playAuxSFX(2006, i, j, k, MathHelper.ceiling_float_int(this.fallDistance - 3.0F));
+                if (l == 11 || l == 32 || l == 21) {
+                    block = this.worldObj.getBlock(i, j - 1, k);
                 }
-
-                block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
+            } else if (!this.worldObj.isRemote && this.fallDistance > 3.0F) {
+                this.worldObj.playAuxSFX(2006, i, j, k, MathHelper.ceiling_float_int(this.fallDistance - 3.0F));
             }
 
-            super.updateFallState(distanceFallenThisTick, isOnGround);
-            ci.cancel();
+            block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
+        }
+
+        super.updateFallState(distanceFallenThisTick, isOnGround);
+        ci.cancel();
     }
 
     /**

@@ -1,21 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.gardenstuff;
 
-import com.jaquadro.minecraft.gardentrees.world.gen.feature.WorldGenCandelilla;
-import cpw.mods.fml.common.IWorldGenerator;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Random;
+import com.jaquadro.minecraft.gardentrees.world.gen.feature.WorldGenCandelilla;
+
+import cpw.mods.fml.common.IWorldGenerator;
 
 @Mixin(WorldGenCandelilla.class)
 public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGenerator {
+
     @Shadow
     Block plantBlock;
 
@@ -42,7 +46,8 @@ public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGen
             int z1 = z + rand.nextInt(range) - rand.nextInt(range);
             int level = 1 + rand.nextInt(7);
 
-            if (world.isAirBlock(x1, y1, z1) && (!world.provider.hasNoSky || y1 < 255) && this.plantBlock.canBlockStay(world, x1, y1, z1)) {
+            if (world.isAirBlock(x1, y1, z1) && (!world.provider.hasNoSky || y1 < 255)
+                && this.plantBlock.canBlockStay(world, x1, y1, z1)) {
                 world.setBlock(x1, y1, z1, this.plantBlock, level, 2);
             }
         }
@@ -55,7 +60,8 @@ public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGen
      * @reason
      */
     @Overwrite(remap = false)
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+        IChunkProvider chunkProvider) {
         int x = chunkX * 16;
         int z = chunkZ * 16;
         BiomeGenBase biome = world.getBiomeGenForCoords(x + 8, z + 8);

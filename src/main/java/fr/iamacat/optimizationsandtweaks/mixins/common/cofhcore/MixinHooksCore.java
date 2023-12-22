@@ -1,17 +1,19 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.cofhcore;
 
-import cofh.asmhooks.HooksCore;
-import cofh.lib.util.helpers.MathHelper;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.ArrayList;
-import java.util.List;
+import cofh.asmhooks.HooksCore;
+import cofh.lib.util.helpers.MathHelper;
 
 @Mixin(HooksCore.class)
 public class MixinHooksCore {

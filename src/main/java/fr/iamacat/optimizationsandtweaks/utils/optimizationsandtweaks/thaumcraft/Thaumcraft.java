@@ -3,7 +3,9 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraf
 import thaumcraft.api.nodes.NodeType;
 
 public class Thaumcraft {
+
     public static class BiomeAuraResult {
+
         private final int baura;
         private final NodeType type;
 

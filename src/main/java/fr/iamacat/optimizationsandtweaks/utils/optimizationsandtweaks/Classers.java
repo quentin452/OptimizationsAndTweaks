@@ -29,8 +29,8 @@ public class Classers {
 
     // MixinBiomeCache
 
-    public static class Block
-    {
+    public static class Block {
+
         public static WorldChunkManager chunkManager;
         /** An array of chunk rainfall values saved by this cache. */
         public float[] rainfallValues = new float[256];
@@ -42,6 +42,7 @@ public class Classers {
         public int zPosition;
         /** The last time this BiomeCacheBlock was accessed, in milliseconds. */
         public long lastAccessTime;
+
         public Block(int p_i1972_2_, int p_i1972_3_, WorldChunkManager chunkManager) {
             Block.chunkManager = chunkManager;
             this.xPosition = p_i1972_2_;
@@ -53,8 +54,7 @@ public class Classers {
         /**
          * Returns the BiomeGenBase related to the x, z position from the cache block.
          */
-        public BiomeGenBase getBiomeGenAt(int p_76885_1_, int p_76885_2_)
-        {
+        public BiomeGenBase getBiomeGenAt(int p_76885_1_, int p_76885_2_) {
             return this.biomes[p_76885_1_ & 15 | (p_76885_2_ & 15) << 4];
         }
     }

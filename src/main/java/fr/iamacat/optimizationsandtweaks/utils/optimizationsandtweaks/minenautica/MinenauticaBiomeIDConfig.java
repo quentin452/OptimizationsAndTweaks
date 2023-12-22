@@ -1,17 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minenautica;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import fr.iamacat.optimizationsandtweaks.OptimizationsAndTweaks;
-import fr.iamacat.optimizationsandtweaks.Tags;
-import lotr.common.LOTRMod;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import fr.iamacat.optimizationsandtweaks.Tags;
+
 public class MinenauticaBiomeIDConfig {
+
     public static Configuration config;
     private static final List<ConfigCategory> allCategories = new ArrayList();
     private static String CATEOGY_BIOMES;

@@ -9,11 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
 @Mixin(EntityMoveHelper.class)
@@ -40,31 +36,31 @@ public class MixinEntityMoveHelper {
      */
     @Overwrite
     public void onUpdateMoveHelper() {
-            this.entity.setMoveForward(0.0F);
+        this.entity.setMoveForward(0.0F);
 
-            if (this.update) {
-                this.update = false;
-                double posXDelta = this.posX - this.entity.posX;
-                double posZDelta = this.posZ - this.entity.posZ;
-                double posYDelta = this.posY - this.entity.boundingBox.minY;
-                double squaredDistance = posXDelta * posXDelta + posYDelta * posYDelta + posZDelta * posZDelta;
+        if (this.update) {
+            this.update = false;
+            double posXDelta = this.posX - this.entity.posX;
+            double posZDelta = this.posZ - this.entity.posZ;
+            double posYDelta = this.posY - this.entity.boundingBox.minY;
+            double squaredDistance = posXDelta * posXDelta + posYDelta * posYDelta + posZDelta * posZDelta;
 
-                if (squaredDistance >= 2.500000277905201E-7D) {
-                    float newYaw = (float) Math.toDegrees(FastMath.atan2(posZDelta, posXDelta)) - 90.0F;
-                    this.entity.rotationYaw = this
-                        .optimizationsAndTweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
+            if (squaredDistance >= 2.500000277905201E-7D) {
+                float newYaw = (float) Math.toDegrees(FastMath.atan2(posZDelta, posXDelta)) - 90.0F;
+                this.entity.rotationYaw = this
+                    .optimizationsAndTweaks$limitAngle(this.entity.rotationYaw, newYaw, 30.0F);
 
-                    double movementSpeed = this.speed
-                        * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
-                            .getAttributeValue();
-                    this.entity.setAIMoveSpeed((float) movementSpeed);
+                double movementSpeed = this.speed
+                    * this.entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
+                        .getAttributeValue();
+                this.entity.setAIMoveSpeed((float) movementSpeed);
 
-                    if (posYDelta > 0.0 && posXDelta * posXDelta + posZDelta * posZDelta < 1.0) {
-                        this.entity.getJumpHelper()
-                            .setJumping();
-                    }
+                if (posYDelta > 0.0 && posXDelta * posXDelta + posZDelta * posZDelta < 1.0) {
+                    this.entity.getJumpHelper()
+                        .setJumping();
                 }
             }
+        }
     }
 
     /**

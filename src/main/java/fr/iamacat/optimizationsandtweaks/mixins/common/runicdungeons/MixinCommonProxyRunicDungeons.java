@@ -1,10 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.runicdungeons;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
 import cpw.mods.fml.common.registry.EntityRegistry;
 import mrcomputerghost.runicdungeons.entity.EntityGuardian;
 import mrcomputerghost.runicdungeons.proxy.CommonProxy;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(CommonProxy.class)
 public class MixinCommonProxyRunicDungeons {
@@ -18,7 +19,7 @@ public class MixinCommonProxyRunicDungeons {
         int entityId;
         do {
             entityId = EntityRegistry.findGlobalUniqueEntityId();
-        } while(entityId < 1001);
+        } while (entityId < 1001);
         EntityRegistry.registerGlobalEntityID(EntityGuardian.class, "Guardian", entityId, 10, 0);
     }
 }

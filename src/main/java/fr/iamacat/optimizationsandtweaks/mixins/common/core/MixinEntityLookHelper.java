@@ -104,14 +104,17 @@ public class MixinEntityLookHelper {
 
     @Unique
     private void optimizationsAndTweaks$updateEntityNonLooking() {
-        this.entity.rotationYawHead = this.updateRotation(this.entity.rotationYawHead, this.entity.renderYawOffset, 10.0F);
+        this.entity.rotationYawHead = this
+            .updateRotation(this.entity.rotationYawHead, this.entity.renderYawOffset, 10.0F);
     }
 
     @Unique
     private void optimizationsAndTweaks$limitEntityRotation() {
-        float yawDifference = MathHelper.wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
+        float yawDifference = MathHelper
+            .wrapAngleTo180_float(this.entity.rotationYawHead - this.entity.renderYawOffset);
 
-        if (!this.entity.getNavigator().noPath()) {
+        if (!this.entity.getNavigator()
+            .noPath()) {
             if (yawDifference < -75.0F) {
                 this.entity.rotationYawHead = this.entity.renderYawOffset - 75.0F;
             }
