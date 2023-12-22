@@ -178,6 +178,9 @@ public enum Mixin implements IMixin {
     common_minenautica_MixinCanBlockStay(Side.COMMON, require(TargetedMod.MINENAUTICA)
         .and(m -> OptimizationsandTweaksConfig.enableMixinCanBlockStay),
         "minenautica.MixinCanBlockStay"),
+    common_minenautica_MixinBiomeGenGrassyPlateaus(Side.COMMON, require(TargetedMod.MINENAUTICA)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenGrassyPlateaus),
+        "minenautica.MixinBiomeGenGrassyPlateaus"),
     common_runicdungeons_MixinCommonProxyRunicDungeons(Side.COMMON, require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons).and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
     common_akatsuki_MixinEntitySasori(Side.COMMON, require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),

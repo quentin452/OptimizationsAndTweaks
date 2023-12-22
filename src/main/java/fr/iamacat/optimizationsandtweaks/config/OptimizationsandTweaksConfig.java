@@ -566,6 +566,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCanBlockStay;
+
+    @Config.Comment("Fix Cascading worldgens caused by BiomeGenGrassyPlateaus from Minenautica mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBiomeGenGrassyPlateaus;
     @Config.Comment("Fix Cascading worldgens caused by Bloodgrass from Minenautica mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
