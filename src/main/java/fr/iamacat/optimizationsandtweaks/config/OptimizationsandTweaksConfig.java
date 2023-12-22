@@ -562,10 +562,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAluminumOxideWorldGen;
-    @Config.Comment("Fix Cascading worldgens caused by ChunkProviderMinenautica from Minenautica mod")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkProviderMinenautica;
     @Config.Comment("Fix Cascading worldgens caused by GenerateCoal from Minenautica mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
