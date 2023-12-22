@@ -957,6 +957,375 @@ public class MixinGenerateCoral {
             return false;
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
+    public void generateSafeShallowsCoral(World world, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_) {
+        for(int l = 0; l < 1110; ++l) {
+            this.blockToSet = BlocksAndItems.seagrass;
+            int i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            int j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+            int k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            int x;
+            int coralTubeType;
+            int chance;
+            if ((!world.provider.hasNoSky || j1 < 255) && this.blockToSet.canBlockStay(world, i1, j1, k1)) {
+                x = p_76484_2_.nextInt(100);
+                if (x != 0) {
+                    if (x <= 20 && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+                        if (x == 20) {
+                            this.blockToSet = BlocksAndItems.quartz;
+                            world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
+                        } else if (x == 19) {
+                            if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water) {
+                                coralTubeType = p_76484_2_.nextInt(4) + 2;
+                                world.setBlock(i1, j1, k1, BlocksAndItems.saltDeposit, coralTubeType, 2);
+                            }
+                        } else if (x <= 10) {
+                            this.createCoralCluster(world, p_76484_2_, i1, j1 - 1, k1, safeShallowsCoralArray, 1.2F, true, true);
+                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes2, 0.6F, false, false);
+                        } else if (x <= 15) {
+                            this.createCoralCluster(world, p_76484_2_, i1, j1 - 1, k1, safeShallowsCoralArray, 1.2F, true, true);
+                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes1, 0.85F, false, false);
+                        } else {
+                            this.createCoralCluster(world, p_76484_2_, i1, j1, k1, safeShallowsTypes3, 0.85F, false, true);
+                        }
+                    }
+                } else {
+                    coralTubeType = p_76484_2_.nextInt(21);
+                    if ((coralTubeType == 0 || coralTubeType == 1) && this.canStructureSpawn(world, i1, j1 - 1, k1, 19, 5, 4.0F)) {
+                        Coraltube1.generate(world, i1, j1 - 3, k1);
+                    }
+
+                    if ((coralTubeType == 2 || coralTubeType == 3) && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
+                        Coraltube2.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 4 || coralTubeType == 5) && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 13, 4.0F)) {
+                        Coraltube3.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 6 || coralTubeType == 7) && this.canStructureSpawn(world, i1, j1 - 1, k1, 17, 3, 4.0F)) {
+                        Coraltube4.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 8 || coralTubeType == 9) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
+                        Coraltube5.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 10 || coralTubeType == 11) && this.canStructureSpawn(world, i1, j1 - 1, k1, 9, 7, 4.0F)) {
+                        Coraltube6.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 12 || coralTubeType == 13) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 3, 4.0F)) {
+                        Coraltube7.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 14 || coralTubeType == 15) && this.canStructureSpawn(world, i1, j1 - 1, k1, 5, 17, 4.0F)) {
+                        Coraltube8.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 16 || coralTubeType == 17) && this.canStructureSpawn(world, i1, j1 - 1, k1, 3, 16, 4.0F)) {
+                        Coraltube9.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if ((coralTubeType == 18 || coralTubeType == 19) && this.canStructureSpawn(world, i1, j1 - 1, k1, 13, 9, 4.0F)) {
+                        Coraltube10.generate(world, i1, j1 - 2, k1);
+                    }
+
+                    if (coralTubeType == 20) {
+                        chance = p_76484_2_.nextInt(2);
+                        if (this.canStructureSpawn(world, i1, j1 - 1, k1, 15, 15, 4.0F)) {
+                            int voxeltubeType = p_76484_2_.nextInt(2);
+                            if (voxeltubeType == 0) {
+                                Voxeltube1.generate(world, i1, j1 - 1, k1);
+                            } else {
+                                Voxeltube2.generate(world, i1, j1 - 1, k1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            x = p_76484_2_.nextInt(2);
+            if (x == 0) {
+                this.blockToSet = BlocksAndItems.redTableCoral;
+            } else {
+                this.blockToSet = BlocksAndItems.purpleTableCoral;
+            }
+
+            i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+            k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && p_76484_2_.nextInt(4) == 0) {
+                Block nextBlock1 = world.getBlock(i1 + 1, j1, k1);
+                Block nextBlock2 = world.getBlock(i1 - 1, j1, k1);
+                Block nextBlock3 = world.getBlock(i1, j1, k1 + 1);
+                Block nextBlock4 = world.getBlock(i1, j1, k1 - 1);
+                if (nextBlock1 == BlocksAndItems.safeShallowsRock || nextBlock2 == BlocksAndItems.safeShallowsRock || nextBlock3 == BlocksAndItems.safeShallowsRock || nextBlock4 == BlocksAndItems.safeShallowsRock) {
+                    world.setBlock(i1, j1, k1, this.blockToSet, this.metadata, 2);
+                    boolean cancel;
+                    int ypos;
+                    if (nextBlock1 == BlocksAndItems.safeShallowsRock) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 4, 2);
+                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                            world.setBlock(i1 + 1, j1, k1, BlocksAndItems.orangePolyps, 4, 2);
+                        }
+
+                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                            world.setBlock(i1 + 1, j1, k1, BlocksAndItems.purpleSponge, 4, 2);
+                        }
+
+                        cancel = true;
+                        ypos = 1;
+
+                        label383:
+                        while(true) {
+                            while(true) {
+                                if (!cancel) {
+                                    break label383;
+                                }
+
+                                if ((world.getBlock(i1 + 1, j1 + ypos, k1) == Blocks.sand || world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 4, 2);
+                                    if (world.getBlock(i1 + 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
+                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                            world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 4, 2);
+                                        }
+
+                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                            world.setBlock(i1 + 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 4, 2);
+                                        }
+                                    }
+
+                                    ++ypos;
+                                } else {
+                                    cancel = false;
+                                }
+                            }
+                        }
+                    } else if (nextBlock2 == BlocksAndItems.safeShallowsRock) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 2, 2);
+                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                            world.setBlock(i1 - 1, j1, k1, BlocksAndItems.orangePolyps, 2, 2);
+                        }
+
+                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                            world.setBlock(i1 - 1, j1, k1, BlocksAndItems.purpleSponge, 2, 2);
+                        }
+
+                        cancel = true;
+                        ypos = 1;
+
+                        label397:
+                        while(true) {
+                            while(true) {
+                                if (!cancel) {
+                                    break label397;
+                                }
+
+                                if ((world.getBlock(i1 - 1, j1 + ypos, k1) == Blocks.sand || world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 2, 2);
+                                    if (world.getBlock(i1 - 1, j1 + ypos, k1) == BlocksAndItems.safeShallowsRock) {
+                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                            world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.orangePolyps, 2, 2);
+                                        }
+
+                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                            world.setBlock(i1 - 1, j1 + ypos, k1, BlocksAndItems.purpleSponge, 2, 2);
+                                        }
+                                    }
+
+                                    ++ypos;
+                                } else {
+                                    cancel = false;
+                                }
+                            }
+                        }
+                    } else if (nextBlock3 == BlocksAndItems.safeShallowsRock) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 5, 2);
+                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                            world.setBlock(i1, j1, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
+                        }
+
+                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                            world.setBlock(i1, j1, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
+                        }
+
+                        cancel = true;
+                        ypos = 1;
+
+                        label411:
+                        while(true) {
+                            while(true) {
+                                if (!cancel) {
+                                    break label411;
+                                }
+
+                                if ((world.getBlock(i1, j1 + ypos, k1 + 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 5, 2);
+                                    if (world.getBlock(i1, j1 + ypos, k1 + 1) == BlocksAndItems.safeShallowsRock) {
+                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                            world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.orangePolyps, 5, 2);
+                                        }
+
+                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                            world.setBlock(i1, j1 + ypos, k1 + 1, BlocksAndItems.purpleSponge, 5, 2);
+                                        }
+                                    }
+
+                                    ++ypos;
+                                } else {
+                                    cancel = false;
+                                }
+                            }
+                        }
+                    } else if (nextBlock4 == BlocksAndItems.safeShallowsRock) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 3, 2);
+                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                            world.setBlock(i1, j1, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
+                        }
+
+                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                            world.setBlock(i1, j1, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
+                        }
+
+                        cancel = true;
+                        ypos = 1;
+
+                        label426:
+                        while(true) {
+                            while(true) {
+                                if (!cancel) {
+                                    break label426;
+                                }
+
+                                if ((world.getBlock(i1, j1 + ypos, k1 - 1) == Blocks.sand || world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock) && Math.floor(Math.random() * 100.0 + 1.0) <= 85.0) {
+                                    world.setBlock(i1, j1 + ypos, k1, this.blockToSet, this.metadata, 2);
+                                    world.setBlockMetadataWithNotify(i1, j1 + ypos, k1, 3, 2);
+                                    if (world.getBlock(i1, j1 + ypos, k1 - 1) == BlocksAndItems.safeShallowsRock) {
+                                        if (this.blockToSet == BlocksAndItems.redTableCoral) {
+                                            world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.orangePolyps, 3, 2);
+                                        }
+
+                                        if (this.blockToSet == BlocksAndItems.purpleTableCoral) {
+                                            world.setBlock(i1, j1 + ypos, k1 - 1, BlocksAndItems.purpleSponge, 3, 2);
+                                        }
+                                    }
+
+                                    ++ypos;
+                                } else {
+                                    cancel = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+            k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water && p_76484_2_.nextInt(50) == 0) {
+                if (p_76484_2_.nextInt(2) == 0) {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                } else {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                }
+
+                world.setBlockMetadataWithNotify(i1, j1, k1, p_76484_2_.nextInt(4) + 2, 2);
+            }
+
+            i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+            k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            if (world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater && world.getBlock(i1, j1 + 1, k1) == BlocksAndItems.saltWater && Math.floor(Math.random() * 10.0 + 1.0) == 1.0 && (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water || world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water || world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water)) {
+                if (world.getBlock(i1 + 1, j1, k1).getMaterial() != Material.water) {
+                    coralTubeType = p_76484_2_.nextInt(2);
+                    if (coralTubeType == 0) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                    } else {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    }
+
+                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                    if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 6, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 10, 2);
+                    }
+                } else if (world.getBlock(i1 - 1, j1, k1).getMaterial() != Material.water) {
+                    coralTubeType = p_76484_2_.nextInt(2);
+                    if (coralTubeType == 0) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                    } else {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    }
+
+                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                    if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 7, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 11, 2);
+                    }
+                } else if (world.getBlock(i1, j1, k1 + 1).getMaterial() != Material.water) {
+                    coralTubeType = p_76484_2_.nextInt(2);
+                    if (coralTubeType == 0) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                    } else {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    }
+
+                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                    if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 8, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 12, 2);
+                    }
+                } else if (world.getBlock(i1, j1, k1 - 1).getMaterial() != Material.water) {
+                    coralTubeType = p_76484_2_.nextInt(2);
+                    if (coralTubeType == 0) {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.limestoneOutcrop);
+                    } else {
+                        world.setBlock(i1, j1, k1, BlocksAndItems.sandstoneOutcrop);
+                    }
+
+                    chance = (int)Math.floor(Math.random() * 2.0 + 1.0);
+                    if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 9, 2);
+                    } else {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 13, 2);
+                    }
+                }
+            }
+
+            i1 = p_76484_3_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            j1 = p_76484_4_ + p_76484_2_.nextInt(24) - p_76484_2_.nextInt(24);
+            k1 = p_76484_5_ + p_76484_2_.nextInt(8) - p_76484_2_.nextInt(8);
+            if (world.getBlock(i1, j1 - 1, k1) == BlocksAndItems.giantCoralTube && world.getBlock(i1, j1, k1) == BlocksAndItems.saltWater) {
+                coralTubeType = p_76484_2_.nextInt(3);
+                if (coralTubeType == 0) {
+                    world.setBlock(i1, j1, k1, BlocksAndItems.slantedShellPlate);
+                    chance = p_76484_2_.nextInt(4);
+                    if (chance == 0) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 2, 2);
+                    } else if (chance == 1) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 3, 2);
+                    } else if (chance == 2) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 4, 2);
+                    } else if (chance == 3) {
+                        world.setBlockMetadataWithNotify(i1, j1, k1, 5, 2);
+                    }
+                }
+            }
+        }
+
+    }
     static {
         sandSubArray = new Block[]{Blocks.sand};
         sandArray = new Block[][]{sandSubArray};
