@@ -65,6 +65,9 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
     }
     @Unique
     private boolean optimizationsAndTweaks$gisInvalidBlock(World world, int x, int y, int z) {
+        if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, x >> 4, z >> 4)) {
+            return false;
+        }
         Block blockAtPos = world.getBlock(x, y, z);
         return blockAtPos == Blocks.bedrock
             || blockAtPos == block
