@@ -300,7 +300,11 @@ public class MixinGenerateCoral {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean canStructureSpawn(World world, int x, int y, int z, int length, int width, float maxInvalidBlocksIndex) {
         int invalidBlocks = 0;
 
@@ -312,12 +316,8 @@ public class MixinGenerateCoral {
             }
         }
 
-        float maxInvalidBlocks = (float)(length * width) * (1.0F / maxInvalidBlocksIndex);
-        if ((float)invalidBlocks > maxInvalidBlocks) {
-            return false;
-        } else {
-            return true;
-        }
+        float maxInvalidBlocks = (length * width) * (1.0F / maxInvalidBlocksIndex);
+        return !(invalidBlocks > maxInvalidBlocks);
     }
     @Shadow
     private void createCoralCluster(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
