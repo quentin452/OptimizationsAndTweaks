@@ -722,6 +722,9 @@ public class MixinGenerateCoral {
 
     @Unique
     private void optimizationsAndTweaks$generateGreenTableCoral(World world, Random random, int x1, int y1, int z1) {
+        if (x1 < 0 || x1 > 16 || z1 < 0 || z1 > 16) {
+            return;
+        }
         int i1 = x1 + random.nextInt(8) - random.nextInt(8);
         int j1 = y1 + random.nextInt(24) - random.nextInt(24);
         int k1 = z1 + random.nextInt(8) - random.nextInt(8);
