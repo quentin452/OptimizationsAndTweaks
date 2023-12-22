@@ -93,7 +93,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
 
         for(int j = -2; j <= 2; ++j) {
             for(int k = -2; k <= 2; ++k) {
-                float f = 10.0F / MathHelper.sqrt_float((float)(j * j + k * k) + 0.2F);
+                float f = 10.0F / MathHelper.sqrt_float((j * j + k * k) + 0.2F);
                 this.parabolicField[j + 2 + (k + 2) * 5] = f;
             }
         }
@@ -147,7 +147,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
                         double d13 = (d4 - d2) * d9;
 
                         for(int i3 = 0; i3 < 4; ++i3) {
-                            int j3 = i3 + k * 4 << 12 | 0 + j1 * 4 << 8 | k2 * 8 + l2;
+                            int j3 = i3 + k * 4 << 12 | j1 * 4 << 8 | k2 * 8 + l2;
                             short short1 = 256;
                             j3 -= short1;
                             double d14 = 0.25;
@@ -188,7 +188,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() != Event.Result.DENY) {
             double d0 = 0.03125;
-            this.stoneNoise = this.noisePerl.func_151599_a(this.stoneNoise, (double)(par1 * 16), (double)(par2 * 16), 16, 16, d0 * 2.0, d0 * 2.0, 1.0);
+            this.stoneNoise = this.noisePerl.func_151599_a(this.stoneNoise, par1 * 16, par2 * 16, 16, 16, d0 * 2.0, d0 * 2.0, 1.0);
 
             int chunkXStart = par1 * 16;
             int chunkZStart = par2 * 16;
@@ -197,21 +197,22 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
 
             for (int k = chunkXStart; k < chunkXEnd; ++k) {
                 for (int l = chunkZStart; l < chunkZEnd; ++l) {
-                    BiomeGenBase biome = par4ArrayOfBiomeGenBase[l - chunkZStart + (k - chunkXStart) * 16];
+                    int i = l - chunkZStart + (k - chunkXStart) * 16;
+                    BiomeGenBase biome = par4ArrayOfBiomeGenBase[i];
 
                     if (biome instanceof BiomeGenSafeShallows) {
                         BiomeGenSafeShallows biomegenbase = (BiomeGenSafeShallows) biome;
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[i]);
                     }
 
                     if (biome instanceof BiomeGenGrassyPlateaus) {
                         BiomeGenGrassyPlateaus biomegenbase = (BiomeGenGrassyPlateaus)par4ArrayOfBiomeGenBase[l + k * 16];
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[i]);
                     }
 
                     if (biome instanceof BiomeGenKelpForest) {
                         BiomeGenKelpForest biomegenbase = (BiomeGenKelpForest)par4ArrayOfBiomeGenBase[l + k * 16];
-                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[l - chunkZStart + (k - chunkXStart) * 16]);
+                        biomegenbase.func_150573_a(this.worldObj, this.rand, blocks, par3ArrayOfByte, k, l, this.stoneNoise[i]);
                     }
                 }
             }
@@ -227,7 +228,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
      */
     @Overwrite(remap = false)
     public Chunk func_73154_d(int par1, int par2) {
-        this.rand.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
+        this.rand.setSeed(par1 * 341873128712L + par2 * 132897987541L);
         Block[] ablock = new Block[65536];
         byte[] abyte = new byte[65536];
         this.func_147424_a(par1, par2, ablock);
@@ -292,14 +293,14 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
                 double d12 = optimizationsAndTweaks$getD12(i1, this.noise5);
 
                 ++i1;
-                double d13 = (double)f1;
-                double d14 = (double)f;
+                double d13 = f1;
+                double d14 = f;
                 d13 += d12 * 0.2;
                 d13 = d13 * 8.5 / 8.0;
                 double d5 = 8.5 + d13 * 4.0;
 
                 for(int j2 = 0; j2 < 33; ++j2) {
-                    double d6 = ((double)j2 - d5) * 12.0 * 128.0 / 256.0 / d14;
+                    double d6 = (j2 - d5) * 12.0 * 128.0 / 256.0 / d14;
                     if (d6 < 0.0) {
                         d6 *= 4.0;
                     }
@@ -309,7 +310,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
                     double d9 = (this.noise3[l] / 10.0 + 1.0) / 2.0;
                     double d10 = MathHelper.denormalizeClamp(d7, d8, d9) - d6;
                     if (j2 > 29) {
-                        double d11 = (double)((float)(j2 - 29) / 3.0F);
+                        double d11 = (j2 - 29) / 3.0F;
                         d10 = d10 * (1.0 - d11) + -10.0 * d11;
                     }
 
@@ -364,7 +365,7 @@ public abstract class MixinChunkProviderMinenautica implements IChunkProvider {
         this.rand.setSeed(this.worldObj.getSeed());
         long i1 = this.rand.nextLong() / 2L * 2L + 1L;
         long j1 = this.rand.nextLong() / 2L * 2L + 1L;
-        this.rand.setSeed((long)par2 * i1 + (long)par3 * j1 ^ this.worldObj.getSeed());
+        this.rand.setSeed(par2 * i1 + par3 * j1 ^ this.worldObj.getSeed());
         boolean flag = false;
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, this.worldObj, this.rand, par2, par3, flag));
         biomegenbase.decorate(this.worldObj, this.rand, k, l);
