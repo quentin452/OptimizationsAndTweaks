@@ -60,4 +60,19 @@ public abstract class MixinCrystalFormationBig extends WorldGeneratorAdv {
         }
     }
 
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
+    private void setBlock(World world, Random random, int i, int j, int k, int mask) {
+        if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, i >> 4, k >> 4)) {
+            return;
+        }
+
+        Block blockAtPos = this.worldObj.getBlock(i, j, k);
+        if (blockAtPos != Blocks.bedrock && blockAtPos != this.block && blockAtPos != Blocks.nether_brick && blockAtPos != Blocks.nether_brick_fence && blockAtPos != Blocks.mob_spawner) {
+            this.placeBlock(this.worldObj, i, j, k, this.block, this.metaCrystal, mask);
+        }
+    }
 }
