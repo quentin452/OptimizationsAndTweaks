@@ -554,6 +554,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityEventHandler;
+    @Config.Comment("Add a config for biomeids from Minenautica mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBiomeRegistryMinenautica;
     @Config.Comment("Made sure that EntityID from RunicDungeons is above 1000 to prevent crash with Minenautica(Need config helper installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

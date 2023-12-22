@@ -124,7 +124,7 @@ dependencies {
     implementation "curse.maven:korin-bluebedrock-238494:2277337-deobf-sources-api"
     implementation "curse.maven:bbrains-umfixes-939770:4914347-deobf-sources-api"
     implementation "curse.maven:runic-dungeons-227065:2310826-deobf-sources-api"
-    implementation "curse.maven:runic-dungeons-227065:2310826-deobf-sources-api"
+    implementation "curse.maven:minenautica-244541:2475705-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

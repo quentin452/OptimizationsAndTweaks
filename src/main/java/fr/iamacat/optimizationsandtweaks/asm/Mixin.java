@@ -160,11 +160,13 @@ public enum Mixin implements IMixin {
     common_KoRIN_MixinKoRINEventHandler(Side.COMMON, require(TargetedMod.KORINBLUEBEDROCK)
         .and(m -> OptimizationsandTweaksConfig.enableMixinKoRINEventHandler),
         "KoRIN.MixinKoRINEventHandler"),
-    common_runicdungeons_MixinCommonProxyRunicDungeons(
-        Side.COMMON,
-        require(TargetedMod.RUNICDUNGEONS)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons)
-            .and(require(TargetedMod.CONFIGHELPER)),
+    common_minenautica_MixinBiomeRegistry(Side.COMMON, require(TargetedMod.MINENAUTICA)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryMinenautica),
+        "minenautica.MixinBiomeRegistry"),
+    common_minenautica_MixinMinenautica(Side.COMMON, require(TargetedMod.MINENAUTICA)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryMinenautica),
+        "minenautica.MixinMinenautica"),
+    common_runicdungeons_MixinCommonProxyRunicDungeons(Side.COMMON, require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons).and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
     common_akatsuki_MixinEntitySasori(Side.COMMON, require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),
         "akatsuki.MixinEntitySasori"),
