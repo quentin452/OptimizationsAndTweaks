@@ -166,6 +166,12 @@ public enum Mixin implements IMixin {
     common_minenautica_MixinMinenautica(Side.COMMON, require(TargetedMod.MINENAUTICA)
         .and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryMinenautica),
         "minenautica.MixinMinenautica"),
+    common_minenautica_MixinAluminumOxideWorldGen(Side.COMMON, require(TargetedMod.MINENAUTICA)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinAluminumOxideWorldGen),
+        "minenautica.MixinAluminumOxideWorldGen"),
+    common_minenautica_MixinGenerateCoral(Side.COMMON, require(TargetedMod.MINENAUTICA)
+        .and(m -> OptimizationsandTweaksConfig.enableMixinGenerateCoral),
+        "minenautica.MixinGenerateCoral"),
     common_runicdungeons_MixinCommonProxyRunicDungeons(Side.COMMON, require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons).and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
     common_akatsuki_MixinEntitySasori(Side.COMMON, require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),

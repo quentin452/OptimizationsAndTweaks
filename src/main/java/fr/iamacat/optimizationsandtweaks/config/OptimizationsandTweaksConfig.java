@@ -558,6 +558,15 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryMinenautica;
+    @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAluminumOxideWorldGen;
+
+    @Config.Comment("Fix Cascading worldgens caused by GenerateCoal from Minenautica mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGenerateCoral;
     @Config.Comment("Made sure that EntityID from RunicDungeons is above 1000 to prevent crash with Minenautica(Need config helper installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
