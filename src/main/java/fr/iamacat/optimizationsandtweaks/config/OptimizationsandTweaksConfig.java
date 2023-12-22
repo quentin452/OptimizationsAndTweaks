@@ -558,27 +558,27 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryMinenautica;
-    @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod(Disabled by default cause problem during generation)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAluminumOxideWorldGen;
-    @Config.Comment("Fix Cascading worldgens caused by CanBlockStay from Minenautica mod")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Fix Cascading worldgens caused by CanBlockStay from Minenautica mod(Disabled by default cause problem during generation)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCanBlockStay;
-    @Config.Comment("Fix Cascading worldgens caused by BiomeGenKelpForest from Minenautica mod")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Fix Cascading worldgens caused by BiomeGenKelpForest from Minenautica mod(Disabled by default cause problem during generation)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeGenKelpForest;
-    @Config.Comment("Fix Cascading worldgens caused by BiomeGenGrassyPlateaus from Minenautica mod")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Fix Cascading worldgens caused by BiomeGenGrassyPlateaus from Minenautica mod(Disabled by default cause problem during generation)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeGenGrassyPlateaus;
-    @Config.Comment("Fix Cascading worldgens caused by Bloodgrass from Minenautica mod")
-    @Config.DefaultBoolean(true)
+    @Config.Comment("Fix Cascading worldgens caused by Bloodgrass from Minenautica mod(Disabled by default cause problem during generation)")
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBloodgrass;
-    @Config.Comment("Fix Cascading worldgens caused by GenerateCoal from Minenautica mod")
+    @Config.Comment("Fix Cascading worldgens caused by GenerateCoal from Minenautica mod(Disabled by default cause problem during generation)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGenerateCoral;
