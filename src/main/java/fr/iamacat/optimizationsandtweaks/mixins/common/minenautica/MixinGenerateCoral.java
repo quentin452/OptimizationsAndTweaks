@@ -96,12 +96,6 @@ public class MixinGenerateCoral {
     int random2;
     @Unique
     int type;
-    @Unique
-    int i1 = x1 + random.nextInt(8) - random.nextInt(8);
-    @Unique
-    int j1 = y1 + random.nextInt(24) - random.nextInt(24);
-    @Unique
-    int k1 = z1 + random.nextInt(8) - random.nextInt(8);
     /**
      * @author
      * @reason
@@ -116,6 +110,9 @@ public class MixinGenerateCoral {
 
     @Unique
     private void optimizationsAndTweaks$generateCoral(World world, Random random) {
+        int i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        int j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        int k1 = z1 + random.nextInt(8) - random.nextInt(8);
         this.blockToSet = BlocksAndItems.bloodgrass;
         if ((!world.provider.hasNoSky || j1 < 255) && this.blockToSet.canBlockStay(world, i1, j1, k1)) {
             random2 = random.nextInt(60);
@@ -241,9 +238,9 @@ public class MixinGenerateCoral {
 
     @Unique
     private void optimizationsAndTweaks$generateLithiumOutcrop(World world, Random random, int x1, int y1, int z1) {
-        i1 = x1 + random.nextInt(8) - random.nextInt(8);
-        j1 = y1 + random.nextInt(24) - random.nextInt(24);
-        k1 = z1 + random.nextInt(8) - random.nextInt(8);
+        int i1 = x1 + random.nextInt(8) - random.nextInt(8);
+        int j1 = y1 + random.nextInt(24) - random.nextInt(24);
+        int k1 = z1 + random.nextInt(8) - random.nextInt(8);
         if (world.getBlock(i1, j1 - 1, k1).getMaterial() != Material.water && world.getBlock(i1, j1, k1).getMaterial() == Material.water) {
             random2 = random.nextInt(30);
             if (random2 == 0) {
