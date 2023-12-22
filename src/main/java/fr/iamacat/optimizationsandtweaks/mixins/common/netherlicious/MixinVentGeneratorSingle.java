@@ -26,7 +26,8 @@ public abstract class MixinVentGeneratorSingle extends WorldGenerator {
     @Shadow
     private int metaVent;
 
-    private final Set<Long> generatedChunks = new HashSet<>();
+    @Unique
+    private final Set<Long> optimizationsAndTweaks$generatedChunks = new HashSet<>();
 
     /**
      * @author
@@ -35,7 +36,7 @@ public abstract class MixinVentGeneratorSingle extends WorldGenerator {
     @Overwrite(remap = false)
     public boolean func_76484_a(World world, Random random, int x, int y, int z) {
         long chunkPos = ((long) x >> 4) & 0xFFFFFFFFL | (((long) z >> 4) & 0xFFFFFFFFL) << 32;
-        if (generatedChunks.contains(chunkPos)) {
+        if (optimizationsAndTweaks$generatedChunks.contains(chunkPos)) {
             return false; // Chunk already generated, skip
         }
 
@@ -44,7 +45,7 @@ public abstract class MixinVentGeneratorSingle extends WorldGenerator {
             return false;
         }
 
-        generatedChunks.add(chunkPos);
+        optimizationsAndTweaks$generatedChunks.add(chunkPos);
 
         for (int l = 0; l < 4; ++l) {
             int i1 = (x >> 4 << 4) + random.nextInt(16);
