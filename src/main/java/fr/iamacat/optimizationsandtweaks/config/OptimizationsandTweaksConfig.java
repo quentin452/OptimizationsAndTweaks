@@ -558,6 +558,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryMinenautica;
+    @Config.Comment("Fix Cascading worldgen caused by VentGeneratorSingle class from Netherlicious mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinVentGeneratorSingle;
     @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod(Disabled by default cause problem during generation)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

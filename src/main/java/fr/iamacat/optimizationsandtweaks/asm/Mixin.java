@@ -156,10 +156,12 @@ public enum Mixin implements IMixin {
 
     common_core_MixinChunk(Side.COMMON,
         avoid(TargetedMod.BLENDTRONIC).and(m -> OptimizationsandTweaksConfig.enableMixinChunk), "core.MixinChunk"),
+    common_netherlicious_MixinVentGeneratorSingle(Side.COMMON,
+        require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinVentGeneratorSingle),
+        "netherlicious.MixinVentGeneratorSingle"),
     common_netherlicious_MixinNetherliciousEventHandler(Side.COMMON,
         require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinNetherliciousEventHandler),
         "netherlicious.MixinNetherliciousEventHandler"),
-
     common_KoRIN_MixinKoRINEventHandler(Side.COMMON,
         require(TargetedMod.KORINBLUEBEDROCK).and(m -> OptimizationsandTweaksConfig.enableMixinKoRINEventHandler),
         "KoRIN.MixinKoRINEventHandler"),
