@@ -307,17 +307,19 @@ public class MixinGenerateCoral {
     @Overwrite(remap = false)
     public boolean canStructureSpawn(World world, int x, int y, int z, int length, int width, float maxInvalidBlocksIndex) {
         int invalidBlocks = 0;
+        Block waterBlock = Blocks.water;
 
-        for(int i = 0; i < length; ++i) {
-            for(int j = 0; j < width; ++j) {
-                if (world.getBlock(x + i, y - 1, z + j).getMaterial() == Material.water) {
+        for (int i = 0; i < length; ++i) {
+            for (int j = 0; j < width; ++j) {
+                Block block = world.getBlock(x + i, y - 1, z + j);
+                if (block == waterBlock) {
                     ++invalidBlocks;
                 }
             }
         }
 
         float maxInvalidBlocks = (length * width) * (1.0F / maxInvalidBlocksIndex);
-        return !(invalidBlocks > maxInvalidBlocks);
+        return invalidBlocks <= maxInvalidBlocks;
     }
     @Shadow
     private void createCoralCluster(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
