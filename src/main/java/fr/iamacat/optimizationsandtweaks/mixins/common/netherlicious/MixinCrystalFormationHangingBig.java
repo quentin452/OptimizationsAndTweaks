@@ -46,7 +46,7 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void placeRandomBlock(World world, Random random, int i, int j, int k, int mask) {
         if (!optimizationsAndTweaks$gisInvalidBlock(world, i, j, k)) {
             if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, i >> 4, k >> 4)) {
