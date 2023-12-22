@@ -103,13 +103,14 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
             int k = 0;
 
             for (int l = ai2[j] + byte3; k != l; k += byte3) {
-                ai3[j] = MathHelper.floor_double((double) (ai[j] + k) + 0.5);
-                ai3[byte1] = MathHelper.floor_double((double) ai[byte1] + (double) k * d + 0.5);
-                ai3[byte2] = MathHelper.floor_double((double) ai[byte2] + (double) k * d1 + 0.5);
+                ai3[j] = MathHelper.floor_double( (ai[j] + k) + 0.5);
+                ai3[byte1] = MathHelper.floor_double(ai[byte1] + k * d + 0.5);
+                ai3[byte2] = MathHelper.floor_double( ai[byte2] + k * d1 + 0.5);
 
-                Chunk chunk = worldObj.getChunkFromBlockCoords(ai3[0], ai3[2]);
-                if (chunk != null && chunk.isChunkLoaded) {
-                    this.drawSphere(random, ai3[0], ai3[1], ai3[2]);
+                if (optimizationsAndTweaks$isNearbyChunksLoaded(worldObj, ai3[0] >> 4, ai3[2] >> 4)) {
+                    drawSphere(random, ai3[0], ai3[1], ai3[2]);
+                } else {
+                    break;
                 }
             }
         }
@@ -157,6 +158,9 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
      */
     @Overwrite(remap = false)
     private void setBlock(World world, Random random, int i, int j, int k, int mask) {
+        if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, i >> 4, k >> 4)) {
+            return;
+        }
         if (!optimizationsAndTweaks$gisInvalidBlock(world, i, j, k)) {
             Chunk chunk = world.getChunkFromBlockCoords(i, k);
             if (chunk != null && chunk.isChunkLoaded) {
