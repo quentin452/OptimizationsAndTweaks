@@ -37,6 +37,13 @@ public abstract class MixinWorldGenSewers{
      */
     @Overwrite(remap = false)
     public boolean LocationIsValidSpawn(World world, int posX, int posY, int posZ) {
+        int chunkX = posX >> 4;
+        int chunkZ = posZ >> 4;
+
+        if (!world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+            return false;
+        }
+
         int distanceToAir = optimizationsAndTweaks$calculateDistanceToAir(world, posX, posY, posZ);
 
         if (distanceToAir > 3) {
@@ -55,14 +62,19 @@ public abstract class MixinWorldGenSewers{
         return optimizationsAndTweaks$isValidSpawnBlock(block, blockBelow, validSpawnBlocks);
     }
 
+
     @Unique
     private int optimizationsAndTweaks$calculateDistanceToAir(World world, int posX, int posY, int posZ) {
         int maxDistance = 3;
         int distance = 0;
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
-        Chunk chunk = world.getChunkFromBlockCoords(chunkX, chunkZ);
 
+        if (!world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+            return -1;
+        }
+
+        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
         int chunkMinY = Math.max(0, posY);
         int chunkMaxY = Math.min(world.getHeight(), posY + maxDistance);
 
