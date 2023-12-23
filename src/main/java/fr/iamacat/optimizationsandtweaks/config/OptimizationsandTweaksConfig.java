@@ -663,6 +663,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromWorldGenSlimeCarnage;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenMadLab from Slime Carnage mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenMadLab;
     @Config.Comment("Fix Some Cascading Worldgen caused by ThaumcraftWorldGenerator from Thaumcraft4 mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
