@@ -105,16 +105,25 @@ public abstract class MixinWorldGenSewers{
      */
     @Overwrite(remap = false)
     public boolean func_76484_a(World world, Random rand, int i, int j, int k) {
-        if (this.LocationIsValidSpawn(world, i, j, k) && this.LocationIsValidSpawn(world, i + 8, j, k)
+        int chunkX = i >> 4;
+        int chunkZ = k >> 4;
+
+        boolean allCornersInChunk = chunkX * 16 == i && chunkZ * 16 == k
+            && this.LocationIsValidSpawn(world, i, j, k)
+            && this.LocationIsValidSpawn(world, i + 8, j, k)
             && this.LocationIsValidSpawn(world, i + 8, j, k + 4)
-            && this.LocationIsValidSpawn(world, i, j, k + 4)) {
-            optimizationsAndTweaks$generate1(world,rand,i,j,k);
-            optimizationsAndTweaks$generate2(world,rand,i,j,k);
-            optimizationsAndTweaks$generate3(world,rand,i,j,k);
-            optimizationsAndTweaks$generate4(world,rand,i,j,k);
+            && this.LocationIsValidSpawn(world, i, j, k + 4);
+
+        if (i >= 0 && i < 16 && k >= 0 && k < 16 && j >= 0 && j < 256 && allCornersInChunk) {
+            optimizationsAndTweaks$generate1(world, rand, i, j, k);
+            optimizationsAndTweaks$generate2(world, rand, i, j, k);
+            optimizationsAndTweaks$generate3(world, rand, i, j, k);
+            optimizationsAndTweaks$generate4(world, rand, i, j, k);
+
             if (!world.isRemote) {
-                optimizationsAndTweaks$generate5(world,rand,i,j,k);
+                optimizationsAndTweaks$generate5(world, rand, i, j, k);
             }
+
             return true;
         } else {
             return false;
