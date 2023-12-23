@@ -149,7 +149,7 @@ public enum Mixin implements IMixin {
         "core.MixinDimensionManager"),
     common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
         "core.pathfinding.MixinPathFinder"),
-    server_core_MixinWorldServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinWorldServer,
+    common_core_MixinWorldServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldServer,
         "core.MixinWorldServer"),
     common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
         "core.MixinStatsComponent"),
