@@ -87,11 +87,14 @@ public class OptimizationsandTweaksConfig {
     @Config.RangeInt(min = 1, max = 1000)
     @Config.RequiresWorldRestart
     public static int batchsize;
-    // BugFix Mixins
     @Config.Comment("Optimize MixinEntitySquid class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitySquid;
+    @Config.Comment("Optimize LaunchClassLoader class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLaunchClassLoader;
     @Config.Comment("Optimize EntityZombie class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
