@@ -28,8 +28,9 @@ public enum TargetedMod implements ITargetedMod {
      */
     MANAMETAL("manametalmod", false, startsWith("manametalmod")),
     SMOOTHFONT("SmoothFont", false, startsWith("SmoothFont")),
-
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
+
+    PACKAGEDAUTO("PackagedAuto", false, startsWith("PackagedAuto")),
     RUNICDUNGEONS("RunicDungeons", false, startsWith("RunicDungeons")),
 
     MINENAUTICA("Minenautica", false, startsWith("Minenautica")),

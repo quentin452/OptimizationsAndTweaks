@@ -16,6 +16,9 @@ public enum Mixin implements IMixin {
     // TWEAKING MIXINS
 
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
+    common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
+        require(TargetedMod.PACKAGEDAUTO).and(m -> OptimizationsandTweaksConfig.enableMixinNeiHandlerPackagedAuto),
+        "packagedauto.MixinNeiHandlerPackagedAuto"),
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain),
         "lotrimprovements.MixinMain"),

@@ -1,5 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
+import codechicken.nei.api.ItemInfo;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
@@ -56,6 +59,35 @@ public class Classers {
          */
         public BiomeGenBase getBiomeGenAt(int p_76885_1_, int p_76885_2_) {
             return this.biomes[p_76885_1_ & 15 | (p_76885_2_ & 15) << 4];
+        }
+    }
+
+    // MixinItemInfo
+
+    public static class ItemStackKey2 {
+
+        public final ItemStack stack;
+
+        public ItemStackKey2(ItemStack stack) {
+            this.stack = stack;
+        }
+
+        @Override
+        public int hashCode() {
+            if (this.stack == null) return 1;
+            int hashCode = 1;
+            hashCode = 31 * hashCode + stack.stackSize;
+            hashCode = 31 * hashCode + Item.getIdFromItem(stack.getItem());
+            hashCode = 31 * hashCode + stack.getItemDamage();
+            hashCode = 31 * hashCode + (!stack.hasTagCompound() ? 0 : stack.getTagCompound().hashCode());
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (!(o instanceof ItemStackKey2)) return false;
+            return ItemStack.areItemStacksEqual(this.stack, ((ItemStackKey2) o).stack);
         }
     }
 }

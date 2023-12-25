@@ -1,11 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.launchwrapper.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -15,7 +17,6 @@ import java.net.URLConnection;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -25,15 +26,15 @@ import java.util.jar.Manifest;
 public abstract class MixinLaunchClassLoader extends URLClassLoader {
         @Shadow
         public static final int BUFFER_SIZE = 1 << 12;
-        @Shadow
-        private List<URL> sources;
+        @Unique
+        private ArrayList<URL> optimizationsAndTweaks$sources;
         @Shadow
         private ClassLoader parent = getClass().getClassLoader();
     @Shadow
 
         private List<IClassTransformer> transformers = new ArrayList<IClassTransformer>(2);
-    @Shadow
-        private Map<String, Class<?>> cachedClasses = new LinkedHashMap<String, Class<?>>();
+    @Unique
+        private Map<String, Class<?>> optimizationsAndTweaks$cachedClasses = new Object2ObjectHashMap<>();
     @Shadow
         private Set<String> invalidClasses = new HashSet<String>(1000);
 
@@ -41,12 +42,12 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
         private Set<String> classLoaderExceptions = new HashSet<String>();
     @Shadow
         private Set<String> transformerExceptions = new HashSet<String>();
-    @Shadow
-        private Map<Package, Manifest> packageManifests = new LinkedHashMap<Package, Manifest>();
-    @Shadow
-        private Map<String,byte[]> resourceCache = new LinkedHashMap<String,byte[]>(1000);
-    @Shadow
-        private Set<String> negativeResourceCache = Collections.newSetFromMap(new LinkedHashMap<String, Boolean>());
+    @Unique
+        private Map<Package, Manifest> optimizationsAndTweaks$packageManifests = new Object2ObjectHashMap<>();
+    @Unique
+        private Map<String,byte[]> optimizationsAndTweaks$resourceCache = new Object2ObjectHashMap<>();
+    @Unique
+        private Set<String> optimizationsAndTweaks$negativeResourceCache = Collections.newSetFromMap(new Object2ObjectHashMap<>());
     @Shadow
 
         private IClassNameTransformer renameTransformer;
@@ -71,7 +72,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
     public MixinLaunchClassLoader(URL[] sources) {
             super(sources, null);
-            this.sources = new ArrayList<URL>(Arrays.asList(sources));
+            this.optimizationsAndTweaks$sources = new ArrayList<URL>(Arrays.asList(sources));
 
             // classloader exclusions
             addClassLoaderExclusion("java.");
@@ -129,15 +130,15 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
                 }
             }
 
-            if (cachedClasses.containsKey(name)) {
-                return cachedClasses.get(name);
+            if (optimizationsAndTweaks$cachedClasses.containsKey(name)) {
+                return optimizationsAndTweaks$cachedClasses.get(name);
             }
 
             for (final String exception : transformerExceptions) {
                 if (name.startsWith(exception)) {
                     try {
                         final Class<?> clazz = super.findClass(name);
-                        cachedClasses.put(name, clazz);
+                        optimizationsAndTweaks$cachedClasses.put(name, clazz);
                         return clazz;
                     } catch (ClassNotFoundException e) {
                         invalidClasses.add(name);
@@ -148,8 +149,8 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
             try {
                 final String transformedName = transformName(name);
-                if (cachedClasses.containsKey(transformedName)) {
-                    return cachedClasses.get(transformedName);
+                if (optimizationsAndTweaks$cachedClasses.containsKey(transformedName)) {
+                    return optimizationsAndTweaks$cachedClasses.get(transformedName);
                 }
 
                 final String untransformedName = untransformName(name);
@@ -175,7 +176,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
                             signers = entry.getCodeSigners();
                             if (pkg == null) {
                                 pkg = definePackage(packageName, manifest, jarURLConnection.getJarFileURL());
-                                packageManifests.put(pkg, manifest);
+                                optimizationsAndTweaks$packageManifests.put(pkg, manifest);
                             } else {
                                 if (pkg.isSealed() && !pkg.isSealed(jarURLConnection.getJarFileURL())) {
                                     LogWrapper.severe("The jar file %s is trying to seal already secured path %s", jarFile.getName(), packageName);
@@ -188,7 +189,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
                         Package pkg = getPackage(packageName);
                         if (pkg == null) {
                             pkg = definePackage(packageName, null, null, null, null, null, null, null);
-                            packageManifests.put(pkg, EMPTY);
+                            optimizationsAndTweaks$packageManifests.put(pkg, EMPTY);
                         } else if (pkg.isSealed()) {
                             LogWrapper.severe("The URL %s is defining elements for sealed path %s", urlConnection.getURL(), packageName);
                         }
@@ -202,7 +203,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
                 final CodeSource codeSource = urlConnection == null ? null : new CodeSource(urlConnection.getURL(), signers);
                 final Class<?> clazz = defineClass(transformedName, transformedClass, 0, transformedClass.length, codeSource);
-                cachedClasses.put(transformedName, clazz);
+                optimizationsAndTweaks$cachedClasses.put(transformedName, clazz);
                 return clazz;
             } catch (Throwable e) {
                 invalidClasses.add(name);
@@ -307,11 +308,11 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
     @Overwrite(remap = false)
         public void addURL(final URL url) {
             super.addURL(url);
-            sources.add(url);
+            optimizationsAndTweaks$sources.add(url);
         }
     @Overwrite(remap = false)
         public List<URL> getSources() {
-            return sources;
+            return optimizationsAndTweaks$sources;
         }
     @Overwrite(remap = false)
         private byte[] readFully(InputStream stream) {
@@ -362,17 +363,17 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
         }
     @Overwrite(remap = false)
         public byte[] getClassBytes(String name) throws IOException {
-            if (negativeResourceCache.contains(name)) {
+            if (optimizationsAndTweaks$negativeResourceCache.contains(name)) {
                 return null;
-            } else if (resourceCache.containsKey(name)) {
-                return resourceCache.get(name);
+            } else if (optimizationsAndTweaks$resourceCache.containsKey(name)) {
+                return optimizationsAndTweaks$resourceCache.get(name);
             }
             if (name.indexOf('.') == -1) {
                 for (final String reservedName : RESERVED_NAMES) {
                     if (name.toUpperCase(Locale.ENGLISH).startsWith(reservedName)) {
                         final byte[] data = getClassBytes("_" + name);
                         if (data != null) {
-                            resourceCache.put(name, data);
+                            optimizationsAndTweaks$resourceCache.put(name, data);
                             return data;
                         }
                     }
@@ -386,14 +387,14 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
                 if (classResource == null) {
                     if (DEBUG) LogWrapper.finest("Failed to find class resource %s", resourcePath);
-                    negativeResourceCache.add(name);
+                    optimizationsAndTweaks$negativeResourceCache.add(name);
                     return null;
                 }
                 classStream = classResource.openStream();
 
                 if (DEBUG) LogWrapper.finest("Loading class %s from resource %s", name, classResource.toString());
                 final byte[] data = readFully(classStream);
-                resourceCache.put(name, data);
+                optimizationsAndTweaks$resourceCache.put(name, data);
                 return data;
             } finally {
                 closeSilently(classStream);
@@ -410,6 +411,6 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
         }
     @Overwrite(remap = false)
         public void clearNegativeEntries(Set<String> entriesToClear) {
-            negativeResourceCache.removeAll(entriesToClear);
+            optimizationsAndTweaks$negativeResourceCache.removeAll(entriesToClear);
         }
     }

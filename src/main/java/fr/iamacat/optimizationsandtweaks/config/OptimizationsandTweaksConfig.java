@@ -119,6 +119,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMain;
+
+    @Config.Comment("Disabling Visual Recipe loading from PackagedAuto to eliminate ram usage on Modpacks")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNeiHandlerPackagedAuto;
     @Config.Comment("Add decimal value support to Minestones mod stoneDropRate config")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
