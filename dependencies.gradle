@@ -127,6 +127,9 @@ dependencies {
     implementation "curse.maven:minenautica-244541:2475705-deobf-sources-api"
     implementation "curse.maven:packagedauto-308380:4478950-deobf-sources-api"
     implementation "curse.maven:uplink-333787:3146512-deobf-sources-api"
+    implementation "curse.maven:colored-iron-248871:2323251-deobf-sources-api"
+    implementation "curse.maven:colour-color-blocks-229836:2236558-deobf-sources-api"
+    implementation "curse.maven:cube-elementals-mod-cube-monsters-mod-221778:2208737-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
@@ -148,6 +151,8 @@ dependencies {
     implementation files("libs/gemsnjewels-1.0.9-mc1.7.10.jar")
     implementation files("libs/OpenBlocks-1.8.2-GTNH-dev.jar")
     implementation files("libs/OpenModsLibs-1.7.10-0.10.6-dev.jar")
+    implementation files("libs/The-Amazing-Mod-1.7.10.jar")
+    implementation files("libs/Ore+Spiders+V1.2.1+For+MC+1.7.10.jar")
 
 }
 

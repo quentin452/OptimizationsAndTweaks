@@ -29,9 +29,10 @@ public enum TargetedMod implements ITargetedMod {
     MANAMETAL("manametalmod", false, startsWith("manametalmod")),
     SMOOTHFONT("SmoothFont", false, startsWith("SmoothFont")),
     EXTRAUTILS("ExtraUtilities", false, startsWith("extrautilities")),
-
+    COLOREDIRON("Colored+Iron", false, startsWith("Colored+Iron")),
     PACKAGEDAUTO("PackagedAuto", false, startsWith("PackagedAuto")),
     RUNICDUNGEONS("RunicDungeons", false, startsWith("RunicDungeons")),
+    ORESPIDERS("Ore+Spiders", false, startsWith("Ore+Spiders")),
 
     MINENAUTICA("Minenautica", false, startsWith("Minenautica")),
 

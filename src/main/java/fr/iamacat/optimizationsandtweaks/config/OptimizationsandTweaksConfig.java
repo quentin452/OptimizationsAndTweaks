@@ -517,6 +517,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemBlockling;
+    @Config.Comment("Fix null Crash on startup caused by ColoredIron mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinColoredIron;
     @Config.Comment("(todo) Fix https://github.com/quentin452/privates-minecraft-modpack/issues/48 with FamiliarsAPI")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -529,7 +533,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSettings;
-
     @Config.Comment("Fix eternalfrost biomes ids are hardcoded at 255(by removing it) if endlessids ids is installed")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -619,6 +622,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCommonProxyRunicDungeons;
+
+    @Config.Comment("Made sure that EntityID from OreSpiders is above 1000 to prevent crash with unknown mod(Need config helper installed)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityRegistererOreSpiders;
     @Config.Comment("Fix Spam logs when minefactory reloaded is installed with several mod(see the mixin to find which")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

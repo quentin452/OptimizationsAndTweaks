@@ -212,6 +212,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons)
             .and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
+
+    common_orespiders_MixinEntityRegistererOreSpiders(Side.COMMON,
+        require(TargetedMod.ORESPIDERS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRegistererOreSpiders)
+            .and(require(TargetedMod.CONFIGHELPER)),
+        "orespiders.MixinEntityRegistererOreSpiders"),
     common_akatsuki_MixinEntitySasori(Side.COMMON,
         require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),
         "akatsuki.MixinEntitySasori"),
@@ -373,10 +378,12 @@ public enum Mixin implements IMixin {
     common_eternalfrost_MixinEFConfiguration(Side.COMMON,
         require(TargetedMod.ETERNALFROST).and(m -> OptimizationsandTweaksConfig.enableMixinEFConfiguration),
         "eternalfrost.MixinEFConfiguration"),
-
     common_blocklings_MixinItemBlockling(Side.COMMON,
         require(TargetedMod.BLOCKLINGS).and(m -> OptimizationsandTweaksConfig.enableMixinItemBlockling),
         "blocklings.MixinItemBlockling"),
+    common_colorediron_MixinColoredIron(Side.COMMON,
+        require(TargetedMod.COLOREDIRON).and(m -> OptimizationsandTweaksConfig.enableMixinColoredIron),
+        "colorediron.MixinColoredIron"),
     common_nei_MixinWorldOverlayRenderer(Side.COMMON,
         require(TargetedMod.NEI).and(m -> OptimizationsandTweaksConfig.enableMixinWorldOverlayRenderer),
         "nei.MixinWorldOverlayRenderer"),
