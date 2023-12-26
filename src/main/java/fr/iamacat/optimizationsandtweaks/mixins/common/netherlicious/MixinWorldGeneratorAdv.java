@@ -1,19 +1,22 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.netherlicious;
 
-import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
 
 @Mixin(WorldGeneratorAdv.class)
-public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
+public abstract class MixinWorldGeneratorAdv extends WorldGenerator {
+
     @Shadow
     private boolean profiling = false;
     @Shadow
@@ -25,13 +28,14 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
     @Shadow
     private int fillcount = 0;
 
-    public MixinWorldGeneratorAdv() {
-    }
+    public MixinWorldGeneratorAdv() {}
+
     @Shadow
 
     public void setProfiling(boolean profiling) {
         this.profiling = profiling;
     }
+
     @Shadow
     public final void noGen() {
         ++this.callcount;
@@ -56,7 +60,6 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
     @Shadow
     public abstract boolean doGeneration(World var1, Random var2, int var3, int var4, int var5);
 
-
     /**
      * @author
      * @reason
@@ -70,7 +73,15 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
             Block existingBlock = worldObj.getBlock(x, y, z);
             int existingMeta = worldObj.getBlockMetadata(x, y, z);
 
-            if (optimizationsAndTweaks$shouldPlaceBlock(existingBlock, existingMeta, block, metadata, worldObj, x, y, z)) {
+            if (optimizationsAndTweaks$shouldPlaceBlock(
+                existingBlock,
+                existingMeta,
+                block,
+                metadata,
+                worldObj,
+                x,
+                y,
+                z)) {
                 optimizationsAndTweaks$placeNewBlock(worldObj, x, y, z, block, metadata, mask);
                 return true;
             }
@@ -78,27 +89,35 @@ public abstract class MixinWorldGeneratorAdv  extends WorldGenerator {
 
         return false;
     }
+
     @Unique
-    private boolean optimizationsAndTweaks$shouldPlaceBlock(Block existingBlock, int existingMeta, Block block, int metadata, World world, int x, int y, int z) {
-        return (existingBlock != block || existingMeta != metadata) && optimizationsAndTweaks$canPlaceBlock(world, x, y, z);
+    private boolean optimizationsAndTweaks$shouldPlaceBlock(Block existingBlock, int existingMeta, Block block,
+        int metadata, World world, int x, int y, int z) {
+        return (existingBlock != block || existingMeta != metadata)
+            && optimizationsAndTweaks$canPlaceBlock(world, x, y, z);
     }
+
     @Unique
     private boolean optimizationsAndTweaks$canPlaceBlock(World world, int x, int y, int z) {
         return !world.isAirBlock(x, y, z);
     }
+
     @Unique
     private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
         for (int i = -1; i <= 1; i++) {
             for (int k = -1; k <= 1; k++) {
-                if (!world.getChunkProvider().chunkExists(x + i, z + k)) {
+                if (!world.getChunkProvider()
+                    .chunkExists(x + i, z + k)) {
                     return false;
                 }
             }
         }
         return true;
     }
+
     @Unique
-    private void optimizationsAndTweaks$placeNewBlock(World world, int x, int y, int z, Block block, int metadata, int mask) {
+    private void optimizationsAndTweaks$placeNewBlock(World world, int x, int y, int z, Block block, int metadata,
+        int mask) {
         if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, x >> 4, z >> 4)) {
             return;
         }

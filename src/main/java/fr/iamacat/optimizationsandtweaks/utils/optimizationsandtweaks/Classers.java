@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
-import codechicken.nei.api.ItemInfo;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -79,7 +78,9 @@ public class Classers {
             hashCode = 31 * hashCode + stack.stackSize;
             hashCode = 31 * hashCode + Item.getIdFromItem(stack.getItem());
             hashCode = 31 * hashCode + stack.getItemDamage();
-            hashCode = 31 * hashCode + (!stack.hasTagCompound() ? 0 : stack.getTagCompound().hashCode());
+            hashCode = 31 * hashCode + (!stack.hasTagCompound() ? 0
+                : stack.getTagCompound()
+                    .hashCode());
             return hashCode;
         }
 

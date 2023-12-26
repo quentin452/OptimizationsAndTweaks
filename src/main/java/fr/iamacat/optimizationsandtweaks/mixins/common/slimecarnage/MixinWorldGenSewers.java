@@ -24,7 +24,7 @@ import supremopete.SlimeCarnage.mobs.EntityRaphaelSlime;
 import supremopete.SlimeCarnage.worldgen.WorldGenSewers;
 
 @Mixin(WorldGenSewers.class)
-public abstract class MixinWorldGenSewers{
+public abstract class MixinWorldGenSewers {
 
     @Shadow
     protected Block[] GetValidSpawnBlocks() {
@@ -40,7 +40,8 @@ public abstract class MixinWorldGenSewers{
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
 
-        if (!world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+        if (!world.getChunkProvider()
+            .chunkExists(chunkX, chunkZ)) {
             return false;
         }
 
@@ -62,7 +63,6 @@ public abstract class MixinWorldGenSewers{
         return optimizationsAndTweaks$isValidSpawnBlock(block, blockBelow, validSpawnBlocks);
     }
 
-
     @Unique
     private int optimizationsAndTweaks$calculateDistanceToAir(World world, int posX, int posY, int posZ) {
         int maxDistance = 3;
@@ -70,7 +70,8 @@ public abstract class MixinWorldGenSewers{
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
 
-        if (!world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+        if (!world.getChunkProvider()
+            .chunkExists(chunkX, chunkZ)) {
             return -1;
         }
 
@@ -129,6 +130,7 @@ public abstract class MixinWorldGenSewers{
             return false;
         }
     }
+
     @Unique
     public void optimizationsAndTweaks$generate1(World world, Random rand, int i, int j, int k) {
         int j4;
@@ -228,6 +230,7 @@ public abstract class MixinWorldGenSewers{
         world.setBlock(i + 2, j - 13, k - 3, Blocks.iron_bars);
         world.setBlock(i + 2, j - 13, k - 4, Blocks.air);
     }
+
     @Unique
     public void optimizationsAndTweaks$generate2(World world, Random rand, int i, int j, int k) {
         int j3;
@@ -240,8 +243,7 @@ public abstract class MixinWorldGenSewers{
         for (j3 = 0; j3 < 6; ++j3) {
             ItemStack itemstack2 = this.pickCheckLootItem(rand);
             if (itemstack2 != null) {
-                tileentitychest
-                    .setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
+                tileentitychest.setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
             }
         }
 
@@ -309,13 +311,11 @@ public abstract class MixinWorldGenSewers{
         world.setBlock(i + 11, j - 12, k - 7, Blocks.air);
         world.setBlock(i + 11, j - 12, k - 7, Blocks.iron_bars);
         world.setBlock(i + 8, j - 12, k - 3, Blocks.mob_spawner);
-        TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner) world
-            .getTileEntity(i + 8, j - 12, k - 3);
+        TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner) world.getTileEntity(i + 8, j - 12, k - 3);
         tileentitymobspawner1.func_145881_a()
             .setEntityName("SlimeCarnage.FootSoldierSlime");
         world.setBlock(i + 14, j - 12, k - 3, Blocks.mob_spawner);
-        TileEntityMobSpawner tileentitymobspawner2 = (TileEntityMobSpawner) world
-            .getTileEntity(i + 14, j - 12, k - 3);
+        TileEntityMobSpawner tileentitymobspawner2 = (TileEntityMobSpawner) world.getTileEntity(i + 14, j - 12, k - 3);
         tileentitymobspawner2.func_145881_a()
             .setEntityName("SlimeCarnage.FootSoldierSlime");
         world.setBlock(i + 19, j - 13, k - 4, Blocks.chest);
@@ -325,8 +325,7 @@ public abstract class MixinWorldGenSewers{
         for (j8 = 0; j8 < 6; ++j8) {
             ItemStack itemstack2 = this.pickCheckLootItem(rand);
             if (itemstack2 != null) {
-                tileentitychest2
-                    .setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
+                tileentitychest2.setInventorySlotContents(rand.nextInt(tileentitychest.getSizeInventory()), itemstack2);
             }
         }
     }
@@ -485,6 +484,7 @@ public abstract class MixinWorldGenSewers{
         micslime.setLocationAndAngles(i + 21, j - 12, k + 26, 0.0F, 0.0F);
         world.spawnEntityInWorld(micslime);
     }
+
     @Shadow
     private ItemStack pickCheckLootItem(Random random) {
         int i = random.nextInt(31);

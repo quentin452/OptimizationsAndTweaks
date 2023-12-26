@@ -1,23 +1,26 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.netherlicious;
 
-import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.CrystalFormationHangingBig;
-import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.CrystalFormationHangingBig;
+import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
 
 @Mixin(CrystalFormationHangingBig.class)
 public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv {
+
     @Shadow
-    static final byte[] otherCoordPairs = new byte[]{2, 0, 0, 1, 2, 1};
+    static final byte[] otherCoordPairs = new byte[] { 2, 0, 0, 1, 2, 1 };
     @Shadow
     private World worldObj;
     @Shadow
@@ -30,11 +33,13 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
     int[] crystalbase;
     @Shadow
     int baserange;
+
     @Unique
     private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
         for (int i = -1; i <= 1; i++) {
             for (int k = -1; k <= 1; k++) {
-                if (!world.getChunkProvider().chunkExists(x + i, z + k)) {
+                if (!world.getChunkProvider()
+                    .chunkExists(x + i, z + k)) {
                     return false;
                 }
             }
@@ -63,25 +68,26 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
             }
         }
     }
+
     @Unique
     private boolean optimizationsAndTweaks$gisInvalidBlock(World world, int x, int y, int z) {
         if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, x >> 4, z >> 4)) {
             return false;
         }
         Block blockAtPos = world.getBlock(x, y, z);
-        return blockAtPos == Blocks.bedrock
-            || blockAtPos == block
+        return blockAtPos == Blocks.bedrock || blockAtPos == block
             || blockAtPos == Blocks.nether_brick
             || blockAtPos == Blocks.nether_brick_fence
             || blockAtPos == Blocks.mob_spawner;
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     void placeBlockLine(Random random, int[] ai, int[] ai1) {
-        int[] ai2 = new int[]{0, 0, 0};
+        int[] ai2 = new int[] { 0, 0, 0 };
         byte byte0 = 0;
 
         byte j = 0;
@@ -99,13 +105,13 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
 
             double d = (double) ai2[byte1] / (double) ai2[j];
             double d1 = (double) ai2[byte2] / (double) ai2[j];
-            int[] ai3 = new int[]{0, 0, 0};
+            int[] ai3 = new int[] { 0, 0, 0 };
             int k = 0;
 
             for (int l = ai2[j] + byte3; k != l; k += byte3) {
-                ai3[j] = MathHelper.floor_double( (ai[j] + k) + 0.5);
+                ai3[j] = MathHelper.floor_double((ai[j] + k) + 0.5);
                 ai3[byte1] = MathHelper.floor_double(ai[byte1] + k * d + 0.5);
-                ai3[byte2] = MathHelper.floor_double( ai[byte2] + k * d1 + 0.5);
+                ai3[byte2] = MathHelper.floor_double(ai[byte2] + k * d1 + 0.5);
 
                 if (optimizationsAndTweaks$isNearbyChunksLoaded(worldObj, ai3[0] >> 4, ai3[2] >> 4)) {
                     drawSphere(random, ai3[0], ai3[1], ai3[2]);
@@ -115,6 +121,7 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -125,33 +132,34 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
 
         chunk = worldObj.getChunkFromBlockCoords(i, k);
         if (chunk != null && chunk.isChunkLoaded) {
-        this.setBlock(this.worldObj, random, i, j, k, 3);
-        this.setBlock(this.worldObj, random, i + 1, j, k, 3);
-        this.setBlock(this.worldObj, random, i - 1, j, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i + 1, j + 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i - 1, j + 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i + 1, j - 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i - 1, j - 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i + 1, j, k + 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i - 1, j, k + 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i + 1, j, k - 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i - 1, j, k - 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i + 2, j, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i - 2, j, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j + 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j - 1, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j + 2, k, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j - 2, k, 3);
-        this.setBlock(this.worldObj, random, i, j, k + 1, 3);
-        this.setBlock(this.worldObj, random, i, j, k - 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j + 1, k + 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j + 1, k - 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j - 1, k + 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j - 1, k - 1, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j, k + 2, 3);
-        this.placeRandomBlock(this.worldObj, random, i, j, k - 2, 3);
+            this.setBlock(this.worldObj, random, i, j, k, 3);
+            this.setBlock(this.worldObj, random, i + 1, j, k, 3);
+            this.setBlock(this.worldObj, random, i - 1, j, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i + 1, j + 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i - 1, j + 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i + 1, j - 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i - 1, j - 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i + 1, j, k + 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i - 1, j, k + 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i + 1, j, k - 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i - 1, j, k - 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i + 2, j, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i - 2, j, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j + 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j - 1, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j + 2, k, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j - 2, k, 3);
+            this.setBlock(this.worldObj, random, i, j, k + 1, 3);
+            this.setBlock(this.worldObj, random, i, j, k - 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j + 1, k + 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j + 1, k - 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j - 1, k + 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j - 1, k - 1, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j, k + 2, 3);
+            this.placeRandomBlock(this.worldObj, random, i, j, k - 2, 3);
         }
     }
+
     /**
      * @author
      * @reason

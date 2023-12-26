@@ -1,21 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.netherlicious;
 
-import DelirusCrux.Netherlicious.Common.BlockItemUtility.ModBlocks;
-import DelirusCrux.Netherlicious.World.Features.Terrain.RuptureSpike;
-import net.minecraft.block.Block;
+import java.util.Random;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import DelirusCrux.Netherlicious.Common.BlockItemUtility.ModBlocks;
+import DelirusCrux.Netherlicious.World.Features.Terrain.RuptureSpike;
 
 @Mixin(RuptureSpike.class)
 public abstract class MixinRuptureSpike extends WorldGenerator {
+
     @Shadow
     private int minWidth;
     @Shadow
@@ -24,6 +26,7 @@ public abstract class MixinRuptureSpike extends WorldGenerator {
     private int MinHeight;
     @Shadow
     private int Height;
+
     /**
      * @author
      * @reason
@@ -47,30 +50,35 @@ public abstract class MixinRuptureSpike extends WorldGenerator {
     }
 
     @Unique
-    private void optimizationsAndTweaks$processSphere(World world, Random random, int posX, int posY, int posZ, int sphereWidth) {
+    private void optimizationsAndTweaks$processSphere(World world, Random random, int posX, int posY, int posZ,
+        int sphereWidth) {
         for (int i1 = posX - sphereWidth; i1 <= posX + sphereWidth; ++i1) {
             for (int j1 = posY - sphereWidth; j1 <= posY + sphereWidth; ++j1) {
                 for (int k1 = posZ - sphereWidth; k1 <= posZ + sphereWidth; ++k1) {
-                    optimizationsAndTweaks$checkSphereArea( world, i1, j1, k1, sphereWidth, random);
+                    optimizationsAndTweaks$checkSphereArea(world, i1, j1, k1, sphereWidth, random);
                 }
             }
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$checkSphereArea(World world, int i1, int j1, int k1, int sphereWidth, Random random) {
+    private void optimizationsAndTweaks$checkSphereArea(World world, int i1, int j1, int k1, int sphereWidth,
+        Random random) {
         int dist = i1 * i1 + j1 * j1 + k1 * k1;
 
-        if (dist < sphereWidth * sphereWidth || (dist < (sphereWidth + 1) * (sphereWidth + 1) && random.nextInt(3) == 0)) {
+        if (dist < sphereWidth * sphereWidth
+            || (dist < (sphereWidth + 1) * (sphereWidth + 1) && random.nextInt(3) == 0)) {
             int j3 = j1;
             while (j3 >= 0) {
                 if (world.checkChunksExist(i1, j3, k1, i1, j3, k1)) {
-                    if (!optimizationsAndTweaks$isOpaqueCube(world, i1, j3, k1) || optimizationsAndTweaks$isLava(world, i1, j3, k1)) {
+                    if (!optimizationsAndTweaks$isOpaqueCube(world, i1, j3, k1)
+                        || optimizationsAndTweaks$isLava(world, i1, j3, k1)) {
                         j3--;
                         continue;
                     }
 
-                    if (optimizationsAndTweaks$isAirOrNetherBrick(world, i1, j3, k1) || optimizationsAndTweaks$isLavaMaterial(world, i1, j3, k1)) {
+                    if (optimizationsAndTweaks$isAirOrNetherBrick(world, i1, j3, k1)
+                        || optimizationsAndTweaks$isLavaMaterial(world, i1, j3, k1)) {
                         placeRandomBlackstone(world, random, i1, j3, k1);
                     }
                 }
@@ -81,19 +89,25 @@ public abstract class MixinRuptureSpike extends WorldGenerator {
 
     @Unique
     private boolean optimizationsAndTweaks$isOpaqueCube(World world, int x, int y, int z) {
-        return world.getBlock(x, y, z).isOpaqueCube();
+        return world.getBlock(x, y, z)
+            .isOpaqueCube();
     }
+
     @Unique
     private boolean optimizationsAndTweaks$isLava(World world, int x, int y, int z) {
         return world.getBlock(x, y, z) == Blocks.lava;
     }
+
     @Unique
     private boolean optimizationsAndTweaks$isAirOrNetherBrick(World world, int x, int y, int z) {
         return world.getBlock(x, y, z) == Blocks.air && world.getBlock(x, y - 1, z) != Blocks.nether_brick;
     }
+
     @Unique
     private boolean optimizationsAndTweaks$isLavaMaterial(World world, int x, int y, int z) {
-        return world.getBlock(x, y, z).getMaterial().isLiquid();
+        return world.getBlock(x, y, z)
+            .getMaterial()
+            .isLiquid();
     }
 
     /**

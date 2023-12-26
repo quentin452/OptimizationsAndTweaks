@@ -884,7 +884,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
      * @author
      * @reason
      */
-    //@Overwrite idk why but now this method causing crash so not injected
+    // @Overwrite idk why but now this method causing crash so not injected
     public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn) {
         FMLClientHandler.instance()
             .startIntegratedServer(folderName, worldName, worldSettingsIn);

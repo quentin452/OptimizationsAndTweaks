@@ -495,8 +495,7 @@ public enum Mixin implements IMixin {
         "slimecarnage.MixinWorldGenSewers"),
 
     common_slimecarnage_MixinWorldGenMadLab(Side.COMMON,
-        require(TargetedMod.SLIMECARNAGE)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMadLab),
+        require(TargetedMod.SLIMECARNAGE).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMadLab),
         "slimecarnage.MixinWorldGenMadLab"),
     common_familliarsAPI_MixinFamiliar(Side.COMMON,
         require(TargetedMod.FAMILIARSAPI).and(m -> OptimizationsandTweaksConfig.enableMixinFamiliar),

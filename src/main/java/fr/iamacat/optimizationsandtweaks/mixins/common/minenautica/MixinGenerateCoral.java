@@ -378,7 +378,9 @@ public class MixinGenerateCoral {
         float maxInvalidBlocks = (length * width) * (1.0F / maxInvalidBlocksIndex);
         return invalidBlocks <= maxInvalidBlocks;
     }
+
     int icreateCoralCluster;
+
     /**
      * @author
      * @reason
@@ -398,7 +400,8 @@ public class MixinGenerateCoral {
         ++storedBlocksIndex;
 
         for (icreateCoralCluster = 0; icreateCoralCluster < storedBlocks.length
-            && (storedBlocks[icreateCoralCluster][0] != 0 || storedBlocks[icreateCoralCluster][1] != 0 || storedBlocks[icreateCoralCluster][2] != 0)
+            && (storedBlocks[icreateCoralCluster][0] != 0 || storedBlocks[icreateCoralCluster][1] != 0
+                || storedBlocks[icreateCoralCluster][2] != 0)
             && storedBlocksIndex < 490; ++icreateCoralCluster) {
             int[] positionArray;
             boolean flag;
@@ -411,28 +414,94 @@ public class MixinGenerateCoral {
             int blockToSetInsideIndex;
             Block blockToSetSpawnInside;
             int canSpawnProbibility;
-            if (world.getBlock(storedBlocks[icreateCoralCluster][0] - 1, storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2]) != null
-                && world.getBlock(storedBlocks[icreateCoralCluster][0] - 1, storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2])
+            if (world.getBlock(
+                storedBlocks[icreateCoralCluster][0] - 1,
+                storedBlocks[icreateCoralCluster][1] - 1,
+                storedBlocks[icreateCoralCluster][2]) != null
+                && world
+                    .getBlock(
+                        storedBlocks[icreateCoralCluster][0] - 1,
+                        storedBlocks[icreateCoralCluster][1] - 1,
+                        storedBlocks[icreateCoralCluster][2])
                     .getMaterial() != Material.water) {
-                optimizationsAndTweaks$CoralCluster1(world, random, x, y, z, coralTypes,  size, doesBlockAboveHaveToBeWater,  shouldReplaceBlocks);
+                optimizationsAndTweaks$CoralCluster1(
+                    world,
+                    random,
+                    x,
+                    y,
+                    z,
+                    coralTypes,
+                    size,
+                    doesBlockAboveHaveToBeWater,
+                    shouldReplaceBlocks);
             }
 
-            if (world.getBlock(storedBlocks[icreateCoralCluster][0] + 1, storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2]) != null
-                && world.getBlock(storedBlocks[icreateCoralCluster][0] + 1, storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2])
+            if (world.getBlock(
+                storedBlocks[icreateCoralCluster][0] + 1,
+                storedBlocks[icreateCoralCluster][1] - 1,
+                storedBlocks[icreateCoralCluster][2]) != null
+                && world
+                    .getBlock(
+                        storedBlocks[icreateCoralCluster][0] + 1,
+                        storedBlocks[icreateCoralCluster][1] - 1,
+                        storedBlocks[icreateCoralCluster][2])
                     .getMaterial() != Material.water) {
-                optimizationsAndTweaks$CoralCluster2(world, random, x, y, z, coralTypes,  size, doesBlockAboveHaveToBeWater,  shouldReplaceBlocks);
+                optimizationsAndTweaks$CoralCluster2(
+                    world,
+                    random,
+                    x,
+                    y,
+                    z,
+                    coralTypes,
+                    size,
+                    doesBlockAboveHaveToBeWater,
+                    shouldReplaceBlocks);
 
             }
 
-            if (world.getBlock(storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2] - 1) != null
-                && world.getBlock(storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2] - 1)
+            if (world.getBlock(
+                storedBlocks[icreateCoralCluster][0],
+                storedBlocks[icreateCoralCluster][1] - 1,
+                storedBlocks[icreateCoralCluster][2] - 1) != null
+                && world
+                    .getBlock(
+                        storedBlocks[icreateCoralCluster][0],
+                        storedBlocks[icreateCoralCluster][1] - 1,
+                        storedBlocks[icreateCoralCluster][2] - 1)
                     .getMaterial() != Material.water) {
-                optimizationsAndTweaks$CoralCluster3(world, random, x, y, z, coralTypes,  size, doesBlockAboveHaveToBeWater,  shouldReplaceBlocks);
+                optimizationsAndTweaks$CoralCluster3(
+                    world,
+                    random,
+                    x,
+                    y,
+                    z,
+                    coralTypes,
+                    size,
+                    doesBlockAboveHaveToBeWater,
+                    shouldReplaceBlocks);
 
             }
 
-            if (world.getBlock(storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2] + 1) != null && world.getBlock(storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1] - 1, storedBlocks[icreateCoralCluster][2] + 1).getMaterial() != Material.water) {
-                optimizationsAndTweaks$CoralCluster4(world, random, x, y, z, coralTypes,  size, doesBlockAboveHaveToBeWater,  shouldReplaceBlocks);
+            if (world.getBlock(
+                storedBlocks[icreateCoralCluster][0],
+                storedBlocks[icreateCoralCluster][1] - 1,
+                storedBlocks[icreateCoralCluster][2] + 1) != null
+                && world
+                    .getBlock(
+                        storedBlocks[icreateCoralCluster][0],
+                        storedBlocks[icreateCoralCluster][1] - 1,
+                        storedBlocks[icreateCoralCluster][2] + 1)
+                    .getMaterial() != Material.water) {
+                optimizationsAndTweaks$CoralCluster4(
+                    world,
+                    random,
+                    x,
+                    y,
+                    z,
+                    coralTypes,
+                    size,
+                    doesBlockAboveHaveToBeWater,
+                    shouldReplaceBlocks);
             }
         }
     }
@@ -442,8 +511,8 @@ public class MixinGenerateCoral {
      * @reason
      */
     @Unique
-    private void optimizationsAndTweaks$CoralCluster1(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size,
-                                                      boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
+    private void optimizationsAndTweaks$CoralCluster1(World world, Random random, int x, int y, int z,
+        Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
 
         int[] positionArray;
         boolean flag;
@@ -466,7 +535,8 @@ public class MixinGenerateCoral {
         int[] positionArray1 = new int[] { x, y, z };
         storedBlocks[storedBlocksIndex] = positionArray1;
         ++storedBlocksIndex;
-        positionArray = new int[] { storedBlocks[icreateCoralCluster][0] - 1, storedBlocks[icreateCoralCluster][1], storedBlocks[icreateCoralCluster][2] };
+        positionArray = new int[] { storedBlocks[icreateCoralCluster][0] - 1, storedBlocks[icreateCoralCluster][1],
+            storedBlocks[icreateCoralCluster][2] };
         flag = false;
 
         for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
@@ -506,44 +576,32 @@ public class MixinGenerateCoral {
                     if (doesBlockAboveHaveToBeWater) {
                         if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
-                            == BlocksAndItems.saltWater
+                                == BlocksAndItems.saltWater
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
-                            != blockToSetSpawnInside) {
-                            world.setBlock(
-                                positionArray[0],
-                                positionArray[1],
-                                positionArray[2],
-                                blockToSetSpawnInside);
+                                != blockToSetSpawnInside) {
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                             storedBlocks[storedBlocksIndex] = positionArray;
                             ++storedBlocksIndex;
                         }
                     } else if (shouldReplaceBlocks) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
+                        world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                         storedBlocks[storedBlocksIndex] = positionArray;
                         ++storedBlocksIndex;
                     } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
                         == BlocksAndItems.saltWater) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
-                        storedBlocks[storedBlocksIndex] = positionArray;
-                        ++storedBlocksIndex;
-                    }
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                            storedBlocks[storedBlocksIndex] = positionArray;
+                            ++storedBlocksIndex;
+                        }
                 }
             }
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$CoralCluster2(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size,
-                                                      boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
+    private void optimizationsAndTweaks$CoralCluster2(World world, Random random, int x, int y, int z,
+        Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
         int[] positionArray;
         boolean flag;
         int distanceFromCoral;
@@ -565,7 +623,8 @@ public class MixinGenerateCoral {
         int[] positionArray1 = new int[] { x, y, z };
         storedBlocks[storedBlocksIndex] = positionArray1;
         ++storedBlocksIndex;
-        positionArray = new int[] { storedBlocks[icreateCoralCluster][0] + 1, storedBlocks[icreateCoralCluster][1], storedBlocks[icreateCoralCluster][2] };
+        positionArray = new int[] { storedBlocks[icreateCoralCluster][0] + 1, storedBlocks[icreateCoralCluster][1],
+            storedBlocks[icreateCoralCluster][2] };
         flag = false;
 
         for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
@@ -605,44 +664,32 @@ public class MixinGenerateCoral {
                     if (doesBlockAboveHaveToBeWater) {
                         if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
-                            == BlocksAndItems.saltWater
+                                == BlocksAndItems.saltWater
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
-                            != blockToSetSpawnInside) {
-                            world.setBlock(
-                                positionArray[0],
-                                positionArray[1],
-                                positionArray[2],
-                                blockToSetSpawnInside);
+                                != blockToSetSpawnInside) {
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                             storedBlocks[storedBlocksIndex] = positionArray;
                             ++storedBlocksIndex;
                         }
                     } else if (shouldReplaceBlocks) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
+                        world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                         storedBlocks[storedBlocksIndex] = positionArray;
                         ++storedBlocksIndex;
                     } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
                         == BlocksAndItems.saltWater) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
-                        storedBlocks[storedBlocksIndex] = positionArray;
-                        ++storedBlocksIndex;
-                    }
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                            storedBlocks[storedBlocksIndex] = positionArray;
+                            ++storedBlocksIndex;
+                        }
                 }
             }
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$CoralCluster3(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size,
-                                                      boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
+    private void optimizationsAndTweaks$CoralCluster3(World world, Random random, int x, int y, int z,
+        Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
         int[] positionArray;
         boolean flag;
         int distanceFromCoral;
@@ -664,7 +711,8 @@ public class MixinGenerateCoral {
         int[] positionArray1 = new int[] { x, y, z };
         storedBlocks[storedBlocksIndex] = positionArray1;
         ++storedBlocksIndex;
-        positionArray = new int[] { storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1], storedBlocks[icreateCoralCluster][2] - 1 };
+        positionArray = new int[] { storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1],
+            storedBlocks[icreateCoralCluster][2] - 1 };
         flag = false;
 
         for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
@@ -704,44 +752,32 @@ public class MixinGenerateCoral {
                     if (doesBlockAboveHaveToBeWater) {
                         if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
-                            == BlocksAndItems.saltWater
+                                == BlocksAndItems.saltWater
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
-                            != blockToSetSpawnInside) {
-                            world.setBlock(
-                                positionArray[0],
-                                positionArray[1],
-                                positionArray[2],
-                                blockToSetSpawnInside);
+                                != blockToSetSpawnInside) {
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                             storedBlocks[storedBlocksIndex] = positionArray;
                             ++storedBlocksIndex;
                         }
                     } else if (shouldReplaceBlocks) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
+                        world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                         storedBlocks[storedBlocksIndex] = positionArray;
                         ++storedBlocksIndex;
                     } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
                         == BlocksAndItems.saltWater) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
-                        storedBlocks[storedBlocksIndex] = positionArray;
-                        ++storedBlocksIndex;
-                    }
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                            storedBlocks[storedBlocksIndex] = positionArray;
+                            ++storedBlocksIndex;
+                        }
                 }
             }
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$CoralCluster4(World world, Random random, int x, int y, int z, Block[][] coralTypes, float size,
-                                                      boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
+    private void optimizationsAndTweaks$CoralCluster4(World world, Random random, int x, int y, int z,
+        Block[][] coralTypes, float size, boolean doesBlockAboveHaveToBeWater, boolean shouldReplaceBlocks) {
         int[] positionArray;
         boolean flag;
         int distanceFromCoral;
@@ -763,7 +799,8 @@ public class MixinGenerateCoral {
         int[] positionArray1 = new int[] { x, y, z };
         storedBlocks[storedBlocksIndex] = positionArray1;
         ++storedBlocksIndex;
-        positionArray = new int[] { storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1], storedBlocks[icreateCoralCluster][2] + 1 };
+        positionArray = new int[] { storedBlocks[icreateCoralCluster][0], storedBlocks[icreateCoralCluster][1],
+            storedBlocks[icreateCoralCluster][2] + 1 };
         flag = false;
 
         for (distanceFromCoral = 0; distanceFromCoral < storedBlocks.length; ++distanceFromCoral) {
@@ -803,36 +840,24 @@ public class MixinGenerateCoral {
                     if (doesBlockAboveHaveToBeWater) {
                         if (world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] + 1, positionArray[2])
-                            == BlocksAndItems.saltWater
+                                == BlocksAndItems.saltWater
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2]) != null
                             && world.getBlock(positionArray[0], positionArray[1] - 1, positionArray[2])
-                            != blockToSetSpawnInside) {
-                            world.setBlock(
-                                positionArray[0],
-                                positionArray[1],
-                                positionArray[2],
-                                blockToSetSpawnInside);
+                                != blockToSetSpawnInside) {
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                             storedBlocks[storedBlocksIndex] = positionArray;
                             ++storedBlocksIndex;
                         }
                     } else if (shouldReplaceBlocks) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
+                        world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
                         storedBlocks[storedBlocksIndex] = positionArray;
                         ++storedBlocksIndex;
                     } else if (world.getBlock(positionArray[0], positionArray[1], positionArray[2])
                         == BlocksAndItems.saltWater) {
-                        world.setBlock(
-                            positionArray[0],
-                            positionArray[1],
-                            positionArray[2],
-                            blockToSetSpawnInside);
-                        storedBlocks[storedBlocksIndex] = positionArray;
-                        ++storedBlocksIndex;
-                    }
+                            world.setBlock(positionArray[0], positionArray[1], positionArray[2], blockToSetSpawnInside);
+                            storedBlocks[storedBlocksIndex] = positionArray;
+                            ++storedBlocksIndex;
+                        }
                 }
             }
         }

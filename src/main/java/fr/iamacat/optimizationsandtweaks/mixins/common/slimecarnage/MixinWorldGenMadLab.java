@@ -1,15 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.slimecarnage;
 
+import java.util.Random;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
 import supremopete.SlimeCarnage.mobs.*;
 import supremopete.SlimeCarnage.worldgen.WorldGenMadLab;
-
-import java.util.Random;
 
 @Mixin(WorldGenMadLab.class)
 public class MixinWorldGenMadLab {
@@ -23,16 +25,21 @@ public class MixinWorldGenMadLab {
         int chunkX = i >> 4;
         int chunkZ = k >> 4;
 
-        if (i >= 0 && i < 16 && k >= 0 && k < 16 && j >= 0 && j < 256 &&
-            chunkX * 16 == i && chunkZ * 16 == k &&
-            world.getBlock(i, j, k) == Blocks.grass &&
-            world.getBlock(i, j + 1, k) == Blocks.air &&
-            world.getBlock(i + 4, j, k) == Blocks.grass &&
-            world.getBlock(i + 4, j, k + 4) == Blocks.grass &&
-            world.getBlock(i, j, k + 4) == Blocks.grass &&
-            world.getBlock(i + 4, j + 1, k) == Blocks.air &&
-            world.getBlock(i + 4, j + 1, k + 4) == Blocks.air &&
-            world.getBlock(i, j + 1, k + 4) == Blocks.air) {
+        if (i >= 0 && i < 16
+            && k >= 0
+            && k < 16
+            && j >= 0
+            && j < 256
+            && chunkX * 16 == i
+            && chunkZ * 16 == k
+            && world.getBlock(i, j, k) == Blocks.grass
+            && world.getBlock(i, j + 1, k) == Blocks.air
+            && world.getBlock(i + 4, j, k) == Blocks.grass
+            && world.getBlock(i + 4, j, k + 4) == Blocks.grass
+            && world.getBlock(i, j, k + 4) == Blocks.grass
+            && world.getBlock(i + 4, j + 1, k) == Blocks.air
+            && world.getBlock(i + 4, j + 1, k + 4) == Blocks.air
+            && world.getBlock(i, j + 1, k + 4) == Blocks.air) {
 
             optimizationsAndTweaks$generate1(world, rand, i, j, k);
             optimizationsAndTweaks$generate2(world, rand, i, j, k);
@@ -42,63 +49,64 @@ public class MixinWorldGenMadLab {
             return false;
         }
     }
+
     @Unique
     public void optimizationsAndTweaks$generate1(World world, Random rand, int i, int j, int k) {
         int i7;
         int k7;
         int dunno;
-        for(i7 = -10; i7 < 5; ++i7) {
-            for(k7 = 1; k7 < 4; ++k7) {
-                for(dunno = 1; dunno < 4; ++dunno) {
+        for (i7 = -10; i7 < 5; ++i7) {
+            for (k7 = 1; k7 < 4; ++k7) {
+                for (dunno = 1; dunno < 4; ++dunno) {
                     world.setBlock(i + k7, j + i7, k + dunno, Blocks.stone);
                 }
             }
         }
 
-        for(i7 = -10; i7 < -5; ++i7) {
-            for(k7 = -4; k7 < 9; ++k7) {
-                for(dunno = 1; dunno < 17; ++dunno) {
+        for (i7 = -10; i7 < -5; ++i7) {
+            for (k7 = -4; k7 < 9; ++k7) {
+                for (dunno = 1; dunno < 17; ++dunno) {
                     world.setBlock(i + k7, j + i7, k + dunno, Blocks.stone);
                 }
             }
         }
 
-        for(i7 = 5; i7 < 10; ++i7) {
-            for(k7 = 1; k7 < 4; ++k7) {
-                for(dunno = 1; dunno < 4; ++dunno) {
+        for (i7 = 5; i7 < 10; ++i7) {
+            for (k7 = 1; k7 < 4; ++k7) {
+                for (dunno = 1; dunno < 4; ++dunno) {
                     world.setBlock(i + k7, j + i7, k + dunno, Blocks.air);
                 }
             }
         }
 
-        for(i7 = -9; i7 < 4; ++i7) {
+        for (i7 = -9; i7 < 4; ++i7) {
             world.setBlock(i + 2, j + i7, k + 2, Blocks.air);
         }
 
-        for(i7 = -10; i7 < -5; ++i7) {
-            for(k7 = -4; k7 < 9; ++k7) {
-                for(dunno = 1; dunno < 17; ++dunno) {
+        for (i7 = -10; i7 < -5; ++i7) {
+            for (k7 = -4; k7 < 9; ++k7) {
+                for (dunno = 1; dunno < 17; ++dunno) {
                     world.setBlock(i + k7, j + i7, k + dunno, Blocks.stone);
                 }
             }
         }
 
-        for(i7 = -9; i7 < -6; ++i7) {
-            for(k7 = -3; k7 < 8; ++k7) {
-                for(dunno = 2; dunno < 16; ++dunno) {
+        for (i7 = -9; i7 < -6; ++i7) {
+            for (k7 = -3; k7 < 8; ++k7) {
+                for (dunno = 2; dunno < 16; ++dunno) {
                     world.setBlock(i + k7, j + i7, k + dunno, Blocks.air);
                 }
             }
         }
 
-        for(i7 = -4; i7 < 9; ++i7) {
-            for(k7 = 1; k7 < 17; ++k7) {
+        for (i7 = -4; i7 < 9; ++i7) {
+            for (k7 = 1; k7 < 17; ++k7) {
                 world.setBlock(i + i7, j - 10, k + k7, Blocks.air);
             }
         }
 
-        for(i7 = -4; i7 < 9; ++i7) {
-            for(k7 = 1; k7 < 17; ++k7) {
+        for (i7 = -4; i7 < 9; ++i7) {
+            for (k7 = 1; k7 < 17; ++k7) {
                 dunno = rand.nextInt(2);
                 if (dunno == 0) {
                     world.setBlock(i + i7, j - 10, k + k7, Blocks.cobblestone);
@@ -108,6 +116,7 @@ public class MixinWorldGenMadLab {
             }
         }
     }
+
     @Unique
     public void optimizationsAndTweaks$generate2(World world, Random rand, int i, int j, int k) {
         world.setBlock(i + 1, j + 1, k + 2, Blocks.air);
@@ -286,52 +295,53 @@ public class MixinWorldGenMadLab {
         world.setBlock(i + 3, j - 7, k + 13, Blocks.torch);
         world.setBlock(i + 2, j + 0, k + 2, Blocks.air);
     }
+
     @Unique
     public void optimizationsAndTweaks$generate3(World world, Random rand, int i, int j, int k) {
         int i7;
-        for(i7 = -9; i7 < 1; ++i7) {
+        for (i7 = -9; i7 < 1; ++i7) {
             world.setBlock(i + 2, j + i7, k + 2, Blocks.ladder);
             world.setBlockMetadataWithNotify(i + 2, j + i7, k + 2, 3, 2);
         }
 
         world.setBlock(i + 3, j - 7, k + 15, Blocks.wall_sign);
         world.setBlockMetadataWithNotify(i + 3, j - 7, k + 15, 2, 2);
-        TileEntitySign tileentitysign3 = (TileEntitySign)world.getTileEntity(i + 3, j - 7, k + 15);
+        TileEntitySign tileentitysign3 = (TileEntitySign) world.getTileEntity(i + 3, j - 7, k + 15);
         tileentitysign3.signText[0] = "Experiment 1:";
         tileentitysign3.signText[1] = "Slime weakening";
         tileentitysign3.signText[2] = "FAILED";
         world.setBlock(i + 3, j - 8, k + 15, Blocks.wall_sign);
         world.setBlockMetadataWithNotify(i + 3, j - 8, k + 15, 2, 2);
-        TileEntitySign tileentitysign4 = (TileEntitySign)world.getTileEntity(i + 3, j - 8, k + 15);
+        TileEntitySign tileentitysign4 = (TileEntitySign) world.getTileEntity(i + 3, j - 8, k + 15);
         tileentitysign4.signText[0] = "Experiment 2:";
         tileentitysign4.signText[1] = "Slime melting";
         tileentitysign4.signText[2] = "FAILED";
         world.setBlock(i + 1, j - 7, k + 15, Blocks.wall_sign);
         world.setBlockMetadataWithNotify(i + 1, j - 7, k + 15, 2, 2);
-        TileEntitySign tileentitysign5 = (TileEntitySign)world.getTileEntity(i + 1, j - 7, k + 15);
+        TileEntitySign tileentitysign5 = (TileEntitySign) world.getTileEntity(i + 1, j - 7, k + 15);
         tileentitysign5.signText[0] = "Experiment 3:";
         tileentitysign5.signText[1] = "Slime exploding";
         tileentitysign5.signText[2] = "FAILED";
         world.setBlock(i + 1, j - 8, k + 15, Blocks.wall_sign);
         world.setBlockMetadataWithNotify(i + 1, j - 8, k + 15, 2, 2);
-        TileEntitySign tileentitysign6 = (TileEntitySign)world.getTileEntity(i + 1, j - 8, k + 15);
+        TileEntitySign tileentitysign6 = (TileEntitySign) world.getTileEntity(i + 1, j - 8, k + 15);
         tileentitysign6.signText[0] = "Experiment 4:";
         tileentitysign6.signText[1] = "Slime travel";
         tileentitysign6.signText[2] = "Minor success";
         EntityDocSlime docslime = new EntityDocSlime(world);
-        docslime.setLocationAndAngles((double)(i + 2), (double)(j - 9), (double)(k + 7), 0.0F, 0.0F);
+        docslime.setLocationAndAngles((double) (i + 2), (double) (j - 9), (double) (k + 7), 0.0F, 0.0F);
         world.spawnEntityInWorld(docslime);
         EntityOrangeSlime orslime = new EntityOrangeSlime(world);
-        orslime.setLocationAndAngles((double)(i - 2), (double)(j - 9), (double)(k + 6), 0.0F, 0.0F);
+        orslime.setLocationAndAngles((double) (i - 2), (double) (j - 9), (double) (k + 6), 0.0F, 0.0F);
         world.spawnEntityInWorld(orslime);
         EntityRedSlime plslime = new EntityRedSlime(world);
-        plslime.setLocationAndAngles((double)(i + 5), (double)(j - 9), (double)(k + 6), 0.0F, 0.0F);
+        plslime.setLocationAndAngles((double) (i + 5), (double) (j - 9), (double) (k + 6), 0.0F, 0.0F);
         world.spawnEntityInWorld(plslime);
         EntityBlueSlime hislime = new EntityBlueSlime(world);
-        hislime.setLocationAndAngles((double)(i + 5), (double)(j - 9), (double)(k + 12), 0.0F, 0.0F);
+        hislime.setLocationAndAngles((double) (i + 5), (double) (j - 9), (double) (k + 12), 0.0F, 0.0F);
         world.spawnEntityInWorld(hislime);
         EntityVillagerSlime vslime = new EntityVillagerSlime(world);
-        vslime.setLocationAndAngles((double)(i - 2), (double)(j - 9), (double)(k + 2), 0.0F, 0.0F);
+        vslime.setLocationAndAngles((double) (i - 2), (double) (j - 9), (double) (k + 2), 0.0F, 0.0F);
         world.spawnEntityInWorld(vslime);
     }
 }
