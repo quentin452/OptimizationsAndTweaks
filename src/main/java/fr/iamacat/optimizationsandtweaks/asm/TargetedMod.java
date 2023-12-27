@@ -33,6 +33,7 @@ public enum TargetedMod implements ITargetedMod {
     PACKAGEDAUTO("PackagedAuto", false, startsWith("PackagedAuto")),
     RUNICDUNGEONS("RunicDungeons", false, startsWith("RunicDungeons")),
     ORESPIDERS("Ore+Spiders", false, startsWith("Ore+Spiders")),
+    TRAINCRAFT("Traincraft", false, startsWith("Traincraft")),
 
     MINENAUTICA("Minenautica", false, startsWith("Minenautica")),
 
@@ -119,6 +120,8 @@ public enum TargetedMod implements ITargetedMod {
     BLENDTRONIC("blendtronic", false, startsWith("blendtronic")),
     WITCHERY("witchery-", false, startsWith("witchery-")),
     WITCHERYY("witchery", false, startsWith("witchery")),
+    SYNC("Sync", false, startsWith("Sync")),
+    ICHUNUTIL("iChunUtil", false, startsWith("iChunUtil")),
 
     JEWELRYCRAFT2("Jewelrycraft2", false, startsWith("Jewelrycraft2")),
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),

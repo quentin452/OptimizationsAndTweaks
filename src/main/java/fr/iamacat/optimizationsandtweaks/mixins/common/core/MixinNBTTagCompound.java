@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.nbt.NBTBase;
@@ -44,5 +45,22 @@ public abstract class MixinNBTTagCompound extends NBTBase {
     public byte func_150299_b(String key) {
         NBTBase nbtbase = (NBTBase) this.tagMap.get(key);
         return nbtbase != null ? nbtbase.getId() : 0;
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Override
+    public NBTBase copy() {
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+
+        for (Map.Entry<String, NBTBase> entry : (Iterable<Map.Entry<String, NBTBase>>) this.tagMap.entrySet()) {
+            String key = entry.getKey();
+            NBTBase value = entry.getValue();
+            nbttagcompound.setTag(key, value.copy());
+        }
+
+        return nbttagcompound;
     }
 }

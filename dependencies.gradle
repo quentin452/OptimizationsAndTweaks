@@ -85,6 +85,7 @@ dependencies {
     implementation "curse.maven:not-enough-pets-322159:4460610-deobf-sources-api"
     implementation "curse.maven:aether-255308:3280117-deobf-sources-api"
     implementation "curse.maven:practical-logistics-240562:2306263-deobf-sources-api"
+    implementation "curse.maven:sonar-core-239418:2306173-deobf-sources-api"
     implementation "curse.maven:akatsuki-mod-262491:2391747-deobf-sources-api"
     implementation "curse.maven:flaxbeards-steam-power-224867:2301651-deobf-sources-api"
     implementation "curse.maven:catwalks-2-236460:2296725-deobf-sources-api"
@@ -130,6 +131,9 @@ dependencies {
     implementation "curse.maven:colored-iron-248871:2323251-deobf-sources-api"
     implementation "curse.maven:colour-color-blocks-229836:2236558-deobf-sources-api"
     implementation "curse.maven:cube-elementals-mod-cube-monsters-mod-221778:2208737-deobf-sources-api"
+    implementation "curse.maven:traincraft-245169:4285380-deobf-sources-api"
+    implementation "curse.maven:sync-229090:2338150-deobf-sources-api"
+    implementation "curse.maven:ichunutil-229060:2338148-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
@@ -153,7 +157,6 @@ dependencies {
     implementation files("libs/OpenModsLibs-1.7.10-0.10.6-dev.jar")
     implementation files("libs/The-Amazing-Mod-1.7.10.jar")
     implementation files("libs/Ore+Spiders+V1.2.1+For+MC+1.7.10.jar")
-
 }
 
 jar {

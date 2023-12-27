@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Vector;
 
 public class MainUtil {
 

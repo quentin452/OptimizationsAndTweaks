@@ -259,7 +259,9 @@ public enum Mixin implements IMixin {
     common_ic2_MixinPriorityExecutor(Side.COMMON,
         require(TargetedMod.INDUSTRIALCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinPriorityExecutor),
         "ic2.MixinPriorityExecutor"),
-
+    common_practicallogistics_MixinInfotypeRegistry(Side.COMMON,
+        require(TargetedMod.PRACTICALLOGISTICS).and(m -> OptimizationsandTweaksConfig.enableMixinInfotypeRegistry),
+        "practicallogistics.MixinInfotypeRegistry"),
     common_growthcraft_MixinAppleFuelHandler(Side.COMMON,
         require(TargetedMod.GROWTHCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinAppleFuelHandler),
         "growthcraft.MixinAppleFuelHandler"),
@@ -302,7 +304,9 @@ public enum Mixin implements IMixin {
     common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
         "core.MixinWorldGenMinable"),
     common_core_MixinLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLeaves, "core.MixinLeaves"),
-
+    common_core_MixinLanguageRegistry(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinLanguageRegistry,
+        "core.MixinLanguageRegistry"),
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
 
@@ -333,7 +337,9 @@ public enum Mixin implements IMixin {
     common_codechickencore_MixinClassDiscoverer(Side.COMMON,
         require(TargetedMod.CODECHICKENCORE).and(m -> OptimizationsandTweaksConfig.enableMixinClassDiscoverer),
         "codechickencore.MixinClassDiscoverer"),
-
+    common_traincraft_MixinTierRecipeManager(Side.COMMON,
+        require(TargetedMod.TRAINCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinTierRecipeManager),
+        "traincraft.MixinTierRecipeManager"),
     common_lootpluplus_MixinLootPPHelper(Side.COMMON,
         require(TargetedMod.LOOTPLUSPLUS).and(m -> OptimizationsandTweaksConfig.enableMixinLootPPHelper),
         "lootpluplus.MixinLootPPHelper"),
@@ -541,9 +547,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.MINEFACTORYRELOADED)
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixNoSuchMethodException),
         "minefactoryreloaded.MixinFixNoSuchMethodException"),
-
     common_core_MixinGodZillaFix(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
+
+    common_core_MixinContainer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinContainer,
+        "core.MixinContainer"),
     common_witchery_MixinGenericEventsWitchery(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinGenericEventsWitchery, "witchery.MixinGenericEventsWitchery"),
     common_opis_MixinopisProfilerEvent(Side.COMMON,

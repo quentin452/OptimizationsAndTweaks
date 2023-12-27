@@ -288,6 +288,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEventRegistry;
+
+    @Config.Comment("Optimize InfotypeRegistry from Practical Logistics")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinInfotypeRegistry;
     @Config.Comment("Optimize NibbleArray")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -374,6 +379,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOpenGlHelper;
+    @Config.Comment("Optimize LanguageRegistry")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLanguageRegistry;
     @Config.Comment("Optimize RenderItem")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -415,6 +424,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureManager;
+    @Config.Comment("Fix IndexOutOfBoundsException Crash caused by Container Class ??????")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinContainer;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -466,6 +479,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinClassDiscoverer;
+
+    @Config.Comment("Optimize TierRecipeManager from Traincraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTierRecipeManager;
     @Config.Comment("Optimize WardenicChargeEvents class from Thaumic Revelations")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
