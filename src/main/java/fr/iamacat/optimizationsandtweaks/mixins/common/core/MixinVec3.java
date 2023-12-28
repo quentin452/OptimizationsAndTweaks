@@ -80,46 +80,6 @@ public class MixinVec3 {
     private double cachedZSquare = Double.NaN;
 
     /**
-     * Euclidean distance between this and the specified vector, returned as double.
-     */
-    @Overwrite
-    public double distanceTo(Vec3 vec) {
-        double d0 = vec.xCoord - this.xCoord;
-        double d1 = vec.yCoord - this.yCoord;
-        double d2 = vec.zCoord - this.zCoord;
-
-        double xSquare = getXSquare();
-        double ySquare = getYSquare();
-        double zSquare = getZSquare();
-
-        return MathHelper.sqrt_double(d0 * d0 / xSquare + d1 * d1 / ySquare + d2 * d2 / zSquare);
-    }
-
-    @Unique
-    private double getXSquare() {
-        if (Double.isNaN(cachedXSquare)) {
-            cachedXSquare = this.xCoord * this.xCoord;
-        }
-        return cachedXSquare;
-    }
-
-    @Unique
-    private double getYSquare() {
-        if (Double.isNaN(cachedYSquare)) {
-            cachedYSquare = this.yCoord * this.yCoord;
-        }
-        return cachedYSquare;
-    }
-
-    @Unique
-    private double getZSquare() {
-        if (Double.isNaN(cachedZSquare)) {
-            cachedZSquare = this.zCoord * this.zCoord;
-        }
-        return cachedZSquare;
-    }
-
-    /**
      * The square of the Euclidean distance between this and the specified vector.
      */
     @Overwrite
