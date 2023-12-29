@@ -148,8 +148,6 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),
-    common_core_MixinDimensionManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDimensionManager,
-        "core.MixinDimensionManager"),
     common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
         "core.pathfinding.MixinPathFinder"),
     common_core_MixinWorldServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldServer,
@@ -550,8 +548,6 @@ public enum Mixin implements IMixin {
     common_core_MixinGodZillaFix(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
 
-    common_core_MixinContainer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinContainer,
-        "core.MixinContainer"),
     common_witchery_MixinGenericEventsWitchery(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinGenericEventsWitchery, "witchery.MixinGenericEventsWitchery"),
     common_opis_MixinopisProfilerEvent(Side.COMMON,

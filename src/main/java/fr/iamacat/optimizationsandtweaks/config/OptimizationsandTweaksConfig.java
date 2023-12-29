@@ -42,10 +42,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinModifiableAttributeInstance;
-    @Config.Comment("Optimize DimensionManager Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinDimensionManager;
     @Config.Comment("Optimize RandomPositionGenerator Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -424,10 +420,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureManager;
-    @Config.Comment("Fix IndexOutOfBoundsException Crash caused by Container Class ??????")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinContainer;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
