@@ -42,7 +42,7 @@ public class MixinThaumcraftCraftingManager {
 
         try {
             tmeta = !Objects.requireNonNull((new ItemStack(item, 1, meta)).getItem()).isDamageable() && (new ItemStack(item, 1, meta)).getItem().getHasSubtypes() ? meta : 32767;
-        } catch (Exception var5) {
+        } catch (Exception ignored) {
         }
 
         if (ThaumcraftApi.exists(item, tmeta)) {
@@ -161,8 +161,10 @@ public class MixinThaumcraftCraftingManager {
 
     @Unique
     private static boolean optimizationsAndTweaks$isValidRecipe(IRecipe recipe, Item item, int meta) {
-        if (recipe != null && recipe.getRecipeOutput() != null && Item.getIdFromItem(recipe.getRecipeOutput().getItem()) > 0 &&
-            recipe.getRecipeOutput().getItem() != null) {
+        if(recipe == null) {
+            return false;
+        }
+        if (recipe.getRecipeOutput() != null && Item.getIdFromItem(recipe.getRecipeOutput().getItem()) > 0 && recipe.getRecipeOutput().getItem() != null) {
             int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
             int idS = meta == 32767 ? 0 : meta;
             return recipe.getRecipeOutput().getItem() == item && idR == idS;
@@ -193,23 +195,44 @@ public class MixinThaumcraftCraftingManager {
 
     @Unique
     private static void optimizationsAndTweaks$processShapedRecipe(ShapedRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+        if (recipe == null || recipe.recipeItems == null || recipe.recipeItems.length == 0) {
+            // Handle null/invalid recipes more gracefully
+            return;
+        }
+
         int width = recipe.recipeWidth;
         ItemStack[] items = recipe.recipeItems;
 
-        for (int i = 0; i < width && i < 3; i++) {
-            for (int j = 0; j < width && j < 3; j++) {
-                ItemStack stack = items[i + j * width];
-                optimizationsAndTweaks$processItemStack(stack, aspectList, history);
+        int calculatedWidth = Math.min(width, (int) Math.sqrt(items.length));
+
+        for (int i = 0; i < calculatedWidth; i++) {
+            for (int j = 0; j < calculatedWidth; j++) {
+                // Calculate the index within the item array
+                int index = i + j * calculatedWidth;
+
+                // Bounds checking to prevent accessing invalid array indexes
+                if (index >= 0 && index < items.length) {
+                    ItemStack stack = items[index];
+                    optimizationsAndTweaks$processItemStack(stack, aspectList, history);
+                }
             }
         }
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processShapelessRecipe(ShapelessRecipes recipe, AspectList aspectList, ArrayList<List> history) {
-        List<Object> items = Collections.singletonList(recipe.recipeItems);
-
-        for (Object stack : items) {
-            optimizationsAndTweaks$processItemStack((ItemStack) stack, aspectList, history);
+    private static void optimizationsAndTweaks$processShapelessRecipe(
+        ShapelessRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+        List<?> items = Collections.singletonList(recipe.recipeItems);
+        for (Object item : items) {
+            if (item instanceof ItemStack) {
+                optimizationsAndTweaks$processItemStack((ItemStack) item, aspectList, history);
+            } else if (item instanceof List<?>) {
+                for (Object stack : (List<?>) item) {
+                    if (stack instanceof ItemStack) {
+                        optimizationsAndTweaks$processItemStack((ItemStack) stack, aspectList, history);
+                    }
+                }
+            }
         }
     }
 
@@ -250,11 +273,16 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
-
     @Unique
     private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList, ArrayList<List> history) {
-        if (stack != null && !Utils.isEETransmutionItem(stack.getItem())) {
-            AspectList aspects = generateTags(stack.getItem(), stack.getItemDamage(), history);
+        if (stack == null || stack.getItem() == null) {
+            return;
+        }
+
+        if (!Utils.isEETransmutionItem(stack.getItem())) {
+            int itemDamage = stack.getItemDamage();
+            AspectList aspects = generateTags(stack.getItem(), itemDamage, history);
+
             if (aspects != null && aspects.size() > 0) {
                 ItemStack clonedStack = stack.copy();
 
@@ -266,7 +294,6 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
-
     @Unique
     private static void optimizationsAndTweaks$refineAndSetMinValueAspect(AspectList ph, int minValue) {
         if (ph != null && ph.visSize() > 0) {
@@ -430,7 +457,7 @@ public class MixinThaumcraftCraftingManager {
             ItemStack cat = null;
             if (cr.catalyst instanceof ItemStack) {
                 cat = (ItemStack)cr.catalyst;
-            } else if (cr.catalyst instanceof ArrayList && ((ArrayList<?>)cr.catalyst).size() > 0) {
+            } else if (cr.catalyst instanceof ArrayList && !((ArrayList<?>) cr.catalyst).isEmpty()) {
                 cat = (ItemStack)((ArrayList<?>)cr.catalyst).get(0);
             }
 
