@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
@@ -15,6 +16,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -287,7 +289,14 @@ public class MixinThaumcraftCraftingManager {
 
         return ret;
     }
-    @Shadow
+    @Unique
+    private static Map<List<?>, AspectList> optimizationsAndTweaks$tagsCache = new Object2ObjectHashMap<>();
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public static AspectList getObjectTags(ItemStack itemstack) {
         Item item;
         int meta;
@@ -298,7 +307,12 @@ public class MixinThaumcraftCraftingManager {
             return null;
         }
 
-        AspectList tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, meta));
+        List<?> cacheKey = Arrays.asList(item, meta);
+        if (optimizationsAndTweaks$tagsCache.containsKey(cacheKey)) {
+            return optimizationsAndTweaks$tagsCache.get(cacheKey);
+        }
+
+        AspectList tmp = ThaumcraftApi.objectTags.get(cacheKey);
         if (tmp == null) {
             Collection<List> col = ThaumcraftApi.objectTags.keySet();
 
@@ -314,8 +328,8 @@ public class MixinThaumcraftCraftingManager {
             }
 
             tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, 32767));
-            if (tmp == null && tmp == null) {
-                if (meta == 32767 && tmp == null) {
+            if (tmp == null) {
+                if (meta == 32767) {
                     int index = 0;
 
                     do {
@@ -328,6 +342,7 @@ public class MixinThaumcraftCraftingManager {
                     tmp = generateTags(item, meta);
                 }
             }
+            optimizationsAndTweaks$tagsCache.put(cacheKey, tmp);
         }
 
         if (itemstack.getItem() instanceof ItemWandCasting) {
@@ -348,56 +363,52 @@ public class MixinThaumcraftCraftingManager {
             tmp.merge(Aspect.WATER, 1);
             ItemPotion ip = (ItemPotion)item;
             List effects = Collections.singletonList(ip.getEffects(itemstack.getItemDamage()));
-            if (effects != null) {
-                if (ItemPotion.isSplash(itemstack.getItemDamage())) {
-                    tmp.merge(Aspect.ENTROPY, 2);
-                }
+            if (ItemPotion.isSplash(itemstack.getItemDamage())) {
+                tmp.merge(Aspect.ENTROPY, 2);
+            }
 
-                Iterator var5 = effects.iterator();
-
-                while(var5.hasNext()) {
-                    PotionEffect var6 = (PotionEffect)var5.next();
-                    tmp.merge(Aspect.MAGIC, (var6.getAmplifier() + 1) * 2);
-                    if (var6.getPotionID() == Potion.blindness.id) {
-                        tmp.merge(Aspect.DARKNESS, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.confusion.id) {
-                        tmp.merge(Aspect.ELDRITCH, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.damageBoost.id) {
-                        tmp.merge(Aspect.WEAPON, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.digSlowdown.id) {
-                        tmp.merge(Aspect.TRAP, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.digSpeed.id) {
-                        tmp.merge(Aspect.TOOL, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.fireResistance.id) {
-                        tmp.merge(Aspect.ARMOR, var6.getAmplifier() + 1);
-                        tmp.merge(Aspect.FIRE, (var6.getAmplifier() + 1) * 2);
-                    } else if (var6.getPotionID() == Potion.harm.id) {
-                        tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.heal.id) {
-                        tmp.merge(Aspect.HEAL, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.hunger.id) {
-                        tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.invisibility.id) {
-                        tmp.merge(Aspect.SENSES, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.jump.id) {
-                        tmp.merge(Aspect.FLIGHT, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.moveSlowdown.id) {
-                        tmp.merge(Aspect.TRAP, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.moveSpeed.id) {
-                        tmp.merge(Aspect.MOTION, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.nightVision.id) {
-                        tmp.merge(Aspect.SENSES, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.poison.id) {
-                        tmp.merge(Aspect.POISON, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.regeneration.id) {
-                        tmp.merge(Aspect.HEAL, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.resistance.id) {
-                        tmp.merge(Aspect.ARMOR, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.waterBreathing.id) {
-                        tmp.merge(Aspect.AIR, (var6.getAmplifier() + 1) * 3);
-                    } else if (var6.getPotionID() == Potion.weakness.id) {
-                        tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
-                    }
+            for (Object effect : effects) {
+                PotionEffect var6 = (PotionEffect) effect;
+                tmp.merge(Aspect.MAGIC, (var6.getAmplifier() + 1) * 2);
+                if (var6.getPotionID() == Potion.blindness.id) {
+                    tmp.merge(Aspect.DARKNESS, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.confusion.id) {
+                    tmp.merge(Aspect.ELDRITCH, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.damageBoost.id) {
+                    tmp.merge(Aspect.WEAPON, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.digSlowdown.id) {
+                    tmp.merge(Aspect.TRAP, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.digSpeed.id) {
+                    tmp.merge(Aspect.TOOL, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.fireResistance.id) {
+                    tmp.merge(Aspect.ARMOR, var6.getAmplifier() + 1);
+                    tmp.merge(Aspect.FIRE, (var6.getAmplifier() + 1) * 2);
+                } else if (var6.getPotionID() == Potion.harm.id) {
+                    tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.heal.id) {
+                    tmp.merge(Aspect.HEAL, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.hunger.id) {
+                    tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.invisibility.id) {
+                    tmp.merge(Aspect.SENSES, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.jump.id) {
+                    tmp.merge(Aspect.FLIGHT, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.moveSlowdown.id) {
+                    tmp.merge(Aspect.TRAP, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.moveSpeed.id) {
+                    tmp.merge(Aspect.MOTION, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.nightVision.id) {
+                    tmp.merge(Aspect.SENSES, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.poison.id) {
+                    tmp.merge(Aspect.POISON, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.regeneration.id) {
+                    tmp.merge(Aspect.HEAL, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.resistance.id) {
+                    tmp.merge(Aspect.ARMOR, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.waterBreathing.id) {
+                    tmp.merge(Aspect.AIR, (var6.getAmplifier() + 1) * 3);
+                } else if (var6.getPotionID() == Potion.weakness.id) {
+                    tmp.merge(Aspect.DEATH, (var6.getAmplifier() + 1) * 3);
                 }
             }
         }
@@ -411,7 +422,6 @@ public class MixinThaumcraftCraftingManager {
         } else {
             AspectList out = new AspectList();
             Aspect[] arr$ = sourcetags.getAspects();
-            int len$ = arr$.length;
 
             for (Aspect aspect : arr$) {
                 out.merge(aspect, Math.min(amount, sourcetags.getAmount(aspect)));
@@ -455,7 +465,7 @@ public class MixinThaumcraftCraftingManager {
 
             for(i$ = 0; i$ < len$; ++i$) {
                 as = arr$[i$];
-                int amt = (int)(Math.sqrt((double)ot.getAmount(as)) / (double)ss);
+                int amt = (int)(Math.sqrt(ot.getAmount(as)) / ss);
                 out.add(as, amt);
             }
 
@@ -477,16 +487,15 @@ public class MixinThaumcraftCraftingManager {
     @Shadow
     private static AspectList generateTagsFromArcaneRecipes(Item item, int meta, ArrayList<List> history) {
         AspectList ret = null;
-        int value = 0;
         List recipeList = ThaumcraftApi.getCraftingRecipes();
 
         label173:
-        for(int q = 0; q < recipeList.size(); ++q) {
-            if (recipeList.get(q) instanceof IArcaneRecipe) {
-                IArcaneRecipe recipe = (IArcaneRecipe)recipeList.get(q);
+        for (Object o : recipeList) {
+            if (o instanceof IArcaneRecipe) {
+                IArcaneRecipe recipe = (IArcaneRecipe) o;
                 if (recipe.getRecipeOutput() != null) {
                     int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
-                    int idS = meta < 0 ? 0 : meta;
+                    int idS = Math.max(meta, 0);
                     if (recipe.getRecipeOutput().getItem() == item && idR == idS) {
                         ArrayList<ItemStack> ingredients = new ArrayList();
                         new AspectList();
@@ -495,20 +504,19 @@ public class MixinThaumcraftCraftingManager {
                         try {
                             int i;
                             ItemStack is;
-                            if (recipeList.get(q) instanceof ShapedArcaneRecipe) {
-                                int width = ((ShapedArcaneRecipe)recipeList.get(q)).width;
-                                i = ((ShapedArcaneRecipe)recipeList.get(q)).height;
-                                Object[] items = ((ShapedArcaneRecipe)recipeList.get(q)).getInput();
+                            if (o instanceof ShapedArcaneRecipe) {
+                                int width = ((ShapedArcaneRecipe) o).width;
+                                Object[] items = ((ShapedArcaneRecipe) o).getInput();
 
-                                for(i = 0; i < width && i < 3; ++i) {
-                                    for(int j = 0; j < i && j < 3; ++j) {
+                                for (i = 0; i < width && i < 3; ++i) {
+                                    for (int j = 0; j < i && j < 3; ++j) {
                                         if (items[i + j * width] != null) {
                                             ItemStack it;
                                             if (items[i + j * width] instanceof ArrayList) {
-                                                Iterator i$ = ((ArrayList)items[i + j * width]).iterator();
+                                                Iterator i$ = ((ArrayList) items[i + j * width]).iterator();
 
-                                                while(i$.hasNext()) {
-                                                    it = (ItemStack)i$.next();
+                                                while (i$.hasNext()) {
+                                                    it = (ItemStack) i$.next();
                                                     if (Utils.isEETransmutionItem(it.getItem())) {
                                                         continue label173;
                                                     }
@@ -522,7 +530,7 @@ public class MixinThaumcraftCraftingManager {
                                                     }
                                                 }
                                             } else {
-                                                is = (ItemStack)items[i + j * width];
+                                                is = (ItemStack) items[i + j * width];
                                                 if (Utils.isEETransmutionItem(is.getItem())) {
                                                     continue label173;
                                                 }
@@ -534,17 +542,16 @@ public class MixinThaumcraftCraftingManager {
                                         }
                                     }
                                 }
-                            } else if (recipeList.get(q) instanceof ShapelessArcaneRecipe) {
-                                ArrayList items = ((ShapelessArcaneRecipe)recipeList.get(q)).getInput();
+                            } else if (o instanceof ShapelessArcaneRecipe) {
+                                ArrayList items = ((ShapelessArcaneRecipe) o).getInput();
 
-                                for(i = 0; i < items.size() && i < 9; ++i) {
+                                for (i = 0; i < items.size() && i < 9; ++i) {
                                     if (items.get(i) != null) {
                                         ItemStack it;
                                         if (items.get(i) instanceof ArrayList) {
-                                            Iterator i$ = ((ArrayList)items.get(i)).iterator();
 
-                                            while(i$.hasNext()) {
-                                                it = (ItemStack)i$.next();
+                                            for (Object object : (ArrayList) items.get(i)) {
+                                                it = (ItemStack) object;
                                                 if (Utils.isEETransmutionItem(it.getItem())) {
                                                     continue label173;
                                                 }
@@ -558,7 +565,7 @@ public class MixinThaumcraftCraftingManager {
                                                 }
                                             }
                                         } else {
-                                            it = (ItemStack)items.get(i);
+                                            it = (ItemStack) items.get(i);
                                             if (Utils.isEETransmutionItem(it.getItem())) {
                                                 continue label173;
                                             }
@@ -579,26 +586,23 @@ public class MixinThaumcraftCraftingManager {
                                 arr$ = recipe.getAspects().getAspects();
                                 i = arr$.length;
 
-                                for(i$ = 0; i$ < i; ++i$) {
+                                for (i$ = 0; i$ < i; ++i$) {
                                     as = arr$[i$];
-                                    ph.add(as, (int)(Math.sqrt((double)recipe.getAspects().getAmount(as)) / (double)((float)recipe.getRecipeOutput().stackSize)));
+                                    ph.add(as, (int) (Math.sqrt(recipe.getAspects().getAmount(as)) / ((float) recipe.getRecipeOutput().stackSize)));
                                 }
                             }
 
                             arr$ = ph.copy().getAspects();
                             i = arr$.length;
 
-                            for(i$ = 0; i$ < i; ++i$) {
+                            for (i$ = 0; i$ < i; ++i$) {
                                 as = arr$[i$];
                                 if (ph.getAmount(as) <= 0) {
                                     ph.remove(as);
                                 }
                             }
 
-                            if (cval >= value) {
-                                ret = ph;
-                                value = cval;
-                            }
+                            ret = ph;
                         } catch (Exception var22) {
                             var22.printStackTrace();
                         }
