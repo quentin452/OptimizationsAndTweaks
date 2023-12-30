@@ -210,7 +210,10 @@ public enum Mixin implements IMixin {
         require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons)
             .and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
-
+    common_therealketer_MixinKMOD_Main_Entities(Side.COMMON,
+        require(TargetedMod.THEREALKETER).and(m -> OptimizationsandTweaksConfig.enableMixinKMOD_Main_Entities)
+            .and(require(TargetedMod.CONFIGHELPER)),
+        "therealketer.MixinKMOD_Main_Entities"),
     common_orespiders_MixinEntityRegistererOreSpiders(Side.COMMON,
         require(TargetedMod.ORESPIDERS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRegistererOreSpiders)
             .and(require(TargetedMod.CONFIGHELPER)),

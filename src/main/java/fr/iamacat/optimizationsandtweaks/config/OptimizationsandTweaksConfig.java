@@ -632,6 +632,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCommonProxyRunicDungeons;
+    @Config.Comment("Made sure that EntityID from The Real Keter is above 1000 to prevent crash with an unknown mod(Need config helper installed)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinKMOD_Main_Entities;
 
     @Config.Comment("Made sure that EntityID from OreSpiders is above 1000 to prevent crash with unknown mod(Need config helper installed)")
     @Config.DefaultBoolean(true)

@@ -46,6 +46,7 @@ public enum TargetedMod implements ITargetedMod {
     INDUSTRIALCRAFT("industrialcraft", false, startsWith("industrialcraft")),
 
     HARDCOREWITHER("Hardcore Wither", false, startsWith("Hardcore Wither")),
+    THEREALKETER("Real.Kether", false, startsWith("Real.Kether")),
     EASYBREEDING("easybreading", false, startsWith("easybreading")),
     PORTALGUN("PortalGun", false, startsWith("PortalGun")),
     CODECHICKENCORE("CodeChickenCore", false, startsWith("CodeChickenCore")),
