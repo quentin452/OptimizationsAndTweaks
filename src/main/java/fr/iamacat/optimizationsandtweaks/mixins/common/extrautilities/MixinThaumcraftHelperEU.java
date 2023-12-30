@@ -174,7 +174,7 @@ public class MixinThaumcraftHelperEU {
     @Overwrite
     private static void addAspectRecipe(ItemStack result, Object... ingredients) {
         if (result == null || result.getItem() == null) {
-            return; 
+            return;
         }
 
         AspectList al = new AspectList(result);
@@ -218,13 +218,15 @@ public class MixinThaumcraftHelperEU {
                 continue;
             }
 
-            AspectList aspectList;
-            if (o instanceof ItemStack || o instanceof Item || o instanceof Block) {
-                ItemStack stack = (o instanceof ItemStack) ? (ItemStack) o : new ItemStack((Block) o);
-                aspectList = new AspectList(stack);
+            if (o instanceof ItemStack || o instanceof Item) {
+                ItemStack stack = (o instanceof ItemStack) ? (ItemStack) o : new ItemStack((Item) o);
+                AspectList aspectList = new AspectList(stack);
                 al.add(aspectList);
-            } else if (o instanceof String) {
-                aspectList = new AspectList();
+                continue;
+            }
+
+            if (o instanceof String) {
+                AspectList aspectList = new AspectList();
                 int oreId = Integer.parseInt((String) o);
                 OreDictionary.getOres(oreId).forEach(itemStack -> aspectList.merge(new AspectList(itemStack)));
                 al.add(aspectList);

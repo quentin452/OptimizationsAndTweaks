@@ -305,6 +305,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftHelperEU;
+
+    @Config.Comment("Optimize BlockBreakingRegistry class From Extra Utilities")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockBreakingRegistry;
     @Config.Comment("Optimize NibbleArray")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
