@@ -29,7 +29,7 @@ import java.util.*;
 public class MixinThaumcraftCraftingManager {
     @Shadow
     public static AspectList generateTags(Item item, int meta) {
-        return generateTags(item, meta, new ArrayList());
+        return generateTags(item, meta, new ArrayList<>());
     }
     /**
      * @author
@@ -150,7 +150,7 @@ public class MixinThaumcraftCraftingManager {
                 int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
                 int idS = meta == 32767 ? 0 : meta;
                 if (recipe.getRecipeOutput().getItem() == item && idR == idS) {
-                    ArrayList<ItemStack> ingredients = new ArrayList();
+                    ArrayList<ItemStack> ingredients = new ArrayList<>();
                     new AspectList();
 
                     try {
@@ -159,11 +159,10 @@ public class MixinThaumcraftCraftingManager {
                         ItemStack is;
                         if (recipeList.get(q) instanceof ShapedRecipes) {
                             width = ((ShapedRecipes)recipeList.get(q)).recipeWidth;
-                            i = ((ShapedRecipes)recipeList.get(q)).recipeHeight;
                             ItemStack[] items = ((ShapedRecipes)recipeList.get(q)).recipeItems;
 
                             for(i = 0; i < width && i < 3; ++i) {
-                                for(int j = 0; j < i && j < 3; ++j) {
+                                for(int j = 0; j < i; ++j) {
                                     if (items[i + j * width] != null) {
                                         if (Utils.isEETransmutionItem(items[i + j * width].getItem())) {
                                             continue label216;
@@ -232,10 +231,9 @@ public class MixinThaumcraftCraftingManager {
                                     for(i = 0; i < items.size() && i < 9; ++i) {
                                         if (items.get(i) != null) {
                                             if (items.get(i) instanceof ArrayList) {
-                                                Iterator i$ = ((ArrayList)items.get(i)).iterator();
 
-                                                while(i$.hasNext()) {
-                                                    it = (ItemStack)i$.next();
+                                                for (Object o : (ArrayList) items.get(i)) {
+                                                    it = (ItemStack) o;
                                                     if (Utils.isEETransmutionItem(it.getItem())) {
                                                         continue label216;
                                                     }
@@ -486,9 +484,8 @@ public class MixinThaumcraftCraftingManager {
                     int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
                     int idS = Math.max(meta, 0);
                     if (recipe.getRecipeOutput().getItem() == item && idR == idS) {
-                        ArrayList<ItemStack> ingredients = new ArrayList();
+                        ArrayList<ItemStack> ingredients = new ArrayList<>();
                         new AspectList();
-                        int cval = 0;
 
                         try {
                             int i;
@@ -498,14 +495,13 @@ public class MixinThaumcraftCraftingManager {
                                 Object[] items = ((ShapedArcaneRecipe) o).getInput();
 
                                 for (i = 0; i < width && i < 3; ++i) {
-                                    for (int j = 0; j < i && j < 3; ++j) {
+                                    for (int j = 0; j < i; ++j) {
                                         if (items[i + j * width] != null) {
                                             ItemStack it;
                                             if (items[i + j * width] instanceof ArrayList) {
-                                                Iterator i$ = ((ArrayList) items[i + j * width]).iterator();
 
-                                                while (i$.hasNext()) {
-                                                    it = (ItemStack) i$.next();
+                                                for (Object object : (ArrayList) items[i + j * width]) {
+                                                    it = (ItemStack) object;
                                                     if (Utils.isEETransmutionItem(it.getItem())) {
                                                         continue label173;
                                                     }
