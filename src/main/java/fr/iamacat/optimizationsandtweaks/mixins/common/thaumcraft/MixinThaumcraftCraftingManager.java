@@ -15,6 +15,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -60,6 +61,32 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    private static AspectList generateTagsFromRecipes(Item item, int meta, ArrayList<List> history) {
+        AspectList ret;
+        ret = generateTagsFromCrucibleRecipes(item, meta, history);
+        if (ret != null) {
+            return ret;
+        } else {
+            ret = generateTagsFromArcaneRecipes(item, meta, history);
+            if (ret != null) {
+                return ret;
+            } else {
+                ret = generateTagsFromInfusionRecipes(item, meta, history);
+                if (ret != null) {
+                    return ret;
+                } else {
+                    ret = generateTagsFromCraftingRecipes(item, meta, history);
+                    return ret;
+                }
+            }
+        }
+    }
+    /**
     /**
      * @author
      * @reason
@@ -113,178 +140,155 @@ public class MixinThaumcraftCraftingManager {
      * @reason
      */
     @Overwrite
-    private static AspectList generateTagsFromRecipes(Item item, int meta, ArrayList<List> history) {
-        AspectList ret;
-        ret = generateTagsFromCrucibleRecipes(item, meta, history);
-        if (ret != null) {
-            return ret;
-        } else {
-            ret = generateTagsFromArcaneRecipes(item, meta, history);
-            if (ret != null) {
-                return ret;
-            } else {
-                ret = generateTagsFromInfusionRecipes(item, meta, history);
-                if (ret != null) {
-                    return ret;
-                } else {
-                    ret = generateTagsFromCraftingRecipes(item, meta, history);
-                    return ret;
-                }
-            }
-        }
-    }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
     private static AspectList generateTagsFromCraftingRecipes(Item item, int meta, ArrayList<List> history) {
         AspectList ret = null;
-        int value = Integer.MAX_VALUE;
-        List recipeList = Collections.singletonList(CraftingManager.getInstance().getRecipeList());
+        int minValue = Integer.MAX_VALUE;
+        List<IRecipe> recipeList = Collections.unmodifiableList(new ArrayList<>(CraftingManager.getInstance().getRecipeList()));
 
-        label216:
-        for(int q = 0; q < recipeList.size(); ++q) {
-            IRecipe recipe = (IRecipe)recipeList.get(q);
-            if (recipe != null && recipe.getRecipeOutput() != null && Item.getIdFromItem(recipe.getRecipeOutput().getItem()) > 0 && recipe.getRecipeOutput().getItem() != null) {
-                int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
-                int idS = meta == 32767 ? 0 : meta;
-                if (recipe.getRecipeOutput().getItem() == item && idR == idS) {
-                    ArrayList<ItemStack> ingredients = new ArrayList<>();
-                    new AspectList();
-
-                    try {
-                        int width;
-                        int i;
-                        ItemStack is;
-                        if (recipeList.get(q) instanceof ShapedRecipes) {
-                            width = ((ShapedRecipes)recipeList.get(q)).recipeWidth;
-                            ItemStack[] items = ((ShapedRecipes)recipeList.get(q)).recipeItems;
-
-                            for(i = 0; i < width && i < 3; ++i) {
-                                for(int j = 0; j < i; ++j) {
-                                    if (items[i + j * width] != null) {
-                                        if (Utils.isEETransmutionItem(items[i + j * width].getItem())) {
-                                            continue label216;
-                                        }
-
-                                        is = items[i + j * width].copy();
-                                        is.stackSize = 1;
-                                        ingredients.add(is);
-                                    }
-                                }
-                            }
-                        } else {
-                            ItemStack it;
-                            if (recipeList.get(q) instanceof ShapelessRecipes) {
-                                List<ItemStack> items = ((ShapelessRecipes)recipeList.get(q)).recipeItems;
-
-                                for(i = 0; i < items.size() && i < 9; ++i) {
-                                    if (items.get(i) != null) {
-                                        if (Utils.isEETransmutionItem(items.get(i).getItem())) {
-                                            continue label216;
-                                        }
-
-                                        it = items.get(i).copy();
-                                        it.stackSize = 1;
-                                        ingredients.add(it);
-                                    }
-                                }
-                            } else {
-                                if (recipeList.get(q) instanceof ShapedOreRecipe) {
-                                    width = ((ShapedOreRecipe)recipeList.get(q)).getRecipeSize();
-                                    Object[] items = ((ShapedOreRecipe)recipeList.get(q)).getInput();
-
-                                    for(i = 0; i < width && i < 9; ++i) {
-                                        if (items[i] != null) {
-                                            if (items[i] instanceof ArrayList) {
-
-                                                for (Object o : (ArrayList) items[i]) {
-                                                    it = (ItemStack) o;
-                                                    if (Utils.isEETransmutionItem(it.getItem())) {
-                                                        continue label216;
-                                                    }
-
-                                                    AspectList obj = generateTags(it.getItem(), it.getItemDamage(), history);
-                                                    if (obj != null && obj.size() > 0) {
-                                                        is = it.copy();
-                                                        is.stackSize = 1;
-                                                        ingredients.add(is);
-                                                        break;
-                                                    }
-                                                }
-                                            } else {
-                                                it = (ItemStack)items[i];
-                                                if (Utils.isEETransmutionItem(it.getItem())) {
-                                                    continue label216;
-                                                }
-
-                                                it = it.copy();
-                                                it.stackSize = 1;
-                                                ingredients.add(it);
-                                            }
-                                        }
-                                    }
-                                } else if (recipeList.get(q) instanceof ShapelessOreRecipe) {
-                                    ArrayList<Object> items = ((ShapelessOreRecipe)recipeList.get(q)).getInput();
-
-                                    for(i = 0; i < items.size() && i < 9; ++i) {
-                                        if (items.get(i) != null) {
-                                            if (items.get(i) instanceof ArrayList) {
-
-                                                for (Object o : (ArrayList) items.get(i)) {
-                                                    it = (ItemStack) o;
-                                                    if (Utils.isEETransmutionItem(it.getItem())) {
-                                                        continue label216;
-                                                    }
-
-                                                    AspectList obj = generateTags(it.getItem(), it.getItemDamage(), history);
-                                                    if (obj != null && obj.size() > 0) {
-                                                        is = it.copy();
-                                                        is.stackSize = 1;
-                                                        ingredients.add(is);
-                                                        break;
-                                                    }
-                                                }
-                                            } else {
-                                                it = (ItemStack)items.get(i);
-                                                if (Utils.isEETransmutionItem(it.getItem())) {
-                                                    continue label216;
-                                                }
-
-                                                it = it.copy();
-                                                it.stackSize = 1;
-                                                ingredients.add(it);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        AspectList ph = getAspectsFromIngredients(ingredients, recipe.getRecipeOutput(), history);
-                        Aspect[] arr$ = ph.copy().getAspects();
-
-                        for(i = 0; i < i; ++i) {
-                            Aspect as = arr$[i];
-                            if (ph.getAmount(as) <= 0) {
-                                ph.remove(as);
-                            }
-                        }
-
-                        if (ph.visSize() < value && ph.visSize() > 0) {
-                            ret = ph;
-                            value = ph.visSize();
-                        }
-                    } catch (Exception var20) {
-                        var20.printStackTrace();
-                    }
+        for (IRecipe object : recipeList) {
+            if (optimizationsAndTweaks$isValidRecipe(object, item, meta)) {
+                try {
+                    AspectList ph = optimizationsAndTweaks$processRecipeAndGetAspects(object, history);
+                    optimizationsAndTweaks$refineAndSetMinValueAspect(ph, minValue);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
 
         return ret;
     }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$isValidRecipe(IRecipe recipe, Item item, int meta) {
+        if (recipe != null && recipe.getRecipeOutput() != null && Item.getIdFromItem(recipe.getRecipeOutput().getItem()) > 0 &&
+            recipe.getRecipeOutput().getItem() != null) {
+            int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
+            int idS = meta == 32767 ? 0 : meta;
+            return recipe.getRecipeOutput().getItem() == item && idR == idS;
+        }
+        return false;
+    }
+
+    @Unique
+    private static AspectList optimizationsAndTweaks$processRecipeAndGetAspects(IRecipe recipe, ArrayList<List> history) {
+        AspectList aspectList = new AspectList();
+
+        try {
+            if (recipe instanceof ShapedRecipes) {
+                optimizationsAndTweaks$processShapedRecipe((ShapedRecipes) recipe, aspectList, history);
+            } else if (recipe instanceof ShapelessRecipes) {
+                optimizationsAndTweaks$processShapelessRecipe((ShapelessRecipes) recipe, aspectList, history);
+            } else if (recipe instanceof ShapedOreRecipe) {
+                optimizationsAndTweaks$processShapedOreRecipe((ShapedOreRecipe) recipe, aspectList, history);
+            } else if (recipe instanceof ShapelessOreRecipe) {
+                optimizationsAndTweaks$processShapelessOreRecipe((ShapelessOreRecipe) recipe, aspectList, history);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return aspectList;
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$processShapedRecipe(ShapedRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+        int width = recipe.recipeWidth;
+        ItemStack[] items = recipe.recipeItems;
+
+        for (int i = 0; i < width && i < 3; i++) {
+            for (int j = 0; j < width && j < 3; j++) {
+                ItemStack stack = items[i + j * width];
+                optimizationsAndTweaks$processItemStack(stack, aspectList, history);
+            }
+        }
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$processShapelessRecipe(ShapelessRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+        List<Object> items = Collections.singletonList(recipe.recipeItems);
+
+        for (Object stack : items) {
+            optimizationsAndTweaks$processItemStack((ItemStack) stack, aspectList, history);
+        }
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$processShapedOreRecipe(ShapedOreRecipe recipe, AspectList aspectList, ArrayList<List> history) {
+        Object input = recipe.getInput();
+
+        if (input != null) {
+            Object[] items = (Object[]) input;
+
+            for (Object item : items) {
+                if (item instanceof ItemStack) {
+                    optimizationsAndTweaks$processItemStack((ItemStack) item, aspectList, history);
+                } else if (item instanceof ArrayList) {
+                    for (Object o : (ArrayList<?>) item) {
+                        if (o instanceof ItemStack) {
+                            optimizationsAndTweaks$processItemStack((ItemStack) o, aspectList, history);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$processShapelessOreRecipe(ShapelessOreRecipe recipe, AspectList aspectList, ArrayList<List> history) {
+        List<?> items = Collections.singletonList(recipe.getInput());
+
+        for (Object item : items) {
+            if (item instanceof ItemStack) {
+                optimizationsAndTweaks$processItemStack((ItemStack) item, aspectList, history);
+            } else if (item instanceof ArrayList) {
+                for (Object o : (ArrayList<?>) item) {
+                    if (o instanceof ItemStack) {
+                        optimizationsAndTweaks$processItemStack((ItemStack) o, aspectList, history);
+                    }
+                }
+            }
+        }
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList, ArrayList<List> history) {
+        if (stack != null && !Utils.isEETransmutionItem(stack.getItem())) {
+            AspectList aspects = generateTags(stack.getItem(), stack.getItemDamage(), history);
+            if (aspects != null && aspects.size() > 0) {
+                ItemStack clonedStack = stack.copy();
+
+                if (clonedStack.stackSize != 1) {
+                    clonedStack.stackSize = 1;
+                }
+
+                aspectList.merge(aspects);
+            }
+        }
+    }
+
+    @Unique
+    private static void optimizationsAndTweaks$refineAndSetMinValueAspect(AspectList ph, int minValue) {
+        if (ph != null && ph.visSize() > 0) {
+            List<Aspect> aspectsToRemove = new ArrayList<>();
+
+            for (Aspect aspect : ph.getAspects()) {
+                if (ph.getAmount(aspect) <= 0) {
+                    aspectsToRemove.add(aspect);
+                }
+            }
+
+            for (Aspect aspect : aspectsToRemove) {
+                ph.remove(aspect);
+            }
+
+            if (ph.visSize() < minValue) {
+                ph.copy();
+                ph.visSize();
+            }
+        }
+    }
+
     /**
      * @author
      * @reason
