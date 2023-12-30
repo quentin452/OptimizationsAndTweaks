@@ -32,6 +32,32 @@ public class MixinThaumcraftCraftingManager {
     public static AspectList generateTags(Item item, int meta) {
         return generateTags(item, meta, new ArrayList<>());
     }
+    @Unique
+    private static HashMap<List<Object>, AspectList> optimizationsAndTweaks$tagCache = new HashMap<>();
+
+    @Unique
+    private static AspectList optimizationsAndTweaks$getTags(ItemStack itemstack) {
+        Item item;
+        int meta;
+        try {
+            item = itemstack.getItem();
+            meta = itemstack.getItemDamage();
+        } catch (Exception e) {
+            return null;
+        }
+
+        List<Object> key = Arrays.asList((Object) item, meta);
+        if (optimizationsAndTweaks$tagCache.containsKey(key)) {
+            return optimizationsAndTweaks$tagCache.get(key);
+        } else {
+            // Add the item to the cache with an initial null value to prevent recursive calls
+            optimizationsAndTweaks$tagCache.put(key, null);
+
+            AspectList tags = getObjectTags(itemstack);
+            optimizationsAndTweaks$tagCache.put(key, tags);
+            return tags;
+        }
+    }
     /**
      * @author
      * @reason
@@ -39,18 +65,18 @@ public class MixinThaumcraftCraftingManager {
     @Overwrite
     public static AspectList generateTags(Item item, int meta, ArrayList<List> history) {
         int tmeta = meta;
-
         try {
-            tmeta = !Objects.requireNonNull((new ItemStack(item, 1, meta)).getItem()).isDamageable() && (new ItemStack(item, 1, meta)).getItem().getHasSubtypes() ? meta : 32767;
-        } catch (Exception ignored) {
-        }
+            tmeta = (!Objects.requireNonNull(new ItemStack(item, 1, meta).getItem()).isDamageable() && new ItemStack(item, 1, meta).getItem().getHasSubtypes()) ? meta : 32767;
+        } catch (Exception ignored) {}
+
+        List<Object> key = Arrays.asList((Object)item, tmeta);
 
         if (ThaumcraftApi.exists(item, tmeta)) {
-            return getObjectTags(new ItemStack(item, 1, tmeta));
-        } else if (history.contains(Arrays.asList((Object)item, tmeta))) {
+            return optimizationsAndTweaks$getTags(new ItemStack(item, 1, tmeta));
+        } else if (history.contains(key)) {
             return null;
         } else {
-            history.add(Arrays.asList((Object)item, tmeta));
+            history.add(key);
             if (history.size() < 100) {
                 AspectList ret = generateTagsFromRecipes(item, tmeta == 32767 ? 0 : meta, history);
                 ret = capAspects(ret, 64);
@@ -61,30 +87,52 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
+
+    @Unique
+    private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList, ArrayList<List> history) {
+        if (stack == null || stack.getItem() == null) {
+            return;
+        }
+
+        if (!Utils.isEETransmutionItem(stack.getItem())) {
+            AspectList aspects = optimizationsAndTweaks$getTags(stack);
+
+            if (aspects != null && aspects.size() > 0) {
+                ItemStack clonedStack = stack.copy();
+
+                if (clonedStack.stackSize != 1) {
+                    clonedStack.stackSize = 1;
+                }
+
+                aspectList.merge(aspects);
+            }
+        }
+    }
     /**
      * @author
      * @reason
      */
     @Overwrite
     private static AspectList generateTagsFromRecipes(Item item, int meta, ArrayList<List> history) {
-        AspectList ret;
-        ret = generateTagsFromCrucibleRecipes(item, meta, history);
+        AspectList ret = generateTagsFromCrucibleRecipes(item, meta, history);
+
         if (ret != null) {
             return ret;
-        } else {
-            ret = generateTagsFromArcaneRecipes(item, meta, history);
-            if (ret != null) {
-                return ret;
-            } else {
-                ret = generateTagsFromInfusionRecipes(item, meta, history);
-                if (ret != null) {
-                    return ret;
-                } else {
-                    ret = generateTagsFromCraftingRecipes(item, meta, history);
-                    return ret;
-                }
-            }
         }
+
+        ret = generateTagsFromArcaneRecipes(item, meta, history);
+
+        if (ret != null) {
+            return ret;
+        }
+
+        ret = generateTagsFromInfusionRecipes(item, meta, history);
+
+        if (ret == null) {
+            ret = generateTagsFromCraftingRecipes(item, meta, history);
+        }
+
+        return ret;
     }
     /**
     /**
@@ -161,15 +209,15 @@ public class MixinThaumcraftCraftingManager {
 
     @Unique
     private static boolean optimizationsAndTweaks$isValidRecipe(IRecipe recipe, Item item, int meta) {
-        if(recipe == null) {
+        if (recipe == null || recipe.getRecipeOutput() == null || recipe.getRecipeOutput().getItem() == null) {
             return false;
         }
-        if (recipe.getRecipeOutput() != null && Item.getIdFromItem(recipe.getRecipeOutput().getItem()) > 0 && recipe.getRecipeOutput().getItem() != null) {
-            int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
-            int idS = meta == 32767 ? 0 : meta;
-            return recipe.getRecipeOutput().getItem() == item && idR == idS;
-        }
-        return false;
+
+        ItemStack outputStack = recipe.getRecipeOutput().copy();
+        ItemStack comparisonStack = new ItemStack(item, 1, meta);
+
+        // Check if the output item and metadata match the given item and meta
+        return ItemStack.areItemStacksEqual(outputStack, comparisonStack);
     }
 
     @Unique
@@ -270,27 +318,6 @@ public class MixinThaumcraftCraftingManager {
                         optimizationsAndTweaks$processItemStack((ItemStack) o, aspectList, history);
                     }
                 }
-            }
-        }
-    }
-    @Unique
-    private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList, ArrayList<List> history) {
-        if (stack == null || stack.getItem() == null) {
-            return;
-        }
-
-        if (!Utils.isEETransmutionItem(stack.getItem())) {
-            int itemDamage = stack.getItemDamage();
-            AspectList aspects = generateTags(stack.getItem(), itemDamage, history);
-
-            if (aspects != null && aspects.size() > 0) {
-                ItemStack clonedStack = stack.copy();
-
-                if (clonedStack.stackSize != 1) {
-                    clonedStack.stackSize = 1;
-                }
-
-                aspectList.merge(aspects);
             }
         }
     }
