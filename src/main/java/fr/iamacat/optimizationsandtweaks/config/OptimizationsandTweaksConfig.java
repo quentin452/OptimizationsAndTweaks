@@ -227,7 +227,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLoader;
-    
+
        */
     @Config.Comment("Optimize Minecraft")
     @Config.DefaultBoolean(true)
@@ -296,6 +296,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinInfotypeRegistry;
+    @Config.Comment("Optimize ThaumcraftCraftingManager from Thaumcraft To Reduce loading time")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinThaumcraftCraftingManager;
     @Config.Comment("Optimize NibbleArray")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
