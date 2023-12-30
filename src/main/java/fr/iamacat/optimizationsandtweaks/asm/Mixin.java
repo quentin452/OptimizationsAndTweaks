@@ -55,8 +55,11 @@ public enum Mixin implements IMixin {
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
         "core.MixinFMLServerHandler"),
+    /* todo need to fix was loaded to early crash
     common_core_MixinLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLoader,
         "core.MixinLoader"),
+
+     */
     common_core_MixinMinecraft(Side.COMMON,
         avoid(TargetedMod.FALSETWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinMinecraft),
         "core.MixinMinecraft"),
