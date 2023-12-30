@@ -46,10 +46,10 @@ public class MixinThaumcraftCraftingManager {
 
         if (ThaumcraftApi.exists(item, tmeta)) {
             return getObjectTags(new ItemStack(item, 1, tmeta));
-        } else if (history.contains(Arrays.asList(item, tmeta))) {
+        } else if (history.contains(Arrays.asList((Object)item, tmeta))) {
             return null;
         } else {
-            history.add(Arrays.asList(item, tmeta));
+            history.add(Arrays.asList((Object)item, tmeta));
             if (history.size() < 100) {
                 AspectList ret = generateTagsFromRecipes(item, tmeta == 32767 ? 0 : meta, history);
                 ret = capAspects(ret, 64);
@@ -141,7 +141,7 @@ public class MixinThaumcraftCraftingManager {
     private static AspectList generateTagsFromCraftingRecipes(Item item, int meta, ArrayList<List> history) {
         AspectList ret = null;
         int value = Integer.MAX_VALUE;
-        List recipeList = CraftingManager.getInstance().getRecipeList();
+        List recipeList = Collections.singletonList(CraftingManager.getInstance().getRecipeList());
 
         label216:
         for(int q = 0; q < recipeList.size(); ++q) {
@@ -227,7 +227,7 @@ public class MixinThaumcraftCraftingManager {
                                         }
                                     }
                                 } else if (recipeList.get(q) instanceof ShapelessOreRecipe) {
-                                    ArrayList items = ((ShapelessOreRecipe)recipeList.get(q)).getInput();
+                                    ArrayList<Object> items = ((ShapelessOreRecipe)recipeList.get(q)).getInput();
 
                                     for(i = 0; i < items.size() && i < 9; ++i) {
                                         if (items.get(i) != null) {
@@ -302,7 +302,7 @@ public class MixinThaumcraftCraftingManager {
             return null;
         }
 
-        AspectList tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, meta));
+        AspectList tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object) item, meta));
         if (tmp == null) {
             Collection<List> col = ThaumcraftApi.objectTags.keySet();
 
@@ -317,13 +317,13 @@ public class MixinThaumcraftCraftingManager {
                 }
             }
 
-            tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, 32767));
+            tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object)item, 32767));
             if (tmp == null) {
                 if (meta == 32767) {
                     int index = 0;
 
                     do {
-                        tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, index));
+                        tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object)item, index));
                         ++index;
                     } while(index < 16 && tmp == null);
                 }
