@@ -222,6 +222,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFMLServerHandler;
+    @Config.Comment("Optimize Loader")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLoader;
     @Config.Comment("Optimize Minecraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

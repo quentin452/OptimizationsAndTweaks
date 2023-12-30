@@ -1,10 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
+import cpw.mods.fml.common.ModContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
+
+import java.util.Comparator;
 
 public class Classers {
 
@@ -89,6 +92,17 @@ public class Classers {
             if (o == this) return true;
             if (!(o instanceof ItemStackKey2)) return false;
             return ItemStack.areItemStacksEqual(this.stack, ((ItemStackKey2) o).stack);
+        }
+    }
+
+    // MixinLoader
+
+    public static class ModIdComparator implements Comparator<ModContainer>
+    {
+        @Override
+        public int compare(ModContainer o1, ModContainer o2)
+        {
+            return o1.getModId().compareTo(o2.getModId());
         }
     }
 }
