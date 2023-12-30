@@ -300,6 +300,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftCraftingManager;
+
+    @Config.Comment("Optimize ThaumcraftHelper class From Extra Utilities")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinThaumcraftHelperEU;
     @Config.Comment("Optimize NibbleArray")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
