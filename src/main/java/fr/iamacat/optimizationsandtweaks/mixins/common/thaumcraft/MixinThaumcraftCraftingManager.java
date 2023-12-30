@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
@@ -16,7 +15,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -289,9 +287,6 @@ public class MixinThaumcraftCraftingManager {
 
         return ret;
     }
-    @Unique
-    private static Map<List<?>, AspectList> optimizationsAndTweaks$tagsCache = new Object2ObjectHashMap<>();
-
     /**
      * @author
      * @reason
@@ -307,12 +302,7 @@ public class MixinThaumcraftCraftingManager {
             return null;
         }
 
-        List<?> cacheKey = Arrays.asList(item, meta);
-        if (optimizationsAndTweaks$tagsCache.containsKey(cacheKey)) {
-            return optimizationsAndTweaks$tagsCache.get(cacheKey);
-        }
-
-        AspectList tmp = ThaumcraftApi.objectTags.get(cacheKey);
+        AspectList tmp = ThaumcraftApi.objectTags.get(Arrays.asList(item, meta));
         if (tmp == null) {
             Collection<List> col = ThaumcraftApi.objectTags.keySet();
 
@@ -342,7 +332,6 @@ public class MixinThaumcraftCraftingManager {
                     tmp = generateTags(item, meta);
                 }
             }
-            optimizationsAndTweaks$tagsCache.put(cacheKey, tmp);
         }
 
         if (itemstack.getItem() instanceof ItemWandCasting) {
