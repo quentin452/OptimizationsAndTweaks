@@ -393,7 +393,7 @@ public enum Mixin implements IMixin {
     common_extrautilities_MixinThaumcraftHelperEU(Side.COMMON,
         require(TargetedMod.EXTRAUTILS).and(m -> OptimizationsandTweaksConfig.enableMixinThaumcraftHelperEU),
         "extrautilities.MixinThaumcraftHelperEU"),
-    common_extrautilities_MixinBlockBreakingRegistry(Side.COMMON,
+    client_extrautilities_MixinBlockBreakingRegistry(Side.CLIENT,
         require(TargetedMod.EXTRAUTILS).and(m -> OptimizationsandTweaksConfig.enableMixinBlockBreakingRegistry),
         "extrautilities.MixinBlockBreakingRegistry"),
     common_eternalfrost_MixinEFConfiguration(Side.COMMON,

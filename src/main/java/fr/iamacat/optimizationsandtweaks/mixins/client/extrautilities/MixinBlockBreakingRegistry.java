@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.extrautilities;
+package fr.iamacat.optimizationsandtweaks.mixins.client.extrautilities;
 
 import com.rwtema.extrautils.LogHelper;
 import com.rwtema.extrautils.tileentity.enderquarry.BlockBreakingRegistry;
