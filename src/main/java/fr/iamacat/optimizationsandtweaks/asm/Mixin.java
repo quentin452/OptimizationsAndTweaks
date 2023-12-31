@@ -415,6 +415,9 @@ public enum Mixin implements IMixin {
     common_diseasecraft_MixinMedUtils(Side.COMMON,
         require(TargetedMod.DISEASECRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinMedUtils),
         "diseasecraft.MixinMedUtils"),
+    common_potionshards_MixinEventHandlerPotionShards(Side.COMMON,
+        require(TargetedMod.POTIONSHARDS).and(m -> OptimizationsandTweaksConfig.enableMixinEventHandlerPotionShards),
+        "potionshards.MixinEventHandlerPotionShards"),
 
     common_fossilsandarcheologyrevivals_MixinAcademyGenerator(Side.COMMON,
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),

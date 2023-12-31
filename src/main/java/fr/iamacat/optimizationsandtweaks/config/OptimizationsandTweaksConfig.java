@@ -625,6 +625,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRuptureSpike;
+    @Config.Comment("Fix Null crashes from EventHandler from Potion shards mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventHandlerPotionShards;
     @Config.Comment("Fix AcademyGenerator Infinite Loop that freeze the server from Fossil Archeology Revival")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

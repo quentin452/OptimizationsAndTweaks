@@ -69,6 +69,7 @@ public enum TargetedMod implements ITargetedMod {
     NETHERLICIOUS("netherlicious", false, startsWith("netherlicious")),
     CONFIGHELPER("confighelper", false, startsWith("confighelper")),
     FOSSILANDARCHEOLOGYREVIVAL("fossilsarcheology", false, startsWith("fossilsarcheology")),
+    POTIONSHARDS("Potion Shard", false, startsWith("Potion Shard")),
 
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
