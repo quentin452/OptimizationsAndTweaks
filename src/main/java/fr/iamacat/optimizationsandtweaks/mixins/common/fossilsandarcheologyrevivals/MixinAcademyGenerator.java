@@ -23,10 +23,6 @@ public class MixinAcademyGenerator {
      */
     @Overwrite(remap = false)
     private final void generateStructure(World world, Random rand, int chunkX, int chunkZ) {
-        // prevent generation on flatworld to prevent infinite loop caused by doesBlockHaveSolidTopSurface
-        if (world.getWorldInfo().getTerrainType() == WorldType.FLAT) {
-            return;
-        }
         BiomeGenBase biome = world.getWorldChunkManager().getBiomeGenAt(chunkX, chunkZ);
         FossilStructureGenerator gen = new FossilStructureGenerator();
         int struct = rand.nextInt(FossilStructureGenerator.structures.size());
@@ -67,12 +63,25 @@ public class MixinAcademyGenerator {
 
     @Unique
     private boolean optimizationsAndTweaks$isValidSpawnLocation(World world, int x, int y, int z) {
-        return World.doesBlockHaveSolidTopSurface(world, x, y, z)
-            && World.doesBlockHaveSolidTopSurface(world, x + 10, y, z + 11)
-            && World.doesBlockHaveSolidTopSurface(world, x - 10, y, z - 11)
-            && World.doesBlockHaveSolidTopSurface(world, x + 10, y, z - 11)
-            && (World.doesBlockHaveSolidTopSurface(world, x - 10, y, z + 11)
-            || !world.canBlockSeeTheSky(x, y, z))
-            && Block.getIdFromBlock(world.getBlock(x, y + 1, z)) != Block.getIdFromBlock(Blocks.water);
+        if (y < 0) {
+            return false;
+        }
+
+        Block centerBlock = world.getBlock(x, y, z);
+        Block offset1Block = world.getBlock(x + 10, y, z + 11);
+        Block offset2Block = world.getBlock(x - 10, y, z - 11);
+        Block offset3Block = world.getBlock(x + 10, y, z - 11);
+        Block offset4Block = world.getBlock(x - 10, y, z + 11);
+
+        boolean centerSolid = centerBlock.getMaterial().isSolid();
+        boolean offset1Solid = offset1Block.getMaterial().isSolid();
+        boolean offset2Solid = offset2Block.getMaterial().isSolid();
+        boolean offset3Solid = offset3Block.getMaterial().isSolid();
+        boolean offset4Solid = offset4Block.getMaterial().isSolid();
+
+        boolean skyAccessible = !world.canBlockSeeTheSky(x, y, z);
+        boolean blockAboveNotWater = world.getBlock(x, y + 1, z) != Blocks.water;
+
+        return centerSolid && offset1Solid && offset2Solid && offset3Solid && (offset4Solid || skyAccessible) && blockAboveNotWater;
     }
 }
