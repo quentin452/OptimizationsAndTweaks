@@ -416,6 +416,10 @@ public enum Mixin implements IMixin {
         require(TargetedMod.DISEASECRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinMedUtils),
         "diseasecraft.MixinMedUtils"),
 
+    common_fossilsandarcheologyrevivals_MixinAcademyGenerator(Side.COMMON,
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
+        "fossilsandarcheologyrevivals.MixinAcademyGenerator"),
+
     common_industrialupgrade_MixinRegisterOreDict(Side.COMMON,
         require(TargetedMod.INDUSTRIALUPGRADE).and(m -> OptimizationsandTweaksConfig.enableMixinRegisterOreDict),
         "industrialupgrade.MixinRegisterOreDict"),

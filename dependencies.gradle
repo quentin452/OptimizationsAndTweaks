@@ -145,6 +145,7 @@ dependencies {
     transformedMod("com.github.GTNewHorizons:EnderIO:2.5.8:dev")
     transformedMod("com.github.GTNewHorizons:OpenComputers:1.10.0-GTNH:sources")
 
+    implementation files("libs/fossilsarcheology-7.3.2.jar")
     implementation files("libs/FamiliarsAPI-1.7.10.jar")
     implementation files("libs/FamiliarsDefaultMobPack-1.7.10.jar")
     implementation files("libs/FamiliarsExtendedFamPack-1.7.10.jar")

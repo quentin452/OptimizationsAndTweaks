@@ -68,6 +68,8 @@ public enum TargetedMod implements ITargetedMod {
     ADVANCEDGENETICS("advancedgenetics", false, startsWith("advancedgenetics")),
     NETHERLICIOUS("netherlicious", false, startsWith("netherlicious")),
     CONFIGHELPER("confighelper", false, startsWith("confighelper")),
+    FOSSILANDARCHEOLOGYREVIVAL("fossilsarcheology", false, startsWith("fossilsarcheology")),
+
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),
