@@ -629,6 +629,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAcademyGenerator;
+    @Config.Comment("Fix ShipWrekGenerator Infinite Loop that freeze the server from Fossil Archeology Revival")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinShipWreckGenerator;
     @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod(Disabled by default cause problem during generation)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart

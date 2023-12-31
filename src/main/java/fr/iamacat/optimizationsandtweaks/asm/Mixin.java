@@ -419,7 +419,9 @@ public enum Mixin implements IMixin {
     common_fossilsandarcheologyrevivals_MixinAcademyGenerator(Side.COMMON,
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
         "fossilsandarcheologyrevivals.MixinAcademyGenerator"),
-
+    common_fossilsandarcheologyrevivals_MixinShipWreckGenerator(Side.COMMON,
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinShipWreckGenerator),
+        "fossilsandarcheologyrevivals.MixinShipWreckGenerator"),
     common_industrialupgrade_MixinRegisterOreDict(Side.COMMON,
         require(TargetedMod.INDUSTRIALUPGRADE).and(m -> OptimizationsandTweaksConfig.enableMixinRegisterOreDict),
         "industrialupgrade.MixinRegisterOreDict"),
