@@ -18,7 +18,7 @@ public class MixinShipWreckGenerator {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     private void generateStructure(World world, Random rand, int chunkX, int chunkZ) {
         FossilWaterStructureGenerator gen = new FossilWaterStructureGenerator();
         int struct = rand.nextInt(FossilWaterStructureGenerator.structures.size());
