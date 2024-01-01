@@ -292,10 +292,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEventRegistry;
 
-    @Config.Comment("Optimize InfotypeRegistry from Practical Logistics")
-    @Config.DefaultBoolean(false)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinInfotypeRegistry;
     @Config.Comment("Optimize ThaumcraftCraftingManager from Thaumcraft To Reduce loading time")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
