@@ -82,7 +82,9 @@ public enum TargetedMod implements ITargetedMod {
     DISEASECRAFT("DiseaseCraft", false, startsWith("DiseaseCraft")),
     ELDRITCHEMPIRE("eldritch-empire", false, startsWith("eldritch-empire")),
     FANTASTICFISH("Fantastic_Fish", false, startsWith("Fantastic_Fish")),
-
+    MINEGICKA("minegicka", false, startsWith("minegicka")),
+    FROZENLAND("Frozenland", false, startsWith("Frozenland")),
+    DISASTERCRAFT("disaster_craft", false, startsWith("disaster_craft")),
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),
     SMALLSTAIRS("Small Stairs", false, startsWith("Small Stairs")),

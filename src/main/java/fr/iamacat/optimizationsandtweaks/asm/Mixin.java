@@ -22,6 +22,10 @@ public enum Mixin implements IMixin {
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain),
         "lotrimprovements.MixinMain"),
+    common_minegicka_MixinModBaseMinegicka(Side.COMMON,
+        require(TargetedMod.MINEGICKA)
+                .and(m -> OptimizationsandTweaksConfig.enableMixinModBaseMinegicka),
+        "minegicka.MixinModBaseMinegicka"),
     common_lotr_MixinLOTRMod(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGS).and(
             avoid(TargetedMod.LORDOFTHERINGSFORK)

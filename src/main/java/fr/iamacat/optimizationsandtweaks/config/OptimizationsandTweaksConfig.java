@@ -694,6 +694,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean MixinLOTRWorldProvider;
+    @Config.Comment("Add configs options to change Potion Ids from Minegicka mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinModBaseMinegicka;
     @Config.Comment("Add configs options to change Biome Ids from LOTR mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
