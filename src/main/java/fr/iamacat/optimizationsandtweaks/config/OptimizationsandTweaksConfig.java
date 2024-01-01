@@ -661,6 +661,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGenerateCoral;
+    @Config.Comment("Made sure that EntityID from elijahs Chocolate mod is above 1000 to prevent crash with unknown mod(Need config helper installed)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityChocolateCreeper;
     @Config.Comment("Made sure that EntityID from RunicDungeons is above 1000 to prevent crash with Minenautica(Need config helper installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

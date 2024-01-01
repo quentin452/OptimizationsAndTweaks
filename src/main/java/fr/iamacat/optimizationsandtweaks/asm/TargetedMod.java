@@ -71,7 +71,7 @@ public enum TargetedMod implements ITargetedMod {
     FOSSILANDARCHEOLOGYREVIVAL("fossilsarcheology", false, startsWith("fossilsarcheology")),
     POTIONSHARDS("Potion Shard", false, startsWith("Potion Shard")),
     LOTOFMOBS("Lot O Mobs", false, startsWith("lom")),
-
+    ELIJAHSCHOCOLATEMOD("Elijah's Chocolate Mod", false, startsWith("Elijah's Chocolate Mod")),
     PAMSHARVESTCRAFT("Pam's HarvestCraft", false, contains("harvestcraft")),
     SHINCOLLE("Shinkeiseikan Collection", false, startsWith("shincolle")),
     COFHCORE("CoFHCore", false, startsWith("cofhcore")),

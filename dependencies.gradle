@@ -135,6 +135,7 @@ dependencies {
     implementation "curse.maven:sync-229090:2338150-deobf-sources-api"
     implementation "curse.maven:ichunutil-229060:2338148-deobf-sources-api"
     implementation "curse.maven:potion-shards-285611:2871651-deobf-sources-api"
+    implementation "curse.maven:elijahs-chocolate-mod-248073:2319217-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
