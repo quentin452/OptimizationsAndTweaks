@@ -193,6 +193,13 @@ public enum Mixin implements IMixin {
     common_minenautica_MixinMinenautica(Side.COMMON,
         require(TargetedMod.MINENAUTICA).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryMinenautica),
         "minenautica.MixinMinenautica"),
+    common_lotofmobs_MixinLotsOMobs(Side.COMMON,
+        require(TargetedMod.LOTOFMOBS).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryLotsOMobs),
+        "lotofmobs.MixinLotsOMobs"),
+
+    common_lotofmobs_MixinLotsOMobsBiomes(Side.COMMON,
+        require(TargetedMod.LOTOFMOBS).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryLotsOMobs),
+        "lotofmobs.MixinLotsOMobsBiomes"),
     common_minenautica_MixinAluminumOxideWorldGen(Side.COMMON,
         require(TargetedMod.MINENAUTICA).and(m -> OptimizationsandTweaksConfig.enableMixinAluminumOxideWorldGen),
         "minenautica.MixinAluminumOxideWorldGen"),

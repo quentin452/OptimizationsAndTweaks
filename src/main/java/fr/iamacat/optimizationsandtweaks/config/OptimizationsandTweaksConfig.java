@@ -600,6 +600,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryMinenautica;
+    @Config.Comment("Add a config for biomeids from Lot O Mobs mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBiomeRegistryLotsOMobs;
     @Config.Comment("Fix Cascading worldgen caused by VentGeneratorSingle class from Netherlicious mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
