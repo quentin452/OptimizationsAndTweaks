@@ -163,6 +163,7 @@ dependencies {
     implementation files("libs/Real.Kether-V1.9.5.2.jar")
     implementation files("libs/lom_1.7.10_202.0.4.jar")
     implementation files("libs/eldritch-empires-091.1.jar")
+    implementation files("libs/Fantastic_Fish_Mod_1.7.10.jar")
 
 }
 

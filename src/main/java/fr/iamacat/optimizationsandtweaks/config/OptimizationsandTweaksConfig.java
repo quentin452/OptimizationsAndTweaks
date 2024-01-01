@@ -584,7 +584,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAppleFuelHandler;
-    @Config.Comment("Change name of TileEntities from aeterh to fix dupplicated names")
+    @Config.Comment("Made name of the TileEntity from Fantastic Fish to fix dupplicated names")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFantasticMod;
+    @Config.Comment("Change name of TileEntities from aether to fix dupplicated names")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAetherTileEntities;

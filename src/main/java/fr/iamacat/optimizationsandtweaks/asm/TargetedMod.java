@@ -81,6 +81,7 @@ public enum TargetedMod implements ITargetedMod {
     GROWTHCRAFT("growthcraft", false, startsWith("growthcraft")),
     DISEASECRAFT("DiseaseCraft", false, startsWith("DiseaseCraft")),
     ELDRITCHEMPIRE("eldritch-empire", false, startsWith("eldritch-empire")),
+    FANTASTICFISH("Fantastic_Fish", false, startsWith("Fantastic_Fish")),
 
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),
