@@ -22,6 +22,16 @@ public enum Mixin implements IMixin {
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain),
         "lotrimprovements.MixinMain"),
+
+    common_disastercraft_MixinBiomeListDisaster(Side.COMMON,
+        require(TargetedMod.DISASTERCRAFT)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
+        "disastercraft.MixinBiomeListDisaster"),
+
+    common_disastercraft_MixinMainDisastercraft(Side.COMMON,
+        require(TargetedMod.DISASTERCRAFT)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
+        "disastercraft.MixinMainDisastercraft"),
     common_minegicka_MixinModBaseMinegicka(Side.COMMON,
         require(TargetedMod.MINEGICKA)
                 .and(m -> OptimizationsandTweaksConfig.enableMixinModBaseMinegicka),
