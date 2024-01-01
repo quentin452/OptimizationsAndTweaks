@@ -661,6 +661,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGenerateCoral;
+    @Config.Comment("Made sure that EntityID from EldritchEmpire mod is above 1000 to prevent crash with unknown mod(Need config helper installed)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEldritchEmpireRegistration;
     @Config.Comment("Made sure that EntityID from elijahs Chocolate mod is above 1000 to prevent crash with unknown mod(Need config helper installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

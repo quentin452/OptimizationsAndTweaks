@@ -80,6 +80,7 @@ public enum TargetedMod implements ITargetedMod {
     ESSENCEOFTHEGODFORK("eotg", false, startsWith("eotg")),
     GROWTHCRAFT("growthcraft", false, startsWith("growthcraft")),
     DISEASECRAFT("DiseaseCraft", false, startsWith("DiseaseCraft")),
+    ELDRITCHEMPIRE("eldritch-empire", false, startsWith("eldritch-empire")),
 
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),

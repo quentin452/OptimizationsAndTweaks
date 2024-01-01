@@ -162,6 +162,7 @@ dependencies {
     implementation files("libs/Ore+Spiders+V1.2.1+For+MC+1.7.10.jar")
     implementation files("libs/Real.Kether-V1.9.5.2.jar")
     implementation files("libs/lom_1.7.10_202.0.4.jar")
+    implementation files("libs/eldritch-empires-091.1.jar")
 
 }
 

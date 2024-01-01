@@ -226,6 +226,10 @@ public enum Mixin implements IMixin {
         require(TargetedMod.ELIJAHSCHOCOLATEMOD).and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)
             .and(require(TargetedMod.CONFIGHELPER)),
         "elijahschocolate.MixinEntityChocolateCreeper"),
+    common_eldritchempire_MixinEldritchEmpireRegistration(Side.COMMON,
+        require(TargetedMod.ELDRITCHEMPIRE).and(m -> OptimizationsandTweaksConfig.enableMixinEldritchEmpireRegistration)
+            .and(require(TargetedMod.CONFIGHELPER)),
+        "eldritchempire.MixinEldritchEmpireRegistration"),
     common_therealketer_MixinKMOD_Main_Entities(Side.COMMON,
         require(TargetedMod.THEREALKETER).and(m -> OptimizationsandTweaksConfig.enableMixinKMOD_Main_Entities)
             .and(require(TargetedMod.CONFIGHELPER)),
