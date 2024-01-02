@@ -38,8 +38,8 @@ public abstract class MixinCrystalFormationHangingBig extends WorldGeneratorAdv 
     private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
         for (int i = -1; i <= 1; i++) {
             for (int k = -1; k <= 1; k++) {
-                if (!world.getChunkProvider()
-                    .chunkExists(x + i, z + k)) {
+                Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+                if (!chunk.isChunkLoaded) {
                     return false;
                 }
             }

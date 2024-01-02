@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,8 +36,8 @@ public abstract class MixinCrystalFormationBig extends WorldGeneratorAdv {
     private boolean optimizationsAndTweaks$isNearbyChunksLoaded(World world, int x, int z) {
         for (int i = -1; i <= 1; i++) {
             for (int k = -1; k <= 1; k++) {
-                if (!world.getChunkProvider()
-                    .chunkExists(x + i, z + k)) {
+                Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+                if (!chunk.isChunkLoaded) {
                     return false;
                 }
             }

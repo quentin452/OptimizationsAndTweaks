@@ -7,6 +7,7 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
@@ -43,8 +44,8 @@ public abstract class MixinVentGeneratorSingle extends WorldGenerator {
             return false; // Chunk already generated, skip
         }
 
-        ChunkProviderServer chunkProvider = ((WorldServer) world).theChunkProviderServer;
-        if (!chunkProvider.chunkExists(x >> 4, z >> 4)) {
+        Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+        if (!chunk.isChunkLoaded) {
             return false;
         }
 

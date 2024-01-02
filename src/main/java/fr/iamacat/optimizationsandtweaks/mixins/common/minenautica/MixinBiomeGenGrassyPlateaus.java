@@ -31,14 +31,11 @@ public abstract class MixinBiomeGenGrassyPlateaus extends BiomeGenBase {
     public void func_76728_a(World world, Random random, int chunkX, int chunkZ) {
         super.decorate(world, random, chunkX, chunkZ);
 
-        if (world.getChunkProvider()
-            .chunkExists(chunkX, chunkZ)) {
             int x = chunkX + random.nextInt(16);
             int y = 50;
             int z = chunkZ + random.nextInt(16);
 
             (new GenerateCoral()).generateGrassyPlateausCoral(world, random, x, y, z);
-        }
     }
 
     @Shadow

@@ -40,11 +40,6 @@ public abstract class MixinWorldGenSewers {
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
 
-        if (!world.getChunkProvider()
-            .chunkExists(chunkX, chunkZ)) {
-            return false;
-        }
-
         int distanceToAir = optimizationsAndTweaks$calculateDistanceToAir(world, posX, posY, posZ);
 
         if (distanceToAir > 3) {
@@ -69,11 +64,6 @@ public abstract class MixinWorldGenSewers {
         int distance = 0;
         int chunkX = posX >> 4;
         int chunkZ = posZ >> 4;
-
-        if (!world.getChunkProvider()
-            .chunkExists(chunkX, chunkZ)) {
-            return -1;
-        }
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
         int chunkMinY = Math.max(0, posY);

@@ -10,6 +10,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -485,21 +486,15 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
      */
     @Overwrite
     public static void createNodeAt(World world, int x, int y, int z, NodeType nt, NodeModifier nm, AspectList al) {
-        int chunkX = x >> 4;
-        int chunkZ = z >> 4;
-
-        if (optimizationsAndTweaks$isChunkLoaded(world, chunkX, chunkZ)
-            && optimizationsAndTweaks$isAirBlock(world, x, y, z)) {
+        Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+        if (!chunk.isChunkLoaded) {
+            return;
+        }
+        if (optimizationsAndTweaks$isAirBlock(world, x, y, z)) {
             optimizationsAndTweaks$setBlockAiry(world, x, y, z);
             optimizationsAndTweaks$updateTileEntity(world, x, y, z, nt, nm, al);
             optimizationsAndTweaks$markBlockForUpdate(world, x, y, z);
         }
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$isChunkLoaded(World world, int chunkX, int chunkZ) {
-        return world.getChunkProvider()
-            .chunkExists(chunkX, chunkZ);
     }
 
     @Unique
