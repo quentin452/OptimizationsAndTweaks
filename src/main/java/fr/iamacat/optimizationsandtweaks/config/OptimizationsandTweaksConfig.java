@@ -775,7 +775,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftUtils;
-    @Config.Comment("Fix EXTREME Cascading Worldgen caused by WorldGenNori Class from MasterChef mod")
+    @Config.Comment("Fix EXTREME Cascading Worldgen caused by WorldGenNori Class from MasterChef mod(I disabled the generation code because it seem that nothing is generated in game and so make cascading worldgens for nothing)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenNori;
