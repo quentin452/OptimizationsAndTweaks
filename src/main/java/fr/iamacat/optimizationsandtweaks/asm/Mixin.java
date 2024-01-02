@@ -528,6 +528,10 @@ public enum Mixin implements IMixin {
     common_thaumcraft_MixinWorldGenCustomFlowersSide(Side.COMMON,
         require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenCustomFlowers),
         "thaumcraft.MixinWorldGenCustomFlowers"),
+
+    common_masterchef_MixinWorldGenNori(Side.COMMON,
+        require(TargetedMod.MASTERCHEF).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenNori),
+        "masterchef.MixinWorldGenNori"),
     common_gardenstuff_MixinWorldGenCandelilla(Side.COMMON,
         require(TargetedMod.GARDENSTUFF).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenCandelilla),
         "gardenstuff.MixinWorldGenCandelilla"),

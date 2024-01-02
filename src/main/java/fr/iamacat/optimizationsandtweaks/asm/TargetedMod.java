@@ -84,6 +84,8 @@ public enum TargetedMod implements ITargetedMod {
     FANTASTICFISH("Fantastic_Fish", false, startsWith("Fantastic_Fish")),
     MINEGICKA("minegicka", false, startsWith("minegicka")),
     FROZENLAND("Frozenland", false, startsWith("Frozenland")),
+    MASTERCHEF("MasterChef", false, startsWith("MasterChef")),
+
     DISASTERCRAFT("disaster_craft", false, startsWith("disaster_craft")),
     AKATSUKI("Akatsuk", false, startsWith("Akatsuk")),
     INDUSTRIALUPGRADE("IndustrialUpgrade", false, startsWith("IndustrialUpgrade")),

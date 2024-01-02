@@ -166,6 +166,7 @@ dependencies {
     implementation files("libs/Fantastic_Fish_Mod_1.7.10.jar")
     implementation files("libs/disaster_craft_mod_1.7.10.jar")
     implementation files("libs/Frozenland_Mod_1.7.10.jar")
+    implementation files("libs/MasterChef-1.7.10.jar")
     implementation files("libs/minegicka_3_mod_1.7.10.jar")
 
 }

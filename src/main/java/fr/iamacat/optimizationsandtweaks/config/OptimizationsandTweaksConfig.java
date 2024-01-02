@@ -775,6 +775,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftUtils;
+    @Config.Comment("Fix EXTREME Cascading Worldgen caused by WorldGenNori Class from MasterChef mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenNori;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenPamFruitTree from Pam's Harvestcraft mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
