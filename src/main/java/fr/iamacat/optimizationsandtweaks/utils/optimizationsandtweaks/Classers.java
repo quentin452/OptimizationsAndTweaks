@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
+import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -103,6 +104,26 @@ public class Classers {
         public int compare(ModContainer o1, ModContainer o2)
         {
             return o1.getModId().compareTo(o2.getModId());
+        }
+    }
+
+    // MixinWorldGenPyramid
+
+    public static class Pair {
+        public int x;
+        public int y;
+
+        public Pair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public boolean equals(Object p) {
+            if (!(p instanceof Pair)) {
+                return false;
+            } else {
+                return ((Pair)p).x == this.x && ((Pair)p).y == this.y;
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ public enum TargetedMod implements ITargetedMod {
     GARDENSTUFF("GardenStuff", false, startsWith("GardenStuff")),
 
     DRAGONBLOCKC("DragonBlockC", false, startsWith("DragonBlockC")),
+    ATUM2("Atum", false, startsWith("Atum")),
 
     UNTHAUMIC("Thaumcraft Minus Thaumcraft", false, startsWith("Thaumcraft Minus Thaumcraft")),
 
@@ -92,13 +93,17 @@ public enum TargetedMod implements ITargetedMod {
     SMALLSTAIRS("Small Stairs", false, startsWith("Small Stairs")),
     XAEROWORLDMAP("XaerosWorldMap", false, startsWith("XaerosWorldMap")),
     XAEROMINIMAP("Xaeros_Minimap", false, startsWith("Xaeros_Minimap")),
-
-    ATUM("Atum", false, startsWith("atum")),
     FARLANDERS("The Farlanders", false, startsWith("farlanders")),
+    MYTHANDMONSTERS("mythandmonsters", false, startsWith("mythandmonsters")),
+
     SLIMECARNAGE("SlimeCarnage", false, startsWith("SlimeCarnage")),
     ATOMICSTYKERSBATTLETOWERS("AtomicStryker's Battletowers", false, startsWith("battletower")),
     SALTYMOD_EXPANDED("Salty Mod Expanded", false, startsWith("SaltMod")),
-    BUILDCRAFT("BuildCraft", false, startsWith("BuildCraft|Core")),
+    BUILDCRAFT("buildcraft", false, startsWith("buildcraft")),
+    BUILDCRAFTOILTWEAKS("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
+    NEWDUNGEONS("new_dungeons", false, startsWith("new_dungeons")),
+    GOBLINS("goblins", false, startsWith("goblins")),
+
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
@@ -107,6 +112,8 @@ public enum TargetedMod implements ITargetedMod {
     LORDOFTHERINGSFORK("LOTRModfork", false, startsWith("LOTRModfork")),
     LOTRIMPROVEMENTS("LOTR Improvements", false, startsWith("LOTR Improvements")),
     ADVANCEDWORLDSELECTION("WorldSelectionAdvanced", false, startsWith("WorldSelectionAdvanced")),
+    FORESTRY("Forestry", false, startsWith("Forestry")),
+    RECURRENTCOMPLEX("RecurrentComplex", false, startsWith("RecurrentComplex")),
 
     ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
     LOOTPLUSPLUS("Loot++", false, startsWith("Loot++")),

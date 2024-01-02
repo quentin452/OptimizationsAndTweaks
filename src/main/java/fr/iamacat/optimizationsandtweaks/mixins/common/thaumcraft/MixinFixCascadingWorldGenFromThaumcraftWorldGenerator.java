@@ -37,8 +37,7 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
 
-import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.countBlocksAroundPlayer;
-import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.optimizationsAndTweaks$countFoliageAroundPlayer;
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.*;
 
 @Mixin(ThaumcraftWorldGenerator.class)
 public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {
@@ -393,59 +392,7 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Unique
     private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random,
         int value, NodeType type, NodeModifier modifier) {
-        int chunkX = x >> 4;
-        int chunkZ = z >> 4;
-
-        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-        if(!chunk.isChunkLoaded) {
-            return;
-        }
-        int water = countBlocksAroundPlayer(world, x, y, z, Material.water);
-        int lava = countBlocksAroundPlayer(world, x, y, z, Material.lava);
-        int stone = countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());
-        int foliage = optimizationsAndTweaks$countFoliageAroundPlayer(world, x, y, z);
-
-        final int THRESHOLD_WATER = 100;
-        final int THRESHOLD_LAVA = 100;
-        final int THRESHOLD_STONE = 500;
-        final int THRESHOLD_FOLIAGE = 100;
-
-        AspectList al = new AspectList();
-
-        if (water > THRESHOLD_WATER) {
-            al.merge(Aspect.WATER, 1);
-        }
-
-        if (lava > THRESHOLD_LAVA) {
-            al.merge(Aspect.FIRE, 1);
-            al.merge(Aspect.EARTH, 1);
-        }
-
-        if (stone > THRESHOLD_STONE) {
-            al.merge(Aspect.EARTH, 1);
-        }
-
-        if (foliage > THRESHOLD_FOLIAGE) {
-            al.merge(Aspect.PLANT, 1);
-        }
-
-        int totalAmount = al.size();
-        int[] spread = new int[totalAmount];
-        float totalSpread = 0.0F;
-
-        for (int a = 0; a < totalAmount; ++a) {
-            int aspectAmount = al.getAmount(al.getAspectsSorted()[a]);
-            spread[a] = (aspectAmount == 2) ? 50 + random.nextInt(25) : 25 + random.nextInt(50);
-            totalSpread += spread[a];
-        }
-
-        for (int a = 0; a < totalAmount; ++a) {
-            float spreadValue = spread[a] / totalSpread * value;
-            al.merge(al.getAspectsSorted()[a], (int) spreadValue);
-        }
-
-        createNodeAt(world, x, y, z, type, modifier, al);
+        applyThresholds(world, x, y, z, random, value, type, modifier);
     }
 
     /**

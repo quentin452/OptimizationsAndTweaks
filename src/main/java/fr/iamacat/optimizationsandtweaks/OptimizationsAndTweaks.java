@@ -1,5 +1,8 @@
 package fr.iamacat.optimizationsandtweaks;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.FileInjector;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.ModConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -8,6 +11,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
+
+import java.io.File;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {
@@ -19,7 +24,14 @@ public class OptimizationsAndTweaks {
     public static Configuration config;
 
     @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent event) {}
+    public static void preInit(FMLPreInitializationEvent event) {
+        if(FMLCommonHandler.instance().findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
+            File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");
+            ModConfig modConfig = new ModConfig(configFile, event);
+            FileInjector.setModConfig(modConfig);
+            ModConfig.initializeConfig(event);
+        }
+    }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {}

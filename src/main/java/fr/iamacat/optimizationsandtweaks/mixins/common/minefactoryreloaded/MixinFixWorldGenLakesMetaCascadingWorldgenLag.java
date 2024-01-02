@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,6 +29,14 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
 
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+
+        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if(!chunk.isChunkLoaded) {
+            return false;
+        }
         if (optimizationsAndTweaks$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {
             // Limit lake generation to prevent cascading issues
             return false;

@@ -751,6 +751,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenMadLab;
+    @Config.Comment("Fix Some Cascading Worldgen caused by SpringPopulate Class from Buildcraft mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinSpringPopulate;
+    @Config.Comment("Fix Some Cascading Worldgen caused by GOBLINWorldGenGVillage1 Class from Goblins mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGOBLINWorldGenGVillage1;
     @Config.Comment("Fix Some Cascading Worldgen caused by ThaumcraftWorldGenerator from Thaumcraft4 mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -778,6 +786,30 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftUtils;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenMisStructures Class from Fossil And Archeology Revival mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenMiscStructures;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenPyramid Class from Atum mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenPyramid;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenOasis Class from Atum mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenOasis;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenRuins Class from Atum mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenRuins;
+    @Config.Comment("Fix Some Cascading Worldgen caused by HiveDecorator Class from Forestry mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinHiveDecorator;
+    @Config.Comment("Rewrite MythicAndMonster generator to use RecurrentComplex(need recurent complex installed)(The mixin will be injected only if Recurrent Complex is installed")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMAMWorldGenerator;
     @Config.Comment("Fix EXTREME Cascading Worldgen caused by WorldGenNori Class from MasterChef mod(I disabled the generation code because it seem that nothing is generated in game and so make cascading worldgens for nothing)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -136,6 +136,7 @@ dependencies {
     implementation "curse.maven:ichunutil-229060:2338148-deobf-sources-api"
     implementation "curse.maven:potion-shards-285611:2871651-deobf-sources-api"
     implementation "curse.maven:elijahs-chocolate-mod-248073:2319217-deobf-sources-api"
+    implementation "curse.maven:atum-mod-59621:2256356-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
@@ -168,7 +169,9 @@ dependencies {
     implementation files("libs/Frozenland_Mod_1.7.10.jar")
     implementation files("libs/MasterChef-1.7.10.jar")
     implementation files("libs/minegicka_3_mod_1.7.10.jar")
-
+    implementation files("libs/mythandmonsters_1.7.10_1.0.0.jar")
+    implementation files("libs/goblins_mod_6.0.jar")
+    implementation files("libs/Forestry-4.8.1.jar")
 }
 
 jar {
