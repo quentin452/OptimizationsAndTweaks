@@ -2,11 +2,13 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
 import java.util.Random;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.BiomeGenMagicalForest2;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenBigMushroom;
 import net.minecraft.world.gen.feature.WorldGenBlockBlob;
 
@@ -34,6 +36,14 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
      */
     @Override
     public void decorate(World world, Random random, int x, int z) {
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+
+        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if(!chunk.isChunkLoaded) {
+            return;
+        }
         optimizationsAndTweaks$generateBlobs(world, random, x, z);
         optimizationsAndTweaks$generateBigMushrooms(world, random, x, z);
         optimizationsAndTweaks$generateManaPods(world, random, x, z);
@@ -79,10 +89,6 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
     }
 
     @Unique
-    private static final int[][] PROBABLE_POSITIONS = { { 1, 0, 0 }, { 0, 0, 1 }, { -1, 0, 0 }, { 0, 0, -1 },
-        { 1, 0, 1 }, { -1, 0, 1 }, { -1, 0, -1 }, { 1, 0, -1 }, { 0, 1, 0 }, { 0, -1, 0 } };
-
-    @Unique
     private void optimizationsAndTweaks$generateCustomPlants(World world, Random random, int x, int z) {
         int worldHeight = world.getHeightValue(x, z);
 
@@ -95,28 +101,11 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
             }
 
             if (world.getBlock(posX, worldHeight, posZ) == Blocks.grass && world.isAirBlock(posX, worldHeight + 1, posZ)
-                && optimizationsAndTweaks$isAdjacentToWood(world, posX, worldHeight + 1, posZ)) {
+                && BiomeGenMagicalForest2.optimizationsAndTweaks$isAdjacentToWood(world, posX, worldHeight + 1, posZ)) {
 
                 world.setBlock(posX, worldHeight + 1, posZ, ConfigBlocks.blockCustomPlant, 5, 2);
             }
         }
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isAdjacentToWood(IBlockAccess world, int x, int y, int z) {
-        for (int[] pos : PROBABLE_POSITIONS) {
-            int xx = pos[0] + x;
-            int yy = pos[1] + y;
-            int zz = pos[2] + z;
-
-            Block block = world.getBlock(xx, yy, zz);
-
-            if (block != null && block.isWood(world, xx, yy, zz)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     static {

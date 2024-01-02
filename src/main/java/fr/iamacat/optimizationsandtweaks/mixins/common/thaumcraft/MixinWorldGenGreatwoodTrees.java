@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -110,13 +111,21 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
 
     @Unique
     private boolean optimizationsAndTweaks$checkBlockAtPosition(int[] position) {
-        try {
-            Block block = this.worldObj.getBlock(position[0], position[1], position[2]);
-            return (block.isAir(this.worldObj, position[0], position[1], position[2])
-                || block == ConfigBlocks.blockMagicalLeaves);
-        } catch (Exception var17) {
-            return false;
+        int x = position[0];
+        int y = position[1];
+        int z = position[2];
+
+        if (y >= 0 && y < 256) {
+            Block block = this.worldObj.getBlock(x, y, z);
+
+            if (block != null) {
+                if (block.isAir(this.worldObj, x, y, z) || block == ConfigBlocks.blockMagicalLeaves) {
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
 
     /**
@@ -197,6 +206,14 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      */
     @Overwrite(remap = false)
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5, boolean spiders) {
+        int chunkX = par3 >> 4;
+        int chunkZ = par5 >> 4;
+
+        Chunk chunk = par1World.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if(!chunk.isChunkLoaded) {
+            return false;
+        }
         this.worldObj = par1World;
         long var6 = par2Random.nextLong();
         this.rand.setSeed(var6);
@@ -371,21 +388,29 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
      */
     @Overwrite(remap = false)
     void genTreeLayer(int par1, int par2, int par3, float par4, byte par5, Block par6) {
+        int chunkX = par1 >> 4;
+        int chunkZ = par3 >> 4;
+
+        Chunk chunk = worldObj.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if(!chunk.isChunkLoaded) {
+            return;
+        }
+
         int var7 = (int) (par4 + 0.618D);
         byte var8 = otherCoordPairs[par5];
         byte var9 = otherCoordPairs[par5 + 3];
         int[] var10 = new int[] { par1, par2, par3 };
         int[] var11 = new int[] { 0, 0, 0 };
         int var12 = -var7;
-        int var13 = -var7;
 
         for (var11[par5] = var10[par5]; var12 <= var7; ++var12) {
             var11[var8] = var10[var8] + var12;
-            var13 = -var7;
+            int var13 = -var7;
 
             while (var13 <= var7) {
                 double var15 = Math.pow(Math.abs(var12) + 0.5D, 2.0D) + Math.pow(Math.abs(var13) + 0.5D, 2.0D);
-                if (!(var15 > (par4 * par4))) {
+                if (var15 <= (par4 * par4)) {
                     try {
                         var11[var9] = var10[var9] + var13;
                         Block block = this.worldObj.getBlock(var11[0], var11[1], var11[2]);
@@ -393,16 +418,14 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
                             || block.canBeReplacedByLeaves(this.worldObj, var11[0], var11[1], var11[2]))) {
                             this.setBlockAndNotifyAdequately(this.worldObj, var11[0], var11[1], var11[2], par6, 0);
                         }
-                    } catch (Exception var17) {
-                        ;
+                    } catch (Exception ignored) {
                     }
-
                 }
                 ++var13;
             }
         }
-
     }
+
 
     @Shadow
     void generateLeafNodeBases() {

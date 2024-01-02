@@ -48,9 +48,13 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
     public boolean LocationIsValidSpawn(World world, int i, int j, int k) {
         int distanceToAir = 0;
 
-        // Count the distance to air blocks
-        for (Block checkID = world.getBlock(i, j, k); checkID
-            != Blocks.air; checkID = world.getBlock(i, j + distanceToAir, k)) {
+        while (distanceToAir <= 2) {
+            Block checkID = world.getBlock(i, j + distanceToAir, k);
+
+            if (checkID == Blocks.air) {
+                break;
+            }
+
             ++distanceToAir;
         }
 
@@ -61,14 +65,12 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
             Block blockIDBelow = world.getBlock(i, j - 1, k);
             Block[] validSpawnBlocks = this.GetValidSpawnBlocks();
 
-            // Check conditions for valid spawn location
             for (Block x : validSpawnBlocks) {
                 if (blockIDAbove != Blocks.air) {
                     return false;
                 }
 
-                if (blockID == x
-                    || (blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x) {
+                if (blockID == x || ((blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x)) {
                     return true;
                 }
             }

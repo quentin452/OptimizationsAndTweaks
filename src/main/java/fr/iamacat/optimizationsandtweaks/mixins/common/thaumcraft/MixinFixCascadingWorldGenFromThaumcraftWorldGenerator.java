@@ -37,6 +37,9 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
 
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.countBlocksAroundPlayer;
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.optimizationsAndTweaks$countFoliageAroundPlayer;
+
 @Mixin(ThaumcraftWorldGenerator.class)
 public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {
 
@@ -390,9 +393,17 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
     @Unique
     private static void optimizationsAndTweaks$applyThresholds(World world, int x, int y, int z, Random random,
         int value, NodeType type, NodeModifier modifier) {
-        int water = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.water);
-        int lava = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Material.lava);
-        int stone = optimizationsAndTweaks$countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+
+        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if(!chunk.isChunkLoaded) {
+            return;
+        }
+        int water = countBlocksAroundPlayer(world, x, y, z, Material.water);
+        int lava = countBlocksAroundPlayer(world, x, y, z, Material.lava);
+        int stone = countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());
         int foliage = optimizationsAndTweaks$countFoliageAroundPlayer(world, x, y, z);
 
         final int THRESHOLD_WATER = 100;
@@ -435,49 +446,6 @@ public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator impl
         }
 
         createNodeAt(world, x, y, z, type, modifier, al);
-    }
-
-    @Unique
-    private static final int SEARCH_RADIUS = 5;
-
-    @Unique
-    private static int optimizationsAndTweaks$countBlocksAroundPlayer(World world, int x, int y, int z,
-        Material material) {
-        int count = 0;
-
-        for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
-            for (int yOffset = -SEARCH_RADIUS; yOffset <= SEARCH_RADIUS; ++yOffset) {
-                for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
-                    if (world.getBlock(x + xOffset, y + yOffset, z + zOffset)
-                        .getMaterial() == material) {
-                        count++;
-                    }
-                }
-            }
-        }
-
-        return count;
-    }
-
-    @Unique
-    private static final int SEARCH_RADIUS2 = 5;
-
-    @Unique
-    private static int optimizationsAndTweaks$countFoliageAroundPlayer(World world, int x, int y, int z) {
-        int count = 0;
-
-        for (int xOffset = -SEARCH_RADIUS2; xOffset <= SEARCH_RADIUS2; ++xOffset) {
-            for (int yOffset = -SEARCH_RADIUS2; yOffset <= SEARCH_RADIUS2; ++yOffset) {
-                for (int zOffset = -SEARCH_RADIUS2; zOffset <= SEARCH_RADIUS2; ++zOffset) {
-                    if (world.getBlock(x + xOffset, y + yOffset, z + zOffset)
-                        .isLeaves(world, x + xOffset, y + yOffset, z + zOffset)) {
-                        count++;
-                    }
-                }
-            }
-        }
-
-        return count;
     }
 
     /**
