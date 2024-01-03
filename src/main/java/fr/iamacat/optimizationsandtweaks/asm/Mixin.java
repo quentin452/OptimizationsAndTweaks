@@ -444,6 +444,10 @@ public enum Mixin implements IMixin {
     common_mankini_MixinBatMankiniJump(Side.COMMON,
         require(TargetedMod.MANKINI).and(m -> OptimizationsandTweaksConfig.enableMixinBatMankiniJump),
         "mankini.MixinBatMankiniJump"),
+
+    common_experienceore_MixinWorldGenHandlerExperienceOre(Side.COMMON,
+        require(TargetedMod.EXPERIENCEORE).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre),
+        "experienceore.MixinWorldGenHandlerExperienceOre"),
     common_buildcraft_MixinSpringPopulate(Side.COMMON,
         require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinSpringPopulate),
         "buildcraft.MixinSpringPopulate"),

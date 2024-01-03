@@ -1,6 +1,8 @@
 package fr.iamacat.optimizationsandtweaks;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.function.Exp;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore.ExperienceOreConfig;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.FileInjector;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.ModConfig;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,6 +32,9 @@ public class OptimizationsAndTweaks {
             ModConfig modConfig = new ModConfig(configFile, event);
             FileInjector.setModConfig(modConfig);
             ModConfig.initializeConfig(event);
+        }
+        if(FMLCommonHandler.instance().findContainerFor("ExpOre") != null && OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre) {
+            ExperienceOreConfig.setupAndLoad(event);
         }
     }
 

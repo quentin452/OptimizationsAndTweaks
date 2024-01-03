@@ -873,7 +873,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinVersionInfo;
-
+    @Config.Comment("Add a config to change frequency or Experience ore generation from Experience ore Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenHandlerExperienceOre;
     @Config.Comment("Remove unecessary println in KitchenCraftMachines class from KitchenCraft Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
