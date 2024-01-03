@@ -114,6 +114,7 @@ public enum TargetedMod implements ITargetedMod {
     ADVANCEDWORLDSELECTION("WorldSelectionAdvanced", false, startsWith("WorldSelectionAdvanced")),
     FORESTRY("Forestry", false, startsWith("Forestry")),
     RECURRENTCOMPLEX("RecurrentComplex", false, startsWith("RecurrentComplex")),
+    MANKINI("Mankini", false, startsWith("Mankini")),
 
     ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
     LOOTPLUSPLUS("Loot++", false, startsWith("Loot++")),

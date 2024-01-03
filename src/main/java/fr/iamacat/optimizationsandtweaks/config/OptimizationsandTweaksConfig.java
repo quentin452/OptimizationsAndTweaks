@@ -882,6 +882,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBuildCraftConfig;
+    @Config.Comment("Disabling Anti Fall damage (OP) from Mankini Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBatMankiniJump;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })
