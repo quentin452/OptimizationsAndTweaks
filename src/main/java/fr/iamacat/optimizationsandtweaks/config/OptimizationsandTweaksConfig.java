@@ -892,6 +892,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBatMankiniJump;
+    @Config.Comment("Remove Grim3212 Version Checker to prevent https://github.com/quentin452/privates-minecraft-modpack/issues/903")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGrimModule;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

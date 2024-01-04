@@ -34,6 +34,7 @@ public enum TargetedMod implements ITargetedMod {
     RUNICDUNGEONS("RunicDungeons", false, startsWith("RunicDungeons")),
     ORESPIDERS("Ore+Spiders", false, startsWith("Ore+Spiders")),
     TRAINCRAFT("Traincraft", false, startsWith("Traincraft")),
+    GRIM3212("Grim3212", false, startsWith("Grim3212")),
 
     MINENAUTICA("Minenautica", false, startsWith("Minenautica")),
 

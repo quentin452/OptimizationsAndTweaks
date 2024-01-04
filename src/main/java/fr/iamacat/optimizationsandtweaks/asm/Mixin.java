@@ -661,6 +661,9 @@ public enum Mixin implements IMixin {
     common_kitchencraft_MixinKitchenCraftMachines(Side.COMMON,
         require(TargetedMod.KITCHENCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinKitchenCraftMachines),
         "kitchencraft.MixinKitchenCraftMachines"),
+    common_grim3212_MixinGrimModule(Side.COMMON,
+        require(TargetedMod.GRIM3212).and(m -> OptimizationsandTweaksConfig.enableMixinGrimModule),
+        "grim3212.MixinGrimModule"),
 
     // CLIENT MIXINS
 
