@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
+import thaumcraft.api.internal.DummyInternalMethodHandler;
 
 import java.util.Comparator;
 
@@ -124,6 +125,29 @@ public class Classers {
             } else {
                 return ((Pair)p).x == this.x && ((Pair)p).y == this.y;
             }
+        }
+    }
+
+    // MixinInfusionVisualDisguiseArmor
+
+    public static class FakeMethodHandler extends DummyInternalMethodHandler {
+        public FakeMethodHandler() {
+        }
+
+        public boolean isResearchComplete(String username, String researchkey) {
+            return true;
+        }
+    }
+
+    // MixinGuiResearchRecipe
+
+    public static class Coord2D {
+        public   int x;
+        public  int y;
+
+        public  Coord2D(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
     }
 }

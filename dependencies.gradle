@@ -138,6 +138,7 @@ dependencies {
     implementation "curse.maven:elijahs-chocolate-mod-248073:2319217-deobf-sources-api"
     implementation "curse.maven:atum-mod-59621:2256356-deobf-sources-api"
     implementation "curse.maven:experience-ore-226591:2223296-deobf-sources-api"
+    implementation "curse.maven:gadomancy-237271:2338768-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

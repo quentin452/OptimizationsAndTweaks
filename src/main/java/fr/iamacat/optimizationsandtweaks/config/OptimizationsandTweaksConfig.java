@@ -296,7 +296,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftCraftingManager;
-
+    @Config.Comment("Fix null crashes caused by Thaumonomicon Book of Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableFixThaumonomiconBookNullCrashes;
     @Config.Comment("Optimize ThaumcraftHelper class From Extra Utilities")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

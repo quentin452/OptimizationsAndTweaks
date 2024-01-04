@@ -116,6 +116,7 @@ public enum TargetedMod implements ITargetedMod {
     RECURRENTCOMPLEX("RecurrentComplex", false, startsWith("RecurrentComplex")),
     MANKINI("Mankini", false, startsWith("Mankini")),
     EXPERIENCEORE("ExperienceOre", false, startsWith("ExperienceOre")),
+    GADOMANCY("gadomancy", false, startsWith("gadomancy")),
 
     ETERNALFROST("eternalfrost", false, startsWith("eternalfrost")),
     LOOTPLUSPLUS("Loot++", false, startsWith("Loot++")),
