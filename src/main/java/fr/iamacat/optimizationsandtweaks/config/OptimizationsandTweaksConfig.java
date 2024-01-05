@@ -880,6 +880,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLocalizationUpdater;
+    @Config.Comment("Disable Version Check from Bird Nests")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean disableBirdNestVersionChecker;
     @Config.Comment("Disable Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

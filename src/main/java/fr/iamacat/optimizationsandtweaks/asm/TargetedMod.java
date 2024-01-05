@@ -106,6 +106,7 @@ public enum TargetedMod implements ITargetedMod {
     NEWDUNGEONS("new_dungeons", false, startsWith("new_dungeons")),
     GOBLINS("goblins", false, startsWith("goblins")),
     REMOTEIO("RemoteIO", false, startsWith("RemoteIO")),
+    BIRDSNEST("BirdsNests", false, startsWith("BirdsNests")),
 
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
