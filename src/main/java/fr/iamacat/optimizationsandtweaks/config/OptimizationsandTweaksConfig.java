@@ -884,6 +884,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean disableBirdNestVersionChecker;
+    @Config.Comment("Disable Version Check from COFHCORE")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCOFHCORE;
     @Config.Comment("Disable Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

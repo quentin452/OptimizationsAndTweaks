@@ -593,6 +593,9 @@ public enum Mixin implements IMixin {
         require(TargetedMod.STEAMCRAFT2)
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromWorldGenBrassTree),
         "steamcraft2.MixinFixCascadingFromWorldGenBrassTree"),
+    common_cofhcore_MixinCOFHCORE(Side.COMMON,
+        require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinCOFHCORE),
+        "cofhcore.MixinCOFHCORE"),
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
         require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinOreDictCofhFix),
         "cofhcore.fixoredictcrash.MixinOreDictionaryArbiter"),
