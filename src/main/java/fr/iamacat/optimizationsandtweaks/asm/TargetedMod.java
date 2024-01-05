@@ -109,7 +109,7 @@ public enum TargetedMod implements ITargetedMod {
     BIRDSNEST("BirdsNests", false, startsWith("BirdsNests")),
     WEATHERCARPET("Weather", false, startsWith("Weather")),
     HAMSTERIFIC("hamsterrific", false, startsWith("hamsterrific")),
-
+    GANYSNETHER("Ganys_Nether", false, startsWith("Ganys_Nether")),
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
     KINGDOMSOFTHEOVERWORLD("Kingdoms of the Overworld Mod", false, startsWith("Kingdoms of the Overworld")),
