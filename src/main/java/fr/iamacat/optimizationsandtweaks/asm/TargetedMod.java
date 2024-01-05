@@ -108,6 +108,7 @@ public enum TargetedMod implements ITargetedMod {
     REMOTEIO("RemoteIO", false, startsWith("RemoteIO")),
     BIRDSNEST("BirdsNests", false, startsWith("BirdsNests")),
     WEATHERCARPET("Weather", false, startsWith("Weather")),
+    HAMSTERIFIC("hamsterrific", false, startsWith("hamsterrific")),
 
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),

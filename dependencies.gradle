@@ -140,6 +140,7 @@ dependencies {
     implementation "curse.maven:experience-ore-226591:2223296-deobf-sources-api"
     implementation "curse.maven:gadomancy-237271:2338768-deobf-sources-api"
     implementation "curse.maven:birds-nests-250466:2340114-deobf-sources-api"
+    implementation "curse.maven:hamsterrific-restored-402981:3035672-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

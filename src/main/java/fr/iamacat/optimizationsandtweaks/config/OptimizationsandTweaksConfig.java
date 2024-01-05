@@ -829,6 +829,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFixCascadingFromWorldGenBrassTree;
+    @Config.Comment("Fix java.lang.Integer cannot be cast to java.lang.Byte caused by Hamsterific Restored mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityHamster;
     @Config.Comment("Fix Random Crash caused by oredict from Cofh Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
