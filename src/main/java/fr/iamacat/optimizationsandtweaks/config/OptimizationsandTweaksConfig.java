@@ -892,6 +892,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCloudChecking;
+    @Config.Comment("Disable DevCape Rendering register from Myth and Monsters")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMAMClientProxy;
     @Config.Comment("Disable Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
