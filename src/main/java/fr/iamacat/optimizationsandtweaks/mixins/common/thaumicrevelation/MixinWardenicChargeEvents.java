@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.thaumicrevelations;
+package fr.iamacat.optimizationsandtweaks.mixins.common.thaumicrevelation;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

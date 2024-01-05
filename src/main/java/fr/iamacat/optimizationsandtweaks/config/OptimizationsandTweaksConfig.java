@@ -854,6 +854,11 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchBlockMagicalLeavesPerformances;
 
+    @Config.Comment("Fix null crash caused by KeyHandler from Thaumic Revelation")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinKeyHandlerTHAUMREV;
+
     @Config.Comment("Fix Null crash caused by ScanManager from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

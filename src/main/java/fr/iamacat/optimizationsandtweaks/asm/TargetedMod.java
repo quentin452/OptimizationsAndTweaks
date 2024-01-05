@@ -109,6 +109,8 @@ public enum TargetedMod implements ITargetedMod {
     BIRDSNEST("BirdsNests", false, startsWith("BirdsNests")),
     WEATHERCARPET("Weather", false, startsWith("Weather")),
     HAMSTERIFIC("hamsterrific", false, startsWith("hamsterrific")),
+    THAUMICREVELEATION("ThaumicRevelations", false, startsWith("ThaumicRevelations")),
+
     GANYSNETHER("Ganys_Nether", false, startsWith("Ganys_Nether")),
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),
@@ -154,7 +156,6 @@ public enum TargetedMod implements ITargetedMod {
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),
     OPIS("Opis", false, startsWith("Opis")),
     KORINBLUEBEDROCK("1-7-10-005-KoRIN", false, startsWith("1-7-10-005-KoRIN")),
-    THAUMICREVELATIONS("ThaumicRevelations", false, startsWith("ThaumicRevelations")),
 
     AETHER("aether", false, startsWith("aether")),;
 
