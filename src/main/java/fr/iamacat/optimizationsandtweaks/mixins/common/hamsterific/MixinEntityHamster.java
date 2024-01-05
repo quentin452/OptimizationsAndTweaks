@@ -36,4 +36,13 @@ public abstract class MixinEntityHamster  extends EntityTameable {
     public int getBallColor() {
         return this.dataWatcher.getWatchableObjectInt(21);
     }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
+    public void setBallColor(int b) {
+        this.dataWatcher.updateObject(21, b);
+    }
 }
