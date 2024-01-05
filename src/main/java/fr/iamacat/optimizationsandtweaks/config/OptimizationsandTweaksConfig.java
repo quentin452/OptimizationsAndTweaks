@@ -888,6 +888,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCOFHCORE;
+    @Config.Comment("Disable Version Check from WEATHER CARPET")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCloudChecking;
     @Config.Comment("Disable Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

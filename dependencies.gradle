@@ -179,6 +179,7 @@ dependencies {
     implementation files("libs/Mankini_1.7.10_1.2.1.jar")
     implementation files("libs/Grim3212-Core-1.7.10.jar")
     implementation files("libs/RemoteIO-1.7.10-2.4.8.jar")
+    implementation files("libs/Weather+Carpets+Mod-1.2.5.jar")
 
 }
 
