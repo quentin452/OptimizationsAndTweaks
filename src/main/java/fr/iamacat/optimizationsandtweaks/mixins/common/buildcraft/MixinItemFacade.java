@@ -23,10 +23,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Mixin(ItemFacade.class)
 public class MixinItemFacade {
@@ -138,34 +134,16 @@ public class MixinItemFacade {
         ItemStack facade6Hollow = facadeHollow.splitStack(1);
         facade6Hollow.stackSize = 6;
 
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        List<Callable<Void>> tasks = new ArrayList<>();
+        if (Loader.isModLoaded("BuildCraft|Silicon") && !BuildCraftTransport.facadeForceNonLaserRecipe) {
+            int time = 8000;
 
-        tasks.add(() -> {
-            if (Loader.isModLoaded("BuildCraft|Silicon") && !BuildCraftTransport.facadeForceNonLaserRecipe) {
-                int time = 8000;
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, time, facade6, optimizationsAndTweaks$getPipeStructureCobblestone(3), itemStack);
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", time, facade6Hollow, optimizationsAndTweaks$getPipeStructureCobblestone(3), itemStack);
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
-            }
-            return null;
-        });
-
-        tasks.add(() -> {
-            if (!Loader.isModLoaded("BuildCraft|Silicon") || BuildCraftTransport.facadeForceNonLaserRecipe) {
-                GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
-                GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
-            }
-            return null;
-        });
-
-        try {
-            executor.invokeAll(tasks);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            executor.shutdown();
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, time, facade6, optimizationsAndTweaks$getPipeStructureCobblestone(3), itemStack);
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", time, facade6Hollow, optimizationsAndTweaks$getPipeStructureCobblestone(3), itemStack);
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
+        } else {
+            GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+            GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
         }
     }
 
