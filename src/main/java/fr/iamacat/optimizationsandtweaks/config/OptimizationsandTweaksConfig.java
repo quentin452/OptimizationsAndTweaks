@@ -863,6 +863,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinScanManager;
+    @Config.Comment("Reduce time to load Facades from Buildcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemFacade;
     @Config.Comment("Reduce tps lags caused by SpawnerAnimals on VoidWorld")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

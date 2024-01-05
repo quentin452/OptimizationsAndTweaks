@@ -472,6 +472,9 @@ public enum Mixin implements IMixin {
     common_buildcraft_MixinSpringPopulate(Side.COMMON,
         require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinSpringPopulate),
         "buildcraft.MixinSpringPopulate"),
+    common_buildcraft_MixinItemFacade(Side.COMMON,
+        require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinItemFacade),
+        "buildcraft.MixinItemFacade"),
 
     common_diseasecraft_MixinMedUtils(Side.COMMON,
         require(TargetedMod.DISEASECRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinMedUtils),
