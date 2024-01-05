@@ -872,6 +872,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityDarkMiresi;
+    @Config.Comment("Fix https://github.com/quentin452/privates-minecraft-modpack/issues/905 caused by Tinkersconstruct")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTinkerGears;
     @Config.Comment("Remove Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
