@@ -876,7 +876,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTinkerGears;
-    @Config.Comment("Remove Version check from Mal Core mod")
+    @Config.Comment("Disable LocalizationUpdater from RemoteIO")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLocalizationUpdater;
+    @Config.Comment("Disable Version check from Mal Core mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinVersionInfo;

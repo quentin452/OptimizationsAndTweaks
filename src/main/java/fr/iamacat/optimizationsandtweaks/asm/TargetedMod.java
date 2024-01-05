@@ -105,6 +105,7 @@ public enum TargetedMod implements ITargetedMod {
     BUILDCRAFTOILTWEAKS("BuildCraftOilTweak", false, startsWith("BuildCraftOilTweak")),
     NEWDUNGEONS("new_dungeons", false, startsWith("new_dungeons")),
     GOBLINS("goblins", false, startsWith("goblins")),
+    REMOTEIO("RemoteIO", false, startsWith("RemoteIO")),
 
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
     ADVENTOFASCENSION("Advent of Ascension", false, startsWith("nevermine")),

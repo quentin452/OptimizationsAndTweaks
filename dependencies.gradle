@@ -177,6 +177,7 @@ dependencies {
     implementation files("libs/Forestry-4.8.1.jar")
     implementation files("libs/Mankini_1.7.10_1.2.1.jar")
     implementation files("libs/Grim3212-Core-1.7.10.jar")
+    implementation files("libs/RemoteIO-1.7.10-2.4.8.jar")
 
 }
 
