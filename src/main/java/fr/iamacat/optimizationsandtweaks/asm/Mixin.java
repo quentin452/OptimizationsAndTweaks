@@ -710,7 +710,7 @@ public enum Mixin implements IMixin {
     client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
         .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
     client_core_MixinRenderManager(Side.CLIENT,
-        avoid(TargetedMod.SKINPORT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager),
+        avoid(TargetedMod.SKINPORT).and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager)),
         "core.MixinRenderManager"),
     client_essenceofthegod_MixinBarTickHandler(Side.CLIENT,
         m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
@@ -750,7 +750,7 @@ public enum Mixin implements IMixin {
     client_core_MixinEntityRenderer(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.FASTCRAFT))
         .and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer), "core.MixinEntityRenderer"),
     client_core_MixinModelRenderer(Side.CLIENT,
-        avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer),
+        avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
         "core.MixinModelRenderer"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),

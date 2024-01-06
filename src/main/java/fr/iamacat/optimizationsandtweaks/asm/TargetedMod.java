@@ -110,6 +110,7 @@ public enum TargetedMod implements ITargetedMod {
     WEATHERCARPET("Weather", false, startsWith("Weather")),
     HAMSTERIFIC("hamsterrific", false, startsWith("hamsterrific")),
     THAUMICREVELEATION("ThaumicRevelations", false, startsWith("ThaumicRevelations")),
+    ANGELICA("angelica", false, startsWith("angelica")),
 
     GANYSNETHER("Ganys_Nether", false, startsWith("Ganys_Nether")),
     TCONSTRUCT("TConstruct", false, startsWith("TConstruct")),
