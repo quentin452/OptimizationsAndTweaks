@@ -1,14 +1,14 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore;
 
-import com.lom.lotsomobscore.LotsOMobs;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.shad0wb1ade.experienceore.Main;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ExperienceOreConfig {
 
@@ -23,9 +23,7 @@ public class ExperienceOreConfig {
 
     private static String makeCategory(String name) {
         ConfigCategory category = config.getCategory(name);
-        category.setLanguageKey(
-            Main.MOD_ID + ".config."
-                + name);
+        category.setLanguageKey(Main.MOD_ID + ".config." + name);
         allCategories.add(category);
         return name;
     }

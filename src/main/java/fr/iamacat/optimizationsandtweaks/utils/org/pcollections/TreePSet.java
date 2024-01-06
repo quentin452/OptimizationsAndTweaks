@@ -9,13 +9,7 @@ package fr.iamacat.optimizationsandtweaks.utils.org.pcollections;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 

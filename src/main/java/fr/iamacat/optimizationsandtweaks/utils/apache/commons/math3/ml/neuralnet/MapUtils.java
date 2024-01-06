@@ -15,12 +15,7 @@
 
 package fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.neuralnet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NoDataException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.distance.DistanceMeasure;

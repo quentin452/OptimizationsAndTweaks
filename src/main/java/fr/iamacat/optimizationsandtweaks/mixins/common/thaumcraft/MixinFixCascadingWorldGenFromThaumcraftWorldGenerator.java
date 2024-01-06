@@ -1,9 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.*;
+
 import java.util.*;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
@@ -36,8 +37,6 @@ import thaumcraft.common.lib.world.biomes.BiomeHandler;
 import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
-
-import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.*;
 
 @Mixin(ThaumcraftWorldGenerator.class)
 public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {

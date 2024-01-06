@@ -1,16 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.common.lib.research.ScanManager;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.common.lib.research.ScanManager;
 
 @Mixin(ScanManager.class)
 public class MixinScanManager {

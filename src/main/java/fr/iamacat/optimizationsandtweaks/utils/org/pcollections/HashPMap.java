@@ -7,12 +7,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.org.pcollections;
 
 import java.io.Serializable;
-import java.util.AbstractSet;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A persistent map from keys to values. Keys and values can be null.

@@ -15,11 +15,7 @@
 
 package fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode;
 
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.DimensionMismatchException;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MathIllegalStateException;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NoBracketingException;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooSmallException;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.*;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.util.LocalizedFormats;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Array2DRowRealMatrix;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.nonstiff.AdaptiveStepsizeIntegrator;

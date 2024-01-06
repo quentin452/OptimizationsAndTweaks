@@ -1,22 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.hamsterific;
 
-import com.google.common.collect.UnmodifiableIterator;
-import com.google.common.reflect.ClassPath;
-import es.razzleberri.hamsterrific.EntityHamster;
-import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.world.World;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+import com.google.common.reflect.ClassPath;
+
+import es.razzleberri.hamsterrific.EntityHamster;
+
 @Mixin(EntityHamster.class)
-public abstract class MixinEntityHamster  extends EntityTameable {
+public abstract class MixinEntityHamster extends EntityTameable {
+
     @Shadow
     private static List<String> hamsterColorList;
 
@@ -30,8 +33,9 @@ public abstract class MixinEntityHamster  extends EntityTameable {
      */
     @Overwrite(remap = false)
     public void setInBall(boolean b) {
-        this.dataWatcher.updateObject(20,(b ? 1 : 0));
+        this.dataWatcher.updateObject(20, (b ? 1 : 0));
     }
+
     /**
      * @author
      * @reason
@@ -40,6 +44,7 @@ public abstract class MixinEntityHamster  extends EntityTameable {
     public boolean isInBall() {
         return this.dataWatcher.getWatchableObjectInt(20) == 1;
     }
+
     /**
      * @author
      * @reason
@@ -84,7 +89,10 @@ public abstract class MixinEntityHamster  extends EntityTameable {
             try {
                 Pattern p = Pattern.compile("assets/minecraft/(mob/hamster/hamster_.*)");
 
-                for (ClassPath.ResourceInfo i : ClassPath.from(this.getClass().getClassLoader()).getResources()) {
+                for (ClassPath.ResourceInfo i : ClassPath.from(
+                    this.getClass()
+                        .getClassLoader())
+                    .getResources()) {
                     Matcher m = p.matcher(i.getResourceName());
                     if (m.matches()) {
                         String s = m.group(1);

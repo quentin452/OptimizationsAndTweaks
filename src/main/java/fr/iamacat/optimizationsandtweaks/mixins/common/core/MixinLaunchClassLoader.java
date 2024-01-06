@@ -1,30 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.io.*;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.CodeSigner;
-import java.security.CodeSource;
 import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import net.minecraft.launchwrapper.*;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+
 // todo fix : it seem that the mixin isn't loaded in game
 @Mixin(LaunchClassLoader.class)
 public abstract class MixinLaunchClassLoader extends URLClassLoader {
@@ -324,6 +319,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
         }
         return buffer;
     }
+
     @Overwrite(remap = false)
     public List<IClassTransformer> getTransformers() {
         return Collections.unmodifiableList(transformers);
@@ -338,6 +334,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
     public void addTransformerExclusion(String toExclude) {
         transformerExceptions.add(toExclude);
     }
+
     @Overwrite(remap = false)
     public byte[] getClassBytes(String name) throws IOException {
         if (optimizationsAndTweaks$resourceCache.containsKey(name)) {
@@ -345,7 +342,8 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
         }
         if (name.indexOf('.') == -1) {
             for (final String reservedName : RESERVED_NAMES) {
-                if (name.toUpperCase(Locale.ENGLISH).startsWith(reservedName)) {
+                if (name.toUpperCase(Locale.ENGLISH)
+                    .startsWith(reservedName)) {
                     final byte[] data = getClassBytes("_" + name);
                     if (data.length > 0) {
                         optimizationsAndTweaks$resourceCache.put(name, data);
@@ -357,7 +355,8 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
         InputStream classStream = null;
         try {
-            final String resourcePath = name.replace('.', '/').concat(".class");
+            final String resourcePath = name.replace('.', '/')
+                .concat(".class");
             final URL classResource = findResource(resourcePath);
 
             if (classResource == null) {
@@ -374,6 +373,7 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
             closeSilently(classStream);
         }
     }
+
     @Overwrite(remap = false)
     private static void closeSilently(Closeable closeable) {
         if (closeable != null) {
@@ -385,6 +385,6 @@ public abstract class MixinLaunchClassLoader extends URLClassLoader {
 
     @Overwrite(remap = false)
     public void clearNegativeEntries(Set<String> entriesToClear) {
-      //  optimizationsAndTweaks$negativeResourceCache.removeAll(entriesToClear);
+        // optimizationsAndTweaks$negativeResourceCache.removeAll(entriesToClear);
     }
 }

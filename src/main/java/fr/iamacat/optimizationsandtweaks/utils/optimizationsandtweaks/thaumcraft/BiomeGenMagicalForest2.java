@@ -3,13 +3,11 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraf
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import org.spongepowered.asm.mixin.Unique;
 
 public class BiomeGenMagicalForest2 {
-    private static final int[][] PROBABLE_POSITIONS = {
-        { 1, 0, 0 }, { 0, 0, 1 }, { -1, 0, 0 }, { 0, 0, -1 },
-        { 1, 0, 1 }, { -1, 0, 1 }, { -1, 0, -1 }, { 1, 0, -1 }, { 0, 1, 0 }, { 0, -1, 0 }
-    };
+
+    private static final int[][] PROBABLE_POSITIONS = { { 1, 0, 0 }, { 0, 0, 1 }, { -1, 0, 0 }, { 0, 0, -1 },
+        { 1, 0, 1 }, { -1, 0, 1 }, { -1, 0, -1 }, { 1, 0, -1 }, { 0, 1, 0 }, { 0, -1, 0 } };
 
     public static boolean optimizationsAndTweaks$isAdjacentToWood(World world, int x, int y, int z) {
         int chunkX = x >> 4;

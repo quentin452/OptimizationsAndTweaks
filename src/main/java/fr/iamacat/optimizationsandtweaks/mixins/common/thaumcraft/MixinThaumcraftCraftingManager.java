@@ -1,5 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
+import java.util.*;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
@@ -12,10 +14,12 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -24,14 +28,14 @@ import thaumcraft.common.items.wands.ItemWandCasting;
 import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumcraft.common.lib.utils.Utils;
 
-import java.util.*;
-
 @Mixin(ThaumcraftCraftingManager.class)
 public class MixinThaumcraftCraftingManager {
+
     @Shadow
     public static AspectList generateTags(Item item, int meta) {
         return generateTags(item, meta, new ArrayList<>());
     }
+
     @Unique
     private static HashMap<List<Object>, AspectList> optimizationsAndTweaks$tagCache = new HashMap<>();
 
@@ -58,6 +62,7 @@ public class MixinThaumcraftCraftingManager {
             return tags;
         }
     }
+
     /**
      * @author
      * @reason
@@ -66,10 +71,12 @@ public class MixinThaumcraftCraftingManager {
     public static AspectList generateTags(Item item, int meta, ArrayList<List> history) {
         int tmeta = meta;
         try {
-            tmeta = (!Objects.requireNonNull(new ItemStack(item, 1, meta).getItem()).isDamageable() && new ItemStack(item, 1, meta).getItem().getHasSubtypes()) ? meta : 32767;
+            tmeta = (!Objects.requireNonNull(new ItemStack(item, 1, meta).getItem())
+                .isDamageable() && new ItemStack(item, 1, meta).getItem()
+                    .getHasSubtypes()) ? meta : 32767;
         } catch (Exception ignored) {}
 
-        List<Object> key = Arrays.asList((Object)item, tmeta);
+        List<Object> key = Arrays.asList((Object) item, tmeta);
 
         if (ThaumcraftApi.exists(item, tmeta)) {
             return optimizationsAndTweaks$getTags(new ItemStack(item, 1, tmeta));
@@ -89,7 +96,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList, ArrayList<List> history) {
+    private static void optimizationsAndTweaks$processItemStack(ItemStack stack, AspectList aspectList,
+        ArrayList<List> history) {
         if (stack == null || stack.getItem() == null) {
             return;
         }
@@ -108,6 +116,7 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
+
     /**
      * @author
      * @reason
@@ -134,21 +143,31 @@ public class MixinThaumcraftCraftingManager {
 
         return ret;
     }
+
     /**
-    /**
+     * /**
+     * 
      * @author
      * @reason
      */
     @Overwrite
-    private static AspectList getAspectsFromIngredients(ArrayList<ItemStack> ingredients, ItemStack recipeOut, ArrayList<List> history) {
+    private static AspectList getAspectsFromIngredients(ArrayList<ItemStack> ingredients, ItemStack recipeOut,
+        ArrayList<List> history) {
         AspectList out = new AspectList();
         AspectList mid = new AspectList();
 
         for (ItemStack is : ingredients) {
             AspectList obj = generateTags(is.getItem(), is.getItemDamage(), history);
 
-            if (Objects.requireNonNull(is.getItem()).getContainerItem() != null && is.getItem().getContainerItem() != is.getItem()) {
-                AspectList objC = generateTags(is.getItem().getContainerItem(), 32767, history);
+            if (Objects.requireNonNull(is.getItem())
+                .getContainerItem() != null
+                && is.getItem()
+                    .getContainerItem() != is.getItem()) {
+                AspectList objC = generateTags(
+                    is.getItem()
+                        .getContainerItem(),
+                    32767,
+                    history);
                 assert objC != null;
                 Aspect[] containerAspects = objC.getAspects();
 
@@ -183,6 +202,7 @@ public class MixinThaumcraftCraftingManager {
 
         return out;
     }
+
     /**
      * @author
      * @reason
@@ -191,7 +211,10 @@ public class MixinThaumcraftCraftingManager {
     private static AspectList generateTagsFromCraftingRecipes(Item item, int meta, ArrayList<List> history) {
         AspectList ret = null;
         int minValue = Integer.MAX_VALUE;
-        List<IRecipe> recipeList = Collections.unmodifiableList(new ArrayList<>(CraftingManager.getInstance().getRecipeList()));
+        List<IRecipe> recipeList = Collections.unmodifiableList(
+            new ArrayList<>(
+                CraftingManager.getInstance()
+                    .getRecipeList()));
 
         for (IRecipe object : recipeList) {
             if (optimizationsAndTweaks$isValidRecipe(object, item, meta)) {
@@ -209,11 +232,14 @@ public class MixinThaumcraftCraftingManager {
 
     @Unique
     private static boolean optimizationsAndTweaks$isValidRecipe(IRecipe recipe, Item item, int meta) {
-        if (recipe == null || recipe.getRecipeOutput() == null || recipe.getRecipeOutput().getItem() == null) {
+        if (recipe == null || recipe.getRecipeOutput() == null
+            || recipe.getRecipeOutput()
+                .getItem() == null) {
             return false;
         }
 
-        ItemStack outputStack = recipe.getRecipeOutput().copy();
+        ItemStack outputStack = recipe.getRecipeOutput()
+            .copy();
         ItemStack comparisonStack = new ItemStack(item, 1, meta);
 
         // Check if the output item and metadata match the given item and meta
@@ -221,7 +247,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static AspectList optimizationsAndTweaks$processRecipeAndGetAspects(IRecipe recipe, ArrayList<List> history) {
+    private static AspectList optimizationsAndTweaks$processRecipeAndGetAspects(IRecipe recipe,
+        ArrayList<List> history) {
         AspectList aspectList = new AspectList();
 
         try {
@@ -242,7 +269,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processShapedRecipe(ShapedRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+    private static void optimizationsAndTweaks$processShapedRecipe(ShapedRecipes recipe, AspectList aspectList,
+        ArrayList<List> history) {
         if (recipe == null || recipe.recipeItems == null || recipe.recipeItems.length == 0) {
             // Handle null/invalid recipes more gracefully
             return;
@@ -268,8 +296,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processShapelessRecipe(
-        ShapelessRecipes recipe, AspectList aspectList, ArrayList<List> history) {
+    private static void optimizationsAndTweaks$processShapelessRecipe(ShapelessRecipes recipe, AspectList aspectList,
+        ArrayList<List> history) {
         List<?> items = Collections.singletonList(recipe.recipeItems);
         for (Object item : items) {
             if (item instanceof ItemStack) {
@@ -285,7 +313,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processShapedOreRecipe(ShapedOreRecipe recipe, AspectList aspectList, ArrayList<List> history) {
+    private static void optimizationsAndTweaks$processShapedOreRecipe(ShapedOreRecipe recipe, AspectList aspectList,
+        ArrayList<List> history) {
         Object input = recipe.getInput();
 
         if (input != null) {
@@ -306,7 +335,8 @@ public class MixinThaumcraftCraftingManager {
     }
 
     @Unique
-    private static void optimizationsAndTweaks$processShapelessOreRecipe(ShapelessOreRecipe recipe, AspectList aspectList, ArrayList<List> history) {
+    private static void optimizationsAndTweaks$processShapelessOreRecipe(ShapelessOreRecipe recipe,
+        AspectList aspectList, ArrayList<List> history) {
         List<?> items = Collections.singletonList(recipe.getInput());
 
         for (Object item : items) {
@@ -321,6 +351,7 @@ public class MixinThaumcraftCraftingManager {
             }
         }
     }
+
     @Unique
     private static void optimizationsAndTweaks$refineAndSetMinValueAspect(AspectList ph, int minValue) {
         if (ph != null && ph.visSize() > 0) {
@@ -373,15 +404,15 @@ public class MixinThaumcraftCraftingManager {
                 }
             }
 
-            tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object)item, 32767));
+            tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object) item, 32767));
             if (tmp == null) {
                 if (meta == 32767) {
                     int index = 0;
 
                     do {
-                        tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object)item, index));
+                        tmp = ThaumcraftApi.objectTags.get(Arrays.asList((Object) item, index));
                         ++index;
-                    } while(index < 16 && tmp == null);
+                    } while (index < 16 && tmp == null);
                 }
 
                 if (tmp == null) {
@@ -391,13 +422,25 @@ public class MixinThaumcraftCraftingManager {
         }
 
         if (itemstack.getItem() instanceof ItemWandCasting) {
-            ItemWandCasting wand = (ItemWandCasting)itemstack.getItem();
+            ItemWandCasting wand = (ItemWandCasting) itemstack.getItem();
             if (tmp == null) {
                 tmp = new AspectList();
             }
 
-            tmp.merge(Aspect.MAGIC, (wand.getRod(itemstack).getCraftCost() + wand.getCap(itemstack).getCraftCost()) / 2);
-            tmp.merge(Aspect.TOOL, (wand.getRod(itemstack).getCraftCost() + wand.getCap(itemstack).getCraftCost()) / 3);
+            tmp.merge(
+                Aspect.MAGIC,
+                (wand.getRod(itemstack)
+                    .getCraftCost()
+                    + wand.getCap(itemstack)
+                        .getCraftCost())
+                    / 2);
+            tmp.merge(
+                Aspect.TOOL,
+                (wand.getRod(itemstack)
+                    .getCraftCost()
+                    + wand.getCap(itemstack)
+                        .getCraftCost())
+                    / 3);
         }
 
         if (item != null && item == Items.potionitem) {
@@ -406,7 +449,7 @@ public class MixinThaumcraftCraftingManager {
             }
 
             tmp.merge(Aspect.WATER, 1);
-            ItemPotion ip = (ItemPotion)item;
+            ItemPotion ip = (ItemPotion) item;
             List effects = Collections.singletonList(ip.getEffects(itemstack.getItemDamage()));
             if (ItemPotion.isSplash(itemstack.getItemDamage())) {
                 tmp.merge(Aspect.ENTROPY, 2);
@@ -460,6 +503,7 @@ public class MixinThaumcraftCraftingManager {
 
         return capAspects(tmp, 64);
     }
+
     @Shadow
     private static AspectList capAspects(AspectList sourcetags, int amount) {
         if (sourcetags == null) {
@@ -475,6 +519,7 @@ public class MixinThaumcraftCraftingManager {
             return out;
         }
     }
+
     @Shadow
     private static AspectList generateTagsFromCrucibleRecipes(Item item, int meta, ArrayList<List> history) {
         CrucibleRecipe cr = ThaumcraftApi.getCrucibleRecipe(new ItemStack(item, 1, meta));
@@ -483,9 +528,9 @@ public class MixinThaumcraftCraftingManager {
             int ss = cr.getRecipeOutput().stackSize;
             ItemStack cat = null;
             if (cr.catalyst instanceof ItemStack) {
-                cat = (ItemStack)cr.catalyst;
+                cat = (ItemStack) cr.catalyst;
             } else if (cr.catalyst instanceof ArrayList && !((ArrayList<?>) cr.catalyst).isEmpty()) {
-                cat = (ItemStack)((ArrayList<?>)cr.catalyst).get(0);
+                cat = (ItemStack) ((ArrayList<?>) cr.catalyst).get(0);
             }
 
             assert cat != null;
@@ -499,7 +544,7 @@ public class MixinThaumcraftCraftingManager {
                 arr$ = ot2.getAspects();
                 len$ = arr$.length;
 
-                for(i$ = 0; i$ < len$; ++i$) {
+                for (i$ = 0; i$ < len$; ++i$) {
                     as = arr$[i$];
                     out.add(as, ot2.getAmount(as));
                 }
@@ -508,16 +553,16 @@ public class MixinThaumcraftCraftingManager {
             arr$ = ot.getAspects();
             len$ = arr$.length;
 
-            for(i$ = 0; i$ < len$; ++i$) {
+            for (i$ = 0; i$ < len$; ++i$) {
                 as = arr$[i$];
-                int amt = (int)(Math.sqrt(ot.getAmount(as)) / ss);
+                int amt = (int) (Math.sqrt(ot.getAmount(as)) / ss);
                 out.add(as, amt);
             }
 
             arr$ = out.getAspects();
             len$ = arr$.length;
 
-            for(i$ = 0; i$ < len$; ++i$) {
+            for (i$ = 0; i$ < len$; ++i$) {
                 as = arr$[i$];
                 if (out.getAmount(as) <= 0) {
                     out.remove(as);
@@ -529,19 +574,23 @@ public class MixinThaumcraftCraftingManager {
             return null;
         }
     }
+
     @Shadow
     private static AspectList generateTagsFromArcaneRecipes(Item item, int meta, ArrayList<List> history) {
         AspectList ret = null;
         List recipeList = ThaumcraftApi.getCraftingRecipes();
 
-        label173:
-        for (Object o : recipeList) {
+        label173: for (Object o : recipeList) {
             if (o instanceof IArcaneRecipe) {
                 IArcaneRecipe recipe = (IArcaneRecipe) o;
                 if (recipe.getRecipeOutput() != null) {
-                    int idR = recipe.getRecipeOutput().getItemDamage() == 32767 ? 0 : recipe.getRecipeOutput().getItemDamage();
+                    int idR = recipe.getRecipeOutput()
+                        .getItemDamage() == 32767 ? 0
+                            : recipe.getRecipeOutput()
+                                .getItemDamage();
                     int idS = Math.max(meta, 0);
-                    if (recipe.getRecipeOutput().getItem() == item && idR == idS) {
+                    if (recipe.getRecipeOutput()
+                        .getItem() == item && idR == idS) {
                         ArrayList<ItemStack> ingredients = new ArrayList<>();
                         new AspectList();
 
@@ -564,7 +613,10 @@ public class MixinThaumcraftCraftingManager {
                                                         continue label173;
                                                     }
 
-                                                    AspectList obj = generateTags(it.getItem(), it.getItemDamage(), history);
+                                                    AspectList obj = generateTags(
+                                                        it.getItem(),
+                                                        it.getItemDamage(),
+                                                        history);
                                                     if (obj != null && obj.size() > 0) {
                                                         is = it.copy();
                                                         is.stackSize = 1;
@@ -599,7 +651,10 @@ public class MixinThaumcraftCraftingManager {
                                                     continue label173;
                                                 }
 
-                                                AspectList obj = generateTags(it.getItem(), it.getItemDamage(), history);
+                                                AspectList obj = generateTags(
+                                                    it.getItem(),
+                                                    it.getItemDamage(),
+                                                    history);
                                                 if (obj != null && obj.size() > 0) {
                                                     is = it.copy();
                                                     is.stackSize = 1;
@@ -626,16 +681,23 @@ public class MixinThaumcraftCraftingManager {
                             int i$;
                             Aspect as;
                             if (recipe.getAspects() != null) {
-                                arr$ = recipe.getAspects().getAspects();
+                                arr$ = recipe.getAspects()
+                                    .getAspects();
                                 i = arr$.length;
 
                                 for (i$ = 0; i$ < i; ++i$) {
                                     as = arr$[i$];
-                                    ph.add(as, (int) (Math.sqrt(recipe.getAspects().getAmount(as)) / ((float) recipe.getRecipeOutput().stackSize)));
+                                    ph.add(
+                                        as,
+                                        (int) (Math.sqrt(
+                                            recipe.getAspects()
+                                                .getAmount(as))
+                                            / ((float) recipe.getRecipeOutput().stackSize)));
                                 }
                             }
 
-                            arr$ = ph.copy().getAspects();
+                            arr$ = ph.copy()
+                                .getAspects();
                             i = arr$.length;
 
                             for (i$ = 0; i$ < i; ++i$) {
@@ -656,6 +718,7 @@ public class MixinThaumcraftCraftingManager {
 
         return ret;
     }
+
     /**
      * @author
      * @reason
@@ -666,9 +729,11 @@ public class MixinThaumcraftCraftingManager {
         if (cr == null) {
             return null;
         } else {
-            AspectList ot = cr.getAspects().copy();
+            AspectList ot = cr.getAspects()
+                .copy();
             ArrayList<ItemStack> ingredients = new ArrayList<>();
-            ItemStack is = cr.getRecipeInput().copy();
+            ItemStack is = cr.getRecipeInput()
+                .copy();
             is.stackSize = 1;
             ingredients.add(is);
 

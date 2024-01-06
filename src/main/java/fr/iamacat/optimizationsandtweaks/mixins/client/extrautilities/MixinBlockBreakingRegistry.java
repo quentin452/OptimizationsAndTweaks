@@ -1,15 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.extrautilities;
 
-import com.rwtema.extrautils.LogHelper;
-import com.rwtema.extrautils.tileentity.enderquarry.BlockBreakingRegistry;
-import com.rwtema.extrautils.tileentity.enderquarry.BlockDummy;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.extrautilities.ClassBytesCache;
+import java.lang.reflect.Method;
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -17,11 +17,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import com.rwtema.extrautils.LogHelper;
+import com.rwtema.extrautils.tileentity.enderquarry.BlockBreakingRegistry;
+import com.rwtema.extrautils.tileentity.enderquarry.BlockDummy;
+
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.extrautilities.ClassBytesCache;
 
 @Mixin(BlockBreakingRegistry.class)
 public class MixinBlockBreakingRegistry {
+
     @Shadow
     public static BlockBreakingRegistry instance = new BlockBreakingRegistry();
     @Shadow
@@ -31,15 +35,18 @@ public class MixinBlockBreakingRegistry {
     @Shadow
     public static Map<String, Boolean> names = new HashMap();
     @Shadow
-    public static LaunchClassLoader cl = (LaunchClassLoader)BlockBreakingRegistry.class.getClassLoader();
+    public static LaunchClassLoader cl = (LaunchClassLoader) BlockBreakingRegistry.class.getClassLoader();
+
     @Shadow
     public static boolean blackList(Block id) {
         return entries.get(id).blackList;
     }
+
     @Shadow
     public static boolean isSpecial(Block id) {
         return entries.get(id).isSpecial;
     }
+
     @Shadow
     public static boolean isFence(Block id) {
         return entries.get(id).isFence;
@@ -74,7 +81,9 @@ public class MixinBlockBreakingRegistry {
             while (blockIterator.hasNext()) {
                 Block block = (Block) blockIterator.next();
                 BlockBreakingRegistry.entry e = entries.get(block);
-                String name = block.getUnlocalizedName() != null ? block.getUnlocalizedName() : block.getClass().getName();
+                String name = block.getUnlocalizedName() != null ? block.getUnlocalizedName()
+                    : block.getClass()
+                        .getName();
                 try {
                     name = Block.blockRegistry.getNameForObject(block);
                 } catch (Exception ignored) {
@@ -86,10 +95,14 @@ public class MixinBlockBreakingRegistry {
                     int renderType = block.getRenderType();
                     e.isFence = renderType == 11 || block instanceof BlockFence;
                 } catch (Exception | NoClassDefFoundError exception) {
-                    LogHelper.error("Error checking block class code: Exception calling getRenderType() on block " + name);
+                    LogHelper
+                        .error("Error checking block class code: Exception calling getRenderType() on block " + name);
                     exception.printStackTrace();
                     if (exception instanceof NoClassDefFoundError) {
-                        throw new RuntimeException("Serious error calling getRenderType() on block " + name + " : Likely cause is client-side code is being called server-side", exception);
+                        throw new RuntimeException(
+                            "Serious error calling getRenderType() on block " + name
+                                + " : Likely cause is client-side code is being called server-side",
+                            exception);
                     } else {
                         throw new RuntimeException("Serious error calling getRenderType() on block " + name, exception);
                     }

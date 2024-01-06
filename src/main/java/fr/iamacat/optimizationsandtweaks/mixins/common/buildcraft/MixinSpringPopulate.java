@@ -1,23 +1,26 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.buildcraft;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.SpringPopulate;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Random;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockSpring;
+import buildcraft.core.SpringPopulate;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 @Mixin(SpringPopulate.class)
 public class MixinSpringPopulate {
+
     /**
      * @author
      * @reason
@@ -45,6 +48,7 @@ public class MixinSpringPopulate {
 
         doPopulate(event.world, event.rand, worldX, worldZ);
     }
+
     /**
      * @author
      * @reason
@@ -56,7 +60,7 @@ public class MixinSpringPopulate {
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return;
         }
         int dimId = world.provider.dimensionId;

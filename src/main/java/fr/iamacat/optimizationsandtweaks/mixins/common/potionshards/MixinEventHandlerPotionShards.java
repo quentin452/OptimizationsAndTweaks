@@ -1,19 +1,22 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.potionshards;
 
+import java.util.Random;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.world.BlockEvent;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mod.posh.EventHandler;
 import mod.posh.ModBlocks;
 import mod.posh.ModItems;
 import mod.posh.ModTools;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.world.BlockEvent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-
-import java.util.Random;
 
 @Mixin(EventHandler.class)
 public class MixinEventHandlerPotionShards {
+
     /**
      * @author
      * @reason
@@ -21,7 +24,9 @@ public class MixinEventHandlerPotionShards {
     @Overwrite(remap = false)
     @SubscribeEvent
     public void onHarvest(BlockEvent.HarvestDropsEvent event) {
-        if (event.harvester != null && event.harvester.getHeldItem() != null && event.harvester.getHeldItem().getItem() == ModTools.cleansePickaxe) {
+        if (event.harvester != null && event.harvester.getHeldItem() != null
+            && event.harvester.getHeldItem()
+                .getItem() == ModTools.cleansePickaxe) {
             Random rand = new Random();
             ItemStack drop = null;
 

@@ -1,23 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.birdsnest;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.item.Item;
+
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import panda.birdsnests.BirdsNests;
-import panda.birdsnests.VersionChecker;
 import panda.birdsnests.dropRegistry;
 
 @Mixin(BirdsNests.class)
 public class MixinBirdNests {
+
     @Shadow
     public static String[] mega;
     @Shadow
     public static Logger log;
+
     /**
      * @author
      * @reason
@@ -30,7 +32,10 @@ public class MixinBirdNests {
                 String[] tempsplit = s.split(",");
                 if (tempsplit.length == 3) {
                     if (Item.itemRegistry.getObject(tempsplit[0]) != null) {
-                        dropRegistry.registerConfigRarity(tempsplit[2].split("-"), (Item) Item.itemRegistry.getObject(tempsplit[0]), Integer.parseInt(tempsplit[1]));
+                        dropRegistry.registerConfigRarity(
+                            tempsplit[2].split("-"),
+                            (Item) Item.itemRegistry.getObject(tempsplit[0]),
+                            Integer.parseInt(tempsplit[1]));
                         log.info("Custom drop " + tempsplit[0] + " added");
                     } else {
                         log.error("UNABLE TO RESOLVE CUSTOM DROP " + tempsplit[0]);

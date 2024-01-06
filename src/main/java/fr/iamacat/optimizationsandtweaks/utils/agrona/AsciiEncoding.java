@@ -144,7 +144,7 @@ public final class AsciiEncoding {
 
     /**
      * Calling this method is equivalent of doing:
-     * 
+     *
      * <pre>
      * {@code digitCount(value) - 1}
      * </pre>
@@ -161,7 +161,7 @@ public final class AsciiEncoding {
 
     /**
      * Calling this method is equivalent of doing:
-     * 
+     *
      * <pre>
      * {@code digitCount(value) - 1}
      * </pre>

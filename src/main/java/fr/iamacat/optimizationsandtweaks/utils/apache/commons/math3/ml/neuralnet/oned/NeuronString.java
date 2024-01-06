@@ -22,6 +22,7 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.Nu
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.OutOfRangeException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.neuralnet.FeatureInitializer;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.neuralnet.Network;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ml.neuralnet.Neuron;
 
 /**
  * Neural network with the topology of a one-dimensional line.

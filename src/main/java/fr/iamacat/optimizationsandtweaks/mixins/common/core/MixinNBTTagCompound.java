@@ -1,7 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.nbt.NBTBase;

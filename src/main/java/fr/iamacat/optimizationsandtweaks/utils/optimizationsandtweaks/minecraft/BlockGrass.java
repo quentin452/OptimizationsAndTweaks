@@ -1,11 +1,12 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minecraft;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Random;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class BlockGrass {
 

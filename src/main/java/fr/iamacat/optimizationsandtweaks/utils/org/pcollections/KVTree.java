@@ -7,12 +7,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.org.pcollections;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A persistent (immutable, purely functional) balanced-binary-tree implementation, with such

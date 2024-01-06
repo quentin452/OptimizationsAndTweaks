@@ -1,10 +1,7 @@
 package fr.iamacat.optimizationsandtweaks;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.function.Exp;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore.ExperienceOreConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.FileInjector;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.ModConfig;
+import java.io.File;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -12,9 +9,11 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
-
-import java.io.File;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore.ExperienceOreConfig;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.FileInjector;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.ModConfig;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {
@@ -27,13 +26,16 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
-        if(FMLCommonHandler.instance().findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
+        if (FMLCommonHandler.instance()
+            .findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
             File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");
             ModConfig modConfig = new ModConfig(configFile, event);
             FileInjector.setModConfig(modConfig);
             ModConfig.initializeConfig(event);
         }
-        if(FMLCommonHandler.instance().findContainerFor("ExpOre") != null && OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre) {
+        if (FMLCommonHandler.instance()
+            .findContainerFor("ExpOre") != null
+            && OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre) {
             ExperienceOreConfig.setupAndLoad(event);
         }
     }

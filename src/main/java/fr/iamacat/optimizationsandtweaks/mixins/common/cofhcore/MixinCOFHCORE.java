@@ -1,5 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.cofhcore;
 
+import java.io.File;
+import java.util.ArrayList;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import cofh.CoFHCore;
 import cofh.core.CoFHProps;
 import cofh.core.Proxy;
@@ -17,28 +35,12 @@ import cofh.core.util.energy.FurnaceFuelHandler;
 import cofh.core.util.fluid.BucketHandler;
 import cofh.core.world.FeatureParser;
 import cofh.core.world.WorldHandler;
-import cofh.mod.updater.UpdateManager;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
-import java.io.File;
-import java.util.ArrayList;
 
 @Mixin(CoFHCore.class)
 public class MixinCOFHCORE {
+
     @Shadow
     public static Proxy proxy;
     @Shadow
@@ -55,6 +57,7 @@ public class MixinCOFHCORE {
     public static MinecraftServer server;
     @Shadow
     private final ArrayList<IBakeable> oven = new ArrayList();
+
     /**
      * @author
      * @reason
@@ -63,7 +66,8 @@ public class MixinCOFHCORE {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent var1) {
         CoFHProps.configDir = var1.getModConfigurationDirectory();
-      //  UpdateManager.registerUpdater(new UpdateManager(this, "https://raw.github.com/CoFH/VERSION/master/CoFHCore", "http://teamcofh.com/downloads/"));
+        // UpdateManager.registerUpdater(new UpdateManager(this, "https://raw.github.com/CoFH/VERSION/master/CoFHCore",
+        // "http://teamcofh.com/downloads/"));
         configCore.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/core/common.cfg"), true));
         configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/core/client.cfg"), true));
         MinecraftForge.EVENT_BUS.register(proxy);
@@ -76,12 +80,19 @@ public class MixinCOFHCORE {
         BucketHandler.initialize();
         FurnaceFuelHandler.initialize();
         PacketHandler.instance.initialize();
-        RecipeSorter.register("cofh:augment", RecipeAugmentable.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
+        RecipeSorter
+            .register("cofh:augment", RecipeAugmentable.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
         RecipeSorter.register("cofh:secure", RecipeSecure.class, RecipeSorter.Category.SHAPED, "before:cofh:upgrade");
-        RecipeSorter.register("cofh:upgrade", RecipeUpgrade.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
-        RecipeSorter.register("cofh:upgradeoverride", RecipeUpgradeOverride.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
+        RecipeSorter
+            .register("cofh:upgrade", RecipeUpgrade.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
+        RecipeSorter.register(
+            "cofh:upgradeoverride",
+            RecipeUpgradeOverride.class,
+            RecipeSorter.Category.SHAPED,
+            "before:forge:shapedore");
         this.registerOreDictionaryEntries();
     }
+
     @Shadow
     private boolean moduleCore() {
         String var2 = "General";
@@ -107,6 +118,7 @@ public class MixinCOFHCORE {
         configCore.save();
         return true;
     }
+
     @Shadow
     private boolean moduleLoot() {
         configLoot.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/core/loot.cfg"), true));
@@ -142,15 +154,18 @@ public class MixinCOFHCORE {
             return true;
         }
     }
+
     @Shadow
     public void registerOreDictionaryEntries() {
         this.registerOreDictionaryEntry("blockCloth", new ItemStack(Blocks.wool, 1, 32767));
         this.registerOreDictionaryEntry("coal", new ItemStack(Items.coal, 1, 0));
         this.registerOreDictionaryEntry("charcoal", new ItemStack(Items.coal, 1, 1));
     }
+
     @Shadow
     private boolean registerOreDictionaryEntry(String var1, ItemStack var2) {
-        if (OreDictionary.getOres(var1).isEmpty()) {
+        if (OreDictionary.getOres(var1)
+            .isEmpty()) {
             OreDictionary.registerOre(var1, var2);
             return true;
         } else {

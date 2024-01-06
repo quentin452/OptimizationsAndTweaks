@@ -1,6 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.asm;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 import com.falsepattern.lib.mixin.IMixin;
@@ -24,17 +24,14 @@ public enum Mixin implements IMixin {
         "lotrimprovements.MixinMain"),
 
     common_disastercraft_MixinBiomeListDisaster(Side.COMMON,
-        require(TargetedMod.DISASTERCRAFT)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
+        require(TargetedMod.DISASTERCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
         "disastercraft.MixinBiomeListDisaster"),
 
     common_disastercraft_MixinMainDisastercraft(Side.COMMON,
-        require(TargetedMod.DISASTERCRAFT)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
+        require(TargetedMod.DISASTERCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
         "disastercraft.MixinMainDisastercraft"),
     common_minegicka_MixinModBaseMinegicka(Side.COMMON,
-        require(TargetedMod.MINEGICKA)
-                .and(m -> OptimizationsandTweaksConfig.enableMixinModBaseMinegicka),
+        require(TargetedMod.MINEGICKA).and(m -> OptimizationsandTweaksConfig.enableMixinModBaseMinegicka),
         "minegicka.MixinModBaseMinegicka"),
     common_lotr_MixinLOTRMod(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGS).and(
@@ -69,10 +66,10 @@ public enum Mixin implements IMixin {
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
         "core.MixinFMLServerHandler"),
-    /* todo need to fix was loaded to early crash
-    common_core_MixinLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLoader,
-        "core.MixinLoader"),
-
+    /*
+     * todo need to fix was loaded to early crash
+     * common_core_MixinLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLoader,
+     * "core.MixinLoader"),
      */
     common_core_MixinMinecraft(Side.COMMON,
         avoid(TargetedMod.FALSETWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinMinecraft),
@@ -237,7 +234,8 @@ public enum Mixin implements IMixin {
             .and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
     common_elijahschocolate_MixinEntityChocolateCreeper(Side.COMMON,
-        require(TargetedMod.ELIJAHSCHOCOLATEMOD).and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)
+        require(TargetedMod.ELIJAHSCHOCOLATEMOD)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)
             .and(require(TargetedMod.CONFIGHELPER)),
         "elijahschocolate.MixinEntityChocolateCreeper"),
     common_fantasticfish_MixinFantasticMod(Side.COMMON,
@@ -340,8 +338,7 @@ public enum Mixin implements IMixin {
     common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
         "core.MixinWorldGenMinable"),
     common_core_MixinLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLeaves, "core.MixinLeaves"),
-    common_core_MixinLanguageRegistry(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinLanguageRegistry,
+    common_core_MixinLanguageRegistry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLanguageRegistry,
         "core.MixinLanguageRegistry"),
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
@@ -467,7 +464,8 @@ public enum Mixin implements IMixin {
         "mankini.MixinBatMankiniJump"),
 
     common_experienceore_MixinWorldGenHandlerExperienceOre(Side.COMMON,
-        require(TargetedMod.EXPERIENCEORE).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre),
+        require(TargetedMod.EXPERIENCEORE)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre),
         "experienceore.MixinWorldGenHandlerExperienceOre"),
     common_buildcraft_MixinSpringPopulate(Side.COMMON,
         require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinSpringPopulate),
@@ -483,13 +481,16 @@ public enum Mixin implements IMixin {
         require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinGOBLINWorldGenGVillage1),
         "goblins.MixinGOBLINWorldGenGVillage1"),
     common_fossilsandarcheologyrevivals_MixinAcademyGenerator(Side.COMMON,
-        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
         "fossilsandarcheologyrevivals.MixinAcademyGenerator"),
     common_fossilsandarcheologyrevivals_MixinShipWreckGenerator(Side.COMMON,
-        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinShipWreckGenerator),
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinShipWreckGenerator),
         "fossilsandarcheologyrevivals.MixinShipWreckGenerator"),
     common_fossilsandarcheologyrevivals_MixinWorldGenMiscStructures(Side.COMMON,
-        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMiscStructures),
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMiscStructures),
         "fossilsandarcheologyrevivals.MixinWorldGenMiscStructures"),
 
     common_atum_MixinWorldGenPyramid(Side.COMMON,
@@ -505,7 +506,8 @@ public enum Mixin implements IMixin {
         require(TargetedMod.FORESTRY).and(m -> OptimizationsandTweaksConfig.enableMixinHiveDecorator),
         "forestry.MixinHiveDecorator"),
     common_mythandmonsters_MixinMAMWorldGenerator(Side.COMMON,
-        require(TargetedMod.MYTHANDMONSTERS).and(require(TargetedMod.RECURRENTCOMPLEX).and(m -> OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator)),
+        require(TargetedMod.MYTHANDMONSTERS).and(
+            require(TargetedMod.RECURRENTCOMPLEX).and(m -> OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator)),
         "mythandmonsters.MixinMAMWorldGenerator"),
     common_mythandmonsters_MixinMAMClientProxy(Side.COMMON,
         require(TargetedMod.MYTHANDMONSTERS).and(m -> OptimizationsandTweaksConfig.enableMixinMAMClientProxy),
@@ -710,7 +712,8 @@ public enum Mixin implements IMixin {
     client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
         .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
     client_core_MixinRenderManager(Side.CLIENT,
-        avoid(TargetedMod.SKINPORT).and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager)),
+        avoid(TargetedMod.SKINPORT)
+            .and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinRenderManager)),
         "core.MixinRenderManager"),
     client_essenceofthegod_MixinBarTickHandler(Side.CLIENT,
         m -> OptimizationsandTweaksConfig.enableMixindisablingguifromEssenceofthegod,
@@ -750,7 +753,8 @@ public enum Mixin implements IMixin {
     client_core_MixinEntityRenderer(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.FASTCRAFT))
         .and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer), "core.MixinEntityRenderer"),
     client_core_MixinModelRenderer(Side.CLIENT,
-        avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
+        avoid(TargetedMod.OPTIFINE)
+            .and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
         "core.MixinModelRenderer"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),

@@ -16,11 +16,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.events;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.UnivariateFunction;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.AllowedSolution;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.BracketedUnivariateSolver;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.PegasusSolver;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.UnivariateSolverUtils;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.analysis.solvers.*;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NoBracketingException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.EquationsMapper;

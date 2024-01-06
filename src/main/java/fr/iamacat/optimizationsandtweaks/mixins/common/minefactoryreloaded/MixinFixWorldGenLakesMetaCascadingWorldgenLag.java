@@ -34,7 +34,7 @@ public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerato
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return false;
         }
         if (optimizationsAndTweaks$lakeGenerationCounter >= MAX_LAKE_GENERATIONS_PER_TICK) {

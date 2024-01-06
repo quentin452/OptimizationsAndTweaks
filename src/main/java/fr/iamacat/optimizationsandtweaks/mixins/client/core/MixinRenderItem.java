@@ -31,7 +31,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-@Mixin(value = RenderItem.class,priority = 999)
+@Mixin(value = RenderItem.class, priority = 999)
 public abstract class MixinRenderItem extends Render {
 
     @Shadow

@@ -21,12 +21,7 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.Di
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.MaxCountExceededException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NoBracketingException;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.exception.NumberIsTooSmallException;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.AbstractFieldIntegrator;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.FieldEquationsMapper;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.FieldExpandableODE;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.FieldODEState;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.FieldODEStateAndDerivative;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.FirstOrderFieldDifferentialEquations;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.ode.*;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathArrays;
 
 /**

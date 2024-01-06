@@ -211,7 +211,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
 
         Chunk chunk = par1World.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return false;
         }
         this.worldObj = par1World;
@@ -393,7 +393,7 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
 
         Chunk chunk = worldObj.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return;
         }
 
@@ -418,14 +418,12 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
                             || block.canBeReplacedByLeaves(this.worldObj, var11[0], var11[1], var11[2]))) {
                             this.setBlockAndNotifyAdequately(this.worldObj, var11[0], var11[1], var11[2], par6, 0);
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                 }
                 ++var13;
             }
         }
     }
-
 
     @Shadow
     void generateLeafNodeBases() {

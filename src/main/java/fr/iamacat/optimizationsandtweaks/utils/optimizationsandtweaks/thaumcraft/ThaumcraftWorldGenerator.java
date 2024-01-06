@@ -1,24 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft;
 
+import static thaumcraft.common.lib.world.ThaumcraftWorldGenerator.createNodeAt;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import org.spongepowered.asm.mixin.Unique;
+
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.nodes.NodeModifier;
 import thaumcraft.api.nodes.NodeType;
 
-import java.util.Random;
-
-import static thaumcraft.common.lib.world.ThaumcraftWorldGenerator.createNodeAt;
-
 public class ThaumcraftWorldGenerator {
 
     private static final int SEARCH_RADIUS = 5;
-
 
     public static int countBlocksAroundPlayer(World world, int cx, int cy, int cz, Material material) {
         int chunkX = cx >> 4;
@@ -88,14 +87,15 @@ public class ThaumcraftWorldGenerator {
         }
         return count;
     }
-    public static void applyThresholds(World world, int x, int y, int z, Random random,
-                                       int value, NodeType type, NodeModifier modifier) {
+
+    public static void applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type,
+        NodeModifier modifier) {
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return;
         }
         int water = countBlocksAroundPlayer(world, x, y, z, Material.water);

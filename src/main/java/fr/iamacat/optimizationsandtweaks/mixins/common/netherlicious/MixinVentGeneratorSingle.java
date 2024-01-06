@@ -6,9 +6,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import org.spongepowered.asm.mixin.Mixin;

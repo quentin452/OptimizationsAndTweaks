@@ -14,7 +14,9 @@ package fr.iamacat.optimizationsandtweaks.utils.agrona.generation;
 
 import static java.io.File.separatorChar;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;

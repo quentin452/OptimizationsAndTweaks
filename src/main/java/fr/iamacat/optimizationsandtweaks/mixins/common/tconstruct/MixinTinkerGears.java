@@ -1,16 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.tconstruct;
 
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import mantle.pulsar.pulse.Handler;
+import java.util.List;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import mantle.pulsar.pulse.Handler;
 import tconstruct.TConstruct;
 import tconstruct.library.TConstructRegistry;
 import tconstruct.library.crafting.FluidType;
@@ -19,10 +23,9 @@ import tconstruct.plugins.gears.TinkerGears;
 import tconstruct.smeltery.TinkerSmeltery;
 import tconstruct.util.config.PHConstruct;
 
-import java.util.List;
-
 @Mixin(TinkerGears.class)
 public class MixinTinkerGears {
+
     @Shadow
     public static Item gearCast;
 
@@ -49,9 +52,10 @@ public class MixinTinkerGears {
             // register every gear besides wooden gear for creating a gear cast
             if (!oreName.equals("gearWood")) {
                 for (ItemStack g : gears) {
-                    TConstructRegistry.getTableCasting().addCastingRecipe(cast, aluCastLiquid, g, false, 50);
-                    if (!PHConstruct.removeGoldCastRecipes)
-                        TConstructRegistry.getTableCasting().addCastingRecipe(cast, goldCastLiquid, g, false, 50);
+                    TConstructRegistry.getTableCasting()
+                        .addCastingRecipe(cast, aluCastLiquid, g, false, 50);
+                    if (!PHConstruct.removeGoldCastRecipes) TConstructRegistry.getTableCasting()
+                        .addCastingRecipe(cast, goldCastLiquid, g, false, 50);
                 }
             }
 
@@ -71,7 +75,8 @@ public class MixinTinkerGears {
                     ItemStack gear = gears.get(0);
                     FluidStack liquid = new FluidStack(fluid.getID(), TConstruct.ingotLiquidValue * 4);
                     // gear casting
-                    TConstructRegistry.getTableCasting().addCastingRecipe(gear, liquid, cast, 55);
+                    TConstructRegistry.getTableCasting()
+                        .addCastingRecipe(gear, liquid, cast, 55);
                     // and melting it back
                     FluidType ft = FluidType.getFluidType(fluid);
                     if (ft != null) Smeltery.addMelting(ft, gear, 100, TConstruct.ingotLiquidValue * 4);

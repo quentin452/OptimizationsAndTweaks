@@ -6,11 +6,7 @@
 
 package fr.iamacat.optimizationsandtweaks.utils.org.pcollections;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * An immutable, persistent map from keys of type K to values of type V, with keys arranged in

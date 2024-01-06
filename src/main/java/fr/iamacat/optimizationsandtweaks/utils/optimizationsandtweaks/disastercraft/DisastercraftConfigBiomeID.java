@@ -1,14 +1,14 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.disastercraft;
 
-import com.williameze.minegicka3.ModBase;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import fr.emerald.disaster.MainDisastercraft;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import fr.emerald.disaster.MainDisastercraft;
 
 public class DisastercraftConfigBiomeID {
 
@@ -26,9 +26,7 @@ public class DisastercraftConfigBiomeID {
 
     private static String makeCategory(String name) {
         ConfigCategory category = config.getCategory(name);
-        category.setLanguageKey(
-            MainDisastercraft.instance + ".config."
-                + name);
+        category.setLanguageKey(MainDisastercraft.instance + ".config." + name);
         allCategories.add(category);
         return name;
     }

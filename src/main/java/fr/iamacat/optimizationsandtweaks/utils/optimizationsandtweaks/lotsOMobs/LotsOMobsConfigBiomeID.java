@@ -1,14 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotsOMobs;
 
-import com.lom.lotsomobscore.LotsOMobs;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import lotr.common.LOTRMod;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+
+import com.lom.lotsomobscore.LotsOMobs;
+
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class LotsOMobsConfigBiomeID {
 
@@ -33,9 +34,7 @@ public class LotsOMobsConfigBiomeID {
 
     private static String makeCategory(String name) {
         ConfigCategory category = config.getCategory(name);
-        category.setLanguageKey(
-            LotsOMobs.instance + ".config."
-                + name);
+        category.setLanguageKey(LotsOMobs.instance + ".config." + name);
         allCategories.add(category);
         return name;
     }

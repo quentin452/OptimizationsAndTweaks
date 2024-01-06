@@ -1,15 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
-import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
-import cpw.mods.fml.common.ModContainer;
+import java.util.Comparator;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-import thaumcraft.api.internal.DummyInternalMethodHandler;
 
-import java.util.Comparator;
+import cpw.mods.fml.common.ModContainer;
+import thaumcraft.api.internal.DummyInternalMethodHandler;
 
 public class Classers {
 
@@ -99,18 +99,19 @@ public class Classers {
 
     // MixinLoader
 
-    public static class ModIdComparator implements Comparator<ModContainer>
-    {
+    public static class ModIdComparator implements Comparator<ModContainer> {
+
         @Override
-        public int compare(ModContainer o1, ModContainer o2)
-        {
-            return o1.getModId().compareTo(o2.getModId());
+        public int compare(ModContainer o1, ModContainer o2) {
+            return o1.getModId()
+                .compareTo(o2.getModId());
         }
     }
 
     // MixinWorldGenPyramid
 
     public static class Pair {
+
         public int x;
         public int y;
 
@@ -123,7 +124,7 @@ public class Classers {
             if (!(p instanceof Pair)) {
                 return false;
             } else {
-                return ((Pair)p).x == this.x && ((Pair)p).y == this.y;
+                return ((Pair) p).x == this.x && ((Pair) p).y == this.y;
             }
         }
     }
@@ -131,8 +132,8 @@ public class Classers {
     // MixinInfusionVisualDisguiseArmor
 
     public static class FakeMethodHandler extends DummyInternalMethodHandler {
-        public FakeMethodHandler() {
-        }
+
+        public FakeMethodHandler() {}
 
         public boolean isResearchComplete(String username, String researchkey) {
             return true;
@@ -142,10 +143,11 @@ public class Classers {
     // MixinGuiResearchRecipe
 
     public static class Coord2D {
-        public   int x;
-        public  int y;
 
-        public  Coord2D(int x, int y) {
+        public int x;
+        public int y;
+
+        public Coord2D(int x, int y) {
             this.x = x;
             this.y = y;
         }

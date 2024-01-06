@@ -21,11 +21,7 @@ import java.util.Map;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.Field;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.RealFieldElement;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Array2DRowFieldMatrix;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.ArrayFieldVector;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldDecompositionSolver;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldLUDecomposition;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldMatrix;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.*;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.MathArrays;
 
 /**

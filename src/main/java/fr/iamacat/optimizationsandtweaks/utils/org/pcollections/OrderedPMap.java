@@ -7,12 +7,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.org.pcollections;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Like {@link PMap} but preserves insertion order. Persistent equivalent of {@link LinkedHashMap}.

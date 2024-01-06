@@ -20,7 +20,10 @@
 
 package fr.iamacat.optimizationsandtweaks.utils.trove.list.linked;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.Array;
 import java.util.AbstractSequentialList;
 import java.util.ListIterator;

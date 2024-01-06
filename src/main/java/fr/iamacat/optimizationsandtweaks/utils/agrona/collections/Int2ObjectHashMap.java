@@ -16,19 +16,8 @@ import static fr.iamacat.optimizationsandtweaks.utils.agrona.BitUtil.findNextPos
 import static fr.iamacat.optimizationsandtweaks.utils.agrona.collections.CollectionUtil.validateLoadFactor;
 import static java.util.Objects.requireNonNull;
 
-import java.util.AbstractCollection;
-import java.util.AbstractSet;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
+import java.util.*;
+import java.util.function.*;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.generation.DoNotSub;
 

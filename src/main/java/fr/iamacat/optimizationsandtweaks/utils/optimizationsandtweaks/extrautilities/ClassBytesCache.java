@@ -1,7 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.extrautilities;
 
-import net.minecraft.launchwrapper.LaunchClassLoader;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
+
 public class ClassBytesCache {
+
     private static final Map<String, byte[]> classBytesCache = new ConcurrentHashMap<>();
 
     public static byte[] getClassBytes(ClassLoader classLoader, String className) throws IOException {

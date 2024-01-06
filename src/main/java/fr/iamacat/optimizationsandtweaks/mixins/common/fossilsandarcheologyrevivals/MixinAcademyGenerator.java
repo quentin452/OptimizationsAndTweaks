@@ -1,29 +1,32 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.fossilsandarcheologyrevivals;
 
-import fossilsarcheology.Revival;
-import fossilsarcheology.server.gen.structure.AcademyGenerator;
-import fossilsarcheology.server.gen.structure.FossilStructureGenerator;
-import fossilsarcheology.server.structure.util.Structure;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import fossilsarcheology.Revival;
+import fossilsarcheology.server.gen.structure.AcademyGenerator;
+import fossilsarcheology.server.gen.structure.FossilStructureGenerator;
+import fossilsarcheology.server.structure.util.Structure;
 
 @Mixin(AcademyGenerator.class)
 public class MixinAcademyGenerator {
+
     /**
      * @author
      * @reason
      */
     @Overwrite(remap = false)
     private final void generateStructure(World world, Random rand, int chunkX, int chunkZ) {
-        BiomeGenBase biome = world.getWorldChunkManager().getBiomeGenAt(chunkX, chunkZ);
+        BiomeGenBase biome = world.getWorldChunkManager()
+            .getBiomeGenAt(chunkX, chunkZ);
         FossilStructureGenerator gen = new FossilStructureGenerator();
         int struct = rand.nextInt(FossilStructureGenerator.structures.size());
 
@@ -73,15 +76,24 @@ public class MixinAcademyGenerator {
         Block offset3Block = world.getBlock(x + 10, y, z - 11);
         Block offset4Block = world.getBlock(x - 10, y, z + 11);
 
-        boolean centerSolid = centerBlock.getMaterial().isSolid();
-        boolean offset1Solid = offset1Block.getMaterial().isSolid();
-        boolean offset2Solid = offset2Block.getMaterial().isSolid();
-        boolean offset3Solid = offset3Block.getMaterial().isSolid();
-        boolean offset4Solid = offset4Block.getMaterial().isSolid();
+        boolean centerSolid = centerBlock.getMaterial()
+            .isSolid();
+        boolean offset1Solid = offset1Block.getMaterial()
+            .isSolid();
+        boolean offset2Solid = offset2Block.getMaterial()
+            .isSolid();
+        boolean offset3Solid = offset3Block.getMaterial()
+            .isSolid();
+        boolean offset4Solid = offset4Block.getMaterial()
+            .isSolid();
 
         boolean skyAccessible = !world.canBlockSeeTheSky(x, y, z);
         boolean blockAboveNotWater = world.getBlock(x, y + 1, z) != Blocks.water;
 
-        return centerSolid && offset1Solid && offset2Solid && offset3Solid && (offset4Solid || skyAccessible) && blockAboveNotWater;
+        return centerSolid && offset1Solid
+            && offset2Solid
+            && offset3Solid
+            && (offset4Solid || skyAccessible)
+            && blockAboveNotWater;
     }
 }

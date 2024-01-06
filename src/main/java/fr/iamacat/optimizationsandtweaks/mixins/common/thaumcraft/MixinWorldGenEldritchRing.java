@@ -70,7 +70,8 @@ public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
                     return false;
                 }
 
-                if (blockID == x || ((blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x)) {
+                if (blockID == x
+                    || ((blockID == Blocks.snow_layer || blockID == Blocks.tallgrass) && blockIDBelow == x)) {
                     return true;
                 }
             }

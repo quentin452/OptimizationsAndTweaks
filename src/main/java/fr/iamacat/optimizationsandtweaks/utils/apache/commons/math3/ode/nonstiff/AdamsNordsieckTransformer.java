@@ -20,15 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.fraction.BigFraction;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Array2DRowFieldMatrix;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.Array2DRowRealMatrix;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.ArrayFieldVector;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldDecompositionSolver;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldLUDecomposition;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.FieldMatrix;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.MatrixUtils;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.QRDecomposition;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.RealMatrix;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.linear.*;
 
 /**
  * Transformer to Nordsieck vectors for Adams integrators.

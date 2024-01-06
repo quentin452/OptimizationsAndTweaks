@@ -30,10 +30,10 @@ public abstract class MixinBiomeGenKelpForest extends BiomeGenBase {
     @Overwrite(remap = false)
     public void func_76728_a(World world, Random random, int chunkX, int chunkZ) {
         super.decorate(world, random, chunkX, chunkZ);
-            int x = chunkX + random.nextInt(16);
-            int y = 40;
-            int z = chunkZ + random.nextInt(16);
-            (new GenerateCoral()).generateKelpForestCoral(world, random, x, y, z);
+        int x = chunkX + random.nextInt(16);
+        int y = 40;
+        int z = chunkZ + random.nextInt(16);
+        (new GenerateCoral()).generateKelpForestCoral(world, random, x, y, z);
     }
 
     @Shadow

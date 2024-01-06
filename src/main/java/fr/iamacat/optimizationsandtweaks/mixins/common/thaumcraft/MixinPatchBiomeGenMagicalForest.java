@@ -2,10 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.BiomeGenMagicalForest2;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -16,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.BiomeGenMagicalForest2;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.world.WorldGenManaPods;
 import thaumcraft.common.lib.world.biomes.BiomeGenMagicalForest;
@@ -41,7 +39,7 @@ public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return;
         }
         optimizationsAndTweaks$generateBlobs(world, random, x, z);

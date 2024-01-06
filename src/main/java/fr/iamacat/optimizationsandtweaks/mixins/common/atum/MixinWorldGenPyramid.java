@@ -1,25 +1,29 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.atum;
 
-import com.teammetallurgy.atum.blocks.AtumBlocks;
-import com.teammetallurgy.atum.blocks.tileentity.chests.TileEntityPharaohChest;
-import com.teammetallurgy.atum.items.AtumLoot;
-import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import java.util.ArrayList;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.teammetallurgy.atum.blocks.AtumBlocks;
+import com.teammetallurgy.atum.blocks.tileentity.chests.TileEntityPharaohChest;
+import com.teammetallurgy.atum.items.AtumLoot;
+import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
+
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
 
 @Mixin(WorldGenPyramid.class)
-public abstract class MixinWorldGenPyramid  extends WorldGenerator {
+public abstract class MixinWorldGenPyramid extends WorldGenerator {
+
     /**
      * @author
      * @reason
@@ -31,7 +35,7 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
-        if(!chunk.isChunkLoaded) {
+        if (!chunk.isChunkLoaded) {
             return false;
         }
         if (random.nextFloat() > 0.3) {
@@ -49,9 +53,9 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
         int x;
         int dx;
         int dz;
-        for(x = -6; x < 10; ++x) {
-            for(dx = x; dx <= width - x; ++dx) {
-                for(dz = x; dz <= depth - x; ++dz) {
+        for (x = -6; x < 10; ++x) {
+            for (dx = x; dx <= width - x; ++dx) {
+                for (dz = x; dz <= depth - x; ++dz) {
                     Block id = world.getBlock(dx + i, x + j + 3, dz + k);
                     if (id == null || id == AtumBlocks.BLOCK_SAND) {
                         world.setBlockToAir(dx + i, x + j + 3, dz + k);
@@ -62,8 +66,8 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
             }
         }
 
-        for(x = -3; x < width + 3; ++x) {
-            for(dx = -3; dx < depth + 3; ++dx) {
+        for (x = -3; x < width + 3; ++x) {
+            for (dx = -3; dx < depth + 3; ++dx) {
                 if (x >= 0 && x < width && dx >= 0 && dx < depth) {
                     world.setBlockToAir(x + i, j, dx + k);
                     world.setBlock(x + i, j - 1, dx + k, AtumBlocks.BLOCK_STONE);
@@ -115,9 +119,9 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
         world.setBlockToAir(i - 4, j, k + zIn);
         world.setBlockToAir(i - 4, j + 1, k + zIn);
 
-        for(x = 4; x < 8; ++x) {
-            for(dx = 6; dx < 12; ++dx) {
-                for(dz = 6; dz < 12; ++dz) {
+        for (x = 4; x < 8; ++x) {
+            for (dx = 6; dx < 12; ++dx) {
+                for (dz = 6; dz < 12; ++dz) {
                     world.setBlockToAir(i + dx, j + x, k + dz);
                 }
             }
@@ -128,18 +132,17 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
         world.setBlock(i + 10, j + 4, k + 8, AtumBlocks.BLOCK_PHARAOHCHEST, 0, 2);
 
         try {
-            TileEntityPharaohChest te = (TileEntityPharaohChest)world.getTileEntity(i + 10, j + 4, k + 8);
+            TileEntityPharaohChest te = (TileEntityPharaohChest) world.getTileEntity(i + 10, j + 4, k + 8);
             AtumLoot.fillChest(te, 15, 0.9F);
-        } catch (ClassCastException ignored) {
-        }
+        } catch (ClassCastException ignored) {}
 
         if (world.isAirBlock(i + 7, j + 1, k + 7)) {
             this.placeLadders(world, i + 7, j, k + 7, 4);
         } else {
             boolean found = false;
 
-            for(dx = -1; dx <= 1 && !found; ++dx) {
-                for(dz = -1; dz <= 1; ++dz) {
+            for (dx = -1; dx <= 1 && !found; ++dx) {
+                for (dz = -1; dz <= 1; ++dz) {
                     if (world.isAirBlock(i + 7 + dx, j + 1, k + 7 + dz)) {
                         this.placeLadders(world, i + 7 + dx, j, k + 7 + dz, 3);
                         found = true;
@@ -151,6 +154,7 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
 
         return false;
     }
+
     @Shadow
     public void placeTrap(World world, int x, int y, int z) {
         int meta = 0;
@@ -172,6 +176,7 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
 
         world.setBlock(x, y, z, AtumBlocks.BLOCK_TRAPARROW, meta, 0);
     }
+
     @Shadow
     public void placeLadders(World world, int x, int y, int z, int height) {
         int meta = 0;
@@ -191,7 +196,7 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
             meta = 5;
         }
 
-        for(int i = 0; i < height; ++i) {
+        for (int i = 0; i < height; ++i) {
             world.setBlock(x, y + i, z, Blocks.ladder, meta, 0);
         }
 
@@ -231,6 +236,6 @@ public abstract class MixinWorldGenPyramid  extends WorldGenerator {
                 array[x + choice.x / 2][y + choice.y / 2] = true;
                 this.generateMaze(array, random, x + choice.x, y + choice.y);
             }
-        } while(!choices.isEmpty());
+        } while (!choices.isEmpty());
     }
 }
