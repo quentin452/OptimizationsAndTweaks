@@ -478,6 +478,12 @@ public enum Mixin implements IMixin {
     common_goblins_MixinGOBLINWorldGenGVillage1(Side.COMMON,
         require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinGOBLINWorldGenGVillage1),
         "goblins.MixinGOBLINWorldGenGVillage1"),
+    common_goblins_MixinGOBLINWorldGenFireplace(Side.COMMON,
+        require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinGOBLINWorldGenFireplace),
+        "goblins.MixinGOBLINWorldGenFireplace"),
+    common_goblins_MixinGOBLINWorldGenHuts(Side.COMMON,
+        require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinGOBLINWorldGenHuts),
+        "goblins.MixinGOBLINWorldGenHuts"),
     common_fossilsandarcheologyrevivals_MixinAcademyGenerator(Side.COMMON,
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
             .and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),

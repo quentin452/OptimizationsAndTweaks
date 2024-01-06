@@ -754,6 +754,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSpringPopulate;
+    @Config.Comment("Fix Some Cascading Worldgen caused by GOBLINWorldGenFireplace Class from Goblins mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGOBLINWorldGenFireplace;
+    @Config.Comment("Fix Some Cascading Worldgen caused by GOBLINWorldGenHuts Class from Goblins mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGOBLINWorldGenHuts;
     @Config.Comment("Fix Some Cascading Worldgen caused by GOBLINWorldGenGVillage1 Class from Goblins mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
