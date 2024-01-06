@@ -31,18 +31,18 @@ import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectH
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
 
-    @Shadow
-    protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_) {
-        Chunk chunk = p_151350_0_.getChunkFromChunkCoords(p_151350_1_, p_151350_2_);
-        int k = p_151350_1_ * 16 + p_151350_0_.rand.nextInt(16);
-        int l = p_151350_2_ * 16 + p_151350_0_.rand.nextInt(16);
+    @Overwrite
+    protected static ChunkPosition func_151350_a(World world, int chunkX, int chunkZ) {
+        int x = chunkX * 16 + world.rand.nextInt(16);
+        int z = chunkZ * 16 + world.rand.nextInt(16);
 
-        if (chunk != null) {
-            int i1 = p_151350_0_.rand.nextInt(chunk.getTopFilledSegment() + 16 - 1);
-            return new ChunkPosition(k, i1, l);
-        } else {
-            return new ChunkPosition(k, p_151350_0_.rand.nextInt(p_151350_0_.getActualHeight()), l);
-        }
+        int minY = 0;
+        int maxY = world.getActualHeight();
+
+        int y = world.rand.nextInt(maxY - minY) + minY;
+
+        return new ChunkPosition(x, y, z);
+
     }
 
     @Shadow
@@ -89,14 +89,10 @@ public class MixinPatchSpawnerAnimals {
      * @reason optimize findChunksForSpawning
      */
     @Overwrite
-    public int findChunksForSpawning(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_, boolean p_77192_4_)
-    {
-        if (!p_77192_2_ && !p_77192_3_)
-        {
+    public int findChunksForSpawning(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_, boolean p_77192_4_) {
+        if (!p_77192_2_ && !p_77192_3_) {
             return 0;
-        }
-        else
-        {
+        } else {
             this.eligibleChunksForSpawning.clear();
             int i;
             int k;
@@ -132,20 +128,25 @@ public class MixinPatchSpawnerAnimals {
                 EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
                 if ((!enumcreaturetype.getPeacefulCreature() || p_77192_3_) && (enumcreaturetype.getPeacefulCreature() || p_77192_2_) && (!enumcreaturetype.getAnimal() || p_77192_4_) && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
                 {
-                    this.eligibleChunksForSpawning.keySet().iterator();
-                    Iterator iterator;
-                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList<>(eligibleChunksForSpawning.keySet());
-                    Collections.shuffle(tmp);
-                    iterator = tmp.iterator();
+                    Iterator<ChunkCoordIntPair> iterator = this.eligibleChunksForSpawning.keySet().iterator();
+                    ArrayList<ChunkCoordIntPair> eligibleChunks = new ArrayList<>(this.eligibleChunksForSpawning.keySet());
+                    Collections.shuffle(eligibleChunks);
+                    iterator = eligibleChunks.iterator();
+
                     while (iterator.hasNext()) {
-                        ChunkCoordIntPair chunkcoordintpair1 = (ChunkCoordIntPair) iterator.next();
+                        ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
                         if (Boolean.FALSE.equals(this.eligibleChunksForSpawning.get(chunkcoordintpair1))) {
-                            ChunkPosition chunkposition = func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
+                            ChunkPosition chunkposition = this.func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
+                            if (chunkposition == null) {
+                                continue;
+                            }
                             int j1 = chunkposition.chunkPosX;
                             int k1 = chunkposition.chunkPosY;
                             int l1 = chunkposition.chunkPosZ;
+
                             if (!p_77192_1_.getBlock(j1, k1, l1).isNormalCube() && p_77192_1_.getBlock(j1, k1, l1).getMaterial() == enumcreaturetype.getCreatureMaterial()) {
                                 int i2 = 0;
+
                                 for (int j2 = 0; j2 < 3; j2++) {
                                     int k2 = j1;
                                     int l2 = k1;
