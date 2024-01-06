@@ -1,10 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
@@ -16,21 +12,23 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     protected static ChunkPosition func_151350_a(World world, int chunkX, int chunkZ) {
         int x = chunkX * 16 + world.rand.nextInt(16);
@@ -53,35 +51,24 @@ public class MixinPatchSpawnerAnimals {
      * @reason greatly reduce TPS lags on VoidWorld and more
      */
     @Overwrite
-    public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType p_77190_0_, World p_77190_1_, int p_77190_2_,
-        int p_77190_3_, int p_77190_4_) {
-        if (OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals) {
-            if (p_77190_0_.getCreatureMaterial() == Material.water) {
-                return p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_)
-                    .getMaterial()
-                    .isLiquid()
-                    && p_77190_1_.getBlock(p_77190_2_, p_77190_3_ - 1, p_77190_4_)
-                        .getMaterial()
-                        .isLiquid()
-                    && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_ + 1, p_77190_4_)
-                        .isNormalCube();
-            } else if (!World.doesBlockHaveSolidTopSurface(p_77190_1_, p_77190_2_, p_77190_3_ - 1, p_77190_4_)) {
+    public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
+            Block block = world.getBlock(x, y - 1, z);
+            Block blockAbove = world.getBlock(x, y, z);
+
+            if (creatureType.getCreatureMaterial() == Material.water) {
+                Block blockBelow = world.getBlock(x, y + 1, z);
+                return block.getMaterial().isLiquid()
+                    && blockBelow.getMaterial().isLiquid()
+                    && !blockAbove.isNormalCube();
+            } else if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
                 return false;
             } else {
-                Block block = p_77190_1_.getBlock(p_77190_2_, p_77190_3_ - 1, p_77190_4_);
-                boolean spawnBlock = block
-                    .canCreatureSpawn(p_77190_0_, p_77190_1_, p_77190_2_, p_77190_3_ - 1, p_77190_4_);
-                return spawnBlock && block != Blocks.bedrock
-                    && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_)
-                        .isNormalCube()
-                    && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_, p_77190_4_)
-                        .getMaterial()
-                        .isLiquid()
-                    && !p_77190_1_.getBlock(p_77190_2_, p_77190_3_ + 1, p_77190_4_)
-                        .isNormalCube();
+                boolean canSpawn = block.canCreatureSpawn(creatureType, world, x, y - 1, z);
+                return canSpawn && block != Blocks.bedrock
+                    && !blockAbove.isNormalCube()
+                    && !blockAbove.getMaterial().isLiquid()
+                    && !world.getBlock(x, y + 1, z).isNormalCube();
             }
-        }
-        return false;
     }
 
     /**
