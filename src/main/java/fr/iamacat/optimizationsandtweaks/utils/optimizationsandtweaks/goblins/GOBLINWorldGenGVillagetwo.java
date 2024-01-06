@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.goblins;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
@@ -19,11 +20,21 @@ public class GOBLINWorldGenGVillagetwo {
     }
 
     public static boolean canGenerateVillage(World world, int i, int j, int k) {
-        return world.getBlock(i, j, k) == Blocks.grass &&
-            world.getBlock(i + 21, j, k + 30) == Blocks.grass &&
+        if (!world.blockExists(i, j, k) || !world.blockExists(i + 21, j, k + 30) ||
+            !world.blockExists(i + 21, j + 10, k + 30) || !world.blockExists(i, j + 10, k)) {
+            return false;
+        }
+
+        Block block1 = world.getBlock(i, j, k);
+        Block block2 = world.getBlock(i + 21, j, k + 30);
+        Block block3 = world.getBlock(i + 21, j + 10, k + 30);
+        Block block4 = world.getBlock(i, j + 10, k);
+
+        return block1 == Blocks.grass &&
+            block2 == Blocks.grass &&
             canGenerate(world, new Random(), i, j, k) &&
-            world.getBlock(i + 21, j + 10, k + 30) == Blocks.air &&
-            world.getBlock(i, j + 10, k) == Blocks.air;
+            block3 == Blocks.air &&
+            block4 == Blocks.air;
     }
 
     public static boolean canGenerate(World world, Random rand, int i, int j, int k) {

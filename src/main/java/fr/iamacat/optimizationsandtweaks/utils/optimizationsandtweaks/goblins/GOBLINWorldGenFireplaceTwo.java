@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.goblins;
 
 import goblin.*;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -13,10 +14,20 @@ import java.util.Random;
 public class GOBLINWorldGenFireplaceTwo {
 
     public static boolean canGenerateFireplace(World world, int i, int j, int k) {
-        return world.getBlock(i, j, k) == Blocks.grass &&
-            world.getBlock(i + 6, j, k + 6) == Blocks.grass &&
-            world.getBlock(i + 6, j, k) == Blocks.grass &&
-            world.getBlock(i, j, k + 6) == Blocks.grass;
+        if (!world.blockExists(i, j, k) || !world.blockExists(i + 6, j, k + 6) ||
+            !world.blockExists(i + 6, j, k) || !world.blockExists(i, j, k + 6)) {
+            return false;
+        }
+
+        Block block1 = world.getBlock(i, j, k);
+        Block block2 = world.getBlock(i + 6, j, k + 6);
+        Block block3 = world.getBlock(i + 6, j, k);
+        Block block4 = world.getBlock(i, j, k + 6);
+
+        return block1 == Blocks.grass &&
+            block2 == Blocks.grass &&
+            block3 == Blocks.grass &&
+            block4 == Blocks.grass;
     }
     public static void func_76484_a(World world, Random rand, int i, int j, int k) {
         int width1;
@@ -117,8 +128,8 @@ public class GOBLINWorldGenFireplaceTwo {
                 GOBLINEntityGoblin goblin = new GOBLINEntityGoblin(world);
                 c = -1 + rand.nextInt(9);
                 c1 = -1 + rand.nextInt(9);
-                goblin.setLocationAndAngles((double)(i + c), (double)(j + 1), (double)(k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
-                goblin.setPosition((double)(i + c), (double)(j + 1), (double)(k + c1));
+                goblin.setLocationAndAngles(i + c, j + 1, k + c1, world.rand.nextFloat() * 360.0F, 0.0F);
+                goblin.setPosition((i + c), (j + 1), (k + c1));
                 world.spawnEntityInWorld(goblin);
             }
 
@@ -126,8 +137,8 @@ public class GOBLINWorldGenFireplaceTwo {
                 GOBLINEntityGoblinRanger goblin = new GOBLINEntityGoblinRanger(world);
                 c = -1 + rand.nextInt(9);
                 c1 = -1 + rand.nextInt(9);
-                goblin.setLocationAndAngles((double)(i + c), (double)(j + 1), (double)(k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
-                goblin.setPosition((double)(i + c), (double)(j + 1), (double)(k + c1));
+                goblin.setLocationAndAngles((i + c), (j + 1), (k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
+                goblin.setPosition((i + c), (j + 1), (k + c1));
                 world.spawnEntityInWorld(goblin);
             }
 
@@ -135,8 +146,8 @@ public class GOBLINWorldGenFireplaceTwo {
                 GOBLINEntityGoblinSoldier goblin = new GOBLINEntityGoblinSoldier(world);
                 c = -1 + rand.nextInt(9);
                 c1 = -1 + rand.nextInt(9);
-                goblin.setLocationAndAngles((double)(i + c), (double)(j + 1), (double)(k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
-                goblin.setPosition((double)(i + c), (double)(j + 1), (double)(k + c1));
+                goblin.setLocationAndAngles((i + c), (j + 1), (k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
+                goblin.setPosition((i + c), (j + 1), (k + c1));
                 world.spawnEntityInWorld(goblin);
             }
 
@@ -144,8 +155,8 @@ public class GOBLINWorldGenFireplaceTwo {
                 GOBLINEntityGoblinBomber goblin = new GOBLINEntityGoblinBomber(world);
                 c = -1 + rand.nextInt(9);
                 c1 = -1 + rand.nextInt(9);
-                goblin.setLocationAndAngles((double)(i + c), (double)(j + 1), (double)(k + c1), world.rand.nextFloat() * 360.0F, 0.0F);
-                goblin.setPosition((double)(i + c), (double)(j + 1), (double)(k + c1));
+                goblin.setLocationAndAngles((i + c), (j + 1), k + c1, world.rand.nextFloat() * 360.0F, 0.0F);
+                goblin.setPosition((i + c), (j + 1), (k + c1));
                 world.spawnEntityInWorld(goblin);
             }
         }

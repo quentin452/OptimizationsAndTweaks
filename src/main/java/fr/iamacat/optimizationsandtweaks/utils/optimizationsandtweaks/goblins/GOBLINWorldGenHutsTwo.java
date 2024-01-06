@@ -15,10 +15,20 @@ import java.util.Random;
 
 public class GOBLINWorldGenHutsTwo {
     public static boolean canGenerateHuts(World world, int i, int j, int k) {
-        return world.getBlock(i, j, k) == Blocks.grass &&
-            world.getBlock(i + 12, j, k + 12) == Blocks.grass &&
-            world.getBlock(i + 12, j, k) == Blocks.grass &&
-            world.getBlock(i, j, k + 12) == Blocks.grass;
+        if (!world.blockExists(i, j, k) || !world.blockExists(i + 12, j, k + 12) ||
+            !world.blockExists(i + 12, j, k) || !world.blockExists(i, j, k + 12)) {
+            return false;
+        }
+
+        Block block1 = world.getBlock(i, j, k);
+        Block block2 = world.getBlock(i + 12, j, k + 12);
+        Block block3 = world.getBlock(i + 12, j, k);
+        Block block4 = world.getBlock(i, j, k + 12);
+
+        return block1 == Blocks.grass &&
+            block2 == Blocks.grass &&
+            block3 == Blocks.grass &&
+            block4 == Blocks.grass;
     }
     public static final WeightedRandomChestContent[] goblinStandardChest;
     public static final WeightedRandomChestContent[] goblinRiderChest;
@@ -138,27 +148,28 @@ public class GOBLINWorldGenHutsTwo {
     protected static void generateRightHouse(World world, Random rand, int i, int j, int k) {
         int height;
         int width2;
-        for(height = 0; height <= 7; ++height) {
-            for(width2 = 0; width2 <= 9; ++width2) {
-                for(height = 0; height <= 4; ++height) {
-                    if (height == 0) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.grass, 0, 2);
-                    } else if (height > 0 && height < 3) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.dirt, 0, 2);
-                    } else {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.stone, 0, 2);
+            for (height = 0; height <= 7; ++height) {
+                for (width2 = 0; width2 <= 9; ++width2) {
+                    for (int h = 0; h <= 4; ++h) {
+                        if (h == 0) {
+                            world.setBlock(i + h, j - height, k + width2, Blocks.grass, 0, 2);
+                        } else if (h > 0 && h < 3) {
+                            world.setBlock(i + h, j - height, k + width2, Blocks.dirt, 0, 2);
+                        } else {
+                            world.setBlock(i + h, j - height, k + width2, Blocks.stone, 0, 2);
+                        }
                     }
                 }
             }
-        }
 
-        for(height = -1; height <= 7; ++height) {
-            for(width2 = 1; width2 <= 5; ++width2) {
-                for(height = 1; height <= 4; ++height) {
-                    world.setBlock(i + height, j + height, k + width2, Blocks.air, 0, 2);
+            for (height = -1; height <= 7; ++height) {
+                for (width2 = 1; width2 <= 5; ++width2) {
+                    for (int h = 1; h <= 4; ++h) {
+                        world.setBlock(i + h, j + h, k + width2, Blocks.air, 0, 2);
+                    }
                 }
             }
-        }
+
 
         for(height = 1; height <= 2; ++height) {
             world.setBlock(i + 1, j + height, k + 1, Blocks.planks, 0, 2);
@@ -244,24 +255,24 @@ public class GOBLINWorldGenHutsTwo {
     protected static void generateLeftHouse(World world, Random rand, int i, int j, int k) {
         int height;
         int width2;
-        for(height = -2; height <= 5; ++height) {
-            for(width2 = -2; width2 <= 6; ++width2) {
-                for(height = 0; height <= 4; ++height) {
-                    if (height == 0) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.grass, 0, 2);
-                    } else if (height > 0 && height < 3) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.dirt, 0, 2);
+        for (height = -2; height <= 5; ++height) {
+            for (width2 = -2; width2 <= 6; ++width2) {
+                for (int h = 0; h <= 4; ++h) {
+                    if (h == 0) {
+                        world.setBlock(i + h, j - height, k + width2, Blocks.grass, 0, 2);
+                    } else if (h > 0 && h < 3) {
+                        world.setBlock(i + h, j - height, k + width2, Blocks.dirt, 0, 2);
                     } else {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.stone, 0, 2);
+                        world.setBlock(i + h, j - height, k + width2, Blocks.stone, 0, 2);
                     }
                 }
             }
         }
 
-        for(height = -2; height <= 6; ++height) {
-            for(width2 = 1; width2 <= 5; ++width2) {
-                for(height = 1; height <= 4; ++height) {
-                    world.setBlock(i + height, j + height, k + width2, Blocks.air, 0, 2);
+        for (height = -2; height <= 6; ++height) {
+            for (width2 = 1; width2 <= 5; ++width2) {
+                for (int h = 1; h <= 4; ++h) {
+                    world.setBlock(i + h, j + h, k + width2, Blocks.air, 0, 2);
                 }
             }
         }
@@ -351,24 +362,25 @@ public class GOBLINWorldGenHutsTwo {
     protected static void generateTopHouse(World world, Random rand, int i, int j, int k) {
         int height;
         int width2;
-        for(height = 0; height <= 6; ++height) {
-            for(width2 = 0; width2 <= 5; ++width2) {
-                for(height = 0; height <= 4; ++height) {
-                    if (height == 0) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.grass, 0, 2);
-                    } else if (height > 0 && height < 3) {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.dirt, 0, 2);
+
+        for (height = 0; height <= 6; ++height) {
+            for (width2 = 0; width2 <= 5; ++width2) {
+                for (int h = 0; h <= 4; ++h) {
+                    if (h == 0) {
+                        world.setBlock(i + h, j - height, k + width2, Blocks.grass, 0, 2);
+                    } else if (h < 3) {
+                        world.setBlock(i + h, j - height, k + width2, Blocks.dirt, 0, 2);
                     } else {
-                        world.setBlock(i + height, j - height, k + width2, Blocks.stone, 0, 2);
+                        world.setBlock(i + h, j - height, k + width2, Blocks.stone, 0, 2);
                     }
                 }
             }
         }
 
-        for(height = 1; height <= 5; ++height) {
-            for(width2 = 1; width2 <= 4; ++width2) {
-                for(height = 1; height <= 4; ++height) {
-                    world.setBlock(i + height, j + height, k + width2, Blocks.air, 0, 2);
+        for (height = 1; height <= 5; ++height) {
+            for (width2 = 1; width2 <= 4; ++width2) {
+                for (int h = 1; h <= 4; ++h) {
+                    world.setBlock(i + h, j + height, k + width2, Blocks.air, 0, 2);
                 }
             }
         }
