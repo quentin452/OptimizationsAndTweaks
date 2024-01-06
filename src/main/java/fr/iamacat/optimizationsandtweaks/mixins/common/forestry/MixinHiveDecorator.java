@@ -38,15 +38,16 @@ public class MixinHiveDecorator {
      */
     @Overwrite
     public static void decorateHives(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ,
-        boolean hasVillageGenerated) {
-        chunkX = chunkX >> 4;
-        chunkZ = chunkZ >> 4;
+                                     boolean hasVillageGenerated) {
+        chunkX >>= 4;
+        chunkZ >>= 4;
 
         Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 
         if (!chunk.isChunkLoaded) {
             return;
         }
+
         if (TerrainGen.populate(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, EVENT_TYPE)) {
             decorateHives(world, rand, chunkX, chunkZ);
         }
