@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.ganysnether;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.WeightedRandomChestContent;
@@ -137,14 +138,25 @@ public class MixinNetherWorldGenGanys {
      */
     @Overwrite(remap = false)
     private boolean hasLavaNearby(World world, int x, int y, int z) {
-        return world.getBlock(x + 1, y, z)
-            .getMaterial() == Material.lava
-            || world.getBlock(x - 1, y, z)
-                .getMaterial() == Material.lava
-            || world.getBlock(x, y, z + 1)
-                .getMaterial() == Material.lava
-            || world.getBlock(x, y, z - 1)
-                .getMaterial() == Material.lava;
+        Block block;
+
+        block = world.getBlock(x + 1, y, z);
+        if (block != null && block.getMaterial() == Material.lava) {
+            return true;
+        }
+
+        block = world.getBlock(x - 1, y, z);
+        if (block != null && block.getMaterial() == Material.lava) {
+            return true;
+        }
+
+        block = world.getBlock(x, y, z + 1);
+        if (block != null && block.getMaterial() == Material.lava) {
+            return true;
+        }
+
+        block = world.getBlock(x, y, z - 1);
+        return block != null && block.getMaterial() == Material.lava;
     }
 
     @Shadow
