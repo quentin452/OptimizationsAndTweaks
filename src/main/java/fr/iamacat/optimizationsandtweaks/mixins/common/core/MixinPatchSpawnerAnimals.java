@@ -97,11 +97,11 @@ public class MixinPatchSpawnerAnimals {
                         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(l + j, i1 + k);
                         if (!flag3)
                         {
-                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.valueOf(false));
+                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.FALSE);
                         }
                         else if (!this.eligibleChunksForSpawning.containsKey(chunkcoordintpair))
                         {
-                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.valueOf(true));
+                            this.eligibleChunksForSpawning.put(chunkcoordintpair, Boolean.TRUE);
                         }
                     }
                 }
@@ -116,55 +116,47 @@ public class MixinPatchSpawnerAnimals {
                 if ((!enumcreaturetype.getPeacefulCreature() || p_77192_3_) && (enumcreaturetype.getPeacefulCreature() || p_77192_2_) && (!enumcreaturetype.getAnimal() || p_77192_4_) && p_77192_1_.countEntities(enumcreaturetype, true) <= enumcreaturetype.getMaxNumberOfCreature() * this.eligibleChunksForSpawning.size() / 256)
                 {
                     Iterator<ChunkCoordIntPair> iterator = this.eligibleChunksForSpawning.keySet().iterator();
-                    ArrayList<ChunkCoordIntPair> eligibleChunks = new ArrayList<>(this.eligibleChunksForSpawning.keySet());
+                    ArrayList eligibleChunks = new ArrayList<>(this.eligibleChunksForSpawning.keySet());
                     Collections.shuffle(eligibleChunks);
                     iterator = eligibleChunks.iterator();
 
                     while (iterator.hasNext()) {
                         ChunkCoordIntPair chunkcoordintpair1 = iterator.next();
                         if (Boolean.FALSE.equals(this.eligibleChunksForSpawning.get(chunkcoordintpair1))) {
-                            ChunkPosition chunkposition = this.func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
-                            if (chunkposition == null) {
-                                continue;
-                            }
+                            ChunkPosition chunkposition = func_151350_a(p_77192_1_, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
                             int j1 = chunkposition.chunkPosX;
                             int k1 = chunkposition.chunkPosY;
                             int l1 = chunkposition.chunkPosZ;
 
-                            if (!p_77192_1_.getBlock(j1, k1, l1).isNormalCube() && p_77192_1_.getBlock(j1, k1, l1).getMaterial() == enumcreaturetype.getCreatureMaterial()) {
+                            Block block = p_77192_1_.getBlock(j1, k1, l1);
+                            Material blockMaterial = block.getMaterial();
+
+                            if (!block.isNormalCube() && blockMaterial == enumcreaturetype.getCreatureMaterial()) {
                                 int i2 = 0;
+                                int maxSpawnAttempts = 3;
 
-                                for (int j2 = 0; j2 < 3; j2++) {
-                                    int k2 = j1;
-                                    int l2 = k1;
-                                    int i3 = l1;
-                                    byte b1 = 6;
-                                    BiomeGenBase.SpawnListEntry spawnlistentry = null;
-                                    IEntityLivingData ientitylivingdata = null;
+                                for (int j2 = 0; j2 < maxSpawnAttempts; j2++) {
+                                    int k2 = j1 + p_77192_1_.rand.nextInt(6) - p_77192_1_.rand.nextInt(6);
+                                    int l2 = k1 + p_77192_1_.rand.nextInt(1) - p_77192_1_.rand.nextInt(1);
+                                    int i3 = l1 + p_77192_1_.rand.nextInt(6) - p_77192_1_.rand.nextInt(6);
 
-                                    for (int j3 = 0; j3 < 4; j3++) {
-                                        k2 += p_77192_1_.rand.nextInt(b1) - p_77192_1_.rand.nextInt(b1);
-                                        l2 += p_77192_1_.rand.nextInt(1) - p_77192_1_.rand.nextInt(1);
-                                        i3 += p_77192_1_.rand.nextInt(b1) - p_77192_1_.rand.nextInt(b1);
+                                    if (canCreatureTypeSpawnAtLocation(enumcreaturetype, p_77192_1_, k2, l2, i3)) {
+                                        float f = k2 + 0.5F;
+                                        float f2 = i3 + 0.5F;
 
-                                        if (canCreatureTypeSpawnAtLocation(enumcreaturetype, p_77192_1_, k2, l2, i3)) {
-                                            float f = k2 + 0.5F;
-                                            float f2 = i3 + 0.5F;
+                                        if (p_77192_1_.getClosestPlayer(f, (float) l2, f2, 24.0D) == null) {
+                                            float f3 = f - (float) chunkcoordinates.posX;
+                                            float f4 = l2 - (float) chunkcoordinates.posY;
+                                            float f5 = f2 - (float) chunkcoordinates.posZ;
+                                            float f6 = f3 * f3 + f4 * f4 + f5 * f5;
 
-                                            if (p_77192_1_.getClosestPlayer(f, (float) l2, f2, 24.0D) == null) {
-                                                float f3 = f - (float) chunkcoordinates.posX;
-                                                float f4 = (float) l2 - (float) chunkcoordinates.posY;
-                                                float f5 = f2 - (float) chunkcoordinates.posZ;
-                                                float f6 = f3 * f3 + f4 * f4 + f5 * f5;
+                                            if (f6 >= 576.0F) {
+                                                if (i2 >= maxSpawnAttempts) {
+                                                    break;
+                                                }
 
-                                                if (f6 >= 576.0F) {
-                                                    if (spawnlistentry == null) {
-                                                        spawnlistentry = p_77192_1_.spawnRandomCreature(enumcreaturetype, k2, l2, i3);
-                                                        if (spawnlistentry == null) {
-                                                            break;
-                                                        }
-                                                    }
-
+                                                BiomeGenBase.SpawnListEntry spawnlistentry = p_77192_1_.spawnRandomCreature(enumcreaturetype, k2, l2, i3);
+                                                if (spawnlistentry != null) {
                                                     EntityLiving entityliving;
                                                     try {
                                                         entityliving = (EntityLiving) spawnlistentry.entityClass.getConstructor(World.class).newInstance(p_77192_1_);
@@ -180,10 +172,10 @@ public class MixinPatchSpawnerAnimals {
                                                         ++i2;
                                                         p_77192_1_.spawnEntityInWorld(entityliving);
                                                         if (!ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, (float) l2, f2)) {
-                                                            ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
+                                                            entityliving.onSpawnWithEgg(null);
                                                         }
-                                                        if (j2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving)) {
-                                                            break; // Break outer loop
+                                                        if (i2 >= ForgeEventFactory.getMaxSpawnPackSize(entityliving)) {
+                                                            break;
                                                         }
                                                     }
                                                     i += i2;

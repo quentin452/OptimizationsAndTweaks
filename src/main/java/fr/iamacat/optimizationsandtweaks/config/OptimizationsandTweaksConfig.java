@@ -867,7 +867,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinScanManager;
-    @Config.Comment("Reduce tps lags caused by SpawnerAnimals on VoidWorld")
+    @Config.Comment("Reduce tps lags caused by SpawnerAnimals(Can reduce spawnrate of entities)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;
