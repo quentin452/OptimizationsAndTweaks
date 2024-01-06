@@ -89,78 +89,67 @@ public class MixinModelRenderer {
      * @reason
      */
     @Overwrite
-    @SideOnly(Side.CLIENT)
-    public void render(float p_78785_1_) {
-        if (!this.isHidden && this.showModel) {
-            if (!this.compiled) {
-                this.compileDisplayList(p_78785_1_);
-            }
-
-            GL11.glTranslatef(this.offsetX, this.offsetY, this.offsetZ);
-
-            if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
-                if (this.rotationPointX == 0.0F && this.rotationPointY == 0.0F && this.rotationPointZ == 0.0F) {
-                    renderDisplayListAndChildModels(p_78785_1_);
-                } else {
-                    renderWithRotationAndOffset(p_78785_1_);
-                }
-            } else {
-                renderWithFullRotation(p_78785_1_);
-            }
-
-            GL11.glTranslatef(-this.offsetX, -this.offsetY, -this.offsetZ);
+    public void render(float partialTicks) {
+        if (this.isHidden || !this.showModel) {
+            return;
         }
-    }
 
-    @Unique
-    public void renderDisplayListAndChildModels(float p_78785_1_) {
-        GL11.glCallList(this.displayList);
-
-        if (this.childModels != null) {
-            for (Object childModel : this.childModels) {
-                ((ModelRenderer) childModel).render(p_78785_1_);
-            }
+        if (!this.compiled) {
+            this.compileDisplayList(partialTicks);
         }
-    }
 
-    @Unique
-    private void renderWithRotationAndOffset(float p_78785_1_) {
-        GL11.glTranslatef(
-            this.rotationPointX * p_78785_1_,
-            this.rotationPointY * p_78785_1_,
-            this.rotationPointZ * p_78785_1_);
-        renderDisplayListAndChildModels(p_78785_1_);
-        GL11.glTranslatef(
-            -this.rotationPointX * p_78785_1_,
-            -this.rotationPointY * p_78785_1_,
-            -this.rotationPointZ * p_78785_1_);
-    }
-
-    @Unique
-    private void renderWithFullRotation(float p_78785_1_) {
         GL11.glPushMatrix();
-        GL11.glTranslatef(
-            this.rotationPointX * p_78785_1_,
-            this.rotationPointY * p_78785_1_,
-            this.rotationPointZ * p_78785_1_);
+        GL11.glTranslatef(this.offsetX, this.offsetY, this.offsetZ);
 
-        if (this.rotateAngleZ != 0.0F) {
-            GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        if (this.rotateAngleX != 0.0F || this.rotateAngleY != 0.0F || this.rotateAngleZ != 0.0F) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(this.rotationPointX * partialTicks, this.rotationPointY * partialTicks, this.rotationPointZ * partialTicks);
+
+            if (this.rotateAngleZ != 0.0F) {
+                GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+            }
+
+            if (this.rotateAngleY != 0.0F) {
+                GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+            }
+
+            if (this.rotateAngleX != 0.0F) {
+                GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+            }
+
+            GL11.glCallList(this.displayList);
+
+            if (this.childModels != null) {
+                for (Object childModel : this.childModels) {
+                    ((ModelRenderer) childModel).render(partialTicks);
+                }
+            }
+
+            GL11.glPopMatrix();
+
+        } else {
+            if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
+                GL11.glTranslatef(this.rotationPointX * partialTicks, this.rotationPointY * partialTicks, this.rotationPointZ * partialTicks);
+            }
+
+            GL11.glCallList(this.displayList);
+
+            if (this.childModels != null) {
+                for (Object childModel : this.childModels) {
+                    ((ModelRenderer) childModel).render(partialTicks);
+                }
+            }
+
+            if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
+                GL11.glTranslatef(-this.rotationPointX * partialTicks, -this.rotationPointY * partialTicks, -this.rotationPointZ * partialTicks);
+            }
+
         }
-
-        if (this.rotateAngleY != 0.0F) {
-            GL11.glRotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
-        }
-
-        if (this.rotateAngleX != 0.0F) {
-            GL11.glRotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
-        }
-
-        renderDisplayListAndChildModels(p_78785_1_);
 
         GL11.glPopMatrix();
-    }
+        GL11.glTranslatef(-this.offsetX, -this.offsetY, -this.offsetZ);
 
+    }
     /**
      * @author
      * @reason
