@@ -299,8 +299,6 @@ public enum Mixin implements IMixin {
     common_growthcraft_MixinAppleFuelHandler(Side.COMMON,
         require(TargetedMod.GROWTHCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinAppleFuelHandler),
         "growthcraft.MixinAppleFuelHandler"),
-    common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
-        "core.MixinBlockGrass"),
     common_adventurersamulet_MixinEntityEagle(Side.COMMON,
         require(TargetedMod.ADVENTURERS_AMULETS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityEagle),
         "adventurersamulet.MixinEntityEagle"),

@@ -387,10 +387,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunk;
-    @Config.Comment("Optimize BlockGrass Ticking")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinBlockGrass;
     @Config.Comment("Optimize OpenGlHelper")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
