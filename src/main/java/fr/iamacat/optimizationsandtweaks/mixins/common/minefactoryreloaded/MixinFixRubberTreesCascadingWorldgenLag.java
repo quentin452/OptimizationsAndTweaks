@@ -1,7 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minefactoryreloaded;
 
+import cofh.lib.util.helpers.BlockHelper;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minefactoryreloaded.WorldGenRubberTree2;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -22,12 +25,22 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         int numAttempts = 4;
 
         for (int attempt = 0; attempt < numAttempts; ++attempt) {
-            int surfaceY = optimizationsAndTweaks$getSurfaceBlockY(world, x, z);
+            int surfaceY = BlockHelper.getSurfaceBlockY(world, x, z);
 
-            if (surfaceY > 0 && growTree(world, rand, x, surfaceY + 1, z)) {
-                return true;
+            if (surfaceY > 0) {
+                if (attempt == 0) {
+                    if (growTree(world, rand, x, surfaceY + 1, z)) {
+                        return true;
+                    }
+                } else {
+                    int xOffset = x + rand.nextInt(16) - 8;
+                    int zOffset = z + rand.nextInt(16) - 8;
+
+                    if (growTree(world, rand, xOffset, surfaceY + 1, zOffset)) {
+                        return true;
+                    }
+                }
             }
-
             x += rand.nextInt(16) - 8;
             z += rand.nextInt(16) - 8;
         }
@@ -48,8 +61,9 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         if (optimizationsAndTweaks$isInvalidTreePosition(world, x, y, z, treeHeight, worldHeight)) {
             return false;
         }
-        optimizationsAndTweaks$placeRubberWoodBlocks(world, x, y, z, treeHeight);
-        optimizationsAndTweaks$generateLeaves(world, rand, x, y, z, treeHeight);
+        optimizationsAndTweaks$placeRubberWoodBlocks(world,x, y, z, treeHeight);
+        WorldGenRubberTree2 worldGenRubberTree2 = new WorldGenRubberTree2();
+        worldGenRubberTree2.generateLeaves(world, rand, x, y, z, treeHeight);
         return true;
     }
     @Unique
@@ -62,33 +76,14 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
     }
     @Unique
     private void optimizationsAndTweaks$placeRubberWoodBlocks(World world, int x, int y, int z, int treeHeight) {
+        Chunk chunk = world.getChunkFromBlockCoords(x, z);
         for (int yOffset = 0; yOffset < treeHeight; ++yOffset) {
-            world.setBlock(x, y + yOffset, z, MFRThings.rubberWoodBlock);
-            optimizationsAndTweaks$notifyBlockUpdate(world, x, y + yOffset, z, 0);
-        }
-    }
-    @Unique
-    private void optimizationsAndTweaks$generateLeaves(World world, Random rand, int x, int y, int z, int treeHeight) {
-        for (int yOffset = y - 3 + treeHeight; yOffset <= y + treeHeight; ++yOffset) {
-            int var12 = yOffset - (y + treeHeight);
-            int center = 1 - var12 / 2;
-            for (int xOffset = x - center; xOffset <= x + center; ++xOffset) {
-                for (int zOffset = z - center; zOffset <= z + center; ++zOffset) {
-                    int xPos = xOffset - x;
-                    int zPos = zOffset - z;
-                    if ((xPos != center || zPos != center || rand.nextInt(2) != 0 && var12 != 0)) {
-                        if (optimizationsAndTweaks$canPlaceLeaf(rand)) {
-                            world.setBlock(xOffset, yOffset, zOffset, MFRThings.rubberLeavesBlock);
-                        }
-                        optimizationsAndTweaks$notifyBlockUpdate(world, xOffset, yOffset, zOffset, 0);
-                    }
-                }
+            int blockY = y + yOffset;
+            if (!chunk.func_150807_a(x & 15, blockY, z & 15, MFRThings.rubberWoodBlock, 0)) {
+                chunk.func_150807_a(x & 15, blockY, z & 15, MFRThings.rubberWoodBlock, 0);
+                optimizationsAndTweaks$notifyBlockUpdate(world, x, blockY, z, 0);
             }
         }
-    }
-    @Unique
-    private boolean optimizationsAndTweaks$canPlaceLeaf(Random rand) {
-        return rand.nextFloat() < 0.9f;
     }
     @Unique
     private boolean optimizationsAndTweaks$placeSapling(World world, int x, int y, int z) {
@@ -105,14 +100,5 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         if (!world.isRemote) {
             world.notifyBlockChange(x, y, z, Block.getBlockById(meta));
         }
-    }
-    @Unique
-    private int optimizationsAndTweaks$getSurfaceBlockY(World world, int x, int z) {
-        for (int y = world.getHeight() - 1; y > 0; y--) {
-            if (world.getBlock(x, y, z).getMaterial().isSolid()) {
-                return y;
-            }
-        }
-        return -1;
     }
 }
