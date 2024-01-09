@@ -1,10 +1,12 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minefactoryreloaded;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -16,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import powercrystals.minefactoryreloaded.MineFactoryReloadedCore;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
+import powercrystals.minefactoryreloaded.world.MineFactoryReloadedWorldGen;
 import powercrystals.minefactoryreloaded.world.WorldGenMassiveTree;
 
 import java.util.Arrays;
@@ -349,8 +352,39 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
             }
         }
     }
+    // todo : fix cascading worldgens from here
+    /*
+    java.lang.Exception: Cascading world generation
+    at net.minecraft.world.chunk.Chunk.logCascadingWorldGeneration(Chunk.java:4652) ~[apx.class:?]
+    at net.minecraft.world.chunk.Chunk.handler$zfd000$archaicfix$savePopulatingChunk(Chunk.java:4658) ~[apx.class:?]
+    at net.minecraft.world.chunk.Chunk.func_76624_a(Chunk.java) ~[apx.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.originalLoadChunk(ChunkProviderServer.java:190) ~[ms.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.loadChunk(ChunkProviderServer.java:131) ~[ms.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.func_73158_c(ChunkProviderServer.java:101) ~[ms.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.func_73154_d(ChunkProviderServer.java:199) ~[ms.class:?]
+    at net.minecraft.world.World.func_72964_e(World.java:419) ~[ahb.class:?]
+    at net.minecraft.world.World.func_147439_a(World.java:51213) ~[ahb.class:?]
+    at powercrystals.minefactoryreloaded.world.WorldGenMassiveTree.genLeafLayer(WorldGenMassiveTree.java:182) ~[WorldGenMassiveTree.class:?]
+    at powercrystals.minefactoryreloaded.world.WorldGenMassiveTree.generateLeaves(WorldGenMassiveTree.java:214) ~[WorldGenMassiveTree.class:?]
+    at powercrystals.minefactoryreloaded.world.WorldGenMassiveTree.func_76484_a(WorldGenMassiveTree.java:813) ~[WorldGenMassiveTree.class:?]
+    at powercrystals.minefactoryreloaded.world.MineFactoryReloadedWorldGen.optimizationsAndTweaks$generateMegaRubberTree(MineFactoryReloadedWorldGen.java:562) ~[MineFactoryReloadedWorldGen .class:?]
+    at powercrystals.minefactoryreloaded.world.MineFactoryReloadedWorldGen.generateFeature(MineFactoryReloadedWorldGen.java:612) ~[MineFactoryReloadedWorldGen.class:?]
+    at cofh.core.world.WorldHandler.generateWorld(WorldHandler.java:270) ~[WorldHandler.class:?]
+    at cofh.core.world.WorldHandler.generate(WorldHandler.java:233) ~[WorldHandler.class:?]
+    at cpw.mods.fml.common.registry.GameRegistry.generateWorld(GameRegistry.java:112) ~[GameRegistry .class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.func_73153_a(ChunkProviderServer.java:280) ~[ms.class:?]
+    at net.minecraft.world.chunk.Chunk.func_76624_a(Chunk.java:1055) ~[apx.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.originalLoadChunk(ChunkProviderServer.java:190) ~[ms.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.loadChunk(ChunkProviderServer.java:131) ~[ms.class:?]
+    at net.minecraft.world.gen.ChunkProviderServer.func_73158_c(ChunkProviderServer.java:101) ~[ms.class:?]
+    at net.minecraft.server.MinecraftServer.func_71222_d(MinecraftServer.java:265) ~[MinecraftServer .class:?]
+    at net.minecraft.server.integrated.IntegratedServer.func_71247_a(IntegratedServer.java:78) ~[bsx.class:?]
+    at net.minecraft.server.integrated.IntegratedServer.func_71197_b(IntegratedServer.java:92) ~[bsx.class:?]
+    at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:1786) ~[MinecraftServer.class:?]
+    at java.lang.Thread.run(Thread.java:750) [?:1.8.0_392]
+   
+     */
     @Shadow
-
     private void genLeafLayer(int var1, int var2, int var3, int var4) {
         int var6 = var1;
         int var7 = var3;
