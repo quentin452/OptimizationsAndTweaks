@@ -18,7 +18,10 @@ import powercrystals.minefactoryreloaded.MineFactoryReloadedCore;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenMassiveTree;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 @Mixin(WorldGenMassiveTree.class)
 public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
@@ -82,18 +85,16 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
     public int checkBlockLine(int[] var1, int[] var2) {
         int[] var4 = this.checkScratch;
         byte var5 = 0;
-
+        Set<Integer> visitedCoordinates = new HashSet<>();
         for (byte var6 = 0; var6 < 3; ++var6) {
             var4[var6] = var2[var6] - var1[var6];
             if (Math.abs(var4[var6]) > Math.abs(var4[var5])) {
                 var5 = var6;
             }
         }
-
         if (var4[var5] == 0) {
             return -1;
         }
-
         byte var6 = otherCoordPairs[var5];
         byte var18 = otherCoordPairs[var5 + 3];
         byte var19 = (byte) ((var4[var5] > 0) ? 1 : -1);
@@ -101,21 +102,24 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
         float var10 = (float) var4[var18] / (float) var4[var5];
         int var11 = 0;
         int var12 = var4[var5] + var19;
-
         for (; var11 != var12; var11 += var19) {
             var4[var5] = var1[var5] + var11;
             var4[var6] = MathHelper.floor_float(var1[var6] + var11 * var9);
             var4[var18] = MathHelper.floor_float(var1[var18] + var11 * var10);
+            int coordinateHash = Arrays.hashCode(var4);
+            if (visitedCoordinates.contains(coordinateHash)) {
+                break;
+            } else {
+                visitedCoordinates.add(coordinateHash);
+            }
             int var14 = var4[0] + var11;
             int var15 = var4[1];
             int var16 = var4[2];
             Block var17 = this.worldObj.getBlock(var14, var15, var16);
-
             if (optimizationsAndTweaks$shouldBreakLoop(var17, var14, var15, var16)) {
                 break;
             }
         }
-
         return (var11 == var12) ? -1 : ((var11 < 0) ? -var11 : var11);
     }
 
@@ -136,6 +140,12 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
      */
     @Overwrite(remap = false)
     public boolean func_76484_a(World var1, Random var2, int var3, int var4, int var5) {
+         int chunkX = var3 >> 4;
+         int chunkZ = var5 >> 4;
+         Chunk chunk = var1.getChunkFromChunkCoords(chunkX, chunkZ);
+         if(!chunk.isChunkLoaded) {
+         return false;
+         }
         this.worldObj = var1;
         long var6 = var2.nextLong();
         this.rand.setSeed(var6);
@@ -188,30 +198,25 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
         var3[0][3] = var6;
         --var4;
 
-        while(var7 >= 0) {
+        while (var7 >= 0) {
             int var8 = 0;
             float var9 = this.layerSize(var7);
             if (var9 > 0.0F) {
-                for(float var10 = 0.5F; var8 < var1; ++var8) {
+                for (float var10 = 0.5F; var8 < var1; ++var8) {
                     float var11 = this.scaleWidth * var9 * (this.rand.nextFloat() + 0.328F);
                     float var12 = this.rand.nextFloat() * 2.0F * 3.1415927F;
                     int var13 = MathHelper.floor_double(var11 * Math.sin(var12) + var2[0] + var10);
                     int var14 = MathHelper.floor_double(var11 * Math.cos(var12) + var2[2] + var10);
-                    int[] var15 = new int[]{var13, var4, var14};
-                    int[] var16 = new int[]{var13, var4 + this.leafDistanceLimit, var14};
-                    if (this.checkBlockLine(var15, var16) == -1) {
-                        int var17;
-                        double var18 = Math.sqrt((var17 = var2[0] - var15[0]) * var17 + (var17 = var2[2] - var15[2]) * var17);
-                        int var20 = (int)(var18 * this.branchSlope);
-                        int[] var21 = new int[]{var2[0], Math.min(var15[1] - var20, var6), var2[2]};
-                        if (this.checkBlockLine(var21, var15) == -1) {
-                            var3[var5][0] = var13;
-                            var3[var5][1] = var4;
-                            var3[var5][2] = var14;
-                            var3[var5][3] = var21[1];
-                            ++var5;
-                        }
-                    }
+
+                    int var17;
+                    double var18 = Math.sqrt((var17 = var2[0] - var13) * var17 + (var17 = var2[2] - var14) * var17);
+                    int var20 = (int)(var18 * this.branchSlope);
+                    int[] var21 = new int[]{var2[0], Math.min(var4 - var20, var6), var2[2]};
+                    var3[var5][0] = var13;
+                    var3[var5][1] = var4;
+                    var3[var5][2] = var14;
+                    var3[var5][3] = var21[1];
+                    ++var5;
                 }
             }
 
@@ -222,69 +227,77 @@ public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
         this.leafNodes = var3;
         this.leafNodesLength = var5;
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     private boolean validTreeLocation() {
         int var1 = Math.min(this.heightLimit + this.basePos[1], 255) - this.basePos[1];
+
         if (var1 < this.minHeight) {
             return false;
-        } else {
-            this.heightLimit = var1;
-            Block var2 = this.worldObj.getBlock(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
-            if (!var2.canSustainPlant(this.worldObj, this.basePos[0], this.basePos[1] - 1, this.basePos[2], ForgeDirection.UP, MFRThings.rubberSaplingBlock)) {
-                return false;
-            } else {
-                int[] var3 = new int[]{this.basePos[0], this.basePos[1], this.basePos[2]};
-                int[] var4 = new int[]{this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
-                var1 = this.checkBlockLine(var3, var4);
-                if (var1 == -1) {
-                    var1 = this.heightLimit;
-                }
+        }
 
-                if (var1 < this.minHeight) {
-                    return false;
-                } else {
-                    this.heightLimit = Math.min(var1, this.heightLimitLimit);
-                    this.height = (int)(this.heightLimit * this.heightAttenuation);
-                    if (this.height >= this.heightLimit) {
-                        this.height = this.heightLimit - 1;
+        this.heightLimit = var1;
+        Block var2 = this.worldObj.getBlock(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
+
+        if (!optimizationsAndTweaks$isValidSoilForSapling(var2)) {
+            return false;
+        }
+
+        this.heightLimit = Math.min(this.heightLimit, this.heightLimitLimit);
+        this.optimizationsAndTweaks$calculateAndSetHeight();
+
+        return !this.safeGrowth || optimizationsAndTweaks$validateSafeGrowth();
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isValidSoilForSapling(Block block) {
+        return block.canSustainPlant(this.worldObj, this.basePos[0], this.basePos[1] - 1, this.basePos[2], ForgeDirection.UP, MFRThings.rubberSaplingBlock);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$calculateAndSetHeight() {
+        this.height = (int) (this.heightLimit * this.heightAttenuation);
+        if (this.height >= this.heightLimit) {
+            this.height = this.heightLimit - 1;
+        }
+        this.height += this.rand.nextInt(this.heightLimit - this.height);
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$validateSafeGrowth() {
+        int var5 = this.basePos[0];
+        int var6 = this.basePos[1];
+        int var7 = this.basePos[1] + this.height;
+        int var8 = this.basePos[2];
+        int[] var3 = new int[]{var5, var6, var8};
+        int[] var4 = new int[]{var5, var7, var8};
+        double var9 = (400.0F / this.trunkSize);
+
+        for (int var11 = -this.trunkSize; var11 <= this.trunkSize; ++var11) {
+            var3[0] = var5 + var11;
+            var4[0] = var5 + var11;
+
+            for (int var12 = -this.trunkSize; var12 <= this.trunkSize; ++var12) {
+                if ((var12 * var12 + var11 * var11) * 4 < this.trunkSize * this.trunkSize * 5) {
+                    var3[2] = var8 + var12;
+                    var4[2] = var8 + var12;
+                    if (this.slopeTrunk) {
+                        var4[1] = var6 + sinc2(var9 * var11, var9 * var12, this.height);
                     }
 
-                    this.height += this.rand.nextInt(this.heightLimit - this.height);
-                    if (this.safeGrowth) {
-                        int var5 = this.basePos[0];
-                        int var6 = this.basePos[1];
-                        int var7 = this.basePos[1] + this.height;
-                        int var8 = this.basePos[2];
-                        var3 = new int[]{var5, var6, var8};
-                        var4 = new int[]{var5, var7, var8};
-                        double var9 = (400.0F / this.trunkSize);
-
-                        for(int var11 = -this.trunkSize; var11 <= this.trunkSize; ++var11) {
-                            var3[0] = var5 + var11;
-                            var4[0] = var5 + var11;
-
-                            for(int var12 = -this.trunkSize; var12 <= this.trunkSize; ++var12) {
-                                if ((var12 * var12 + var11 * var11) * 4 < this.trunkSize * this.trunkSize * 5) {
-                                    var3[2] = var8 + var12;
-                                    var4[2] = var8 + var12;
-                                    if (this.slopeTrunk) {
-                                        var4[1] = var6 + sinc2(var9 * var11, var9 * var12, this.height);
-                                    }
-
-                                    int var13 = this.checkBlockLine(var3, var4);
-                                    if (var13 != -1) {
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
+                    int var13 = this.checkBlockLine(var3, var4);
+                    if (var13 != -1) {
+                        return false;
                     }
-
-                    return true;
                 }
             }
         }
+        return true;
     }
+
     @Shadow
     private static final int sinc2(double var0, double var2, int var4) {
         double var9 = Math.sqrt((var9 = var0 / Math.PI) * var9 + (var9 = var2 / Math.PI) * var9) * Math.PI / 180.0;
