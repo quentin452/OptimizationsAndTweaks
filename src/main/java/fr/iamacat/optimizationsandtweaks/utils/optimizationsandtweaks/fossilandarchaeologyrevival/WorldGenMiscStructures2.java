@@ -51,16 +51,18 @@ public class WorldGenMiscStructures2 {
         if (Revival.CONFIG.generateFossilSites && random.nextInt(3200) == 0) {
             optimizationsAndTweaks$generateFossilSites(random, chunkX, chunkZ, world);
         }
+        int chunkAtMinus70X = -70 >> 4;
+        int chunkAtMinus70Z = -70 >> 4;
+        int chunkAtMinus80X = -80 >> 4;
+        int chunkAtMinus80Z = -120 >> 4;
 
-        Chunk chunkAtMinus70 = world.getChunkFromBlockCoords(-70, -70);
-        Chunk chunkAtMinus80 = world.getChunkFromBlockCoords(-80, -120);
+        int currentDimensionId = world.provider.dimensionId;
 
-        Chunk currentChunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-        if (currentChunk == chunkAtMinus70 && world.provider.dimensionId == Revival.CONFIG.dimensionIDDarknessLair) {
+        if (chunkX == chunkAtMinus70X && chunkZ == chunkAtMinus70Z && currentDimensionId == Revival.CONFIG.dimensionIDDarknessLair) {
             optimizationsAndTweaks$generate2(random, world);
         }
 
-        if (currentChunk == chunkAtMinus80 && world.provider.dimensionId == Revival.CONFIG.dimensionIDTreasure) {
+        if (chunkX == chunkAtMinus80X && chunkZ == chunkAtMinus80Z && currentDimensionId == Revival.CONFIG.dimensionIDTreasure) {
             optimizationsAndTweaks$generate3(random, world);
         }
     }
