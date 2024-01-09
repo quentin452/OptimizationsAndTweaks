@@ -705,6 +705,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAddConfigForLOTRBIOMEIDS;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenMassiveTree class from minefactory reloaded Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenMassiveTree;
     @Config.Comment("Fix Some Cascading Worldgen caused by Rubber Trees from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
