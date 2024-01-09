@@ -121,7 +121,6 @@ public enum TargetedMod implements ITargetedMod {
     LORDOFTHERINGSFORK("LOTRModfork", false, startsWith("LOTRModfork")),
     LOTRIMPROVEMENTS("LOTR Improvements", false, startsWith("LOTR Improvements")),
     ADVANCEDWORLDSELECTION("WorldSelectionAdvanced", false, startsWith("WorldSelectionAdvanced")),
-    FORESTRY("Forestry", false, startsWith("Forestry")),
     RECURRENTCOMPLEX("RecurrentComplex", false, startsWith("RecurrentComplex")),
     MANKINI("Mankini", false, startsWith("Mankini")),
     EXPERIENCEORE("ExperienceOre", false, startsWith("ExperienceOre")),

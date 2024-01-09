@@ -813,10 +813,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinNetherWorldGenGanys;
-    @Config.Comment("Fix Some Cascading Worldgen caused by HiveDecorator Class from Forestry mod")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinHiveDecorator;
     @Config.Comment("Rewrite MythicAndMonster generator to use RecurrentComplex(need recurent complex installed)(The mixin will be injected only if Recurrent Complex is installed")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

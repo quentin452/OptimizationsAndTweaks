@@ -506,9 +506,6 @@ public enum Mixin implements IMixin {
     common_atum_MixinWorldGenRuins(Side.COMMON,
         require(TargetedMod.ATUM2).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenRuins),
         "atum.MixinWorldGenRuins"),
-    common_forestry_MixinHiveDecorator(Side.COMMON,
-        require(TargetedMod.FORESTRY).and(m -> OptimizationsandTweaksConfig.enableMixinHiveDecorator),
-        "forestry.MixinHiveDecorator"),
     common_mythandmonsters_MixinMAMWorldGenerator(Side.COMMON,
         require(TargetedMod.MYTHANDMONSTERS).and(
             require(TargetedMod.RECURRENTCOMPLEX).and(m -> OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator)),
