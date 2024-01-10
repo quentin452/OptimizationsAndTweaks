@@ -660,14 +660,14 @@ public enum Mixin implements IMixin {
         require(TargetedMod.SHINCOLLE)
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromShinColleWorldGen),
         "shincolle.MixinFixCascadingFromShinColleWorldGen"),
-    common_minefactoryreloaded_MixinWorldGenTreeBase(Side.COMMON,
+    common_obsgreenery_MixinWorldGenTreeBase(Side.COMMON,
         require(TargetedMod.OBSGREENERY)
             .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBase),
-        "minefactoryreloaded.MixinWorldGenTreeBase"),
-    common_minefactoryreloaded_MixinWorldGenTreeBlackWattle(Side.COMMON,
+        "obsgreenery.MixinWorldGenTreeBase"),
+    common_obsgreenery_MixinWorldGenTreeBlackWattle(Side.COMMON,
         require(TargetedMod.OBSGREENERY)
             .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBlackWattle),
-        "minefactoryreloaded.MixinWorldGenTreeBlackWattle"),
+        "obsgreenery.MixinWorldGenTreeBlackWattle"),
 
     common_minefactoryreloaded_MixinWorldGenMassiveTree(Side.COMMON,
         require(TargetedMod.MINEFACTORYRELOADED)

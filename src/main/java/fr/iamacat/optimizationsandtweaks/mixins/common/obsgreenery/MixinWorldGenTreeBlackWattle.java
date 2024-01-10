@@ -48,7 +48,7 @@ public class MixinWorldGenTreeBlackWattle extends WorldGenTreeBase {
      * @author
      * @reason
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public boolean grow(World world, Random rand, int x, int y, int z) {
         int minTrunkHeight = 8;
         int extraHeight = rand.nextInt(12);
