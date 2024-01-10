@@ -61,43 +61,19 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
             yMax = 0;
         }
 
-        Chunk chunk = world.getChunkFromBlockCoords(x, z);
-
-        if (!chunk.isChunkLoaded) {
-            return;
-        }
-
-        Block[][][] blocks = new Block[xzRadius * 2 + 1][yRadius * 2 + 1][xzRadius * 2 + 1];
-
         for (int xOff = -xzRadius; xOff <= xzRadius; ++xOff) {
             for (int zOff = -xzRadius; zOff <= xzRadius; ++zOff) {
                 for (int yOff = yMin; yOff <= yMax; ++yOff) {
-                    int posX = x + xOff;
-                    int posY = y + yOff;
-                    int posZ = z + zOff;
+                    int xCurr = x + xOff;
+                    int yCurr = y + yOff;
+                    int zCurr = z + zOff;
 
-                    if (world.blockExists(posX, posY, posZ)) {
-                        blocks[xOff + xzRadius][yOff + yRadius][zOff + xzRadius] = chunk.getBlock(posX & 15, posY, posZ & 15);
-                    }
-                }
-            }
-        }
-
-        for (int xOff = -xzRadius; xOff <= xzRadius; ++xOff) {
-            for (int zOff = -xzRadius; zOff <= xzRadius; ++zOff) {
-                for (int yOff = yMin; yOff <= yMax; ++yOff) {
-                    int xOffAbs = Math.abs(xOff);
-                    int zOffAbs = Math.abs(zOff);
-                    int yOffAbs = Math.abs(yOff);
-                    if (xOffAbs + zOffAbs + yOffAbs <= bound) {
-                        int posX = x + xOff;
-                        int posY = y + yOff;
-                        int posZ = z + zOff;
-
-                        Block block = blocks[xOff + xzRadius][yOff + yRadius][zOff + xzRadius];
-
-                        if (block != null && (xOff != 0 || yOff != 0 || zOff != 0) && block.isAir(world, posX, posY, posZ)) {
-                            this.placeBlock(world, posX, posY, posZ, a_leaves, a_leavesMeta);
+                    if (world.blockExists(xCurr, yCurr, zCurr) && world.isAirBlock(xCurr, yCurr, zCurr)) {
+                        int xOffAbs = Math.abs(xOff);
+                        int zOffAbs = Math.abs(zOff);
+                        int yOffAbs = Math.abs(yOff);
+                        if (xOffAbs + zOffAbs + yOffAbs <= bound && (xOff != 0 || yOff != 0 || zOff != 0)) {
+                            world.setBlock(xCurr, yCurr, zCurr, a_leaves, a_leavesMeta, 2);
                         }
                     }
                 }
@@ -105,6 +81,9 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
         }
     }
     protected void placeBlock(World world, int x, int y, int z, Block block, int meta) {
-        this.setBlockAndNotifyAdequately(world, x, y, z, block, meta);
+        if (world.blockExists(x, y, z)) {
+            world.setBlock(x, y, z, block, meta, 2);
+        }
     }
+
 }
