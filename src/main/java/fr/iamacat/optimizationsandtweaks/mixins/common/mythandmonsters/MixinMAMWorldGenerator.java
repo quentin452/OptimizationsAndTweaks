@@ -27,12 +27,6 @@ public class MixinMAMWorldGenerator {
     @Overwrite(remap = false)
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
-        chunkX = chunkX >> 4;
-        chunkZ = chunkZ >> 4;
-        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-        if (!chunk.isChunkLoaded) {
-            return;
-        }
         switch (world.provider.dimensionId) {
             case -1:
                 this.generateNether(world, random, chunkX * 16, chunkZ * 16);
