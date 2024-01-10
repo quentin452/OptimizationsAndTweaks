@@ -14,10 +14,11 @@ public class LongHashMap2 {
     private transient volatile int modCount;
 
     /**
-     * returns the hashed key given the original key
+     * @author TheMasterCaver, embeddedt (mixin version)
+     * @reason Use a better hash (from TMCW) that avoids collisions.
      */
     private static int getHashedKey(long p_76155_0_) {
-        return hash((int) (p_76155_0_ ^ p_76155_0_ >>> 32));
+        return (int)p_76155_0_ + (int)(p_76155_0_ >>> 32) * 92821;
     }
 
     /**
