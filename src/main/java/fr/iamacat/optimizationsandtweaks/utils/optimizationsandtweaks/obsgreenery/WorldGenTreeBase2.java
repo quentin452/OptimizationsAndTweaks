@@ -6,7 +6,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
-public abstract class WorldGenTreeBase2 extends WorldGenerator {
+import java.util.Random;
+
+public class WorldGenTreeBase2 extends WorldGenerator {
     public void optimizationsAndTweaks$recursiveBranch45(World world, int x, int y, int z, int len, Classers.Quadrant quadrant, Block a_log, int a_logMeta, Block a_leaves, int a_leavesMeta) {
         if (len > 0) {
             int posX = x;
@@ -86,4 +88,8 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
         }
     }
 
+    @Override
+    public boolean generate(World p_76484_1_, Random p_76484_2_, int p_76484_3_, int p_76484_4_, int p_76484_5_) {
+        return false;
+    }
 }
