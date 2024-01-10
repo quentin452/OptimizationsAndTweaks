@@ -6,58 +6,30 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 public abstract class WorldGenTreeBase2 extends WorldGenerator {
     public void optimizationsAndTweaks$recursiveBranch45(World world, int x, int y, int z, int len, Classers.Quadrant quadrant, Block a_log, int a_logMeta, Block a_leaves, int a_leavesMeta) {
-        Chunk chunk = world.getChunkFromBlockCoords(x, z);
-
-        if(chunk.isChunkLoaded) {
-            return;
-        }
-        if (len <= 0) {
-            return;
-        }
-
-        Deque<BranchInfo> stack = new ArrayDeque<>();
-        stack.push(new BranchInfo(x, y, z, len, quadrant));
-
-        while (!stack.isEmpty()) {
-            BranchInfo branch = stack.pop();
-
-            int posX = branch.getX();
-            int posY = branch.getY();
-            int posZ = branch.getZ();
-            int branchLen = branch.getLen();
-            Classers.Quadrant branchQuadrant = branch.getQuadrant();
-
+        if (len > 0) {
+            int posX = x;
+            int posY = y;
+            int posZ = z;
             int branchAt = -1;
-
             if (world.rand.nextInt(5) >= 1) {
-                branchAt = posY + (int) (branchLen * 0.6F);
+                branchAt = y + (int)(len * 0.6F);
             }
 
-            for (int i = 0; i < branchLen; ++i) {
-                posX = this.optimizationsAndTweaks$incX(posX, branchQuadrant);
+            for(int i = 0; i < len; ++i) {
+                posX = this.optimizationsAndTweaks$incX(posX, quadrant);
                 ++posY;
-                posZ = this.optimizationsAndTweaks$incX(posZ, branchQuadrant);
-
-                boolean isLeaf1 = i != branchLen - 1 && i != branchLen - 4;
-                boolean isLeaf2 = i == branchLen - 1;
-                boolean isLeaf3 = i == branchLen - 4;
-
+                posZ = this.optimizationsAndTweaks$incX(posZ, quadrant);
                 this.placeBlock(world, posX, posY, posZ, a_log, a_logMeta + 12);
-
-                if (i >= branchLen - 4) {
-                    this.leafClump(world, posX, posY, posZ, a_leaves, a_leavesMeta, isLeaf1, isLeaf2, isLeaf3);
+                if (i >= len - 4) {
+                    this.leafClump(world, posX, posY, posZ, a_leaves, a_leavesMeta, i != len - 1 && i != len - 4, i == len - 1, i == len - 4);
                 }
 
-                if (branchAt > 0 && posY == branchAt && branchLen > 3) {
-                    int bLen = branchLen / 2;
-                    stack.push(new BranchInfo(posX, posY, posZ, bLen, branchQuadrant.next()));
-                    stack.push(new BranchInfo(posX, posY, posZ, bLen, branchQuadrant.previous()));
-                    break;
+                if (branchAt > 0 && posY == branchAt && len > 3) {
+                    int bLen = len / 2;
+                    this.optimizationsAndTweaks$recursiveBranch45(world, posX, posY, posZ, bLen, quadrant.next(), a_log, a_logMeta, a_leaves, a_leavesMeta);
+                    this.optimizationsAndTweaks$recursiveBranch45(world, posX, posY, posZ, bLen, quadrant.previous(), a_log, a_logMeta, a_leaves, a_leavesMeta);
                 }
             }
         }
