@@ -181,6 +181,7 @@ dependencies {
     implementation files("libs/RemoteIO-1.7.10-2.4.8.jar")
     implementation files("libs/Weather+Carpets+Mod-1.2.5.jar")
     implementation files("libs/Ganys_Nether-1.8.3.jar")
+    implementation files("libs/obsgreenery-1.3.0_mc1.7.10.jar")
 
 }
 

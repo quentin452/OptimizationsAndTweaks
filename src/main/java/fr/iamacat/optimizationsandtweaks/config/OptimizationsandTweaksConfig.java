@@ -705,6 +705,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAddConfigForLOTRBIOMEIDS;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenTreeBase class from ObsGreenery mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenTreeBase;
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenTreeBlackWattle class from ObsGreenery mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenTreeBlackWattle;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenMassiveTree class from minefactory reloaded Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

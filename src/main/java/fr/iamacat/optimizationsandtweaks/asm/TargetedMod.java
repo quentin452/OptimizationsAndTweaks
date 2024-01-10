@@ -156,6 +156,7 @@ public enum TargetedMod implements ITargetedMod {
     RAGDOLLCORPSE("ragdollCorpses", false, startsWith("ragdollCorpses")),
     OPIS("Opis", false, startsWith("Opis")),
     KORINBLUEBEDROCK("1-7-10-005-KoRIN", false, startsWith("1-7-10-005-KoRIN")),
+    OBSGREENERY("obsgreenery", false, startsWith("obsgreenery")),
 
     AETHER("aether", false, startsWith("aether")),;
 

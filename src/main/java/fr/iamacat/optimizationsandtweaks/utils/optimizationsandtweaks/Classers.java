@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks;
 
 import java.util.Comparator;
 
+import com.jim.obsgreenery.world.WorldGenTreeBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -150,6 +151,85 @@ public class Classers {
         public Coord2D(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+    }
+
+    // MixinWorldGenTreeBase
+
+    public enum Quadrant {
+        X_Z,
+        X_NEGZ,
+        NEGX_Z,
+        NEGX_NEGZ;
+
+        Quadrant() {
+        }
+
+        public Quadrant next() {
+            switch (this) {
+                case NEGX_Z:
+                    return X_Z;
+                case NEGX_NEGZ:
+                    return NEGX_Z;
+                case X_Z:
+                    return X_NEGZ;
+                case X_NEGZ:
+                default:
+                    return NEGX_NEGZ;
+            }
+        }
+
+        public Quadrant previous() {
+            switch (this) {
+                case NEGX_Z:
+                    return NEGX_NEGZ;
+                case NEGX_NEGZ:
+                    return X_NEGZ;
+                case X_Z:
+                    return NEGX_Z;
+                case X_NEGZ:
+                default:
+                    return X_Z;
+            }
+        }
+    }
+
+    public static class XZCoord {
+        public int x;
+        public int z;
+
+        public XZCoord(int x, int z) {
+            this.x = x;
+            this.z = z;
+        }
+
+        public XZCoord() {
+            this(0, 0);
+        }
+
+        public XZCoord offset(int dir, int amount) {
+            int xOff = 0;
+            int zOff = 0;
+            switch (dir) {
+                case 2:
+                    zOff = -amount;
+                    break;
+                case 3:
+                default:
+                    zOff = amount;
+                    break;
+                case 4:
+                    xOff = -amount;
+                    break;
+                case 5:
+                    xOff = amount;
+            }
+
+            return new XZCoord(this.x + xOff, this.z + zOff);
+        }
+
+        public XZCoord offset(int dir) {
+            return this.offset(dir, 1);
         }
     }
 }
