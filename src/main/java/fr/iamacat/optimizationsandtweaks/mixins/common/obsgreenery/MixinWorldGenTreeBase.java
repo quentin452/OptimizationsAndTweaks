@@ -6,9 +6,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.fluids.BlockFluidBase;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -274,21 +276,30 @@ public abstract class MixinWorldGenTreeBase extends WorldGenerator {
         }
 
     }
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     protected void leafRing(World world, int x, int y, int z, Block leaves, int leavesMeta, int radius) {
         int minX = x - radius;
         int maxX = x + radius;
         int minZ = z - radius;
         int maxZ = z + radius;
 
-        for(int xPos = minX; xPos <= maxX; ++xPos) {
-            for(int zPos = minZ; zPos <= maxZ; ++zPos) {
-                if ((xPos != minX && xPos != maxX || zPos != minZ && zPos != maxZ) && (zPos != z || xPos != x) && this.canPlaceLeaves(world, xPos, y, zPos, leaves, leavesMeta)) {
-                    this.placeBlock(world, xPos, y, zPos, leaves, leavesMeta);
+        Chunk chunk = world.getChunkFromBlockCoords(x, z);
+
+        if (!chunk.isChunkLoaded) {
+            return;
+        }
+
+        for (int xPos = minX; xPos <= maxX; ++xPos) {
+            for (int zPos = minZ; zPos <= maxZ; ++zPos) {
+                if ((xPos != minX && xPos != maxX || zPos != minZ && zPos != maxZ) && (zPos != z || xPos != x) && (world.blockExists(xPos, y, zPos) && this.canPlaceLeaves(world, xPos, y, zPos, leaves, leavesMeta))) {
+                        this.placeBlock(world, xPos, y, zPos, leaves, leavesMeta);
                 }
             }
         }
-
     }
     @Shadow
     protected void trunkRing4(World world, int x, int y, int z, Block log, int logMeta) {

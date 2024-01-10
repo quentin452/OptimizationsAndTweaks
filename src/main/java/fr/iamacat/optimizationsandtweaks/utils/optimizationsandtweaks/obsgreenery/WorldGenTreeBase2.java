@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.obsgreene
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.ArrayDeque;
@@ -10,6 +11,11 @@ import java.util.Deque;
 
 public abstract class WorldGenTreeBase2 extends WorldGenerator {
     public void optimizationsAndTweaks$recursiveBranch45(World world, int x, int y, int z, int len, Classers.Quadrant quadrant, Block a_log, int a_logMeta, Block a_leaves, int a_leavesMeta) {
+        Chunk chunk = world.getChunkFromBlockCoords(x, z);
+
+        if(chunk.isChunkLoaded) {
+            return;
+        }
         if (len <= 0) {
             return;
         }
@@ -67,9 +73,7 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
                 return coord + 1;
         }
     }
-    protected void leafClump(World world, int x, int y, int z, Block a_leaves, int a_leavesMeta) {
-        this.leafClump(world, x, y, z, a_leaves, a_leavesMeta, false, false, false);
-    }
+
     protected void leafClump(World world, int x, int y, int z, Block a_leaves, int a_leavesMeta, boolean xzPlaneOnly, boolean topOnly, boolean bottomOnly) {
         int xzRadius = 2;
         int yRadius = 2;
@@ -85,20 +89,42 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
             yMax = 0;
         }
 
-        for(int xOff = -xzRadius; xOff <= xzRadius; ++xOff) {
-            int xOffAbs = this.absolute(xOff);
+        Chunk chunk = world.getChunkFromBlockCoords(x, z);
 
-            for(int zOff = -xzRadius; zOff <= xzRadius; ++zOff) {
-                int zOffAbs = this.absolute(zOff);
+        if (!chunk.isChunkLoaded) {
+            return;
+        }
 
-                for(int yOff = yMin; yOff <= yMax; ++yOff) {
-                    int yOffAbs = this.absolute(yOff);
+        Block[][][] blocks = new Block[xzRadius * 2 + 1][yRadius * 2 + 1][xzRadius * 2 + 1];
+
+        for (int xOff = -xzRadius; xOff <= xzRadius; ++xOff) {
+            for (int zOff = -xzRadius; zOff <= xzRadius; ++zOff) {
+                for (int yOff = yMin; yOff <= yMax; ++yOff) {
+                    int posX = x + xOff;
+                    int posY = y + yOff;
+                    int posZ = z + zOff;
+
+                    if (world.blockExists(posX, posY, posZ)) {
+                        blocks[xOff + xzRadius][yOff + yRadius][zOff + xzRadius] = chunk.getBlock(posX & 15, posY, posZ & 15);
+                    }
+                }
+            }
+        }
+
+        for (int xOff = -xzRadius; xOff <= xzRadius; ++xOff) {
+            for (int zOff = -xzRadius; zOff <= xzRadius; ++zOff) {
+                for (int yOff = yMin; yOff <= yMax; ++yOff) {
+                    int xOffAbs = Math.abs(xOff);
+                    int zOffAbs = Math.abs(zOff);
+                    int yOffAbs = Math.abs(yOff);
                     if (xOffAbs + zOffAbs + yOffAbs <= bound) {
                         int posX = x + xOff;
                         int posY = y + yOff;
                         int posZ = z + zOff;
-                        Block block = this.getBlockAt(world, posX, posY, posZ);
-                        if ((xOff != 0 || yOff != 0 || zOff != 0) && block.isAir(world, posX, posY, posZ)) {
+
+                        Block block = blocks[xOff + xzRadius][yOff + yRadius][zOff + xzRadius];
+
+                        if (block != null && (xOff != 0 || yOff != 0 || zOff != 0) && block.isAir(world, posX, posY, posZ)) {
                             this.placeBlock(world, posX, posY, posZ, a_leaves, a_leavesMeta);
                         }
                     }
@@ -108,30 +134,5 @@ public abstract class WorldGenTreeBase2 extends WorldGenerator {
     }
     protected void placeBlock(World world, int x, int y, int z, Block block, int meta) {
         this.setBlockAndNotifyAdequately(world, x, y, z, block, meta);
-    }
-    protected int absolute(int num) {
-        return num < 0 ? -num : num;
-    }
-    protected boolean canPlaceLeaves(World world, int x, int y, int z, Block leaves, int meta) {
-        Block block = this.getBlockAt(world, x, y, z);
-        return block != leaves && block.isAir(world, x, y, z) && this.isBlockReplacable(block, world, x, y, z);
-    }
-
-    protected Block getBlockAt(World world, int x, int y, int z) {
-        return world.getBlock(x, y, z);
-    }
-
-    protected boolean isBlockReplacable(Block block, World world, int x, int y, int z) {
-        if (block == null) {
-            return true;
-        } else if (block.isAir(world, x, y, z)) {
-            return true;
-        } else if (block.isLeaves(world, x, y, z)) {
-            return false;
-        } else if (block.isReplaceable(world, x, y, z)) {
-            return true;
-        } else {
-            return block.canBeReplacedByLeaves(world, x, y, z);
-        }
     }
 }
