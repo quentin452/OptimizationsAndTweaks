@@ -853,4 +853,15 @@ public class MixinWorld {
 
         return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void spawnParticle(String particleName, double x, double y, double z, double velocityX, double velocityY, double velocityZ)
+    {
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).spawnParticle(particleName, x, y, z, velocityX, velocityY, velocityZ);
+        }
+    }
 }
