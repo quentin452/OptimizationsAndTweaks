@@ -1,6 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thaumcraft;
 
-import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.ThaumcraftWorldGenerator.*;
+import static fr.iamacat.optimizationsandtweaks.utilsformods.thaumcraft.ThaumcraftWorldGenerator.*;
 
 import java.util.*;
 
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.Thaumcraft;
+import fr.iamacat.optimizationsandtweaks.utilsformods.thaumcraft.Thaumcraft;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.nodes.NodeModifier;

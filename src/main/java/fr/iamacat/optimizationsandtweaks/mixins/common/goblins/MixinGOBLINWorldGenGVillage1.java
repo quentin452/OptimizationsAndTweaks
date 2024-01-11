@@ -2,12 +2,9 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.goblins;
 
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.goblins.GOBLINWorldGenGVillagetwo;
-import net.minecraft.block.Block;
+import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenGVillagetwo;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.feature.WorldGenTrees;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

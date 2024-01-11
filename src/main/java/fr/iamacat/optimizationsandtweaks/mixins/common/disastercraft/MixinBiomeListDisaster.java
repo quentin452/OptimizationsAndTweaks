@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.emerald.disaster.biome.*;
 import fr.emerald.disaster.world.WorldTypeDisaster;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.disastercraft.DisastercraftConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.disastercraft.DisastercraftConfigBiomeID;
 
 @Mixin(BiomeListDisaster.class)
 public class MixinBiomeListDisaster {

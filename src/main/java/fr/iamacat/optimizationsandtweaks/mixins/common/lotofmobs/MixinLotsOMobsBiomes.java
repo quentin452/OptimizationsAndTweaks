@@ -13,7 +13,7 @@ import com.lom.lotsomobsdino.WorldProviderDino;
 import com.lom.lotsomobsiceage.WorldProviderIceAge;
 import com.lom.lotsomobsinit.LotsOMobsBiomes;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotsOMobs.LotsOMobsConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.lotsOMobs.LotsOMobsConfigBiomeID;
 
 @Mixin(LotsOMobsBiomes.class)
 public class MixinLotsOMobsBiomes {

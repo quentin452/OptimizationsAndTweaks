@@ -41,7 +41,7 @@ import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
 import cpw.mods.fml.relauncher.ModListHelper;
 import cpw.mods.fml.relauncher.Side;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
 @Mixin(Loader.class)
 public class MixinLoader {

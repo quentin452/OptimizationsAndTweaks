@@ -15,7 +15,7 @@ import fr.emerald.disaster.MainDisastercraft;
 import fr.emerald.disaster.blocks.Agapanthus;
 import fr.emerald.disaster.blocks.Brambles;
 import fr.emerald.disaster.items.Boiled;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.disastercraft.DisastercraftConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.disastercraft.DisastercraftConfigBiomeID;
 
 @Mixin(MainDisastercraft.class)
 public class MixinMainDisastercraft {

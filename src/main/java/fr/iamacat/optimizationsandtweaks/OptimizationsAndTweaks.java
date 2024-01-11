@@ -11,9 +11,9 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore.ExperienceOreConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.FileInjector;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mythandmonsters.recurrentcomplextrewrite.ModConfig;
+import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
+import fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite.FileInjector;
+import fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite.ModConfig;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {

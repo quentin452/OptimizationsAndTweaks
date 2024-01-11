@@ -18,7 +18,7 @@ import com.lom.lotsomobsworldgen.OreGeneration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotsOMobs.LotsOMobsConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.lotsOMobs.LotsOMobsConfigBiomeID;
 
 @Mixin(LotsOMobs.class)
 public class MixinLotsOMobs {

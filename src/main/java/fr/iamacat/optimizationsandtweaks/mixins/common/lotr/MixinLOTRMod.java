@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotr.LOTRConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.lotr.LOTRConfigBiomeID;
 import lotr.common.LOTRMod;
 
 @Mixin(LOTRMod.class)

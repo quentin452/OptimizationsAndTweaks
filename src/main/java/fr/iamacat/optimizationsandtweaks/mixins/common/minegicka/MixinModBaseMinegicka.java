@@ -18,7 +18,6 @@ import com.williameze.minegicka3.CreativeTabCustom;
 import com.williameze.minegicka3.ModBase;
 import com.williameze.minegicka3.PotionCustom;
 import com.williameze.minegicka3.main.entities.living.Entity888;
-import com.williameze.minegicka3.main.entities.magic.*;
 import com.williameze.minegicka3.main.objects.blocks.*;
 import com.williameze.minegicka3.main.objects.items.*;
 import com.williameze.minegicka3.main.packets.PacketHandler;
@@ -27,7 +26,7 @@ import com.williameze.minegicka3.mechanics.SpellDamageModifier;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minegicka.MinegickaConfigPotionID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.minegicka.MinegickaConfigPotionID;
 
 @Mixin(ModBase.class)
 public class MixinModBaseMinegicka {

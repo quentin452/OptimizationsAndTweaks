@@ -19,7 +19,7 @@ import com.teammetallurgy.atum.blocks.tileentity.chests.TileEntityPharaohChest;
 import com.teammetallurgy.atum.items.AtumLoot;
 import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
 @Mixin(WorldGenPyramid.class)
 public abstract class MixinWorldGenPyramid extends WorldGenerator {

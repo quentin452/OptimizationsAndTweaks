@@ -1,14 +1,12 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.lotr;
 
-import java.awt.*;
-
 import net.minecraft.init.Blocks;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.lotr.LOTRConfigBiomeID;
+import fr.iamacat.optimizationsandtweaks.utilsformods.lotr.LOTRConfigBiomeID;
 import lotr.common.LOTRMod;
 import lotr.common.world.biome.*;
 

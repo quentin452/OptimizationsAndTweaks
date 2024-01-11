@@ -2,7 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.minefactoryreloaded;
 
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minefactoryreloaded.WorldGenLakesMeta2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenLakesMeta2;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 import makeo.gadomancy.common.crafting.InfusionVisualDisguiseArmor;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.internal.IInternalMethodHandler;

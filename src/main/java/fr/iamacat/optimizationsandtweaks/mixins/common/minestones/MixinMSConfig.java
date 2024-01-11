@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.sinkillerj.minestones.MSConfig;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minestones.Patcher;
+import fr.iamacat.optimizationsandtweaks.utilsformods.minestones.Patcher;
 
 @Mixin(MSConfig.class)
 public class MixinMSConfig {

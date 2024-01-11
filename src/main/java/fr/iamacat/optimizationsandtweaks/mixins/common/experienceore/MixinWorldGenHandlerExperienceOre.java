@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 import cpw.mods.fml.common.IWorldGenerator;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.experienceore.ExperienceOreConfig;
+import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
 
 @Mixin(WorldGenHandler.class)
 public class MixinWorldGenHandlerExperienceOre implements IWorldGenerator {

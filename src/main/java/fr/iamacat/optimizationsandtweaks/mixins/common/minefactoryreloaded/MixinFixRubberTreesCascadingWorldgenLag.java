@@ -1,7 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minefactoryreloaded;
 
 import cofh.lib.util.helpers.BlockHelper;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minefactoryreloaded.WorldGenRubberTree2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;

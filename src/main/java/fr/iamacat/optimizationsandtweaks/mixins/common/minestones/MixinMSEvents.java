@@ -15,7 +15,7 @@ import com.sinkillerj.minestones.MSConfig;
 import com.sinkillerj.minestones.MSEvents;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.minestones.Patcher;
+import fr.iamacat.optimizationsandtweaks.utilsformods.minestones.Patcher;
 
 @Mixin(MSEvents.class)
 public class MixinMSEvents {

@@ -2,7 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.fossilsandarcheologyrevi
 
 import fossilsarcheology.Revival;
 import fossilsarcheology.server.gen.WorldGenMiscStructures;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.fossilandarchaeologyrevival.WorldGenMiscStructures2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.fossilandarchaeologyrevival.WorldGenMiscStructures2;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import org.spongepowered.asm.mixin.Mixin;

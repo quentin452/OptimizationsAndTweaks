@@ -1,7 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.obsgreenery;
 
 import com.jim.obsgreenery.world.WorldGenTreeBase;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;

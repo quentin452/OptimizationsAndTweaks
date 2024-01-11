@@ -21,7 +21,7 @@ import com.rwtema.extrautils.LogHelper;
 import com.rwtema.extrautils.tileentity.enderquarry.BlockBreakingRegistry;
 import com.rwtema.extrautils.tileentity.enderquarry.BlockDummy;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.extrautilities.ClassBytesCache;
+import fr.iamacat.optimizationsandtweaks.utilsformods.extrautilities.ClassBytesCache;
 
 @Mixin(BlockBreakingRegistry.class)
 public class MixinBlockBreakingRegistry {

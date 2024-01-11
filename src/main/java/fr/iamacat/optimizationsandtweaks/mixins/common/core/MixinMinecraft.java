@@ -97,7 +97,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.StartupQuery;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
 @Mixin(value = Minecraft.class, priority = 999)
 public abstract class MixinMinecraft implements IPlayerUsage {

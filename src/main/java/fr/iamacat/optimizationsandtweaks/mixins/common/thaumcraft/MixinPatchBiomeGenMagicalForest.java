@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thaumcraft.BiomeGenMagicalForest2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.thaumcraft.BiomeGenMagicalForest2;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.world.WorldGenManaPods;
 import thaumcraft.common.lib.world.biomes.BiomeGenMagicalForest;

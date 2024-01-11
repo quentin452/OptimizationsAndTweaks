@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.industrialcraft2.FixedPriorityQueue2;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.industrialcraft2.ThreadFactoryImpl2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.industrialcraft2.FixedPriorityQueue2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.industrialcraft2.ThreadFactoryImpl2;
 import ic2.core.util.PriorityExecutor;
 
 @Mixin(PriorityExecutor.class)

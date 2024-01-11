@@ -1,7 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.GZIPInputStream2;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.GZIPOutputStream2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.resources.GZIPInputStream2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.resources.GZIPOutputStream2;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.nbt.*;

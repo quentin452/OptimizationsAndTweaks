@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.Classers;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.LongHashMap2;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.LongHashMap2;
 
 @Mixin(BiomeCache.class)
 public class MixinBiomeCache {
