@@ -34,6 +34,8 @@ import com.google.common.collect.ImmutableSetMultimap;
 public class MixinWorld {
 
     @Shadow
+    public int skylightSubtracted;
+    @Shadow
     int[] lightUpdateBlockList;
     @Unique
     private World world;
@@ -310,12 +312,12 @@ public class MixinWorld {
                 p_72866_1_.posZ = p_72866_1_.lastTickPosZ;
             }
 
-            if (Double.isNaN((double) p_72866_1_.rotationPitch)
-                || Double.isInfinite((double) p_72866_1_.rotationPitch)) {
+            if (Double.isNaN(p_72866_1_.rotationPitch)
+                || Double.isInfinite(p_72866_1_.rotationPitch)) {
                 p_72866_1_.rotationPitch = p_72866_1_.prevRotationPitch;
             }
 
-            if (Double.isNaN((double) p_72866_1_.rotationYaw) || Double.isInfinite((double) p_72866_1_.rotationYaw)) {
+            if (Double.isNaN(p_72866_1_.rotationYaw) || Double.isInfinite(p_72866_1_.rotationYaw)) {
                 p_72866_1_.rotationYaw = p_72866_1_.prevRotationYaw;
             }
 
@@ -625,22 +627,20 @@ public class MixinWorld {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public void setLightValue(EnumSkyBlock p_72915_1_, int p_72915_2_, int p_72915_3_, int p_72915_4_, int p_72915_5_) {
-        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000) {
-            if (p_72915_3_ >= 0) {
-                if (p_72915_3_ < 256) {
-                    if (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4)) {
+        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000 && (p_72915_3_ >= 0 && (p_72915_3_ < 256 && (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4))))) {
                         Chunk chunk = this.getChunkFromChunkCoords(p_72915_2_ >> 4, p_72915_4_ >> 4);
                         chunk.setLightValue(p_72915_1_, p_72915_2_ & 15, p_72915_3_, p_72915_4_ & 15, p_72915_5_);
 
-                        for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1) {
-                            ((IWorldAccess) this.worldAccesses.get(i1))
-                                .markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
+                        for (Object worldAccess : this.worldAccesses) {
+                            ((IWorldAccess) worldAccess)
+                                    .markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
                         }
-                    }
-                }
-            }
         }
     }
 
@@ -807,5 +807,50 @@ public class MixinWorld {
     @Shadow
     public Chunk getChunkFromBlockCoords(int p_72938_1_, int p_72938_2_) {
         return this.getChunkFromChunkCoords(p_72938_1_ >> 4, p_72938_2_ >> 4);
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getBlockLightValue_do(int p_72849_1_, int p_72849_2_, int p_72849_3_, boolean p_72849_4_) {
+        if (optimizationsAndTweaks$isWithinBounds(p_72849_1_, p_72849_2_, p_72849_3_)) {
+            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_).getUseNeighborBrightness()) {
+                return optimizationsAndTweaks$getMaxNeighborLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
+            } else if (p_72849_2_ < 0) {
+                return 0;
+            } else {
+                return optimizationsAndTweaks$getChunkBlockLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
+            }
+        } else {
+            return 15;
+        }
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isWithinBounds(int x, int y, int z) {
+        return x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000;
+    }
+
+    @Unique
+    private int optimizationsAndTweaks$getMaxNeighborLightValue(int x, int y, int z) {
+        int l1 = getBlockLightValue_do(x, y + 1, z, false);
+        int l = getBlockLightValue_do(x + 1, y, z, false);
+        int i1 = getBlockLightValue_do(x - 1, y, z, false);
+        int j1 = getBlockLightValue_do(x, y, z + 1, false);
+        int k1 = getBlockLightValue_do(x, y, z - 1, false);
+
+        return Math.max(Math.max(Math.max(l1, l), Math.max(i1, j1)), k1);
+    }
+
+    @Unique
+    private int optimizationsAndTweaks$getChunkBlockLightValue(int x, int y, int z) {
+        if (y >= 256) y = 255;
+
+        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+        x &= 15;
+        z &= 15;
+
+        return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
     }
 }

@@ -13,16 +13,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
 
-    // TWEAKING MIXINS
 
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
+    common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper, "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
         require(TargetedMod.PACKAGEDAUTO).and(m -> OptimizationsandTweaksConfig.enableMixinNeiHandlerPackagedAuto),
         "packagedauto.MixinNeiHandlerPackagedAuto"),
     common_lotrimprovements_MixinMain(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGSFORK).and(m -> OptimizationsandTweaksConfig.enableMixinMain),
         "lotrimprovements.MixinMain"),
-
     common_disastercraft_MixinBiomeListDisaster(Side.COMMON,
         require(TargetedMod.DISASTERCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinAddConfigForDisastercraft),
         "disastercraft.MixinBiomeListDisaster"),
@@ -47,6 +46,10 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.LORDOFTHERINGSFORK)
             .and(require(TargetedMod.ENDLESSIDS).and(m -> OptimizationsandTweaksConfig.MixinLOTRWorldProvider)),
         "lotr.MixinLOTRWorldProvider"),
+
+    common_mowziesmobs_MixinStructureGeneratorBaseMM(Side.COMMON,
+       require(TargetedMod.MOWZIESMOBS).and(m -> OptimizationsandTweaksConfig.enableMixinStructureGeneratorBaseMM),
+        "mowziesmobs.MixinStructureGeneratorBaseMM"),
 
     common_minestones_MixinItemMinestone(Side.COMMON,
         require(TargetedMod.MINESTONES).and(m -> OptimizationsandTweaksConfig.enableMixinItemMinestone),
@@ -327,7 +330,14 @@ public enum Mixin implements IMixin {
 
     common_core_entity_MixinEntityAnimal(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAnimal,
         "core.entity.MixinEntityAnimal"),
-
+    common_core_biomes_MixinBiomeGenBase(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase,
+        "core.biomes.MixinBiomeGenBase"),
+    common_core_MixinChunkProviderGenerate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderGenerate,
+        "core.MixinChunkProviderGenerate"),
+    common_core_MixinCompressedStreamTools(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinCompressedStreamTools,
+        "core.MixinCompressedStreamTools"),
+    common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
+        "core.MixinBlockGrass"),
     common_core_MixinLaunchClassLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLaunchClassLoader,
         "core.MixinLaunchClassLoader"),
     common_core_entity_MixinEntitySquid(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntitySquid,
@@ -491,6 +501,10 @@ public enum Mixin implements IMixin {
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
             .and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
         "fossilsandarcheologyrevivals.MixinAcademyGenerator"),
+    common_fossilsandarcheologyrevivals_MixinTarGenerator(Side.COMMON,
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinTarGenerator),
+        "fossilsandarcheologyrevivals.MixinTarGenerator"),
     common_fossilsandarcheologyrevivals_MixinShipWreckGenerator(Side.COMMON,
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
             .and(m -> OptimizationsandTweaksConfig.enableMixinShipWreckGenerator),

@@ -65,13 +65,13 @@ public abstract class MixinWorldGenRuins extends WorldGenerator {
                     if (chestX != x2 && chestZ != z2 && chestX != i && chestZ != k && chestY != -1) {
                         world.setBlockToAir(chestX, chestY + height, chestZ);
                     } else if (chestY < meta) {
-                        if ((double) random.nextFloat() > 0.1) {
+                        if (random.nextFloat() > 0.1) {
                             world.setBlock(chestX, chestY + height, chestZ, AtumBlocks.BLOCK_LARGEBRICK);
                         } else {
                             world.setBlock(chestX, chestY + height, chestZ, AtumBlocks.BLOCK_SMALLBRICK);
                         }
-                    } else if (chestY == meta && (double) random.nextFloat() > 0.7) {
-                        if ((double) random.nextFloat() > 0.1) {
+                    } else if (chestY == meta && random.nextFloat() > 0.7) {
+                        if (random.nextFloat() > 0.1) {
                             world.setBlock(chestX, chestY + height, chestZ, AtumBlocks.BLOCK_SLABS, 2, 0);
                         } else {
                             world.setBlock(chestX, chestY + height, chestZ, AtumBlocks.BLOCK_SLABS, 3, 0);
@@ -81,26 +81,19 @@ public abstract class MixinWorldGenRuins extends WorldGenerator {
             }
         }
 
-        chestX = width / 2 + i;
-        chestZ = Math.max(z2, k) - 1;
-        boolean var16 = false;
-        if ((double) random.nextFloat() > 0.5) {
+        if (random.nextFloat() > 0.5) {
             chestX = random.nextInt(width - 1) + 1 + Math.min(i, x2);
-            if ((double) random.nextFloat() > 0.5) {
+            if (random.nextFloat() > 0.5) {
                 chestZ = Math.max(z2, k) - 1;
-                var16 = true;
             } else {
                 chestZ = Math.min(z2, k) + 1;
-                var16 = true;
             }
         } else {
             chestZ = random.nextInt(depth - 1) + 1 + Math.min(k, z2);
-            if ((double) random.nextFloat() > 0.5) {
+            if (random.nextFloat() > 0.5) {
                 chestX = Math.max(x2, i) - 1;
-                var16 = true;
             } else {
                 chestX = Math.min(x2, i) + 1;
-                var16 = true;
             }
         }
 

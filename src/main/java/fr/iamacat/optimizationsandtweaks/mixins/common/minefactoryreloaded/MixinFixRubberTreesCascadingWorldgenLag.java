@@ -28,25 +28,21 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
             int surfaceY = BlockHelper.getSurfaceBlockY(world, x, z);
 
             if (surfaceY > 0) {
-                if (attempt == 0) {
-                    if (growTree(world, rand, x, surfaceY + 1, z)) {
-                        return true;
-                    }
-                } else {
-                    int xOffset = x + rand.nextInt(16) - 8;
-                    int zOffset = z + rand.nextInt(16) - 8;
+                int xOffset = (attempt == 0) ? x : x + rand.nextInt(16) - 8;
+                int zOffset = (attempt == 0) ? z : z + rand.nextInt(16) - 8;
 
-                    if (growTree(world, rand, xOffset, surfaceY + 1, zOffset)) {
-                        return true;
-                    }
+                if (growTree(world, rand, xOffset, surfaceY + 1, zOffset)) {
+                    return true;
                 }
             }
+
             x += rand.nextInt(16) - 8;
             z += rand.nextInt(16) - 8;
         }
 
         return false;
     }
+
     /**
      * @author
      * @reason

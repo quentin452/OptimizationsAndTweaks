@@ -144,7 +144,11 @@ public abstract class MixinBlockDynamicLiquid extends BlockLiquid {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private void func_149813_h(World p_149813_1_, int p_149813_2_, int p_149813_3_, int p_149813_4_, int p_149813_5_) {
         if (this.func_149809_q(p_149813_1_, p_149813_2_, p_149813_3_, p_149813_4_)) {
             Block block = p_149813_1_.getBlock(p_149813_2_, p_149813_3_, p_149813_4_);

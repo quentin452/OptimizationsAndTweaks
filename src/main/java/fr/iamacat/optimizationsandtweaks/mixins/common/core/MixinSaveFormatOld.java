@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.world.storage.SaveFormatOld;
@@ -14,7 +15,6 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(SaveFormatOld.class)
 public class MixinSaveFormatOld {
 
-    // todo avoid the usage of Tread.sleep
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Shadow
@@ -44,7 +44,7 @@ public class MixinSaveFormatOld {
             for (int i = 1; i <= 5; ++i) {
                 logger.info("Attempt " + i + "...");
 
-                if (deleteFiles(file1.listFiles())) {
+                if (deleteFiles(Objects.requireNonNull(file1.listFiles()))) {
                     break;
                 }
 
@@ -54,7 +54,6 @@ public class MixinSaveFormatOld {
                     try {
                         TimeUnit.MILLISECONDS.sleep(500);
                     } catch (InterruptedException interruptedexception) {
-                        ;
                     }
                 }
             }
@@ -63,19 +62,22 @@ public class MixinSaveFormatOld {
         }
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     protected static boolean deleteFiles(File[] p_75807_0_) {
-        for (int i = 0; i < p_75807_0_.length; ++i) {
-            File file1 = p_75807_0_[i];
+        for (File file1 : p_75807_0_) {
             logger.debug("Deleting " + file1);
 
-            if (file1.isDirectory() && !deleteFiles(file1.listFiles())) {
-                logger.warn("Couldn\'t delete directory " + file1);
+            if (file1.isDirectory() && !deleteFiles(Objects.requireNonNull(file1.listFiles()))) {
+                logger.warn("Couldn't delete directory " + file1);
                 return false;
             }
 
             if (!file1.delete()) {
-                logger.warn("Couldn\'t delete file " + file1);
+                logger.warn("Couldn't delete file " + file1);
                 return false;
             }
         }

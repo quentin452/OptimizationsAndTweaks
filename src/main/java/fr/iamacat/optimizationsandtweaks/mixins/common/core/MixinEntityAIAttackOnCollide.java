@@ -145,7 +145,7 @@ public class MixinEntityAIAttackOnCollide extends EntityAIBase {
             double distance = this.attacker.getDistanceToEntity(target);
             // lags here caused by if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
             if (!navigator.tryMoveToEntityLiving(target, this.speedTowardsTarget)) {
-                this.field_75445_i += (int) (distance / penaltyDistance) * penaltyFactor;
+                this.field_75445_i += (int) ((int) (distance / penaltyDistance) * penaltyFactor);
             }
         }
 

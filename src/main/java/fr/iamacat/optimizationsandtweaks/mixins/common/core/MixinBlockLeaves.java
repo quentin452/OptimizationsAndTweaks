@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockLeaves.class)
 public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShearable {
@@ -28,8 +31,8 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
      * @author
      * @reason
      */
-    @Overwrite
-    public void updateTick(World world, int posX, int posY, int posZ, Random random) {
+    @Inject(method = "updateTick", at = @At("HEAD"), cancellable = true)
+    public void updateTick(World world, int posX, int posY, int posZ, Random random, CallbackInfo ci) {
         if (!world.isRemote) {
             int currentMetadata = world.getBlockMetadata(posX, posY, posZ);
 
@@ -108,6 +111,7 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
                 }
             }
         }
+        ci.cancel();
     }
 
     @Unique

@@ -82,10 +82,10 @@ public class MixinAnimationHandler {
             prevTime = this.animPrevTime.get(channel.name);
             float prevFrame = this.animCurrentFrame.get(channel.name);
             long currentTime = System.nanoTime();
-            double deltaTime = (double) (currentTime - prevTime) / 1.0E9;
-            float numberOfSkippedFrames = (float) (deltaTime * (double) channel.fps);
+            double deltaTime = (currentTime - prevTime) / 1.0E9;
+            float numberOfSkippedFrames = (float) (deltaTime * channel.fps);
             float currentFrame = prevFrame + numberOfSkippedFrames;
-            if (currentFrame < (float) (channel.totalFrames - 1)) {
+            if (currentFrame < (channel.totalFrames - 1)) {
                 this.animPrevTime.put(channel.name, currentTime);
                 this.animCurrentFrame.put(channel.name, currentFrame);
                 return true;

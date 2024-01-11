@@ -51,11 +51,12 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
     @Shadow
     private boolean persistenceRequired;
 
+    @Unique
     private EntityLiving entityLiving;
 
     @Shadow
     protected void despawnEntity() {
-        Event.Result result = null;
+        Event.Result result;
         if (this.persistenceRequired) {
             this.entityAge = 0;
         } else if ((this.entityAge & 0x1F) == 0x1F

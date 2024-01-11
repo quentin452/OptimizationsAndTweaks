@@ -65,7 +65,7 @@ public abstract class MixinEntitySasori extends EntityMob implements IMCAnimated
                 List list = this.worldObj.getEntitiesWithinAABB(Entity.class, aabb);
                 Iterator iterator = list.iterator();
 
-                for (Entity entity = null; iterator.hasNext(); this.plevok = this.rand.nextInt(200) + 100) {
+                for (Entity entity; iterator.hasNext(); this.plevok = this.rand.nextInt(200) + 100) {
                     entity = (Entity) iterator.next();
                     double disEnE = entity.getDistance(entity.posX, entity.posY, entity.posZ);
                     if (entity != null && disEnE <= r) {

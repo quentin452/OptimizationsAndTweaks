@@ -2103,9 +2103,8 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     public void func_152348_aa() {
         int i = Keyboard.getEventKey();
 
-        if (i != 0 && !Keyboard.isRepeatEvent()) {
-            if (!(this.currentScreen instanceof GuiControls)
-                || ((GuiControls) this.currentScreen).field_152177_g <= getSystemTime() - 20L) {
+        if (i != 0 && !Keyboard.isRepeatEvent() && (!(this.currentScreen instanceof GuiControls)
+                || ((GuiControls) this.currentScreen).field_152177_g <= getSystemTime() - 20L)) {
                 if (Keyboard.getEventKeyState()) {
                     if (i == this.gameSettings.field_152396_an.getKeyCode()) {
                         if (this.func_152346_Z()
@@ -2114,16 +2113,13 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                                 .func_152914_u();
                         } else if (this.func_152346_Z()
                             .func_152924_m()) {
-                                this.displayGuiScreen(new GuiYesNo(new GuiYesNoCallback() {
-
-                                    public void confirmClicked(boolean result, int id) {
-                                        if (result) {
-                                            func_152346_Z().func_152930_t();
-                                        }
-
-                                        displayGuiScreen((GuiScreen) null);
+                                this.displayGuiScreen(new GuiYesNo((result, id) -> {
+                                    if (result) {
+                                        func_152346_Z().func_152930_t();
                                     }
-                                }, I18n.format("stream.confirm_start", new Object[0]), "", 0));
+
+                                    displayGuiScreen(null);
+                                }, I18n.format("stream.confirm_start"), "", 0));
                             } else if (this.func_152346_Z()
                                 .func_152928_D()
                                 && this.func_152346_Z()
@@ -2170,7 +2166,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 } else if (i == this.gameSettings.field_152399_aq.getKeyCode()) {
                     this.field_152353_at.func_152910_a(false);
                 }
-            }
+
         }
     }
 

@@ -378,11 +378,11 @@ public class MixinPlayerAether {
                 shouldSpawnPortal,
                 server.worldServerForDimension(transferDimension));
             if (this.getEntity().ridingEntity != null) {
-                this.getEntity().ridingEntity.mountEntity((Entity) null);
+                this.getEntity().ridingEntity.mountEntity(null);
             }
 
             if (this.getEntity().riddenByEntity != null) {
-                this.getEntity().riddenByEntity.mountEntity((Entity) null);
+                this.getEntity().riddenByEntity.mountEntity(null);
             }
 
             if (server != null && server.getConfigurationManager() != null) {

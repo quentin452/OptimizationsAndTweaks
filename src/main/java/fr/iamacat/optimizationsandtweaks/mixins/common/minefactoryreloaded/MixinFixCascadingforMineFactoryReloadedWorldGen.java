@@ -55,7 +55,7 @@ public class MixinFixCascadingforMineFactoryReloadedWorldGen {
     @Unique
     private static boolean optimizationsAndTweaks$generateMegaRubberTree(World var0, Random var1, int var2, int var3,
         int var4, boolean var5) {
-        return (new WorldGenMassiveTree(false)).setTreeScale((float) (4 + var1.nextInt(3)), 0.8F, 0.7F)
+        return (new WorldGenMassiveTree(false)).setTreeScale((4 + var1.nextInt(3)), 0.8F, 0.7F)
             .setLeafAttenuation(0.6F)
             .setSloped(true)
             .setSafe(var5)

@@ -210,11 +210,9 @@ public class MixinLanguageRegistry {
     @Shadow
     @Deprecated
     public void loadLocalization(URL localizationFile, String lang, boolean isXML) {
-        InputStream langStream = null;
-        Properties langPack = new Properties();
 
-        try {
-            langStream = localizationFile.openStream();
+        Properties langPack = new Properties();
+        try (InputStream langStream = localizationFile.openStream()) {
 
             if (isXML) {
                 langPack.loadFromXML(langStream);
@@ -225,17 +223,14 @@ public class MixinLanguageRegistry {
             addStringLocalization(langPack, lang);
         } catch (IOException e) {
             FMLLog.log(Level.ERROR, e, "Unable to load localization from file %s", localizationFile);
-        } finally {
-            try {
-                if (langStream != null) {
-                    langStream.close();
-                }
-            } catch (IOException ex) {
-                // HUSH
-            }
         }
+        // HUSH
     }
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite(remap = false)
     public void injectLanguage(String language, HashMap<String, String> parsedLangFile) {
 
@@ -280,7 +275,7 @@ public class MixinLanguageRegistry {
                 }
             }
         }
-        if (added.size() > 0) FMLLog.fine(
+        if (!added.isEmpty()) FMLLog.fine(
             "Found translations in %s [%s]",
             source.getName(),
             Joiner.on(", ")
@@ -290,7 +285,7 @@ public class MixinLanguageRegistry {
 
     @Shadow
     private void searchDirForLanguages(File source, String path, Side side) throws IOException {
-        for (File file : source.listFiles()) {
+        for (File file : Objects.requireNonNull(source.listFiles())) {
             String currPath = path + file.getName();
             if (file.isDirectory()) {
                 searchDirForLanguages(file, currPath + '/', side);

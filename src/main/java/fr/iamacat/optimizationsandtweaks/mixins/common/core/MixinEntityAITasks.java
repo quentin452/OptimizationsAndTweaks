@@ -118,26 +118,29 @@ public class MixinEntityAITasks {
         this.theProfiler.endSection();
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
         this.theProfiler.startSection("canUse");
-        Iterator iterator = this.taskEntries.iterator();
 
-        while (iterator.hasNext()) {
-            EntityAITasks.EntityAITaskEntry entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
+        for (Object taskEntry : this.taskEntries) {
+            EntityAITasks.EntityAITaskEntry entityaitaskentry = (EntityAITasks.EntityAITaskEntry) taskEntry;
 
             if (entityaitaskentry != p_75775_1_) {
                 if (p_75775_1_.priority >= entityaitaskentry.priority) {
                     if (this.executingTaskEntries.contains(entityaitaskentry)
-                        && !this.areTasksCompatible(p_75775_1_, entityaitaskentry)) {
+                            && !this.areTasksCompatible(p_75775_1_, entityaitaskentry)) {
                         this.theProfiler.endSection();
                         return false;
                     }
                 } else if (this.executingTaskEntries.contains(entityaitaskentry)
-                    && !entityaitaskentry.action.isInterruptible()) {
-                        this.theProfiler.endSection();
-                        return false;
-                    }
+                        && !entityaitaskentry.action.isInterruptible()) {
+                    this.theProfiler.endSection();
+                    return false;
+                }
             }
         }
 

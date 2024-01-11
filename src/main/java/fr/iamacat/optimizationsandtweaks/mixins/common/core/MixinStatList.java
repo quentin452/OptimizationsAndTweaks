@@ -16,10 +16,8 @@ public abstract class MixinStatList {
 
     @Inject(method = "func_151182_a", at = @At("TAIL"), remap = false)
     private static void onRegisterStat(EntityList.EntityEggInfo eggInfo, CallbackInfoReturnable<StatBase> info) {
-        if (OptimizationsandTweaksConfig.enableMixinStatList) {
             StatBase stat = info.getReturnValue();
             String statId = stat.statId;
             System.out.println("[Registered stat ID] " + statId);
-        }
     }
 }

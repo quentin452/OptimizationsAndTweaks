@@ -34,7 +34,6 @@ public class MixinAnimTickHandler {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinAnimTickHandler) {
             if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
                 for (IMCAnimatedEntity entity : optimizationsAndTweaks$activeEntities) {
                     entity.getAnimationHandler()
@@ -43,7 +42,6 @@ public class MixinAnimTickHandler {
                         optimizationsAndTweaks$activeEntities.remove(entity);
                     }
                 }
-            }
         }
         ci.cancel();
     }

@@ -55,18 +55,22 @@ public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
                             String cmd = it.next().command.trim()
                                 .toLowerCase();
 
-                            if (cmd.equals("/fml confirm")) {
-                                FMLLog.info("confirmed");
-                                query.setResult(true);
-                                done.set(true);
-                                it.remove();
-                            } else if (cmd.equals("/fml cancel")) {
-                                FMLLog.info("cancelled");
-                                query.setResult(false);
-                                done.set(true);
-                                it.remove();
-                            } else if (cmd.equals("/stop")) {
-                                StartupQuery.abort();
+                            switch (cmd) {
+                                case "/fml confirm":
+                                    FMLLog.info("confirmed");
+                                    query.setResult(true);
+                                    done.set(true);
+                                    it.remove();
+                                    break;
+                                case "/fml cancel":
+                                    FMLLog.info("cancelled");
+                                    query.setResult(false);
+                                    done.set(true);
+                                    it.remove();
+                                    break;
+                                case "/stop":
+                                    StartupQuery.abort();
+                                    break;
                             }
                         }
                     }

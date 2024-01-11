@@ -111,11 +111,19 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
+    @Config.Comment("Optimize EnchantmentHelper Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEnchantmentHelper;
+
+    @Config.Comment("Optimize StructureGeneratorBase Class from Mowzies mobs")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinStructureGeneratorBaseMM;
     @Config.Comment("Disable Attack Indicator from LotrImprovements if Lotr iam a cat fork is enabled")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMain;
-
     @Config.Comment("Disabling Visual Recipe loading from PackagedAuto to eliminate ram usage on Modpacks")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -128,7 +136,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemMinestone;
-
     @Config.Comment("Optimize LowerStringMap performances")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -149,12 +156,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockLeaves;
-
     @Config.Comment("Optimize BiomeCache Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeCache;
-
     @Config.Comment("Optimize RenderBlocks Class(KEEP THIS DISABLED) cause issues ")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -179,7 +184,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockLiquid;
-
     @Config.Comment("Optimize EntityItem")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -188,7 +192,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinOilTweakEventHandler;
-
     @Config.Comment("Optimize SteamcraftEventHandler from Flaxbeard's Steam Power")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -241,7 +244,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSaveFormatOld;
-
     @Config.Comment("Optimize WorldGenMinable")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -254,7 +256,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
-
     @Config.Comment("Optimize PathFinder Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -457,6 +458,22 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAnimal;
 
+    @Config.Comment("Optimize ChunkProviderGenerate")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunkProviderGenerate;
+    @Config.Comment("Optimize BlockGrass")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockGrass;
+    @Config.Comment("Optimize CompressedStreamTools")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinCompressedStreamTools;
+    @Config.Comment("Optimize BiomeGenBase")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBiomeGenBase;
     @Config.Comment("Optimize EntityAIFollowParent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -465,7 +482,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
-
     @Config.Comment("Optimize BlockFalling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -474,7 +490,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinLootPPHelper;
-
     @Config.Comment("Optimize HooksCore from CofhCore Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -487,7 +502,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinClassDiscoverer;
-
     @Config.Comment("Optimize TierRecipeManager from Traincraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -512,17 +526,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMappingThread;
-
     @Config.Comment("Optimize Unthaumic class from ThaumcraftMinusThaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUnthaumic;
-
     @Config.Comment("Optimize StringTranslate class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStringTranslate;
-
     @Config.Comment("Optimize PlayerSpecials class from Instrumentus mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -640,10 +651,15 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinShipWreckGenerator;
+    @Config.Comment("Fix Cascading worldgens caused by TarGenerator from Fossil and archeology mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTarGenerator;
     @Config.Comment("Fix AluminumOxideWorldGen Infinite Loop that freeze the server from Minenautica mod(Disabled by default cause problem during generation)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAluminumOxideWorldGen;
+
     @Config.Comment("Fix Cascading worldgens caused by CanBlockStay from Minenautica mod(Disabled by default cause problem during generation)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
