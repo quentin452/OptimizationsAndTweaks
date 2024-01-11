@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -13,7 +14,6 @@ import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +26,12 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     protected MixinBlockLeaves(Material p_i45433_1_, boolean p_i45433_2_) {
         super(p_i45433_1_, p_i45433_2_);
     }
+    @Unique
+    private final int AREA_SIZE = 32;
+    @Unique
+    private final int HALF_AREA = AREA_SIZE / 2;
+    @Unique
+    private int[] optimizationsAndTweaks$blockArray = new int[AREA_SIZE * AREA_SIZE * AREA_SIZE];
 
     /**
      * @author
@@ -38,34 +44,37 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
             if ((currentMetadata & 8) != 0 && (currentMetadata & 4) == 0) {
                 final int SEARCH_RADIUS = 4;
-                final int AREA_SIZE = 32;
-                final int HALF_AREA = AREA_SIZE / 2;
-                int[] blockArray = new int[AREA_SIZE * AREA_SIZE * AREA_SIZE];
 
-                // Initialize block array
+                // Initialize a block array
+                Arrays.fill(optimizationsAndTweaks$blockArray, 0);
+
                 for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
                     for (int yOffset = -SEARCH_RADIUS; yOffset <= SEARCH_RADIUS; ++yOffset) {
                         for (int zOffset = -SEARCH_RADIUS; zOffset <= SEARCH_RADIUS; ++zOffset) {
-                            Block currentBlock = world.getBlock(posX + xOffset, posY + yOffset, posZ + zOffset);
+                            int blockX = posX + xOffset;
+                            int blockY = posY + yOffset;
+                            int blockZ = posZ + zOffset;
+
+                            Block currentBlock = world.getBlock(blockX, blockY, blockZ);
                             int index = (xOffset + HALF_AREA) * AREA_SIZE * AREA_SIZE
                                 + (yOffset + HALF_AREA) * AREA_SIZE
                                 + zOffset
                                 + HALF_AREA;
 
-                            if (!currentBlock.canSustainLeaves(world, posX + xOffset, posY + yOffset, posZ + zOffset)) {
-                                if (currentBlock.isLeaves(world, posX + xOffset, posY + yOffset, posZ + zOffset)) {
-                                    blockArray[index] = -2;
+                            if (!currentBlock.canSustainLeaves(world, blockX, blockY, blockZ)) {
+                                if (currentBlock.isLeaves(world, blockX, blockY, blockZ)) {
+                                    optimizationsAndTweaks$blockArray[index] = -2;
                                 } else {
-                                    blockArray[index] = -1;
+                                    optimizationsAndTweaks$blockArray[index] = -1;
                                 }
                             } else {
-                                blockArray[index] = 0;
+                                optimizationsAndTweaks$blockArray[index] = 0;
                             }
                         }
                     }
                 }
 
-                // Update block status based on neighbor blocks
+                // Update block status based on neighbor blocks and propagate leaves status
                 for (int iteration = 1; iteration <= 4; ++iteration) {
                     for (int xOffset = -SEARCH_RADIUS; xOffset <= SEARCH_RADIUS; ++xOffset) {
                         for (int yOffset = -SEARCH_RADIUS; yOffset <= SEARCH_RADIUS; ++yOffset) {
@@ -75,25 +84,13 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
                                     + zOffset
                                     + HALF_AREA;
 
-                                if (blockArray[index] == iteration - 1) {
-                                    optimizationsAndTweaks$propagateLeavesStatus(blockArray, index - 1, iteration);
-                                    optimizationsAndTweaks$propagateLeavesStatus(blockArray, index + 1, iteration);
-                                    optimizationsAndTweaks$propagateLeavesStatus(
-                                        blockArray,
-                                        index - AREA_SIZE,
-                                        iteration);
-                                    optimizationsAndTweaks$propagateLeavesStatus(
-                                        blockArray,
-                                        index + AREA_SIZE,
-                                        iteration);
-                                    optimizationsAndTweaks$propagateLeavesStatus(
-                                        blockArray,
-                                        index - AREA_SIZE * AREA_SIZE,
-                                        iteration);
-                                    optimizationsAndTweaks$propagateLeavesStatus(
-                                        blockArray,
-                                        index + AREA_SIZE * AREA_SIZE,
-                                        iteration);
+                                if (optimizationsAndTweaks$blockArray[index] == iteration - 1) {
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index - 1, iteration);
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index + 1, iteration);
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index - AREA_SIZE, iteration);
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index + AREA_SIZE, iteration);
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index - AREA_SIZE * AREA_SIZE, iteration);
+                                    optimizationsAndTweaks$propagateLeavesStatus(optimizationsAndTweaks$blockArray, index + AREA_SIZE * AREA_SIZE, iteration);
                                 }
                             }
                         }
@@ -101,7 +98,7 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
                 }
 
                 // Check central block and update world
-                int centralBlockStatus = blockArray[HALF_AREA * AREA_SIZE * AREA_SIZE + HALF_AREA * AREA_SIZE
+                int centralBlockStatus = optimizationsAndTweaks$blockArray[HALF_AREA * AREA_SIZE * AREA_SIZE + HALF_AREA * AREA_SIZE
                     + HALF_AREA];
 
                 if (centralBlockStatus >= 0) {
