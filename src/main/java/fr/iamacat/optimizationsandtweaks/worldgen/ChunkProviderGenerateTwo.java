@@ -42,7 +42,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
 
     // ATTENTION IT BREAK VANILLA SEED PARITY
     /** RNG. */
-    private Random rand;
+    private final Random rand;
     private NoiseGeneratorOctavesMultithread field_147431_j;
     private NoiseGeneratorOctavesMultithread field_147432_k;
     private NoiseGeneratorOctavesMultithread field_147429_l;
@@ -53,10 +53,10 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     public NoiseGeneratorOctavesMultithread noiseGen6;
     public NoiseGeneratorOctavesMultithread mobSpawnerNoise;
     /** Reference to the World object. */
-    private World worldObj;
-    /** are map structures going to be generated (e.g. strongholds) */
+    private final World worldObj;
+    /** are map structures going to be generated (e.g., strongholds) */
     private final boolean mapFeaturesEnabled;
-    private WorldType field_147435_p;
+    private final WorldType field_147435_p;
     private final double[] field_147434_q;
     private final float[] parabolicField;
     private double[] stoneNoise = new double[256];
@@ -205,8 +205,8 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         double d0 = 0.03125D;
         this.stoneNoise = this.field_147430_m.func_151599_a(
             this.stoneNoise,
-            (double) (p_147422_1_ * 16),
-            (double) (p_147422_2_ * 16),
+                p_147422_1_ * 16,
+                p_147422_2_ * 16,
             16,
             16,
             d0 * 2.0D,
@@ -236,7 +236,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     }
 
     /**
-     * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
+     * Will return a chunk if it doesn't exist and it's not an MP client it will generate all the blocks for the
      * specified chunk from the map seed and chunk seed
      */
     public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
@@ -304,11 +304,8 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
             684.412D,
             684.412D,
             684.412D);
-        boolean flag1 = false;
-        boolean flag = false;
         int l = 0;
         int i1 = 0;
-        double d4 = 8.5D;
 
         for (int j1 = 0; j1 < 5; ++j1) {
             for (int k1 = 0; k1 < 5; ++k1) {
@@ -345,34 +342,11 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
                 f1 /= f2;
                 f = f * 0.9F + 0.1F;
                 f1 = (f1 * 4.0F - 1.0F) / 8.0F;
-                double d12 = this.field_147426_g[i1] / 8000.0D;
-
-                if (d12 < 0.0D) {
-                    d12 = -d12 * 0.3D;
-                }
-
-                d12 = d12 * 3.0D - 2.0D;
-
-                if (d12 < 0.0D) {
-                    d12 /= 2.0D;
-
-                    if (d12 < -1.0D) {
-                        d12 = -1.0D;
-                    }
-
-                    d12 /= 1.4D;
-                    d12 /= 2.0D;
-                } else {
-                    if (d12 > 1.0D) {
-                        d12 = 1.0D;
-                    }
-
-                    d12 /= 8.0D;
-                }
+                double d12 = getD12(i1);
 
                 ++i1;
-                double d13 = (double) f1;
-                double d14 = (double) f;
+                double d13 = f1;
+                double d14 = f;
                 d13 += d12 * 0.2D;
                 d13 = d13 * 8.5D / 8.0D;
                 double d5 = 8.5D + d13 * 4.0D;
@@ -401,6 +375,34 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         }
     }
 
+    private double getD12(int i1) {
+        double d12 = this.field_147426_g[i1] / 8000.0D;
+
+        if (d12 < 0.0D) {
+            d12 = -d12 * 0.3D;
+        }
+
+        d12 = d12 * 3.0D - 2.0D;
+
+        if (d12 < 0.0D) {
+            d12 /= 2.0D;
+
+            if (d12 < -1.0D) {
+                d12 = -1.0D;
+            }
+
+            d12 /= 1.4D;
+            d12 /= 2.0D;
+        } else {
+            if (d12 > 1.0D) {
+                d12 = 1.0D;
+            }
+
+            d12 /= 8.0D;
+        }
+        return d12;
+    }
+
     /**
      * Checks to see if a chunk exists at x, y
      */
@@ -409,7 +411,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     }
 
     /**
-     * Populates chunk with ores etc etc
+     * Populates chunk with ores etc. etc
      */
     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_) {
         BlockFalling.fallInstantly = true;
@@ -552,10 +554,10 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
 
     public void recreateStructures(int p_82695_1_, int p_82695_2_) {
         if (this.mapFeaturesEnabled) {
-            this.mineshaftGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.villageGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.strongholdGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
-            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, (Block[]) null);
+            this.mineshaftGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, null);
+            this.villageGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, null);
+            this.strongholdGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, null);
+            this.scatteredFeatureGenerator.func_151539_a(this, this.worldObj, p_82695_1_, p_82695_2_, null);
         }
     }
 }
