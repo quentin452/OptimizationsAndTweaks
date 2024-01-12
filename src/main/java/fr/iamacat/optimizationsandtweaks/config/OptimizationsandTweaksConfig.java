@@ -614,6 +614,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryLotsOMobs;
+    @Config.Comment("Fix null crash caused by PPAPEventHandler from PPAP MOD")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPPAPEventHandler;
     @Config.Comment("Fix Cascading worldgen caused by VentGeneratorSingle class from Netherlicious mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

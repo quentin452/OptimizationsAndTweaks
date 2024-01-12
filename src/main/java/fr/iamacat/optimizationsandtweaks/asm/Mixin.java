@@ -308,6 +308,10 @@ public enum Mixin implements IMixin {
     common_adventurersamulet_MixinEntityEagle(Side.COMMON,
         require(TargetedMod.ADVENTURERS_AMULETS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityEagle),
         "adventurersamulet.MixinEntityEagle"),
+
+    common_ppap_MixinPPAPEventHandler(Side.COMMON,
+        require(TargetedMod.PPAPMOD).and(m -> OptimizationsandTweaksConfig.enableMixinPPAPEventHandler),
+        "ppap.MixinPPAPEventHandler"),
     common_core_MixinEntityLiving(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityLiving,
         "core.MixinEntityLiving"),
     common_core_MixinEntityAgeable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAgeable,

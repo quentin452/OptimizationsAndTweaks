@@ -159,6 +159,7 @@ public enum TargetedMod implements ITargetedMod {
     OBSGREENERY("obsgreenery", false, startsWith("obsgreenery")),
     SIGNPOST("signpost", false, startsWith("signpost")),
     MOWZIESMOBS("MowziesMobs", false, startsWith("MowziesMobs")),
+    PPAPMOD("PPAP", false, startsWith("PPAP")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;
