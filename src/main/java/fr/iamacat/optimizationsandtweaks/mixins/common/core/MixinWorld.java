@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
@@ -863,5 +864,22 @@ public class MixinWorld {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).spawnParticle(particleName, x, y, z, velocityX, velocityY, velocityZ);
         }
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int countEntities(Class p_72907_1_)
+    {
+        int i = 0;
+        for (Object o : this.loadedEntityList) {
+            Entity entity = (Entity) o;
+
+            if ((!(entity instanceof EntityLiving) || !((EntityLiving) entity).isNoDespawnRequired()) && p_72907_1_.isAssignableFrom(entity.getClass())) {
+                ++i;
+            }
+        }
+        return i;
     }
 }
