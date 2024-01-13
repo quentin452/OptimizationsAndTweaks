@@ -256,6 +256,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
+    @Config.Comment("Optimize MathHelper Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMathHelper;
+
     @Config.Comment("Optimize Stitcher Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
