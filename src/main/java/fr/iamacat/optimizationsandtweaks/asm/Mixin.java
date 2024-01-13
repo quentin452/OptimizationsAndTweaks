@@ -790,6 +790,8 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.OPTIFINE)
             .and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
         "core.MixinModelRenderer"),
+    client_core_MixinStitcher(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinStitcher,
+        "core.MixinStitcher"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),
     client_core_MixinItemRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinItemRenderer,
