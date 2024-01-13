@@ -13,8 +13,8 @@ import java.util.Random;
 @Mixin(MathHelper.class)
 public class MixinMathHelper {
 
-    @Unique
-    private static float[] SIN_TABLE = optimizationsAndTweaks$initSinTable();
+    @Shadow
+    private static float[] SIN_TABLE = new float[65536];
     @Unique
     private static final float optimizationsAndTweaks$PI = (float) Math.PI;
 
@@ -29,14 +29,6 @@ public class MixinMathHelper {
     @Shadow
     private static final int[] multiplyDeBruijnBitPosition;
 
-    @Unique
-    private static float[] optimizationsAndTweaks$initSinTable() {
-        float[] sinTable = new float[65536];
-        for (int var0 = 0; var0 < 65536; ++var0) {
-            sinTable[var0] = (float) StrictMath.sin(var0 * optimizationsAndTweaks$PI * 2.0D / 65536.0D);
-        }
-        return sinTable;
-    }
     /**
      * sin looked up in a table
      */
