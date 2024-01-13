@@ -186,6 +186,7 @@ dependencies {
     implementation files("libs/obsgreenery-1.3.0_mc1.7.10.jar")
     implementation files("libs/appliedenergistics2-rv3-beta-305-GTNH.jar")
     implementation files("libs/PPAP_Mod_1.7.10_1.5.0.jar")
+    implementation files("libs/Too-Much-TNT-Mod-1.7.10_1.jar")
 
 }
 

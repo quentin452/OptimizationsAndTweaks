@@ -238,6 +238,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons)
             .and(require(TargetedMod.CONFIGHELPER)),
         "runicdungeons.MixinCommonProxyRunicDungeons"),
+
+    common_toomuchtnt_MixinTooMuchTNT(Side.COMMON,
+        require(TargetedMod.TOOMUCHTNT).and(m -> OptimizationsandTweaksConfig.enableMixinTooMuchTNT)
+            .and(require(TargetedMod.ENDLESSIDS)),
+        "toomuchtnt.MixinTooMuchTNT"),
     common_elijahschocolate_MixinEntityChocolateCreeper(Side.COMMON,
         require(TargetedMod.ELIJAHSCHOCOLATEMOD)
             .and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)

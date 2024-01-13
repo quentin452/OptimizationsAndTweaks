@@ -160,6 +160,7 @@ public enum TargetedMod implements ITargetedMod {
     SIGNPOST("signpost", false, startsWith("signpost")),
     MOWZIESMOBS("MowziesMobs", false, startsWith("MowziesMobs")),
     PPAPMOD("PPAP", false, startsWith("PPAP")),
+    TOOMUCHTNT("Too-Much-TNT", false, startsWith("Too-Much-TNT")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;

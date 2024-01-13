@@ -693,6 +693,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGenerateCoral;
+    @Config.Comment("Made sure that EntityID from TooMuchTNT mod is above 1000 to prevent crash with unknown mod(Need endlessids installed)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTooMuchTNT;
     @Config.Comment("Made sure that EntityID from EldritchEmpire mod is above 1000 to prevent crash with unknown mod(Need config helper installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
