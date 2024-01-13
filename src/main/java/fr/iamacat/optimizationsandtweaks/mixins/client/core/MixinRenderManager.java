@@ -128,12 +128,12 @@ public class MixinRenderManager {
         GL11.glDisable(GL11.GL_BLEND);
         float f2 = p_85094_1_.width / 2.0F;
         AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox(
-            p_85094_2_ - (double) f2,
+            p_85094_2_ - f2,
             p_85094_4_,
-            p_85094_6_ - (double) f2,
-            p_85094_2_ + (double) f2,
+            p_85094_6_ - f2,
+            p_85094_2_ + f2,
             p_85094_4_ + (double) p_85094_1_.height,
-            p_85094_6_ + (double) f2);
+            p_85094_6_ + f2);
         RenderGlobal.drawOutlinedBoundingBox(axisalignedbb, 16777215);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_LIGHTING);
