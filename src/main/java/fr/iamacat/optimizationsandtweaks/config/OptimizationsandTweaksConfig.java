@@ -479,7 +479,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinCompressedStreamTools;
-    @Config.Comment("Optimize BiomeGenBase")
+    @Config.Comment("Optimize BiomeGenBase(not injected if DragonAPI is installed)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeGenBase;

@@ -161,6 +161,7 @@ public enum TargetedMod implements ITargetedMod {
     MOWZIESMOBS("MowziesMobs", false, startsWith("MowziesMobs")),
     PPAPMOD("PPAP", false, startsWith("PPAP")),
     TOOMUCHTNT("Too-Much-TNT", false, startsWith("Too-Much-TNT")),
+    DRAGONAPI("DragonAPI", false, startsWith("DragonAPI")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;
