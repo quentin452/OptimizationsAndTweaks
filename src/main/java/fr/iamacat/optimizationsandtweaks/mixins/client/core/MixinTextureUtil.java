@@ -7,7 +7,6 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -16,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.spongepowered.asm.mixin.Unique;
 
 @SideOnly(Side.CLIENT)
 @Mixin(value = TextureUtil.class, priority = 999)
@@ -32,8 +33,8 @@ public class MixinTextureUtil {
 
     @Shadow
     private static final Logger logger = LogManager.getLogger();
-    @Shadow
-    private static final IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
+    @Unique
+    private static final int[] optimizationsAndTweaks$dataBuffer = new int[4194304];
     @Shadow
     public static final DynamicTexture missingTexture = new DynamicTexture(16, 16);
     @Shadow
@@ -102,9 +103,9 @@ public class MixinTextureUtil {
                         for (int l1 = 0; l1 < i1; ++l1) {
                             int i2 = 2 * (k1 + l1 * j1);
                             aint3[k1 + l1 * l] = func_147943_a(
-                                aint2[i2 + 0],
+                                aint2[i2],
                                 aint2[i2 + 1],
-                                aint2[i2 + 0 + j1],
+                                aint2[i2 + j1],
                                 aint2[i2 + 1 + j1],
                                 flag);
                         }
@@ -144,10 +145,10 @@ public class MixinTextureUtil {
 
             for (i1 = 0; i1 < 4; ++i1) {
                 if (field_147957_g[i1] >> 24 != 0) {
-                    f += (float) Math.pow((double) ((float) (field_147957_g[i1] >> 24 & 255) / 255.0F), 2.2D);
-                    f1 += (float) Math.pow((double) ((float) (field_147957_g[i1] >> 16 & 255) / 255.0F), 2.2D);
-                    f2 += (float) Math.pow((double) ((float) (field_147957_g[i1] >> 8 & 255) / 255.0F), 2.2D);
-                    f3 += (float) Math.pow((double) ((float) (field_147957_g[i1] >> 0 & 255) / 255.0F), 2.2D);
+                    f += (float) Math.pow(((field_147957_g[i1] >> 24 & 255) / 255.0F), 2.2D);
+                    f1 += (float) Math.pow(((field_147957_g[i1] >> 16 & 255) / 255.0F), 2.2D);
+                    f2 += (float) Math.pow(((field_147957_g[i1] >> 8 & 255) / 255.0F), 2.2D);
+                    f3 += (float) Math.pow(((field_147957_g[i1] & 255) / 255.0F), 2.2D);
                 }
             }
 
@@ -155,10 +156,10 @@ public class MixinTextureUtil {
             f1 /= 4.0F;
             f2 /= 4.0F;
             f3 /= 4.0F;
-            i1 = (int) (Math.pow((double) f, 0.45454545454545453D) * 255.0D);
-            int j1 = (int) (Math.pow((double) f1, 0.45454545454545453D) * 255.0D);
-            int k1 = (int) (Math.pow((double) f2, 0.45454545454545453D) * 255.0D);
-            int l1 = (int) (Math.pow((double) f3, 0.45454545454545453D) * 255.0D);
+            i1 = (int) (Math.pow(f, 0.45454545454545453D) * 255.0D);
+            int j1 = (int) (Math.pow(f1, 0.45454545454545453D) * 255.0D);
+            int k1 = (int) (Math.pow(f2, 0.45454545454545453D) * 255.0D);
+            int l1 = (int) (Math.pow(f3, 0.45454545454545453D) * 255.0D);
 
             if (i1 < 96) {
                 i1 = 0;
@@ -175,12 +176,12 @@ public class MixinTextureUtil {
     @Overwrite
     public static int func_147944_a(int p_147944_0_, int p_147944_1_, int p_147944_2_, int p_147944_3_,
         int p_147944_4_) {
-        float f = (float) Math.pow((double) ((float) (p_147944_0_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f1 = (float) Math.pow((double) ((float) (p_147944_1_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f2 = (float) Math.pow((double) ((float) (p_147944_2_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f3 = (float) Math.pow((double) ((float) (p_147944_3_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f4 = (float) Math.pow((double) (f + f1 + f2 + f3) * 0.25D, 0.45454545454545453D);
-        return (int) ((double) f4 * 255.0D);
+        float f = (float) Math.pow((p_147944_0_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f1 = (float) Math.pow((p_147944_1_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f2 = (float) Math.pow((p_147944_2_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f3 = (float) Math.pow((p_147944_3_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f4 = (float) Math.pow((f + f1 + f2 + f3) * 0.25D, 0.45454545454545453D);
+        return (int) (f4 * 255.0D);
     }
 
     /**
@@ -211,7 +212,8 @@ public class MixinTextureUtil {
      */
     @Overwrite
     public static void uploadTextureSub(int p_147947_0_, int[] p_147947_1_, int p_147947_2_, int p_147947_3_,
-        int p_147947_4_, int p_147947_5_, boolean p_147947_6_, boolean p_147947_7_, boolean p_147947_8_) {
+                                        int p_147947_4_, int p_147947_5_, boolean p_147947_6_, boolean p_147947_7_,
+                                        boolean p_147947_8_) {
         int j1 = 4194304 / p_147947_2_;
         func_147954_b(p_147947_6_, p_147947_8_);
         setTextureClamped(p_147947_7_);
@@ -221,7 +223,12 @@ public class MixinTextureUtil {
             int l1 = k1 / p_147947_2_;
             i2 = Math.min(j1, p_147947_3_ - l1);
             int j2 = p_147947_2_ * i2;
-            copyToBufferPos(p_147947_1_, k1, j2);
+
+            // Convert the int array to IntBuffer
+            IntBuffer buffer = BufferUtils.createIntBuffer(j2);
+            buffer.put(p_147947_1_, k1, j2);
+            buffer.flip();
+
             GL11.glTexSubImage2D(
                 GL11.GL_TEXTURE_2D,
                 p_147947_0_,
@@ -231,7 +238,7 @@ public class MixinTextureUtil {
                 i2,
                 GL12.GL_BGRA,
                 GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
-                dataBuffer);
+                buffer);
         }
     }
 
@@ -266,7 +273,7 @@ public class MixinTextureUtil {
         if (p_147946_1_ > 0) {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, p_147946_1_);
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, 0.0F);
-            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, (float) p_147946_1_);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, p_147946_1_);
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
 
@@ -298,7 +305,7 @@ public class MixinTextureUtil {
      */
     @Overwrite
     public static void uploadTextureImageSubImpl(BufferedImage p_110993_0_, int p_110993_1_, int p_110993_2_,
-        boolean p_110993_3_, boolean p_110993_4_) {
+                                                 boolean p_110993_3_, boolean p_110993_4_) {
         int k = p_110993_0_.getWidth();
         int l = p_110993_0_.getHeight();
         int i1 = 4194304 / k;
@@ -311,7 +318,12 @@ public class MixinTextureUtil {
             int l1 = Math.min(i1, l - k1);
             int i2 = k * l1;
             p_110993_0_.getRGB(0, k1, k, l1, aint, 0, k);
-            copyToBuffer(aint, i2);
+
+            // Convert the int array to IntBuffer
+            IntBuffer buffer = BufferUtils.createIntBuffer(i2);
+            buffer.put(aint, 0, i2);
+            buffer.flip();
+
             GL11.glTexSubImage2D(
                 GL11.GL_TEXTURE_2D,
                 0,
@@ -321,10 +333,9 @@ public class MixinTextureUtil {
                 l1,
                 GL12.GL_BGRA,
                 GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
-                dataBuffer);
+                buffer);
         }
     }
-
     /**
      * @author
      * @reason
@@ -417,11 +428,7 @@ public class MixinTextureUtil {
         if (Minecraft.getMinecraft().gameSettings.anaglyph) {
             aint1 = updateAnaglyph(p_110994_0_);
         }
-
-        dataBuffer.clear();
-        dataBuffer.put(aint1, p_110994_1_, p_110994_2_);
-        dataBuffer.position(0)
-            .limit(p_110994_2_);
+        System.arraycopy(aint1, p_110994_1_, optimizationsAndTweaks$dataBuffer, 0, p_110994_2_);
     }
 
     @Shadow
