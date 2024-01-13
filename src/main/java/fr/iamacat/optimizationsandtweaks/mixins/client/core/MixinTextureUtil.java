@@ -3,6 +3,8 @@ package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -34,7 +36,7 @@ public class MixinTextureUtil {
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Unique
-    private static final int[] optimizationsAndTweaks$dataBuffer = new int[4194304];
+    private static final List<Integer> optimizationsAndTweaks$dataBuffer = new ArrayList<>();
     @Shadow
     public static final DynamicTexture missingTexture = new DynamicTexture(16, 16);
     @Shadow
@@ -428,7 +430,10 @@ public class MixinTextureUtil {
         if (Minecraft.getMinecraft().gameSettings.anaglyph) {
             aint1 = updateAnaglyph(p_110994_0_);
         }
-        System.arraycopy(aint1, p_110994_1_, optimizationsAndTweaks$dataBuffer, 0, p_110994_2_);
+
+        for (int i = p_110994_1_; i < p_110994_1_ + p_110994_2_; i++) {
+            optimizationsAndTweaks$dataBuffer.add(aint1[i]);
+        }
     }
 
     @Shadow
@@ -542,8 +547,6 @@ public class MixinTextureUtil {
     }
 
     static {
-        int var0 = -16777216;
-        int var1 = -524040;
         int[] var2 = new int[] { -524040, -524040, -524040, -524040, -524040, -524040, -524040, -524040 };
         int[] var3 = new int[] { -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216,
             -16777216 };
