@@ -143,6 +143,8 @@ dependencies {
     implementation "curse.maven:hamsterrific-restored-402981:3035672-deobf-sources-api"
     implementation "curse.maven:signpost-261837:2922217-deobf-sources-api"
     implementation "curse.maven:mowzies-mobs-250498:2327392-deobf-sources-api"
+    implementation "curse.maven:coroutil-237749:2388794-deobf-sources-api"
+    implementation "curse.maven:zombie-awareness-237754:2285743-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')

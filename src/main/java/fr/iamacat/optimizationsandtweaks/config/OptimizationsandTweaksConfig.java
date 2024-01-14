@@ -438,6 +438,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureUtil;
+
+    @Config.Comment("Optimize BlockFLuidClass")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockFluidClassic;
     @Config.Comment("Optimize ItemRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -515,6 +520,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTierRecipeManager;
+    @Config.Comment("Optimize PFQueue Class from CoroUtil")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPFQueue;
+    @Config.Comment("Optimize ZAUtil Class from ZombieAwareness")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinZAUtil;
     @Config.Comment("Optimize WardenicChargeEvents class from Thaumic Revelations")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

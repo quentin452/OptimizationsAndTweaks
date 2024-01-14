@@ -162,6 +162,8 @@ public enum TargetedMod implements ITargetedMod {
     PPAPMOD("PPAP", false, startsWith("PPAP")),
     TOOMUCHTNT("Too-Much-TNT", false, startsWith("Too-Much-TNT")),
     DRAGONAPI("DragonAPI", false, startsWith("DragonAPI")),
+    COROUTIL("coroutil", false, startsWith("coroutil")),
+    ZOMBIEAWARENESS("zombieawareness", false, startsWith("zombieawareness")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;

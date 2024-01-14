@@ -232,4 +232,22 @@ public class Classers {
             return this.offset(dir, 1);
         }
     }
+
+    // MixinBlockFluidClassic
+
+    public static class FlowCostContext {
+        public final int x;
+        public final int y;
+        public final int z;
+        public final int recurseDepth;
+        public final int adjSide;
+
+        public FlowCostContext(int x, int y, int z, int recurseDepth, int adjSide) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.recurseDepth = recurseDepth;
+            this.adjSide = adjSide;
+        }
+    }
 }

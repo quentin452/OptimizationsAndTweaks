@@ -61,6 +61,8 @@ public enum Mixin implements IMixin {
     common_minestones_MixinMSEvents(Side.COMMON,
         require(TargetedMod.MINESTONES).and(m -> OptimizationsandTweaksConfig.enableMixinMinestoneSupportDecimalValue),
         "minestones.MixinMSEvents"),
+    common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
+        "core.MixinBlockFluidClassic"),
 
     // OPTIMIZATIONS MIXINS
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
@@ -203,6 +205,12 @@ public enum Mixin implements IMixin {
     common_KoRIN_MixinKoRINEventHandler(Side.COMMON,
         require(TargetedMod.KORINBLUEBEDROCK).and(m -> OptimizationsandTweaksConfig.enableMixinKoRINEventHandler),
         "KoRIN.MixinKoRINEventHandler"),
+    common_coroutil_MixinPFQueue(Side.COMMON,
+        require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enableMixinPFQueue),
+        "coroutil.MixinPFQueue"),
+    common_zombieawareness_MixinZAUtil(Side.COMMON,
+        require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enableMixinZAUtil),
+        "zombieawareness.MixinZAUtil"),
     common_minenautica_MixinBiomeRegistry(Side.COMMON,
         require(TargetedMod.MINENAUTICA).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeRegistryMinenautica),
         "minenautica.MixinBiomeRegistry"),
