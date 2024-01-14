@@ -164,6 +164,7 @@ public enum TargetedMod implements ITargetedMod {
     DRAGONAPI("DragonAPI", false, startsWith("DragonAPI")),
     COROUTIL("coroutil", false, startsWith("coroutil")),
     ZOMBIEAWARENESS("zombieawareness", false, startsWith("zombieawareness")),
+    ANIMALSPLUS("animalsPlus", false, startsWith("animalsPlus")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;

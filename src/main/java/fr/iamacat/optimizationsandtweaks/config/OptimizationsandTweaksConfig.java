@@ -447,7 +447,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;
-
+    @Config.Comment("Optimize EntitySwimming Class from Animal Plus")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntitySwimming;
     @Config.Comment("Optimize MapGenStructure Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
