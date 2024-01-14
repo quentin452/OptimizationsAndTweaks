@@ -25,11 +25,9 @@ public class MixinEntityEnderGolem extends EntityMob {
      */
     @Inject(method = "func_70639_aQ", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70639_aQ(CallbackInfoReturnable<String> cir) {
-        if (OptimizationsandTweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {
             if (this.rand.nextInt(2) == 0) {
                 this.worldObj.playSoundAtEntity(this, "farlanders:titanIdle", 1.0F, 1.2F);
             }
-        }
         cir.setReturnValue(null);
     }
 
@@ -39,9 +37,7 @@ public class MixinEntityEnderGolem extends EntityMob {
      */
     @Inject(method = "func_70673_aS", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70673_aS(CallbackInfoReturnable<String> cir) {
-        if (OptimizationsandTweaksConfig.enableMixinFixUnableToPlayUnknowSoundEventFromFarlandersmod) {
             this.worldObj.playSoundAtEntity(this, "farlanders:titanDeathEcho", 1.5F, 1.2F);
-        }
         cir.setReturnValue(null);
     }
 }
