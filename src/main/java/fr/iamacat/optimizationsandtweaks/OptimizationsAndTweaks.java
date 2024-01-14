@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks;
 
 import java.io.File;
 
+import fr.iamacat.optimizationsandtweaks.eventshandler.EventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -26,6 +27,8 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
+        EventHandler eventHandler = new EventHandler();
+        MinecraftForge.EVENT_BUS.register(eventHandler);
         if (FMLCommonHandler.instance()
             .findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
             File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");

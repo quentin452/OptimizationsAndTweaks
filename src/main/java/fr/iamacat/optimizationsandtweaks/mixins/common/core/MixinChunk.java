@@ -1,7 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
@@ -13,6 +15,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +24,14 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
+    @Shadow
+    public Map chunkTileEntityMap;
+    /** Whether or not this Chunk is currently loaded into the World */
+    @Shadow
+    public boolean isChunkLoaded;
+    /** Reference to the World object. */
+    @Shadow
+    public World worldObj;
     @Shadow
     public boolean isTerrainPopulated;
     @Shadow
@@ -118,64 +130,5 @@ public class MixinChunk {
                 }
             }
         }
-    }
-    // Remove all EntityItem during initial chunk generation.
-    // to prevent lags caused by a large amount of EntityItem on mod packs at initial chunk loading.
-    // inspired by Tidy Chunk mod from 1.12.2.
-    // todo remove all loggings/try and catch when i am sure that this method is work well
-    // todo clear EntityItem after isTerrainPopulated and not before to remove again more EntityItem
-    @Unique
-    private void optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(Chunk chunk) {
-        World world = chunk.worldObj;
-
-        if (chunk.isTerrainPopulated) {
-            return;
-        }
-
-        List<EntityItem> entitiesToRemove = new ArrayList<>();
-        for (Object obj : world.loadedEntityList) {
-            if (obj instanceof EntityItem) {
-                EntityItem entityItem = (EntityItem) obj;
-                int entityX = MathHelper.floor_double(entityItem.posX);
-                int entityZ = MathHelper.floor_double(entityItem.posZ);
-
-                System.out.println("Checking EntityItem: " + entityItem + " at (" + entityX + ", " + entityZ + ")");
-                entitiesToRemove.add(entityItem);
-            }
-        }
-        for (EntityItem entity : entitiesToRemove) {
-            world.removeEntity(entity);
-            System.out.println("EntityItem removed: " + entity);
-        }
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
-    {
-        Chunk chunk = p_76624_1_.provideChunk(p_76624_3_,p_76624_4_);
-        if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
-        {
-            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
-        }
-
-        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1))
-        {
-            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_);
-        }
-
-        if (p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
-        {
-            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_ - 1);
-        }
-
-        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_))
-        {
-            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
-        }
-        optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(chunk);
     }
 }
