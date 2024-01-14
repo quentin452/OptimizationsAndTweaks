@@ -4,10 +4,12 @@ import java.util.List;
 
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +19,8 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
-
+    @Shadow
+    public boolean isTerrainPopulated;
     @Shadow
     public List[] entityLists;
 
@@ -114,5 +117,55 @@ public class MixinChunk {
                 }
             }
         }
+    }
+    // Remove all EntityItem during initial chunk generation
+    // to prevent lags caused by a large amount of EntityItem on mod packs.
+    // todo remove all loggings/try and catch when i am sure that this method is work well
+    // todo fix seem to be doesn't work
+    @Unique
+    private void optimizationsAndTweaks$clearEntityItems(Chunk chunk, int x, int z) {
+        World world = chunk.worldObj;
+        for (Object obj : world.loadedEntityList) {
+            if (obj instanceof EntityItem) {
+                EntityItem entityItem = (EntityItem) obj;
+                int entityX = MathHelper.floor_double(entityItem.posX);
+                int entityZ = MathHelper.floor_double(entityItem.posZ);
+                if (entityX >= x * 16 && entityX < (x + 1) * 16 && entityZ >= z * 16 && entityZ < (z + 1) * 16) {
+                    System.out.println("EntityItem marked for removal by optimizationsAndTweaks$clearEntityItems: " + entityItem);
+                    world.removeEntity(entityItem);
+                    System.out.println("EntityItem removed 1 by optimizationsAndTweaks$clearEntityItems: " + entityItem);
+                }
+            }
+        }
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
+    {
+        Chunk chunk = p_76624_1_.provideChunk(p_76624_3_,p_76624_4_);
+        if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_ - 1);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
+        }
+        optimizationsAndTweaks$clearEntityItems(chunk, p_76624_3_, p_76624_4_);
     }
 }
