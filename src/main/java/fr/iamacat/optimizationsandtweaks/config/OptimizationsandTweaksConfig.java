@@ -439,10 +439,14 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureUtil;
 
-    @Config.Comment("Optimize BlockFLuidClass")
+    @Config.Comment("Optimize BlockFLuid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockFluidClassic;
+    @Config.Comment("Optimize ChunkProviderServer Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunkProviderServer;
     @Config.Comment("Optimize ItemRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

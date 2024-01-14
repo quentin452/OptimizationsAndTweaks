@@ -63,6 +63,8 @@ public enum Mixin implements IMixin {
         "minestones.MixinMSEvents"),
     common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
         "core.MixinBlockFluidClassic"),
+    common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
+        "core.MixinChunkProviderServer"),
 
     // OPTIMIZATIONS MIXINS
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
