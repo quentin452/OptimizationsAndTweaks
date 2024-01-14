@@ -65,6 +65,8 @@ public enum Mixin implements IMixin {
         "core.MixinBlockFluidClassic"),
     common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
+    common_core_MixinMapGenStructure(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure,
+        "core.MixinMapGenStructure"),
 
     // OPTIMIZATIONS MIXINS
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,

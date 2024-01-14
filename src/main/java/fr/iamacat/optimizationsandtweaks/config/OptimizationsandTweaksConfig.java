@@ -447,6 +447,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;
+
+    @Config.Comment("Optimize MapGenStructure Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMapGenStructure;
     @Config.Comment("Optimize ItemRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
