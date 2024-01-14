@@ -5,20 +5,23 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EventHandler {
+
     // Remove all EntityItem during initial chunk generation.
     // to prevent lags caused by a large amount of EntityItem on mod packs at initial chunk loading.
     // inspired by Tidy Chunk mod from 1.12.2.
     // todo remove all loggings/try and catch when i am sure that this method is work well
-    // todo clear EntityItem after isTerrainPopulated and not before to remove again more EntityItem
-    @Unique
-    private void optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(Chunk chunk) {
+    // todo fix he try to clear EntityItem every time i load chunk even when the chunk is old (potentially fixed)
+    private void optimizationsAndTweaks$clearEntityItemsAtChunkPopulatePost(Chunk chunk) {
         World world = chunk.worldObj;
 
         if (chunk.isTerrainPopulated) {
@@ -38,14 +41,20 @@ public class EventHandler {
         }
 
         for (EntityItem entity : entitiesToRemove) {
-            world.removeEntity(entity);
+            entity.setDead();
             world.loadedEntityList.remove(entity);
             System.out.println("EntityItem removed: " + entity);
         }
     }
+
     @SubscribeEvent
-    public void onChunkLoad(ChunkEvent.Load event) {
-        Chunk chunk = event.getChunk();
-        optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(chunk);
+    public void onPopulateChunkPost(PopulateChunkEvent.Post event) {
+        World world = event.world;
+        int chunkX = event.chunkX;
+        int chunkZ = event.chunkZ;
+        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+        if(chunk != null) {
+            optimizationsAndTweaks$clearEntityItemsAtChunkPopulatePost(chunk);
+        }
     }
 }
