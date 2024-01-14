@@ -3,10 +3,13 @@ package fr.iamacat.optimizationsandtweaks.eventshandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
@@ -19,7 +22,7 @@ public class EventHandler {
     // Remove all EntityItem during initial chunk generation.
     // to prevent lags caused by a large amount of EntityItem on mod packs at initial chunk loading.
     // inspired by Tidy Chunk mod from 1.12.2.
-    // todo fix not all EntityItem don't get removed
+    // todo fix not all EntityItem get removed
     // todo probably remove the set
     private static final Set<Chunk> processedChunks = new HashSet<>();
 
@@ -71,4 +74,20 @@ public class EventHandler {
     }
 
    */
+   /* @SubscribeEvent
+    public void onEntitySpawn(EntityJoinWorldEvent event) {
+        if (event.entity instanceof EntityItem) {
+            EntityItem entityItem = (EntityItem) event.entity;
+            double posX = entityItem.posX;
+            double posY = entityItem.posY;
+            double posZ = entityItem.posZ;
+
+            ItemStack itemStack = entityItem.getEntityItem();
+            String itemName = itemStack.getDisplayName();
+
+            System.out.println("EntityItem spawned at (" + posX + ", " + posY + ", " + posZ + ") with item name: " + itemName);
+        }
+    }
+
+    */
 }
