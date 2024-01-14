@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.command.IEntitySelector;
@@ -125,20 +126,32 @@ public class MixinChunk {
     @Unique
     private void optimizationsAndTweaks$clearEntityItems(Chunk chunk, int x, int z) {
         World world = chunk.worldObj;
+        System.out.println("Starting optimizationsAndTweaks$clearEntityItems for chunk (" + x + ", " + z + ")");
+
+        List<EntityItem> entitiesToRemove = new ArrayList<>();
+
         for (Object obj : world.loadedEntityList) {
             if (obj instanceof EntityItem) {
                 EntityItem entityItem = (EntityItem) obj;
                 int entityX = MathHelper.floor_double(entityItem.posX);
                 int entityZ = MathHelper.floor_double(entityItem.posZ);
+
+                System.out.println("Checking EntityItem: " + entityItem + " at (" + entityX + ", " + entityZ + ")");
+
                 if (entityX >= x * 16 && entityX < (x + 1) * 16 && entityZ >= z * 16 && entityZ < (z + 1) * 16) {
-                    System.out.println("EntityItem marked for removal by optimizationsAndTweaks$clearEntityItems: " + entityItem);
-                    world.removeEntity(entityItem);
-                    System.out.println("EntityItem removed 1 by optimizationsAndTweaks$clearEntityItems: " + entityItem);
+                    System.out.println("EntityItem marked for removal: " + entityItem);
+                    entitiesToRemove.add(entityItem);
                 }
             }
         }
-    }
 
+        for (EntityItem entity : entitiesToRemove) {
+            System.out.println("EntityItem removed: " + entity);
+            world.removeEntity(entity);
+        }
+
+        System.out.println("Finished optimizationsAndTweaks$clearEntityItems for chunk (" + x + ", " + z + ")");
+    }
     /**
      * @author
      * @reason
