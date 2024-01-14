@@ -119,17 +119,20 @@ public class MixinChunk {
             }
         }
     }
-    // Remove all EntityItem during initial chunk generation
-    // to prevent lags caused by a large amount of EntityItem on mod packs.
+    // Remove all EntityItem during initial chunk generation.
+    // to prevent lags caused by a large amount of EntityItem on mod packs at initial chunk loading.
+    // inspired by Tidy Chunk mod from 1.12.2.
     // todo remove all loggings/try and catch when i am sure that this method is work well
-    // todo fix seem to be doesn't work
+    // todo clear EntityItem after isTerrainPopulated and not before to remove again more EntityItem
     @Unique
-    private void optimizationsAndTweaks$clearEntityItems(Chunk chunk, int x, int z) {
+    private void optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(Chunk chunk) {
         World world = chunk.worldObj;
-        System.out.println("Starting optimizationsAndTweaks$clearEntityItems for chunk (" + x + ", " + z + ")");
+
+        if (chunk.isTerrainPopulated) {
+            return;
+        }
 
         List<EntityItem> entitiesToRemove = new ArrayList<>();
-
         for (Object obj : world.loadedEntityList) {
             if (obj instanceof EntityItem) {
                 EntityItem entityItem = (EntityItem) obj;
@@ -137,21 +140,15 @@ public class MixinChunk {
                 int entityZ = MathHelper.floor_double(entityItem.posZ);
 
                 System.out.println("Checking EntityItem: " + entityItem + " at (" + entityX + ", " + entityZ + ")");
-
-                if (entityX >= x * 16 && entityX < (x + 1) * 16 && entityZ >= z * 16 && entityZ < (z + 1) * 16) {
-                    System.out.println("EntityItem marked for removal: " + entityItem);
-                    entitiesToRemove.add(entityItem);
-                }
+                entitiesToRemove.add(entityItem);
             }
         }
-
         for (EntityItem entity : entitiesToRemove) {
-            System.out.println("EntityItem removed: " + entity);
             world.removeEntity(entity);
+            System.out.println("EntityItem removed: " + entity);
         }
-
-        System.out.println("Finished optimizationsAndTweaks$clearEntityItems for chunk (" + x + ", " + z + ")");
     }
+
     /**
      * @author
      * @reason
@@ -179,6 +176,6 @@ public class MixinChunk {
         {
             p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
         }
-        optimizationsAndTweaks$clearEntityItems(chunk, p_76624_3_, p_76624_4_);
+        optimizationsAndTweaks$clearEntityItemsAtInitialChunkload(chunk);
     }
 }
