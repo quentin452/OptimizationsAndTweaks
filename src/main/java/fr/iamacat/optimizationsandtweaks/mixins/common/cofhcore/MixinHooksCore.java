@@ -43,7 +43,7 @@ public class MixinHooksCore {
                 boolean validZ = validX && z >= -30000000 && z < 30000000;
 
                 if (world.blockExists(x, 64, z)) {
-                    int minYLoop = validZ ? minY - 1 : minY - 1;
+                    int minYLoop = minY - 1;
 
                     for (int y = minYLoop; y < maxY; ++y) {
                         Block block = validZ ? world.getBlock(x, y, z) : Blocks.bedrock;
@@ -55,5 +55,4 @@ public class MixinHooksCore {
 
         return collidingBoxes;
     }
-
 }
