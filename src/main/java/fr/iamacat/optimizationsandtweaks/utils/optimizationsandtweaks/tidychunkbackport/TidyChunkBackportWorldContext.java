@@ -78,27 +78,7 @@ public class TidyChunkBackportWorldContext {
         world.removeEntity(entity);
         ++this.removeCount;
     }
-    /*public boolean isContained(Entity entity) {
-        if (entity instanceof EntityItem && entity.isEntityAlive()) {
-            EntityItem item = (EntityItem) entity;
-            int posX = MathHelper.floor_double(item.posX);
-            int posZ = MathHelper.floor_double(item.posZ);
-            ChunkPos chunkPos = new ChunkPos(posX, posZ);
-            if (chunks.containsKey(chunkPos)) {
-                long timeAdded = chunks.get(chunkPos);
-                long currentTime = item.worldObj.getTotalWorldTime();
-                long maxTimeDifference = 100;
-                if (currentTime - timeAdded <= maxTimeDifference) {
-                    return true;
-                } else {
-                    removeChunkIfPresent(chunkPos);
-                }
-            }
-        }
-        return false;
-    }
-
-     */
+    
     // todo fix : Reason: Not in TidyChunk.
     public boolean isContained(@Nonnull final Entity entity) {
         if (entity instanceof EntityItem && entity.isEntityAlive()) {
@@ -113,13 +93,6 @@ public class TidyChunkBackportWorldContext {
         }
 
         return false;
-    }
-
-    private void removeChunkIfPresent(ChunkPos chunkPos) {
-        if (this.chunks.containsKey(chunkPos)) {
-            this.chunks.remove(chunkPos);
-            System.out.println("Chunk removed from the map");
-        }
     }
 }
 
