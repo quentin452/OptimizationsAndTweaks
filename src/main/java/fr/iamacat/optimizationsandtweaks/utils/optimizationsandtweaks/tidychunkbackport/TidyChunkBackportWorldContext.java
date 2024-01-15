@@ -38,7 +38,7 @@ public class TidyChunkBackportWorldContext {
                         removeEntity(itemEntity, world);
                     } else {
                         if (!isTargetEntity(itemEntity)) {
-                            // System.out.println("Reason: Not a target entity.");
+                            System.out.println("Reason: Not a target entity.");
                         }
                         if (!isContained(itemEntity)) {
                             System.out.println("Reason: Not in TidyChunk.");
