@@ -27,8 +27,6 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
-        EventHandler eventHandler = new EventHandler();
-        MinecraftForge.EVENT_BUS.register(eventHandler);
         if (FMLCommonHandler.instance()
             .findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
             File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");
@@ -44,10 +42,12 @@ public class OptimizationsAndTweaks {
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {}
-
-    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        EventHandler eventHandler = new EventHandler();
+        MinecraftForge.EVENT_BUS.register(eventHandler);
         MinecraftForge.EVENT_BUS.register(proxy);
     }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {}
 }
