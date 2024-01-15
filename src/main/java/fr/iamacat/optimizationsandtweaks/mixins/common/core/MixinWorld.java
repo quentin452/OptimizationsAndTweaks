@@ -889,8 +889,10 @@ public class MixinWorld {
     }
     @Inject(method="tick", at=@At(value="INVOKE"))
     private void onTickInject(CallbackInfo info) {
-        if(OptimizationsandTweaksConfig.enableTidyChunkBackport){
-        TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
+        // Check if TidyChunkBackport is enabled in the configuration
+        if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
+            // Call the injectInWorldTick method from the TidyChunkBackportEventHandler
+            TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
         }
     }
 }

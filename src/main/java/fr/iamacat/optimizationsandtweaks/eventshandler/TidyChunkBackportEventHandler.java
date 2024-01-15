@@ -3,11 +3,9 @@ package fr.iamacat.optimizationsandtweaks.eventshandler;
 import com.falsepattern.lib.compat.ChunkPos;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -23,8 +21,10 @@ public class TidyChunkBackportEventHandler {
     // Tidy Chunk Backport Version V0.1 (alpha)
     // todo Need bugfixes/optimizations/redundant code remover/Map Changer
 
+    // Map to store world contexts
     public static final Map<Integer, TidyChunkBackportWorldContext> worldData = new HashMap<>();
 
+    // Event handler for world unload
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onWorldUnload(WorldEvent.Unload evt) {
         World w = evt.world;
@@ -34,6 +34,7 @@ public class TidyChunkBackportEventHandler {
         }
     }
 
+    // Event handler for chunk population
     @SubscribeEvent
     public void onChunkPopulate(PopulateChunkEvent.Pre evt) {
         TidyChunkBackportWorldContext ctx = getWorldContext(evt.world);
@@ -41,6 +42,7 @@ public class TidyChunkBackportEventHandler {
         ctx.add(pos, evt.world);
     }
 
+    // Event handler for entity join world
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent evt) {
         Entity entity = evt.entity;
@@ -60,17 +62,20 @@ public class TidyChunkBackportEventHandler {
         }
     }
 
+    // Create a new world context if not exists
     private static TidyChunkBackportWorldContext createWorldContext(World w) {
         TidyChunkBackportWorldContext ctx;
         worldData.put(w.provider.dimensionId, ctx = new TidyChunkBackportWorldContext());
         return ctx;
     }
 
+    // Get the world context for a given world
     private static TidyChunkBackportWorldContext getWorldContext(World w) {
         TidyChunkBackportWorldContext ctx = worldData.get(w.provider.dimensionId);
         return ctx == null ? createWorldContext(w) : ctx;
     }
 
+    // Inject the tidy chunk logic in the world tick
     public static void injectInWorldTick(World world) {
         TidyChunkBackportWorldContext ctx = getWorldContext(world);
 

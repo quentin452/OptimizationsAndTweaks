@@ -6,29 +6,35 @@ import gnu.trove.iterator.TObjectLongIterator;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TidyChunkBackportWorldContext {
+
+    // Map to store the time when chunks were added
     public final TObjectLongHashMap<ChunkPos> chunks = new TObjectLongHashMap<>();
     private int removeCount = 0;
 
+    // Check if an entity is an EntityItem
     public static boolean isTargetEntity(@Nonnull final Entity e) {
         return EntityItem.class.isAssignableFrom(e.getClass());
     }
 
+    // Add a chunk to the map with the current world time
     public void add(ChunkPos pos, World world) {
         long currentTime = world.getTotalWorldTime();
         this.chunks.put(pos, currentTime);
     }
 
+    // Search for and remove EntityItems that meet certain criteria
     public void searchAndDestroy(@Nonnull final World world) {
         if (!this.chunks.isEmpty()) {
+            // Get the list of loaded entities in the world
             List loadedEntities = world.getLoadedEntityList();
 
             for (Object entityObject : loadedEntities) {
@@ -36,11 +42,13 @@ public class TidyChunkBackportWorldContext {
                     EntityItem itemEntity = (EntityItem) entityObject;
 
                     if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
+                        // Debug: Print removal message
                         if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger){
-                        System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
+                            System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
                         }
                         removeEntity(itemEntity, world);
                     } else {
+                        // Debug: Print reason if not in TidyChunk
                         if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger && (!isContained(itemEntity))) {
                             System.out.println("Reason: Not in TidyChunk. (" + itemEntity + ")");
                         }
@@ -54,31 +62,41 @@ public class TidyChunkBackportWorldContext {
         }
     }
 
+    // Remove old chunks based on configured tick span
     public void removeOldContext(World world) {
         int span = OptimizationsandTweaksConfig.TidyChunkBackportPostTick;
 
-        List<ChunkPos> chunksToRemove = new ArrayList<>();
+        // Create a list of chunks to remove
+        List<ChunkEntry> chunksToRemove = new ArrayList<>();
 
         TObjectLongHashMap<ChunkPos> tempMap = new TObjectLongHashMap<>(this.chunks);
 
+        // Filter chunks to remove
         for (TObjectLongIterator<ChunkPos> iterator = tempMap.iterator(); iterator.hasNext(); ) {
             iterator.advance();
             long time = iterator.value();
             if (world.getTotalWorldTime() - time > span) {
-                chunksToRemove.add(iterator.key());
+                chunksToRemove.add(new ChunkEntry(iterator.key(), time));
             }
         }
 
-        for (ChunkPos chunkPos : chunksToRemove) {
-            this.chunks.remove(chunkPos);
+        // Sort chunks to remove by time (oldest to newest)
+        chunksToRemove.sort(Comparator.comparingLong(ChunkEntry::getTime));
+
+        // Remove chunks in the order from oldest to newest
+        for (ChunkEntry entry : chunksToRemove) {
+            this.chunks.remove(entry.getChunkPos());
         }
     }
 
+    // Remove an entity from the world
     public void removeEntity(Entity entity, World world) {
         entity.setDead();
         world.removeEntity(entity);
         ++this.removeCount;
     }
+
+    // Check if an EntityItem is contained within a TidyChunk
     public boolean isContained(@Nonnull final Entity entity) {
         if (entity instanceof EntityItem && entity.isEntityAlive()) {
             EntityItem item = (EntityItem) entity;
@@ -92,4 +110,3 @@ public class TidyChunkBackportWorldContext {
         return false;
     }
 }
-
