@@ -52,14 +52,6 @@ public class TidyChunkBackportEventHandler {
 
         EntityItem itemEntity = (EntityItem) entity;
 
-        ItemStack itemStack = itemEntity.getEntityItem();
-        String itemName = itemStack.getUnlocalizedName();
-        if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger){
-        System.out.println("Item Name: " + itemName);
-        System.out.println("Spawn Position: (" + entity.posX + ", " + entity.posY + ", " + entity.posZ + ")");
-        System.out.println("Dimension: " + world.provider.getDimensionName());
-        }
-
         final TidyChunkBackportWorldContext ctx = getWorldContext(world);
 
         if (ctx.isContained(itemEntity)) {
