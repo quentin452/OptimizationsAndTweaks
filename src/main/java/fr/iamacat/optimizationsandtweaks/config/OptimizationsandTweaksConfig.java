@@ -1007,6 +1007,19 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUpdateCheckThreadCOFH;
+    @Config.Comment("Tidy Chunk Backport feature(EntityItem remover at first chunk generation to reduce tps lags)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableTidyChunkBackport;
+    @Config.Comment("Tidy Chunk Backport Number of ticks post chunk generation to check for EntityItems")
+    @Config.DefaultInt(10)
+    @Config.RangeInt(min = 0, max = 100)
+    @Config.RequiresWorldRestart
+    public static int TidyChunkBackportPostTick;
+    @Config.Comment("Tidy Chunk Backport debugger")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableTidyChunkBackportDebugger;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

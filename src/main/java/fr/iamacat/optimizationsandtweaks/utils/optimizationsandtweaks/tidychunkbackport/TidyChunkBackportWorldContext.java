@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport;
 
 import com.falsepattern.lib.compat.ChunkPos;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import gnu.trove.iterator.TObjectLongIterator;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import net.minecraft.entity.Entity;
@@ -35,10 +36,12 @@ public class TidyChunkBackportWorldContext {
                     EntityItem itemEntity = (EntityItem) entityObject;
 
                     if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
+                        if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger){
                         System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
+                        }
                         removeEntity(itemEntity, world);
                     } else {
-                        if (!isContained(itemEntity)) {
+                        if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger && (!isContained(itemEntity))) {
                             System.out.println("Reason: Not in TidyChunk. (" + itemEntity + ")");
                         }
                     }
@@ -52,7 +55,7 @@ public class TidyChunkBackportWorldContext {
     }
 
     public void removeOldContext(World world) {
-        int span = 100;
+        int span = OptimizationsandTweaksConfig.TidyChunkBackportPostTick;
 
         List<ChunkPos> chunksToRemove = new ArrayList<>();
 
@@ -76,7 +79,6 @@ public class TidyChunkBackportWorldContext {
         world.removeEntity(entity);
         ++this.removeCount;
     }
-    // todo fix : Reason: Not in TidyChunk.
     public boolean isContained(@Nonnull final Entity entity) {
         if (entity instanceof EntityItem && entity.isEntityAlive()) {
             EntityItem item = (EntityItem) entity;

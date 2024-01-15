@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -888,6 +889,8 @@ public class MixinWorld {
     }
     @Inject(method="tick", at=@At(value="INVOKE"))
     private void onTickInject(CallbackInfo info) {
+        if(OptimizationsandTweaksConfig.enableTidyChunkBackport){
         TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
+        }
     }
 }

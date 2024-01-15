@@ -43,8 +43,10 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
+        if(OptimizationsandTweaksConfig.enableTidyChunkBackport){
+            TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
         MinecraftForge.EVENT_BUS.register(eventHandler);
+        }
         MinecraftForge.EVENT_BUS.register(proxy);
     }
 
