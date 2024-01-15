@@ -5,6 +5,8 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -48,10 +50,19 @@ public class TidyChunkBackportEventHandler {
             return;
         }
 
+        EntityItem itemEntity = (EntityItem) entity;
+
+        ItemStack itemStack = itemEntity.getEntityItem();
+        String itemName = itemStack.getUnlocalizedName();
+
+        System.out.println("Item Name: " + itemName);
+        System.out.println("Spawn Position: (" + entity.posX + ", " + entity.posY + ", " + entity.posZ + ")");
+        System.out.println("Dimension: " + world.provider.getDimensionName());
+
         final TidyChunkBackportWorldContext ctx = getWorldContext(world);
 
-        if (ctx.isContained(entity)) {
-            ctx.removeEntity(entity,world);
+        if (ctx.isContained(itemEntity)) {
+            ctx.removeEntity(entity, world);
             evt.setCanceled(true);
         }
     }

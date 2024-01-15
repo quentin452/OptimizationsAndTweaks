@@ -34,20 +34,21 @@ public class TidyChunkBackportWorldContext {
                     EntityItem itemEntity = (EntityItem) entityObject;
 
                     if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
-                        System.out.println("Entity meets criteria, removing...");
+                        System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
                         removeEntity(itemEntity, world);
                     } else {
                         if (!isTargetEntity(itemEntity)) {
-                            System.out.println("Reason: Not a target entity.");
+                            System.out.println("Reason: Not a target entity. (" + itemEntity + ")");
                         }
                         if (!isContained(itemEntity)) {
-                            System.out.println("Reason: Not in TidyChunk.");
+                            System.out.println("Reason: Not in TidyChunk. (" + itemEntity + ")");
                         }
                     }
                 }
             }
 
             if (this.removeCount > 0) {
+                System.out.println("Total entities removed: " + this.removeCount);
                 this.removeCount = 0;
             }
         }
