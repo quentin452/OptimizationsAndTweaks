@@ -100,8 +100,8 @@ public enum Mixin implements IMixin {
         "core.MixinEntityAINearestAttackableTarget"),
     common_core_MixinEntityList(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityList,
         "core.MixinEntityList"),
-
-    common_core_MixinNBTTagCompound(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound,
+    common_core_MixinNBTTagCompound(Side.COMMON,
+        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound),
         "core.MixinNBTTagCompound"),
     common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
         "core.MixinEntityArrowAttack"),
