@@ -5,8 +5,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -19,6 +18,7 @@ public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.
     // To prevent lags caused by a large amount of EntityItem on mod packs.
     // Backport of Tidy Chunk mod from 1.12.2 to 1.7.10.
+    // Tidy Chunk Backport Version V0.1 (alpha)
 
     public static final Map<Integer, TidyChunkBackportWorldContext> worldData = new HashMap<>();
 
@@ -31,25 +31,12 @@ public class TidyChunkBackportEventHandler {
         }
     }
 
-    // onWorldUnload seem to not function correctly(never called) , so now we use injectInWorldTick which is work
-   /* @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onWorldTick(TickEvent.WorldTickEvent evt) {
-        System.out.println("World Tick Event in World " + evt.world.provider.dimensionId);
-        if (evt.phase == TickEvent.Phase.END) {
-            WorldContext ctx = getWorldContext(evt.world);
-            ctx.searchAndDestroy(evt.world);
-            ctx.removeOldContext(evt.world);
-        }
-    }
-
-    */
     @SubscribeEvent
     public void onChunkPopulate(PopulateChunkEvent.Pre evt) {
         TidyChunkBackportWorldContext ctx = getWorldContext(evt.world);
-        ChunkPosition pos = new ChunkPosition(evt.chunkX, 0, evt.chunkZ);
+        ChunkPos pos = new ChunkPos(evt.chunkX, evt.chunkZ);
         ctx.add(pos, evt.world);
     }
-
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent evt) {
         Entity entity = evt.entity;
@@ -62,7 +49,6 @@ public class TidyChunkBackportEventHandler {
         final TidyChunkBackportWorldContext ctx = getWorldContext(world);
 
         if (ctx.isContained(entity)) {
-            // this call does nothing, so probably need to add more prints statements
             ctx.removeEntity(entity,world);
             evt.setCanceled(true);
         }
