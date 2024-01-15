@@ -103,7 +103,7 @@ public class TidyChunkBackportWorldContext {
             int posX = MathHelper.floor_double(item.posX);
             int posZ = MathHelper.floor_double(item.posZ);
 
-            ChunkPos chunkPos = new ChunkPos(posX, posZ);
+            ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
 
             return this.chunks.containsKey(chunkPos);
         }
