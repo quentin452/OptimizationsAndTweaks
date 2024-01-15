@@ -57,7 +57,9 @@ public class TidyChunkBackportWorldContext {
 
         List<ChunkPos> chunksToRemove = new ArrayList<>();
 
-        for (TObjectLongIterator<ChunkPos> iterator = this.chunks.iterator(); iterator.hasNext(); ) {
+        TObjectLongHashMap<ChunkPos> tempMap = new TObjectLongHashMap<>(this.chunks);
+
+        for (TObjectLongIterator<ChunkPos> iterator = tempMap.iterator(); iterator.hasNext(); ) {
             iterator.advance();
             long time = iterator.value();
             if (world.getTotalWorldTime() - time > span) {
@@ -69,6 +71,7 @@ public class TidyChunkBackportWorldContext {
             this.chunks.remove(chunkPos);
         }
     }
+
     public void removeEntity(Entity entity, World world) {
         entity.setDead();
         world.removeEntity(entity);
