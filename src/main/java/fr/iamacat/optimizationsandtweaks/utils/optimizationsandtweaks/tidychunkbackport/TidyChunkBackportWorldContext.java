@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,9 +38,6 @@ public class TidyChunkBackportWorldContext {
                         System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
                         removeEntity(itemEntity, world);
                     } else {
-                        if (!isTargetEntity(itemEntity)) {
-                            System.out.println("Reason: Not a target entity. (" + itemEntity + ")");
-                        }
                         if (!isContained(itemEntity)) {
                             System.out.println("Reason: Not in TidyChunk. (" + itemEntity + ")");
                         }
@@ -48,11 +46,11 @@ public class TidyChunkBackportWorldContext {
             }
 
             if (this.removeCount > 0) {
-                System.out.println("Total entities removed: " + this.removeCount);
                 this.removeCount = 0;
             }
         }
     }
+
     public void removeOldContext(World world) {
         int span = 100;
 
@@ -78,18 +76,15 @@ public class TidyChunkBackportWorldContext {
         world.removeEntity(entity);
         ++this.removeCount;
     }
-    
     // todo fix : Reason: Not in TidyChunk.
     public boolean isContained(@Nonnull final Entity entity) {
         if (entity instanceof EntityItem && entity.isEntityAlive()) {
             EntityItem item = (EntityItem) entity;
-
-            int posX = MathHelper.floor_double(item.posX);
-            int posZ = MathHelper.floor_double(item.posZ);
-
-            ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
-
-            return this.chunks.containsKey(chunkPos);
+            Chunk chunk = item.worldObj.getChunkFromChunkCoords(item.chunkCoordX, item.chunkCoordZ);
+            if (chunk != null) {
+                ChunkPos chunkPos = new ChunkPos(item.chunkCoordX, item.chunkCoordZ);
+                return this.chunks.containsKey(chunkPos);
+            }
         }
 
         return false;

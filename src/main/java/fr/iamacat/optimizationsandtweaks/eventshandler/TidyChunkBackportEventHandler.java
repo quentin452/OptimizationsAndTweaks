@@ -6,8 +6,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -41,6 +39,7 @@ public class TidyChunkBackportEventHandler {
         ChunkPos pos = new ChunkPos(evt.chunkX, evt.chunkZ);
         ctx.add(pos, evt.world);
     }
+
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent evt) {
         Entity entity = evt.entity;
@@ -52,12 +51,14 @@ public class TidyChunkBackportEventHandler {
 
         EntityItem itemEntity = (EntityItem) entity;
 
-        ItemStack itemStack = itemEntity.getEntityItem();
+       /* ItemStack itemStack = itemEntity.getEntityItem();
         String itemName = itemStack.getUnlocalizedName();
 
         System.out.println("Item Name: " + itemName);
         System.out.println("Spawn Position: (" + entity.posX + ", " + entity.posY + ", " + entity.posZ + ")");
         System.out.println("Dimension: " + world.provider.getDimensionName());
+
+        */
 
         final TidyChunkBackportWorldContext ctx = getWorldContext(world);
 
