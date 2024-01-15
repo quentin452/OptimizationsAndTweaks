@@ -2,7 +2,7 @@ package fr.iamacat.optimizationsandtweaks;
 
 import java.io.File;
 
-import fr.iamacat.optimizationsandtweaks.eventshandler.EventHandler;
+import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -43,7 +43,7 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        EventHandler eventHandler = new EventHandler();
+        TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
         MinecraftForge.EVENT_BUS.register(eventHandler);
         MinecraftForge.EVENT_BUS.register(proxy);
     }

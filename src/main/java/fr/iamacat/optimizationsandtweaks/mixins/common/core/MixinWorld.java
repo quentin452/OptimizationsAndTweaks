@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -30,6 +31,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import com.google.common.collect.ImmutableSetMultimap;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = World.class, priority = 999)
 public class MixinWorld {
@@ -881,5 +885,9 @@ public class MixinWorld {
             }
         }
         return i;
+    }
+    @Inject(method="tick", at=@At(value="INVOKE"))
+    private void onTickInject(CallbackInfo info) {
+        TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
     }
 }
