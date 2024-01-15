@@ -18,7 +18,7 @@ public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.
     // To prevent lags caused by a large amount of EntityItem on mod packs.
     // Backport of Tidy Chunk mod from 1.12.2 to 1.7.10.
-    // Tidy Chunk Backport Version V0.1 (alpha)
+    // Tidy Chunk Backport Version V1.0 (stable)
     // todo Need bugfixes/optimizations/redundant code remover/Map Changer
 
     // Map to store world contexts
