@@ -66,9 +66,11 @@ public class MixinPatchSpawnerAnimals {
 
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(Block block, Block blockBelow, Block blockAbove) {
-        return block.getMaterial().isLiquid()
-            && blockBelow.getMaterial().isLiquid()
-            && !blockAbove.isNormalCube();
+        Material blockMaterial = block.getMaterial();
+        Material blockBelowMaterial = blockBelow.getMaterial();
+        boolean isNormalCubeAbove = blockAbove.isNormalCube();
+
+        return blockMaterial.isLiquid() && blockBelowMaterial.isLiquid() && !isNormalCubeAbove;
     }
 
     @Unique
