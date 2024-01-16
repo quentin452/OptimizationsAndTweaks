@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
@@ -38,6 +39,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = World.class, priority = 999)
 public class MixinWorld {
+    @Shadow
+    protected int updateLCG = (new Random()).nextInt();
+    @Shadow
+    public Random rand = new Random();
+
+    @Shadow
+    private int ambientTickCountdown;
 
     @Shadow
     public int skylightSubtracted;
@@ -893,6 +901,77 @@ public class MixinWorld {
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             // Call the injectInWorldTick method from the TidyChunkBackportEventHandler
             TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
+        }
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    protected void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_)
+    {
+        this.theProfiler.endStartSection("moodSound");
+
+        if (this.ambientTickCountdown == 0 && !this.isRemote)
+        {
+            this.updateLCG = this.updateLCG * 3 + 1013904223;
+            int k = this.updateLCG >> 2;
+            int l = k & 15;
+            int i1 = k >> 8 & 15;
+            int j1 = k >> 16 & 255;
+
+            if (p_147467_3_ != null && this.world != null)
+            {
+                Block block = p_147467_3_.getBlock(l, j1, i1);
+                l += p_147467_1_;
+                i1 += p_147467_2_;
+
+                if (block != null && (block.getMaterial() == Material.air &&
+                        this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8) &&
+                        this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0 &&
+                        this.world.provider != null))
+                    {
+                        EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
+
+                        if (entityplayer != null && entityplayer.worldObj != null &&
+                            entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D)
+                        {
+                            this.playSoundEffect(l + 0.5D, j1 + 0.5D, i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
+                            this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
+                        }
+
+                }
+            }
+        }
+        this.theProfiler.endStartSection("checkLight");
+        if (p_147467_3_ != null)
+        {
+            p_147467_3_.enqueueRelightChecks();
+        }
+    }
+    @Shadow
+    public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_)
+    {
+        if (p_72883_2_ < 0)
+        {
+            return 0;
+        }
+        else
+        {
+            if (p_72883_2_ >= 256)
+            {
+                p_72883_2_ = 255;
+            }
+
+            return this.getChunkFromChunkCoords(p_72883_1_ >> 4, p_72883_3_ >> 4).getBlockLightValue(p_72883_1_ & 15, p_72883_2_, p_72883_3_ & 15, 0);
+        }
+    }
+
+    @Overwrite
+    public void playSoundEffect(double x, double y, double z, String soundName, float volume, float pitch)
+    {
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).playSound(soundName, x, y, z, volume, pitch);
         }
     }
 }
