@@ -20,6 +20,7 @@ public class TidyChunkBackportEventHandler {
     // Backport of Tidy Chunk mod from 1.12.2 to 1.7.10.
     // Tidy Chunk Backport Version V1.0 (stable)
     // todo Need bugfixes/optimizations/redundant code remover/Map Changer
+    // todo prevent EntityItem to be dropped from the player if removeOldContext is not terminated
 
     // Map to store world contexts
     public static final Map<Integer, TidyChunkBackportWorldContext> worldData = new HashMap<>();
