@@ -188,6 +188,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
+    @Config.Comment("Tweak BlockBuildCraftFluid class from Buildcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockBuildCraftFluid;
     @Config.Comment("Optimize OilTweakEventHandler from Buildcraft oil Tweak addon")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
