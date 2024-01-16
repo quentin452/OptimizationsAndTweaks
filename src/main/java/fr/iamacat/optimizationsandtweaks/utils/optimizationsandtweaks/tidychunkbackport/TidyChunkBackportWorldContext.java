@@ -22,7 +22,7 @@ public class TidyChunkBackportWorldContext {
 
     // Check if an entity is an EntityItem
     public static boolean isTargetEntity(@Nonnull final Entity e) {
-        return EntityItem.class.isAssignableFrom(e.getClass());
+        return e instanceof EntityItem;
     }
 
     // Add a chunk to the map with the current world time
@@ -34,31 +34,33 @@ public class TidyChunkBackportWorldContext {
     // Search for and remove EntityItems that meet certain criteria
     public void searchAndDestroy(@Nonnull final World world) {
         if (!this.chunks.isEmpty()) {
-            // Get the list of loaded entities in the world
-            List loadedEntities = world.getLoadedEntityList();
+            List<EntityItem> entitiesToRemove = new ArrayList<>();
 
-            for (Object entityObject : loadedEntities) {
+            for (Object entityObject : world.loadedEntityList) {
                 if (entityObject instanceof EntityItem) {
                     EntityItem itemEntity = (EntityItem) entityObject;
 
                     if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
-                        // Debug: Print removal message
-                        if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger){
-                            System.out.println("Entity meets criteria, removing... (" + itemEntity + ")");
-                        }
-                        removeEntity(itemEntity, world);
-                    } else {
-                        // Debug: Print reason if not in TidyChunk
-                        if(OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger && (!isContained(itemEntity))) {
-                            System.out.println("Reason: Not in TidyChunk. (" + itemEntity + ")");
-                        }
+                        entitiesToRemove.add(itemEntity);
                     }
                 }
             }
 
-            if (this.removeCount > 0) {
-                this.removeCount = 0;
+            removeEntities(entitiesToRemove, world);
+        }
+    }
+
+    private void removeEntities(List<EntityItem> entities, World world) {
+        for (EntityItem entity : entities) {
+            if (OptimizationsandTweaksConfig.enableTidyChunkBackportDebugger) {
+                System.out.println("Entity meets criteria, removing... (" + entity + ")");
             }
+
+            removeEntity(entity, world);
+        }
+
+        if (this.removeCount > 0) {
+            this.removeCount = 0;
         }
     }
 
