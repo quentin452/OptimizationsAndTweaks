@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.noise;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -12,9 +13,9 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
     // ATTENTION IT BREAK VANILLA SEED PARITY
 
     /** Collection of noise generation functions. Output is combined to produce different octaves of noise. */
-    private NoiseGeneratorImprovedMultithread[] generatorCollection;
-    private int octaves;
-    private ExecutorService executor;
+    private final NoiseGeneratorImprovedMultithread[] generatorCollection;
+    private final int octaves;
+    private final ExecutorService executor;
 
     public NoiseGeneratorOctavesMultithread(Random p_i2111_1_, int p_i2111_2_) {
         this.octaves = p_i2111_2_;
@@ -39,28 +40,26 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
         if (p_76304_1_ == null) {
             p_76304_1_ = new double[p_76304_5_ * p_76304_6_ * p_76304_7_];
         } else {
-            for (int k1 = 0; k1 < p_76304_1_.length; ++k1) {
-                p_76304_1_[k1] = 0.0D;
-            }
+            Arrays.fill(p_76304_1_, 0.0D);
         }
 
         double d6 = 1.0D;
 
-        CompletableFuture<Void>[] futures = new CompletableFuture[octaves];
+        CompletableFuture[] futures = new CompletableFuture[octaves];
 
         for (int l1 = 0; l1 < this.octaves; ++l1) {
             final int octave = l1;
-            double d3 = (double) p_76304_2_ * d6 * p_76304_8_;
-            double d4 = (double) p_76304_3_ * d6 * p_76304_10_;
-            double d5 = (double) p_76304_4_ * d6 * p_76304_12_;
+            double d3 = p_76304_2_ * d6 * p_76304_8_;
+            double d4 = p_76304_3_ * d6 * p_76304_10_;
+            double d5 = p_76304_4_ * d6 * p_76304_12_;
             long i2 = MathHelper.floor_double_long(d3);
             long j2 = MathHelper.floor_double_long(d5);
-            d3 -= (double) i2;
-            d5 -= (double) j2;
+            d3 -= i2;
+            d5 -= j2;
             i2 %= 16777216L;
             j2 %= 16777216L;
-            d3 += (double) i2;
-            d5 += (double) j2;
+            d3 += i2;
+            d5 += j2;
 
             double[] finalP_76304_1_ = p_76304_1_;
             double finalD = d3;

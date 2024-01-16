@@ -6,7 +6,7 @@ public class NoiseGeneratorImprovedMultithread {
 
     // multithreading not enabled due to Height bug
     // todo fixme
-    private int[] permutations;
+    private final int[] permutations;
     public double xCoord;
     public double yCoord;
     public double zCoord;
@@ -33,7 +33,6 @@ public class NoiseGeneratorImprovedMultithread {
         int i;
 
         for (i = 0; i < 256; this.permutations[i] = i++) {
-            ;
         }
 
         for (i = 0; i < 256; ++i) {
@@ -79,41 +78,37 @@ public class NoiseGeneratorImprovedMultithread {
         int j6;
 
         if (p_76308_9_ == 1) {
-            boolean flag7 = false;
-            boolean flag8 = false;
-            boolean flag = false;
-            boolean flag9 = false;
-            double d21 = 0.0D;
-            double d22 = 0.0D;
+            double d21;
+            double d22;
             k5 = 0;
             double d23 = 1.0D / p_76308_17_;
 
             for (int j1 = 0; j1 < p_76308_8_; ++j1) {
-                d9 = p_76308_2_ + (double) j1 * p_76308_11_ + this.xCoord;
+                d9 = p_76308_2_ + j1 * p_76308_11_ + this.xCoord;
                 int i6 = (int) d9;
 
-                if (d9 < (double) i6) {
+                if (d9 < i6) {
                     --i6;
                 }
 
                 int k1 = i6 & 255;
-                d9 -= (double) i6;
+                d9 -= i6;
                 d11 = d9 * d9 * d9 * (d9 * (d9 * 6.0D - 15.0D) + 10.0D);
 
                 for (l1 = 0; l1 < p_76308_10_; ++l1) {
-                    d12 = p_76308_6_ + (double) l1 * p_76308_15_ + this.zCoord;
+                    d12 = p_76308_6_ + l1 * p_76308_15_ + this.zCoord;
                     i2 = (int) d12;
 
-                    if (d12 < (double) i2) {
+                    if (d12 < i2) {
                         --i2;
                     }
 
                     j2 = i2 & 255;
-                    d12 -= (double) i2;
+                    d12 -= i2;
                     d13 = d12 * d12 * d12 * (d12 * (d12 * 6.0D - 15.0D) + 10.0D);
-                    l = this.permutations[k1] + 0;
+                    l = this.permutations[k1];
                     int i4 = this.permutations[l] + j2;
-                    int j4 = this.permutations[k1 + 1] + 0;
+                    int j4 = this.permutations[k1 + 1];
                     i1 = this.permutations[j4] + j2;
                     d21 = this.lerp(
                         d11,
@@ -132,51 +127,45 @@ public class NoiseGeneratorImprovedMultithread {
             l = 0;
             double d7 = 1.0D / p_76308_17_;
             i1 = -1;
-            boolean flag1 = false;
-            boolean flag2 = false;
-            boolean flag3 = false;
-            boolean flag4 = false;
-            boolean flag5 = false;
-            boolean flag6 = false;
             double d8 = 0.0D;
             d9 = 0.0D;
             double d10 = 0.0D;
             d11 = 0.0D;
 
             for (l1 = 0; l1 < p_76308_8_; ++l1) {
-                d12 = p_76308_2_ + (double) l1 * p_76308_11_ + this.xCoord;
+                d12 = p_76308_2_ + l1 * p_76308_11_ + this.xCoord;
                 i2 = (int) d12;
 
-                if (d12 < (double) i2) {
+                if (d12 < i2) {
                     --i2;
                 }
 
                 j2 = i2 & 255;
-                d12 -= (double) i2;
+                d12 -= i2;
                 d13 = d12 * d12 * d12 * (d12 * (d12 * 6.0D - 15.0D) + 10.0D);
 
                 for (int k2 = 0; k2 < p_76308_10_; ++k2) {
-                    double d14 = p_76308_6_ + (double) k2 * p_76308_15_ + this.zCoord;
+                    double d14 = p_76308_6_ + k2 * p_76308_15_ + this.zCoord;
                     int l2 = (int) d14;
 
-                    if (d14 < (double) l2) {
+                    if (d14 < l2) {
                         --l2;
                     }
 
                     int i3 = l2 & 255;
-                    d14 -= (double) l2;
+                    d14 -= l2;
                     double d15 = d14 * d14 * d14 * (d14 * (d14 * 6.0D - 15.0D) + 10.0D);
 
                     for (int j3 = 0; j3 < p_76308_9_; ++j3) {
-                        double d16 = p_76308_4_ + (double) j3 * p_76308_13_ + this.yCoord;
+                        double d16 = p_76308_4_ + j3 * p_76308_13_ + this.yCoord;
                         int k3 = (int) d16;
 
-                        if (d16 < (double) k3) {
+                        if (d16 < k3) {
                             --k3;
                         }
 
                         int l3 = k3 & 255;
-                        d16 -= (double) k3;
+                        d16 -= k3;
                         double d17 = d16 * d16 * d16 * (d16 * (d16 * 6.0D - 15.0D) + 10.0D);
 
                         if (j3 == 0 || l3 != i1) {

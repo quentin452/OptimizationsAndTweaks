@@ -11,11 +11,11 @@ public class NoiseGeneratorSimplexMultithread {
     private final ExecutorService executorService = Executors.newFixedThreadPool(
         Runtime.getRuntime()
             .availableProcessors());
-    private static int[][] field_151611_e = new int[][] { { 1, 1, 0 }, { -1, 1, 0 }, { 1, -1, 0 }, { -1, -1, 0 },
+    private static final int[][] field_151611_e = new int[][] { { 1, 1, 0 }, { -1, 1, 0 }, { 1, -1, 0 }, { -1, -1, 0 },
         { 1, 0, 1 }, { -1, 0, 1 }, { 1, 0, -1 }, { -1, 0, -1 }, { 0, 1, 1 }, { 0, -1, 1 }, { 0, 1, -1 },
         { 0, -1, -1 } };
     public static final double field_151614_a = Math.sqrt(3.0D);
-    private int[] field_151608_f;
+    private final int[] field_151608_f;
     public double field_151612_b;
     public double field_151613_c;
     public double field_151610_d;
@@ -34,7 +34,6 @@ public class NoiseGeneratorSimplexMultithread {
         int i;
 
         for (i = 0; i < 256; this.field_151608_f[i] = i++) {
-            ;
         }
 
         for (i = 0; i < 256; ++i) {
@@ -51,7 +50,7 @@ public class NoiseGeneratorSimplexMultithread {
     }
 
     private static double func_151604_a(int[] p_151604_0_, double p_151604_1_, double p_151604_3_) {
-        return (double) p_151604_0_[0] * p_151604_1_ + (double) p_151604_0_[1] * p_151604_3_;
+        return p_151604_0_[0] * p_151604_1_ + p_151604_0_[1] * p_151604_3_;
     }
 
     public double func_151605_a(double p_151605_1_, double p_151605_3_) {
@@ -60,9 +59,9 @@ public class NoiseGeneratorSimplexMultithread {
         int i = func_151607_a(p_151605_1_ + d6);
         int j = func_151607_a(p_151605_3_ + d6);
         double d7 = (3.0D - field_151614_a) / 6.0D;
-        double d8 = (double) (i + j) * d7;
-        double d9 = (double) i - d8;
-        double d10 = (double) j - d8;
+        double d8 = i * d7 + j * d7;
+        double d9 = i - d8;
+        double d10 = j - d8;
         double d11 = p_151605_1_ - d9;
         double d12 = p_151605_3_ - d10;
         byte b0;
@@ -76,8 +75,8 @@ public class NoiseGeneratorSimplexMultithread {
             b1 = 1;
         }
 
-        double d13 = d11 - (double) b0 + d7;
-        double d14 = d12 - (double) b1 + d7;
+        double d13 = d11 - b0 + d7;
+        double d14 = d12 - b1 + d7;
         double d15 = d11 - 1.0D + 2.0D * d7;
         double d16 = d12 - 1.0D + 2.0D * d7;
         int k = i & 255;
@@ -119,22 +118,22 @@ public class NoiseGeneratorSimplexMultithread {
     }
 
     public void func_151606_a(double[] p_151606_1_, double p_151606_2_, double p_151606_4_, int p_151606_6_,
-        int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
+                              int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
 
         Future<?>[] futures = new Future[p_151606_7_];
 
         for (int l = 0; l < p_151606_7_; ++l) {
             int finalL = l;
             futures[l] = executorService.submit(() -> {
-                double d5 = (p_151606_4_ + (double) finalL) * p_151606_10_ + this.field_151613_c;
+                double d5 = (p_151606_4_ + finalL) * p_151606_10_ + this.field_151613_c;
                 for (int i1 = 0; i1 < p_151606_6_; ++i1) {
-                    double d6 = (p_151606_2_ + (double) i1) * p_151606_8_ + this.field_151612_b;
+                    double d6 = (p_151606_2_ + i1) * p_151606_8_ + this.field_151612_b;
                     double d10 = (d6 + d5) * field_151609_g;
                     int j1 = func_151607_a(d6 + d10);
                     int k1 = func_151607_a(d5 + d10);
-                    double d11 = (double) (j1 + k1) * field_151615_h;
-                    double d12 = (double) j1 - d11;
-                    double d13 = (double) k1 - d11;
+                    double d11 = (j1 + k1) * field_151615_h;
+                    double d12 = j1 - d11;
+                    double d13 = k1 - d11;
                     double d14 = d6 - d12;
                     double d15 = d5 - d13;
                     byte b0;
@@ -148,8 +147,8 @@ public class NoiseGeneratorSimplexMultithread {
                         b1 = 1;
                     }
 
-                    double d16 = d14 - (double) b0 + field_151615_h;
-                    double d17 = d15 - (double) b1 + field_151615_h;
+                    double d16 = d14 - b0 + field_151615_h;
+                    double d17 = d15 - b1 + field_151615_h;
                     double d18 = d14 - 1.0D + 2.0D * field_151615_h;
                     double d19 = d15 - 1.0D + 2.0D * field_151615_h;
                     int k = j1 & 255;
@@ -193,7 +192,6 @@ public class NoiseGeneratorSimplexMultithread {
             });
         }
 
-        // Wait for all threads to finish
         for (Future<?> future : futures) {
             try {
                 future.get();
