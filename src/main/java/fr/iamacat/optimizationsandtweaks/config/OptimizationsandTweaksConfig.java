@@ -892,6 +892,21 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinNetherWorldGenGanys;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by ObsidianChestGenerator Class from SGS Treasure mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinObsidianChestGenerator;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by PlansProcessor Class from SGS Treasure mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPlansProcessor;
+
+    @Config.Comment("Fix Some Cascading Worldgen caused by WorldUtilSGSTREASURE Class from SGS Treasure mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldUtilSGSTREASURE;
     @Config.Comment("Rewrite MythicAndMonster generator to use RecurrentComplex(need recurent complex installed)(The mixin will be injected only if Recurrent Complex is installed")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -165,6 +165,7 @@ public enum TargetedMod implements ITargetedMod {
     COROUTIL("coroutil", false, startsWith("coroutil")),
     ZOMBIEAWARENESS("zombieawareness", false, startsWith("zombieawareness")),
     ANIMALSPLUS("animalsPlus", false, startsWith("animalsPlus")),
+    SGSTREASURE("Treasure", false, startsWith("Treasure")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;
