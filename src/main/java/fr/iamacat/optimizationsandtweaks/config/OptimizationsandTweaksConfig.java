@@ -80,7 +80,7 @@ public class OptimizationsandTweaksConfig {
     public static int numberofcpus;
     @Config.Comment("Batch size ,if you have tps issues try lowering or highering the batch size.")
     @Config.DefaultInt(150)
-    @Config.RangeInt(min = 1, max = 1000)
+    @Config.RangeInt(min = 1, max = 100)
     @Config.RequiresWorldRestart
     public static int batchsize;
     @Config.Comment("Optimize MixinEntitySquid class")
