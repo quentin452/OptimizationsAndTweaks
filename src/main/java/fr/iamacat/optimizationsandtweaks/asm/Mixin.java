@@ -371,7 +371,7 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntityAnimal"),
 
     common_core_biomes_MixinBiomeGenBase(Side.COMMON,
-        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase),
+        avoid(TargetedMod.DRAGONAPI).and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase)),
         "core.biomes.MixinBiomeGenBase"),
     common_core_MixinChunkProviderGenerate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderGenerate,
         "core.MixinChunkProviderGenerate"),

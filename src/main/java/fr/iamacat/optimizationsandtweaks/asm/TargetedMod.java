@@ -166,6 +166,7 @@ public enum TargetedMod implements ITargetedMod {
     ZOMBIEAWARENESS("zombieawareness", false, startsWith("zombieawareness")),
     ANIMALSPLUS("animalsPlus", false, startsWith("animalsPlus")),
     SGSTREASURE("Treasure", false, startsWith("Treasure")),
+    ALFHEIM("Alfheim", false, startsWith("Alfheim")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;
