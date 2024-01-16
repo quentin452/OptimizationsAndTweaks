@@ -18,7 +18,7 @@ public class EntityItemSpawningEventHandler {
 
             World world = itemEntity.worldObj;
 
-            if (world != null && !world.isRemote) {
+            if (world != null && !world.isRemote && OptimizationsandTweaksConfig.enableEntityItemSpawningDebugger) {
                 ItemStack itemStack = itemEntity.getEntityItem();
                 String itemName = itemStack.getUnlocalizedName();
 
