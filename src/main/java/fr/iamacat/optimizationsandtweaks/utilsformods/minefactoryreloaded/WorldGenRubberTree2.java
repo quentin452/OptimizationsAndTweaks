@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import org.spongepowered.asm.mixin.Unique;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 
 import java.util.ArrayList;
@@ -52,5 +53,30 @@ public class WorldGenRubberTree2 {
 
     private boolean canPlaceLeaf(Random rand) {
         return rand.nextFloat() < 0.9f;
+    }
+    @Unique
+    public static int optimizationsAndTweaks$getSurfaceBlockY(World world, int x, int z) {
+        int y = world.getHeight();
+
+        Block block;
+        Chunk chunk;
+        do {
+            --y;
+            if (y < 0) {
+                break;
+            }
+
+            int chunkX = x >> 4;
+            int chunkZ = z >> 4;
+
+            if (!world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
+                break;
+            }
+
+            chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
+            block = chunk.getBlock(x & 15, y, z & 15);
+        } while (block.isAir(world, x, y, z) || block.isReplaceable(world, x, y, z) || block.isLeaves(world, x, y, z) || block.isFoliage(world, x, y, z) || block.canBeReplacedByLeaves(world, x, y, z));
+
+        return y;
     }
 }

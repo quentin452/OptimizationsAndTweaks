@@ -13,6 +13,9 @@ import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
 
 import java.util.Random;
+
+import static fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2.optimizationsAndTweaks$getSurfaceBlockY;
+
 @Mixin(WorldGenRubberTree.class)
 public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 
@@ -25,7 +28,7 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         int numAttempts = 4;
 
         for (int attempt = 0; attempt < numAttempts; ++attempt) {
-            int surfaceY = BlockHelper.getSurfaceBlockY(world, x, z);
+            int surfaceY = optimizationsAndTweaks$getSurfaceBlockY(world, x, z);
 
             if (surfaceY > 0) {
                 int xOffset = (attempt == 0) ? x : x + rand.nextInt(16) - 8;
