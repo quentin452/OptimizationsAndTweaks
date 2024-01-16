@@ -182,17 +182,17 @@ public class MixinPatchSpawnerAnimals {
         int i = 0;
         int maxSpawnAttempts = 3;
 
-        float offsetX;
-        float offsetY;
-        float offsetZ;
+        float spawnX = 0.0F;
+        float spawnY = 0.0F;
+        float offsetX, offsetY, offsetZ;
 
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
             int y = chunkPosition.chunkPosY + world.rand.nextInt(1) - world.rand.nextInt(1);
             int z = chunkPosition.chunkPosZ + world.rand.nextInt(6) - world.rand.nextInt(6);
 
-            float spawnX = x + 0.5F;
-            float spawnY = z + 0.5F;
+            spawnX = x + 0.5F;
+            spawnY = z + 0.5F;
 
             offsetX = spawnX - (float) spawnPoint.posX;
             offsetY = y - (float) spawnPoint.posY;
@@ -201,33 +201,47 @@ public class MixinPatchSpawnerAnimals {
             float distanceSquared = offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ;
 
             if (distanceSquared >= 576.0F && canCreatureTypeSpawnAtLocation(creatureType, world, x, y, z) && (world.getClosestPlayer(spawnX, (float) y, spawnY, 24.0D) == null)) {
-                    if (i >= maxSpawnAttempts) {
-                        break;
+                BiomeGenBase.SpawnListEntry spawnListEntry = world.spawnRandomCreature(creatureType, x, y, z);
+                if (spawnListEntry != null) {
+                    EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
+
+                    assert entityLiving != null;
+                    entityLiving.setLocationAndAngles(spawnX, (float) y, spawnY, world.rand.nextFloat() * 360.0F, 0.0F);
+
+                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnY);
+                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+                        i++;
                     }
-
-                    BiomeGenBase.SpawnListEntry spawnListEntry = world.spawnRandomCreature(creatureType, x, y, z);
-                    if (spawnListEntry != null) {
-                        EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
-
-                        assert entityLiving != null;
-                        entityLiving.setLocationAndAngles(spawnX, (float) y, spawnY, world.rand.nextFloat() * 360.0F, 0.0F);
-
-                        Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnY);
-                        if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
-                            i++;
-                            world.spawnEntityInWorld(entityLiving);
-                            if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, (float) y, spawnY)) {
-                                entityLiving.onSpawnWithEgg(null);
-                            }
-                            if (i >= ForgeEventFactory.getMaxSpawnPackSize(entityLiving)) {
-                                break;
-                            }
-                        }
-                    }
+                }
             }
         }
 
+        if (i > 0) {
+            optimizationsAndTweaks$spawnEntities(world, creatureType, spawnX, spawnY, i);
+        }
+
         return i;
+    }
+    @Unique
+    private void optimizationsAndTweaks$spawnEntities(WorldServer world, EnumCreatureType creatureType, float spawnX, float spawnY, int count) {
+        for (int j = 0; j < count; j++) {
+            BiomeGenBase.SpawnListEntry spawnListEntry = world.spawnRandomCreature(creatureType, (int) spawnX, (int) spawnY, (int) spawnX);
+            if (spawnListEntry != null) {
+                EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
+
+                assert entityLiving != null;
+                entityLiving.setLocationAndAngles(spawnX, spawnY, spawnX, world.rand.nextFloat() * 360.0F, 0.0F);
+
+                world.spawnEntityInWorld(entityLiving);
+
+                Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnX);
+                if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+                    if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnX)) {
+                        entityLiving.onSpawnWithEgg(null);
+                    }
+                }
+            }
+        }
     }
 
     @Unique
