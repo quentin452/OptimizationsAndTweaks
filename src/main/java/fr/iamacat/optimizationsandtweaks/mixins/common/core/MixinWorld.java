@@ -908,7 +908,7 @@ public class MixinWorld {
      * @reason
      */
     @Overwrite
-    protected void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_)
+    public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_)
     {
         this.theProfiler.endStartSection("moodSound");
 
