@@ -116,13 +116,10 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
         int z = position[2];
 
         if (y >= 0 && y < 256) {
-            Block block = this.worldObj.getBlock(x, y, z);
+            Chunk chunk = worldObj.getChunkFromBlockCoords(x, z);
+            Block block = chunk.getBlock(x & 15, y, z & 15);
 
-            if (block != null) {
-                if (block.isAir(this.worldObj, x, y, z) || block == ConfigBlocks.blockMagicalLeaves) {
-                    return true;
-                }
-            }
+            return block != null && (block.isAir(this.worldObj, x, y, z) || block == ConfigBlocks.blockMagicalLeaves);
         }
 
         return false;
@@ -458,7 +455,6 @@ public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
     @Overwrite(remap = false)
     void placeBlockLine(int[] par1ArrayOfInteger, int[] par2ArrayOfInteger, Block par3) {
         int[] var4 = new int[] { 0, 0, 0 };
-        byte var5 = 0;
         byte var6 = optimizationsAndTweaks$findLargestDifference(par1ArrayOfInteger, par2ArrayOfInteger, var4);
 
         if (var4[var6] != 0) {
