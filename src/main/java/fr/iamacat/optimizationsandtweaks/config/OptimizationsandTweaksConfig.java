@@ -1021,7 +1021,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableTidyChunkBackport;
     @Config.Comment("Tidy Chunk Backport Number of ticks post chunk generation to check for EntityItems , 20 tick = 1 seconde")
-    @Config.DefaultInt(80)
+    @Config.DefaultInt(50)
     @Config.RangeInt(min = 0, max = 1000)
     @Config.RequiresWorldRestart
     public static int TidyChunkBackportPostTick;
