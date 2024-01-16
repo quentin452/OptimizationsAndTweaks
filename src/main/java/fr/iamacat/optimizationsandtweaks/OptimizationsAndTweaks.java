@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks;
 
 import java.io.File;
 
+import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -46,6 +47,10 @@ public class OptimizationsAndTweaks {
         if(OptimizationsandTweaksConfig.enableTidyChunkBackport){
             TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
         MinecraftForge.EVENT_BUS.register(eventHandler);
+        }
+        if(OptimizationsandTweaksConfig.enableEntityItemSpawningDebugger){
+            EntityItemSpawningEventHandler eventHandler = new EntityItemSpawningEventHandler();
+            MinecraftForge.EVENT_BUS.register(eventHandler);
         }
         MinecraftForge.EVENT_BUS.register(proxy);
     }

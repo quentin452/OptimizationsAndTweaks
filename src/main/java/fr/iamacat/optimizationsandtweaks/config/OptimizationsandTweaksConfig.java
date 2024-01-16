@@ -1020,6 +1020,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableTidyChunkBackportDebugger;
+
+    @Config.Comment("EntityItem Spawning debugger")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableEntityItemSpawningDebugger;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })
