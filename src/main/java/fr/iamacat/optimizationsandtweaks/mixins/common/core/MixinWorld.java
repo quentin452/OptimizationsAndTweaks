@@ -883,17 +883,11 @@ public class MixinWorld {
      * @reason
      */
     @Overwrite
-    public int countEntities(Class p_72907_1_)
-    {
-        int i = 0;
-        for (Object o : this.loadedEntityList) {
-            Entity entity = (Entity) o;
-
-            if ((!(entity instanceof EntityLiving) || !((EntityLiving) entity).isNoDespawnRequired()) && p_72907_1_.isAssignableFrom(entity.getClass())) {
-                ++i;
-            }
-        }
-        return i;
+    public int countEntities(Class<?> entityClass) {
+        return (int) loadedEntityList.stream()
+            .filter(entity -> !((entity instanceof EntityLiving) && ((EntityLiving) entity).isNoDespawnRequired())
+                && entityClass.isAssignableFrom(entity.getClass()))
+            .count();
     }
     @Inject(method="tick", at=@At(value="INVOKE"))
     private void onTickInject(CallbackInfo info) {
