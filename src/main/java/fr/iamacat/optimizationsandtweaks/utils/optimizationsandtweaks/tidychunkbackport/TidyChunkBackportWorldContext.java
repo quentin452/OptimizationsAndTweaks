@@ -100,11 +100,8 @@ public class TidyChunkBackportWorldContext {
     public boolean isContained(@Nonnull final Entity entity) {
         if (entity instanceof EntityItem && entity.isEntityAlive()) {
             EntityItem item = (EntityItem) entity;
-            Chunk chunk = item.worldObj.getChunkFromChunkCoords(item.chunkCoordX, item.chunkCoordZ);
-            if (chunk != null) {
-                ChunkPos chunkPos = new ChunkPos(item.chunkCoordX, item.chunkCoordZ);
-                return this.chunks.containsKey(chunkPos);
-            }
+            ChunkPos chunkPos = new ChunkPos(item.chunkCoordX, item.chunkCoordZ);
+            return this.chunks.containsKey(chunkPos);
         }
 
         return false;
