@@ -94,9 +94,10 @@ public abstract class MixinBlockBuildCraftFluid extends BlockFluidClassic {
         onBlockDestroyedByExplosion(world, x, y, z, explosion);
     }
 
-    @Shadow
+    @Overwrite
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        if (!dense || entity == null) {
+        if(entity.isBurning()) entity.extinguish();
+        if (!dense) {
             return;
         }
 
@@ -116,14 +117,22 @@ public abstract class MixinBlockBuildCraftFluid extends BlockFluidClassic {
         return 0;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
-        return flammability;
+        return 0;
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite(remap = false)
     public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
-        return flammable;
+        return false;
     }
 
     @Overwrite(remap = false)
