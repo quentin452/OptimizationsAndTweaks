@@ -439,46 +439,52 @@ public abstract class MixinWorldServer extends World {
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
-        ChunkCoordIntPair chunkCoord = p_72920_1_.getChunkCoordIntPair();
+    public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean removeEntries) {
+        ChunkCoordIntPair chunkCoord = chunk.getChunkCoordIntPair();
         int minX = (chunkCoord.chunkXPos << 4) - 2;
         int maxX = minX + 16 + 2;
         int minZ = (chunkCoord.chunkZPos << 4) - 2;
         int maxZ = minZ + 16 + 2;
 
-        List<NextTickListEntry> list = new ArrayList<>();
-        Iterator<Object> iterator = this.pendingTickListEntriesTreeSet.iterator();
-        while (iterator.hasNext()) {
-            Object obj = iterator.next();
+        List<NextTickListEntry> filteredList = new ArrayList<>();
+        Set<Object> entriesToRemove = new HashSet<>();
+
+        for (Object obj : this.pendingTickListEntriesTreeSet) {
             if (obj instanceof NextTickListEntry) {
-                NextTickListEntry nextticklistentry = (NextTickListEntry) obj;
-                if (nextticklistentry.xCoord >= minX && nextticklistentry.xCoord < maxX
-                    && nextticklistentry.zCoord >= minZ
-                    && nextticklistentry.zCoord < maxZ) {
-                    list.add(nextticklistentry);
-                    if (p_72920_2_) {
-                        iterator.remove();
+                NextTickListEntry entry = (NextTickListEntry) obj;
+                if (optimizationsAndTweaks$isEntryWithinBounds(entry, minX, maxX, minZ, maxZ)) {
+                    filteredList.add(entry);
+                    if (removeEntries) {
+                        entriesToRemove.add(obj);
                     }
                 }
             }
         }
 
-        if (!p_72920_2_ && OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
-            for (NextTickListEntry entry : list) {
-                System.out.println(
-                    "Block present at (" + entry.xCoord
-                        + ", "
-                        + entry.yCoord
-                        + ", "
-                        + entry.zCoord
-                        + ") "
-                        + "UnlocalizedName: "
-                        + entry.func_151351_a()
-                            .getUnlocalizedName());
-            }
+        if (removeEntries) {
+            this.pendingTickListEntriesTreeSet.removeAll(entriesToRemove);
         }
 
-        return list;
+        if (!removeEntries && OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
+            optimizationsAndTweaks$printDebugInfo(filteredList);
+        }
+
+        return filteredList;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isEntryWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ, int maxZ) {
+        return entry.xCoord >= minX && entry.xCoord < maxX
+            && entry.zCoord >= minZ
+            && entry.zCoord < maxZ;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$printDebugInfo(List<NextTickListEntry> entries) {
+        for (NextTickListEntry entry : entries) {
+            System.out.println("Block present at (" + entry.xCoord + ", " + entry.yCoord + ", " + entry.zCoord + ") " +
+                "UnlocalizedName: " + entry.func_151351_a().getUnlocalizedName());
+        }
     }
 
     /**
