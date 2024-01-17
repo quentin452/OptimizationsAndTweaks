@@ -67,17 +67,13 @@ public class TidyChunkBackportWorldContext {
     public void removeOldContext(World world) {
         int span = OptimizationsandTweaksConfig.TidyChunkBackportPostTick;
         long currentTime = world.getTotalWorldTime();
-        List<ChunkPos> chunksToRemove = new ArrayList<>();
-        TObjectLongIterator<ChunkPos> iterator = this.chunks.iterator();
-        while (iterator.hasNext()) {
+        TObjectLongHashMap<ChunkPos> copy = new TObjectLongHashMap<>(this.chunks);
+        for (TObjectLongIterator<ChunkPos> iterator = copy.iterator(); iterator.hasNext(); ) {
             iterator.advance();
             long time = iterator.value();
             if (currentTime - time > span) {
-                chunksToRemove.add(iterator.key());
+                this.chunks.remove(iterator.key());
             }
-        }
-        for (ChunkPos chunkPos : chunksToRemove) {
-            this.chunks.remove(chunkPos);
         }
     }
 
