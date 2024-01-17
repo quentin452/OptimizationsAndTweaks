@@ -824,9 +824,13 @@ public enum Mixin implements IMixin {
         "core.MixinPatchSpawnerAnimals"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
-    client_core_MixinEntityRenderer(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.FASTCRAFT))
-        .and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer), "core.MixinEntityRenderer"),
-    client_core_MixinModelRenderer(Side.CLIENT,
+    client_core_MixinEntityRenderer(
+        Side.CLIENT,
+        avoid(TargetedMod.OPTIFINE)
+            .and(avoid(TargetedMod.FASTCRAFT))
+            .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer)),
+        "core.MixinEntityRenderer"
+    ),    client_core_MixinModelRenderer(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE)
             .and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
         "core.MixinModelRenderer"),
