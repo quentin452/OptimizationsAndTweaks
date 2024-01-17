@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import cofh.thermalexpansion.block.cache.BlockCache;
 import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
