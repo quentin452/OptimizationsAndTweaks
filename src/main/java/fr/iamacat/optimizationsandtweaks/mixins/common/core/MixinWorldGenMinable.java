@@ -26,17 +26,32 @@ public class MixinWorldGenMinable extends WorldGenerator {
     @Shadow
     private int mineableBlockMeta;
 
+    @Unique
+    private static final int SIN_COS_PRECISION = 360;
+    @Unique
+    private static final float[] SIN_TABLE = new float[SIN_COS_PRECISION];
+    @Unique
+    private static final float[] COS_TABLE = new float[SIN_COS_PRECISION];
+
+    static {
+        for (int i = 0; i < SIN_COS_PRECISION; i++) {
+            float angle = (float) Math.toRadians(i);
+            SIN_TABLE[i] = MathHelper.sin(angle);
+            COS_TABLE[i] = MathHelper.cos(angle);
+        }
+    }
+
     /**
      * @author iamacatfr
-     * @reason reducing tps lags during worldgen
+     * @reason reducing TPS lags during worldgen
      */
     @Overwrite
     public boolean generate(World world, Random random, int x, int y, int z) {
         float f = random.nextFloat() * (float) Math.PI;
-        double d0 = x + 8 + MathHelper.sin(f) * numberOfBlocks / 8.0f;
-        double d1 = x + 8 - MathHelper.sin(f) * numberOfBlocks / 8.0f;
-        double d2 = z + 8 + MathHelper.cos(f) * numberOfBlocks / 8.0f;
-        double d3 = z + 8 - MathHelper.cos(f) * numberOfBlocks / 8.0f;
+        double d0 = x + 8 + SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
+        double d1 = x + 8 - SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
+        double d2 = z + 8 + COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
+        double d3 = z + 8 - COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
         double d4 = y + random.nextInt(3) - 2;
         double d5 = y + random.nextInt(3) - 2;
 
@@ -52,8 +67,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
             double d7 = d4 + (d5 - d4) * l / numberOfBlocks;
             double d8 = d2 + (d3 - d2) * l / numberOfBlocks;
             double d9 = random.nextDouble() * numberOfBlocks / 16.0D;
-            double d10 = (MathHelper.sin(l * (float) Math.PI / numberOfBlocks) + 1.0f) * d9 + 1.0D;
-            double d11 = (MathHelper.sin(l * (float) Math.PI / numberOfBlocks) + 1.0f) * d9 + 1.0D;
+            double d10 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
+            double d11 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
 
             optimizationsAndTweaks$generateEllipseLayer(world, d6, d7, d8, d10, d11);
         }
