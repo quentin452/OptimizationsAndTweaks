@@ -67,27 +67,16 @@ public class TidyChunkBackportWorldContext {
     // Remove old chunks based on configured tick span
     public void removeOldContext(World world) {
         int span = OptimizationsandTweaksConfig.TidyChunkBackportPostTick;
+        long currentTime = world.getTotalWorldTime();
 
-        // Create a list of chunks to remove
-        List<ChunkEntry> chunksToRemove = new ArrayList<>();
+        TObjectLongIterator<ChunkPos> iterator = this.chunks.iterator();
 
-        TObjectLongHashMap<ChunkPos> tempMap = new TObjectLongHashMap<>(this.chunks);
-
-        // Filter chunks to remove
-        for (TObjectLongIterator<ChunkPos> iterator = tempMap.iterator(); iterator.hasNext(); ) {
+        while (iterator.hasNext()) {
             iterator.advance();
             long time = iterator.value();
-            if (world.getTotalWorldTime() - time > span) {
-                chunksToRemove.add(new ChunkEntry(iterator.key(), time));
+            if (currentTime - time > span) {
+                iterator.remove();
             }
-        }
-
-        // Sort chunks to remove by time (oldest to newest)
-        chunksToRemove.sort(Comparator.comparingLong(ChunkEntry::getTime));
-
-        // Remove chunks in the order from oldest to newest
-        for (ChunkEntry entry : chunksToRemove) {
-            this.chunks.remove(entry.getChunkPos());
         }
     }
 
