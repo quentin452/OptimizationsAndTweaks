@@ -513,10 +513,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIFollowParent;
-    @Config.Comment("Optimize EnumCreatureType Class")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEnumCreatureType;
     @Config.Comment("Optimize EntityMob Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

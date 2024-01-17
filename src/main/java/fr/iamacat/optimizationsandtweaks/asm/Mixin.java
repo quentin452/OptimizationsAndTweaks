@@ -396,8 +396,6 @@ public enum Mixin implements IMixin {
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
     common_core_MixinEntityMob(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityMob, "core.MixinEntityMob"),
-    common_core_MixinEnumCreatureType(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEnumCreatureType, "core.MixinEnumCreatureType"),
     common_jewelrycraft2_MixinEntityEventHandler(Side.COMMON,
         require(TargetedMod.JEWELRYCRAFT2).and(m -> OptimizationsandTweaksConfig.enableMixinEntityEventHandler),
         "jewelrycraft2.MixinEntityEventHandler"),
