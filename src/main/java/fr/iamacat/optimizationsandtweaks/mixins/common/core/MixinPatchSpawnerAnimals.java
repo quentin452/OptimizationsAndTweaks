@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import cofh.thermalexpansion.block.cache.BlockCache;
 import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
@@ -16,10 +17,6 @@ import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -44,7 +41,6 @@ public class MixinPatchSpawnerAnimals {
 
     @Unique
     private Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
-
     /**
      * @author iamacatfr
      * @reason greatly reduce TPS lags on VoidWorld and more
@@ -115,10 +111,11 @@ public class MixinPatchSpawnerAnimals {
         EnumCreatureType[] creatureTypes = EnumCreatureType.values();
         for (EnumCreatureType creatureType : creatureTypes) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
-                List<ChunkCoordIntPair> eligibleChunks = new ArrayList<>(optimizationsAndTweaks$eligibleChunksForSpawning.keySet());
-                Collections.shuffle(eligibleChunks);
-
-                spawnedEntities += optimizationsAndTweaks$spawnEntitiesInChunks(world, creatureType, eligibleChunks, spawnPoint);
+                for (Object chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning.keySet()) {
+                    if (Boolean.FALSE.equals(optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkCoord))) {
+                        spawnedEntities += optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordIntPair) chunkCoord, spawnPoint);
+                    }
+                }
             }
         }
 
@@ -168,19 +165,6 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private int optimizationsAndTweaks$spawnEntitiesInChunks(WorldServer world, EnumCreatureType creatureType, List<ChunkCoordIntPair> eligibleChunks, ChunkCoordinates spawnPoint) {
-        int spawnedEntities = 0;
-
-        for (ChunkCoordIntPair chunkCoord : eligibleChunks) {
-            if (Boolean.FALSE.equals(optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkCoord))) {
-                spawnedEntities += optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, chunkCoord, spawnPoint);
-            }
-        }
-
-        return spawnedEntities;
-    }
-
-    @Unique
     private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordIntPair chunkCoord, ChunkCoordinates spawnPoint) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
 
@@ -189,9 +173,9 @@ public class MixinPatchSpawnerAnimals {
 
         float spawnX = 0.0F;
         float spawnY = 0.0F;
-        float offsetX;
-        float offsetY;
-        float offsetZ;
+
+        BiomeGenBase.SpawnListEntry spawnListEntry = null;
+        EntityLiving entityLiving = null;
 
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
@@ -201,24 +185,18 @@ public class MixinPatchSpawnerAnimals {
             spawnX = x + 0.5F;
             spawnY = z + 0.5F;
 
-            offsetX = spawnX - (float) spawnPoint.posX;
-            offsetY = y - (float) spawnPoint.posY;
-            offsetZ = spawnY - (float) spawnPoint.posZ;
+            float offsetX = spawnX - (float) spawnPoint.posX;
+            float offsetY = y - (float) spawnPoint.posY;
+            float offsetZ = spawnY - (float) spawnPoint.posZ;
 
             float distanceSquared = offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ;
 
-            if (distanceSquared >= 576.0F && canCreatureTypeSpawnAtLocation(creatureType, world, x, y, z) && (world.getClosestPlayer(spawnX, (float) y, spawnY, 24.0D) == null)) {
-                BiomeGenBase.SpawnListEntry spawnListEntry = world.spawnRandomCreature(creatureType, x, y, z);
-                if (spawnListEntry != null) {
-                    EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
+            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, (float) y, spawnY, distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, (float) y, spawnY)) {
+                spawnListEntry = optimizationsAndTweaks$getOrCreateSpawnListEntry(creatureType, world, x, y, z, spawnListEntry);
+                entityLiving = optimizationsAndTweaks$getOrCreateEntityLiving(world, spawnListEntry, entityLiving);
 
-                    assert entityLiving != null;
-                    entityLiving.setLocationAndAngles(spawnX, (float) y, spawnY, world.rand.nextFloat() * 360.0F, 0.0F);
-
-                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnY);
-                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
-                        i++;
-                    }
+                if (entityLiving != null) {
+                    i += optimizationsAndTweaks$trySpawnEntity(world, spawnX, (float) y, spawnY, entityLiving);
                 }
             }
         }
@@ -229,6 +207,47 @@ public class MixinPatchSpawnerAnimals {
 
         return i;
     }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isSpawnLocationValid(EnumCreatureType creatureType, World world, float spawnX, float spawnY, float spawnZ, float distanceSquared) {
+        return distanceSquared >= 576.0F && canCreatureTypeSpawnAtLocation(creatureType, world, (int) spawnX, (int) spawnY, (int) spawnZ);
+    }
+    @Unique
+    private boolean optimizationsAndTweaks$isPlayerCloseEnough(World world, float spawnX, float spawnY, float spawnZ) {
+        return world.getClosestPlayer(spawnX, spawnY, spawnZ, 24.0D) == null;
+    }
+    @Unique
+    private BiomeGenBase.SpawnListEntry optimizationsAndTweaks$getOrCreateSpawnListEntry(EnumCreatureType creatureType, World world, int x, int y, int z, BiomeGenBase.SpawnListEntry spawnListEntry) {
+        if (spawnListEntry == null) {
+            WorldServer worldServer = (WorldServer) world;
+            return worldServer.spawnRandomCreature(creatureType, x, y, z);
+        }
+        return spawnListEntry;
+    }
+    @Unique
+    private EntityLiving optimizationsAndTweaks$getOrCreateEntityLiving(WorldServer world, BiomeGenBase.SpawnListEntry spawnListEntry, EntityLiving entityLiving) {
+        if (entityLiving == null && spawnListEntry != null) {
+            entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
+        }
+        return entityLiving;
+    }
+    @Unique
+    private int optimizationsAndTweaks$trySpawnEntity(WorldServer world, float spawnX, float spawnY, float spawnZ, EntityLiving entityLiving) {
+        entityLiving.setLocationAndAngles(spawnX, spawnY, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
+
+        Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnZ);
+        if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+            world.spawnEntityInWorld(entityLiving);
+
+            if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnZ)) {
+                entityLiving.onSpawnWithEgg(null);
+            }
+
+            return 1;
+        }
+        return 0;
+    }
+
 
     @Unique
     private void optimizationsAndTweaks$spawnEntities(WorldServer world, EnumCreatureType creatureType, float spawnX, float spawnY, int count) {
