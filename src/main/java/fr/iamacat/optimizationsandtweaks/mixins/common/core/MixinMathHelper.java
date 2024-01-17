@@ -13,8 +13,8 @@ import java.util.Random;
 @Mixin(MathHelper.class)
 public class MixinMathHelper {
 
-    @Shadow
-    private static float[] SIN_TABLE = new float[65536];
+    @Unique
+    private static float[] SIN_TABLE2 = new float[65536];
     @Unique
     private static final float optimizationsAndTweaks$PI = (float) Math.PI;
 
@@ -34,7 +34,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float sin(float p_76126_0_) {
-        return SIN_TABLE[(int) (p_76126_0_ * 10430.378F) & 65535];
+        return SIN_TABLE2[(int) (p_76126_0_ * 10430.378F) & 65535];
     }
 
     /**
@@ -42,7 +42,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float cos(float p_76134_0_) {
-        return SIN_TABLE[(int) (p_76134_0_ * 10430.378F + 16384.0F) & 65535];
+        return SIN_TABLE2[(int) (p_76134_0_ * 10430.378F + 16384.0F) & 65535];
     }
     /**
      * @author
@@ -50,7 +50,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float sqrt_float(float p_76129_0_) {
-        return (float) StrictMath.sqrt(p_76129_0_);
+        return (float) Math.sqrt(p_76129_0_);
     }
 
     /**
@@ -59,7 +59,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static float sqrt_double(double p_76133_0_) {
-        return (float) StrictMath.sqrt(p_76133_0_);
+        return (float) Math.sqrt(p_76133_0_);
     }
     /**
      * Returns the greatest integer less than or equal to the float argument
@@ -85,7 +85,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static int floor_double(double p_76128_0_) {
-        return (int) StrictMath.floor(p_76128_0_);
+        return (int) Math.floor(p_76128_0_);
     }
 
     /**
@@ -93,7 +93,7 @@ public class MixinMathHelper {
      */
     @Overwrite
     public static long floor_double_long(double p_76124_0_) {
-        return (long) StrictMath.floor(p_76124_0_);
+        return (long) Math.floor(p_76124_0_);
     }
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -402,7 +402,7 @@ public class MixinMathHelper {
     }
     static {
         for (int var0 = 0; var0 < 65536; ++var0) {
-            SIN_TABLE[var0] = (float) StrictMath.sin(var0 * optimizationsAndTweaks$PI * 2.0D / 65536.0D);
+            SIN_TABLE2[var0] = (float) Math.sin(var0 * optimizationsAndTweaks$PI * 2.0D / 65536.0D);
         }
 
         multiplyDeBruijnBitPosition = new int[]{0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};
