@@ -215,12 +215,22 @@ public abstract class MixinWorldServer extends World {
     @Unique
     private void optimizationsAndTweaks$updateTickBlocks(Chunk chunk, int k, int l) {
         for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray()) {
-            if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
-                for (int i3 = 0; i3 < 3; ++i3) {
-                    optimizationsAndTweaks$updateSingleBlockTick(extendedblockstorage, k, l);
-                }
+            optimizationsAndTweaks$processBlockStorage(extendedblockstorage, k, l);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$processBlockStorage(ExtendedBlockStorage extendedblockstorage, int k, int l) {
+        if (optimizationsAndTweaks$isBlockStorageValid(extendedblockstorage)) {
+            for (int i3 = 0; i3 < 3; ++i3) {
+                optimizationsAndTweaks$updateSingleBlockTick(extendedblockstorage, k, l);
             }
         }
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isBlockStorageValid(ExtendedBlockStorage extendedblockstorage) {
+        return extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick();
     }
 
     @Unique
