@@ -5,6 +5,7 @@ import net.minecraft.world.gen.NoiseGeneratorImproved;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(NoiseGeneratorImproved.class)
 public class MixinNoiseGeneratorImproved  extends NoiseGenerator {
@@ -33,28 +34,17 @@ public class MixinNoiseGeneratorImproved  extends NoiseGenerator {
     @Overwrite
     public void populateNoiseArray(double[] p_76308_1_, double p_76308_2_, double p_76308_4_, double p_76308_6_, int p_76308_8_, int p_76308_9_, int p_76308_10_, double p_76308_11_, double p_76308_13_, double p_76308_15_, double p_76308_17_)
     {
-        int l;
-        int i1;
-        double d9;
-        double d11;
-        int l1;
-        double d12;
-        int i2;
-        int j2;
-        double d13;
-        int k5;
-        int j6;
-
         if (p_76308_9_ == 1)
         {
-            populateNoiseArraysub1(p_76308_1_, p_76308_2_, p_76308_6_,  p_76308_8_, p_76308_10_, p_76308_11_, p_76308_15_, p_76308_17_);
+            optimizationsAndTweaks$populateNoiseArraysub1(p_76308_1_, p_76308_2_, p_76308_6_,  p_76308_8_, p_76308_10_, p_76308_11_, p_76308_15_, p_76308_17_);
         }
         else
         {
-            populateNoiseArraysub2(p_76308_1_, p_76308_2_, p_76308_4_, p_76308_6_,  p_76308_8_, p_76308_9_, p_76308_10_, p_76308_11_, p_76308_13_, p_76308_15_, p_76308_17_);
+            optimizationsAndTweaks$populateNoiseArraysub2(p_76308_1_, p_76308_2_, p_76308_4_, p_76308_6_,  p_76308_8_, p_76308_9_, p_76308_10_, p_76308_11_, p_76308_13_, p_76308_15_, p_76308_17_);
         }
     }
-    public void populateNoiseArraysub1(double[] p_76308_1_, double p_76308_2_, double p_76308_6_, int p_76308_8_, int p_76308_10_, double p_76308_11_, double p_76308_15_, double p_76308_17_)
+    @Unique
+    public void optimizationsAndTweaks$populateNoiseArraysub1(double[] p_76308_1_, double p_76308_2_, double p_76308_6_, int p_76308_8_, int p_76308_10_, double p_76308_11_, double p_76308_15_, double p_76308_17_)
     {
         int l;
         int i1;
@@ -111,7 +101,8 @@ public class MixinNoiseGeneratorImproved  extends NoiseGenerator {
                 }
             }
         }
-    public void populateNoiseArraysub2(double[] p_76308_1_, double p_76308_2_, double p_76308_4_, double p_76308_6_, int p_76308_8_, int p_76308_9_, int p_76308_10_, double p_76308_11_, double p_76308_13_, double p_76308_15_, double p_76308_17_)
+    @Unique
+    public void optimizationsAndTweaks$populateNoiseArraysub2(double[] p_76308_1_, double p_76308_2_, double p_76308_4_, double p_76308_6_, int p_76308_8_, int p_76308_9_, int p_76308_10_, double p_76308_11_, double p_76308_13_, double p_76308_15_, double p_76308_17_)
     {
         {
             int l;
