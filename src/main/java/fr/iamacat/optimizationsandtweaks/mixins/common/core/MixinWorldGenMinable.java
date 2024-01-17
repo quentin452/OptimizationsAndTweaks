@@ -11,6 +11,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(WorldGenMinable.class)
 public class MixinWorldGenMinable extends WorldGenerator {
@@ -39,6 +40,13 @@ public class MixinWorldGenMinable extends WorldGenerator {
         double d4 = y + random.nextInt(3) - 2;
         double d5 = y + random.nextInt(3) - 2;
 
+        optimizationsAndTweaks$generateEllipse(world, random, d0, d1, d2, d3, d4, d5);
+
+        return true;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double d0, double d1, double d2, double d3, double d4, double d5) {
         for (int l = 0; l <= numberOfBlocks; ++l) {
             double d6 = d0 + (d1 - d0) * l / numberOfBlocks;
             double d7 = d4 + (d5 - d4) * l / numberOfBlocks;
@@ -47,26 +55,39 @@ public class MixinWorldGenMinable extends WorldGenerator {
             double d10 = (MathHelper.sin(l * (float) Math.PI / numberOfBlocks) + 1.0f) * d9 + 1.0D;
             double d11 = (MathHelper.sin(l * (float) Math.PI / numberOfBlocks) + 1.0f) * d9 + 1.0D;
 
-            for (int k2 = MathHelper.floor_double(d6 - d10 / 2.0D); k2 <= MathHelper.floor_double(d6 + d10 / 2.0D); ++k2) {
-                double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
+            optimizationsAndTweaks$generateEllipseLayer(world, d6, d7, d8, d10, d11);
+        }
+    }
 
-                for (int l2 = MathHelper.floor_double(d7 - d11 / 2.0D); l2 <= MathHelper.floor_double(d7 + d11 / 2.0D); ++l2) {
-                    double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
+    @Unique
+    private void optimizationsAndTweaks$generateEllipseLayer(World world, double d6, double d7, double d8, double d10, double d11) {
+        for (int k2 = MathHelper.floor_double(d6 - d10 / 2.0D); k2 <= MathHelper.floor_double(d6 + d10 / 2.0D); ++k2) {
+            double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
 
-                    for (int i3 = MathHelper.floor_double(d8 - d10 / 2.0D); i3 <= MathHelper.floor_double(d8 + d10 / 2.0D); ++i3) {
-                        double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
+            for (int l2 = MathHelper.floor_double(d7 - d11 / 2.0D); l2 <= MathHelper.floor_double(d7 + d11 / 2.0D); ++l2) {
+                double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
 
-                        if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D) {
-                            Block block = world.getBlock(k2, l2, i3);
-                            if (block.isReplaceableOreGen(world, k2, l2, i3, field_150518_c)) {
-                                world.setBlock(k2, l2, i3, field_150519_a, mineableBlockMeta, 2);
-                            }
-                        }
+                for (int i3 = MathHelper.floor_double(d8 - d10 / 2.0D); i3 <= MathHelper.floor_double(d8 + d10 / 2.0D); ++i3) {
+                    double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
+
+                    if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
+                        optimizationsAndTweaks$replaceBlockIfReplaceable(world, k2, l2, i3);
                     }
                 }
             }
         }
+    }
 
-        return true;
+    @Unique
+    private boolean optimizationsAndTweaks$isInsideEllipse(double d12, double d13, double d14) {
+        return d12 * d12 + d13 * d13 + d14 * d14 < 1.0D;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$replaceBlockIfReplaceable(World world, int x, int y, int z) {
+        Block block = world.getBlock(x, y, z);
+        if (block.isReplaceableOreGen(world, x, y, z, field_150518_c)) {
+            world.setBlock(x, y, z, field_150519_a, mineableBlockMeta, 2);
+        }
     }
 }
