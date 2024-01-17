@@ -77,11 +77,22 @@ public class MixinEntityRegistererOreSpiders {
             3,
             4,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry
             .registerGlobalEntityID(EntityDiamondSpider.class, "DiamondSpider", entityId, blackColour, lightBlueColour);
         EntityRegistry.addSpawn(
@@ -90,11 +101,22 @@ public class MixinEntityRegistererOreSpiders {
             2,
             4,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry.registerGlobalEntityID(
             EntityObsidianSpider.class,
             "ObsidianSpider",
@@ -107,11 +129,22 @@ public class MixinEntityRegistererOreSpiders {
             2,
             4,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry
             .registerGlobalEntityID(EntityEmeraldSpider.class, "EmeraldSpider", entityId, blackColour, greenishColour);
         EntityRegistry.addSpawn(
@@ -120,7 +153,8 @@ public class MixinEntityRegistererOreSpiders {
             3,
             4,
             EnumCreatureType.monster,
-                BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsEdge);
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge);
         EntityRegistry
             .registerGlobalEntityID(EntityIronSpider.class, "IronSpider", entityId, blackColour, grayishIronishColour);
         EntityRegistry.addSpawn(
@@ -129,20 +163,25 @@ public class MixinEntityRegistererOreSpiders {
             4,
             5,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry
             .registerGlobalEntityID(EntityEnderSpider.class, "EnderSpider", entityId, blackColour, enderColour);
-        EntityRegistry.addSpawn(
-            EntityEnderSpider.class,
-            20,
-            2,
-            4,
-            EnumCreatureType.monster,
-                BiomeGenEnd.sky);
+        EntityRegistry.addSpawn(EntityEnderSpider.class, 20, 2, 4, EnumCreatureType.monster, BiomeGenEnd.sky);
         EntityRegistry
             .registerGlobalEntityID(EntityGoldSpider.class, "GoldSpider", entityId, blackColour, goldishColour);
         EntityRegistry.addSpawn(
@@ -151,24 +190,29 @@ public class MixinEntityRegistererOreSpiders {
             5,
             6,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry.registerGlobalEntityID(
             EntityQuartzSpider.class,
             "NetherQuartzSpider",
             entityId,
             blackColour,
             netherQuartzColour);
-        EntityRegistry.addSpawn(
-            EntityQuartzSpider.class,
-            20,
-            4,
-            4,
-            EnumCreatureType.monster,
-                BiomeGenEnd.hell);
+        EntityRegistry.addSpawn(EntityQuartzSpider.class, 20, 4, 4, EnumCreatureType.monster, BiomeGenEnd.hell);
         EntityRegistry
             .registerGlobalEntityID(EntityLapisSpider.class, "LapisSpider", entityId, blackColour, lapisishColour);
         EntityRegistry.addSpawn(
@@ -177,11 +221,22 @@ public class MixinEntityRegistererOreSpiders {
             3,
             4,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry
             .registerGlobalEntityID(EntityRedstoneSpider.class, "RedstoneSpider", entityId, blackColour, redishColour);
         EntityRegistry.addSpawn(
@@ -190,11 +245,22 @@ public class MixinEntityRegistererOreSpiders {
             4,
             5,
             EnumCreatureType.monster,
-                BiomeGenBase.desert, BiomeGenBase.desertHills, BiomeGenBase.extremeHills,
-                BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.frozenOcean,
-                BiomeGenBase.frozenRiver, BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungle,
-                BiomeGenBase.jungleHills, BiomeGenBase.plains, BiomeGenBase.swampland, BiomeGenBase.taiga,
-                BiomeGenBase.taigaHills);
+            BiomeGenBase.desert,
+            BiomeGenBase.desertHills,
+            BiomeGenBase.extremeHills,
+            BiomeGenBase.extremeHillsEdge,
+            BiomeGenBase.forest,
+            BiomeGenBase.forestHills,
+            BiomeGenBase.frozenOcean,
+            BiomeGenBase.frozenRiver,
+            BiomeGenBase.iceMountains,
+            BiomeGenBase.icePlains,
+            BiomeGenBase.jungle,
+            BiomeGenBase.jungleHills,
+            BiomeGenBase.plains,
+            BiomeGenBase.swampland,
+            BiomeGenBase.taiga,
+            BiomeGenBase.taigaHills);
         EntityRegistry
             .registerGlobalEntityID(EntityQueenSpider.class, "QueenSpider", entityId, blackColour, muckyGreenColour);
         EntityRegistry.registerModEntity(

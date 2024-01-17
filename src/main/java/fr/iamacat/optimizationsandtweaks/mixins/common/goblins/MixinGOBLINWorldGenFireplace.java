@@ -1,15 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.goblins;
 
-import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenFireplaceTwo;
-import goblin.*;
+import java.util.Random;
+
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Random;
+import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenFireplaceTwo;
+import goblin.*;
 
 @Mixin(GOBLINWorldGenFireplace.class)
 public class MixinGOBLINWorldGenFireplace {
+
     /**
      * @author
      * @reason

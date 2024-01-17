@@ -1,14 +1,16 @@
 package fr.iamacat.optimizationsandtweaks.eventshandler;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+
 public class EntityItemSpawningEventHandler {
+
     @SubscribeEvent
     public void onEntityJoin(EntityJoinWorldEvent evt) {
         Entity entity = evt.entity;

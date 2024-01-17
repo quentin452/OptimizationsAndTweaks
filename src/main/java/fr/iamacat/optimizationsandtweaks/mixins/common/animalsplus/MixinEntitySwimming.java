@@ -1,7 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.animalsplus;
 
-import clickme.animals.entity.water.EntitySwimming;
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -9,12 +7,17 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import clickme.animals.entity.water.EntitySwimming;
+import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
+
 @Mixin(EntitySwimming.class)
 public abstract class MixinEntitySwimming extends EntityLiving implements IAnimals {
+
     @Shadow
     private double swimTargetX;
     @Shadow
@@ -57,13 +60,18 @@ public abstract class MixinEntitySwimming extends EntityLiving implements IAnima
             double dz = this.swimTargetZ - this.posZ;
             double dist = MathHelper.sqrt_double(dx * dx + dy * dy + dz * dz);
             if (dist < 1.0 || dist > 1000.0) {
-                this.swimTargetX = this.posX + (double)((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadius);
-                this.swimTargetY = this.posY + (double)((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadiusHeight);
-                this.swimTargetZ = this.posZ + (double)((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadius);
+                this.swimTargetX = this.posX + (double) ((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadius);
+                this.swimTargetY = this.posY + (double) ((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadiusHeight);
+                this.swimTargetZ = this.posZ + (double) ((this.rand.nextFloat() * 2.0F - 1.0F) * this.swimRadius);
                 this.isAttacking = false;
             }
 
-            if (this.worldObj.getBlock(MathHelper.floor_double(this.swimTargetX), MathHelper.floor_double(this.swimTargetY + (double)this.height), MathHelper.floor_double(this.swimTargetZ)).getMaterial() == Material.water) {
+            if (this.worldObj
+                .getBlock(
+                    MathHelper.floor_double(this.swimTargetX),
+                    MathHelper.floor_double(this.swimTargetY + (double) this.height),
+                    MathHelper.floor_double(this.swimTargetZ))
+                .getMaterial() == Material.water) {
                 this.motionX += dx / dist * 0.05 * this.swimSpeed;
                 this.motionY += dy / dist * 0.1 * this.swimSpeed;
                 this.motionZ += dz / dist * 0.05 * this.swimSpeed;
@@ -89,10 +97,12 @@ public abstract class MixinEntitySwimming extends EntityLiving implements IAnima
                 }
             }
 
-            this.renderYawOffset += (-((float)FastMath.atan2(this.motionY, this.motionZ)) * 180.0F / 3.1415927F - this.renderYawOffset) * 0.5F;
+            this.renderYawOffset += (-((float) FastMath.atan2(this.motionY, this.motionZ)) * 180.0F / 3.1415927F
+                - this.renderYawOffset) * 0.5F;
             this.rotationYaw = this.renderYawOffset;
             float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
-            this.rotationPitch += ((float) FastMath.atan2(this.motionY, f) * 180.0F / 3.1415927F - this.rotationPitch) * 0.5F;
+            this.rotationPitch += ((float) FastMath.atan2(this.motionY, f) * 180.0F / 3.1415927F - this.rotationPitch)
+                * 0.5F;
         } else {
             this.motionX = 0.0;
             this.motionY -= 0.08;
@@ -105,6 +115,7 @@ public abstract class MixinEntitySwimming extends EntityLiving implements IAnima
             }
         }
     }
+
     @Shadow
     protected Entity findPlayerToAttack() {
         EntityPlayer player = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0);

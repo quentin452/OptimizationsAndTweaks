@@ -208,7 +208,6 @@ public abstract class MixinWorldServer extends World {
 
         this.theProfiler.endStartSection("tickBlocks");
 
-
         optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
     }
 
@@ -242,7 +241,12 @@ public abstract class MixinWorldServer extends World {
         int l2 = randomValue >> 16 & 15;
         Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
         if (block.getTickRandomly()) {
-            block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, optimizationsAndTweaks$random);
+            block.updateTick(
+                this,
+                j2 + k,
+                l2 + extendedblockstorage.getYLocation(),
+                k2 + l,
+                optimizationsAndTweaks$random);
         }
     }
 
@@ -471,17 +475,24 @@ public abstract class MixinWorldServer extends World {
     }
 
     @Unique
-    private boolean optimizationsAndTweaks$isEntryWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ, int maxZ) {
-        return entry.xCoord >= minX && entry.xCoord < maxX
-            && entry.zCoord >= minZ
-            && entry.zCoord < maxZ;
+    private boolean optimizationsAndTweaks$isEntryWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ,
+        int maxZ) {
+        return entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ;
     }
 
     @Unique
     private void optimizationsAndTweaks$printDebugInfo(List<NextTickListEntry> entries) {
         for (NextTickListEntry entry : entries) {
-            System.out.println("Block present at (" + entry.xCoord + ", " + entry.yCoord + ", " + entry.zCoord + ") " +
-                "UnlocalizedName: " + entry.func_151351_a().getUnlocalizedName());
+            System.out.println(
+                "Block present at (" + entry.xCoord
+                    + ", "
+                    + entry.yCoord
+                    + ", "
+                    + entry.zCoord
+                    + ") "
+                    + "UnlocalizedName: "
+                    + entry.func_151351_a()
+                        .getUnlocalizedName());
         }
     }
 

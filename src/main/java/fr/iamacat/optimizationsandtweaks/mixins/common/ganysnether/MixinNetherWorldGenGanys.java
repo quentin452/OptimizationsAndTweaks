@@ -29,7 +29,8 @@ public class MixinNetherWorldGenGanys {
      * @reason
      */
     @Overwrite(remap = false)
-    public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+    public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+        IChunkProvider chunkProvider) {
         chunkX = chunkX >> 4;
         chunkZ = chunkZ >> 4;
 
@@ -47,55 +48,83 @@ public class MixinNetherWorldGenGanys {
                         int blockY = y + 1;
                         int blockZ = chunkZ * 16 + z;
 
-                        if (GanysNether.shouldGenerateUndertakers && rand.nextInt(GanysNether.undertakerRate) == 0 && this.shouldGenerate(world, blockX, blockY, blockZ)) {
+                        if (GanysNether.shouldGenerateUndertakers && rand.nextInt(GanysNether.undertakerRate) == 0
+                            && this.shouldGenerate(world, blockX, blockY, blockZ)) {
                             this.generateUndertakerWithRandomContents(world, blockX, blockY, blockZ, rand);
-                        } else if (GanysNether.shouldGenerateCrops && rand.nextInt(GanysNether.netherCropRate) == 0 && this.shouldGenerate(world, blockX, blockY, blockZ) && this.hasLavaNearby(world, blockX, blockY - 1, blockZ)) {
-                            switch (rand.nextInt(6)) {
-                                case 0:
-                                    if (GanysNether.shouldGenerateGlowingReed) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, Blocks.netherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.glowingReed);
-                                        if (rand.nextInt(10) == 5) {
-                                            world.setBlock(blockX, blockY + 1, blockZ, ModBlocks.glowingReed);
+                        } else if (GanysNether.shouldGenerateCrops && rand.nextInt(GanysNether.netherCropRate) == 0
+                            && this.shouldGenerate(world, blockX, blockY, blockZ)
+                            && this.hasLavaNearby(world, blockX, blockY - 1, blockZ)) {
+                                switch (rand.nextInt(6)) {
+                                    case 0:
+                                        if (GanysNether.shouldGenerateGlowingReed) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, Blocks.netherrack);
+                                            world.setBlock(blockX, blockY, blockZ, ModBlocks.glowingReed);
+                                            if (rand.nextInt(10) == 5) {
+                                                world.setBlock(blockX, blockY + 1, blockZ, ModBlocks.glowingReed);
+                                            }
                                         }
-                                    }
-                                    break;
-                                case 1:
-                                    if (GanysNether.shouldGenerateSpectreWheat) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.spectreWheat, rand.nextInt(7), 2);
-                                    }
-                                    break;
-                                case 2:
-                                    if (GanysNether.shouldGenerateQuarzBerryBush) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.quarzBerryBush, rand.nextInt(7), 2);
-                                    }
-                                    break;
-                                case 3:
-                                    if (GanysNether.shouldGenerateWitherShrub && rand.nextInt(GanysNether.witherShrubRate) == 0) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.witherShrub, rand.nextInt(6), 2);
-                                        world.setBlock(blockX, blockY + 1, blockZ, Blocks.glowstone);
-                                    }
-                                    break;
-                                case 4:
-                                    if (GanysNether.shouldGenerateBlazingCactoid) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, Blocks.netherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.blazingCactoid);
-                                        if (rand.nextInt(10) == 5) {
-                                            world.setBlock(blockX, blockY + 1, blockZ, ModBlocks.blazingCactoid);
+                                        break;
+                                    case 1:
+                                        if (GanysNether.shouldGenerateSpectreWheat) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
+                                            world.setBlock(
+                                                blockX,
+                                                blockY,
+                                                blockZ,
+                                                ModBlocks.spectreWheat,
+                                                rand.nextInt(7),
+                                                2);
                                         }
-                                    }
-                                    break;
-                                case 5:
-                                    if (GanysNether.shouldGenerateHellBush) {
-                                        world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
-                                        world.setBlock(blockX, blockY, blockZ, ModBlocks.hellBush, rand.nextInt(7), 2);
-                                    }
-                                    break;
+                                        break;
+                                    case 2:
+                                        if (GanysNether.shouldGenerateQuarzBerryBush) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
+                                            world.setBlock(
+                                                blockX,
+                                                blockY,
+                                                blockZ,
+                                                ModBlocks.quarzBerryBush,
+                                                rand.nextInt(7),
+                                                2);
+                                        }
+                                        break;
+                                    case 3:
+                                        if (GanysNether.shouldGenerateWitherShrub
+                                            && rand.nextInt(GanysNether.witherShrubRate) == 0) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
+                                            world.setBlock(
+                                                blockX,
+                                                blockY,
+                                                blockZ,
+                                                ModBlocks.witherShrub,
+                                                rand.nextInt(6),
+                                                2);
+                                            world.setBlock(blockX, blockY + 1, blockZ, Blocks.glowstone);
+                                        }
+                                        break;
+                                    case 4:
+                                        if (GanysNether.shouldGenerateBlazingCactoid) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, Blocks.netherrack);
+                                            world.setBlock(blockX, blockY, blockZ, ModBlocks.blazingCactoid);
+                                            if (rand.nextInt(10) == 5) {
+                                                world.setBlock(blockX, blockY + 1, blockZ, ModBlocks.blazingCactoid);
+                                            }
+                                        }
+                                        break;
+                                    case 5:
+                                        if (GanysNether.shouldGenerateHellBush) {
+                                            world.setBlock(blockX, blockY - 1, blockZ, ModBlocks.tilledNetherrack);
+                                            world.setBlock(
+                                                blockX,
+                                                blockY,
+                                                blockZ,
+                                                ModBlocks.hellBush,
+                                                rand.nextInt(7),
+                                                2);
+                                        }
+                                        break;
+                                }
                             }
-                        }
                     }
                 }
             }

@@ -34,14 +34,14 @@ public class MixinAnimTickHandler {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-            if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
-                for (IMCAnimatedEntity entity : optimizationsAndTweaks$activeEntities) {
-                    entity.getAnimationHandler()
-                        .animationsUpdate();
-                    if (((Entity) entity).isDead) {
-                        optimizationsAndTweaks$activeEntities.remove(entity);
-                    }
+        if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
+            for (IMCAnimatedEntity entity : optimizationsAndTweaks$activeEntities) {
+                entity.getAnimationHandler()
+                    .animationsUpdate();
+                if (((Entity) entity).isDead) {
+                    optimizationsAndTweaks$activeEntities.remove(entity);
                 }
+            }
         }
         ci.cancel();
     }

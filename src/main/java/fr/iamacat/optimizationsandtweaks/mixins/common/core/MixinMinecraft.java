@@ -2103,69 +2103,70 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     public void func_152348_aa() {
         int i = Keyboard.getEventKey();
 
-        if (i != 0 && !Keyboard.isRepeatEvent() && (!(this.currentScreen instanceof GuiControls)
+        if (i != 0 && !Keyboard.isRepeatEvent()
+            && (!(this.currentScreen instanceof GuiControls)
                 || ((GuiControls) this.currentScreen).field_152177_g <= getSystemTime() - 20L)) {
-                if (Keyboard.getEventKeyState()) {
-                    if (i == this.gameSettings.field_152396_an.getKeyCode()) {
-                        if (this.func_152346_Z()
-                            .func_152934_n()) {
-                            this.func_152346_Z()
-                                .func_152914_u();
-                        } else if (this.func_152346_Z()
-                            .func_152924_m()) {
-                                this.displayGuiScreen(new GuiYesNo((result, id) -> {
-                                    if (result) {
-                                        func_152346_Z().func_152930_t();
-                                    }
+            if (Keyboard.getEventKeyState()) {
+                if (i == this.gameSettings.field_152396_an.getKeyCode()) {
+                    if (this.func_152346_Z()
+                        .func_152934_n()) {
+                        this.func_152346_Z()
+                            .func_152914_u();
+                    } else if (this.func_152346_Z()
+                        .func_152924_m()) {
+                            this.displayGuiScreen(new GuiYesNo((result, id) -> {
+                                if (result) {
+                                    func_152346_Z().func_152930_t();
+                                }
 
-                                    displayGuiScreen(null);
-                                }, I18n.format("stream.confirm_start"), "", 0));
-                            } else if (this.func_152346_Z()
-                                .func_152928_D()
-                                && this.func_152346_Z()
-                                    .func_152936_l()) {
-                                        if (this.theWorld != null) {
-                                            this.ingameGUI.getChatGUI()
-                                                .printChatMessage(
-                                                    new ChatComponentText("Not ready to start streaming yet!"));
-                                        }
-                                    } else {
-                                        GuiStreamUnavailable.func_152321_a(this.currentScreen);
+                                displayGuiScreen(null);
+                            }, I18n.format("stream.confirm_start"), "", 0));
+                        } else if (this.func_152346_Z()
+                            .func_152928_D()
+                            && this.func_152346_Z()
+                                .func_152936_l()) {
+                                    if (this.theWorld != null) {
+                                        this.ingameGUI.getChatGUI()
+                                            .printChatMessage(
+                                                new ChatComponentText("Not ready to start streaming yet!"));
                                     }
-                    } else if (i == this.gameSettings.field_152397_ao.getKeyCode()) {
+                                } else {
+                                    GuiStreamUnavailable.func_152321_a(this.currentScreen);
+                                }
+                } else if (i == this.gameSettings.field_152397_ao.getKeyCode()) {
+                    if (this.func_152346_Z()
+                        .func_152934_n()) {
                         if (this.func_152346_Z()
-                            .func_152934_n()) {
-                            if (this.func_152346_Z()
-                                .func_152919_o()) {
-                                this.func_152346_Z()
-                                    .func_152933_r();
-                            } else {
-                                this.func_152346_Z()
-                                    .func_152916_q();
-                            }
-                        }
-                    } else if (i == this.gameSettings.field_152398_ap.getKeyCode()) {
-                        if (this.func_152346_Z()
-                            .func_152934_n()) {
+                            .func_152919_o()) {
                             this.func_152346_Z()
-                                .func_152931_p();
+                                .func_152933_r();
+                        } else {
+                            this.func_152346_Z()
+                                .func_152916_q();
                         }
-                    } else if (i == this.gameSettings.field_152399_aq.getKeyCode()) {
-                        this.field_152353_at.func_152910_a(true);
-                    } else if (i == this.gameSettings.field_152395_am.getKeyCode()) {
-                        this.toggleFullscreen();
-                    } else if (i == this.gameSettings.keyBindScreenshot.getKeyCode()) {
-                        this.ingameGUI.getChatGUI()
-                            .printChatMessage(
-                                ScreenShotHelper.saveScreenshot(
-                                    this.mcDataDir,
-                                    this.displayWidth,
-                                    this.displayHeight,
-                                    this.framebufferMc));
+                    }
+                } else if (i == this.gameSettings.field_152398_ap.getKeyCode()) {
+                    if (this.func_152346_Z()
+                        .func_152934_n()) {
+                        this.func_152346_Z()
+                            .func_152931_p();
                     }
                 } else if (i == this.gameSettings.field_152399_aq.getKeyCode()) {
-                    this.field_152353_at.func_152910_a(false);
+                    this.field_152353_at.func_152910_a(true);
+                } else if (i == this.gameSettings.field_152395_am.getKeyCode()) {
+                    this.toggleFullscreen();
+                } else if (i == this.gameSettings.keyBindScreenshot.getKeyCode()) {
+                    this.ingameGUI.getChatGUI()
+                        .printChatMessage(
+                            ScreenShotHelper.saveScreenshot(
+                                this.mcDataDir,
+                                this.displayWidth,
+                                this.displayHeight,
+                                this.framebufferMc));
                 }
+            } else if (i == this.gameSettings.field_152399_aq.getKeyCode()) {
+                this.field_152353_at.func_152910_a(false);
+            }
 
         }
     }

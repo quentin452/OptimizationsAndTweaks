@@ -7,7 +7,6 @@ import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +18,7 @@ public class MixinBlockFalling extends Block {
 
     @Shadow
     public static boolean fallInstantly;
+
     public MixinBlockFalling() {
         super(Material.sand);
         this.setCreativeTab(CreativeTabs.tabBlock);

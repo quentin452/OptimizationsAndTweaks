@@ -1,8 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.toomuchTNT;
 
-import com.toomuchtnt.TooMuchTNT;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Random;
+
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -13,9 +12,13 @@ import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
-import java.util.Random;
+import com.toomuchtnt.TooMuchTNT;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockNuclearWaste2 extends BlockSnow {
+
     public Material blockMaterial;
 
     public BlockNuclearWaste2(int par1) {
@@ -46,7 +49,14 @@ public class BlockNuclearWaste2 extends BlockSnow {
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {
         super.randomDisplayTick(par1World, par2, par3, par4, par5Random);
         if (par5Random.nextInt(10) == 0) {
-            par1World.spawnParticle("reddust", (double)((float)par2 + par5Random.nextFloat()), (double)((float)par3 + 0.3F), (double)((float)par4 + par5Random.nextFloat()), 1.0, 5.0, 0.0);
+            par1World.spawnParticle(
+                "reddust",
+                (double) ((float) par2 + par5Random.nextFloat()),
+                (double) ((float) par3 + 0.3F),
+                (double) ((float) par4 + par5Random.nextFloat()),
+                1.0,
+                5.0,
+                0.0);
         }
 
     }

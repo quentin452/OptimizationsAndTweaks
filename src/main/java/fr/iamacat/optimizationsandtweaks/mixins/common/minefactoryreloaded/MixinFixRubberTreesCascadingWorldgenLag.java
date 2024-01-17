@@ -1,20 +1,21 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.minefactoryreloaded;
 
-import cofh.lib.util.helpers.BlockHelper;
-import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2;
+import static fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2.optimizationsAndTweaks$getSurfaceBlockY;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
-
-import java.util.Random;
-
-import static fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenRubberTree2.optimizationsAndTweaks$getSurfaceBlockY;
 
 @Mixin(WorldGenRubberTree.class)
 public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
@@ -60,19 +61,23 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         if (optimizationsAndTweaks$isInvalidTreePosition(world, x, y, z, treeHeight, worldHeight)) {
             return false;
         }
-        optimizationsAndTweaks$placeRubberWoodBlocks(world,x, y, z, treeHeight);
+        optimizationsAndTweaks$placeRubberWoodBlocks(world, x, y, z, treeHeight);
         WorldGenRubberTree2 worldGenRubberTree2 = new WorldGenRubberTree2();
         worldGenRubberTree2.generateLeaves(world, rand, x, y, z, treeHeight);
         return true;
     }
+
     @Unique
     private boolean optimizationsAndTweaks$shouldNotGrowTree(Random rand) {
         return rand.nextInt(2) == 0;
     }
+
     @Unique
-    private boolean optimizationsAndTweaks$isInvalidTreePosition(World world, int x, int y, int z, int treeHeight, int worldHeight) {
+    private boolean optimizationsAndTweaks$isInvalidTreePosition(World world, int x, int y, int z, int treeHeight,
+        int worldHeight) {
         return y < 1 || y + treeHeight + 1 > worldHeight || !optimizationsAndTweaks$placeSapling(world, x, y, z);
     }
+
     @Unique
     private void optimizationsAndTweaks$placeRubberWoodBlocks(World world, int x, int y, int z, int treeHeight) {
         Chunk chunk = world.getChunkFromBlockCoords(x, z);
@@ -84,6 +89,7 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
             }
         }
     }
+
     @Unique
     private boolean optimizationsAndTweaks$placeSapling(World world, int x, int y, int z) {
         Block sapling = MFRThings.rubberSaplingBlock;
@@ -93,6 +99,7 @@ public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGener
         }
         return false;
     }
+
     @Unique
     private void optimizationsAndTweaks$notifyBlockUpdate(World world, int x, int y, int z, int meta) {
         world.markBlockForUpdate(x, y, z);

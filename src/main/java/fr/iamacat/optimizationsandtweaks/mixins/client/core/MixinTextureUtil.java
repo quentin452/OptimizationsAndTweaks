@@ -24,10 +24,10 @@ import org.lwjgl.opengl.GL14;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import org.spongepowered.asm.mixin.Unique;
 
 @SideOnly(Side.CLIENT)
 @Mixin(value = TextureUtil.class, priority = 999)
@@ -214,8 +214,7 @@ public class MixinTextureUtil {
      */
     @Overwrite
     public static void uploadTextureSub(int p_147947_0_, int[] p_147947_1_, int p_147947_2_, int p_147947_3_,
-                                        int p_147947_4_, int p_147947_5_, boolean p_147947_6_, boolean p_147947_7_,
-                                        boolean p_147947_8_) {
+        int p_147947_4_, int p_147947_5_, boolean p_147947_6_, boolean p_147947_7_, boolean p_147947_8_) {
         int j1 = 4194304 / p_147947_2_;
         func_147954_b(p_147947_6_, p_147947_8_);
         setTextureClamped(p_147947_7_);
@@ -307,7 +306,7 @@ public class MixinTextureUtil {
      */
     @Overwrite
     public static void uploadTextureImageSubImpl(BufferedImage p_110993_0_, int p_110993_1_, int p_110993_2_,
-                                                 boolean p_110993_3_, boolean p_110993_4_) {
+        boolean p_110993_3_, boolean p_110993_4_) {
         int k = p_110993_0_.getWidth();
         int l = p_110993_0_.getHeight();
         int i1 = 4194304 / k;
@@ -338,6 +337,7 @@ public class MixinTextureUtil {
                 buffer);
         }
     }
+
     /**
      * @author
      * @reason

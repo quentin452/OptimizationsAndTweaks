@@ -1,12 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.utilsformods.goblins;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 public class GOBLINWorldGenGVillagetwo {
+
     private static final int[][][] grassBlocks = new int[21][11][31];
 
     static {
@@ -20,8 +21,9 @@ public class GOBLINWorldGenGVillagetwo {
     }
 
     public static boolean canGenerateVillage(World world, int i, int j, int k) {
-        if (!world.blockExists(i, j, k) || !world.blockExists(i + 21, j, k + 30) ||
-            !world.blockExists(i + 21, j + 10, k + 30) || !world.blockExists(i, j + 10, k)) {
+        if (!world.blockExists(i, j, k) || !world.blockExists(i + 21, j, k + 30)
+            || !world.blockExists(i + 21, j + 10, k + 30)
+            || !world.blockExists(i, j + 10, k)) {
             return false;
         }
 
@@ -30,11 +32,10 @@ public class GOBLINWorldGenGVillagetwo {
         Block block3 = world.getBlock(i + 21, j + 10, k + 30);
         Block block4 = world.getBlock(i, j + 10, k);
 
-        return block1 == Blocks.grass &&
-            block2 == Blocks.grass &&
-            canGenerate(world, new Random(), i, j, k) &&
-            block3 == Blocks.air &&
-            block4 == Blocks.air;
+        return block1 == Blocks.grass && block2 == Blocks.grass
+            && canGenerate(world, new Random(), i, j, k)
+            && block3 == Blocks.air
+            && block4 == Blocks.air;
     }
 
     public static boolean canGenerate(World world, Random rand, int i, int j, int k) {
@@ -48,17 +49,20 @@ public class GOBLINWorldGenGVillagetwo {
         }
         return countGrass > 1100;
     }
+
     public static void func_76484_a(World world, Random rand, int i, int j, int k) {
         int a = -15;
 
-        while(true) {
+        while (true) {
             if (a > 45) {
                 generateVillage(world, rand, i, j, k);
                 break;
             }
 
-            for(int b = -15; b <= 55; ++b) {
-                if (world.getBlock(i + a, j + 3, k + b) == Blocks.planks || world.getBlock(i + a, j + 3, k + b) == Blocks.cobblestone || world.getBlock(i + a, j + 3, k + b) == Blocks.stonebrick) {
+            for (int b = -15; b <= 55; ++b) {
+                if (world.getBlock(i + a, j + 3, k + b) == Blocks.planks
+                    || world.getBlock(i + a, j + 3, k + b) == Blocks.cobblestone
+                    || world.getBlock(i + a, j + 3, k + b) == Blocks.stonebrick) {
                     return;
                 }
             }
@@ -66,6 +70,7 @@ public class GOBLINWorldGenGVillagetwo {
             ++a;
         }
     }
+
     public static void generateVillage(World world, Random rand, int i, int j, int k) {
         int width;
         int boss;

@@ -38,11 +38,9 @@ public class NoiseGeneratorPerlinMultithread extends NoiseGenerator {
         for (int i = 0; i < this.field_151602_b; ++i) {
             final int octave = i;
             double finalD3 = d3;
-            CompletableFuture<Double> future = CompletableFuture
-                .supplyAsync(
-                    () -> field_151603_a[octave].func_151605_a(p_151601_1_ * finalD3, p_151601_3_ * finalD3)
-                        / finalD3,
-                    executor);
+            CompletableFuture<Double> future = CompletableFuture.supplyAsync(
+                () -> field_151603_a[octave].func_151605_a(p_151601_1_ * finalD3, p_151601_3_ * finalD3) / finalD3,
+                executor);
 
             futures[i] = future;
             d3 /= 2.0D;
@@ -94,15 +92,17 @@ public class NoiseGeneratorPerlinMultithread extends NoiseGenerator {
             double finalD6 = d6;
             double finalD7 = d7;
             double[] finalP_151600_1_ = p_151600_1_;
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> field_151603_a[octave].func_151606_a(
-                finalP_151600_1_,
-                p_151600_2_,
-                p_151600_4_,
-                p_151600_6_,
-                p_151600_7_,
-                p_151600_8_ * finalD6 * finalD7,
-                p_151600_10_ * finalD6 * finalD7,
-                0.55D / finalD7), executor);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(
+                () -> field_151603_a[octave].func_151606_a(
+                    finalP_151600_1_,
+                    p_151600_2_,
+                    p_151600_4_,
+                    p_151600_6_,
+                    p_151600_7_,
+                    p_151600_8_ * finalD6 * finalD7,
+                    p_151600_10_ * finalD6 * finalD7,
+                    0.55D / finalD7),
+                executor);
 
             futures[l] = future;
             d6 *= p_151600_12_;

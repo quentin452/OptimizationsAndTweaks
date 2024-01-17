@@ -1,6 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
@@ -9,16 +11,16 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Stack;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
 @Mixin(BlockFluidClassic.class)
 public abstract class MixinBlockFluidClassic extends BlockFluidBase {
+
     @Shadow
     protected boolean[] isOptimalFlowDirection = new boolean[4];
     @Shadow
@@ -36,53 +38,52 @@ public abstract class MixinBlockFluidClassic extends BlockFluidBase {
      * @reason
      */
     @Shadow
-    protected boolean[] getOptimalFlowDirections(World world, int x, int y, int z)
-    {
-        for (int side = 0; side < 4; side++)
-        {
+    protected boolean[] getOptimalFlowDirections(World world, int x, int y, int z) {
+        for (int side = 0; side < 4; side++) {
             flowCost[side] = 1000;
 
             int x2 = x;
             int y2 = y;
             int z2 = z;
 
-            switch (side)
-            {
-                case 0: --x2; break;
-                case 1: ++x2; break;
-                case 2: --z2; break;
-                case 3: ++z2; break;
+            switch (side) {
+                case 0:
+                    --x2;
+                    break;
+                case 1:
+                    ++x2;
+                    break;
+                case 2:
+                    --z2;
+                    break;
+                case 3:
+                    ++z2;
+                    break;
             }
 
-            if (!canFlowInto(world, x2, y2, z2) || isSourceBlock(world, x2, y2, z2))
-            {
+            if (!canFlowInto(world, x2, y2, z2) || isSourceBlock(world, x2, y2, z2)) {
                 continue;
             }
 
-            if (canFlowInto(world, x2, y2 + densityDir, z2))
-            {
+            if (canFlowInto(world, x2, y2 + densityDir, z2)) {
                 flowCost[side] = 0;
-            }
-            else
-            {
+            } else {
                 flowCost[side] = calculateFlowCost(world, x2, y2, z2, 1, side);
             }
         }
 
         int min = flowCost[0];
-        for (int side = 1; side < 4; side++)
-        {
-            if (flowCost[side] < min)
-            {
+        for (int side = 1; side < 4; side++) {
+            if (flowCost[side] < min) {
                 min = flowCost[side];
             }
         }
-        for (int side = 0; side < 4; side++)
-        {
+        for (int side = 0; side < 4; side++) {
             isOptimalFlowDirection[side] = flowCost[side] == min;
         }
         return isOptimalFlowDirection;
     }
+
     /**
      * @author
      * @reason
@@ -111,10 +112,9 @@ public abstract class MixinBlockFluidClassic extends BlockFluidBase {
             }
 
             for (int nextAdjSide = 0; nextAdjSide < 4; nextAdjSide++) {
-                if ((nextAdjSide == 0 && adjSide == 1) ||
-                    (nextAdjSide == 1 && adjSide == 0) ||
-                    (nextAdjSide == 2 && adjSide == 3) ||
-                    (nextAdjSide == 3 && adjSide == 2)) {
+                if ((nextAdjSide == 0 && adjSide == 1) || (nextAdjSide == 1 && adjSide == 0)
+                    || (nextAdjSide == 2 && adjSide == 3)
+                    || (nextAdjSide == 3 && adjSide == 2)) {
                     continue;
                 }
 
@@ -144,47 +144,39 @@ public abstract class MixinBlockFluidClassic extends BlockFluidBase {
     }
 
     @Shadow
-    public boolean isSourceBlock(IBlockAccess world, int x, int y, int z)
-    {
+    public boolean isSourceBlock(IBlockAccess world, int x, int y, int z) {
         return world.getBlock(x, y, z) == this && world.getBlockMetadata(x, y, z) == 0;
     }
+
     @Shadow
-    protected boolean canFlowInto(IBlockAccess world, int x, int y, int z)
-    {
-        if (world.getBlock(x, y, z).isAir(world, x, y, z)) return true;
+    protected boolean canFlowInto(IBlockAccess world, int x, int y, int z) {
+        if (world.getBlock(x, y, z)
+            .isAir(world, x, y, z)) return true;
 
         Block block = world.getBlock(x, y, z);
-        if (block == this)
-        {
+        if (block == this) {
             return true;
         }
 
-        if (displacements.containsKey(block))
-        {
+        if (displacements.containsKey(block)) {
             return displacements.get(block);
         }
 
         Material material = block.getMaterial();
-        if (material.blocksMovement()  ||
-            material == Material.water ||
-            material == Material.lava  ||
-            material == Material.portal)
-        {
+        if (material.blocksMovement() || material == Material.water
+            || material == Material.lava
+            || material == Material.portal) {
             return false;
         }
 
         int density = getDensity(world, x, y, z);
-        if (density == Integer.MAX_VALUE)
-        {
+        if (density == Integer.MAX_VALUE) {
             return true;
         }
 
-        if (this.density > density)
-        {
+        if (this.density > density) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

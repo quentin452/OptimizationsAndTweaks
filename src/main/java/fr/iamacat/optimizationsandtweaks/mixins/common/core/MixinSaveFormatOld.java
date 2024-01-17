@@ -53,8 +53,7 @@ public class MixinSaveFormatOld {
                 if (i < 5) {
                     try {
                         TimeUnit.MILLISECONDS.sleep(500);
-                    } catch (InterruptedException interruptedexception) {
-                    }
+                    } catch (InterruptedException interruptedexception) {}
                 }
             }
 

@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins;
 
 import java.util.Comparator;
 
-import com.jim.obsgreenery.world.WorldGenTreeBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -157,13 +156,13 @@ public class Classers {
     // MixinWorldGenTreeBase
 
     public enum Quadrant {
+
         X_Z,
         X_NEGZ,
         NEGX_Z,
         NEGX_NEGZ;
 
-        Quadrant() {
-        }
+        Quadrant() {}
 
         public Quadrant next() {
             switch (this) {
@@ -195,6 +194,7 @@ public class Classers {
     }
 
     public static class XZCoord {
+
         public int x;
         public int z;
 
@@ -236,6 +236,7 @@ public class Classers {
     // MixinBlockFluidClassic
 
     public static class FlowCostContext {
+
         public final int x;
         public final int y;
         public final int z;

@@ -1,12 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.toomuchtnt;
 
-import com.toomuchtnt.*;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import fr.iamacat.optimizationsandtweaks.utils.toomuchTNT.BlockNuclearWaste2;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -14,12 +7,23 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.toomuchtnt.*;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import fr.iamacat.optimizationsandtweaks.utils.toomuchTNT.BlockNuclearWaste2;
+
 @Mixin(TooMuchTNT.class)
 public class MixinTooMuchTNT {
+
     @Shadow
     public static CommonProxyTooMuchTNT proxy;
     @Shadow
@@ -499,81 +503,217 @@ public class MixinTooMuchTNT {
         this.Render(EntityFloatingDynamite.class, "entityfloatingdynamiteprimed", 131, this, 512, 1, true);
         this.Set(EntityUranium.class, "entityuranium", entityId);
         this.Render(EntityUranium.class, "entityuranium", 132, this, 512, 1, true);
-        TNTx5 = (new BlockTNTx5(TNTx5ID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TNTx5");
-        TNTx20 = (new BlockTNTx20(TNTx20ID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TNTx20");
-        TNTx100 = (new BlockTNTx100(TNTx100ID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TNTx100");
-        TNTx500 = (new BlockTNTx500(TNTx500ID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TNTx500");
-        MeteorTNT = (new BlockMeteorTNT(MeteorTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setLightLevel(0.5F).setBlockName("MeteorTNT");
-        FlatTNT = (new BlockFlatTNT(FlatTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("FlatTNT");
-        MiningFlatTNT = (new BlockMiningFlatTNT(MiningFlatTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("MiningFlatTNT");
-        CompactTNT = (new BlockCompactTNT(CompactTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("CompactTNT");
-        HouseTNT = (new BlockHouseTNT(HouseTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("HouseTNT");
-        WoodHouseTNT = (new BlockWoodHouseTNT(WoodHouseTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("WoodHouseTNT");
-        BrickHouseTNT = (new BlockBrickHouseTNT(BrickHouseTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("BrickHouseTNT");
-        FireTNT = (new BlockFireTNT(FireTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("FireTNT");
-        SnowTNT = (new BlockSnowTNT(SnowTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("SnowTNT");
-        OceanTNT = (new BlockOceanTNT(OceanTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("OceanTNT");
-        HellFireTNT = (new BlockHellFireTNT(HellFireTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("HellFireTNT");
-        VaporizeTNT = (new BlockVaporizeTNT(VaporizeTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("VaporizeTNT");
-        EnderTNT = (new BlockEnderTNT(EnderTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("EnderTNT");
-        NuclearTNT = (new BlockNuclearTNT(NuclearTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("NuclearTNT");
-        DiggingTNT = (new BlockDiggingTNT(DiggingTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("DiggingTNT");
-        DrillingTNT = (new BlockDrillingTNT(DrillingTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("DrillingTNT");
-        GhostTNT = (new BlockGhostTNT(GhostTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("GhostTNT");
-        MultiplyTNT = (new BlockMultiplyTNT(MultiplyTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("MultiplyTNT");
-        CubicTNT = (new BlockCubicTNT(CubicTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("CubicTNT");
-        EruptingTNT = (new BlockEruptingTNT(EruptingTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("EruptingTNT");
-        ChemicalTNT = (new BlockChemicalTNT(ChemicalTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("ChemicalTNT");
-        FloatingTNT = (new BlockFloatingTNT(FloatingTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("FloatingTNT");
-        IceTNT = (new BlockIceTNT(IceTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("IceTNT");
-        TimerTNT = (new BlockTimerTNT(TimerTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TimerTNT");
-        ReactionTNT = (new BlockReactionTNT(ReactionTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("ReactionTNT");
-        AnimalTNT = (new BlockAnimalTNT(AnimalTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("AniamlTNT");
-        SandFirework = (new BlockSandFirework(SandFireworkID)).setHardness(0.0F).setStepSound(Block.soundTypeSand).setBlockName("SandFirework");
-        FloatingIslandTNT = (new BlockFloatingIslandTNT(FloatingIslandTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("FloatingIslandTNT");
-        TNTFirework = (new BlockTNTFirework(TNTFireworkID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("TNTFirework");
-        GravityTNT = (new BlockGravityTNT(GravityTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("GravityTNT");
-        MeteorShowerTNT = (new BlockMeteorShowerTNT(MeteorShowerTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("MeteorShowerTNT");
-        SpiralTNT = (new BlockSpiralTNT(SpiralTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("SpiralTNT");
-        GroveTNT = (new BlockGroveTNT(GroveTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("GroveTNT");
-        InvertedTNT = (new BlockInvertedTNT(InvertedTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("InvertedTNT");
-        CustomTNT = (new BlockCustomTNT(CustomTNTID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("CustomTNT");
-        EasterEgg = (new BlockPickleHam(EasterEggID)).setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("EasterEgg");
-        MountainTopRemoval = (new BlockMountainTopRemoval(MountainTopRemovalID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("MountainTopRemoval");
-        MankindsMark = (new BlockMankindsMark(MankindsMarkID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("MankindsMark");
-        PoseidonsWave = (new BlockPoseidonsWave(PoseidonsWaveID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("Poseidon'sWave");
-        HellsGate = (new BlockHellsGate(HellsGateID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("HellsGate");
-        DustBowl = (new BlockDustBowl(DustBowlID)).setHardness(0.0F).setStepSound(Block.soundTypeSand).setBlockName("DustBowl");
-        Hexahedron = (new BlockHexahedron(HexahedronID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("Hexahedron");
-        HeavensGate = (new BlockHeavensGate(HeavensGateID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("HeavensGate");
-        TheRevolution = (new BlockTheRevolution(TheRevolutionID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setBlockName("TheRevolution");
-        Chicxulub = (new BlockChicxulub(ChicxulubID)).setHardness(0.0F).setStepSound(Block.soundTypeStone).setLightLevel(0.75F).setBlockName("Chicxulub");
-        NuclearWaste = (new BlockNuclearWaste2(NuclearWasteID)).setHardness(0.3F).setStepSound(Block.soundTypeSnow).setLightLevel(0.5F).setBlockName("NuclearWaste");
-        SulfurOre = (new BlockSulfurOre(SulfurOreID)).setHardness(3.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone).setBlockName("SulfurOre");
-        UraniumOre = (new BlockUraniumOre(UraniumOreID)).setHardness(3.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone).setLightLevel(0.5F).setBlockName("UraniumOre");
-        Meteorite = (new BlockMeteorite(MeteoriteID)).setHardness(3.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone).setLightLevel(0.5F).setBlockName("Meteorite");
-        Dynamite = (new ItemDynamite(DynamiteID)).setTextureName("Dynamite").setUnlocalizedName("Dynamite");
-        Dynamitex5 = (new ItemDynamitex5(Dynamitex5ID)).setTextureName("Dynamitex5").setUnlocalizedName("Dynamitex5");
-        Dynamitex20 = (new ItemDynamitex20(Dynamitex20ID)).setTextureName("Dynamitex20").setUnlocalizedName("Dynamitex20");
-        Dynamitex100 = (new ItemDynamitex100(Dynamitex100ID)).setTextureName("Dynamitex100").setUnlocalizedName("Dynamitex100");
-        Dynamitex500 = (new ItemDynamitex500(Dynamitex500ID)).setTextureName("Dynamitex500").setUnlocalizedName("Dynamitex500");
-        MeteorDynamite = (new ItemMeteorDynamite(MeteorDynamiteID)).setTextureName("MeteorDynamite").setUnlocalizedName("MeteorDynamite");
-        FlatDynamite = (new ItemFlatDynamite(FlatDynamiteID)).setTextureName("FlatDynamite").setUnlocalizedName("FlatDynamite");
-        MiningFlatDynamite = (new ItemMiningFlatDynamite(MiningFlatDynamiteID)).setTextureName("MiningFlatDynamite").setUnlocalizedName("MiningFlatDynamite");
-        CompactDynamite = (new ItemCompactDynamite(CompactDynamiteID)).setTextureName("CompactDynamite").setUnlocalizedName("CompactDynamite");
-        FireDynamite = (new ItemFireDynamite(FireDynamiteID)).setTextureName("FireDynamite").setUnlocalizedName("FireDynamite");
-        SnowDynamite = (new ItemSnowDynamite(SnowDynamiteID)).setTextureName("SnowDynamite").setUnlocalizedName("SnowDynamite");
-        OceanDynamite = (new ItemOceanDynamite(OceanDynamiteID)).setTextureName("OceanDynamite").setUnlocalizedName("OceanDynamite");
-        HellFireDynamite = (new ItemHellFireDynamite(HellFireDynamiteID)).setTextureName("HellFireDynamite").setUnlocalizedName("HellFireDynamite");
-        VaporizeDynamite = (new ItemVaporizeDynamite(VaporizeDynamiteID)).setTextureName("VaporizeDynamite").setUnlocalizedName("VaporizeDynamite");
-        EnderDynamite = (new ItemEnderDynamite(EnderDynamiteID)).setTextureName("EnderDynamite").setUnlocalizedName("EnderDynamite");
-        NuclearDynamite = (new ItemNuclearDynamite(NuclearDynamiteID)).setTextureName("NuclearDynamite").setUnlocalizedName("NuclearDynamite");
-        GhostDynamite = (new ItemGhostDynamite(GhostDynamiteID)).setTextureName("GhostDynamite").setUnlocalizedName("GhostDynamite");
-        CubicDynamite = (new ItemCubicDynamite(CubicDynamiteID)).setTextureName("CubicDynamite").setUnlocalizedName("CubicDynamite");
-        EruptingDynamite = (new ItemEruptingDynamite(EruptingDynamiteID)).setTextureName("EruptingDynamite").setUnlocalizedName("EruptingDynamite");
-        ChemicalDynamite = (new ItemChemicalDynamite(ChemicalDynamiteID)).setTextureName("ChemicalDynamite").setUnlocalizedName("ChemicalDynamite");
-        FloatingDynamite = (new ItemFloatingDynamite(FloatingDynamiteID)).setTextureName("FloatingDynamite").setUnlocalizedName("FloatingDynamite");
-        Uranium = (new ItemUranium(UraniumID)).setTextureName("Uranium").setUnlocalizedName("Uranium");
+        TNTx5 = (new BlockTNTx5(TNTx5ID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TNTx5");
+        TNTx20 = (new BlockTNTx20(TNTx20ID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TNTx20");
+        TNTx100 = (new BlockTNTx100(TNTx100ID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TNTx100");
+        TNTx500 = (new BlockTNTx500(TNTx500ID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TNTx500");
+        MeteorTNT = (new BlockMeteorTNT(MeteorTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setLightLevel(0.5F)
+            .setBlockName("MeteorTNT");
+        FlatTNT = (new BlockFlatTNT(FlatTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("FlatTNT");
+        MiningFlatTNT = (new BlockMiningFlatTNT(MiningFlatTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("MiningFlatTNT");
+        CompactTNT = (new BlockCompactTNT(CompactTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("CompactTNT");
+        HouseTNT = (new BlockHouseTNT(HouseTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("HouseTNT");
+        WoodHouseTNT = (new BlockWoodHouseTNT(WoodHouseTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("WoodHouseTNT");
+        BrickHouseTNT = (new BlockBrickHouseTNT(BrickHouseTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("BrickHouseTNT");
+        FireTNT = (new BlockFireTNT(FireTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("FireTNT");
+        SnowTNT = (new BlockSnowTNT(SnowTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("SnowTNT");
+        OceanTNT = (new BlockOceanTNT(OceanTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("OceanTNT");
+        HellFireTNT = (new BlockHellFireTNT(HellFireTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("HellFireTNT");
+        VaporizeTNT = (new BlockVaporizeTNT(VaporizeTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("VaporizeTNT");
+        EnderTNT = (new BlockEnderTNT(EnderTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("EnderTNT");
+        NuclearTNT = (new BlockNuclearTNT(NuclearTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("NuclearTNT");
+        DiggingTNT = (new BlockDiggingTNT(DiggingTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("DiggingTNT");
+        DrillingTNT = (new BlockDrillingTNT(DrillingTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("DrillingTNT");
+        GhostTNT = (new BlockGhostTNT(GhostTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("GhostTNT");
+        MultiplyTNT = (new BlockMultiplyTNT(MultiplyTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("MultiplyTNT");
+        CubicTNT = (new BlockCubicTNT(CubicTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("CubicTNT");
+        EruptingTNT = (new BlockEruptingTNT(EruptingTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("EruptingTNT");
+        ChemicalTNT = (new BlockChemicalTNT(ChemicalTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("ChemicalTNT");
+        FloatingTNT = (new BlockFloatingTNT(FloatingTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("FloatingTNT");
+        IceTNT = (new BlockIceTNT(IceTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("IceTNT");
+        TimerTNT = (new BlockTimerTNT(TimerTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TimerTNT");
+        ReactionTNT = (new BlockReactionTNT(ReactionTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("ReactionTNT");
+        AnimalTNT = (new BlockAnimalTNT(AnimalTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("AniamlTNT");
+        SandFirework = (new BlockSandFirework(SandFireworkID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeSand)
+            .setBlockName("SandFirework");
+        FloatingIslandTNT = (new BlockFloatingIslandTNT(FloatingIslandTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("FloatingIslandTNT");
+        TNTFirework = (new BlockTNTFirework(TNTFireworkID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("TNTFirework");
+        GravityTNT = (new BlockGravityTNT(GravityTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("GravityTNT");
+        MeteorShowerTNT = (new BlockMeteorShowerTNT(MeteorShowerTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("MeteorShowerTNT");
+        SpiralTNT = (new BlockSpiralTNT(SpiralTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("SpiralTNT");
+        GroveTNT = (new BlockGroveTNT(GroveTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("GroveTNT");
+        InvertedTNT = (new BlockInvertedTNT(InvertedTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("InvertedTNT");
+        CustomTNT = (new BlockCustomTNT(CustomTNTID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("CustomTNT");
+        EasterEgg = (new BlockPickleHam(EasterEggID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeGrass)
+            .setBlockName("EasterEgg");
+        MountainTopRemoval = (new BlockMountainTopRemoval(MountainTopRemovalID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("MountainTopRemoval");
+        MankindsMark = (new BlockMankindsMark(MankindsMarkID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("MankindsMark");
+        PoseidonsWave = (new BlockPoseidonsWave(PoseidonsWaveID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("Poseidon'sWave");
+        HellsGate = (new BlockHellsGate(HellsGateID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("HellsGate");
+        DustBowl = (new BlockDustBowl(DustBowlID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeSand)
+            .setBlockName("DustBowl");
+        Hexahedron = (new BlockHexahedron(HexahedronID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("Hexahedron");
+        HeavensGate = (new BlockHeavensGate(HeavensGateID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("HeavensGate");
+        TheRevolution = (new BlockTheRevolution(TheRevolutionID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("TheRevolution");
+        Chicxulub = (new BlockChicxulub(ChicxulubID)).setHardness(0.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setLightLevel(0.75F)
+            .setBlockName("Chicxulub");
+        NuclearWaste = (new BlockNuclearWaste2(NuclearWasteID)).setHardness(0.3F)
+            .setStepSound(Block.soundTypeSnow)
+            .setLightLevel(0.5F)
+            .setBlockName("NuclearWaste");
+        SulfurOre = (new BlockSulfurOre(SulfurOreID)).setHardness(3.0F)
+            .setResistance(5.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setBlockName("SulfurOre");
+        UraniumOre = (new BlockUraniumOre(UraniumOreID)).setHardness(3.0F)
+            .setResistance(5.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setLightLevel(0.5F)
+            .setBlockName("UraniumOre");
+        Meteorite = (new BlockMeteorite(MeteoriteID)).setHardness(3.0F)
+            .setResistance(5.0F)
+            .setStepSound(Block.soundTypeStone)
+            .setLightLevel(0.5F)
+            .setBlockName("Meteorite");
+        Dynamite = (new ItemDynamite(DynamiteID)).setTextureName("Dynamite")
+            .setUnlocalizedName("Dynamite");
+        Dynamitex5 = (new ItemDynamitex5(Dynamitex5ID)).setTextureName("Dynamitex5")
+            .setUnlocalizedName("Dynamitex5");
+        Dynamitex20 = (new ItemDynamitex20(Dynamitex20ID)).setTextureName("Dynamitex20")
+            .setUnlocalizedName("Dynamitex20");
+        Dynamitex100 = (new ItemDynamitex100(Dynamitex100ID)).setTextureName("Dynamitex100")
+            .setUnlocalizedName("Dynamitex100");
+        Dynamitex500 = (new ItemDynamitex500(Dynamitex500ID)).setTextureName("Dynamitex500")
+            .setUnlocalizedName("Dynamitex500");
+        MeteorDynamite = (new ItemMeteorDynamite(MeteorDynamiteID)).setTextureName("MeteorDynamite")
+            .setUnlocalizedName("MeteorDynamite");
+        FlatDynamite = (new ItemFlatDynamite(FlatDynamiteID)).setTextureName("FlatDynamite")
+            .setUnlocalizedName("FlatDynamite");
+        MiningFlatDynamite = (new ItemMiningFlatDynamite(MiningFlatDynamiteID)).setTextureName("MiningFlatDynamite")
+            .setUnlocalizedName("MiningFlatDynamite");
+        CompactDynamite = (new ItemCompactDynamite(CompactDynamiteID)).setTextureName("CompactDynamite")
+            .setUnlocalizedName("CompactDynamite");
+        FireDynamite = (new ItemFireDynamite(FireDynamiteID)).setTextureName("FireDynamite")
+            .setUnlocalizedName("FireDynamite");
+        SnowDynamite = (new ItemSnowDynamite(SnowDynamiteID)).setTextureName("SnowDynamite")
+            .setUnlocalizedName("SnowDynamite");
+        OceanDynamite = (new ItemOceanDynamite(OceanDynamiteID)).setTextureName("OceanDynamite")
+            .setUnlocalizedName("OceanDynamite");
+        HellFireDynamite = (new ItemHellFireDynamite(HellFireDynamiteID)).setTextureName("HellFireDynamite")
+            .setUnlocalizedName("HellFireDynamite");
+        VaporizeDynamite = (new ItemVaporizeDynamite(VaporizeDynamiteID)).setTextureName("VaporizeDynamite")
+            .setUnlocalizedName("VaporizeDynamite");
+        EnderDynamite = (new ItemEnderDynamite(EnderDynamiteID)).setTextureName("EnderDynamite")
+            .setUnlocalizedName("EnderDynamite");
+        NuclearDynamite = (new ItemNuclearDynamite(NuclearDynamiteID)).setTextureName("NuclearDynamite")
+            .setUnlocalizedName("NuclearDynamite");
+        GhostDynamite = (new ItemGhostDynamite(GhostDynamiteID)).setTextureName("GhostDynamite")
+            .setUnlocalizedName("GhostDynamite");
+        CubicDynamite = (new ItemCubicDynamite(CubicDynamiteID)).setTextureName("CubicDynamite")
+            .setUnlocalizedName("CubicDynamite");
+        EruptingDynamite = (new ItemEruptingDynamite(EruptingDynamiteID)).setTextureName("EruptingDynamite")
+            .setUnlocalizedName("EruptingDynamite");
+        ChemicalDynamite = (new ItemChemicalDynamite(ChemicalDynamiteID)).setTextureName("ChemicalDynamite")
+            .setUnlocalizedName("ChemicalDynamite");
+        FloatingDynamite = (new ItemFloatingDynamite(FloatingDynamiteID)).setTextureName("FloatingDynamite")
+            .setUnlocalizedName("FloatingDynamite");
+        Uranium = (new ItemUranium(UraniumID)).setTextureName("Uranium")
+            .setUnlocalizedName("Uranium");
         this.LoadBlock(TNTx5, "TNTx5");
         this.LoadBlock(TNTx20, "TNTx20");
         this.LoadBlock(TNTx100, "TNTx100");
@@ -656,13 +796,55 @@ public class MixinTooMuchTNT {
         this.R(new ItemStack(TNTx20, 1), "##", "##", '#', TNTx5);
         this.R(new ItemStack(TNTx100, 1), "##", "##", '#', TNTx20);
         this.R(new ItemStack(TNTx500, 1), "##", "##", '#', TNTx100);
-        this.R(new ItemStack(MeteorTNT, 1), "XXX", "XMX", "X#X", '#', TNTx500, 'X', Blocks.obsidian, 'M', Items.lava_bucket);
+        this.R(
+            new ItemStack(MeteorTNT, 1),
+            "XXX",
+            "XMX",
+            "X#X",
+            '#',
+            TNTx500,
+            'X',
+            Blocks.obsidian,
+            'M',
+            Items.lava_bucket);
         this.R(new ItemStack(FlatTNT, 1), "#", "X", '#', TNTx20, 'X', Blocks.obsidian);
         this.R(new ItemStack(MiningFlatTNT, 1), "XXX", "M#M", "XXX", '#', FlatTNT, 'X', Blocks.torch, 'M', TNTx5);
         this.R(new ItemStack(CompactTNT, 1), "XXX", "X#X", "XXX", '#', TNTx5, 'X', Blocks.tnt);
-        this.R(new ItemStack(HouseTNT, 1), "XXX", "G#G", "XMX", '#', TNTx5, 'X', Blocks.cobblestone, 'M', Blocks.crafting_table, 'G', Blocks.glass);
-        this.R(new ItemStack(WoodHouseTNT, 1), "XXX", "M#M", "XXX", '#', HouseTNT, 'X', Blocks.planks, 'M', Items.gold_ingot);
-        this.R(new ItemStack(BrickHouseTNT, 1), "XXX", "M#M", "XXX", '#', HouseTNT, 'X', Blocks.brick_block, 'M', Items.diamond);
+        this.R(
+            new ItemStack(HouseTNT, 1),
+            "XXX",
+            "G#G",
+            "XMX",
+            '#',
+            TNTx5,
+            'X',
+            Blocks.cobblestone,
+            'M',
+            Blocks.crafting_table,
+            'G',
+            Blocks.glass);
+        this.R(
+            new ItemStack(WoodHouseTNT, 1),
+            "XXX",
+            "M#M",
+            "XXX",
+            '#',
+            HouseTNT,
+            'X',
+            Blocks.planks,
+            'M',
+            Items.gold_ingot);
+        this.R(
+            new ItemStack(BrickHouseTNT, 1),
+            "XXX",
+            "M#M",
+            "XXX",
+            '#',
+            HouseTNT,
+            'X',
+            Blocks.brick_block,
+            'M',
+            Items.diamond);
         this.S(new ItemStack(FireTNT, 1), Items.flint_and_steel, TNTx5);
         this.S(new ItemStack(SnowTNT, 1), Blocks.snow, TNTx5);
         this.R(new ItemStack(OceanTNT, 1), " X ", "X#X", " X ", '#', TNTx100, 'X', Items.water_bucket);
@@ -670,11 +852,31 @@ public class MixinTooMuchTNT {
         this.R(new ItemStack(HellFireTNT, 1), " M ", "X#X", " M ", '#', FireTNT, 'M', TNTx20, 'X', Items.ghast_tear);
         this.R(new ItemStack(VaporizeTNT, 1), " X ", "X#X", " X ", '#', TNTx20, 'X', Items.bucket);
         this.S(new ItemStack(EnderTNT, 1), Items.ender_pearl, Blocks.tnt);
-        this.R(new ItemStack(NuclearTNT, 1), "X#X", "#M#", "X#X", '#', TNTx20, 'X', Items.glowstone_dust, 'M', Blocks.gold_block);
+        this.R(
+            new ItemStack(NuclearTNT, 1),
+            "X#X",
+            "#M#",
+            "X#X",
+            '#',
+            TNTx20,
+            'X',
+            Items.glowstone_dust,
+            'M',
+            Blocks.gold_block);
         this.R(new ItemStack(DiggingTNT, 1), "#", "#", "X", '#', TNTx5, 'X', Items.water_bucket);
         this.R(new ItemStack(DrillingTNT, 1), "#", "X", '#', DiggingTNT, 'X', TNTx100);
         this.S(new ItemStack(GhostTNT, 1), Items.milk_bucket, TNTx20);
-        this.R(new ItemStack(MultiplyTNT, 1), "MXM", "X#X", "MXM", '#', TNTx5, 'X', Items.gold_ingot, 'M', new ItemStack(Items.dye, 1, 15));
+        this.R(
+            new ItemStack(MultiplyTNT, 1),
+            "MXM",
+            "X#X",
+            "MXM",
+            '#',
+            TNTx5,
+            'X',
+            Items.gold_ingot,
+            'M',
+            new ItemStack(Items.dye, 1, 15));
         this.R(new ItemStack(CubicTNT, 1), "XXX", "X#X", "XXX", '#', TNTx5, 'X', Blocks.cobblestone);
         this.S(new ItemStack(EruptingTNT, 1), CompactTNT, Items.fire_charge);
         this.S(new ItemStack(ChemicalTNT, 1), TNTx100, Items.water_bucket, Items.gunpowder, Items.redstone);
@@ -683,17 +885,71 @@ public class MixinTooMuchTNT {
         this.R(new ItemStack(TimerTNT, 1), "X", "#", '#', TNTx5, 'X', Items.redstone);
         this.S(new ItemStack(ReactionTNT, 1), ChemicalTNT, CompactTNT);
         this.S(new ItemStack(AnimalTNT, 1), Blocks.tnt, Items.porkchop, Items.rotten_flesh, Items.chicken, Items.beef);
-        this.R(new ItemStack(SandFirework, 1), "XXX", "X#X", "XMX", '#', TNTx5, 'X', Blocks.sand, 'M', Items.firework_charge);
+        this.R(
+            new ItemStack(SandFirework, 1),
+            "XXX",
+            "X#X",
+            "XMX",
+            '#',
+            TNTx5,
+            'X',
+            Blocks.sand,
+            'M',
+            Items.firework_charge);
         this.R(new ItemStack(FloatingIslandTNT, 1), "X#X", '#', FloatingTNT, 'X', MultiplyTNT);
-        this.R(new ItemStack(TNTFirework, 1), "XXX", "X#X", "XMX", '#', TNTx5, 'X', CompactTNT, 'M', Items.firework_charge);
+        this.R(
+            new ItemStack(TNTFirework, 1),
+            "XXX",
+            "X#X",
+            "XMX",
+            '#',
+            TNTx5,
+            'X',
+            CompactTNT,
+            'M',
+            Items.firework_charge);
         this.S(new ItemStack(GravityTNT, 1), EnderTNT, Items.apple);
         this.R(new ItemStack(MeteorShowerTNT, 1), " X ", "X#X", " X ", '#', EruptingTNT, 'X', CompactTNT);
         this.S(new ItemStack(SpiralTNT, 1), EruptingTNT, FloatingTNT);
-        this.R(new ItemStack(GroveTNT, 1), "MMM", "F#F", "XXX", '#', TNTx5, 'X', Blocks.dirt, 'M', Blocks.sapling, 'F', new ItemStack(Items.dye, 1, 15));
+        this.R(
+            new ItemStack(GroveTNT, 1),
+            "MMM",
+            "F#F",
+            "XXX",
+            '#',
+            TNTx5,
+            'X',
+            Blocks.dirt,
+            'M',
+            Blocks.sapling,
+            'F',
+            new ItemStack(Items.dye, 1, 15));
         this.R(new ItemStack(InvertedTNT, 1), " X ", "X#X", " X ", '#', TNTx100, 'X', MultiplyTNT);
-        this.R(new ItemStack(EasterEgg, 1), "M#M", "XXX", "P#P", '#', TNTx20, 'X', new ItemStack(Items.dye, 1, 15), 'M', Items.melon_seeds, 'P', Items.pumpkin_seeds);
+        this.R(
+            new ItemStack(EasterEgg, 1),
+            "M#M",
+            "XXX",
+            "P#P",
+            '#',
+            TNTx20,
+            'X',
+            new ItemStack(Items.dye, 1, 15),
+            'M',
+            Items.melon_seeds,
+            'P',
+            Items.pumpkin_seeds);
         this.S(new ItemStack(NuclearWaste, 2), Items.glowstone_dust, Items.slime_ball);
-        this.S(new ItemStack(Blocks.sand, 32), Items.water_bucket, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone, Blocks.cobblestone);
+        this.S(
+            new ItemStack(Blocks.sand, 32),
+            Items.water_bucket,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone,
+            Blocks.cobblestone);
         this.S(new ItemStack(MountainTopRemoval, 1), FlatTNT, Uranium);
         this.S(new ItemStack(MankindsMark, 1), HouseTNT, Uranium);
         this.S(new ItemStack(PoseidonsWave, 1), OceanTNT, Uranium);
@@ -733,23 +989,29 @@ public class MixinTooMuchTNT {
     public void Set(Class<? extends Entity> par1, String par2, int par3) {
         EntityRegistry.registerGlobalEntityID(par1, par2, par3);
     }
+
     @Shadow
-    public void Render(Class<? extends Entity> par1, String par2, int par3, Object par4, int par5, int par6, boolean par7) {
+    public void Render(Class<? extends Entity> par1, String par2, int par3, Object par4, int par5, int par6,
+        boolean par7) {
         EntityRegistry.registerModEntity(par1, par2, par3, par4, par5, par6, par7);
     }
+
     @Shadow
     public void R(ItemStack output, Object... params) {
         GameRegistry.addRecipe(output, params);
     }
+
     @Shadow
     public void S(ItemStack output, Object... params) {
         GameRegistry.addShapelessRecipe(output, params);
     }
+
     @Shadow
     public void LoadBlock(Block par1, String par2) {
         GameRegistry.registerBlock(par1, par2);
         LanguageRegistry.addName(par1, par2);
     }
+
     @Shadow
     public void LoadItem(Item par1, String par2) {
         GameRegistry.registerItem(par1, par2);

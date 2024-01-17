@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -31,14 +29,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import com.google.common.collect.ImmutableSetMultimap;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.google.common.collect.ImmutableSetMultimap;
+
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
+
 @Mixin(value = World.class, priority = 999)
 public class MixinWorld {
+
     @Shadow
     protected int updateLCG = (new Random()).nextInt();
     @Shadow
@@ -326,8 +328,7 @@ public class MixinWorld {
                 p_72866_1_.posZ = p_72866_1_.lastTickPosZ;
             }
 
-            if (Double.isNaN(p_72866_1_.rotationPitch)
-                || Double.isInfinite(p_72866_1_.rotationPitch)) {
+            if (Double.isNaN(p_72866_1_.rotationPitch) || Double.isInfinite(p_72866_1_.rotationPitch)) {
                 p_72866_1_.rotationPitch = p_72866_1_.prevRotationPitch;
             }
 
@@ -647,14 +648,16 @@ public class MixinWorld {
      */
     @Overwrite
     public void setLightValue(EnumSkyBlock p_72915_1_, int p_72915_2_, int p_72915_3_, int p_72915_4_, int p_72915_5_) {
-        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000 && p_72915_2_ < 30000000 && p_72915_4_ < 30000000 && (p_72915_3_ >= 0 && (p_72915_3_ < 256 && (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4))))) {
-                        Chunk chunk = this.getChunkFromChunkCoords(p_72915_2_ >> 4, p_72915_4_ >> 4);
-                        chunk.setLightValue(p_72915_1_, p_72915_2_ & 15, p_72915_3_, p_72915_4_ & 15, p_72915_5_);
+        if (p_72915_2_ >= -30000000 && p_72915_4_ >= -30000000
+            && p_72915_2_ < 30000000
+            && p_72915_4_ < 30000000
+            && (p_72915_3_ >= 0 && (p_72915_3_ < 256 && (this.chunkExists(p_72915_2_ >> 4, p_72915_4_ >> 4))))) {
+            Chunk chunk = this.getChunkFromChunkCoords(p_72915_2_ >> 4, p_72915_4_ >> 4);
+            chunk.setLightValue(p_72915_1_, p_72915_2_ & 15, p_72915_3_, p_72915_4_ & 15, p_72915_5_);
 
-                        for (Object worldAccess : this.worldAccesses) {
-                            ((IWorldAccess) worldAccess)
-                                    .markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
-                        }
+            for (Object worldAccess : this.worldAccesses) {
+                ((IWorldAccess) worldAccess).markBlockForRenderUpdate(p_72915_2_, p_72915_3_, p_72915_4_);
+            }
         }
     }
 
@@ -822,6 +825,7 @@ public class MixinWorld {
     public Chunk getChunkFromBlockCoords(int p_72938_1_, int p_72938_2_) {
         return this.getChunkFromChunkCoords(p_72938_1_ >> 4, p_72938_2_ >> 4);
     }
+
     /**
      * @author
      * @reason
@@ -829,7 +833,8 @@ public class MixinWorld {
     @Overwrite
     public int getBlockLightValue_do(int p_72849_1_, int p_72849_2_, int p_72849_3_, boolean p_72849_4_) {
         if (optimizationsAndTweaks$isWithinBounds(p_72849_1_, p_72849_2_, p_72849_3_)) {
-            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_).getUseNeighborBrightness()) {
+            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_)
+                .getUseNeighborBrightness()) {
                 return optimizationsAndTweaks$getMaxNeighborLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
             } else if (p_72849_2_ < 0) {
                 return 0;
@@ -874,17 +879,19 @@ public class MixinWorld {
 
         return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void spawnParticle(String particleName, double x, double y, double z, double velocityX, double velocityY, double velocityZ)
-    {
+    public void spawnParticle(String particleName, double x, double y, double z, double velocityX, double velocityY,
+        double velocityZ) {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).spawnParticle(particleName, x, y, z, velocityX, velocityY, velocityZ);
         }
     }
+
     /**
      * @author
      * @reason
@@ -892,85 +899,84 @@ public class MixinWorld {
     @Overwrite
     public int countEntities(Class<?> entityClass) {
         return (int) loadedEntityList.stream()
-            .filter(entity -> !((entity instanceof EntityLiving) && ((EntityLiving) entity).isNoDespawnRequired())
-                && entityClass.isAssignableFrom(entity.getClass()))
+            .filter(
+                entity -> !((entity instanceof EntityLiving) && ((EntityLiving) entity).isNoDespawnRequired())
+                    && entityClass.isAssignableFrom(entity.getClass()))
             .count();
     }
-    @Inject(method="tick", at=@At(value="INVOKE"))
+
+    @Inject(method = "tick", at = @At(value = "INVOKE"))
     private void onTickInject(CallbackInfo info) {
         // Check if TidyChunkBackport is enabled in the configuration
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             // Call the injectInWorldTick method from the TidyChunkBackportEventHandler
-            TidyChunkBackportEventHandler.injectInWorldTick((World)(Object)this);
+            TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_)
-    {
+    public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
         this.theProfiler.endStartSection("moodSound");
 
-        if (this.ambientTickCountdown == 0 && !this.isRemote)
-        {
+        if (this.ambientTickCountdown == 0 && !this.isRemote) {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int k = this.updateLCG >> 2;
             int l = k & 15;
             int i1 = k >> 8 & 15;
             int j1 = k >> 16 & 255;
 
-            if (p_147467_3_ != null && this.world != null)
-            {
+            if (p_147467_3_ != null && this.world != null) {
                 Block block = p_147467_3_.getBlock(l, j1, i1);
                 l += p_147467_1_;
                 i1 += p_147467_2_;
 
-                if (block != null && (block.getMaterial() == Material.air &&
-                        this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8) &&
-                        this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0 &&
-                        this.world.provider != null))
-                    {
-                        EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
+                if (block != null && (block.getMaterial() == Material.air
+                    && this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8)
+                    && this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0
+                    && this.world.provider != null)) {
+                    EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
 
-                        if (entityplayer != null && entityplayer.worldObj != null &&
-                            entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D)
-                        {
-                            this.playSoundEffect(l + 0.5D, j1 + 0.5D, i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
-                            this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
-                        }
+                    if (entityplayer != null && entityplayer.worldObj != null
+                        && entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D) {
+                        this.playSoundEffect(
+                            l + 0.5D,
+                            j1 + 0.5D,
+                            i1 + 0.5D,
+                            "ambient.cave.cave",
+                            0.7F,
+                            0.8F + this.rand.nextFloat() * 0.2F);
+                        this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
+                    }
 
                 }
             }
         }
         this.theProfiler.endStartSection("checkLight");
-        if (p_147467_3_ != null)
-        {
+        if (p_147467_3_ != null) {
             p_147467_3_.enqueueRelightChecks();
         }
     }
+
     @Shadow
-    public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_)
-    {
-        if (p_72883_2_ < 0)
-        {
+    public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_) {
+        if (p_72883_2_ < 0) {
             return 0;
-        }
-        else
-        {
-            if (p_72883_2_ >= 256)
-            {
+        } else {
+            if (p_72883_2_ >= 256) {
                 p_72883_2_ = 255;
             }
 
-            return this.getChunkFromChunkCoords(p_72883_1_ >> 4, p_72883_3_ >> 4).getBlockLightValue(p_72883_1_ & 15, p_72883_2_, p_72883_3_ & 15, 0);
+            return this.getChunkFromChunkCoords(p_72883_1_ >> 4, p_72883_3_ >> 4)
+                .getBlockLightValue(p_72883_1_ & 15, p_72883_2_, p_72883_3_ & 15, 0);
         }
     }
 
     @Overwrite
-    public void playSoundEffect(double x, double y, double z, String soundName, float volume, float pitch)
-    {
+    public void playSoundEffect(double x, double y, double z, String soundName, float volume, float pitch) {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).playSound(soundName, x, y, z, volume, pitch);
         }

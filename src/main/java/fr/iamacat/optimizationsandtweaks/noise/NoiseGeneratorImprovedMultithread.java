@@ -32,8 +32,7 @@ public class NoiseGeneratorImprovedMultithread {
         this.zCoord = p_i45469_1_.nextDouble() * 256.0D;
         int i;
 
-        for (i = 0; i < 256; this.permutations[i] = i++) {
-        }
+        for (i = 0; i < 256; this.permutations[i] = i++) {}
 
         for (i = 0; i < 256; ++i) {
             int j = p_i45469_1_.nextInt(256 - i) + i;

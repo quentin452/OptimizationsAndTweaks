@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -103,7 +102,10 @@ public class MixinModelRenderer {
 
         if (this.rotateAngleX != 0.0F || this.rotateAngleY != 0.0F || this.rotateAngleZ != 0.0F) {
             GL11.glPushMatrix();
-            GL11.glTranslatef(this.rotationPointX * partialTicks, this.rotationPointY * partialTicks, this.rotationPointZ * partialTicks);
+            GL11.glTranslatef(
+                this.rotationPointX * partialTicks,
+                this.rotationPointY * partialTicks,
+                this.rotationPointZ * partialTicks);
 
             if (this.rotateAngleZ != 0.0F) {
                 GL11.glRotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
@@ -129,7 +131,10 @@ public class MixinModelRenderer {
 
         } else {
             if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
-                GL11.glTranslatef(this.rotationPointX * partialTicks, this.rotationPointY * partialTicks, this.rotationPointZ * partialTicks);
+                GL11.glTranslatef(
+                    this.rotationPointX * partialTicks,
+                    this.rotationPointY * partialTicks,
+                    this.rotationPointZ * partialTicks);
             }
 
             GL11.glCallList(this.displayList);
@@ -141,7 +146,10 @@ public class MixinModelRenderer {
             }
 
             if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
-                GL11.glTranslatef(-this.rotationPointX * partialTicks, -this.rotationPointY * partialTicks, -this.rotationPointZ * partialTicks);
+                GL11.glTranslatef(
+                    -this.rotationPointX * partialTicks,
+                    -this.rotationPointY * partialTicks,
+                    -this.rotationPointZ * partialTicks);
             }
 
         }
@@ -150,6 +158,7 @@ public class MixinModelRenderer {
         GL11.glTranslatef(-this.offsetX, -this.offsetY, -this.offsetZ);
 
     }
+
     /**
      * @author
      * @reason

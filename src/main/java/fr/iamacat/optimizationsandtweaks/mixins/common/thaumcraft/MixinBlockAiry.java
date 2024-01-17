@@ -7,13 +7,16 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
 import thaumcraft.api.entities.IEldritchMob;
 import thaumcraft.common.blocks.BlockAiry;
 
 @Mixin(BlockAiry.class)
 public class MixinBlockAiry {
+
     /**
      * @author
      * @reason fix ghost EntityItem caused by onEntityCollidedWithBlock from Aura Node to prevent lags
@@ -23,7 +26,7 @@ public class MixinBlockAiry {
         int metadata = world.getBlockMetadata(x, y, z);
 
         if (metadata == 10) {
-            entity.attackEntityFrom(DamageSource.magic, (float)(1 + world.rand.nextInt(2)));
+            entity.attackEntityFrom(DamageSource.magic, (float) (1 + world.rand.nextInt(2)));
             entity.motionX *= 0.8;
             entity.motionZ *= 0.8;
 

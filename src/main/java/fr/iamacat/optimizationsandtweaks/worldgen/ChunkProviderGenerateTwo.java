@@ -203,15 +203,8 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         if (event.getResult() == Result.DENY) return;
 
         double d0 = 0.03125D;
-        this.stoneNoise = this.field_147430_m.func_151599_a(
-            this.stoneNoise,
-                p_147422_1_ * 16,
-                p_147422_2_ * 16,
-            16,
-            16,
-            d0 * 2.0D,
-            d0 * 2.0D,
-            1.0D);
+        this.stoneNoise = this.field_147430_m
+            .func_151599_a(this.stoneNoise, p_147422_1_ * 16, p_147422_2_ * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
 
         for (int k = 0; k < 16; ++k) {
             for (int l = 0; l < 16; ++l) {

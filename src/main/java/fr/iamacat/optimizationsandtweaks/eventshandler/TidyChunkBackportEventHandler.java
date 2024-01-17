@@ -1,9 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.eventshandler;
 
-import com.falsepattern.lib.compat.ChunkPos;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.World;
@@ -11,8 +10,11 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.falsepattern.lib.compat.ChunkPos;
+
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 
 public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.

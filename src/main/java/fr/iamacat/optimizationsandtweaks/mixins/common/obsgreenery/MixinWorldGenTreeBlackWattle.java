@@ -1,21 +1,25 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.obsgreenery;
 
-import com.jim.obsgreenery.ObsGreenery;
-import com.jim.obsgreenery.world.WorldGenTreeBase;
-import com.jim.obsgreenery.world.WorldGenTreeBlackWattle;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
-import fr.iamacat.optimizationsandtweaks.utilsformods.obsgreenery.WorldGenTreeBase2;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Random;
+import com.jim.obsgreenery.ObsGreenery;
+import com.jim.obsgreenery.world.WorldGenTreeBase;
+import com.jim.obsgreenery.world.WorldGenTreeBlackWattle;
+
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
+import fr.iamacat.optimizationsandtweaks.utilsformods.obsgreenery.WorldGenTreeBase2;
 
 @Mixin(WorldGenTreeBlackWattle.class)
 public class MixinWorldGenTreeBlackWattle extends WorldGenTreeBase {
+
     @Shadow
     protected Block logBlock;
     @Shadow
@@ -34,11 +38,13 @@ public class MixinWorldGenTreeBlackWattle extends WorldGenTreeBase {
         this.leavesBlock = ObsGreenery.blockLeavesA;
         this.leavesBlockMeta = 1;
     }
+
     @Shadow
     public boolean func_76484_a(World world, Random rand, int x, int y, int z) {
         int posY = this.getGroundYPosition(world, x, z) + 1;
         return posY < 100 && posY > 62 && this.grow(world, rand, x, posY, z);
     }
+
     /**
      * @author
      * @reason
@@ -58,14 +64,44 @@ public class MixinWorldGenTreeBlackWattle extends WorldGenTreeBase {
             for (Classers.Quadrant q : var14) {
                 int bY = y + thirdTrunkHeight + rand.nextInt(3) - 1;
                 int bLen = thirdTrunkHeight + rand.nextInt(3) - 1;
-                worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(world, x, bY, z, bLen, q, this.logBlock, this.logBlockMeta, this.leavesBlock, this.leavesBlockMeta);
+                worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(
+                    world,
+                    x,
+                    bY,
+                    z,
+                    bLen,
+                    q,
+                    this.logBlock,
+                    this.logBlockMeta,
+                    this.leavesBlock,
+                    this.leavesBlockMeta);
                 if (extraHeight > 4) {
-                    bLen = (int) ( trunkHeight * 0.3) + rand.nextInt(3) - 1;
-                    worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(world, x, y + minTrunkHeight + halfExtraHeight + rand.nextInt(2) - 1, z, bLen, q, this.logBlock, this.logBlockMeta, this.leavesBlock, this.leavesBlockMeta);
+                    bLen = (int) (trunkHeight * 0.3) + rand.nextInt(3) - 1;
+                    worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(
+                        world,
+                        x,
+                        y + minTrunkHeight + halfExtraHeight + rand.nextInt(2) - 1,
+                        z,
+                        bLen,
+                        q,
+                        this.logBlock,
+                        this.logBlockMeta,
+                        this.leavesBlock,
+                        this.leavesBlockMeta);
                 }
 
-                bLen = (int) ( trunkHeight * 0.15) + rand.nextInt(3) - 1;
-                worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(world, x, y + trunkHeight - 1, z, bLen, q, this.logBlock, this.logBlockMeta, this.leavesBlock, this.leavesBlockMeta);
+                bLen = (int) (trunkHeight * 0.15) + rand.nextInt(3) - 1;
+                worldGenTreeBase2.optimizationsAndTweaks$recursiveBranch45(
+                    world,
+                    x,
+                    y + trunkHeight - 1,
+                    z,
+                    bLen,
+                    q,
+                    this.logBlock,
+                    this.logBlockMeta,
+                    this.leavesBlock,
+                    this.leavesBlockMeta);
             }
 
             return true;

@@ -1,22 +1,16 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
+
     @Shadow
     public Map chunkTileEntityMap;
     /** Whether or not this Chunk is currently loaded into the World */

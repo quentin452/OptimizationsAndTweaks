@@ -9,15 +9,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(StatList.class)
 public abstract class MixinStatList {
 
     @Inject(method = "func_151182_a", at = @At("TAIL"), remap = false)
     private static void onRegisterStat(EntityList.EntityEggInfo eggInfo, CallbackInfoReturnable<StatBase> info) {
-            StatBase stat = info.getReturnValue();
-            String statId = stat.statId;
-            System.out.println("[Registered stat ID] " + statId);
+        StatBase stat = info.getReturnValue();
+        String statId = stat.statId;
+        System.out.println("[Registered stat ID] " + statId);
     }
 }

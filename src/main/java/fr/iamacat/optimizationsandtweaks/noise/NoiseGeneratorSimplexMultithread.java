@@ -33,8 +33,7 @@ public class NoiseGeneratorSimplexMultithread {
         this.field_151610_d = p_i45471_1_.nextDouble() * 256.0D;
         int i;
 
-        for (i = 0; i < 256; this.field_151608_f[i] = i++) {
-        }
+        for (i = 0; i < 256; this.field_151608_f[i] = i++) {}
 
         for (i = 0; i < 256; ++i) {
             int j = p_i45471_1_.nextInt(256 - i) + i;
@@ -118,7 +117,7 @@ public class NoiseGeneratorSimplexMultithread {
     }
 
     public void func_151606_a(double[] p_151606_1_, double p_151606_2_, double p_151606_4_, int p_151606_6_,
-                              int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
+        int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
 
         Future<?>[] futures = new Future[p_151606_7_];
 

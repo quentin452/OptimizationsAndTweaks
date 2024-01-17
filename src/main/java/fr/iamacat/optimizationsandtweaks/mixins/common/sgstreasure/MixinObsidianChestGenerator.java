@@ -1,15 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.sgstreasure;
 
-import com.someguyssoftware.mod.Coords;
-import com.someguyssoftware.treasure.worldgen.chest.ObsidianChestGenerator;
-import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.ObsidianChestGenerator2;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import com.someguyssoftware.mod.Coords;
+import com.someguyssoftware.treasure.worldgen.chest.ObsidianChestGenerator;
+
+import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.ObsidianChestGenerator2;
 
 @Mixin(ObsidianChestGenerator.class)
 public class MixinObsidianChestGenerator {
+
     /**
      * @author
      * @reason

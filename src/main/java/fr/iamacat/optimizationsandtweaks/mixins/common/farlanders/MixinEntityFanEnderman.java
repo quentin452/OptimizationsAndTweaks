@@ -10,8 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.fabiulu.farlanders.common.entity.EntityFanEnderman;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(EntityFanEnderman.class)
 public class MixinEntityFanEnderman extends EntityMob {
 
@@ -26,8 +24,8 @@ public class MixinEntityFanEnderman extends EntityMob {
 
     @Inject(method = "func_70673_aS", at = @At("HEAD"), remap = false, cancellable = true)
     protected void func_70673_aS(CallbackInfoReturnable<String> cir) {
-            this.worldObj.playSoundAtEntity(this, "farlanders:fandeath", 0.7F, 1.0F);
-            cir.setReturnValue(null);
+        this.worldObj.playSoundAtEntity(this, "farlanders:fandeath", 0.7F, 1.0F);
+        cir.setReturnValue(null);
     }
 
 }

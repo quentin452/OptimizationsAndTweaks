@@ -6,11 +6,13 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(EntityMob.class)
 public abstract class MixinEntityMob extends EntityCreature implements IMob {
+
     public MixinEntityMob(World p_i1602_1_) {
         super(p_i1602_1_);
     }
@@ -22,7 +24,8 @@ public abstract class MixinEntityMob extends EntityCreature implements IMob {
      */
     @Overwrite
     protected boolean isValidLightLevel() {
-        if (!this.worldObj.getChunkProvider().chunkExists(MathHelper.floor_double(this.posX) >> 4, MathHelper.floor_double(this.posZ) >> 4)) {
+        if (!this.worldObj.getChunkProvider()
+            .chunkExists(MathHelper.floor_double(this.posX) >> 4, MathHelper.floor_double(this.posZ) >> 4)) {
             return false;
         }
         int i = MathHelper.floor_double(this.posX);

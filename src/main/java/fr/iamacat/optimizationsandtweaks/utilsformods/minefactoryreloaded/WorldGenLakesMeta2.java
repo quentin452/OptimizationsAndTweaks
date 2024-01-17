@@ -1,21 +1,22 @@
 package fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 
-import java.util.Random;
-
-public class WorldGenLakesMeta2  {
+public class WorldGenLakesMeta2 {
 
     private final Block _block;
+
     public WorldGenLakesMeta2(Block var1) {
         this._block = var1;
     }
+
     private static int optimizationsAndTweaks$lakeGenerationCounter = 0;
     private static final int MAX_LAKE_GENERATIONS_PER_TICK = 5;
 
@@ -35,8 +36,7 @@ public class WorldGenLakesMeta2  {
             --y;
         }
 
-        if (y <= 4) {
-        } else {
+        if (y <= 4) {} else {
             y -= 4;
             boolean[] aboolean = new boolean[2048];
             int l = random.nextInt(4) + 4;
@@ -87,7 +87,7 @@ public class WorldGenLakesMeta2  {
 
                             if (i2 < 4 && !material.isSolid()
                                 && !world.getBlock(blockX, blockY, blockZ)
-                                .equals(_block)) {
+                                    .equals(_block)) {
                                 return;
                             }
                         }

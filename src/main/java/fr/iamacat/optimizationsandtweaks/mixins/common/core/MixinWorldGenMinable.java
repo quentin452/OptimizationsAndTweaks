@@ -48,10 +48,18 @@ public class MixinWorldGenMinable extends WorldGenerator {
     @Overwrite
     public boolean generate(World world, Random random, int x, int y, int z) {
         float f = random.nextFloat() * (float) Math.PI;
-        double d0 = x + 8 + SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
-        double d1 = x + 8 - SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
-        double d2 = z + 8 + COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
-        double d3 = z + 8 - COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
+        double d0 = x + 8
+            + SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
+                / 8.0f;
+        double d1 = x + 8
+            - SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
+                / 8.0f;
+        double d2 = z + 8
+            + COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
+                / 8.0f;
+        double d3 = z + 8
+            - COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
+                / 8.0f;
         double d4 = y + random.nextInt(3) - 2;
         double d5 = y + random.nextInt(3) - 2;
 
@@ -61,21 +69,25 @@ public class MixinWorldGenMinable extends WorldGenerator {
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double d0, double d1, double d2, double d3, double d4, double d5) {
+    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double d0, double d1, double d2,
+        double d3, double d4, double d5) {
         for (int l = 0; l <= numberOfBlocks; ++l) {
             double d6 = d0 + (d1 - d0) * l / numberOfBlocks;
             double d7 = d4 + (d5 - d4) * l / numberOfBlocks;
             double d8 = d2 + (d3 - d2) * l / numberOfBlocks;
             double d9 = random.nextDouble() * numberOfBlocks / 16.0D;
-            double d10 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
-            double d11 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
+            double d10 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION)
+                & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
+            double d11 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION)
+                & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
 
             optimizationsAndTweaks$generateEllipseLayer(world, d6, d7, d8, d10, d11);
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateEllipseLayer(World world, double d6, double d7, double d8, double d10, double d11) {
+    private void optimizationsAndTweaks$generateEllipseLayer(World world, double d6, double d7, double d8, double d10,
+        double d11) {
         int minX = MathHelper.floor_double(d6 - d10 / 2.0D);
         int maxX = MathHelper.floor_double(d6 + d10 / 2.0D);
 
@@ -89,7 +101,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
     }
 
     @Unique
-    private void optimizationsAndTweaks$iterateOverEllipse(World world, double d6, double d7, double d8, double d10, double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+    private void optimizationsAndTweaks$iterateOverEllipse(World world, double d6, double d7, double d8, double d10,
+        double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
         for (int k2 = minX; k2 <= maxX; ++k2) {
             double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
 

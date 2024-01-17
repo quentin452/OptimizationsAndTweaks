@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunk
 import com.falsepattern.lib.compat.ChunkPos;
 
 public class ChunkEntry {
+
     private final ChunkPos chunkPos;
     private final long time;
 

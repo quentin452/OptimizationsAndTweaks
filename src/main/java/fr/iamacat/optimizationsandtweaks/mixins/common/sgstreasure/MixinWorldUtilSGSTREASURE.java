@@ -1,13 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.sgstreasure;
 
-import com.someguyssoftware.mod.util.WorldUtil;
-import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.WorldUtil2SGSTREASURE;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import com.someguyssoftware.mod.util.WorldUtil;
+
+import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.WorldUtil2SGSTREASURE;
+
 @Mixin(WorldUtil.class)
 public class MixinWorldUtilSGSTREASURE {
+
     /**
      * @author
      * @reason

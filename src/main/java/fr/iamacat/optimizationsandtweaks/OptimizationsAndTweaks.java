@@ -2,8 +2,6 @@ package fr.iamacat.optimizationsandtweaks;
 
 import java.io.File;
 
-import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
-import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -12,6 +10,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
+import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite.FileInjector;
@@ -44,11 +44,11 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        if(OptimizationsandTweaksConfig.enableTidyChunkBackport){
+        if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
-        MinecraftForge.EVENT_BUS.register(eventHandler);
+            MinecraftForge.EVENT_BUS.register(eventHandler);
         }
-        if(OptimizationsandTweaksConfig.enableEntityItemSpawningDebugger){
+        if (OptimizationsandTweaksConfig.enableEntityItemSpawningDebugger) {
             EntityItemSpawningEventHandler eventHandler = new EntityItemSpawningEventHandler();
             MinecraftForge.EVENT_BUS.register(eventHandler);
         }

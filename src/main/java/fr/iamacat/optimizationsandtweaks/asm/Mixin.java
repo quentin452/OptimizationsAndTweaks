@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
 
-
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
-    common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper, "core.MixinEnchantmentHelper"),
+    common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper,
+        "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
         require(TargetedMod.PACKAGEDAUTO).and(m -> OptimizationsandTweaksConfig.enableMixinNeiHandlerPackagedAuto),
         "packagedauto.MixinNeiHandlerPackagedAuto"),
@@ -51,7 +51,7 @@ public enum Mixin implements IMixin {
         "lotr.MixinLOTRWorldProvider"),
 
     common_mowziesmobs_MixinStructureGeneratorBaseMM(Side.COMMON,
-       require(TargetedMod.MOWZIESMOBS).and(m -> OptimizationsandTweaksConfig.enableMixinStructureGeneratorBaseMM),
+        require(TargetedMod.MOWZIESMOBS).and(m -> OptimizationsandTweaksConfig.enableMixinStructureGeneratorBaseMM),
         "mowziesmobs.MixinStructureGeneratorBaseMM"),
 
     common_minestones_MixinItemMinestone(Side.COMMON,
@@ -73,8 +73,8 @@ public enum Mixin implements IMixin {
 
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
         "core.MixinDedicatedServer"),
-    common_core_noiseMixinNoiseGeneratorImproved(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNoiseGeneratorImproved,
-        "core.noise.MixinNoiseGeneratorImproved"),
+    common_core_noiseMixinNoiseGeneratorImproved(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinNoiseGeneratorImproved, "core.noise.MixinNoiseGeneratorImproved"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
@@ -372,12 +372,13 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntityAnimal"),
 
     common_core_biomes_MixinBiomeGenBase(Side.COMMON,
-        avoid(TargetedMod.DRAGONAPI).and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase)),
+        avoid(TargetedMod.DRAGONAPI)
+            .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase)),
         "core.biomes.MixinBiomeGenBase"),
-    common_core_MixinChunkProviderGenerate(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderGenerate,
-        "core.MixinChunkProviderGenerate"),
-    common_core_MixinCompressedStreamTools(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinCompressedStreamTools,
-        "core.MixinCompressedStreamTools"),
+    common_core_MixinChunkProviderGenerate(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinChunkProviderGenerate, "core.MixinChunkProviderGenerate"),
+    common_core_MixinCompressedStreamTools(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinCompressedStreamTools, "core.MixinCompressedStreamTools"),
     common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
         "core.MixinBlockGrass"),
     common_core_MixinLaunchClassLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLaunchClassLoader,
@@ -387,8 +388,8 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityAITasks(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITasks,
         "core.MixinEntityAITasks"),
 
-    common_core_MixinExtendedBlockStorage(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinExtendedBlockStorage,
-        "core.MixinExtendedBlockStorage"),
+    common_core_MixinExtendedBlockStorage(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinExtendedBlockStorage, "core.MixinExtendedBlockStorage"),
     common_core_MixinEntityMoveHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMoveHelper,
         "core.MixinEntityMoveHelper"),
     common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
@@ -398,8 +399,8 @@ public enum Mixin implements IMixin {
         "core.MixinLanguageRegistry"),
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
-    common_core_MixinEntityMob(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEntityMob, "core.MixinEntityMob"),
+    common_core_MixinEntityMob(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMob,
+        "core.MixinEntityMob"),
     common_jewelrycraft2_MixinEntityEventHandler(Side.COMMON,
         require(TargetedMod.JEWELRYCRAFT2).and(m -> OptimizationsandTweaksConfig.enableMixinEntityEventHandler),
         "jewelrycraft2.MixinEntityEventHandler"),
@@ -553,8 +554,7 @@ public enum Mixin implements IMixin {
             .and(m -> OptimizationsandTweaksConfig.enableMixinAcademyGenerator),
         "fossilsandarcheologyrevivals.MixinAcademyGenerator"),
     common_fossilsandarcheologyrevivals_MixinTarGenerator(Side.COMMON,
-        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinTarGenerator),
+        require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL).and(m -> OptimizationsandTweaksConfig.enableMixinTarGenerator),
         "fossilsandarcheologyrevivals.MixinTarGenerator"),
     common_fossilsandarcheologyrevivals_MixinShipWreckGenerator(Side.COMMON,
         require(TargetedMod.FOSSILANDARCHEOLOGYREVIVAL)
@@ -729,17 +729,14 @@ public enum Mixin implements IMixin {
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixCascadingFromShinColleWorldGen),
         "shincolle.MixinFixCascadingFromShinColleWorldGen"),
     common_obsgreenery_MixinWorldGenTreeBase(Side.COMMON,
-        require(TargetedMod.OBSGREENERY)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBase),
+        require(TargetedMod.OBSGREENERY).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBase),
         "obsgreenery.MixinWorldGenTreeBase"),
     common_obsgreenery_MixinWorldGenTreeBlackWattle(Side.COMMON,
-        require(TargetedMod.OBSGREENERY)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBlackWattle),
+        require(TargetedMod.OBSGREENERY).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenTreeBlackWattle),
         "obsgreenery.MixinWorldGenTreeBlackWattle"),
 
     common_minefactoryreloaded_MixinWorldGenMassiveTree(Side.COMMON,
-        require(TargetedMod.MINEFACTORYRELOADED)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMassiveTree),
+        require(TargetedMod.MINEFACTORYRELOADED).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMassiveTree),
         "minefactoryreloaded.MixinWorldGenMassiveTree"),
     common_minefactoryreloaded_MixinFixCascadingforMineFactoryReloadedWorldGen(Side.COMMON,
         require(TargetedMod.MINEFACTORYRELOADED)
@@ -831,18 +828,14 @@ public enum Mixin implements IMixin {
         "core.MixinPatchSpawnerAnimals"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
         "core.MixinOpenGlHelper"),
-    client_core_MixinEntityRenderer(
-        Side.CLIENT,
-        avoid(TargetedMod.OPTIFINE)
-            .and(avoid(TargetedMod.FASTCRAFT))
-            .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer)),
-        "core.MixinEntityRenderer"
-    ),    client_core_MixinModelRenderer(Side.CLIENT,
+    client_core_MixinEntityRenderer(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.FASTCRAFT))
+        .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer)),
+        "core.MixinEntityRenderer"),
+    client_core_MixinModelRenderer(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE)
             .and(avoid(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinModelRenderer)),
         "core.MixinModelRenderer"),
-    client_core_MixinStitcher(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinStitcher,
-        "core.MixinStitcher"),
+    client_core_MixinStitcher(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinStitcher, "core.MixinStitcher"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),
     client_core_MixinItemRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinItemRenderer,

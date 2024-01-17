@@ -1,16 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.utilsformods.fossilandarchaeologyrevival;
 
-import fossilsarcheology.Revival;
-import fossilsarcheology.server.gen.feature.*;
+import java.util.Random;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 
-import java.util.Random;
+import fossilsarcheology.Revival;
+import fossilsarcheology.server.gen.feature.*;
 
 public class WorldGenMiscStructures2 {
+
     int counter;
     int Zcoord1;
     int base;
@@ -58,11 +59,13 @@ public class WorldGenMiscStructures2 {
 
         int currentDimensionId = world.provider.dimensionId;
 
-        if (chunkX == chunkAtMinus70X && chunkZ == chunkAtMinus70Z && currentDimensionId == Revival.CONFIG.dimensionIDDarknessLair) {
+        if (chunkX == chunkAtMinus70X && chunkZ == chunkAtMinus70Z
+            && currentDimensionId == Revival.CONFIG.dimensionIDDarknessLair) {
             optimizationsAndTweaks$generate2(random, world);
         }
 
-        if (chunkX == chunkAtMinus80X && chunkZ == chunkAtMinus80Z && currentDimensionId == Revival.CONFIG.dimensionIDTreasure) {
+        if (chunkX == chunkAtMinus80X && chunkZ == chunkAtMinus80Z
+            && currentDimensionId == Revival.CONFIG.dimensionIDTreasure) {
             optimizationsAndTweaks$generate3(random, world);
         }
     }
@@ -71,21 +74,24 @@ public class WorldGenMiscStructures2 {
         counter = chunkX * 16 + random.nextInt(16);
         Zcoord1 = chunkZ * 16 + random.nextInt(16);
         base = world.getHeightValue(counter, Zcoord1);
-        biome = world.getWorldChunkManager().getBiomeGenAt(counter, Zcoord1);
+        biome = world.getWorldChunkManager()
+            .getBiomeGenAt(counter, Zcoord1);
         if (BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.BEACH) && !world.provider.hasNoSky
-            && !world.provider.isHellWorld && world.getBlock(counter, base - 1, Zcoord1) == Blocks.sand) {
+            && !world.provider.isHellWorld
+            && world.getBlock(counter, base - 1, Zcoord1) == Blocks.sand) {
             (new MoaiWorldGen()).func_76484_a(world, random, counter, base - random.nextInt(4), Zcoord1);
         }
     }
-
 
     private void optimizationsAndTweaks$generateAztecWeaponShops(Random random, int chunkX, int chunkZ, World world) {
         counter = chunkX * 16 + random.nextInt(16);
         Zcoord1 = chunkZ * 16 + random.nextInt(16);
         base = world.getHeightValue(counter, Zcoord1);
-        biome = world.getWorldChunkManager().getBiomeGenAt(counter, Zcoord1);
+        biome = world.getWorldChunkManager()
+            .getBiomeGenAt(counter, Zcoord1);
         if (BiomeDictionary.isBiomeOfType(biome, BiomeDictionary.Type.JUNGLE) && !world.provider.hasNoSky
-            && !world.provider.isHellWorld && biome.topBlock == Blocks.grass
+            && !world.provider.isHellWorld
+            && biome.topBlock == Blocks.grass
             && world.getBlock(counter, base - 1, Zcoord1) == biome.topBlock) {
             (new AztecWeaponsShopWorldGen()).func_76484_a(world, random, counter, base - 4, Zcoord1);
         }
@@ -95,8 +101,10 @@ public class WorldGenMiscStructures2 {
         counter = chunkX * 16 + random.nextInt(16);
         Zcoord1 = chunkZ * 16 + random.nextInt(16);
         base = world.getHeightValue(counter, Zcoord1);
-        biome = world.getWorldChunkManager().getBiomeGenAt(counter, Zcoord1);
-        if (!world.provider.hasNoSky && !world.provider.isHellWorld && biome.topBlock == Blocks.grass
+        biome = world.getWorldChunkManager()
+            .getBiomeGenAt(counter, Zcoord1);
+        if (!world.provider.hasNoSky && !world.provider.isHellWorld
+            && biome.topBlock == Blocks.grass
             && world.getBlock(counter, base - 1, Zcoord1) == biome.topBlock) {
             (new TarSiteWorldGen()).func_76484_a(world, random, counter, base - 3, Zcoord1);
         }
@@ -106,8 +114,10 @@ public class WorldGenMiscStructures2 {
         counter = chunkX * 16 + random.nextInt(16);
         Zcoord1 = chunkZ * 16 + random.nextInt(16);
         base = world.getHeightValue(counter, Zcoord1);
-        biome = world.getWorldChunkManager().getBiomeGenAt(counter, Zcoord1);
-        if (!world.provider.hasNoSky && !world.provider.isHellWorld && biome.topBlock == Blocks.grass
+        biome = world.getWorldChunkManager()
+            .getBiomeGenAt(counter, Zcoord1);
+        if (!world.provider.hasNoSky && !world.provider.isHellWorld
+            && biome.topBlock == Blocks.grass
             && world.getBlock(counter, base - 1, Zcoord1) == biome.topBlock) {
             (new FossilSiteWorldGen()).func_76484_a(world, random, counter, base - 3, Zcoord1);
         }

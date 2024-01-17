@@ -18,7 +18,7 @@ public class LongHashMap2 {
      * @reason Use a better hash (from TMCW) that avoids collisions.
      */
     private static int getHashedKey(long p_76155_0_) {
-        return (int)p_76155_0_ + (int)(p_76155_0_ >>> 32) * 92821;
+        return (int) p_76155_0_ + (int) (p_76155_0_ >>> 32) * 92821;
     }
 
     /**

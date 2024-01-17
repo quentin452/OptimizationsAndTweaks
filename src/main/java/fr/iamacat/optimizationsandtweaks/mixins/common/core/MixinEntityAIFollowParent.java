@@ -1,10 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.passive.EntityAnimal;
 
@@ -12,6 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
