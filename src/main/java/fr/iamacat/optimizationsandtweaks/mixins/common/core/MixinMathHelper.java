@@ -213,8 +213,15 @@ public class MixinMathHelper {
         return p_151240_1_ >= p_151240_2_ ? p_151240_1_ : p_151240_0_.nextFloat() * (p_151240_2_ - p_151240_1_) + p_151240_1_;
     }
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     public static int getRandomIntegerInRange(Random p_76136_0_, int p_76136_1_, int p_76136_2_) {
+        if (p_76136_2_ <= p_76136_1_) {
+            return p_76136_1_;
+        }
         return p_76136_0_.nextInt(p_76136_2_ - p_76136_1_ + 1) + p_76136_1_;
     }
 
