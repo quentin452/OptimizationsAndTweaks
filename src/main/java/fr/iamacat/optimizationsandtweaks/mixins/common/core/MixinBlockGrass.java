@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -49,11 +50,13 @@ public class MixinBlockGrass {
             int j1 = y + random.nextInt(5) - 3;
             int k1 = z + random.nextInt(3) - 1;
 
-            if (worldIn.getBlock(i1, j1, k1) == Blocks.dirt
-                && worldIn.getBlockMetadata(i1, j1, k1) == 0
-                && worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4
-                && worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
-                worldIn.setBlock(i1, j1, k1, Blocks.grass);
+            Block block = worldIn.getBlock(i1, j1, k1);
+            int metadata = worldIn.getBlockMetadata(i1, j1, k1);
+
+            if (block == Blocks.dirt && metadata == 0 &&
+                worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4 &&
+                worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
+                worldIn.setBlock(i1, j1, k1, Blocks.grass, 0, 2);
             }
         }
     }
