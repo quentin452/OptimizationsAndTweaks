@@ -26,9 +26,6 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
         super(p_i45433_1_, p_i45433_2_);
     }
 
-    @Shadow
-    int[] field_150128_a;
-
     /**
      * @reason
      */
@@ -44,17 +41,25 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
             int searchRadius = 4;
             int areaSize = 2 * searchRadius + 1; // Calculate the size based on the search radius
             int halfArea = areaSize / 2;
-            int[] blockArray = optimizationsAndTweaks$initializeBlockArray(areaSize);
 
-            optimizationsAndTweaks$populateBlockArray(worldIn, x, y, z, areaSize, halfArea, blockArray);
+            // Calculate chunk coordinates for the central block
+            int chunkX = x >> 4;
+            int chunkZ = z >> 4;
 
-            for (int iteration = 1; iteration <= 4; ++iteration) {
-                optimizationsAndTweaks$propagateDecayIteration(blockArray, areaSize, halfArea, iteration);
+            // Check if the chunk contains the central block
+            if (worldIn.getChunkFromChunkCoords(chunkX, chunkZ).getTopFilledSegment() >= y >> 4) {
+                int[] blockArray = optimizationsAndTweaks$initializeBlockArray(areaSize);
+
+                optimizationsAndTweaks$populateBlockArray(worldIn, x, y, z, areaSize, halfArea, blockArray);
+
+                for (int iteration = 1; iteration <= 4; ++iteration) {
+                    optimizationsAndTweaks$propagateDecayIteration(blockArray, areaSize, halfArea, iteration);
+                }
+
+                int centralBlockStatus = blockArray[halfArea * areaSize * areaSize + halfArea * areaSize + halfArea];
+
+                optimizationsAndTweaks$updateWorld(metadata, worldIn, x, y, z, centralBlockStatus);
             }
-
-            int centralBlockStatus = blockArray[halfArea * areaSize * areaSize + halfArea * areaSize + halfArea];
-
-            optimizationsAndTweaks$updateWorld(metadata, worldIn, x, y, z, centralBlockStatus);
         }
 
         ci.cancel();
