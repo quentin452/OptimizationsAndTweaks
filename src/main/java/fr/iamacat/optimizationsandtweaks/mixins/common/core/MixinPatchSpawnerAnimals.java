@@ -164,6 +164,7 @@ public class MixinPatchSpawnerAnimals {
     }
     // do not refactor this method into smaller methods: it can cause Entity is already tracked! errors
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
+    // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
     @Unique
     private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordIntPair chunkCoord, ChunkCoordinates spawnPoint) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
