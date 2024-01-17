@@ -848,13 +848,20 @@ public class MixinWorld {
 
     @Unique
     private int optimizationsAndTweaks$getMaxNeighborLightValue(int x, int y, int z) {
-        int l1 = getBlockLightValue_do(x, y + 1, z, false);
-        int l = getBlockLightValue_do(x + 1, y, z, false);
-        int i1 = getBlockLightValue_do(x - 1, y, z, false);
-        int j1 = getBlockLightValue_do(x, y, z + 1, false);
-        int k1 = getBlockLightValue_do(x, y, z - 1, false);
+        int[] neighborValues = new int[5];
 
-        return Math.max(Math.max(Math.max(l1, l), Math.max(i1, j1)), k1);
+        neighborValues[0] = getBlockLightValue_do(x, y + 1, z, false);
+        neighborValues[1] = getBlockLightValue_do(x + 1, y, z, false);
+        neighborValues[2] = getBlockLightValue_do(x - 1, y, z, false);
+        neighborValues[3] = getBlockLightValue_do(x, y, z + 1, false);
+        neighborValues[4] = getBlockLightValue_do(x, y, z - 1, false);
+
+        int max = neighborValues[0];
+        for (int i = 1; i < neighborValues.length; i++) {
+            max = Math.max(max, neighborValues[i]);
+        }
+
+        return max;
     }
 
     @Unique
