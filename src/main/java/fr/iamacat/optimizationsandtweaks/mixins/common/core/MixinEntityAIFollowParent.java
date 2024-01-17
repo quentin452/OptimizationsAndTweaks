@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.passive.EntityAnimal;
 
@@ -66,7 +67,7 @@ public class MixinEntityAIFollowParent {
     }
 
     @Unique
-    private Map<EntityAnimal, Integer> optimizationsAndTweaks$growingAgeCache = new HashMap<>();
+    private Object2ObjectHashMap<EntityAnimal, Integer> optimizationsAndTweaks$growingAgeCache = new Object2ObjectHashMap<>();
 
     /**
      * @author iamacatfr
