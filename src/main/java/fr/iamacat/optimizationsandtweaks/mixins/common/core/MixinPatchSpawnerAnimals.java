@@ -162,7 +162,7 @@ public class MixinPatchSpawnerAnimals {
             && (!creatureType.getAnimal() || animals)
             && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
     }
-    // do not refactor this method into multiple: this can cause Entity is already tracked! errors
+    // do not refactor this method into multiple: it can cause Entity is already tracked! errors
     @Unique
     private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordIntPair chunkCoord, ChunkCoordinates spawnPoint) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
@@ -170,49 +170,37 @@ public class MixinPatchSpawnerAnimals {
         int i = 0;
         int maxSpawnAttempts = 3;
 
-        float spawnX = 0.0F;
-        float spawnY = 0.0F;
-
-        BiomeGenBase.SpawnListEntry spawnListEntry = null;
-        EntityLiving entityLiving = null;
-
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
             int y = chunkPosition.chunkPosY + world.rand.nextInt(1) - world.rand.nextInt(1);
             int z = chunkPosition.chunkPosZ + world.rand.nextInt(6) - world.rand.nextInt(6);
 
-            spawnX = x + 0.5F;
-            spawnY = z + 0.5F;
+            float spawnX = x + 0.5F;
+            float spawnY = y;
+            float spawnZ = z + 0.5F;
 
             float offsetX = spawnX - (float) spawnPoint.posX;
-            float offsetY = y - (float) spawnPoint.posY;
-            float offsetZ = spawnY - (float) spawnPoint.posZ;
+            float offsetY = spawnY - (float) spawnPoint.posY;
+            float offsetZ = spawnZ - (float) spawnPoint.posZ;
 
             float distanceSquared = offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ;
 
-            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, (float) y, spawnY, distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, (float) y, spawnY)) {
-                spawnListEntry = optimizationsAndTweaks$getOrCreateSpawnListEntry(creatureType, world, x, y, z, spawnListEntry);
-                entityLiving = optimizationsAndTweaks$getOrCreateEntityLiving(world, spawnListEntry, entityLiving);
+            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, spawnY, spawnZ, distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, spawnY, spawnZ)) {
+                BiomeGenBase.SpawnListEntry spawnListEntry = optimizationsAndTweaks$getOrCreateSpawnListEntry(creatureType, world, x, y, z, null);
+                EntityLiving entityLiving = optimizationsAndTweaks$getOrCreateEntityLiving(world, spawnListEntry, null);
 
                 if (entityLiving != null) {
-                    i += optimizationsAndTweaks$trySpawnEntity(world, spawnX, (float) y, spawnY, entityLiving);
-                }
-            }
-        }
-        if (i > 0) {
-            for (int j = 0; j < i; j++) {
-                spawnListEntry = world.spawnRandomCreature(creatureType, (int) spawnX, (int) spawnY, (int) spawnX);
-                if (spawnListEntry != null) {
-                    entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
+                    entityLiving.setLocationAndAngles(spawnX, spawnY, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
 
-                    assert entityLiving != null;
-                    entityLiving.setLocationAndAngles(spawnX, spawnY, spawnX, world.rand.nextFloat() * 360.0F, 0.0F);
+                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnZ);
+                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+                        world.spawnEntityInWorld(entityLiving);
 
-                    world.spawnEntityInWorld(entityLiving);
+                        if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnZ)) {
+                            entityLiving.onSpawnWithEgg(null);
+                        }
 
-                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnX);
-                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere()) && (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnX))) {
-                        entityLiving.onSpawnWithEgg(null);
+                        i += 1;
                     }
                 }
             }
@@ -220,7 +208,6 @@ public class MixinPatchSpawnerAnimals {
 
         return i;
     }
-
     @Unique
     private boolean optimizationsAndTweaks$isSpawnLocationValid(EnumCreatureType creatureType, World world, float spawnX, float spawnY, float spawnZ, float distanceSquared) {
         return distanceSquared >= 576.0F && canCreatureTypeSpawnAtLocation(creatureType, world, (int) spawnX, (int) spawnY, (int) spawnZ);
@@ -243,22 +230,6 @@ public class MixinPatchSpawnerAnimals {
             entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
         }
         return entityLiving;
-    }
-    @Unique
-    private int optimizationsAndTweaks$trySpawnEntity(WorldServer world, float spawnX, float spawnY, float spawnZ, EntityLiving entityLiving) {
-        entityLiving.setLocationAndAngles(spawnX, spawnY, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
-
-        Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnZ);
-        if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
-            world.spawnEntityInWorld(entityLiving);
-
-            if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnZ)) {
-                entityLiving.onSpawnWithEgg(null);
-            }
-
-            return 1;
-        }
-        return 0;
     }
 
     @Unique
