@@ -70,158 +70,139 @@ public class MixinNoiseGeneratorImproved extends NoiseGenerator {
     }
 
     @Unique
-    public void optimizationsAndTweaks$populateNoiseArraysub1(double[] p_76308_1_, double p_76308_2_, double p_76308_6_,
-        int p_76308_8_, int p_76308_10_, double p_76308_11_, double p_76308_15_, double p_76308_17_) {
-        int l;
-        int i1;
-        double d9;
-        double d11;
-        int l1;
-        double d12;
-        int i2;
-        int j2;
-        double d13;
-        int k5;
-        int j6;
-        double d21;
-        double d22;
-        k5 = 0;
-        double d23 = 1.0D / p_76308_17_;
+    public void optimizationsAndTweaks$populateNoiseArraysub1(double[] noiseArray, double xOffset, double zOffset,
+                                                              int xSize, int zSize, double xScale, double zScale,
+                                                              double densityScale) {
+        int index = 0;
+        double densityScaleFactor = 1.0D / densityScale;
 
-        for (int j1 = 0; j1 < p_76308_8_; ++j1) {
-            d9 = p_76308_2_ + j1 * p_76308_11_ + this.xCoord;
-            int i6 = (int) d9;
+        for (int x = 0; x < xSize; ++x) {
+            double xCoord = xOffset + x * xScale + this.xCoord;
+            int intXCoord = (int) xCoord;
 
-            if (d9 < i6) {
-                --i6;
+            if (xCoord < intXCoord) {
+                --intXCoord;
             }
 
-            int k1 = i6 & 255;
-            d9 -= i6;
-            d11 = d9 * d9 * d9 * (d9 * (d9 * 6.0D - 15.0D) + 10.0D);
+            int intX = intXCoord & 255;
+            double dX = xCoord - intXCoord;
+            double dX3 = dX * dX * dX;
+            double dX6 = dX3 * dX3;
+            double dX9 = dX6 * dX3;
 
-            for (l1 = 0; l1 < p_76308_10_; ++l1) {
-                d12 = p_76308_6_ + l1 * p_76308_15_ + this.zCoord;
-                i2 = (int) d12;
+            for (int z = 0; z < zSize; ++z) {
+                double zCoord = zOffset + z * zScale + this.zCoord;
+                int intZCoord = (int) zCoord;
 
-                if (d12 < i2) {
-                    --i2;
+                if (zCoord < intZCoord) {
+                    --intZCoord;
                 }
 
-                j2 = i2 & 255;
-                d12 -= i2;
-                d13 = d12 * d12 * d12 * (d12 * (d12 * 6.0D - 15.0D) + 10.0D);
-                l = this.permutations[k1];
-                int i4 = this.permutations[l] + j2;
-                int j4 = this.permutations[k1 + 1];
-                i1 = this.permutations[j4] + j2;
-                d21 = this.lerp(
-                    d11,
-                    this.func_76309_a(this.permutations[i4], d9, d12),
-                    this.grad(this.permutations[i1], d9 - 1.0D, 0.0D, d12));
-                d22 = this.lerp(
-                    d11,
-                    this.grad(this.permutations[i4 + 1], d9, 0.0D, d12 - 1.0D),
-                    this.grad(this.permutations[i1 + 1], d9 - 1.0D, 0.0D, d12 - 1.0D));
-                double d24 = this.lerp(d13, d21, d22);
-                j6 = k5++;
-                p_76308_1_[j6] += d24 * d23;
+                int intZ = intZCoord & 255;
+                double dZ = zCoord - intZCoord;
+                double dZ3 = dZ * dZ * dZ;
+                double dZ6 = dZ3 * dZ3;
+
+                double d8 = 0.0D;
+                double d9 = 0.0D;
+                double d10 = 0.0D;
+                double d11 = 0.0D;
+
+                for (int l1 = 0; l1 < 4; ++l1) {
+                    double d12 = (l1 & 2) - 1.0D;
+                    double d13 = (l1 & 1) - 1.0D;
+
+                    d8 += grad(this.permutations[(intX + (int) d12) & 255], dX, dZ, dZ - d13);
+                    d9 += grad(this.permutations[(intX + 1 + (int) d12) & 255], dX - 1.0D, dZ, dZ - d13);
+                    d10 += grad(this.permutations[(intX + (int) d12) & 255], dX, dZ - 1.0D, dZ - d13);
+                    d11 += grad(this.permutations[(intX + 1 + (int) d12) & 255], dX - 1.0D, dZ - 1.0D, dZ - d13);
+                }
+
+                double d21 = d8 + dX9 * (d10 - d8) + dZ6 * (d11 - d8 + dX9 * (d9 - d8));
+                noiseArray[index++] += d21 * densityScaleFactor;
             }
         }
     }
 
+
     @Unique
-    public void optimizationsAndTweaks$populateNoiseArraysub2(double[] p_76308_1_, double p_76308_2_, double p_76308_4_,
-        double p_76308_6_, int p_76308_8_, int p_76308_9_, int p_76308_10_, double p_76308_11_, double p_76308_13_,
-        double p_76308_15_, double p_76308_17_) {
-        {
-            int l;
-            int i1;
-            double d9;
-            double d11;
-            int l1;
-            double d12;
-            int i2;
-            int j2;
-            double d13;
-            int k5;
-            int j6;
-            l = 0;
-            double d7 = 1.0D / p_76308_17_;
-            i1 = -1;
-            double d8 = 0.0D;
-            d9 = 0.0D;
-            double d10 = 0.0D;
-            d11 = 0.0D;
+    public void optimizationsAndTweaks$populateNoiseArraysub2(double[] noiseArray, double xOffset, double yOffset,
+                                                              double zOffset, int xSize, int ySize, int zSize,
+                                                              double xScale, double yScale, double zScale, double densityScale) {
+        double d9;
+        double d11;
+        double d8 = 0.0D;
+        d9 = 0.0D;
+        double d10 = 0.0D;
+        d11 = 0.0D;
+        int index = 0;
+        double densityScaleFactor = 1.0D / densityScale;
+        int lastIntY = -1;
 
-            for (l1 = 0; l1 < p_76308_8_; ++l1) {
-                d12 = p_76308_2_ + l1 * p_76308_11_ + this.xCoord;
-                i2 = (int) d12;
+        for (int x = 0; x < xSize; ++x) {
+            double xCoord = xOffset + x * xScale + this.xCoord;
+            int intXCoord = (int) xCoord;
 
-                if (d12 < i2) {
-                    --i2;
+            if (xCoord < intXCoord) {
+                --intXCoord;
+            }
+
+            int intX = intXCoord & 255;
+            double dX = xCoord - intXCoord;
+            double dX3 = dX * dX * dX;
+            double dX6 = dX3 * dX3;
+            double dX9 = dX6 * dX3;
+
+            for (int z = 0; z < zSize; ++z) {
+                double zCoord = zOffset + z * zScale + this.zCoord;
+                int intZCoord = (int) zCoord;
+
+                if (zCoord < intZCoord) {
+                    --intZCoord;
                 }
 
-                j2 = i2 & 255;
-                d12 -= i2;
-                d13 = d12 * d12 * d12 * (d12 * (d12 * 6.0D - 15.0D) + 10.0D);
+                int intZ = intZCoord & 255;
+                double dZ = zCoord - intZCoord;
+                double dZ3 = dZ * dZ * dZ;
+                double dZ6 = dZ3 * dZ3;
 
-                for (int k2 = 0; k2 < p_76308_10_; ++k2) {
-                    double d14 = p_76308_6_ + k2 * p_76308_15_ + this.zCoord;
-                    int l2 = (int) d14;
+                for (int y = 0; y < ySize; ++y) {
+                    double yCoord = yOffset + y * yScale + this.yCoord;
+                    int intYCoord = (int) yCoord;
 
-                    if (d14 < l2) {
-                        --l2;
+                    if (yCoord < intYCoord) {
+                        --intYCoord;
                     }
 
-                    int i3 = l2 & 255;
-                    d14 -= l2;
-                    double d15 = d14 * d14 * d14 * (d14 * (d14 * 6.0D - 15.0D) + 10.0D);
+                    int intY = intYCoord & 255;
+                    double dY = yCoord - intYCoord;
+                    double dY3 = dY * dY * dY;
+                    double dY6 = dY3 * dY3;
+                    double dY9 = dY6 * dY3;
 
-                    for (int j3 = 0; j3 < p_76308_9_; ++j3) {
-                        double d16 = p_76308_4_ + j3 * p_76308_13_ + this.yCoord;
-                        int k3 = (int) d16;
+                    if (y == 0 || intY != lastIntY) {
+                        lastIntY = intY;
+                        int baseX = permutations[intX] + intY;
+                        int baseX1 = permutations[baseX] + intZ;
+                        int baseX2 = permutations[baseX + 1] + intZ;
+                        int baseX3 = permutations[intX + 1] + intY;
+                        int baseX4 = permutations[baseX3] + intZ;
+                        int baseX5 = permutations[baseX3 + 1] + intZ;
 
-                        if (d16 < k3) {
-                            --k3;
-                        }
-
-                        int l3 = k3 & 255;
-                        d16 -= k3;
-                        double d17 = d16 * d16 * d16 * (d16 * (d16 * 6.0D - 15.0D) + 10.0D);
-
-                        if (j3 == 0 || l3 != i1) {
-                            i1 = l3;
-                            int k4 = this.permutations[j2] + l3;
-                            int l4 = this.permutations[k4] + i3;
-                            int i5 = this.permutations[k4 + 1] + i3;
-                            int j5 = this.permutations[j2 + 1] + l3;
-                            k5 = this.permutations[j5] + i3;
-                            int l5 = this.permutations[j5 + 1] + i3;
-                            d8 = this.lerp(
-                                d13,
-                                this.grad(this.permutations[l4], d12, d16, d14),
-                                this.grad(this.permutations[k5], d12 - 1.0D, d16, d14));
-                            d9 = this.lerp(
-                                d13,
-                                this.grad(this.permutations[i5], d12, d16 - 1.0D, d14),
-                                this.grad(this.permutations[l5], d12 - 1.0D, d16 - 1.0D, d14));
-                            d10 = this.lerp(
-                                d13,
-                                this.grad(this.permutations[l4 + 1], d12, d16, d14 - 1.0D),
-                                this.grad(this.permutations[k5 + 1], d12 - 1.0D, d16, d14 - 1.0D));
-                            d11 = this.lerp(
-                                d13,
-                                this.grad(this.permutations[i5 + 1], d12, d16 - 1.0D, d14 - 1.0D),
-                                this.grad(this.permutations[l5 + 1], d12 - 1.0D, d16 - 1.0D, d14 - 1.0D));
-                        }
-
-                        double d18 = this.lerp(d17, d8, d9);
-                        double d19 = this.lerp(d17, d10, d11);
-                        double d20 = this.lerp(d15, d18, d19);
-                        j6 = l++;
-                        p_76308_1_[j6] += d20 * d7;
+                        d8 = lerp(dX9, grad(permutations[baseX1], dX, dY, dZ),
+                            grad(permutations[baseX4], dX - 1.0D, dY, dZ));
+                        d9 = lerp(dX9, grad(permutations[baseX2], dX, dY - 1.0D, dZ),
+                            grad(permutations[baseX5], dX - 1.0D, dY - 1.0D, dZ));
+                        d10 = lerp(dX9, grad(permutations[baseX1 + 1], dX, dY, dZ - 1.0D),
+                            grad(permutations[baseX4 + 1], dX - 1.0D, dY, dZ - 1.0D));
+                        d11 = lerp(dX9, grad(permutations[baseX2 + 1], dX, dY - 1.0D, dZ - 1.0D),
+                            grad(permutations[baseX5 + 1], dX - 1.0D, dY - 1.0D, dZ - 1.0D));
                     }
+
+                    double d18 = lerp(dY9, d8, d9);
+                    double d19 = lerp(dY9, d10, d11);
+                    double d20 = lerp(dZ6, d18, d19);
+                    noiseArray[index++] += d20 * densityScaleFactor;
                 }
             }
         }
