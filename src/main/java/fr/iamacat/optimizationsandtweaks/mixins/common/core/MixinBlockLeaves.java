@@ -25,10 +25,11 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     protected MixinBlockLeaves(Material p_i45433_1_, boolean p_i45433_2_) {
         super(p_i45433_1_, p_i45433_2_);
     }
+
     @Shadow
     int[] field_150128_a;
+
     /**
-     * @author
      * @reason
      */
     @Inject(method = "updateTick", at = @At("HEAD"), cancellable = true)
@@ -40,7 +41,8 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
         int metadata = worldIn.getBlockMetadata(x, y, z);
 
         if (optimizationsAndTweaks$shouldUpdateLeaves(metadata)) {
-            int areaSize = 32;
+            int searchRadius = 4;
+            int areaSize = 2 * searchRadius + 1; // Calculate the size based on the search radius
             int halfArea = areaSize / 2;
             int[] blockArray = optimizationsAndTweaks$initializeBlockArray(areaSize);
 
@@ -57,31 +59,36 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
         ci.cancel();
     }
+
     @Unique
     private boolean optimizationsAndTweaks$shouldUpdateLeaves(int metadata) {
         return (metadata & 12) == 8 && (metadata & 4) == 0;
     }
+
     @Unique
     private int[] optimizationsAndTweaks$initializeBlockArray(int areaSize) {
         return new int[areaSize * areaSize * areaSize];
     }
+
     @Unique
-    private void optimizationsAndTweaks$populateBlockArray(World worldIn, int x, int y, int z, int areaSize, int halfArea, int[] blockArray) {
+    private void optimizationsAndTweaks$populateBlockArray(World worldIn, int x, int y, int z, int areaSize, int halfArea,
+                                                           int[] blockArray) {
         int searchRadius = 4;
 
         for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
             for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
                 for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
                     Block block = worldIn.getBlock(x + xOffset, y + yOffset, z + zOffset);
-                    int index = (xOffset + halfArea) * areaSize * areaSize
-                        + (yOffset + halfArea) * areaSize
-                        + zOffset + halfArea;
+                    int index = (xOffset + halfArea) * areaSize * areaSize + (yOffset + halfArea) * areaSize + zOffset
+                        + halfArea;
 
-                    blockArray[index] = optimizationsAndTweaks$determineBlockArrayValue(block, worldIn, x + xOffset, y + yOffset, z + zOffset);
+                    blockArray[index] = optimizationsAndTweaks$determineBlockArrayValue(block, worldIn,
+                        x + xOffset, y + yOffset, z + zOffset);
                 }
             }
         }
     }
+
     @Unique
     private int optimizationsAndTweaks$determineBlockArrayValue(Block block, World worldIn, int x, int y, int z) {
         if (block.isLeaves(worldIn, x, y, z)) {
@@ -90,16 +97,17 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
             return block.canSustainLeaves(worldIn, x, y, z) ? 0 : -1;
         }
     }
+
     @Unique
-    private void optimizationsAndTweaks$propagateDecayIteration(int[] blockArray, int areaSize, int halfArea, int iteration) {
+    private void optimizationsAndTweaks$propagateDecayIteration(int[] blockArray, int areaSize, int halfArea,
+                                                                int iteration) {
         int searchRadius = 4;
 
         for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
             for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
                 for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
-                    int index = (xOffset + halfArea) * areaSize * areaSize
-                        + (yOffset + halfArea) * areaSize
-                        + zOffset + halfArea;
+                    int index = (xOffset + halfArea) * areaSize * areaSize + (yOffset + halfArea) * areaSize + zOffset
+                        + halfArea;
 
                     if (blockArray[index] == iteration - 1) {
                         optimizationsAndTweaks$propagateDecayToNeighbors(blockArray, index, areaSize, iteration);
@@ -108,14 +116,17 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
             }
         }
     }
+
     @Unique
-    private void optimizationsAndTweaks$propagateDecayToNeighbors(int[] blockArray, int index, int areaSize, int iteration) {
-        for (int offset : new int[]{-1, 1}) {
+    private void optimizationsAndTweaks$propagateDecayToNeighbors(int[] blockArray, int index, int areaSize,
+                                                                  int iteration) {
+        for (int offset : new int[] { -1, 1 }) {
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset, iteration);
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize, iteration);
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize * areaSize, iteration);
         }
     }
+
     @Unique
     private void optimizationsAndTweaks$propagateDecayToNeighbor(int[] blockArray, int index, int iteration) {
         if (index >= 0 && index < blockArray.length && blockArray[index] == -2) {
@@ -124,7 +135,8 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     }
 
     @Unique
-    private void optimizationsAndTweaks$updateWorld(int metadata, World worldIn, int x, int y, int z, int centralBlockStatus) {
+    private void optimizationsAndTweaks$updateWorld(int metadata, World worldIn, int x, int y, int z,
+                                                    int centralBlockStatus) {
         if (centralBlockStatus >= 0) {
             worldIn.setBlockMetadataWithNotify(x, y, z, metadata & -9, 4);
         } else {
@@ -134,13 +146,8 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
     @Shadow
     private void removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_, int p_150126_4_) {
-        this.dropBlockAsItem(
-            p_150126_1_,
-            p_150126_2_,
-            p_150126_3_,
-            p_150126_4_,
-            p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_),
-            0);
+        this.dropBlockAsItem(p_150126_1_, p_150126_2_, p_150126_3_, p_150126_4_,
+            p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_), 0);
         p_150126_1_.setBlockToAir(p_150126_2_, p_150126_3_, p_150126_4_);
     }
 
@@ -163,7 +170,7 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
     @Shadow
     public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> ret = new ArrayList<>();
         int chance = this.func_150123_b(metadata);
 
         if (fortune > 0) {
