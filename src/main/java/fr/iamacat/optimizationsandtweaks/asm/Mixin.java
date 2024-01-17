@@ -71,9 +71,10 @@ public enum Mixin implements IMixin {
     common_core_MixinMapGenStructure(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure,
         "core.MixinMapGenStructure"),
 
-    // OPTIMIZATIONS MIXINS
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
         "core.MixinDedicatedServer"),
+    common_core_noiseMixinNoiseGeneratorImproved(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNoiseGeneratorImproved,
+        "core.noise.MixinNoiseGeneratorImproved"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
