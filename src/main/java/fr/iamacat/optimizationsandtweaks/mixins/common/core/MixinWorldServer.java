@@ -3,6 +3,9 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -39,8 +42,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
 
@@ -54,12 +55,13 @@ public abstract class MixinWorldServer extends World {
     private final EntityTracker theEntityTracker;
     @Shadow
     private final PlayerManager thePlayerManager;
-    @Shadow
-    private Set pendingTickListEntriesHashSet;
+
+    @Unique
+    private ConcurrentHashMap<NextTickListEntry, Boolean> optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
 
     /** All work to do in future ticks. */
-    @Shadow
-    private TreeSet pendingTickListEntriesTreeSet;
+    @Unique
+    private NavigableSet<NextTickListEntry> optimizationsAndTweaks$pendingTickListEntriesTreeSet = new ConcurrentSkipListSet<>();
     @Shadow
     public ChunkProviderServer theChunkProviderServer;
     /** Whether or not level saving is enabled */
@@ -110,14 +112,6 @@ public abstract class MixinWorldServer extends World {
 
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
-        }
-
-        if (this.pendingTickListEntriesHashSet == null) {
-            this.pendingTickListEntriesHashSet = new HashSet();
-        }
-
-        if (this.pendingTickListEntriesTreeSet == null) {
-            this.pendingTickListEntriesTreeSet = new TreeSet();
         }
 
         this.worldTeleporter = new Teleporter(worldServer);
@@ -306,10 +300,8 @@ public abstract class MixinWorldServer extends World {
                 nextticklistentry.setPriority(p_147454_6_);
             }
 
-            if (!this.pendingTickListEntriesHashSet.contains(nextticklistentry)) {
-                this.pendingTickListEntriesHashSet.add(nextticklistentry);
-                this.pendingTickListEntriesTreeSet.add(nextticklistentry);
-            }
+                optimizationsAndTweaks$pendingTickListEntriesHashSet.putIfAbsent(nextticklistentry, Boolean.TRUE);
+                this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
         }
     }
 
@@ -319,7 +311,7 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public void func_147446_b(int p_147446_1_, int p_147446_2_, int p_147446_3_, Block p_147446_4_, int p_147446_5_,
-        int p_147446_6_) {
+                              int p_147446_6_) {
         NextTickListEntry nextticklistentry = new NextTickListEntry(p_147446_1_, p_147446_2_, p_147446_3_, p_147446_4_);
         nextticklistentry.setPriority(p_147446_6_);
 
@@ -327,10 +319,8 @@ public abstract class MixinWorldServer extends World {
             nextticklistentry.setScheduledTime((long) p_147446_5_ + this.worldInfo.getWorldTotalTime());
         }
 
-        if (!this.pendingTickListEntriesHashSet.contains(nextticklistentry)) {
-            this.pendingTickListEntriesHashSet.add(nextticklistentry);
-            this.pendingTickListEntriesTreeSet.add(nextticklistentry);
-        }
+        optimizationsAndTweaks$pendingTickListEntriesHashSet.putIfAbsent(nextticklistentry, Boolean.TRUE);
+        this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
     }
 
     /**
@@ -339,11 +329,12 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public boolean tickUpdates(boolean p_72955_1_) {
-        int i = this.pendingTickListEntriesTreeSet.size();
+        int i = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.size();
 
-        if (i != this.pendingTickListEntriesHashSet.size()) {
-            throw new IllegalStateException("TickNextTick list out of synch");
-        } else {
+        //if (i != this.optimizationsAndTweaks$pendingTickListEntriesHashSet.size()) {
+            //throw new IllegalStateException("TickNextTick list out of synch");
+        //} else
+        {
             if (i > 1000) {
                 i = 1000;
             }
@@ -352,14 +343,14 @@ public abstract class MixinWorldServer extends World {
             NextTickListEntry nextticklistentry;
 
             for (int j = 0; j < i; ++j) {
-                nextticklistentry = (NextTickListEntry) this.pendingTickListEntriesTreeSet.first();
+                nextticklistentry = (NextTickListEntry) this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.first();
 
                 if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime()) {
                     break;
                 }
 
-                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
-                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
+                this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.remove(nextticklistentry);
+                this.optimizationsAndTweaks$pendingTickListEntriesHashSet.remove(nextticklistentry);
                 this.pendingTickListEntriesThisTick.add(nextticklistentry);
             }
 
@@ -432,7 +423,7 @@ public abstract class MixinWorldServer extends World {
 
             this.theProfiler.endSection();
             this.pendingTickListEntriesThisTick.clear();
-            return !this.pendingTickListEntriesTreeSet.isEmpty();
+            return !this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.isEmpty();
         }
     }
 
@@ -441,59 +432,56 @@ public abstract class MixinWorldServer extends World {
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean removeEntries) {
-        ChunkCoordIntPair chunkCoord = chunk.getChunkCoordIntPair();
-        int minX = (chunkCoord.chunkXPos << 4) - 2;
-        int maxX = minX + 16 + 2;
-        int minZ = (chunkCoord.chunkZPos << 4) - 2;
-        int maxZ = minZ + 16 + 2;
+    public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_)
+    {
+        ArrayList arraylist = null;
+        ChunkCoordIntPair chunkcoordintpair = p_72920_1_.getChunkCoordIntPair();
+        int i = (chunkcoordintpair.chunkXPos << 4) - 2;
+        int j = i + 16 + 2;
+        int k = (chunkcoordintpair.chunkZPos << 4) - 2;
+        int l = k + 16 + 2;
 
-        List<NextTickListEntry> filteredList = new ArrayList<>();
-        Set<Object> entriesToRemove = new HashSet<>();
+        for (int i1 = 0; i1 < 2; ++i1)
+        {
+            Iterator iterator;
 
-        for (Object obj : this.pendingTickListEntriesTreeSet) {
-            if (obj instanceof NextTickListEntry) {
-                NextTickListEntry entry = (NextTickListEntry) obj;
-                if (optimizationsAndTweaks$isEntryWithinBounds(entry, minX, maxX, minZ, maxZ)) {
-                    filteredList.add(entry);
-                    if (removeEntries) {
-                        entriesToRemove.add(obj);
+            if (i1 == 0)
+            {
+                iterator = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.iterator();
+            }
+            else
+            {
+                iterator = this.pendingTickListEntriesThisTick.iterator();
+
+                if (!this.pendingTickListEntriesThisTick.isEmpty())
+                {
+                    logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
+                }
+            }
+
+            while (iterator.hasNext())
+            {
+                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
+
+                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j && nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l)
+                {
+                    if (p_72920_2_)
+                    {
+                        this.optimizationsAndTweaks$pendingTickListEntriesHashSet.remove(nextticklistentry);
+                        iterator.remove();
                     }
+
+                    if (arraylist == null)
+                    {
+                        arraylist = new ArrayList();
+                    }
+
+                    arraylist.add(nextticklistentry);
                 }
             }
         }
 
-        if (removeEntries) {
-            this.pendingTickListEntriesTreeSet.removeAll(entriesToRemove);
-        }
-
-        if (!removeEntries && OptimizationsandTweaksConfig.enablegetPendingBlockUpdatesDebugger) {
-            optimizationsAndTweaks$printDebugInfo(filteredList);
-        }
-
-        return filteredList;
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isEntryWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ,
-        int maxZ) {
-        return entry.xCoord >= minX && entry.xCoord < maxX && entry.zCoord >= minZ && entry.zCoord < maxZ;
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$printDebugInfo(List<NextTickListEntry> entries) {
-        for (NextTickListEntry entry : entries) {
-            System.out.println(
-                "Block present at (" + entry.xCoord
-                    + ", "
-                    + entry.yCoord
-                    + ", "
-                    + entry.zCoord
-                    + ") "
-                    + "UnlocalizedName: "
-                    + entry.func_151351_a()
-                        .getUnlocalizedName());
-        }
+        return arraylist;
     }
 
     /**
@@ -504,14 +492,6 @@ public abstract class MixinWorldServer extends World {
     public void initialize(WorldSettings p_72963_1_) {
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
-        }
-
-        if (this.pendingTickListEntriesHashSet == null) {
-            this.pendingTickListEntriesHashSet = new HashSet();
-        }
-
-        if (this.pendingTickListEntriesTreeSet == null) {
-            this.pendingTickListEntriesTreeSet = new TreeSet();
         }
 
         this.createSpawnPosition(p_72963_1_);
