@@ -513,6 +513,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIFollowParent;
+    @Config.Comment("Optimize EnumCreatureType Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEnumCreatureType;
+    @Config.Comment("Optimize EntityMob Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityMob;
     @Config.Comment("Optimize EntityAITasks")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -573,6 +581,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinUnthaumic;
+
+    @Config.Comment("Optimize AutomagyEventHandler class from Automagy mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAutomagyEventHandler;
     @Config.Comment("Optimize StringTranslate class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

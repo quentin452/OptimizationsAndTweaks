@@ -51,6 +51,9 @@ public class MixinPatchSpawnerAnimals {
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
+        if (!world.getChunkProvider().chunkExists(x >> 4, z >> 4)) {
+            return false;
+        }
         Block block = world.getBlock(x, y - 1, z);
         Block blockAbove = world.getBlock(x, y, z);
         Block blockBelow = world.getBlock(x, y + 1, z);
@@ -60,7 +63,7 @@ public class MixinPatchSpawnerAnimals {
         if (creatureMaterial == Material.water) {
             return optimizationsAndTweaks$canCreatureSpawnInWater(block, blockBelow, blockAbove);
         } else {
-            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, blockAbove, blockBelow);
+            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, blockAbove);
         }
     }
 
@@ -75,7 +78,7 @@ public class MixinPatchSpawnerAnimals {
 
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z,
-                                                                         Block block, Block blockAbove, Block blockBelow) {
+                                                                         Block block, Block blockAbove) {
         if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
             return false;
         }
@@ -186,7 +189,9 @@ public class MixinPatchSpawnerAnimals {
 
         float spawnX = 0.0F;
         float spawnY = 0.0F;
-        float offsetX, offsetY, offsetZ;
+        float offsetX;
+        float offsetY;
+        float offsetZ;
 
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
@@ -224,6 +229,7 @@ public class MixinPatchSpawnerAnimals {
 
         return i;
     }
+
     @Unique
     private void optimizationsAndTweaks$spawnEntities(WorldServer world, EnumCreatureType creatureType, float spawnX, float spawnY, int count) {
         for (int j = 0; j < count; j++) {
@@ -237,10 +243,8 @@ public class MixinPatchSpawnerAnimals {
                 world.spawnEntityInWorld(entityLiving);
 
                 Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnX);
-                if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
-                    if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnX)) {
-                        entityLiving.onSpawnWithEgg(null);
-                    }
+                if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere()) && (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnX))) {
+                    entityLiving.onSpawnWithEgg(null);
                 }
             }
         }

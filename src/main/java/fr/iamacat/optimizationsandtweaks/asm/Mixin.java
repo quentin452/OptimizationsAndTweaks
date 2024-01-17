@@ -394,7 +394,10 @@ public enum Mixin implements IMixin {
         "core.MixinLanguageRegistry"),
     common_core_MixinEntityAIFollowParent(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityAIFollowParent, "core.MixinEntityAIFollowParent"),
-
+    common_core_MixinEntityMob(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityMob, "core.MixinEntityMob"),
+    common_core_MixinEnumCreatureType(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEnumCreatureType, "core.MixinEnumCreatureType"),
     common_jewelrycraft2_MixinEntityEventHandler(Side.COMMON,
         require(TargetedMod.JEWELRYCRAFT2).and(m -> OptimizationsandTweaksConfig.enableMixinEntityEventHandler),
         "jewelrycraft2.MixinEntityEventHandler"),
@@ -469,6 +472,9 @@ public enum Mixin implements IMixin {
     common_thaumcraftminusthaumcraft_MixinUnthaumic(Side.COMMON,
         require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinUnthaumic),
         "thaumcraftminusthaumcraft.MixinUnthaumic"),
+    common_automagy_MixinAutomagyEventHandler(Side.COMMON,
+        require(TargetedMod.AUTOMAGY).and(m -> OptimizationsandTweaksConfig.enableMixinAutomagyEventHandler),
+        "automagy.MixinAutomagyEventHandler"),
     common_thaumcraft_MixinPatchBiomeGenMagicalForest(Side.COMMON,
         require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinPatchBiomeGenMagicalForest),
         "thaumcraft.MixinPatchBiomeGenMagicalForest"),
@@ -477,7 +483,6 @@ public enum Mixin implements IMixin {
             .and(m -> OptimizationsandTweaksConfig.enableMixinPatchBlockMagicalLeavesPerformances),
         "thaumcraft.MixinPatchBlockMagicalLeavesPerformances"),
 
-    // BUGFIX MIXINS
     common_ragdollcorpse_MixinEventHandler_Ragdoll(Side.COMMON,
         require(TargetedMod.RAGDOLLCORPSE).and(m -> OptimizationsandTweaksConfig.enableMixinRagdollCorpse),
         "ragdollcorpse.MixinEventHandler_Ragdoll"),
