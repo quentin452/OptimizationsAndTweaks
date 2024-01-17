@@ -39,27 +39,20 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
+    private static Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
     /**
-     * @author iamacatfr
-     * @reason greatly reduce TPS lags on VoidWorld and more
+     * @author
+     * @reason
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
-        if (!world.getChunkProvider().chunkExists(x >> 4, z >> 4)) {
-            return false;
-        }
-        Block block = world.getBlock(x, y - 1, z);
-        Block blockAbove = world.getBlock(x, y, z);
-        Block blockBelow = world.getBlock(x, y + 1, z);
-
-        Material creatureMaterial = creatureType.getCreatureMaterial();
-
-        if (creatureMaterial == Material.water) {
+        Block block = world.getBlock(x, y, z);
+        if (creatureType.getCreatureMaterial() == Material.water) {
+            Block blockBelow = world.getBlock(x, y - 1, z);
+            Block blockAbove = world.getBlock(x, y + 1, z);
             return optimizationsAndTweaks$canCreatureSpawnInWater(block, blockBelow, blockAbove);
-        } else {
-            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, blockAbove);
         }
+        return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, world.getBlock(x, y + 1, z));
     }
 
     @Unique
@@ -67,27 +60,21 @@ public class MixinPatchSpawnerAnimals {
         Material blockMaterial = block.getMaterial();
         Material blockBelowMaterial = blockBelow.getMaterial();
         boolean isNormalCubeAbove = blockAbove.isNormalCube();
-
         return blockMaterial.isLiquid() && blockBelowMaterial.isLiquid() && !isNormalCubeAbove;
     }
 
     @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z,
-                                                                         Block block, Block blockAbove) {
+    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
         if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
             return false;
         }
+        boolean isPeacefulCreature = creatureType.getPeacefulCreature();
+        boolean isAnimal = creatureType.getAnimal();
 
-        boolean canSpawn = optimizationsAndTweaks$canCreatureSpawnOnBlock(creatureType, world, x, y - 1, z, block);
-        return canSpawn && block != Blocks.bedrock
-            && !blockAbove.isNormalCube()
-            && !blockAbove.getMaterial().isLiquid()
-            && !world.getBlock(x, y + 1, z).isNormalCube();
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnOnBlock(EnumCreatureType creatureType, World world, int x, int y, int z, Block block) {
-        return block.canCreatureSpawn(creatureType, world, x, y, z);
+        if ((!isPeacefulCreature || isAnimal) && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256) {
+            return block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid();
+        }
+        return false;
     }
 
     /**
