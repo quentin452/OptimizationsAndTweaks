@@ -20,22 +20,6 @@ public abstract class MixinEntityAIEatDroppedFood extends EntityAIBase {
 
     @Shadow
     private EntityAnimal animal;
-    @Unique
-    double optimizationsAndTweaks$searchDistance = 7.5;
-
-    @Unique
-    private final AxisAlignedBB optimizationsAndTweaks$searchBoundingBox;
-
-    public MixinEntityAIEatDroppedFood(EntityAnimal ent) {
-        this.animal = ent;
-        this.optimizationsAndTweaks$searchBoundingBox = AxisAlignedBB.getBoundingBox(
-            ent.posX - optimizationsAndTweaks$searchDistance,
-            ent.posY - optimizationsAndTweaks$searchDistance,
-            ent.posZ - optimizationsAndTweaks$searchDistance,
-            ent.posX + optimizationsAndTweaks$searchDistance,
-            ent.posY + optimizationsAndTweaks$searchDistance,
-            ent.posZ + optimizationsAndTweaks$searchDistance);
-    }
 
     /**
      * @author iamcatfr
