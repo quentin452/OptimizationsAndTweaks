@@ -76,13 +76,27 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
     @Unique
     private void optimizationsAndTweaks$generateEllipseLayer(World world, double d6, double d7, double d8, double d10, double d11) {
-        for (int k2 = MathHelper.floor_double(d6 - d10 / 2.0D); k2 <= MathHelper.floor_double(d6 + d10 / 2.0D); ++k2) {
+        int minX = MathHelper.floor_double(d6 - d10 / 2.0D);
+        int maxX = MathHelper.floor_double(d6 + d10 / 2.0D);
+
+        int minY = MathHelper.floor_double(d7 - d11 / 2.0D);
+        int maxY = MathHelper.floor_double(d7 + d11 / 2.0D);
+
+        int minZ = MathHelper.floor_double(d8 - d10 / 2.0D);
+        int maxZ = MathHelper.floor_double(d8 + d10 / 2.0D);
+
+        optimizationsAndTweaks$iterateOverEllipse(world, d6, d7, d8, d10, d11, minX, maxX, minY, maxY, minZ, maxZ);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$iterateOverEllipse(World world, double d6, double d7, double d8, double d10, double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+        for (int k2 = minX; k2 <= maxX; ++k2) {
             double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
 
-            for (int l2 = MathHelper.floor_double(d7 - d11 / 2.0D); l2 <= MathHelper.floor_double(d7 + d11 / 2.0D); ++l2) {
+            for (int l2 = minY; l2 <= maxY; ++l2) {
                 double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
 
-                for (int i3 = MathHelper.floor_double(d8 - d10 / 2.0D); i3 <= MathHelper.floor_double(d8 + d10 / 2.0D); ++i3) {
+                for (int i3 = minZ; i3 <= maxZ; ++i3) {
                     double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
 
                     if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
@@ -101,8 +115,19 @@ public class MixinWorldGenMinable extends WorldGenerator {
     @Unique
     private void optimizationsAndTweaks$replaceBlockIfReplaceable(World world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
-        if (block.isReplaceableOreGen(world, x, y, z, field_150518_c)) {
-            world.setBlock(x, y, z, field_150519_a, mineableBlockMeta, 2);
+
+        if (optimizationsAndTweaks$isReplaceableOreGenBlock(block, world, x, y, z)) {
+            optimizationsAndTweaks$replaceBlock(world, x, y, z);
         }
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isReplaceableOreGenBlock(Block block, World world, int x, int y, int z) {
+        return block.isReplaceableOreGen(world, x, y, z, field_150518_c);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$replaceBlock(World world, int x, int y, int z) {
+        world.setBlock(x, y, z, field_150519_a, mineableBlockMeta, 2);
     }
 }
