@@ -39,67 +39,96 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
         int metadata = worldIn.getBlockMetadata(x, y, z);
 
-        if ((metadata & 12) == 8 && (metadata & 4) == 0) {
-            int searchRadius = 4;
+        if (optimizationsAndTweaks$shouldUpdateLeaves(metadata)) {
             int areaSize = 32;
             int halfArea = areaSize / 2;
-            int[] blockArray = new int[areaSize * areaSize * areaSize];
+            int[] blockArray = optimizationsAndTweaks$initializeBlockArray(areaSize);
 
-            for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
-                for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
-                    for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
-                        Block block = worldIn.getBlock(x + xOffset, y + yOffset, z + zOffset);
-                        int index = (xOffset + halfArea) * areaSize * areaSize
-                            + (yOffset + halfArea) * areaSize
-                            + zOffset + halfArea;
-
-                        blockArray[index] = block.isLeaves(worldIn, x + xOffset, y + yOffset, z + zOffset) ? -2
-                            : block.canSustainLeaves(worldIn, x + xOffset, y + yOffset, z + zOffset) ? 0 : -1;
-                    }
-                }
-            }
+            optimizationsAndTweaks$populateBlockArray(worldIn, x, y, z, areaSize, halfArea, blockArray);
 
             for (int iteration = 1; iteration <= 4; ++iteration) {
-                for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
-                    for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
-                        for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
-                            int index = (xOffset + halfArea) * areaSize * areaSize
-                                + (yOffset + halfArea) * areaSize
-                                + zOffset + halfArea;
-
-                            if (blockArray[index] == iteration - 1) {
-                                optimizationsAndTweaks$propagateDecayToNeighbors(blockArray, index, areaSize, iteration);
-                            }
-                        }
-                    }
-                }
+                optimizationsAndTweaks$propagateDecayIteration(blockArray, areaSize, halfArea, iteration);
             }
 
             int centralBlockStatus = blockArray[halfArea * areaSize * areaSize + halfArea * areaSize + halfArea];
 
-            if (centralBlockStatus >= 0) {
-                worldIn.setBlockMetadataWithNotify(x, y, z, metadata & -9, 4);
-            } else {
-                removeLeaves(worldIn, x, y, z);
-            }
+            optimizationsAndTweaks$updateWorld(metadata, worldIn, x, y, z, centralBlockStatus);
         }
 
         ci.cancel();
     }
+    @Unique
+    private boolean optimizationsAndTweaks$shouldUpdateLeaves(int metadata) {
+        return (metadata & 12) == 8 && (metadata & 4) == 0;
+    }
+    @Unique
+    private int[] optimizationsAndTweaks$initializeBlockArray(int areaSize) {
+        return new int[areaSize * areaSize * areaSize];
+    }
+    @Unique
+    private void optimizationsAndTweaks$populateBlockArray(World worldIn, int x, int y, int z, int areaSize, int halfArea, int[] blockArray) {
+        int searchRadius = 4;
 
+        for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
+            for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
+                for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
+                    Block block = worldIn.getBlock(x + xOffset, y + yOffset, z + zOffset);
+                    int index = (xOffset + halfArea) * areaSize * areaSize
+                        + (yOffset + halfArea) * areaSize
+                        + zOffset + halfArea;
+
+                    blockArray[index] = optimizationsAndTweaks$determineBlockArrayValue(block, worldIn, x + xOffset, y + yOffset, z + zOffset);
+                }
+            }
+        }
+    }
+    @Unique
+    private int optimizationsAndTweaks$determineBlockArrayValue(Block block, World worldIn, int x, int y, int z) {
+        if (block.isLeaves(worldIn, x, y, z)) {
+            return -2;
+        } else {
+            return block.canSustainLeaves(worldIn, x, y, z) ? 0 : -1;
+        }
+    }
+    @Unique
+    private void optimizationsAndTweaks$propagateDecayIteration(int[] blockArray, int areaSize, int halfArea, int iteration) {
+        int searchRadius = 4;
+
+        for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
+            for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
+                for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
+                    int index = (xOffset + halfArea) * areaSize * areaSize
+                        + (yOffset + halfArea) * areaSize
+                        + zOffset + halfArea;
+
+                    if (blockArray[index] == iteration - 1) {
+                        optimizationsAndTweaks$propagateDecayToNeighbors(blockArray, index, areaSize, iteration);
+                    }
+                }
+            }
+        }
+    }
     @Unique
     private void optimizationsAndTweaks$propagateDecayToNeighbors(int[] blockArray, int index, int areaSize, int iteration) {
-        for (int offset : new int[] { -1, 1 }) {
+        for (int offset : new int[]{-1, 1}) {
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset, iteration);
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize, iteration);
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize * areaSize, iteration);
         }
     }
-
     @Unique
     private void optimizationsAndTweaks$propagateDecayToNeighbor(int[] blockArray, int index, int iteration) {
         if (index >= 0 && index < blockArray.length && blockArray[index] == -2) {
             blockArray[index] = iteration;
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$updateWorld(int metadata, World worldIn, int x, int y, int z, int centralBlockStatus) {
+        if (centralBlockStatus >= 0) {
+            worldIn.setBlockMetadataWithNotify(x, y, z, metadata & -9, 4);
+        } else {
+            removeLeaves(worldIn, x, y, z);
         }
     }
 
