@@ -521,6 +521,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAITasks;
+
+    @Config.Comment("Optimize ExtendedBlockStorage")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinExtendedBlockStorage;
     @Config.Comment("Optimize BlockFalling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

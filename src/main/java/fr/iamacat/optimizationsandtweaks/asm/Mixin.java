@@ -385,6 +385,9 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntitySquid"),
     common_core_MixinEntityAITasks(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITasks,
         "core.MixinEntityAITasks"),
+
+    common_core_MixinExtendedBlockStorage(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinExtendedBlockStorage,
+        "core.MixinExtendedBlockStorage"),
     common_core_MixinEntityMoveHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMoveHelper,
         "core.MixinEntityMoveHelper"),
     common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
