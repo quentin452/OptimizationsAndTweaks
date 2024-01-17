@@ -5,7 +5,6 @@ import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -153,11 +152,25 @@ public abstract class MixinWorldServer extends World {
         int l = chunkcoordintpair.chunkZPos * 16;
         Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
 
+        optimizationsAndTweaks$updateChunk(k, l, chunk);
+        this.theProfiler.endStartSection("thunder");
+        optimizationsAndTweaks$processThunder(chunk, k, l);
+        this.theProfiler.endStartSection("iceandsnow");
+        optimizationsAndTweaks$processIceAndSnow(chunk, k, l);
+        this.theProfiler.endStartSection("tickBlocks");
+
+        optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$updateChunk(int k, int l, Chunk chunk) {
         this.func_147467_a(k, l, chunk);
         this.theProfiler.endStartSection("tickChunk");
         chunk.func_150804_b(false);
-        this.theProfiler.endStartSection("thunder");
+    }
 
+    @Unique
+    private void optimizationsAndTweaks$processThunder(Chunk chunk, int k, int l) {
         if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0
             && this.isRaining()
             && this.isThundering()) {
@@ -172,9 +185,10 @@ public abstract class MixinWorldServer extends World {
                 this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
             }
         }
+    }
 
-        this.theProfiler.endStartSection("iceandsnow");
-
+    @Unique
+    private void optimizationsAndTweaks$processIceAndSnow(Chunk chunk, int k, int l) {
         if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0) {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int i1 = this.updateLCG >> 2;
@@ -199,10 +213,6 @@ public abstract class MixinWorldServer extends World {
                 }
             }
         }
-
-        this.theProfiler.endStartSection("tickBlocks");
-
-        optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
     }
 
     @Unique
