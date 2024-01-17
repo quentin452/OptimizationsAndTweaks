@@ -1,23 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.structure.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @Mixin(MapGenStructure.class)
 public  abstract class MixinMapGenStructure extends MapGenBase
@@ -90,7 +85,7 @@ public  abstract class MixinMapGenStructure extends MapGenBase
                             StructureStart structurestart = MapGenStructureIO.func_143035_a(nbttagcompound1, p_143027_1_);
 
                             if (structurestart != null) {
-                                this.structureMap.put(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(i, j)), structurestart);
+                                this.structureMap.put(ChunkCoordIntPair.chunkXZ2Int(i, j), structurestart);
                             }
                         }
                     }
