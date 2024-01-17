@@ -103,27 +103,48 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
                     int blockY = posY + yOffset;
                     int blockZ = posZ + zOffset;
 
-                    Block currentBlock = world.getBlock(blockX, blockY, blockZ);
-                    int index = (xOffset + halfArea) * AREA_SIZE * AREA_SIZE
-                        + (yOffset + halfArea) * AREA_SIZE
-                        + zOffset
-                        + halfArea;
-
-                    boolean canSustainLeaves = currentBlock.canSustainLeaves(world, blockX, blockY, blockZ);
-
-                    if (!canSustainLeaves) {
-                        if (currentBlock.isLeaves(world, blockX, blockY, blockZ)) {
-                            optimizationsAndTweaks$blockArray[index] = -2;
-                        } else {
-                            optimizationsAndTweaks$blockArray[index] = -1;
-                        }
-                    } else {
-                        optimizationsAndTweaks$blockArray[index] = 0;
-                    }
+                    optimizationsAndTweaks$processSingleBlock(world, blockX, blockY, blockZ, xOffset, yOffset, zOffset, halfArea);
                 }
             }
         }
     }
+
+    @Unique
+    private void optimizationsAndTweaks$processSingleBlock(World world, int blockX, int blockY, int blockZ, int xOffset, int yOffset, int zOffset, int halfArea) {
+        Block currentBlock = world.getBlock(blockX, blockY, blockZ);
+        int index = optimizationsAndTweaks$calculateIndex(xOffset, yOffset, zOffset, halfArea);
+
+        boolean canSustainLeaves = optimizationsAndTweaks$checkCanSustainLeaves(currentBlock, world, blockX, blockY, blockZ);
+
+        optimizationsAndTweaks$updateBlockArray(world, blockX, blockY, blockZ, canSustainLeaves, currentBlock, index);
+    }
+
+    @Unique
+    private int optimizationsAndTweaks$calculateIndex(int xOffset, int yOffset, int zOffset, int halfArea) {
+        return (xOffset + halfArea) * AREA_SIZE * AREA_SIZE
+            + (yOffset + halfArea) * AREA_SIZE
+            + zOffset
+            + halfArea;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$checkCanSustainLeaves(Block currentBlock, World world, int blockX, int blockY, int blockZ) {
+        return !currentBlock.canSustainLeaves(world, blockX, blockY, blockZ);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$updateBlockArray(World world, int blockX, int blockY, int blockZ, boolean canSustainLeaves, Block currentBlock, int index) {
+        if (!canSustainLeaves) {
+            if (currentBlock.isLeaves(world, blockX, blockY, blockZ)) {
+                optimizationsAndTweaks$blockArray[index] = -2;
+            } else {
+                optimizationsAndTweaks$blockArray[index] = -1;
+            }
+        } else {
+            optimizationsAndTweaks$blockArray[index] = 0;
+        }
+    }
+
     @Unique
     private void optimizationsAndTweaks$propagateLeavesStatus(int[] blockArray, int index, int iteration) {
         if (blockArray[index] == -2) {
