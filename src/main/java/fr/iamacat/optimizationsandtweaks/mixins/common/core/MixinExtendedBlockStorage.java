@@ -18,16 +18,17 @@ public class MixinExtendedBlockStorage {
     private NibbleArray blockMSBArray;
     @Shadow
     private byte[] blockLSBArray;
+    // the map introduce TPS overhead so for now not enabled
 
-    @Unique
-    private Object2ObjectHashMap<Long, Block> optimizationsAndTweaks$blockIdCache = new Object2ObjectHashMap<>();
+//    @Unique
+  //  private Object2ObjectHashMap<Long, Block> optimizationsAndTweaks$blockIdCache = new Object2ObjectHashMap<>();
 
     /**
      * @author
      * @reason
      */
-    @Overwrite
-    public Block getBlockByExtId(int x, int y, int z) {
+   // @Overwrite
+  /*public Block getBlockByExtId(int x, int y, int z) {
         long cacheKey = (long) x << 32 | (long) y << 16 | z;
         if (optimizationsAndTweaks$blockIdCache.containsKey(cacheKey)) {
             return optimizationsAndTweaks$blockIdCache.get(cacheKey);
@@ -41,4 +42,6 @@ public class MixinExtendedBlockStorage {
 
         return block;
     }
+
+   */
 }
