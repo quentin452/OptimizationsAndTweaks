@@ -141,7 +141,6 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
      */
     @Overwrite
     public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
-        Random rand = new Random((long) p_73154_1_ * 341873128712L + (long) p_73154_2_ * 132897987541L);
         Block[] blocks = new Block[65536];
         byte[] blockData = new byte[65536];
 
@@ -170,10 +169,23 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
 
     @Unique
     private void optimizationsAndTweaks$initializeGeneration(Block[] blocks, byte[] blockData, int x, int z) {
-        WorldChunkManager worldChunkManager = worldObj.getWorldChunkManager();
+        optimizationsAndTweaks$initializeGenerationsub1(x,z);
+        optimizationsAndTweaks$initializeGenerationsub2(blocks,x,z);
+        optimizationsAndTweaks$initializeGenerationsub3(blocks, blockData, x, z);
+    }
 
-        func_147424_a(x, z, blocks);
+    @Unique
+    private void optimizationsAndTweaks$initializeGenerationsub1(int x, int z) {
+        WorldChunkManager worldChunkManager = worldObj.getWorldChunkManager();
         biomesForGeneration = worldChunkManager.loadBlockGeneratorData(biomesForGeneration, x * 16, z * 16, 16, 16);
+    }
+    @Unique
+    private void optimizationsAndTweaks$initializeGenerationsub2(Block[] blocks, int x, int z) {
+        func_147424_a(x, z, blocks);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$initializeGenerationsub3(Block[] blocks, byte[] blockData, int x, int z) {
         replaceBlocksForBiome(x, z, blocks, blockData, biomesForGeneration);
     }
 
