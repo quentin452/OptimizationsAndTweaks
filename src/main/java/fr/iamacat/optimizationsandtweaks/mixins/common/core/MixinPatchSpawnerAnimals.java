@@ -195,20 +195,23 @@ public class MixinPatchSpawnerAnimals {
                 distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, (float) y, spawnZ)) {
 
                 BiomeGenBase.SpawnListEntry spawnListEntry = optimizationsAndTweaks$createSpawnListEntry(creatureType, world, x, y, z);
-                EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
 
-                if (entityLiving != null) {
-                    entityLiving.setLocationAndAngles(spawnX, (float) y, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
+                if (spawnListEntry != null) {
+                    EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
 
-                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnZ);
-                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
-                        world.spawnEntityInWorld(entityLiving);
+                    if (entityLiving != null) {
+                        entityLiving.setLocationAndAngles(spawnX, (float) y, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
 
-                        if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, (float) y, spawnZ)) {
-                            entityLiving.onSpawnWithEgg(null);
+                        Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnZ);
+                        if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+                            world.spawnEntityInWorld(entityLiving);
+
+                            if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, (float) y, spawnZ)) {
+                                entityLiving.onSpawnWithEgg(null);
+                            }
+
+                            i += 1;
                         }
-
-                        i += 1;
                     }
                 }
             }
