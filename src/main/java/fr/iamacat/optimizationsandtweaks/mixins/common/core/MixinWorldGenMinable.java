@@ -102,18 +102,27 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
     @Unique
     private void optimizationsAndTweaks$iterateOverEllipse(World world, double d6, double d7, double d8, double d10,
-        double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
-        for (int k2 = minX; k2 <= maxX; ++k2) {
-            double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
+                                                           double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+        Block oreGenBlock = field_150518_c;
 
-            for (int l2 = minY; l2 <= maxY; ++l2) {
-                double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
+        if (oreGenBlock != null) {
+            for (int k2 = minX; k2 <= maxX; ++k2) {
+                double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
 
-                for (int i3 = minZ; i3 <= maxZ; ++i3) {
-                    double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
+                for (int l2 = minY; l2 <= maxY; ++l2) {
+                    double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
 
-                    if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
-                        optimizationsAndTweaks$replaceBlockIfReplaceable(world, k2, l2, i3);
+                    for (int i3 = minZ; i3 <= maxZ; ++i3) {
+                        double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
+
+                        if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
+
+                            Block block = world.getBlock(k2, l2, i3);
+
+                            if (block.isReplaceableOreGen(world, k2, l2, i3, oreGenBlock)) {
+                                optimizationsAndTweaks$replaceBlock(world, k2, l2, i3);
+                            }
+                        }
                     }
                 }
             }
@@ -124,16 +133,7 @@ public class MixinWorldGenMinable extends WorldGenerator {
     private boolean optimizationsAndTweaks$isInsideEllipse(double d12, double d13, double d14) {
         return d12 * d12 + d13 * d13 + d14 * d14 < 1.0D;
     }
-
-    @Unique
-    private void optimizationsAndTweaks$replaceBlockIfReplaceable(World world, int x, int y, int z) {
-        Block block = world.getBlock(x, y, z);
-
-        if (optimizationsAndTweaks$isReplaceableOreGenBlock(block, world, x, y, z)) {
-            optimizationsAndTweaks$replaceBlock(world, x, y, z);
-        }
-    }
-
+    
     @Unique
     private boolean optimizationsAndTweaks$isReplaceableOreGenBlock(Block block, World world, int x, int y, int z) {
         return block.isReplaceableOreGen(world, x, y, z, field_150518_c);
