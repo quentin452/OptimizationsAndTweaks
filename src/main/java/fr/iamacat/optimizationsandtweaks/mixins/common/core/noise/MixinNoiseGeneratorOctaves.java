@@ -31,7 +31,7 @@ public class MixinNoiseGeneratorOctaves extends NoiseGenerator {
             this.optimizationsAndTweaks$generatorCollection[i] = new NoiseGeneratorImprovedMultithread(random);
         }
     }
-
+    // todo fix cascading worldgens/getblock exception/error while updating neighbors errors when Endlessids is installed
     @Overwrite
     public double[] generateNoiseOctaves(double[] p_76304_1_, int p_76304_2_, int p_76304_3_, int p_76304_4_, int p_76304_5_, int p_76304_6_, int p_76304_7_, double p_76304_8_, double p_76304_10_, double p_76304_12_) {
         if (p_76304_1_ == null) {
@@ -76,6 +76,7 @@ public class MixinNoiseGeneratorOctaves extends NoiseGenerator {
     private void optimizationsAndTweaks$populateNoiseArray(double[] array, double d3, double d4, double d5, int p_76304_5_, int p_76304_6_, int p_76304_7_, double d6, double d7, double d8, double d9) {
         this.optimizationsAndTweaks$generatorCollection[optimizationsAndTweaks$l1].populateNoiseArray(array, d3, d4, d5, p_76304_5_, p_76304_6_, p_76304_7_, d6, d7, d8, d9);
     }
+    // todo fix cascading worldgens/getblock exception/error while updating neighbors errors when Endlessids is installed
 
     @Overwrite
     public double[] generateNoiseOctaves(double[] p_76305_1_, int p_76305_2_, int p_76305_3_, int p_76305_4_, int p_76305_5_, double p_76305_6_, double p_76305_8_, double p_76305_10_)

@@ -134,7 +134,7 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
             }
         }
     }
-
+    // todo fix cascading worldgens/getblock exception/error while updating neighbors errors when Endlessids is installed
     /**
      * @author
      * @reason
