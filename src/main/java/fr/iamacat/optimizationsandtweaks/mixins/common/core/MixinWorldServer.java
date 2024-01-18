@@ -41,6 +41,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
 
@@ -54,7 +56,6 @@ public abstract class MixinWorldServer extends World {
     private final EntityTracker theEntityTracker;
     @Shadow
     private final PlayerManager thePlayerManager;
-
     @Unique
     private ConcurrentHashMap<NextTickListEntry, Boolean> optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
 
@@ -103,7 +104,7 @@ public abstract class MixinWorldServer extends World {
     public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 
     public MixinWorldServer(MinecraftServer p_i45284_1_, ISaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_,
-        WorldSettings p_i45284_5_, Profiler p_i45284_6_) {
+                            WorldSettings p_i45284_5_, Profiler p_i45284_6_) {
         super(p_i45284_2_, p_i45284_3_, p_i45284_5_, WorldProvider.getProviderForDimension(p_i45284_4_), p_i45284_6_);
         this.mcServer = p_i45284_1_;
         this.theEntityTracker = new EntityTracker(worldServer);
@@ -111,6 +112,14 @@ public abstract class MixinWorldServer extends World {
 
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
+        }
+
+        if (this.optimizationsAndTweaks$pendingTickListEntriesHashSet == null) {
+            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
+        }
+
+        if (this.optimizationsAndTweaks$pendingTickListEntriesTreeSet == null) {
+            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet = new ConcurrentSkipListSet<>();
         }
 
         this.worldTeleporter = new Teleporter(worldServer);
@@ -124,8 +133,8 @@ public abstract class MixinWorldServer extends World {
         }
 
         if (!(worldServer instanceof WorldServerMulti)) // Forge: We fix the global mapStorage, which causes us to share
-                                                        // scoreboards early. So don't associate the save data with the
-                                                        // temporary scoreboard
+        // scoreboards early. So don't associate the save data with the
+        // temporary scoreboard
         {
             scoreboardsavedata.func_96499_a(this.worldScoreboard);
         }
@@ -152,25 +161,11 @@ public abstract class MixinWorldServer extends World {
         int l = chunkcoordintpair.chunkZPos * 16;
         Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
 
-        optimizationsAndTweaks$updateChunk(k, l, chunk);
-        this.theProfiler.endStartSection("thunder");
-        optimizationsAndTweaks$processThunder(chunk, k, l);
-        this.theProfiler.endStartSection("iceandsnow");
-        optimizationsAndTweaks$processIceAndSnow(chunk, k, l);
-        this.theProfiler.endStartSection("tickBlocks");
-
-        optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$updateChunk(int k, int l, Chunk chunk) {
         this.func_147467_a(k, l, chunk);
         this.theProfiler.endStartSection("tickChunk");
         chunk.func_150804_b(false);
-    }
+        this.theProfiler.endStartSection("thunder");
 
-    @Unique
-    private void optimizationsAndTweaks$processThunder(Chunk chunk, int k, int l) {
         if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0
             && this.isRaining()
             && this.isThundering()) {
@@ -185,10 +180,9 @@ public abstract class MixinWorldServer extends World {
                 this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
             }
         }
-    }
 
-    @Unique
-    private void optimizationsAndTweaks$processIceAndSnow(Chunk chunk, int k, int l) {
+        this.theProfiler.endStartSection("iceandsnow");
+
         if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0) {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int i1 = this.updateLCG >> 2;
@@ -213,25 +207,20 @@ public abstract class MixinWorldServer extends World {
                 }
             }
         }
+
+        this.theProfiler.endStartSection("tickBlocks");
+
+
+        optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
     }
 
     @Unique
     private void optimizationsAndTweaks$updateTickBlocks(Chunk chunk, int k, int l) {
         for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray()) {
-            optimizationsAndTweaks$processBlockStorage(extendedblockstorage, k, l);
+            if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
+                optimizationsAndTweaks$updateSingleBlockTick(extendedblockstorage, k, l);
+            }
         }
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$processBlockStorage(ExtendedBlockStorage extendedblockstorage, int k, int l) {
-        if (optimizationsAndTweaks$isBlockStorageValid(extendedblockstorage)) {
-            optimizationsAndTweaks$updateSingleBlockTick(extendedblockstorage, k, l);
-        }
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isBlockStorageValid(ExtendedBlockStorage extendedblockstorage) {
-        return extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick();
     }
 
     @Unique
@@ -245,12 +234,7 @@ public abstract class MixinWorldServer extends World {
         int l2 = randomValue >> 16 & 15;
         Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
         if (block.getTickRandomly()) {
-            block.updateTick(
-                this,
-                j2 + k,
-                l2 + extendedblockstorage.getYLocation(),
-                k2 + l,
-                optimizationsAndTweaks$random);
+            block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, optimizationsAndTweaks$random);
         }
     }
 
@@ -260,7 +244,7 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_,
-        int p_147454_5_, int p_147454_6_) {
+                                                int p_147454_5_, int p_147454_6_) {
         NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
         // Keeping here as a note for future when it may be restored.
         // boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4,
@@ -310,8 +294,10 @@ public abstract class MixinWorldServer extends World {
                 nextticklistentry.setPriority(p_147454_6_);
             }
 
-                optimizationsAndTweaks$pendingTickListEntriesHashSet.putIfAbsent(nextticklistentry, Boolean.TRUE);
+            if (!this.optimizationsAndTweaks$pendingTickListEntriesHashSet.containsKey(nextticklistentry)) {
+                this.optimizationsAndTweaks$pendingTickListEntriesHashSet.put(nextticklistentry, Boolean.TRUE);
                 this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
+            }
         }
     }
 
@@ -329,8 +315,10 @@ public abstract class MixinWorldServer extends World {
             nextticklistentry.setScheduledTime((long) p_147446_5_ + this.worldInfo.getWorldTotalTime());
         }
 
-        optimizationsAndTweaks$pendingTickListEntriesHashSet.putIfAbsent(nextticklistentry, Boolean.TRUE);
-        this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
+        if (!this.optimizationsAndTweaks$pendingTickListEntriesHashSet.containsKey(nextticklistentry)) {
+            this.optimizationsAndTweaks$pendingTickListEntriesHashSet.put(nextticklistentry, Boolean.TRUE);
+            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
+        }
     }
 
     /**
@@ -341,10 +329,9 @@ public abstract class MixinWorldServer extends World {
     public boolean tickUpdates(boolean p_72955_1_) {
         int i = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.size();
 
-        //if (i != this.optimizationsAndTweaks$pendingTickListEntriesHashSet.size()) {
-            //throw new IllegalStateException("TickNextTick list out of synch");
-        //} else
-        {
+        if (i != this.optimizationsAndTweaks$pendingTickListEntriesHashSet.size()) {
+            throw new IllegalStateException("TickNextTick list out of synch");
+        } else {
             if (i > 1000) {
                 i = 1000;
             }
@@ -442,53 +429,49 @@ public abstract class MixinWorldServer extends World {
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_)
-    {
-        ArrayList arraylist = null;
+    public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
+        List<NextTickListEntry> arraylist = null;
+        Set<NextTickListEntry> removalSet = new HashSet<>();
         ChunkCoordIntPair chunkcoordintpair = p_72920_1_.getChunkCoordIntPair();
         int i = (chunkcoordintpair.chunkXPos << 4) - 2;
         int j = i + 16 + 2;
         int k = (chunkcoordintpair.chunkZPos << 4) - 2;
         int l = k + 16 + 2;
 
-        for (int i1 = 0; i1 < 2; ++i1)
-        {
-            Iterator iterator;
+        for (int i1 = 0; i1 < 2; ++i1) {
+            Iterator<NextTickListEntry> iterator;
 
-            if (i1 == 0)
-            {
+            if (i1 == 0) {
                 iterator = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.iterator();
-            }
-            else
-            {
+            } else {
                 iterator = this.pendingTickListEntriesThisTick.iterator();
 
-                if (!this.pendingTickListEntriesThisTick.isEmpty())
-                {
+                if (!this.pendingTickListEntriesThisTick.isEmpty()) {
                     logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
                 }
             }
 
-            while (iterator.hasNext())
-            {
-                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
+            while (iterator.hasNext()) {
+                NextTickListEntry nextticklistentry = iterator.next();
 
-                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j && nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l)
-                {
-                    if (p_72920_2_)
-                    {
-                        this.optimizationsAndTweaks$pendingTickListEntriesHashSet.remove(nextticklistentry);
-                        iterator.remove();
+                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j &&
+                    nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l) {
+                    if (p_72920_2_) {
+                        removalSet.add(nextticklistentry);
                     }
 
-                    if (arraylist == null)
-                    {
-                        arraylist = new ArrayList();
+                    if (arraylist == null) {
+                        arraylist = new ArrayList<>();
                     }
 
                     arraylist.add(nextticklistentry);
                 }
             }
+        }
+
+        if (p_72920_2_) {
+            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.removeAll(removalSet);
+            this.pendingTickListEntriesThisTick.removeAll(removalSet);
         }
 
         return arraylist;
@@ -502,6 +485,14 @@ public abstract class MixinWorldServer extends World {
     public void initialize(WorldSettings p_72963_1_) {
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
+        }
+
+        if (this.optimizationsAndTweaks$pendingTickListEntriesHashSet == null) {
+            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
+        }
+
+        if (this.optimizationsAndTweaks$pendingTickListEntriesTreeSet == null) {
+            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet = new ConcurrentSkipListSet<>();
         }
 
         this.createSpawnPosition(p_72963_1_);
