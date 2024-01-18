@@ -140,7 +140,10 @@ public abstract class MixinWorldServer extends World {
     @Overwrite
     public void func_147456_g() {
         super.func_147456_g();
-        this.activeChunkSet.parallelStream().forEach(chunkCoord -> processChunk((ChunkCoordIntPair) chunkCoord));
+
+        for (Object o : this.activeChunkSet) {
+            processChunk((ChunkCoordIntPair) o);
+        }
     }
 
     @Unique
