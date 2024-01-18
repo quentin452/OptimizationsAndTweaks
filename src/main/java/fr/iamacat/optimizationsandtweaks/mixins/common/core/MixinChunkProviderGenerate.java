@@ -145,7 +145,7 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
         Block[] blocks = new Block[65536];
         byte[] blockData = new byte[65536];
 
-        optimizationsAndTweaks$generateTerrain(p_73154_1_, p_73154_2_, blocks, blockData, rand);
+        optimizationsAndTweaks$generateTerrain(p_73154_1_, p_73154_2_, blocks, blockData);
 
         Chunk chunk = new Chunk(worldObj, blocks, blockData, p_73154_1_, p_73154_2_);
         chunk.generateSkylightMap();
@@ -154,22 +154,32 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateTerrain(int x, int z, Block[] blocks, byte[] blockData, Random rand) {
+    private void optimizationsAndTweaks$generateTerrain(int x, int z, Block[] blocks, byte[] blockData) {
+        optimizationsAndTweaks$initializeGeneration(blocks,blockData,x, z);
+
+        optimizationsAndTweaks$generateStructure(caveGenerator, x, z, blocks);
+        optimizationsAndTweaks$generateStructure(ravineGenerator, x, z, blocks);
+
+        if (mapFeaturesEnabled) {
+            optimizationsAndTweaks$generateStructure(mineshaftGenerator, x, z, blocks);
+            optimizationsAndTweaks$generateStructure(villageGenerator, x, z, blocks);
+            optimizationsAndTweaks$generateStructure(strongholdGenerator, x, z, blocks);
+            optimizationsAndTweaks$generateStructure(scatteredFeatureGenerator, x, z, blocks);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$initializeGeneration(Block[] blocks, byte[] blockData, int x, int z) {
         WorldChunkManager worldChunkManager = worldObj.getWorldChunkManager();
 
         func_147424_a(x, z, blocks);
         biomesForGeneration = worldChunkManager.loadBlockGeneratorData(biomesForGeneration, x * 16, z * 16, 16, 16);
         replaceBlocksForBiome(x, z, blocks, blockData, biomesForGeneration);
+    }
 
-        caveGenerator.func_151539_a(this, worldObj, x, z, blocks);
-        ravineGenerator.func_151539_a(this, worldObj, x, z, blocks);
-
-        if (mapFeaturesEnabled) {
-            mineshaftGenerator.func_151539_a(this, worldObj, x, z, blocks);
-            villageGenerator.func_151539_a(this, worldObj, x, z, blocks);
-            strongholdGenerator.func_151539_a(this, worldObj, x, z, blocks);
-            scatteredFeatureGenerator.func_151539_a(this, worldObj, x, z, blocks);
-        }
+    @Unique
+    private void optimizationsAndTweaks$generateStructure(MapGenBase structure, int x, int z, Block[] blocks) {
+        structure.func_151539_a(this, worldObj, x, z, blocks);
     }
 
     /**
