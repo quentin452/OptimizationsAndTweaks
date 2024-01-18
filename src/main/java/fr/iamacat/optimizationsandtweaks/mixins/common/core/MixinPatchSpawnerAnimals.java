@@ -74,32 +74,24 @@ public class MixinPatchSpawnerAnimals {
         boolean isNormalCubeAbove = blockAbove.isNormalCube();
         return blockMaterial.isLiquid() && blockBelowMaterial.isLiquid() && !isNormalCubeAbove;
     }
-    @Unique
-    private static int[] optimizationsAndTweaks$creatureTypeCounts = new int[EnumCreatureType.values().length];
-
 
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world,
-                                                                         int x, int y, int z, Block block, Block blockAbove) {
+        int x, int y, int z, Block block, Block blockAbove) {
         if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
             return false;
         }
-
         boolean isPeacefulCreature = creatureType.getPeacefulCreature();
         boolean isAnimal = creatureType.getAnimal();
 
-        int maxCreatureCount = creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
-
-        int creatureCount = optimizationsAndTweaks$creatureTypeCounts[creatureType.ordinal()];
-
-        if ((!isPeacefulCreature || isAnimal) && creatureCount <= maxCreatureCount) {
-            return block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid();
+        if ((!isPeacefulCreature || isAnimal) && world.countEntities(creatureType, true)
+            <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256) {
+            return block != Blocks.bedrock && !blockAbove.isNormalCube()
+                && !blockAbove.getMaterial()
+                    .isLiquid();
         }
-
         return false;
     }
-
-
 
     /**
      * @author iamacatfr
@@ -185,7 +177,7 @@ public class MixinPatchSpawnerAnimals {
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
     @Unique
     private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType,
-                                                            ChunkCoordIntPair chunkCoord, ChunkCoordinates spawnPoint) {
+        ChunkCoordIntPair chunkCoord, ChunkCoordinates spawnPoint) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.chunkXPos, chunkCoord.chunkZPos);
 
         int i = 0;
@@ -206,21 +198,30 @@ public class MixinPatchSpawnerAnimals {
 
             float distanceSquared = offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ;
 
-            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, spawnY, spawnZ, distanceSquared) &&
-                optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, spawnY, spawnZ)) {
-
+            if (optimizationsAndTweaks$isSpawnLocationValid(
+                creatureType,
+                world,
+                spawnX,
+                spawnY,
+                spawnZ,
+                distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, spawnY, spawnZ)) {
                 BiomeGenBase.SpawnListEntry spawnListEntry = optimizationsAndTweaks$getOrCreateSpawnListEntry(
-                    creatureType, world, x, y, z, null);
+                    creatureType,
+                    world,
+                    x,
+                    y,
+                    z,
+                    null);
                 EntityLiving entityLiving = optimizationsAndTweaks$getOrCreateEntityLiving(world, spawnListEntry, null);
 
                 if (entityLiving != null) {
                     entityLiving.setLocationAndAngles(spawnX, spawnY, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
 
-                    Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnZ);
-                    if (canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
+                    Event.Result canSpawn = ForgeEventFactory
+                        .canEntitySpawn(entityLiving, world, spawnX, spawnY, spawnZ);
+                    if (canSpawn == Event.Result.ALLOW
+                        || (canSpawn == Event.Result.DEFAULT && entityLiving.getCanSpawnHere())) {
                         world.spawnEntityInWorld(entityLiving);
-
-                        optimizationsAndTweaks$creatureTypeCounts[creatureType.ordinal()]++;
 
                         if (!ForgeEventFactory.doSpecialSpawn(entityLiving, world, spawnX, spawnY, spawnZ)) {
                             entityLiving.onSpawnWithEgg(null);
