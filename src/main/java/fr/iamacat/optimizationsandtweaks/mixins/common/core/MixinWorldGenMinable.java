@@ -141,6 +141,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
     @Unique
     private void optimizationsAndTweaks$replaceBlock(World world, int x, int y, int z) {
-        world.setBlock(x, y, z, field_150519_a, mineableBlockMeta, 2);
+        if (field_150519_a != null && world != null) {
+            world.setBlock(x, y, z, field_150519_a, mineableBlockMeta, 2);
+        }
     }
 }
