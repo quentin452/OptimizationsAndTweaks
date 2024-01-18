@@ -68,8 +68,6 @@ public enum Mixin implements IMixin {
         "core.MixinBlockFluidClassic"),
     common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
-    common_core_MixinMapGenStructure(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure,
-        "core.MixinMapGenStructure"),
 
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
         "core.MixinDedicatedServer"),
@@ -104,6 +102,11 @@ public enum Mixin implements IMixin {
     common_core_MixinNBTTagCompound(Side.COMMON,
         avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound),
         "core.MixinNBTTagCompound"),
+
+    common_core_MixinMapGenStructure(Side.COMMON,
+        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure),
+        "core.MixinMapGenStructure"),
+
     common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
         "core.MixinEntityArrowAttack"),
     common_core_MixinEntityAITarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITarget,
