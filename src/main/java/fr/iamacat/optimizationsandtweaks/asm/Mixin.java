@@ -198,8 +198,8 @@ public enum Mixin implements IMixin {
         "core.MixinEntityTracker"),
     common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
         "core.pathfinding.MixinPathFinder"),
-    common_core_MixinWorldServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldServer,
-        "core.MixinWorldServer"),
+    common_core_MixinWorldServer(Side.COMMON,
+        avoid(TargetedMod.LAGGOOGLES).and(m -> OptimizationsandTweaksConfig.enableMixinWorldServer), "core.MixinWorldServer"),
     common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
         "core.MixinStatsComponent"),
 
