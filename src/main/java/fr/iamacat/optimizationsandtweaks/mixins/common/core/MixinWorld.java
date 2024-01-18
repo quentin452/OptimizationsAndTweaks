@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -891,18 +893,22 @@ public class MixinWorld {
             ((IWorldAccess) worldAccess).spawnParticle(particleName, x, y, z, velocityX, velocityY, velocityZ);
         }
     }
-
     /**
      * @author
      * @reason
      */
     @Overwrite
     public int countEntities(Class<?> entityClass) {
-        return (int) loadedEntityList.stream()
-            .filter(
-                entity -> !((entity instanceof EntityLiving) && ((EntityLiving) entity).isNoDespawnRequired())
-                    && entityClass.isAssignableFrom(entity.getClass()))
-            .count();
+        int count = 0;
+
+        for (Object entityObj : this.loadedEntityList) {
+            if (entityClass.isInstance(entityObj) &&
+                (!(entityObj instanceof EntityLiving) || !((EntityLiving) entityObj).isNoDespawnRequired())) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE"))
