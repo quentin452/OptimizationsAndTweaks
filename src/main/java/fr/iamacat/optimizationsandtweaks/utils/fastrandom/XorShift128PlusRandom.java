@@ -145,13 +145,14 @@ public class XorShift128PlusRandom extends Random {
     public void jump() {
         long s0 = 0;
         long s1 = 0;
-        for (int i = 0; i < JUMP.length; i++) for (int b = 0; b < 64; b++) {
-            if ((JUMP[i] & 1L << b) != 0) {
-                s0 ^= this.s0;
-                s1 ^= this.s1;
+        for (long l : JUMP)
+            for (int b = 0; b < 64; b++) {
+                if ((l & 1L << b) != 0) {
+                    s0 ^= this.s0;
+                    s1 ^= this.s1;
+                }
+                nextLong();
             }
-            nextLong();
-        }
 
         this.s0 = s0;
         this.s1 = s1;
