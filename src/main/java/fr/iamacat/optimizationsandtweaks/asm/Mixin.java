@@ -71,10 +71,9 @@ public enum Mixin implements IMixin {
 
     server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
         "core.MixinDedicatedServer"),
-    common_core_MixinNoiseGeneratorOctaves(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinNoiseGeneratorOctaves, "core.noise.MixinNoiseGeneratorOctaves"),
-
-    common_core_MixinNoiseGeneratorImproved(Side.COMMON,
+    common_core_MixinWorldType(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinWorldType, "core.MixinWorldType"),
+    common_core_noise_MixinNoiseGeneratorImproved(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinNoiseGeneratorImproved, "core.noise.MixinNoiseGeneratorImproved"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
         "core.MixinFMLClientHandler"),
