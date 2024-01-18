@@ -8,6 +8,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.*;
@@ -133,77 +134,44 @@ public abstract class MixinChunkProviderGenerate implements IChunkProvider {
             }
         }
     }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public Chunk provideChunk(int x, int z) {
-        optimizationsAndTweaks$setupSeed(x, z);
-
+    public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
+        Random rand = new Random((long) p_73154_1_ * 341873128712L + (long) p_73154_2_ * 132897987541L);
         Block[] blocks = new Block[65536];
         byte[] blockData = new byte[65536];
 
-        optimizationsAndTweaks$generateTerrain(x, z, blocks);
-        optimizationsAndTweaks$loadBiomeData(x, z, blocks, blockData);
+        optimizationsAndTweaks$generateTerrain(p_73154_1_, p_73154_2_, blocks, blockData, rand);
 
-        optimizationsAndTweaks$generateStructures(x, z, blocks);
-
-        if (mapFeaturesEnabled) {
-            optimizationsAndTweaks$generateMapFeatures(x, z, blocks);
-        }
-
-        Chunk chunk = optimizationsAndTweaks$createChunk(x, z, blocks, blockData);
-        optimizationsAndTweaks$setBiomeArray(chunk);
+        Chunk chunk = new Chunk(worldObj, blocks, blockData, p_73154_1_, p_73154_2_);
         chunk.generateSkylightMap();
 
         return chunk;
     }
+
     @Unique
-    private void optimizationsAndTweaks$setupSeed(int x, int z) {
-        rand.setSeed(x * 341873128712L + z * 132897987541L);
-    }
-    @Unique
-    private void optimizationsAndTweaks$generateTerrain(int x, int z, Block[] blocks) {
+    private void optimizationsAndTweaks$generateTerrain(int x, int z, Block[] blocks, byte[] blockData, Random rand) {
+        WorldChunkManager worldChunkManager = worldObj.getWorldChunkManager();
+
         func_147424_a(x, z, blocks);
-        biomesForGeneration = worldObj.getWorldChunkManager().loadBlockGeneratorData(biomesForGeneration, x * 16, z * 16, 16, 16);
-        replaceBlocksForBiome(x, z, blocks, new byte[65536], biomesForGeneration);
+        biomesForGeneration = worldChunkManager.loadBlockGeneratorData(biomesForGeneration, x * 16, z * 16, 16, 16);
+        replaceBlocksForBiome(x, z, blocks, blockData, biomesForGeneration);
+
         caveGenerator.func_151539_a(this, worldObj, x, z, blocks);
         ravineGenerator.func_151539_a(this, worldObj, x, z, blocks);
-    }
-    @Unique
-    private void optimizationsAndTweaks$loadBiomeData(int x, int z, Block[] blocks, byte[] blockData) {
-        Chunk chunk = new Chunk(worldObj, blocks, blockData, x, z);
-        byte[] biomeArray = chunk.getBiomeArray();
 
-        for (int k = 0; k < biomeArray.length; ++k) {
-            biomeArray[k] = (byte) biomesForGeneration[k].biomeID;
+        if (mapFeaturesEnabled) {
+            mineshaftGenerator.func_151539_a(this, worldObj, x, z, blocks);
+            villageGenerator.func_151539_a(this, worldObj, x, z, blocks);
+            strongholdGenerator.func_151539_a(this, worldObj, x, z, blocks);
+            scatteredFeatureGenerator.func_151539_a(this, worldObj, x, z, blocks);
         }
     }
-    @Unique
-    private void optimizationsAndTweaks$generateStructures(int x, int z, Block[] blocks) {
-        mineshaftGenerator.func_151539_a(this, worldObj, x, z, blocks);
-        villageGenerator.func_151539_a(this, worldObj, x, z, blocks);
-        strongholdGenerator.func_151539_a(this, worldObj, x, z, blocks);
-        scatteredFeatureGenerator.func_151539_a(this, worldObj, x, z, blocks);
-    }
-    @Unique
-    private void optimizationsAndTweaks$generateMapFeatures(int x, int z, Block[] blocks) {
-        optimizationsAndTweaks$generateStructures(x, z, blocks);
-    }
-    @Unique
-    private Chunk optimizationsAndTweaks$createChunk(int x, int z, Block[] blocks, byte[] blockData) {
-        return new Chunk(worldObj, blocks, blockData, x, z);
-    }
 
-    @Unique
-    private void optimizationsAndTweaks$setBiomeArray(Chunk chunk) {
-        byte[] biomeArray = chunk.getBiomeArray();
-
-        for (int k = 0; k < biomeArray.length; ++k) {
-            biomeArray[k] = (byte) biomesForGeneration[k].biomeID;
-        }
-    }
     /**
      * @author
      * @reason
