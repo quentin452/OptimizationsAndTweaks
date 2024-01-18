@@ -282,6 +282,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinNoiseGeneratorImproved;
+
+    @Config.Comment("Optimize NoiseGeneratorOctaves Class from Vanilla")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNoiseGeneratorOctaves;
     @Config.Comment("Optimize NBTTagCompound")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
