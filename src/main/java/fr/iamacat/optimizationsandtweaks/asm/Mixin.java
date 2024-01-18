@@ -151,6 +151,9 @@ public enum Mixin implements IMixin {
     common_catwalks2_MixinCommonProxy(Side.COMMON, require(TargetedMod.CATWALK2UNOFFICIAL).and(
         avoid(TargetedMod.CATWALK2OFFICIAL).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyForCatWalks2)),
         "catwalks2.MixinCommonProxy"),
+    common_unuquadium_Mixinmcreator_ununquadiumLand(Side.COMMON,
+        require(TargetedMod.UNUNQUADIUM).and(m -> OptimizationsandTweaksConfig.enableMixinmcreator_ununquadiumLand),
+        "unuquadium.Mixinmcreator_ununquadiumLand"),
     common_buildcraft_addon_oiltweaks_MixinOilTweakEventHandler(Side.COMMON,
         require(TargetedMod.BUILDCRAFTOILTWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler),
         "buildcraft.addon.oiltweaks.MixinOilTweakEventHandler"),

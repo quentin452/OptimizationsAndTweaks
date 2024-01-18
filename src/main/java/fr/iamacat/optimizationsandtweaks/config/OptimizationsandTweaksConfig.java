@@ -1072,6 +1072,17 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableEntityItemSpawningDebugger;
+
+    @Config.Comment("Enable Mixinmcreator_ununquadiumLand for Ununqdium Land mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinmcreator_ununquadiumLand;
+
+    @Config.Comment("UnunquadiumLand mod Dimensionid(Require enableMixinmcreator_ununquadiumLand)")
+    @Config.DefaultInt(3)
+    @Config.RangeInt(min = 0, max = 65536)
+    @Config.RequiresWorldRestart
+    public static int LandDimensionID;
     /*
      * @Config.Comment("List of entities to ignore for entity ticking optimization.")
      * @Config.DefaultStringList({ "Wither", "EnderDragon" })

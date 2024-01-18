@@ -192,6 +192,7 @@ dependencies {
     implementation files("libs/Too-Much-TNT-Mod-1.7.10_1.jar")
     implementation files("libs/animalsPlus_1.2.jar")
     implementation files("libs/Treasure-3.0.8-mc1.7.10.jar")
+    implementation files("libs/Ununquadium_mod_1.7.10.jar")
 
 }
 
