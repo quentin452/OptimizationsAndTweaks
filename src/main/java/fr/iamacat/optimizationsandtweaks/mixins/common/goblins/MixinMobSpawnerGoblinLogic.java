@@ -125,7 +125,7 @@ public abstract class MixinMobSpawnerGoblinLogic {
             this.goblinsLeft = 10;
         }
     }
-    @Overwrite
+    @Overwrite(remap = false)
     public Entity func_98265_a(Entity par1Entity) {
         if (this.getRandomEntity() != null) {
             NBTTagCompound nbttagcompound = new NBTTagCompound();
