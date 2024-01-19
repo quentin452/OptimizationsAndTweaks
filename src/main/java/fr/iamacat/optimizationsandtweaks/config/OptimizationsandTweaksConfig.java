@@ -980,6 +980,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinScanManager;
+
+    @Config.Comment("Fix NoSuchMethodError caused by MobSpawnerGoblinlogic from Goblin mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinMobSpawnerGoblinLogic;
     @Config.Comment("Reduce tps lags caused by SpawnerAnimals(Can reduce spawn speed of entities)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
