@@ -899,34 +899,9 @@ public class MixinWorld {
 
     @Overwrite
     public int countEntities(Class<?> entityClass) {
-        AtomicInteger count = optimizationsAndTweaks$initializeCounter();
-        optimizationsAndTweaks$processEntityList(entityClass, count);
-        return optimizationsAndTweaks$getCount(count);
-
-    }
-    @Unique
-    AtomicInteger optimizationsAndTweaks$initializeCounter() {
-        return new AtomicInteger(0);
-    }
-    @Unique
-    void optimizationsAndTweaks$processEntityList(Class<?> entityClass, AtomicInteger count) {
-        this.loadedEntityList.forEach(entity -> {
-            if(optimizationsAndTweaks$matchesEntity(entity, entityClass)) {
-                count.incrementAndGet();
-            }
-        });
-    }
-    @Unique
-    boolean optimizationsAndTweaks$matchesEntity(Object entity, Class<?> entityClass) {
-        return entityClass.isInstance(entity) && !optimizationsAndTweaks$isDespawned((EntityLiving)entity);
-    }
-    @Unique
-    boolean optimizationsAndTweaks$isDespawned(EntityLiving entity) {
-        return entity.isNoDespawnRequired();
-    }
-    @Unique
-    int optimizationsAndTweaks$getCount(AtomicInteger count) {
-        return count.get();
+        return (int) this.loadedEntityList.stream()
+            .filter(entity -> entityClass.isInstance(entity) && (!(entity instanceof EntityLiving) || !((EntityLiving) entity).isNoDespawnRequired()))
+            .count();
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE"))
