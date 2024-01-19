@@ -3,9 +3,8 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -897,25 +896,42 @@ public class MixinWorld {
      * @author
      * @reason
      */
+
     @Overwrite
     public int countEntities(Class<?> entityClass) {
-        int count = 0;
+        AtomicInteger count = optimizationsAndTweaks$initializeCounter();
+        optimizationsAndTweaks$processEntityList(entityClass, count);
+        return optimizationsAndTweaks$getCount(count);
 
-        for (Object entityObj : this.loadedEntityList) {
-            if (entityClass.isInstance(entityObj) &&
-                (!(entityObj instanceof EntityLiving) || !((EntityLiving) entityObj).isNoDespawnRequired())) {
-                count++;
+    }
+    @Unique
+    AtomicInteger optimizationsAndTweaks$initializeCounter() {
+        return new AtomicInteger(0);
+    }
+    @Unique
+    void optimizationsAndTweaks$processEntityList(Class<?> entityClass, AtomicInteger count) {
+        this.loadedEntityList.forEach(entity -> {
+            if(optimizationsAndTweaks$matchesEntity(entity, entityClass)) {
+                count.incrementAndGet();
             }
-        }
-
-        return count;
+        });
+    }
+    @Unique
+    boolean optimizationsAndTweaks$matchesEntity(Object entity, Class<?> entityClass) {
+        return entityClass.isInstance(entity) && !optimizationsAndTweaks$isDespawned((EntityLiving)entity);
+    }
+    @Unique
+    boolean optimizationsAndTweaks$isDespawned(EntityLiving entity) {
+        return entity.isNoDespawnRequired();
+    }
+    @Unique
+    int optimizationsAndTweaks$getCount(AtomicInteger count) {
+        return count.get();
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE"))
     private void onTickInject(CallbackInfo info) {
-        // Check if TidyChunkBackport is enabled in the configuration
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
-            // Call the injectInWorldTick method from the TidyChunkBackportEventHandler
             TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
         }
     }
