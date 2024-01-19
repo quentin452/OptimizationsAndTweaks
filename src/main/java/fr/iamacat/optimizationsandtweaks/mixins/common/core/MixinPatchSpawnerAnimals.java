@@ -4,7 +4,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +16,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
+import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.*;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -38,10 +39,6 @@ public class MixinPatchSpawnerAnimals {
         return new ChunkPosition(x, y, z);
 
     }
-
-    @Unique
-    private static Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
-
     /**
      * @author
      * @reason
@@ -68,38 +65,6 @@ public class MixinPatchSpawnerAnimals {
         Material blockBelowMaterial = blockBelow.getMaterial();
         boolean isNormalCubeAbove = blockAbove.isNormalCube();
         return blockMaterial.isLiquid() && blockBelowMaterial.isLiquid() && !isNormalCubeAbove;
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
-        if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
-            return false;
-        }
-        boolean isPeacefulCreature = creatureType.getPeacefulCreature();
-        boolean isAnimal = creatureType.getAnimal();
-        if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
-            for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
-                if (block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
-        int creatureCount = 0;
-        for (Object entity : world.loadedEntityList) {
-            if (creatureType.getCreatureClass().isInstance(entity)) {
-                ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(MathHelper.floor_double(((Entity) entity).posX) >> 4, MathHelper.floor_double(((Entity) entity).posZ) >> 4);
-                Boolean isChunkEligible = eligibleChunks.get(chunkCoord);
-                if (isChunkEligible != null && isChunkEligible) {
-                    creatureCount++;
-                }
-            }
-        }
-        return creatureCount <= creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
 
     /**
