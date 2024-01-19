@@ -48,6 +48,9 @@ public class MixinPatchSpawnerAnimals {
 
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
+        if (!world.blockExists(x, y, z)) {
+            return false;
+        }
         Block block = world.getBlock(x, y, z);
         if (creatureType.getCreatureMaterial() == Material.water) {
             Block blockBelow = world.getBlock(x, y - 1, z);
