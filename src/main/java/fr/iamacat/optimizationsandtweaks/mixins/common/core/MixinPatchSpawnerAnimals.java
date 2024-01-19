@@ -77,7 +77,7 @@ public class MixinPatchSpawnerAnimals {
         }
         boolean isPeacefulCreature = creatureType.getPeacefulCreature();
         boolean isAnimal = creatureType.getAnimal();
-        if ((!isPeacefulCreature || isAnimal) && shouldSpawnCreature(creatureType, world)) {
+        if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
             for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
                 if (block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid()) {
                     return true;
@@ -88,14 +88,18 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private static boolean shouldSpawnCreature(EnumCreatureType creatureType, World world) {
+    private static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
         int creatureCount = 0;
         for (Object entity : world.loadedEntityList) {
             if (creatureType.getCreatureClass().isInstance(entity)) {
-                creatureCount++;
+                ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(MathHelper.floor_double(((Entity) entity).posX) >> 4, MathHelper.floor_double(((Entity) entity).posZ) >> 4);
+                Boolean isChunkEligible = eligibleChunks.get(chunkCoord);
+                if (isChunkEligible != null && isChunkEligible) {
+                    creatureCount++;
+                }
             }
         }
-        return creatureCount <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
+        return creatureCount <= creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
 
     /**
