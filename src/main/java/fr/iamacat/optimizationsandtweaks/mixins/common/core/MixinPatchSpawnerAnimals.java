@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,16 +71,13 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world,
-                                                                         int x, int y, int z, Block block, Block blockAbove) {
+    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
         if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
             return false;
         }
         boolean isPeacefulCreature = creatureType.getPeacefulCreature();
         boolean isAnimal = creatureType.getAnimal();
-
-        int cachedCount = world.countEntities(creatureType, true);
-        if ((!isPeacefulCreature || isAnimal) && cachedCount <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256) {
+        if ((!isPeacefulCreature || isAnimal) && shouldSpawnCreature(creatureType, world)) {
             for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
                 if (block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid()) {
                     return true;
@@ -87,6 +85,17 @@ public class MixinPatchSpawnerAnimals {
             }
         }
         return false;
+    }
+
+    @Unique
+    private static boolean shouldSpawnCreature(EnumCreatureType creatureType, World world) {
+        int creatureCount = 0;
+        for (Object entity : world.loadedEntityList) {
+            if (creatureType.getCreatureClass().isInstance(entity)) {
+                creatureCount++;
+            }
+        }
+        return creatureCount <= creatureType.getMaxNumberOfCreature() * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
     }
 
     /**
