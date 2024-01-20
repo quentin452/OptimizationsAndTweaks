@@ -14,8 +14,8 @@ import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHa
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
-import fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite.FileInjector;
-import fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite.ModConfig;
+import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.FileInjector;
+import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.ModConfig;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {

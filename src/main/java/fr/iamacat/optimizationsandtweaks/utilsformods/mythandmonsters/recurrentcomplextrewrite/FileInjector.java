@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utilsformods.recurrentcomplextrewrite;
+package fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite;
 
 import java.io.File;
 import java.io.IOException;
