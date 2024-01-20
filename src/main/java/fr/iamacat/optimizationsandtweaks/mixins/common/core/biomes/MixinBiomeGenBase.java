@@ -12,6 +12,7 @@ import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BiomeGenBase.class)
 public class MixinBiomeGenBase {
@@ -26,7 +27,28 @@ public class MixinBiomeGenBase {
     protected static final NoiseGeneratorPerlin temperatureNoise;
     @Shadow
     public float temperature;
-
+    @Unique
+    Block optimizationsAndTweaks$block;
+    @Unique
+    byte optimizationsAndTweaks$b0;
+    @Unique
+    Block optimizationsAndTweaks$block1;
+    @Unique
+    Block optimizationsAndTweaks$block2;
+    @Unique
+    int optimizationsAndTweaks$k;
+    @Unique
+    int optimizationsAndTweaks$l;
+    @Unique
+    int optimizationsAndTweaks$i1;
+    @Unique
+    int optimizationsAndTweaks$j1;
+    @Unique
+    int optimizationsAndTweaks$k1;
+    @Unique
+    int optimizationsAndTweaks$l1;
+    @Unique
+    int optimizationsAndTweaks$i2 = (optimizationsAndTweaks$j1 * 16 + optimizationsAndTweaks$i1) * optimizationsAndTweaks$k1 + optimizationsAndTweaks$l1;
     /**
      * @author
      * @reason
@@ -34,73 +56,116 @@ public class MixinBiomeGenBase {
     @Overwrite
     public final void genBiomeTerrain(World p_150560_1_, Random p_150560_2_, Block[] p_150560_3_, byte[] p_150560_4_,
         int p_150560_5_, int p_150560_6_, double p_150560_7_) {
-        boolean flag = true;
-        Block block = this.topBlock;
-        byte b0 = (byte) (this.field_150604_aj & 255);
-        Block block1 = this.fillerBlock;
-        int k = -1;
-        int l = (int) (p_150560_7_ / 3.0D + 3.0D + p_150560_2_.nextDouble() * 0.25D);
-        int i1 = p_150560_5_ & 15;
-        int j1 = p_150560_6_ & 15;
-        int k1 = p_150560_3_.length / 256;
-
-        for (int l1 = 255; l1 >= 0; --l1) {
-            int i2 = (j1 * 16 + i1) * k1 + l1;
-
-            if (l1 <= p_150560_2_.nextInt(5)) {
-                p_150560_3_[i2] = Blocks.bedrock;
+        optimizationsAndTweaks$Initialize(p_150560_2_, p_150560_3_, p_150560_5_, p_150560_6_, p_150560_7_);
+        for (optimizationsAndTweaks$l1 = 255; optimizationsAndTweaks$l1 >= 0; --optimizationsAndTweaks$l1) {
+            optimizationsAndTweaks$i2 = (optimizationsAndTweaks$j1 * 16 + optimizationsAndTweaks$i1) * optimizationsAndTweaks$k1 + optimizationsAndTweaks$l1;
+            if (optimizationsAndTweaks$l1 <= p_150560_2_.nextInt(5)) {
+                optimizationsAndTweaks$genBiomeTerrainSub1(p_150560_3_);
             } else {
-                Block block2 = p_150560_3_[i2];
+                optimizationsAndTweaks$genBiomeTerrainSub2(p_150560_3_);
 
-                if (block2 != null && block2.getMaterial() != Material.air) {
-                    if (block2 == Blocks.stone) {
-                        if (k == -1) {
-                            if (l <= 0) {
-                                block = null;
-                                b0 = 0;
-                                block1 = Blocks.stone;
-                            } else if (l1 >= 59 && l1 <= 64) {
-                                block = this.topBlock;
-                                b0 = (byte) (this.field_150604_aj & 255);
-                                block1 = this.fillerBlock;
+                if (optimizationsAndTweaks$block2 != null && optimizationsAndTweaks$block2.getMaterial() != Material.air) {
+                    if (optimizationsAndTweaks$block2 == Blocks.stone) {
+                        if (optimizationsAndTweaks$k == -1) {
+                            if (optimizationsAndTweaks$l <= 0) {
+                                optimizationsAndTweaks$genBiomeTerrainSub3();
+                            } else if (optimizationsAndTweaks$l1 >= 59 && optimizationsAndTweaks$l1 <= 64) {
+                                optimizationsAndTweaks$genBiomeTerrainSub4();
                             }
 
-                            if (l1 < 63 && (block == null || block.getMaterial() == Material.air)) {
-                                if (this.getFloatTemperature(p_150560_5_, l1, p_150560_6_) < 0.15F) {
-                                    block = Blocks.ice;
-                                } else {
-                                    block = Blocks.water;
-                                }
-                                b0 = 0;
+                            if (optimizationsAndTweaks$l1 < 63 && (optimizationsAndTweaks$block == null || optimizationsAndTweaks$block.getMaterial() == Material.air)) {
+                                optimizationsAndTweaks$genBiomeTerrainSub5(p_150560_5_, p_150560_6_);
+                                optimizationsAndTweaks$b0 = 0;
                             }
 
-                            k = l;
+                            optimizationsAndTweaks$k = optimizationsAndTweaks$l;
 
-                            if (l1 >= 62) {
-                                p_150560_3_[i2] = block;
-                                p_150560_4_[i2] = b0;
-                            } else if (l1 < 56 - l) {
-                                block = null;
-                                block1 = Blocks.stone;
-                                p_150560_3_[i2] = Blocks.gravel;
+                            if (optimizationsAndTweaks$l1 >= 62) {
+                                optimizationsAndTweaks$genBiomeTerrainSub6(p_150560_3_, p_150560_4_);
+                            } else if (optimizationsAndTweaks$l1 < 56 - optimizationsAndTweaks$l) {
+                                optimizationsAndTweaks$genBiomeTerrainSub7(p_150560_3_);
                             } else {
-                                p_150560_3_[i2] = block1;
+                                optimizationsAndTweaks$genBiomeTerrainSub8(p_150560_3_);
                             }
-                        } else if (k > 0) {
-                            --k;
-                            p_150560_3_[i2] = block1;
-
-                            if (k == 0 && block1 == Blocks.sand) {
-                                k = p_150560_2_.nextInt(4) + Math.max(0, l1 - 63);
-                                block1 = Blocks.sandstone;
-                            }
+                        } else if (optimizationsAndTweaks$k > 0) {
+                            optimizationsAndTweaks$genBiomeTerrainSub9(p_150560_2_, p_150560_3_);
                         }
                     }
                 } else {
-                    k = -1;
+                    optimizationsAndTweaks$genBiomeTerrainSub10();
                 }
             }
         }
+    }
+    @Unique
+    public final void optimizationsAndTweaks$Initialize(Random p_150560_2_, Block[] p_150560_3_,
+                                                        int p_150560_5_, int p_150560_6_, double p_150560_7_) {
+        optimizationsAndTweaks$block = this.topBlock;
+        optimizationsAndTweaks$b0 = (byte) (this.field_150604_aj & 255);
+        optimizationsAndTweaks$block1 = this.fillerBlock;
+        optimizationsAndTweaks$k = -1;
+        optimizationsAndTweaks$l = (int) (p_150560_7_ / 3.0D + 3.0D + p_150560_2_.nextDouble() * 0.25D);
+        optimizationsAndTweaks$i1 = p_150560_5_ & 15;
+        optimizationsAndTweaks$j1 = p_150560_6_ & 15;
+        optimizationsAndTweaks$k1 = p_150560_3_.length / 256;
+    }
+
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub1(Block[] p_150560_3_) {
+                p_150560_3_[optimizationsAndTweaks$i2] = Blocks.bedrock;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub2(Block[] p_150560_3_) {
+        optimizationsAndTweaks$block2 = p_150560_3_[optimizationsAndTweaks$i2];
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub3() {
+        optimizationsAndTweaks$block = null;
+        optimizationsAndTweaks$b0 = 0;
+        optimizationsAndTweaks$block1 = Blocks.stone;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub4() {
+        optimizationsAndTweaks$block = this.topBlock;
+        optimizationsAndTweaks$b0 = (byte) (this.field_150604_aj & 255);
+        optimizationsAndTweaks$block1 = this.fillerBlock;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub5(int p_150560_5_, int p_150560_6_) {
+        if (this.getFloatTemperature(p_150560_5_, optimizationsAndTweaks$l1, p_150560_6_) < 0.15F) {
+            optimizationsAndTweaks$block = Blocks.ice;
+        } else {
+            optimizationsAndTweaks$block = Blocks.water;
+        }
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub6(Block[] p_150560_3_, byte[] p_150560_4_) {
+        p_150560_3_[optimizationsAndTweaks$i2] = optimizationsAndTweaks$block;
+        p_150560_4_[optimizationsAndTweaks$i2] = optimizationsAndTweaks$b0;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub7(Block[] p_150560_3_) {
+        optimizationsAndTweaks$block = null;
+        optimizationsAndTweaks$block1 = Blocks.stone;
+        p_150560_3_[optimizationsAndTweaks$i2] = Blocks.gravel;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub8(Block[] p_150560_3_) {
+        p_150560_3_[optimizationsAndTweaks$i2] = optimizationsAndTweaks$block1;
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub9(Random p_150560_2_, Block[] p_150560_3_) {
+        --optimizationsAndTweaks$k;
+        p_150560_3_[optimizationsAndTweaks$i2] = optimizationsAndTweaks$block1;
+
+        if (optimizationsAndTweaks$k == 0 && optimizationsAndTweaks$block1 == Blocks.sand) {
+            optimizationsAndTweaks$k = p_150560_2_.nextInt(4) + Math.max(0, optimizationsAndTweaks$l1 - 63);
+            optimizationsAndTweaks$block1 = Blocks.sandstone;
+        }
+    }
+    @Unique
+    public final void optimizationsAndTweaks$genBiomeTerrainSub10() {
+        optimizationsAndTweaks$k = -1;
     }
     /**
      * @author
