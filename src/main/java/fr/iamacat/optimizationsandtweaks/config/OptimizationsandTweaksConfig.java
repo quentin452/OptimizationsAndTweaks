@@ -282,10 +282,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldType;
-    @Config.Comment("Optimize NoiseGeneratorImproved Class from Vanilla")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinNoiseGeneratorImproved;
     @Config.Comment("Optimize NBTTagCompound")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -294,7 +290,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityList;
-    @Config.Comment("Optimize DataWatcher(Avoid usage of locks and use ConcurrentHashMap)")
+    @Config.Comment("Optimize DataWatcher")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinDataWatcher;
@@ -456,7 +452,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTextureUtil;
-
+    @Config.Comment("Optimize SaveHandler Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinSaveHandler;
     @Config.Comment("Optimize BlockFLuid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
