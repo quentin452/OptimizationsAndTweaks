@@ -243,60 +243,51 @@ public abstract class MixinWorldServer extends World {
      * @reason
      */
     @Overwrite
-    public void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_,
-                                                int p_147454_5_, int p_147454_6_) {
-        NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
-        // Keeping here as a note for future when it may be restored.
-        // boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4,
-        // nextticklistentry.zCoord >> 4));
-        // byte b0 = isForced ? 0 : 8;
-        byte b0 = 0;
+    public void scheduleBlockUpdateWithPriority(int xCoord, int yCoord, int zCoord, Block block, int priority, int scheduledTime) {
+        NextTickListEntry nextTickListEntry = new NextTickListEntry(xCoord, yCoord, zCoord, block);
+        byte radius = 0;
 
-        if (this.scheduledUpdatesAreImmediate && p_147454_4_.getMaterial() != Material.air) {
-            if (p_147454_4_.func_149698_L()) {
-                b0 = 8;
+        if (scheduledUpdatesAreImmediate && block.getMaterial() != Material.air) {
+            if (block.func_149698_L()) {
+                radius = 8;
 
-                if (this.checkChunksExist(
-                    nextticklistentry.xCoord - b0,
-                    nextticklistentry.yCoord - b0,
-                    nextticklistentry.zCoord - b0,
-                    nextticklistentry.xCoord + b0,
-                    nextticklistentry.yCoord + b0,
-                    nextticklistentry.zCoord + b0)) {
-                    Block block1 = this
-                        .getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+                if (checkChunksExist(
+                    nextTickListEntry.xCoord - radius,
+                    nextTickListEntry.yCoord - radius,
+                    nextTickListEntry.zCoord - radius,
+                    nextTickListEntry.xCoord + radius,
+                    nextTickListEntry.yCoord + radius,
+                    nextTickListEntry.zCoord + radius)) {
+                    Block existingBlock = getBlock(nextTickListEntry.xCoord, nextTickListEntry.yCoord, nextTickListEntry.zCoord);
 
-                    if (block1.getMaterial() != Material.air && block1 == nextticklistentry.func_151351_a()) {
-                        block1.updateTick(
-                            this,
-                            nextticklistentry.xCoord,
-                            nextticklistentry.yCoord,
-                            nextticklistentry.zCoord,
-                            this.rand);
+                    if (existingBlock.getMaterial() != Material.air && existingBlock == nextTickListEntry.func_151351_a()) {
+                        existingBlock.updateTick(this, nextTickListEntry.xCoord, nextTickListEntry.yCoord, nextTickListEntry.zCoord, rand);
                     }
                 }
 
                 return;
             }
 
-            p_147454_5_ = 1;
+            scheduledTime = 1;
         }
 
-        if (this.checkChunksExist(
-            p_147454_1_ - b0,
-            p_147454_2_ - b0,
-            p_147454_3_ - b0,
-            p_147454_1_ + b0,
-            p_147454_2_ + b0,
-            p_147454_3_ + b0)) {
-            if (p_147454_4_.getMaterial() != Material.air) {
-                nextticklistentry.setScheduledTime((long) p_147454_5_ + this.worldInfo.getWorldTotalTime());
-                nextticklistentry.setPriority(p_147454_6_);
+        if (checkChunksExist(
+            xCoord - radius,
+            yCoord - radius,
+            zCoord - radius,
+            xCoord + radius,
+            yCoord + radius,
+            zCoord + radius)) {
+            if (block.getMaterial() != Material.air) {
+                nextTickListEntry.setScheduledTime((long) scheduledTime + worldInfo.getWorldTotalTime());
+                nextTickListEntry.setPriority(priority);
             }
 
-            if (!this.optimizationsAndTweaks$pendingTickListEntriesHashSet.containsKey(nextticklistentry)) {
-                this.optimizationsAndTweaks$pendingTickListEntriesHashSet.put(nextticklistentry, Boolean.TRUE);
-                this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextticklistentry);
+            ConcurrentHashMap<NextTickListEntry, Boolean> pendingEntries = optimizationsAndTweaks$pendingTickListEntriesHashSet;
+
+            if (!pendingEntries.containsKey(nextTickListEntry)) {
+                pendingEntries.put(nextTickListEntry, Boolean.TRUE);
+                optimizationsAndTweaks$pendingTickListEntriesTreeSet.add(nextTickListEntry);
             }
         }
     }
@@ -340,7 +331,7 @@ public abstract class MixinWorldServer extends World {
             NextTickListEntry nextticklistentry;
 
             for (int j = 0; j < i; ++j) {
-                nextticklistentry = (NextTickListEntry) this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.first();
+                nextticklistentry = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.first();
 
                 if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime()) {
                     break;
