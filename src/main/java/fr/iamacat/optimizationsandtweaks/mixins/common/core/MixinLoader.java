@@ -172,7 +172,7 @@ public class MixinLoader {
      * containers. The sorting is performed using a {@link TopologicalSort}
      * based on the pre- and post- dependency information provided by the mods.
      */
-    @Shadow
+    @Overwrite(remap = false)
     private void sortModList() {
         FMLLog.finer("Verifying mod requirements are satisfied");
         try {
@@ -213,10 +213,8 @@ public class MixinLoader {
                     .addAll(mod.getDependencies())
                     .build();
                 for (ArtifactVersion v : allDeps) {
-                    if (modVersions.containsKey(v.getLabel())) {
-                        if (!v.containsVersion(modVersions.get(v.getLabel()))) {
+                    if (modVersions.containsKey(v.getLabel()) && (!v.containsVersion(modVersions.get(v.getLabel())))) {
                             versionMissingMods.add(v);
-                        }
                     }
                 }
                 if (!versionMissingMods.isEmpty()) {
@@ -480,14 +478,7 @@ public class MixinLoader {
 
         List<ModContainer> mods = Lists.newArrayList();
         mods.addAll(getActiveModList());
-        Collections.sort(mods, new Comparator<ModContainer>() {
-
-            @Override
-            public int compare(ModContainer o1, ModContainer o2) {
-                return o1.getModId()
-                    .compareTo(o2.getModId());
-            }
-        });
+        mods.sort(Comparator.comparing(ModContainer::getModId));
 
         FMLLog.fine("Mod signature data");
         FMLLog.fine(" \tValid Signatures:");
@@ -910,7 +901,7 @@ public class MixinLoader {
             }
         } else // remote world, fail on entries with the default action
         {
-            List<String> missedMapping = new ArrayList<String>();
+            List<String> missedMapping = new ArrayList<>();
 
             for (FMLMissingMappingsEvent.MissingMapping mapping : missingMappings.values()) {
                 if (mapping.getAction() == FMLMissingMappingsEvent.Action.DEFAULT) {
