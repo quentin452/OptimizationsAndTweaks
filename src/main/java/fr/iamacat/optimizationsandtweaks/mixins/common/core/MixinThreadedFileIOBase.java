@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 public class MixinThreadedFileIOBase {
 
     @Shadow
-    private List threadedIOQueue = Collections.synchronizedList(new ArrayList());
+    private List threadedIOQueue = Collections.synchronizedList(new ArrayList<>());
     @Shadow
     private volatile long writeQueuedCounter;
     @Shadow
@@ -51,7 +51,7 @@ public class MixinThreadedFileIOBase {
      * @reason
      */
     @Overwrite
-    public void waitForFinish() throws InterruptedException {
+    public void waitForFinish() {
         this.isThreadWaiting = true;
 
         while (this.writeQueuedCounter != this.savedIOCounter) {
