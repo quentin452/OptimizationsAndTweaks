@@ -1,24 +1,21 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import com.falsepattern.lib.compat.ChunkPos;
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.World;
 
-import com.falsepattern.lib.compat.ChunkPos;
-
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import gnu.trove.iterator.TObjectLongIterator;
-import gnu.trove.map.hash.TObjectLongHashMap;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TidyChunkBackportWorldContext {
 
     // Map to store the time when chunks were added
-    public final TObjectLongHashMap<ChunkPos> chunks = new TObjectLongHashMap<>();
+    private final ConcurrentHashMap<ChunkPos, Long> chunks = new ConcurrentHashMap<>();
     private int removeCount = 0;
 
     // Check if an entity is an EntityItem
@@ -69,12 +66,11 @@ public class TidyChunkBackportWorldContext {
     public void removeOldContext(World world) {
         int span = OptimizationsandTweaksConfig.TidyChunkBackportPostTick;
         long currentTime = world.getTotalWorldTime();
-        TObjectLongHashMap<ChunkPos> copy = new TObjectLongHashMap<>(this.chunks);
-        for (TObjectLongIterator<ChunkPos> iterator = copy.iterator(); iterator.hasNext();) {
-            iterator.advance();
-            long time = iterator.value();
+
+        for (Map.Entry<ChunkPos, Long> entry : chunks.entrySet()) {
+            long time = entry.getValue();
             if (currentTime - time > span) {
-                this.chunks.remove(iterator.key());
+                chunks.remove(entry.getKey());
             }
         }
     }
