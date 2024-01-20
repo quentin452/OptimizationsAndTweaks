@@ -5,12 +5,16 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CreatureCountTask implements Runnable {
@@ -40,7 +44,10 @@ public class CreatureCountTask implements Runnable {
     @Override
     public void run() {
         int totalCreatureCount = 0;
+        assert creatureType != null;
+        assert eligibleChunks != null;
         int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
+        assert world != null;
         Iterator<?> entityIterator = world.loadedEntityList.iterator();
         Class<?> creatureClass = Objects.requireNonNull(creatureType.getCreatureClass());
 
@@ -78,30 +85,12 @@ public class CreatureCountTask implements Runnable {
             threadStarted = true;
         }
 
-        try {
-            countThread.join(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         int totalCreatureCount = new CreatureCountTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
         int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
         return totalCreatureCount <= maxCreatureCount;
     }
-
-    public static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
-        if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
-            return false;
-        }
-        boolean isPeacefulCreature = creatureType.getPeacefulCreature();
-        boolean isAnimal = creatureType.getAnimal();
-        if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
-            for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
-                if (block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    @Unique
+    public static CompletableFuture<ChunkCoordinates> optimizationsAndTweaks$getSpawnPoint(WorldServer world) {
+        return CompletableFuture.supplyAsync(world::getSpawnPoint);
     }
 }

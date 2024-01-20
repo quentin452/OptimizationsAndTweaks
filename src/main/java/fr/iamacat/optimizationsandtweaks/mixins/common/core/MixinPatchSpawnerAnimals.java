@@ -6,6 +6,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
@@ -18,8 +19,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$canCreatureSpawnOnLand;
-import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$eligibleChunksForSpawning;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.*;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -60,6 +63,31 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
+    private static boolean optimizationsAndTweaks$isNormalCube(Block block) {
+        return block.isNormalCube();
+    }
+    @Unique
+    private static boolean optimizationsAndTweaks$doesBlockHaveSolidTopSurface(World world, int x, int y, int z) {
+        return World.doesBlockHaveSolidTopSurface(world, x, y, z);
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
+        if (!optimizationsAndTweaks$doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
+            return false;
+        }
+        boolean isPeacefulCreature = creatureType.getPeacefulCreature();
+        boolean isAnimal = creatureType.getAnimal();
+        if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
+            for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
+                if (block != Blocks.bedrock && !optimizationsAndTweaks$isNormalCube(blockAbove) && !blockAbove.getMaterial().isLiquid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(Block block, Block blockBelow, Block blockAbove) {
         Material blockMaterial = block.getMaterial();
         Material blockBelowMaterial = blockBelow.getMaterial();
@@ -72,7 +100,7 @@ public class MixinPatchSpawnerAnimals {
      * @reason optimize findChunksForSpawning
      */
     @Overwrite
-    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
+    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) throws ExecutionException, InterruptedException {
         if (!peaceful && !hostile) {
             return 0;
         }
@@ -81,14 +109,14 @@ public class MixinPatchSpawnerAnimals {
         optimizationsAndTweaks$populateEligibleChunks(world);
 
         int spawnedEntities = 0;
-        ChunkCoordinates spawnPoint = world.getSpawnPoint();
+        CompletableFuture<ChunkCoordinates> spawnPoint = optimizationsAndTweaks$getSpawnPoint(world);
 
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
                 for (Object chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning.keySet()) {
                     Boolean isChunkEligible = (Boolean) optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkCoord);
                     if (isChunkEligible != null && !isChunkEligible) {
-                        spawnedEntities += optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord, spawnPoint);
+                        spawnedEntities = optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord, spawnPoint.get());
                     }
                 }
             }
@@ -139,8 +167,7 @@ public class MixinPatchSpawnerAnimals {
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
     @Unique
-    private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord,
-                                                            ChunkCoordinates spawnPoint) {
+    private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord, ChunkCoordinates spawnPoint) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         int spawnedEntities = 0;
