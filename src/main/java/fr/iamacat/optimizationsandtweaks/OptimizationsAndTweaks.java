@@ -17,7 +17,7 @@ import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOr
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.FileInjector;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.ModConfig;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
+@Mod(modid = Tags.MODID, version = "${modVersion}", name = Tags.MODNAME, acceptedMinecraftVersions = Tags.MCVERSION)
 public class OptimizationsAndTweaks {
 
     @Mod.Instance(Tags.MODID)
