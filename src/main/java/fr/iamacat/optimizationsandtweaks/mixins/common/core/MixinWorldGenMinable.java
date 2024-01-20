@@ -60,8 +60,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
         double d3 = z + 8
             - COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
                 / 8.0f;
-        double d4 = y + random.nextInt(3) - 2;
-        double d5 = y + random.nextInt(3) - 2;
+        double d4 = y + random.nextInt(3) - (double) 2;
+        double d5 = y + random.nextInt(3) - (double) 2;
 
         optimizationsAndTweaks$generateEllipse(world, random, d0, d1, d2, d3, d4, d5);
 
@@ -116,12 +116,7 @@ public class MixinWorldGenMinable extends WorldGenerator {
                         double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
 
                         if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
-
-                            Block block = world.getBlock(k2, l2, i3);
-
-                            if (block.isReplaceableOreGen(world, k2, l2, i3, oreGenBlock)) {
-                                optimizationsAndTweaks$replaceBlock(world, k2, l2, i3);
-                            }
+                            optimizationsAndTweaks$processBlock(world, k2, l2, i3);
                         }
                     }
                 }
@@ -130,13 +125,18 @@ public class MixinWorldGenMinable extends WorldGenerator {
     }
 
     @Unique
+    private void optimizationsAndTweaks$processBlock(World world, int x, int y, int z) {
+        Block oreGenBlock = field_150518_c;
+        Block block = world.getBlock(x, y, z);
+
+        if (block.isReplaceableOreGen(world, x, y, z, oreGenBlock)) {
+            optimizationsAndTweaks$replaceBlock(world, x, y, z);
+        }
+    }
+
+    @Unique
     private boolean optimizationsAndTweaks$isInsideEllipse(double d12, double d13, double d14) {
         return d12 * d12 + d13 * d13 + d14 * d14 < 1.0D;
-    }
-    
-    @Unique
-    private boolean optimizationsAndTweaks$isReplaceableOreGenBlock(Block block, World world, int x, int y, int z) {
-        return block.isReplaceableOreGen(world, x, y, z, field_150518_c);
     }
 
     @Unique
