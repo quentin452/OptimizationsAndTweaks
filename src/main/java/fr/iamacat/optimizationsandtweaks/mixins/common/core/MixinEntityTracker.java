@@ -48,7 +48,7 @@ public class MixinEntityTracker {
     @Shadow
     private int entityViewDistance;
 
-    public MixinEntityTracker(EntityTracker entityTracker, WorldServer p_i1516_1_)
+    public MixinEntityTracker(WorldServer p_i1516_1_)
     {
         this.theWorld = p_i1516_1_;
         this.entityViewDistance = p_i1516_1_.func_73046_m().getConfigurationManager().getEntityViewDistance();
