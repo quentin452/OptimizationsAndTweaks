@@ -35,8 +35,7 @@ public abstract class MixinGrassSpread {
                     int i1 = x + random.nextInt(3) - 1;
                     int j1 = y + random.nextInt(5) - 3;
                     int k1 = z + random.nextInt(3) - 1;
-                    Block block = worldIn.getBlock(i1, j1 + 1, k1);
-
+                    worldIn.getBlock(i1, j1 + 1, k1);
                     if (worldIn.getBlock(i1, j1, k1) == Blocks.dirt && worldIn.getBlockMetadata(i1, j1, k1) == 0
                         && worldIn.getBlockLightValue(i1, j1 + 1, k1) >= 4
                         && worldIn.getBlockLightOpacity(i1, j1 + 1, k1) <= 2) {
