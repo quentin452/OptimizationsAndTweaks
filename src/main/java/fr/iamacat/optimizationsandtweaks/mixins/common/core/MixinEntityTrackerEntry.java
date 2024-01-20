@@ -46,7 +46,7 @@ public class MixinEntityTrackerEntry {
 
             if (!attributeInstanceSet.isEmpty()) {
                 this.func_151261_b(new S20PacketEntityProperties(this.myEntity.getEntityId(), attributeInstanceSet));
-                attributeInstanceSet.clear(); // Clear the set if needed, as it's not empty
+                attributeInstanceSet.clear();
             }
         }
     }
