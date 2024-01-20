@@ -4,6 +4,10 @@
 
 Optimizations and Tweaks for FPS/TPS - Fix bugs and tweak various things to help optimize performance in Minecraft 1.7.10. This mod aims to smooth out gameplay and improve framerates through optimizations.
 
+# Permanent incompat
+
+The original Archaicfix isn't work with my mod due to MixinMapGenStructure ,use my fork instead : [ArchaicFixFork](https://github.com/quentin452/ArchaicFix)
+
 # What this mod have for now?
 
 Go here : [Wiki](https://github.com/quentin452/OptimizationsAndTweaks/wiki)
