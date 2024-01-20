@@ -1,28 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StringTranslate;
-
-import org.apache.logging.log4j.Level;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -30,6 +9,25 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringTranslate;
+import org.apache.logging.log4j.Level;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 @Mixin(LanguageRegistry.class)
 public class MixinLanguageRegistry {
@@ -71,7 +69,7 @@ public class MixinLanguageRegistry {
     /**
      * Deprecated for removal in 1.8. Use the assets lang system
      */
-    @Shadow
+    @Overwrite(remap = false)
     @Deprecated
     public void addStringLocalization(String key, String value) {
         addStringLocalization(key, "en_US", value);
@@ -81,7 +79,6 @@ public class MixinLanguageRegistry {
      * Deprecated for removal in 1.8. Use the assets lang system
      */
     @Overwrite(remap = false)
-
     @Deprecated
     public void addStringLocalization(String key, String lang, String value) {
         Properties langPack = optimizationsAndTweaks$modLanguageData.get(lang);
@@ -130,7 +127,7 @@ public class MixinLanguageRegistry {
         } else if (objectToName instanceof Block) {
             objectName = ((Block) objectToName).getUnlocalizedName();
         } else if (objectToName instanceof ItemStack) {
-            objectName = ((ItemStack) objectToName).getItem()
+            objectName = Objects.requireNonNull(((ItemStack) objectToName).getItem())
                 .getUnlocalizedName((ItemStack) objectToName);
         } else {
             throw new IllegalArgumentException(String.format("Illegal object for naming %s", objectToName));
@@ -207,7 +204,7 @@ public class MixinLanguageRegistry {
     /**
      * Deprecated for removal in 1.8. Use the assets lang system
      */
-    @Shadow
+    @Overwrite(remap = false)
     @Deprecated
     public void loadLocalization(URL localizationFile, String lang, boolean isXML) {
 
@@ -217,7 +214,7 @@ public class MixinLanguageRegistry {
             if (isXML) {
                 langPack.loadFromXML(langStream);
             } else {
-                langPack.load(new InputStreamReader(langStream, Charsets.UTF_8));
+                langPack.load(new InputStreamReader(langStream, StandardCharsets.UTF_8));
             }
 
             addStringLocalization(langPack, lang);
@@ -283,7 +280,7 @@ public class MixinLanguageRegistry {
         zf.close();
     }
 
-    @Shadow
+    @Overwrite(remap = false)
     private void searchDirForLanguages(File source, String path, Side side) throws IOException {
         for (File file : Objects.requireNonNull(source.listFiles())) {
             String currPath = path + file.getName();
@@ -296,7 +293,7 @@ public class MixinLanguageRegistry {
                 FMLLog
                     .fine("Injecting found translation assets for lang %s at %s into language system", lang, currPath);
                 LanguageRegistry.instance()
-                    .injectLanguage(lang, StringTranslate.parseLangFile(new FileInputStream(file)));
+                    .injectLanguage(lang, StringTranslate.parseLangFile(Files.newInputStream(file.toPath())));
                 // Ensure en_US is available to StringTranslate on the server
                 if ("en_US".equals(lang) && side == Side.SERVER) {
                     StringTranslate.inject(new FileInputStream(file));
