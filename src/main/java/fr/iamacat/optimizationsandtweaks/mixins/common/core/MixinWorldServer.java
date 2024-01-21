@@ -3,9 +3,9 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -55,7 +55,7 @@ public abstract class MixinWorldServer extends World {
     @Shadow
     private final PlayerManager thePlayerManager;
     @Unique
-    private ConcurrentHashMap<NextTickListEntry, Boolean> optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
+    private ConcurrentHashMapV8<NextTickListEntry, Boolean> optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMapV8<>();
 
     /** All work to do in future ticks. */
     @Unique
@@ -113,7 +113,7 @@ public abstract class MixinWorldServer extends World {
         }
 
         if (this.optimizationsAndTweaks$pendingTickListEntriesHashSet == null) {
-            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
+            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMapV8<>();
         }
 
         if (this.optimizationsAndTweaks$pendingTickListEntriesTreeSet == null) {
@@ -305,7 +305,7 @@ public abstract class MixinWorldServer extends World {
                 nextTickListEntry.setPriority(priority);
             }
 
-            ConcurrentHashMap<NextTickListEntry, Boolean> pendingEntries = optimizationsAndTweaks$pendingTickListEntriesHashSet;
+            ConcurrentHashMapV8<NextTickListEntry, Boolean> pendingEntries = optimizationsAndTweaks$pendingTickListEntriesHashSet;
 
             if (!pendingEntries.containsKey(nextTickListEntry)) {
                 pendingEntries.put(nextTickListEntry, Boolean.TRUE);
@@ -506,7 +506,7 @@ public abstract class MixinWorldServer extends World {
         }
 
         if (this.optimizationsAndTweaks$pendingTickListEntriesHashSet == null) {
-            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMap<>();
+            this.optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMapV8<>();
         }
 
         if (this.optimizationsAndTweaks$pendingTickListEntriesTreeSet == null) {
