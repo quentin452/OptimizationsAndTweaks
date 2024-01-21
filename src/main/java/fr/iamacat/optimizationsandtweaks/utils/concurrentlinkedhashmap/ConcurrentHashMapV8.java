@@ -3766,7 +3766,7 @@ final Node<K,V> find(int h, Object k) {
                      (containsAll(c) && c.containsAll(this))));
         }
 
-        public ConcurrentHashMapSpliterator<K> spliterator() {
+        public ConcurrentHashMapSpliterator<K> customSpliterator() {
             Node<K,V>[] t;
             ConcurrentHashMapV8<K,V> m = map;
             long n = m.sumCount();
@@ -3829,7 +3829,7 @@ final Node<K,V> find(int h, Object k) {
             throw new UnsupportedOperationException();
         }
 
-        public ConcurrentHashMapSpliterator<V> spliterator() {
+        public ConcurrentHashMapSpliterator<V> customSpliterator() {
             Node<K,V>[] t;
             ConcurrentHashMapV8<K,V> m = map;
             long n = m.sumCount();
@@ -3924,7 +3924,7 @@ final Node<K,V> find(int h, Object k) {
                      (containsAll(c) && c.containsAll(this))));
         }
 
-        public ConcurrentHashMapSpliterator<Entry<K,V>> spliterator() {
+        public ConcurrentHashMapSpliterator<Entry<K,V>> customSpliterator() {
             Node<K,V>[] t;
             ConcurrentHashMapV8<K,V> m = map;
             long n = m.sumCount();
