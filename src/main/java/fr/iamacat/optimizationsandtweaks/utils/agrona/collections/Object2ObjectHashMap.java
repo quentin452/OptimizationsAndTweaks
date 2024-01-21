@@ -162,35 +162,33 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
      * @return current value associated with key, or null if none found
      * @throws IllegalArgumentException if value is null
      */
+
     public V put(final K key, final V value) {
         final Object val = mapNullValue(value);
         requireNonNull(val, "value cannot be null");
-
         final Object[] entries = this.entries;
         final int mask = entries.length - 1;
         int keyIndex = Hashing.evenHash(key.hashCode(), mask);
-
         Object oldValue;
         while (null != (oldValue = entries[keyIndex + 1])) {
             if (Objects.equals(entries[keyIndex], key)) {
                 break;
             }
-
+            if (Hashing.evenHash(key.hashCode(), mask) == Hashing.evenHash((entries[keyIndex]).hashCode(), mask)) {
+                if (Objects.equals(entries[keyIndex], key)) {
+                    break;
+                }
+            }
             keyIndex = next(keyIndex, mask);
         }
-
         if (null == oldValue) {
             ++size;
             entries[keyIndex] = key;
         }
-
         entries[keyIndex + 1] = val;
-
         increaseCapacity();
-
         return unmapNullValue(oldValue);
     }
-
     private void increaseCapacity() {
         if (size > resizeThreshold) {
             // entries.length = 2 * capacity
@@ -254,9 +252,20 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
      */
     public void clear() {
         if (size > 0) {
-            Arrays.fill(entries, null);
+            if (!allNull(entries)) {
+                Arrays.fill(entries, null);
+            }
             size = 0;
         }
+    }
+
+    private boolean allNull(Object[] array) {
+        for (Object element : array) {
+            if (element != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

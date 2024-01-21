@@ -41,8 +41,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
 
@@ -161,56 +159,80 @@ public abstract class MixinWorldServer extends World {
         int l = chunkcoordintpair.chunkZPos * 16;
         Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
 
+        optimizationsAndTweaks$processChunkLightning(chunk, k, l);
+        optimizationsAndTweaks$processChunkIceAndSnow(chunk, k, l);
+        optimizationsAndTweaks$processChunkTickBlocks(chunk, k, l);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$processChunkLightning(Chunk chunk, int k, int l) {
         this.func_147467_a(k, l, chunk);
         this.theProfiler.endStartSection("tickChunk");
         chunk.func_150804_b(false);
         this.theProfiler.endStartSection("thunder");
 
-        if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0
-            && this.isRaining()
-            && this.isThundering()) {
-            int randValue = this.rand.nextInt(100000);
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int i1 = this.updateLCG >> 2;
-            int j1 = k + (i1 & 15);
-            int k1 = l + (i1 >> 8 & 15);
-            int l1 = this.getPrecipitationHeight(j1, k1);
-
-            if (randValue == 0 && this.canLightningStrikeAt(j1, l1, k1)) {
-                this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
-            }
+        if (provider.canDoLightning(chunk) && optimizationsAndTweaks$shouldGenerateLightning()) {
+            optimizationsAndTweaks$generateLightning(k, l);
         }
+    }
 
+    @Unique
+    private boolean optimizationsAndTweaks$shouldGenerateLightning() {
+        return this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering();
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$generateLightning(int k, int l) {
+        int randValue = this.rand.nextInt(100000);
+        this.updateLCG = this.updateLCG * 3 + 1013904223;
+        int i1 = this.updateLCG >> 2;
+        int j1 = k + (i1 & 15);
+        int k1 = l + (i1 >> 8 & 15);
+        int l1 = this.getPrecipitationHeight(j1, k1);
+
+        if (randValue == 0 && this.canLightningStrikeAt(j1, l1, k1)) {
+            this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$processChunkIceAndSnow(Chunk chunk, int k, int l) {
         this.theProfiler.endStartSection("iceandsnow");
 
         if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0) {
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int i1 = this.updateLCG >> 2;
-            int j1 = i1 & 15;
-            int k1 = i1 >> 8 & 15;
-            int l1 = this.getPrecipitationHeight(j1 + k, k1 + l);
-            Block blockBelow = this.getBlock(j1 + k, l1 - 1, k1 + l);
+            optimizationsAndTweaks$generateIceAndSnow(k, l);
+        }
+    }
 
-            if (blockBelow == Blocks.water && this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l)) {
-                this.setBlock(j1 + k, l1 - 1, k1 + l, Blocks.ice);
-            }
+    @Unique
+    private void optimizationsAndTweaks$generateIceAndSnow(int k, int l) {
+        this.updateLCG = this.updateLCG * 3 + 1013904223;
+        int i1 = this.updateLCG >> 2;
+        int j1 = i1 & 15;
+        int k1 = i1 >> 8 & 15;
+        int l1 = this.getPrecipitationHeight(j1 + k, k1 + l);
+        Block blockBelow = this.getBlock(j1 + k, l1 - 1, k1 + l);
 
-            if (this.isRaining() && this.func_147478_e(j1 + k, l1, k1 + l, true)) {
-                this.setBlock(j1 + k, l1, k1 + l, Blocks.snow_layer);
-            }
-
-            if (this.isRaining()) {
-                BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + k, k1 + l);
-
-                if (biomegenbase.canSpawnLightningBolt()) {
-                    blockBelow.fillWithRain(this, j1 + k, l1 - 1, k1 + l);
-                }
-            }
+        if (blockBelow == Blocks.water && this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l)) {
+            this.setBlock(j1 + k, l1 - 1, k1 + l, Blocks.ice);
         }
 
+        if (this.isRaining() && this.func_147478_e(j1 + k, l1, k1 + l, true)) {
+            this.setBlock(j1 + k, l1, k1 + l, Blocks.snow_layer);
+        }
+
+        if (this.isRaining()) {
+            BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + k, k1 + l);
+
+            if (biomegenbase.canSpawnLightningBolt()) {
+                blockBelow.fillWithRain(this, j1 + k, l1 - 1, k1 + l);
+            }
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$processChunkTickBlocks(Chunk chunk, int k, int l) {
         this.theProfiler.endStartSection("tickBlocks");
-
-
         optimizationsAndTweaks$updateTickBlocks(chunk, k, l);
     }
 
@@ -421,51 +443,56 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
-        List<NextTickListEntry> arraylist = null;
-        Set<NextTickListEntry> removalSet = new HashSet<>();
+        List<NextTickListEntry> pendingBlockUpdates = optimizationsAndTweaks$collectPendingBlockUpdates(p_72920_1_, p_72920_2_);
+        optimizationsAndTweaks$removeProcessedEntries(p_72920_2_);
+        return pendingBlockUpdates;
+    }
+
+    @Unique
+    private List<NextTickListEntry> optimizationsAndTweaks$collectPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
+        List<NextTickListEntry> pendingBlockUpdates = new ArrayList<>();
         ChunkCoordIntPair chunkcoordintpair = p_72920_1_.getChunkCoordIntPair();
-        int i = (chunkcoordintpair.chunkXPos << 4) - 2;
-        int j = i + 16 + 2;
-        int k = (chunkcoordintpair.chunkZPos << 4) - 2;
-        int l = k + 16 + 2;
+        int minX = (chunkcoordintpair.chunkXPos << 4) - 2;
+        int maxX = minX + 16 + 2;
+        int minZ = (chunkcoordintpair.chunkZPos << 4) - 2;
+        int maxZ = minZ + 16 + 2;
 
-        for (int i1 = 0; i1 < 2; ++i1) {
-            Iterator<NextTickListEntry> iterator;
+        for (int i = 0; i < 2; ++i) {
+            Iterator<NextTickListEntry> iterator = (i == 0) ? this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.iterator()
+                : this.pendingTickListEntriesThisTick.iterator();
 
-            if (i1 == 0) {
-                iterator = this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.iterator();
-            } else {
-                iterator = this.pendingTickListEntriesThisTick.iterator();
-
-                if (!this.pendingTickListEntriesThisTick.isEmpty()) {
-                    logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
-                }
+            if (i == 1 && !this.pendingTickListEntriesThisTick.isEmpty()) {
+                logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
             }
 
             while (iterator.hasNext()) {
                 NextTickListEntry nextticklistentry = iterator.next();
 
-                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j &&
-                    nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l) {
+                if (optimizationsAndTweaks$isWithinBounds(nextticklistentry, minX, maxX, minZ, maxZ)) {
                     if (p_72920_2_) {
-                        removalSet.add(nextticklistentry);
+                        iterator.remove();
                     }
 
-                    if (arraylist == null) {
-                        arraylist = new ArrayList<>();
-                    }
-
-                    arraylist.add(nextticklistentry);
+                    pendingBlockUpdates.add(nextticklistentry);
                 }
             }
         }
 
-        if (p_72920_2_) {
-            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.removeAll(removalSet);
-            this.pendingTickListEntriesThisTick.removeAll(removalSet);
-        }
+        return pendingBlockUpdates;
+    }
 
-        return arraylist;
+    @Unique
+    private boolean optimizationsAndTweaks$isWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ, int maxZ) {
+        return entry.xCoord >= minX && entry.xCoord < maxX &&
+            entry.zCoord >= minZ && entry.zCoord < maxZ;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$removeProcessedEntries(boolean p_72920_2_) {
+        if (p_72920_2_) {
+            this.pendingTickListEntriesThisTick.clear();
+            this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.clear();
+        }
     }
 
     /**

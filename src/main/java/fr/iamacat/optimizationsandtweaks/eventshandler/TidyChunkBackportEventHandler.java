@@ -1,20 +1,16 @@
 package fr.iamacat.optimizationsandtweaks.eventshandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.falsepattern.lib.compat.ChunkPos;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
-
-import com.falsepattern.lib.compat.ChunkPos;
-
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 
 public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.
@@ -25,7 +21,7 @@ public class TidyChunkBackportEventHandler {
     // todo prevent EntityItem to be dropped from the player if removeOldContext is not terminated
 
     // Map to store world contexts
-    public static final Map<Integer, TidyChunkBackportWorldContext> worldData = new HashMap<>();
+    public static final Object2ObjectHashMap<Integer, TidyChunkBackportWorldContext> worldData = new Object2ObjectHashMap<>();
 
     // Event handler for world unload
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -74,8 +70,7 @@ public class TidyChunkBackportEventHandler {
 
     // Get the world context for a given world
     private static TidyChunkBackportWorldContext getWorldContext(World w) {
-        TidyChunkBackportWorldContext ctx = worldData.get(w.provider.dimensionId);
-        return ctx == null ? createWorldContext(w) : ctx;
+        return worldData.computeIfAbsent(w.provider.dimensionId, k -> createWorldContext(w));
     }
 
     // Inject the tidy chunk logic in the world tick

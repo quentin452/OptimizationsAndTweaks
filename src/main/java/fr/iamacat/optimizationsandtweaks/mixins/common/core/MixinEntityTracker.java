@@ -199,7 +199,8 @@ public class MixinEntityTracker {
         {
             if (this.trackedEntityIDs.containsItem(p_72785_1_.getEntityId()))
             {
-                throw new IllegalStateException("Entity is already tracked!");
+               // throw new IllegalStateException("Entity is already tracked!");
+                return;
             }
 
             EntityTrackerEntry entitytrackerentry = new EntityTrackerEntry(p_72785_1_, p_72785_2_, p_72785_3_, p_72785_4_);
@@ -319,6 +320,10 @@ public class MixinEntityTracker {
             entitytrackerentry.func_151261_b(p_151248_2_);
         }
     }
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     public void removePlayerFromTrackers(EntityPlayerMP p_72787_1_)
     {

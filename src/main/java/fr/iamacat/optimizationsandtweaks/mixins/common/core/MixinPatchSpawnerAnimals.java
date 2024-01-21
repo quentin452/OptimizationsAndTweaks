@@ -14,15 +14,14 @@ import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.*;
+import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$eligibleChunksForSpawning;
+import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$shouldSpawnCreature;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -79,8 +78,9 @@ public class MixinPatchSpawnerAnimals {
         boolean isPeacefulCreature = creatureType.getPeacefulCreature();
         boolean isAnimal = creatureType.getAnimal();
         if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
+            boolean isNormalCubeAbove = optimizationsAndTweaks$isNormalCube(blockAbove);
             for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
-                if (block != Blocks.bedrock && !optimizationsAndTweaks$isNormalCube(blockAbove) && !blockAbove.getMaterial().isLiquid()) {
+                if (block != Blocks.bedrock && !isNormalCubeAbove && !blockAbove.getMaterial().isLiquid()) {
                     return true;
                 }
             }
@@ -100,7 +100,7 @@ public class MixinPatchSpawnerAnimals {
      * @reason optimize findChunksForSpawning
      */
     @Overwrite
-    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) throws ExecutionException, InterruptedException {
+    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
         if (!peaceful && !hostile) {
             return 0;
         }
@@ -109,14 +109,13 @@ public class MixinPatchSpawnerAnimals {
         optimizationsAndTweaks$populateEligibleChunks(world);
 
         int spawnedEntities = 0;
-        CompletableFuture<ChunkCoordinates> spawnPoint = optimizationsAndTweaks$getSpawnPoint(world);
 
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
                 for (Object chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning.keySet()) {
                     Boolean isChunkEligible = (Boolean) optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkCoord);
                     if (isChunkEligible != null && !isChunkEligible) {
-                        spawnedEntities = optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord, spawnPoint.get());
+                        spawnedEntities = optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord);
                     }
                 }
             }
@@ -163,11 +162,12 @@ public class MixinPatchSpawnerAnimals {
             && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature()
             * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
     }
+
     // do not refactor this method into smaller methods: it can cause Entity is already tracked! errors
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
     @Unique
-    private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord, ChunkCoordinates spawnPoint) {
+    private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         int spawnedEntities = 0;
@@ -181,11 +181,7 @@ public class MixinPatchSpawnerAnimals {
             float spawnX = x + 0.5F;
             float spawnZ = z + 0.5F;
 
-            float offsetX = spawnX - (float) spawnPoint.posX;
-            float offsetY = y - (float) spawnPoint.posY;
-            float offsetZ = spawnZ - (float) spawnPoint.posZ;
-
-            float distanceSquared = offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ;
+            float distanceSquared = spawnX * spawnX + spawnZ * spawnZ;
 
             if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, (float) y, spawnZ, distanceSquared)
                 && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, (float) y, spawnZ)) {
@@ -246,6 +242,10 @@ public class MixinPatchSpawnerAnimals {
 
     @Unique
     private boolean optimizationsAndTweaks$canEntitySpawn(EntityLiving entity, World world, double x, double y, double z) {
+        Chunk chunk = world.getChunkFromChunkCoords(MathHelper.floor_double(x) >> 4, MathHelper.floor_double(z) >> 4);
+        if (!chunk.isChunkLoaded) {
+            return false;
+        }
         Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entity, world, (float) x, (float) y, (float) z);
         return canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entity.getCanSpawnHere());
     }

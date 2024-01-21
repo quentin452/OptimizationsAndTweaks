@@ -907,53 +907,6 @@ public class MixinWorld {
         }
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
-        this.theProfiler.endStartSection("moodSound");
-
-        if (this.ambientTickCountdown == 0 && !this.isRemote) {
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int k = this.updateLCG >> 2;
-            int l = k & 15;
-            int i1 = k >> 8 & 15;
-            int j1 = k >> 16 & 255;
-
-            if (p_147467_3_ != null && this.world != null) {
-                Block block = p_147467_3_.getBlock(l, j1, i1);
-                l += p_147467_1_;
-                i1 += p_147467_2_;
-
-                if (block != null && (block.getMaterial() == Material.air
-                    && this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8)
-                    && this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0
-                    && this.world.provider != null)) {
-                    EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
-
-                    if (entityplayer != null && entityplayer.worldObj != null
-                        && entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D) {
-                        this.playSoundEffect(
-                            l + 0.5D,
-                            j1 + 0.5D,
-                            i1 + 0.5D,
-                            "ambient.cave.cave",
-                            0.7F,
-                            0.8F + this.rand.nextFloat() * 0.2F);
-                        this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
-                    }
-
-                }
-            }
-        }
-        this.theProfiler.endStartSection("checkLight");
-        if (p_147467_3_ != null) {
-            p_147467_3_.enqueueRelightChecks();
-        }
-    }
-
     @Shadow
     public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_) {
         if (p_72883_2_ < 0) {
@@ -972,6 +925,59 @@ public class MixinWorld {
     public void playSoundEffect(double x, double y, double z, String soundName, float volume, float pitch) {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).playSound(soundName, x, y, z, volume, pitch);
+        }
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
+        this.theProfiler.endStartSection("moodSound");
+
+        if (optimizationsAndTweaks$shouldPlayAmbientSound()) {
+            optimizationsAndTweaks$playAmbientCaveSound(p_147467_1_, p_147467_2_, p_147467_3_);
+        }
+
+        this.theProfiler.endStartSection("checkLight");
+        p_147467_3_.enqueueRelightChecks();
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldPlayAmbientSound() {
+        return this.ambientTickCountdown == 0 && !this.isRemote;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$playAmbientCaveSound(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
+        this.updateLCG = this.updateLCG * 3 + 1013904223;
+        int k = this.updateLCG >> 2;
+        int l = k & 15;
+        int i1 = k >> 8 & 15;
+        int j1 = k >> 16 & 255;
+        Block block = p_147467_3_.getBlock(l, j1, i1);
+        l += p_147467_1_;
+        i1 += p_147467_2_;
+
+        if (optimizationsAndTweaks$shouldPlayCaveSound(block, l, j1, i1)) {
+            optimizationsAndTweaks$playCaveSound(l, j1, i1);
+        }
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$shouldPlayCaveSound(Block block, int l, int j1, int i1) {
+        return block.getMaterial() == Material.air
+            && this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8)
+            && this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0;
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$playCaveSound(int l, int j1, int i1) {
+        EntityPlayer entityplayer = this.getClosestPlayer((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D, 8.0D);
+
+        if (entityplayer != null && entityplayer.getDistanceSq((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D) > 4.0D) {
+            this.playSoundEffect((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
+            this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
         }
     }
 }
