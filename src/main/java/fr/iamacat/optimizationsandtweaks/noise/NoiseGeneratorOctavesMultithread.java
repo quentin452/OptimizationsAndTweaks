@@ -5,7 +5,6 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.gen.NoiseGenerator;
@@ -16,6 +15,7 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
     /** Collection of noise generation functions. Output is combined to produce different octaves of noise. */
     private final NoiseGeneratorImprovedMultithread[] generatorCollection;
     private final int octaves;
+    private final ExecutorService executor;
 
     public NoiseGeneratorOctavesMultithread(Random p_i2111_1_, int p_i2111_2_) {
         this.octaves = p_i2111_2_;
@@ -24,6 +24,11 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
         for (int j = 0; j < p_i2111_2_; ++j) {
             this.generatorCollection[j] = new NoiseGeneratorImprovedMultithread(p_i2111_1_);
         }
+
+        // Create an executor with a fixed number of threads (you can adjust the number as needed)
+        this.executor = Executors.newFixedThreadPool(
+            Runtime.getRuntime()
+                .availableProcessors());
     }
 
     /**
@@ -31,8 +36,7 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
      * x,y,z noiseScale)
      */
     public double[] generateNoiseOctaves(double[] p_76304_1_, int p_76304_2_, int p_76304_3_, int p_76304_4_,
-                                         int p_76304_5_, int p_76304_6_, int p_76304_7_,
-                                         double p_76304_8_, double p_76304_10_, double p_76304_12_) {
+        int p_76304_5_, int p_76304_6_, int p_76304_7_, double p_76304_8_, double p_76304_10_, double p_76304_12_) {
         if (p_76304_1_ == null) {
             p_76304_1_ = new double[p_76304_5_ * p_76304_6_ * p_76304_7_];
         } else {
@@ -42,8 +46,6 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
         double d6 = 1.0D;
 
         CompletableFuture[] futures = new CompletableFuture[octaves];
-
-        ForkJoinPool executor = ForkJoinPool.commonPool();
 
         for (int l1 = 0; l1 < this.octaves; ++l1) {
             final int octave = l1;
@@ -63,18 +65,20 @@ public class NoiseGeneratorOctavesMultithread extends NoiseGenerator {
             double finalD = d3;
             double finalD1 = d5;
             double finalD2 = d6;
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> this.generatorCollection[octave].populateNoiseArray(
-                finalP_76304_1_,
-                finalD,
-                d4,
-                finalD1,
-                p_76304_5_,
-                p_76304_6_,
-                p_76304_7_,
-                p_76304_8_ * finalD2,
-                p_76304_10_ * finalD2,
-                p_76304_12_ * finalD2,
-                finalD2), executor);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                this.generatorCollection[octave].populateNoiseArray(
+                    finalP_76304_1_,
+                    finalD,
+                    d4,
+                    finalD1,
+                    p_76304_5_,
+                    p_76304_6_,
+                    p_76304_7_,
+                    p_76304_8_ * finalD2,
+                    p_76304_10_ * finalD2,
+                    p_76304_12_ * finalD2,
+                    finalD2);
+            }, executor);
 
             futures[l1] = future;
             d6 /= 2.0D;
