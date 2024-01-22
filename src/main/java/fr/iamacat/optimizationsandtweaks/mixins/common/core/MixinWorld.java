@@ -973,11 +973,66 @@ public class MixinWorld {
 
     @Unique
     private void optimizationsAndTweaks$playCaveSound(int l, int j1, int i1) {
-        EntityPlayer entityplayer = this.getClosestPlayer((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D, 8.0D);
+        EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
 
-        if (entityplayer != null && entityplayer.getDistanceSq((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D) > 4.0D) {
-            this.playSoundEffect((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
+        if (entityplayer != null && entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D) {
+            this.playSoundEffect(l + 0.5D, j1 + 0.5D, i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
             this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
         }
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags) {
+        if (!optimizationsAndTweaks$isValidBlockPos(x, y, z)) {
+            return false;
+        }
+
+        if (y < 0 || y >= 256) {
+            return false;
+        }
+
+        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+        Block block1 = null;
+        net.minecraftforge.common.util.BlockSnapshot blockSnapshot = optimizationsAndTweaks$captureBlockSnapshot(x, y, z, flags);
+
+        if ((flags & 1) != 0) {
+            block1 = chunk.getBlock(x & 15, y, z & 15);
+        }
+
+        boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
+
+        if (!flag && blockSnapshot != null) {
+            this.capturedBlockSnapshots.remove(blockSnapshot);
+            blockSnapshot = null;
+        }
+
+        this.theProfiler.startSection("checkLight");
+        this.func_147451_t(x, y, z);
+        this.theProfiler.endSection();
+
+        if (flag && blockSnapshot == null) {
+            markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
+        }
+
+        return flag;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isValidBlockPos(int x, int y, int z) {
+        return x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000;
+    }
+
+    @Unique
+    private net.minecraftforge.common.util.BlockSnapshot optimizationsAndTweaks$captureBlockSnapshot(int x, int y, int z, int flags) {
+        if (this.captureBlockSnapshots && !this.isRemote) {
+            net.minecraftforge.common.util.BlockSnapshot blockSnapshot =
+                net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(world, x, y, z, flags);
+            this.capturedBlockSnapshots.add(blockSnapshot);
+            return blockSnapshot;
+        }
+        return null;
     }
 }
