@@ -126,12 +126,26 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
     @Unique
     private void optimizationsAndTweaks$processBlock(World world, int x, int y, int z) {
-        Block oreGenBlock = field_150518_c;
-        Block block = world.getBlock(x, y, z);
+        Block oreGenBlock = optimizationsAndTweaks$getField_150518_c();
+        Block block = optimizationsAndTweaks$getBlock(world, x, y, z);
 
-        if (block.isReplaceableOreGen(world, x, y, z, oreGenBlock)) {
+        if (optimizationsAndTweaks$isReplaceableOreGen(world, x, y, z, oreGenBlock, block)) {
             optimizationsAndTweaks$replaceBlock(world, x, y, z);
         }
+    }
+
+    @Unique
+    private Block optimizationsAndTweaks$getField_150518_c() {
+        return field_150518_c;
+    }
+    @Unique
+    private Block optimizationsAndTweaks$getBlock(World world, int x, int y, int z) {
+        return world.getBlock(x, y, z);
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isReplaceableOreGen(World world, int x, int y, int z, Block oreGenBlock, Block block) {
+        return block.isReplaceableOreGen(world, x, y, z, oreGenBlock);
     }
 
     @Unique
