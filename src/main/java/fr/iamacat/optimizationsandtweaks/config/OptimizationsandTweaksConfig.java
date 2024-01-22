@@ -257,7 +257,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinThreadedFileIOBase;
     @Config.Comment("Optimize WorldServer")
-    @Config.DefaultBoolean(true)
+    @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
     @Config.Comment("Optimize MathHelper Class")
