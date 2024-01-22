@@ -2,7 +2,9 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.io.*;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.NBTReadThread;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.nbt.*;
@@ -22,18 +24,16 @@ public abstract class MixinCompressedStreamTools {
      * Load the gzipped compound from the inputstream.
      */
     @Overwrite
-    public static NBTTagCompound readCompressed(InputStream p_74796_0_) throws IOException {
-        DataInputStream datainputstream = new DataInputStream(
-            new BufferedInputStream(new GZIPInputStream2(p_74796_0_)));
-        NBTTagCompound nbttagcompound;
-
+    public static NBTTagCompound readCompressed(InputStream p_74796_0_) {
+        NBTReadThread thread = new NBTReadThread(p_74796_0_);
+        thread.start();
         try {
-            nbttagcompound = func_152456_a(datainputstream, NBTSizeTracker.field_152451_a);
-        } finally {
-            datainputstream.close();
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return nbttagcompound;
+        return thread.getResult();
     }
 
     /**
@@ -131,8 +131,7 @@ public abstract class MixinCompressedStreamTools {
     }
 
     @Shadow
-    private static NBTBase func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_)
-        throws IOException {
+    private static NBTBase func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) {
         try {
             Method func_150284_a = NBTBase.class.getDeclaredMethod("func_150284_a", byte.class);
             Method func_152446_a = NBTBase.class
@@ -177,7 +176,7 @@ public abstract class MixinCompressedStreamTools {
     }
 
     @Shadow
-    private static void func_150663_a(NBTBase p_150663_0_, DataOutput p_150663_1_) throws IOException {
+    private static void func_150663_a(NBTBase p_150663_0_, DataOutput p_150663_1_) {
         try {
             Method writeMethod = NBTBase.class.getDeclaredMethod("write", DataOutput.class);
 
@@ -222,7 +221,7 @@ public abstract class MixinCompressedStreamTools {
         if (!p_152458_0_.exists()) {
             return null;
         } else {
-            DataInputStream datainputstream = new DataInputStream(new FileInputStream(p_152458_0_));
+            DataInputStream datainputstream = new DataInputStream(Files.newInputStream(p_152458_0_.toPath()));
             NBTTagCompound nbttagcompound;
 
             try {
