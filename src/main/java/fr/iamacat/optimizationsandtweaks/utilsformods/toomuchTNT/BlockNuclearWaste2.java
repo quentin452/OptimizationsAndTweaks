@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utils.toomuchTNT;
+package fr.iamacat.optimizationsandtweaks.utilsformods.toomuchTNT;
 
 import java.util.Random;
 

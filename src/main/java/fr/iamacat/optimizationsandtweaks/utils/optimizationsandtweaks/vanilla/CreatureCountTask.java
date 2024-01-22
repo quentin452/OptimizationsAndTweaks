@@ -1,17 +1,14 @@
-package fr.iamacat.optimizationsandtweaks.utilsformods.vanilla;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.atomic.AtomicInteger;

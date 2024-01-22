@@ -19,7 +19,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import fr.iamacat.optimizationsandtweaks.utils.toomuchTNT.BlockNuclearWaste2;
+import fr.iamacat.optimizationsandtweaks.utilsformods.toomuchTNT.BlockNuclearWaste2;
 
 @Mixin(TooMuchTNT.class)
 public class MixinTooMuchTNT {

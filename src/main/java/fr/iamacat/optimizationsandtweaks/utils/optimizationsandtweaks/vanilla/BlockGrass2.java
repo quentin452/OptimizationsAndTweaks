@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.utilsformods.vanilla;
+package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
