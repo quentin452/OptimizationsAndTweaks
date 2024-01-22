@@ -51,9 +51,13 @@ public class CreatureCountTask implements Runnable {
         result.set(totalCreatureCount);
     }
 
-    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
+    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
+        if (creatureType == null) {
+            return 0;
+        }
         return creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
+
 
     public int getTotalCreatureCount() {
         assert result != null;
