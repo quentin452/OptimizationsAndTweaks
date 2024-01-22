@@ -20,8 +20,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$eligibleChunksForSpawning;
-import static fr.iamacat.optimizationsandtweaks.utilsformods.vanilla.CreatureCountTask.optimizationsAndTweaks$shouldSpawnCreature;
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CreatureCountTask.optimizationsAndTweaks$eligibleChunksForSpawning;
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CreatureCountTask.optimizationsAndTweaks$shouldSpawnCreature;
 
 @Mixin(value = SpawnerAnimals.class, priority = 999)
 public class MixinPatchSpawnerAnimals {
@@ -46,18 +46,32 @@ public class MixinPatchSpawnerAnimals {
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
-        if (!world.blockExists(x, y, z)) {
+        if (!optimizationsAndTweaks$checkIfBlockExists(world, x, y, z)) {
             return false;
         }
 
         Block block = world.getBlock(x, y, z);
-
         if (creatureType.getCreatureMaterial() == Material.water) {
-            Block blockBelow = world.getBlock(x, y - 1, z);
-            Block blockAbove = world.getBlock(x, y + 1, z);
-            return optimizationsAndTweaks$canCreatureSpawnInWater(block, blockBelow, blockAbove);
+            return optimizationsAndTweaks$canCreatureSpawnInWater(world, x, y, z, block);
+        } else {
+            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block);
         }
+    }
 
+    @Unique
+    private static boolean optimizationsAndTweaks$checkIfBlockExists(World world, int x, int y, int z) {
+        return world.blockExists(x, y, z);
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(World world, int x, int y, int z, Block block) {
+        Block blockBelow = world.getBlock(x, y - 1, z);
+        Block blockAbove = world.getBlock(x, y + 1, z);
+        return optimizationsAndTweaks$canCreatureSpawnInWater(block, blockBelow, blockAbove);
+    }
+
+    @Unique
+    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block) {
         return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, world.getBlock(x, y + 1, z));
     }
 
@@ -171,7 +185,7 @@ public class MixinPatchSpawnerAnimals {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         int spawnedEntities = 0;
-        int maxSpawnAttempts = 15;
+        int maxSpawnAttempts = 20;
 
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
