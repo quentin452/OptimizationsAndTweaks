@@ -2566,30 +2566,38 @@ public class ConcurrentHashMapV8<K,V> extends AbstractMap<K,V>
          * Returns the TreeNode (or null if not found) for the given key
          * starting at given root.
          */
-        final TreeNode<K,V> findTreeNode(int h, Object k, Class<?> kc) {
+        final TreeNode<K, V> findTreeNode(int h, Object k, Class<?> kc) {
             if (k != null) {
-                TreeNode<K,V> p = this;
-                do  {
-                    int ph, dir; K pk; TreeNode<K,V> q;
-                    TreeNode<K,V> pl = p.left, pr = p.right;
-                    if ((ph = p.hash) > h)
+                TreeNode<K, V> p = this;
+                do {
+                    int ph = p.hash;
+                    K pk = p.key;
+                    TreeNode<K, V> pl = p.left;
+                    TreeNode<K, V> pr = p.right;
+
+                    if (ph > h) {
                         p = pl;
-                    else if (ph < h)
+                    } else if (ph < h) {
                         p = pr;
-                    else if ((pk = p.key) == k || (pk != null && k.equals(pk)))
+                    } else if (pk == k || (pk != null && k.equals(pk))) {
                         return p;
-                    else if (pl == null)
+                    } else if (pl == null) {
                         p = pr;
-                    else if (pr == null)
+                    } else if (pr == null) {
                         p = pl;
-                    else if ((kc != null ||
-                              (kc = comparableClassFor(k)) != null) &&
-                             (dir = compareComparables(kc, k, pk)) != 0)
-                        p = (dir < 0) ? pl : pr;
-                    else if ((q = pr.findTreeNode(h, k, kc)) != null)
-                        return q;
-                    else
-                        p = pl;
+                    } else {
+                        if ((kc != null || (kc = comparableClassFor(k)) != null) &&
+                            compareComparables(kc, k, pk) != 0) {
+                            p = (compareComparables(kc, k, pk) < 0) ? pl : pr;
+                        } else {
+                            TreeNode<K, V> q = pr.findTreeNode(h, k, kc);
+                            if (q != null) {
+                                return q;
+                            } else {
+                                p = pl;
+                            }
+                        }
+                    }
                 } while (p != null);
             }
             return null;
