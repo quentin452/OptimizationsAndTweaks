@@ -9,17 +9,7 @@ import java.io.ObjectStreamField;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -1107,62 +1097,65 @@ public class ConcurrentHashMapV8<K,V> extends AbstractMap<K,V>
      */
     final V replaceNode(Object key, V value, Object cv) {
         int hash = spread(key.hashCode());
-        for (Node<K,V>[] tab = table;;) {
-            Node<K,V> f; int n, i, fh;
-            if (tab == null || (n = tab.length) == 0 ||
-                (f = tabAt(tab, i = (n - 1) & hash)) == null)
+
+        for (Node<K, V>[] tab = table;;) {
+            int n, i, fh;
+            Node<K, V> f;
+
+            if (tab == null || (n = tab.length) == 0 || (f = tabAt(tab, i = (n - 1) & hash)) == null)
                 break;
             else if ((fh = f.hash) == MOVED)
                 tab = helpTransfer(tab, f);
             else {
                 V oldVal = null;
                 boolean validated = false;
-                synchronized (f) {
+
+                if (fh >= 0) {
+                    Node<K, V> pred = null;
+
+                    // Omitted synchronization for initial validations
                     if (tabAt(tab, i) == f) {
-                        if (fh >= 0) {
-                            validated = true;
-                            for (Node<K,V> e = f, pred = null;;) {
-                                K ek;
-                                if (e.hash == hash &&
-                                    ((ek = e.key) == key ||
-                                     (ek != null && key.equals(ek)))) {
-                                    V ev = e.val;
-                                    if (cv == null || cv == ev ||
-                                        (ev != null && cv.equals(ev))) {
-                                        oldVal = ev;
-                                        if (value != null)
-                                            e.val = value;
-                                        else if (pred != null)
-                                            pred.next = e.next;
-                                        else
-                                            setTabAt(tab, i, e.next);
-                                    }
-                                    break;
-                                }
-                                pred = e;
-                                if ((e = e.next) == null)
-                                    break;
-                            }
-                        }
-                        else if (f instanceof TreeBin) {
-                            validated = true;
-                            TreeBin<K,V> t = (TreeBin<K,V>)f;
-                            TreeNode<K,V> r, p;
-                            if ((r = t.root) != null &&
-                                (p = r.findTreeNode(hash, key, null)) != null) {
-                                V pv = p.val;
-                                if (cv == null || cv == pv ||
-                                    (pv != null && cv.equals(pv))) {
-                                    oldVal = pv;
+                        for (Node<K, V> e = f;;) {
+                            K ek;
+                            if (e.hash == hash &&
+                                ((ek = e.key) == key || (ek != null && key.equals(ek)))) {
+                                V ev = e.val;
+                                if (cv == null || cv == ev || (ev != null && cv.equals(ev))) {
+                                    oldVal = ev;
                                     if (value != null)
-                                        p.val = value;
-                                    else if (t.removeTreeNode(p))
-                                        setTabAt(tab, i, untreeify(t.first));
+                                        e.val = value;
+                                    else if (pred != null)
+                                        pred.next = e.next;
+                                    else
+                                        setTabAt(tab, i, e.next);
                                 }
+                                break;
                             }
+                            pred = e;
+                            if ((e = e.next) == null)
+                                break;
                         }
+                        validated = true;
+                    }
+                } else if (f instanceof TreeBin) {
+                    // Omitted synchronization for initial validations in TreeBin
+                    TreeBin<K, V> t = (TreeBin<K, V>) f;
+                    TreeNode<K, V> r, p;
+
+                    if ((r = t.root) != null &&
+                        (p = r.findTreeNode(hash, key, null)) != null) {
+                        V pv = p.val;
+                        if (cv == null || cv == pv || (pv != null && cv.equals(pv))) {
+                            oldVal = pv;
+                            if (value != null)
+                                p.val = value;
+                            else if (t.removeTreeNode(p))
+                                setTabAt(tab, i, untreeify(t.first));
+                        }
+                        validated = true;
                     }
                 }
+
                 if (validated) {
                     if (oldVal != null) {
                         if (value == null)
@@ -2631,11 +2624,9 @@ public class ConcurrentHashMapV8<K,V> extends AbstractMap<K,V>
          */
         static int tieBreakOrder(Object a, Object b) {
             int d;
-            if (a == null || b == null ||
-                (d = a.getClass().getName().
-                 compareTo(b.getClass().getName())) == 0)
-                d = (System.identityHashCode(a) <= System.identityHashCode(b) ?
-                     -1 : 1);
+            if (a == null || b == null || (d = a.getClass().getName().compareTo(b.getClass().getName())) == 0) {
+                d = Integer.compare(Objects.hashCode(a), Objects.hashCode(b));
+            }
             return d;
         }
 
@@ -2646,6 +2637,7 @@ public class ConcurrentHashMapV8<K,V> extends AbstractMap<K,V>
             super(TREEBIN, null, null, null);
             this.first = b;
             TreeNode<K,V> r = null;
+            Class<?> kc = null;
             for (TreeNode<K,V> x = b, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
                 x.left = x.right = null;
@@ -2657,7 +2649,6 @@ public class ConcurrentHashMapV8<K,V> extends AbstractMap<K,V>
                 else {
                     K k = x.key;
                     int h = x.hash;
-                    Class<?> kc = null;
                     for (TreeNode<K,V> p = r;;) {
                         int dir, ph;
                         K pk = p.key;
@@ -2798,31 +2789,33 @@ final Node<K,V> find(int h, Object k) {
 
                 TreeNode<K,V> xp = p;
                 if ((p = (dir <= 0) ? p.left : p.right) == null) {
-                    TreeNode<K,V> x, f = first;
-                    first = x = new TreeNode<K,V>(h, k, v, f, xp);
-                    if (f != null)
-                        f.prev = x;
-                    if (dir <= 0)
-                        xp.left = x;
-                    else
-                        xp.right = x;
-                    if (!xp.red)
-                        x.red = true;
-                    else {
-                        lockRoot();
-                        try {
-                            root = balanceInsertion(root, x);
-                        } finally {
-                            unlockRoot();
-                        }
-                    }
+                    insertNewTreeNode(h, k, v, xp, dir);
                     break;
                 }
             }
             assert checkInvariants(root);
             return null;
         }
-
+        private void insertNewTreeNode(int h, K k, V v, TreeNode<K,V> xp, int dir) {
+            TreeNode<K,V> x, f = first;
+            first = x = new TreeNode<K,V>(h, k, v, f, xp);
+            if (f != null)
+                f.prev = x;
+            if (dir <= 0)
+                xp.left = x;
+            else
+                xp.right = x;
+            if (!xp.red)
+                x.red = true;
+            else {
+                lockRoot();
+                try {
+                    root = balanceInsertion(root, x);
+                } finally {
+                    unlockRoot();
+                }
+            }
+        }
         /**
          * Removes the given node, that must be present before this
          * call.  This is messier than typical red-black deletion code
@@ -3860,21 +3853,24 @@ final Node<K,V> find(int h, Object k) {
 
         @Override
         public boolean contains(Object o) {
-            Object k, v, r; Entry<?,?> e;
-            return ((o instanceof Map.Entry) &&
-                    (k = (e = (Entry<?,?>)o).getKey()) != null &&
-                    (r = map.get(k)) != null &&
-                    (v = e.getValue()) != null &&
-                    (v == r || v.equals(r)));
+            if (!(o instanceof Map.Entry)) return false;
+
+            Entry<?, ?> e = (Entry<?, ?>) o;
+            Object k = e.getKey();
+            Object v = e.getValue();
+
+            return k != null && v != null && Objects.equals(v, map.get(k));
         }
 
         @Override
         public boolean remove(Object o) {
-            Object k, v; Entry<?,?> e;
-            return ((o instanceof Map.Entry) &&
-                    (k = (e = (Entry<?,?>)o).getKey()) != null &&
-                    (v = e.getValue()) != null &&
-                    map.remove(k, v));
+            if (!(o instanceof Map.Entry)) return false;
+
+            Entry<?, ?> e = (Entry<?, ?>) o;
+            Object k = e.getKey();
+            Object v = e.getValue();
+
+            return k != null && v != null && map.remove(k, v);
         }
 
         /**
@@ -3894,23 +3890,18 @@ final Node<K,V> find(int h, Object k) {
         }
 
         @Override
-        public boolean addAll(Collection<? extends Entry<K,V>> c) {
-            boolean added = false;
-            for (Entry<K,V> e : c) {
-                if (add(e))
-                    added = true;
-            }
-            return added;
+        public boolean addAll(Collection<? extends Entry<K, V>> c) {
+            return c.stream().anyMatch(this::add);
         }
 
         @Override
         public final int hashCode() {
             int h = 0;
-            Node<K,V>[] t;
+            Node<K, V>[] t;
             if ((t = map.table) != null) {
-                Traverser<K,V> it = new Traverser<K,V>(t, t.length, 0, t.length);
-                for (Node<K,V> p; (p = it.advance()) != null; ) {
-                    h += p.hashCode();
+                Traverser<K, V> it = new Traverser<>(t, t.length, 0, t.length);
+                for (Node<K, V> p; (p = it.advance()) != null; ) {
+                    h += Objects.hashCode(p);
                 }
             }
             return h;
