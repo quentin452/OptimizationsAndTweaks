@@ -285,6 +285,9 @@ public enum Mixin implements IMixin {
             .and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)
             .and(require(TargetedMod.CONFIGHELPER)),
         "elijahschocolate.MixinEntityChocolateCreeper"),
+    common_fantasticfish_MixinFantasticEvents(Side.COMMON,
+        require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticEvents),
+        "fantasticfish.MixinFantasticEvents"),
     common_fantasticfish_MixinFantasticMod(Side.COMMON,
         require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticMod)
             .and(require(TargetedMod.CONFIGHELPER)),

@@ -683,6 +683,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPPAPEventHandler;
+
+    @Config.Comment("Fix Cascading worldgen caused by FantasticEvents class from Fantastic Fish mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinFantasticEvents;
     @Config.Comment("Fix Cascading worldgen caused by VentGeneratorSingle class from Netherlicious mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
