@@ -109,7 +109,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     public static byte[] memoryReserve = new byte[10485760];
     @Shadow
     private static final List macDisplayModes = Lists
-        .newArrayList(new DisplayMode[] { new DisplayMode(2560, 1600), new DisplayMode(2880, 1800) });
+        .newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
     @Shadow
     private final File fileResourcepacks;
     @Shadow

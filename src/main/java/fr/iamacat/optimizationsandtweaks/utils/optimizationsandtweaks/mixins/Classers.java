@@ -1,17 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins;
 
-import java.util.Comparator;
-import java.util.Objects;
-
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.LongHashMap2;
+import cpw.mods.fml.common.ModContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-
-import cpw.mods.fml.common.ModContainer;
 import thaumcraft.api.internal.DummyInternalMethodHandler;
+
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Classers {
 
@@ -302,4 +300,80 @@ public class Classers {
             return (int) p_76155_0_ + (int) (p_76155_0_ >>> 32) * 92821;
         }
     }
+
+    // MixinIntHashMap
+    public static class EntryIntHashMap
+    {
+        /** The hash code of this entry */
+
+        public final int hashEntry;
+        /** The object stored in this entry */
+        public Object valueEntry;
+        /** The next entry in this slot */
+        public EntryIntHashMap nextEntry;
+        /** The id of the hash slot computed from the hash */
+        public final int slotHash;
+
+        public EntryIntHashMap(int p_i1552_1_, int p_i1552_2_, Object p_i1552_3_, EntryIntHashMap p_i1552_4_)
+        {
+            this.valueEntry = p_i1552_3_;
+            this.nextEntry = p_i1552_4_;
+            this.hashEntry = p_i1552_2_;
+            this.slotHash = p_i1552_1_;
+        }
+
+        /**
+         * Returns the hash code for this entry
+         */
+        public final int getHash()
+        {
+            return this.hashEntry;
+        }
+
+        /**
+         * Returns the object stored in this entry
+         */
+        public final Object getValue()
+        {
+            return this.valueEntry;
+        }
+
+        public final boolean equals(Object p_equals_1_)
+        {
+            if (p_equals_1_ instanceof EntryIntHashMap) {
+                EntryIntHashMap entry = (EntryIntHashMap) p_equals_1_;
+                Integer integer = this.getHash();
+                Integer integer1 = entry.getHash();
+
+                if (Objects.equals(integer, integer1)) {
+                    Object object1 = this.getValue();
+                    Object object2 = entry.getValue();
+
+                    return Objects.equals(object1, object2);
+                }
+
+            }
+            return false;
+        }
+
+        public final int hashCode()
+        {
+            return computeHash(this.hashEntry);
+        }
+
+        public final String toString()
+        {
+            return this.getHash() + "=" + this.getValue();
+        }
+
+        /**
+         * Makes the passed in integer suitable for hashing by a number of shifts
+         */
+        public static int computeHash(int p_76044_0_)
+        {
+            p_76044_0_ ^= p_76044_0_ >>> 20 ^ p_76044_0_ >>> 12;
+            return p_76044_0_ ^ p_76044_0_ >>> 7 ^ p_76044_0_ >>> 4;
+        }
+    }
+
 }

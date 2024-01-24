@@ -273,10 +273,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStitcher;
-    @Config.Comment("Optimize PathFinder Class")
+    @Config.Comment("Optimize Pathfinding for entities")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinPathFinder;
+    public static boolean enablePathfinderOptimizations;
     @Config.Comment("Optimize StatsComponent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -460,6 +460,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSaveHandler;
+
     @Config.Comment("Optimize BlockFLuid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -480,7 +481,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemRenderer;
-
+    @Config.Comment("Optimize IntHashMap")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinIntHashMap;
     @Config.Comment("Optimize LongHashMap")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -624,6 +628,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRegisterOreDict;
+    @Config.Comment("Fix ClassCastException net.minecraft.block.BlockStaticLiquid cannot be cast to net.minecraftforge.fluids.BlockFluidBase")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBlockFluidBase;
     @Config.Comment("Fix null Crash when clicking on the Item from blockling")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -1003,10 +1011,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;
 
-    @Config.Comment("Reduce tps lags caused by BlockLeaves especially on Modpacks")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLeaves;
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

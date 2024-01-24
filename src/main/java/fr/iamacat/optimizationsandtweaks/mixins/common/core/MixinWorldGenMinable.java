@@ -1,8 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenMinable;
@@ -52,13 +55,6 @@ public class MixinWorldGenMinable extends WorldGenerator {
         double centerY = y + random.nextInt(3) - 2.0;
         double centerZ = z + 8 + COS_TABLE[MathHelper.floor_float(angle * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
 
-        optimizationsAndTweaks$generateEllipse(world, random, centerX, centerY, centerZ);
-
-        return true;
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double centerX, double centerY, double centerZ) {
         for (int l = 0; l <= numberOfBlocks; ++l) {
             double ellipseX = centerX - SIN_TABLE[l] * numberOfBlocks / 8.0;
             double ellipseY = centerY + random.nextDouble() * numberOfBlocks / 16.0;
@@ -66,6 +62,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
             optimizationsAndTweaks$generateEllipseLayer(world, ellipseX, ellipseY, ellipseZ);
         }
+
+        return true;
     }
 
     @Unique
@@ -77,29 +75,24 @@ public class MixinWorldGenMinable extends WorldGenerator {
         int minZ = MathHelper.floor_double(ellipseZ - 1.0);
         int maxZ = MathHelper.floor_double(ellipseZ + 1.0);
 
-        optimizationsAndTweaks$iterateOverEllipse(world, ellipseX, ellipseY, ellipseZ, minX, maxX, minY, maxY, minZ, maxZ);
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$iterateOverEllipse(World world, double ellipseX, double ellipseY, double ellipseZ,
-                                                           int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
         Block oreGenBlock = field_150518_c;
 
         if (oreGenBlock != null) {
-            for (int k2 = minX; k2 <= maxX; ++k2) {
-                double d12 = (k2 + 0.5D - ellipseX);
-                for (int l2 = minY; l2 <= maxY; ++l2) {
-                    double d13 = (l2 + 0.5D - ellipseY);
-                    for (int i3 = minZ; i3 <= maxZ; ++i3) {
-                        double d14 = (i3 + 0.5D - ellipseZ);
+            for (int x = minX; x <= maxX; ++x) {
+                double d12 = (x + 0.5D - ellipseX);
+                for (int y = minY; y <= maxY; ++y) {
+                    double d13 = (y + 0.5D - ellipseY);
+                    for (int z = minZ; z <= maxZ; ++z) {
+                        double d14 = (z + 0.5D - ellipseZ);
                         if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
-                            optimizationsAndTweaks$processBlock(world, k2, l2, i3);
+                            optimizationsAndTweaks$processBlock(world, x, y, z);
                         }
                     }
                 }
             }
         }
     }
+
     @Unique
     private void optimizationsAndTweaks$processBlock(World world, int x, int y, int z) {
         Block oreGenBlock = optimizationsAndTweaks$getField_150518_c();
@@ -107,6 +100,31 @@ public class MixinWorldGenMinable extends WorldGenerator {
 
         if (optimizationsAndTweaks$isReplaceableOreGen(world, x, y, z, oreGenBlock, block)) {
             optimizationsAndTweaks$replaceBlock(world, x, y, z);
+        }
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isReplaceableOreGen(World world, int x, int y, int z, Block oreGenBlock, Block block) {
+        return block.isReplaceableOreGen(world, x, y, z, oreGenBlock);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$replaceBlock(World world, int x, int y, int z) {
+        Block oreGenBlock = field_150518_c;
+        Block replaceBlock = field_150519_a;
+
+        if (replaceBlock != null && oreGenBlock != null && world != null) {
+            int currentBlockMeta = world.getBlockMetadata(x, y, z);
+
+            if (world.isAirBlock(x, y, z) || world.getBlock(x, y, z).isReplaceableOreGen(world, x, y, z, oreGenBlock)) {
+                Stream.of(Blocks.air, replaceBlock)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .ifPresent(block -> {
+                        world.setBlock(x, y, z, block, currentBlockMeta, 2);
+                        world.setBlockMetadataWithNotify(x, y, z, currentBlockMeta, 2);
+                    });
+            }
         }
     }
 
@@ -120,27 +138,7 @@ public class MixinWorldGenMinable extends WorldGenerator {
     }
 
     @Unique
-    private boolean optimizationsAndTweaks$isReplaceableOreGen(World world, int x, int y, int z, Block oreGenBlock, Block block) {
-        return block.isReplaceableOreGen(world, x, y, z, oreGenBlock);
-    }
-
-    @Unique
     private boolean optimizationsAndTweaks$isInsideEllipse(double d12, double d13, double d14) {
         return d12 * d12 + d13 * d13 + d14 * d14 < 1.0D;
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$replaceBlock(World world, int x, int y, int z) {
-        Block oreGenBlock = field_150518_c;
-        Block replaceBlock = field_150519_a;
-
-        if (replaceBlock != null && oreGenBlock != null && world != null) {
-            int currentBlockMeta = world.getBlockMetadata(x, y, z);
-
-            if (world.isAirBlock(x, y, z) || world.getBlock(x, y, z).isReplaceableOreGen(world, x, y, z, oreGenBlock)) {
-                world.setBlock(x, y, z, replaceBlock, mineableBlockMeta, 2);
-                world.setBlockMetadataWithNotify(x, y, z, currentBlockMeta, 2);
-            }
-        }
     }
 }

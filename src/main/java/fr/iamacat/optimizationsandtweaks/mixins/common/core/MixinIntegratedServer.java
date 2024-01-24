@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ThreadLanServerPing;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.WorldSettings;
 
 import org.apache.logging.log4j.LogManager;
@@ -51,30 +52,27 @@ public abstract class MixinIntegratedServer extends MinecraftServer {
      */
     @Overwrite
     public void tick() {
-        boolean flag = this.isGamePaused;
-        this.isGamePaused = Minecraft.getMinecraft()
-            .getNetHandler() != null && Minecraft.getMinecraft()
-                .isGamePaused();
+        Minecraft mc = Minecraft.getMinecraft();
+        ServerConfigurationManager configManager = this.getConfigurationManager();
 
-        if (!flag && this.isGamePaused) {
+        boolean wasGamePaused = this.isGamePaused;
+        this.isGamePaused = mc.getNetHandler() != null && mc.isGamePaused();
+
+        if (!wasGamePaused && this.isGamePaused) {
             logger.info("Saving and pausing game...");
-            this.getConfigurationManager()
-                .saveAllPlayerData();
+            configManager.saveAllPlayerData();
             this.saveAllWorlds(false);
         }
 
         if (!this.isGamePaused) {
             super.tick();
 
-            if (this.mc.gameSettings.renderDistanceChunks != this.getConfigurationManager()
-                .getViewDistance()) {
+            if (mc.gameSettings.renderDistanceChunks != configManager.getViewDistance()) {
                 logger.info(
-                    "Changing view distance to {}, from {}",
-                    this.mc.gameSettings.renderDistanceChunks,
-                    this.getConfigurationManager()
-                        .getViewDistance());
-                this.getConfigurationManager()
-                    .func_152611_a(this.mc.gameSettings.renderDistanceChunks);
+                    "Changing view distance to %d, from %d",
+                    mc.gameSettings.renderDistanceChunks,
+                    configManager.getViewDistance());
+                configManager.func_152611_a(mc.gameSettings.renderDistanceChunks);
             }
         }
     }

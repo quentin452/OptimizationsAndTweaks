@@ -157,6 +157,7 @@ public abstract class MixinMobSpawnerGoblinLogic {
                     }
 
                     entity2.readFromNBT(nbttagcompound1);
+                    assert entity1 != null;
                     entity2.setLocationAndAngles(entity1.posX, entity1.posY, entity1.posZ, entity1.rotationYaw, entity1.rotationPitch);
                     if (par1Entity.worldObj != null) {
                         par1Entity.worldObj.spawnEntityInWorld(entity2);
@@ -177,7 +178,7 @@ public abstract class MixinMobSpawnerGoblinLogic {
 
     @Shadow
     public boolean isActivated() {
-        return this.getSpawnerWorld().getClosestPlayer((double)this.getSpawnerX() + 0.5, (double)this.getSpawnerY() + 0.5, (double)this.getSpawnerZ() + 0.5, (double)this.activatingRangeFromPlayer) != null;
+        return this.getSpawnerWorld().getClosestPlayer(this.getSpawnerX() + 0.5, this.getSpawnerY() + 0.5, this.getSpawnerZ() + 0.5, this.activatingRangeFromPlayer) != null;
     }
     @Shadow
     public abstract void func_98267_a(int var1);
@@ -198,7 +199,7 @@ public abstract class MixinMobSpawnerGoblinLogic {
             this.spawnDelay = this.minSpawnDelay + this.getSpawnerWorld().rand.nextInt(i);
         }
 
-        if (this.potentialEntitySpawns != null && this.potentialEntitySpawns.size() > 0) {
+        if (this.potentialEntitySpawns != null && !this.potentialEntitySpawns.isEmpty()) {
             this.setRandomEntity((MobSpawnerGoblinLogic.WeightedRandomMinecart) WeightedRandom.getRandomItem(this.getSpawnerWorld().rand, this.potentialEntitySpawns));
         }
 

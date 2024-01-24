@@ -13,8 +13,6 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.ScoreboardSaveData;
@@ -23,13 +21,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.util.ReportedException;
-import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ChestGenHooks;
@@ -113,12 +109,12 @@ public abstract class MixinWorldServer extends World {
         super.func_147456_g();
 
         for (Object o : this.activeChunkSet) {
-            processChunk((ChunkCoordIntPair) o);
+            optimizationsAndTweaks$processChunk((ChunkCoordIntPair) o);
         }
     }
 
     @Unique
-    private void processChunk(ChunkCoordIntPair chunkcoordintpair) {
+    private void optimizationsAndTweaks$processChunk(ChunkCoordIntPair chunkcoordintpair) {
         int k = chunkcoordintpair.chunkXPos * 16;
         int l = chunkcoordintpair.chunkZPos * 16;
         Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
@@ -218,11 +214,18 @@ public abstract class MixinWorldServer extends World {
         int j2 = randomValue & 15;
         int k2 = randomValue >> 8 & 15;
         int l2 = randomValue >> 16 & 15;
+
         Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
         if (block.getTickRandomly()) {
-            block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, optimizationsAndTweaks$random);
+            optimizationsAndTweaks$updateBlockTick(block, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l);
         }
     }
+
+    @Unique
+    private void optimizationsAndTweaks$updateBlockTick(Block block, int x, int y, int z) {
+        block.updateTick(this, x, y, z, optimizationsAndTweaks$random);
+    }
+
 
     /**
      * @author

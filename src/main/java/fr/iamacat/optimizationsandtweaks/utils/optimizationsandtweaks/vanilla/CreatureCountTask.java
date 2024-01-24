@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
-import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.MathHelper;
@@ -9,18 +8,20 @@ import net.minecraft.world.World;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CreatureCountTask implements Runnable {
-    public static final Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
+    public static final ConcurrentHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new ConcurrentHashMap<>();
     private static final Thread countThread = new Thread(new CreatureCountTask(), "SpawnerAnimals-Thread");
     private static boolean threadStarted = false;
 
     private final EnumCreatureType creatureType;
     private final World world;
-    private final Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks;
+    private final ConcurrentHashMap<ChunkCoordIntPair, Boolean> eligibleChunks;
     private final AtomicInteger result;
 
     private CreatureCountTask() {
@@ -30,7 +31,7 @@ public class CreatureCountTask implements Runnable {
         this.result = null;
     }
 
-    public CreatureCountTask(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks, AtomicInteger result) {
+    public CreatureCountTask(EnumCreatureType creatureType, World world, ConcurrentHashMap<ChunkCoordIntPair,Boolean> eligibleChunks, AtomicInteger result) {
         this.creatureType = creatureType;
         this.world = world;
         this.eligibleChunks = eligibleChunks;
@@ -56,7 +57,7 @@ public class CreatureCountTask implements Runnable {
         result.set(totalCreatureCount);
     }
 
-    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
+    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, ConcurrentHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
         return creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
 
@@ -66,14 +67,14 @@ public class CreatureCountTask implements Runnable {
         return result.get();
     }
 
-    public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
-        if (!threadStarted) {
-            countThread.start();
-            threadStarted = true;
+    public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, ConcurrentMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
+            if (!threadStarted) {
+                countThread.start();
+                threadStarted = true;
         }
 
-        int totalCreatureCount = new CreatureCountTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
-        int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
+        int totalCreatureCount = new CreatureCountTask(creatureType, world, (ConcurrentHashMap<ChunkCoordIntPair, Boolean>) eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
+        int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, (ConcurrentHashMap<ChunkCoordIntPair, Boolean>) eligibleChunks);
         return totalCreatureCount <= maxCreatureCount;
     }
 
@@ -81,13 +82,13 @@ public class CreatureCountTask implements Runnable {
         private final transient Iterator<?> entityIterator;
         private final EnumCreatureType creatureType;
         private final int maxCreatureCount;
-        private final Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks;
+        private final ConcurrentHashMap<ChunkCoordIntPair,Boolean> eligibleChunks;
 
-        public CreatureCountRecursiveTask(Iterator<?> entityIterator, EnumCreatureType creatureType, int maxCreatureCount, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
+        public CreatureCountRecursiveTask(Iterator<?> entityIterator, EnumCreatureType creatureType, int maxCreatureCount, ConcurrentMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
             this.entityIterator = entityIterator;
             this.creatureType = creatureType;
             this.maxCreatureCount = maxCreatureCount;
-            this.eligibleChunks = eligibleChunks;
+            this.eligibleChunks = (ConcurrentHashMap<ChunkCoordIntPair, Boolean>) eligibleChunks;
         }
 
         @Override
@@ -105,7 +106,7 @@ public class CreatureCountTask implements Runnable {
             return totalCreatureCount;
         }
 
-        private boolean isEntityInEligibleChunk(Entity entity, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
+        private boolean isEntityInEligibleChunk(Entity entity, ConcurrentHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
             double entityPosX = entity.posX;
             double entityPosZ = entity.posZ;
             int chunkX = MathHelper.floor_double(entityPosX) >> 4;

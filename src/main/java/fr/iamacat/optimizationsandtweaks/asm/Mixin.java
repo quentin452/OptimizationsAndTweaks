@@ -65,6 +65,8 @@ public enum Mixin implements IMixin {
     common_minestones_MixinMSEvents(Side.COMMON,
         require(TargetedMod.MINESTONES).and(m -> OptimizationsandTweaksConfig.enableMixinMinestoneSupportDecimalValue),
         "minestones.MixinMSEvents"),
+    common_core_MixinBlockFluidBase(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidBase,
+        "core.MixinBlockFluidBase"),
     common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
         "core.MixinBlockFluidClassic"),
     common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
@@ -201,8 +203,11 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),
-    common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
+    common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
         "core.pathfinding.MixinPathFinder"),
+
+    common_core_pathfinding_MixinPathPoint(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
+        "core.pathfinding.MixinPathPoint"),
     common_core_MixinWorldServer(Side.COMMON,
         avoid(TargetedMod.LAGGOOGLES).and(m -> OptimizationsandTweaksConfig.enableMixinWorldServer), "core.MixinWorldServer"),
     common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
@@ -403,7 +408,6 @@ public enum Mixin implements IMixin {
         "core.MixinEntityMoveHelper"),
     common_core_MixinWorldGenMinable(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldGenMinable,
         "core.MixinWorldGenMinable"),
-    common_core_MixinLeaves(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLeaves, "core.MixinLeaves"),
     common_core_MixinLanguageRegistry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLanguageRegistry,
         "core.MixinLanguageRegistry"),
     common_core_MixinEntityAIFollowParent(Side.COMMON,
@@ -423,6 +427,8 @@ public enum Mixin implements IMixin {
 
     common_core_MixinLongHashMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLongHashMap,
         "core.MixinLongHashMap"),
+    common_core_MixinIntHashMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinIntHashMap,
+        "core.MixinIntHashMap"),
 
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         require(TargetedMod.KINGDOMSOFTHEOVERWORLD).and(

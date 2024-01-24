@@ -185,14 +185,11 @@ public abstract class MixinBlockDynamicLiquid extends BlockLiquid {
     @Overwrite
     private boolean func_149807_p(World p_149807_1_, int p_149807_2_, int p_149807_3_, int p_149807_4_) {
         Block block = p_149807_1_.getBlock(p_149807_2_, p_149807_3_, p_149807_4_);
-        return block != Blocks.wooden_door && block != Blocks.iron_door
-            && block != Blocks.standing_sign
-            && block != Blocks.ladder
-            && block != Blocks.reeds
-                ? (block.getMaterial() == Material.portal ? true
-                    : block.getMaterial()
-                        .blocksMovement())
-                : true;
+        return block == Blocks.wooden_door || block == Blocks.iron_door
+                || block == Blocks.standing_sign
+                || block == Blocks.ladder
+                || block == Blocks.reeds || (block.getMaterial() == Material.portal || block.getMaterial()
+                .blocksMovement());
     }
 
     @Shadow
@@ -320,4 +317,14 @@ public abstract class MixinBlockDynamicLiquid extends BlockLiquid {
         return j1;
     }
 
+    @Overwrite
+    public void onBlockAdded(World worldIn, int x, int y, int z)
+    {
+        super.onBlockAdded(worldIn, x, y, z);
+        if (worldIn.getBlock(x, y, z) != this)
+        {
+            return;
+        }
+        worldIn.scheduleBlockUpdate(x, y, z, this, this.tickRate(worldIn));
+    }
 }

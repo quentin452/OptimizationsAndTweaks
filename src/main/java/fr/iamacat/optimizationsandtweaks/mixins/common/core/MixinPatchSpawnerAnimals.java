@@ -51,22 +51,13 @@ public class MixinPatchSpawnerAnimals {
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         Block blockAbove = world.getBlock(x, y + 1, z);
+        Material creatureMaterial = creatureType.getCreatureMaterial();
 
-        if (creatureType.getCreatureMaterial() == Material.water) {
-            return optimizationsAndTweaks$canCreatureSpawnInWater(world, x, y, z, block, blockAbove);
+        if (creatureMaterial == Material.water) {
+            return optimizationsAndTweaks$canCreatureSpawnInWater(block, world.getBlock(x, y - 1, z), blockAbove);
         } else {
             return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, blockAbove);
         }
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(World world, int x, int y, int z, Block block, Block blockAbove) {
-        return optimizationsAndTweaks$canCreatureSpawnInWater(block, world.getBlock(x, y - 1, z), blockAbove);
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$isNormalCube(Block block) {
-        return block.isNormalCube();
     }
 
     @Unique
@@ -74,22 +65,23 @@ public class MixinPatchSpawnerAnimals {
         return World.doesBlockHaveSolidTopSurface(world, x, y, z);
     }
 
-
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
         if (!optimizationsAndTweaks$doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
             return false;
         }
+
         boolean isPeacefulCreature = creatureType.getPeacefulCreature();
         boolean isAnimal = creatureType.getAnimal();
+
         if ((!isPeacefulCreature || isAnimal) && optimizationsAndTweaks$shouldSpawnCreature(creatureType, world, optimizationsAndTweaks$eligibleChunksForSpawning)) {
-            boolean isNormalCubeAbove = optimizationsAndTweaks$isNormalCube(blockAbove);
             for (int spawnAttempt = 0; spawnAttempt < creatureType.getMaxNumberOfCreature(); spawnAttempt++) {
-                if (block != Blocks.bedrock && !isNormalCubeAbove && !blockAbove.getMaterial().isLiquid()) {
+                if (block != Blocks.bedrock && !blockAbove.isNormalCube() && !blockAbove.getMaterial().isLiquid()) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -178,7 +170,7 @@ public class MixinPatchSpawnerAnimals {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         int spawnedEntities = 0;
-        int maxSpawnAttempts = 20;
+        int maxSpawnAttempts = 12;
 
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + world.rand.nextInt(6) - world.rand.nextInt(6);
@@ -190,25 +182,23 @@ public class MixinPatchSpawnerAnimals {
 
             float distanceSquared = spawnX * spawnX + spawnZ * spawnZ;
 
-            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, (float) y, spawnZ, distanceSquared)
-                && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, (float) y, spawnZ)) {
-
+            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, spawnX, y, spawnZ, distanceSquared) && optimizationsAndTweaks$isPlayerCloseEnough(world, spawnX, y, spawnZ)) {
                 BiomeGenBase.SpawnListEntry spawnListEntry = optimizationsAndTweaks$createSpawnListEntry(creatureType, world, x, y, z);
 
                 if (spawnListEntry != null) {
                     EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
 
                     if (entityLiving != null) {
-                        entityLiving.setLocationAndAngles(spawnX, (float) y, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
+                        entityLiving.setLocationAndAngles(spawnX, y, spawnZ, world.rand.nextFloat() * 360.0F, 0.0F);
 
-                        if (optimizationsAndTweaks$canEntitySpawn(entityLiving, world, spawnX, (float) y, spawnZ)) {
+                        if (optimizationsAndTweaks$canEntitySpawn(entityLiving, world, spawnX, y, spawnZ)) {
                             world.spawnEntityInWorld(entityLiving);
 
-                            if (!optimizationsAndTweaks$doSpecialSpawn(entityLiving, world, spawnX, (float) y, spawnZ)) {
+                            if (!optimizationsAndTweaks$doSpecialSpawn(entityLiving, world, spawnX, y, spawnZ)) {
                                 entityLiving.onSpawnWithEgg(null);
                             }
 
-                            spawnedEntities += 1;
+                            spawnedEntities++;
                         }
                     }
                 }
@@ -217,6 +207,7 @@ public class MixinPatchSpawnerAnimals {
 
         return spawnedEntities;
     }
+
 
     @Unique
     private BiomeGenBase.SpawnListEntry optimizationsAndTweaks$createSpawnListEntry(EnumCreatureType creatureType, World world, int x, int y, int z) {
@@ -252,16 +243,17 @@ public class MixinPatchSpawnerAnimals {
     @Unique
     private EntityLiving optimizationsAndTweaks$createEntityInstance(WorldServer world, BiomeGenBase.SpawnListEntry spawnListEntry) {
         Class<? extends EntityLiving> entityClass = spawnListEntry.entityClass;
-
-        Constructor<? extends EntityLiving> constructor = optimizationsAndTweaks$constructorCache.get(entityClass);
-        if (constructor == null) {
+        Constructor<? extends EntityLiving> constructor = optimizationsAndTweaks$constructorCache.computeIfAbsent(entityClass, key -> {
             try {
-                constructor = entityClass.getConstructor(World.class);
-                optimizationsAndTweaks$constructorCache.put(entityClass, constructor);
+                return entityClass.getConstructor(World.class);
             } catch (Exception exception) {
                 exception.printStackTrace();
                 return null;
             }
+        });
+
+        if (constructor == null) {
+            return null;
         }
 
         try {

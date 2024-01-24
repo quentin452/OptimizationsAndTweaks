@@ -7,22 +7,20 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Mixin(LongHashMap.class)
 public class MixinLongHashMap {
     @Unique
     private transient Classers.Entry[] optimizationsAndTweaks$hashArray = new Classers.Entry[16];
-
+    @Unique
+    private transient final AtomicInteger optimizationsAndTweaks$modCount = new AtomicInteger();
     @Shadow
     private transient int numHashElements;
-
     @Shadow
     private int capacity = 12;
-
     @Shadow
     private final float percentUseable = 0.75F;
-
-    @Shadow
-    private transient volatile int modCount;
 
     @Overwrite
     private static int hash(int p_76157_0_) {
@@ -88,7 +86,7 @@ public class MixinLongHashMap {
             entry = entry.nextEntry;
         }
 
-        ++this.modCount;
+        this.optimizationsAndTweaks$modCount.incrementAndGet();
         this.createKey(Classers.Entry.getHashedKey(p_76163_1_), p_76163_1_, p_76163_3_, index);
     }
 
@@ -146,7 +144,7 @@ public class MixinLongHashMap {
             Classers.Entry nextEntry = entry.nextEntry;
 
             if (entry.key == p_76152_1_) {
-                ++this.modCount;
+                this.optimizationsAndTweaks$modCount.incrementAndGet();
                 --this.numHashElements;
 
                 if (prevEntry == null) {

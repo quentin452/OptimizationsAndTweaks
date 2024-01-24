@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
@@ -154,11 +155,12 @@ public class MixinChunk {
 
     @Unique
     private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity,
-        AxisAlignedBB aabb, IEntitySelector entitySelector) {
-        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb)
-            && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
+                                                               AxisAlignedBB aabb, IEntitySelector entitySelector) {
+        return Stream.of(targetEntity)
+            .filter(entity -> entity != sourceEntity)
+            .filter(entity -> entity.boundingBox.intersectsWith(aabb))
+            .anyMatch(entity -> entitySelector == null || entitySelector.isEntityApplicable(entity));
     }
-
     @Unique
     private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb,
         IEntitySelector entitySelector, List<Entity> listToFill, Entity targetEntity) {

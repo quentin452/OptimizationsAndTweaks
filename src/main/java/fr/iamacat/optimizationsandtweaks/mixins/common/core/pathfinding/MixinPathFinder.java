@@ -5,22 +5,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PathFinder.class)
 public class MixinPathFinder {
-
-    @Shadow
-    private IBlockAccess worldMap;
     @Shadow
     private Path path = new Path();
     @Shadow
@@ -33,8 +29,6 @@ public class MixinPathFinder {
     private boolean isMovementBlockAllowed;
     @Shadow
     private boolean isPathingInWater;
-    @Shadow
-    private boolean canEntityDrown;
 
     /**
      * @author
@@ -247,5 +241,81 @@ public class MixinPathFinder {
         }
 
         return pathpoint;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    private PathEntity addToPath(Entity p_75861_1_, PathPoint p_75861_2_, PathPoint p_75861_3_, PathPoint p_75861_4_, float p_75861_5_) {
+        p_75861_2_.totalPathDistance = 0.0F;
+        p_75861_2_.distanceToNext = p_75861_2_.distanceToSquared(p_75861_3_);
+        p_75861_2_.distanceToTarget = p_75861_2_.distanceToNext;
+        this.path.clearPath();
+        this.path.addPoint(p_75861_2_);
+        PathPoint pathpoint3 = p_75861_2_;
+
+        while (!this.path.isPathEmpty()) {
+            PathPoint pathpoint4 = this.path.dequeue();
+
+            if (pathpoint4.equals(p_75861_3_)) {
+                return this.createEntityPath(p_75861_2_, p_75861_3_);
+            }
+
+            if (pathpoint4.distanceToSquared(p_75861_3_) < pathpoint3.distanceToSquared(p_75861_3_)) {
+                pathpoint3 = pathpoint4;
+            }
+
+            pathpoint4.isFirst = true;
+            int i = this.findPathOptions(p_75861_1_, pathpoint4, p_75861_4_, p_75861_3_, p_75861_5_);
+
+            for (int j = 0; j < i; ++j) {
+                PathPoint pathpoint5 = this.pathOptions[j];
+                float f1 = pathpoint4.totalPathDistance + pathpoint4.distanceToSquared(pathpoint5);
+
+                if (!pathpoint5.isAssigned() || f1 < pathpoint5.totalPathDistance) {
+                    pathpoint5.previous = pathpoint4;
+                    pathpoint5.totalPathDistance = f1;
+                    pathpoint5.distanceToNext = pathpoint5.distanceToSquared(p_75861_3_);
+
+                    if (pathpoint5.isAssigned()) {
+                        this.path.changeDistance(pathpoint5, pathpoint5.totalPathDistance + pathpoint5.distanceToNext);
+                    } else {
+                        pathpoint5.distanceToTarget = pathpoint5.totalPathDistance + pathpoint5.distanceToNext;
+                        this.path.addPoint(pathpoint5);
+                    }
+                }
+            }
+        }
+
+        if (pathpoint3 == p_75861_2_) {
+            return null;
+        } else {
+            return this.createEntityPath(p_75861_2_, pathpoint3);
+        }
+    }
+
+    @Shadow
+    private PathEntity createEntityPath(PathPoint p_75853_1_, PathPoint p_75853_2_)
+    {
+        int i = 1;
+        PathPoint pathpoint2;
+
+        for (pathpoint2 = p_75853_2_; pathpoint2.previous != null; pathpoint2 = pathpoint2.previous)
+        {
+            ++i;
+        }
+
+        PathPoint[] apathpoint = new PathPoint[i];
+        pathpoint2 = p_75853_2_;
+        --i;
+
+        for (apathpoint[i] = p_75853_2_; pathpoint2.previous != null; apathpoint[i] = pathpoint2)
+        {
+            pathpoint2 = pathpoint2.previous;
+            --i;
+        }
+
+        return new PathEntity(apathpoint);
     }
 }

@@ -12,10 +12,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Facing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ReportedException;
+import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -36,7 +33,7 @@ import java.util.*;
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld {
     @Shadow
-    protected Set activeChunkSet = new HashSet();
+    protected final Set activeChunkSet = new TreeSet();
 
     @Shadow
     public Random rand = new Random();
@@ -99,7 +96,6 @@ public abstract class MixinWorld {
 
     @Inject(method = "tick", at = @At(value = "INVOKE"))
     private void onTickInject(CallbackInfo info) {
-        activeChunkSet = new TreeSet();
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
         }
@@ -121,11 +117,11 @@ public abstract class MixinWorld {
     @Shadow
     public void removeEntity(Entity p_72900_1_) {
         if (p_72900_1_.riddenByEntity != null) {
-            p_72900_1_.riddenByEntity.mountEntity((Entity) null);
+            p_72900_1_.riddenByEntity.mountEntity(null);
         }
 
         if (p_72900_1_.ridingEntity != null) {
-            p_72900_1_.mountEntity((Entity) null);
+            p_72900_1_.mountEntity(null);
         }
 
         p_72900_1_.setDead();
@@ -137,28 +133,21 @@ public abstract class MixinWorld {
         }
     }
 
-
     /**
     * @author
     * @reason
     */
     @Overwrite
-    public Block getBlock(int x, int y, int z) {
-        if (blockExists(x, y, z)) {
-            Chunk chunk = null;
-            try {
-                chunk = getChunkFromChunkCoords(x >> 4, z >> 4);
-                return chunk.getBlock(x & 15, y, z & 15);
-            } catch (Throwable throwable) {
-                CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Exception getting block type in world");
-                CrashReportCategory crashReportCategory = crashReport.makeCategory("Requested block coordinates");
-                crashReportCategory.addCrashSection("Found chunk", chunk == null);
-                crashReportCategory.addCrashSection("Location", CrashReportCategory.getLocationInfo(x, y, z));
-                throw new ReportedException(crashReport);
+    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
+        if (blockExists(p_147439_1_, p_147439_2_, p_147439_3_)) {
+        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256) {
+            Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
+            if (chunk != null) {
+                return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
             }
-        } else {
-            return Blocks.air;
         }
+        }
+        return Blocks.air;
     }
 
     /**
@@ -793,18 +782,22 @@ public abstract class MixinWorld {
     @Overwrite
     public int getBlockLightValue_do(int p_72849_1_, int p_72849_2_, int p_72849_3_, boolean p_72849_4_) {
         if (optimizationsAndTweaks$isWithinBounds(p_72849_1_, p_72849_2_, p_72849_3_)) {
-            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_)
-                .getUseNeighborBrightness()) {
+            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_).getUseNeighborBrightness()) {
                 return optimizationsAndTweaks$getMaxNeighborLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
             } else if (p_72849_2_ < 0) {
                 return 0;
             } else {
-                return optimizationsAndTweaks$getChunkBlockLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
+                return Arrays.stream(EnumFacing.values()).parallel()
+                    .mapToInt(facing -> optimizationsAndTweaks$getChunkBlockLightValue(p_72849_1_ + facing.getFrontOffsetX(),
+                        p_72849_2_ + facing.getFrontOffsetY(), p_72849_3_ + facing.getFrontOffsetZ()))
+                    .max()
+                    .orElse(0);
             }
         } else {
             return 15;
         }
     }
+
 
     @Unique
     private boolean optimizationsAndTweaks$isWithinBounds(int x, int y, int z) {
@@ -995,4 +988,5 @@ public abstract class MixinWorld {
 
     @Shadow
     protected abstract int func_152379_p();
+
 }

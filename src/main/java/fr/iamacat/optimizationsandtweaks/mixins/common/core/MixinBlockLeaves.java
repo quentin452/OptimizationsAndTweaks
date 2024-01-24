@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
@@ -22,7 +23,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockLeaves.class)
 public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShearable {
-
+    @Unique
+    private static final int SEARCH_RADIUS = 4;
+    @Unique
+    private static final int AREA_SIZE = 2 * SEARCH_RADIUS + 1;
     protected MixinBlockLeaves(Material p_i45433_1_, boolean p_i45433_2_) {
         super(p_i45433_1_, p_i45433_2_);
     }
@@ -39,17 +43,12 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
         int metadata = worldIn.getBlockMetadata(x, y, z);
 
         if (optimizationsAndTweaks$shouldUpdateLeaves(metadata)) {
-            int searchRadius = 4;
-            int areaSize = 2 * searchRadius + 1; // Calculate the size based on the search radius
-            int halfArea = areaSize / 2;
-
-            // Calculate chunk coordinates for the central block
+            int areaSize = 2 * SEARCH_RADIUS + 1;
+            int halfArea = AREA_SIZE / 2;
             int chunkX = x >> 4;
             int chunkZ = z >> 4;
 
-            // Check if the chunk contains the central block
-            if (worldIn.getChunkFromChunkCoords(chunkX, chunkZ)
-                .getTopFilledSegment() >= y >> 4) {
+            if (worldIn.getChunkFromChunkCoords(chunkX, chunkZ).getTopFilledSegment() >= y >> 4) {
                 int[] blockArray = optimizationsAndTweaks$initializeBlockArray(areaSize);
 
                 optimizationsAndTweaks$populateBlockArray(worldIn, x, y, z, areaSize, halfArea, blockArray);
@@ -58,7 +57,8 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
                     optimizationsAndTweaks$propagateDecayIteration(blockArray, areaSize, halfArea, iteration);
                 }
 
-                int centralBlockStatus = blockArray[halfArea * areaSize * areaSize + halfArea * areaSize + halfArea];
+                int centralIndex = halfArea * areaSize * areaSize + halfArea * areaSize + halfArea;
+                int centralBlockStatus = blockArray[centralIndex];
 
                 optimizationsAndTweaks$updateWorld(metadata, worldIn, x, y, z, centralBlockStatus);
             }
@@ -79,30 +79,35 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
     @Unique
     private void optimizationsAndTweaks$populateBlockArray(World worldIn, int x, int y, int z, int areaSize,
-        int halfArea, int[] blockArray) {
+                                                           int halfArea, int[] blockArray) {
         int searchRadius = 4;
-        int chunkX = x >> 4;
-        int chunkZ = z >> 4;
+        Block[][][] cachedBlocks = new Block[2 * searchRadius + 1][2 * searchRadius + 1][2 * searchRadius + 1];
 
-        Chunk chunk = worldIn.getChunkFromChunkCoords(chunkX, chunkZ);
-
-        if (!chunk.isChunkLoaded) {
-            return;
-        }
+        // Populate cachedBlocks array
         for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
             for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
                 for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
-                    Block block = worldIn.getBlock(x + xOffset, y + yOffset, z + zOffset);
-                    int index = (xOffset + halfArea) * areaSize * areaSize + (yOffset + halfArea) * areaSize
-                        + zOffset
-                        + halfArea;
+                    int cachedX = xOffset + searchRadius;
+                    int cachedY = yOffset + searchRadius;
+                    int cachedZ = zOffset + searchRadius;
 
-                    blockArray[index] = optimizationsAndTweaks$determineBlockArrayValue(
-                        block,
-                        worldIn,
-                        x + xOffset,
-                        y + yOffset,
-                        z + zOffset);
+                    cachedBlocks[cachedX][cachedY][cachedZ] = worldIn.getBlock(x + xOffset, y + yOffset, z + zOffset);
+                }
+            }
+        }
+
+        // Populate blockArray using cachedBlocks
+        for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
+            for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
+                for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {
+                    int cachedX = xOffset + searchRadius;
+                    int cachedY = yOffset + searchRadius;
+                    int cachedZ = zOffset + searchRadius;
+
+                    Block block = cachedBlocks[cachedX][cachedY][cachedZ];
+                    int index = (xOffset + halfArea) * areaSize * areaSize + (yOffset + halfArea) * areaSize + zOffset + halfArea;
+
+                    blockArray[index] = optimizationsAndTweaks$determineBlockArrayValue(block, worldIn, x + xOffset, y + yOffset, z + zOffset);
                 }
             }
         }
@@ -110,11 +115,7 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
 
     @Unique
     private int optimizationsAndTweaks$determineBlockArrayValue(Block block, World worldIn, int x, int y, int z) {
-        if (block.isLeaves(worldIn, x, y, z)) {
-            return -2;
-        } else {
-            return block.canSustainLeaves(worldIn, x, y, z) ? 0 : -1;
-        }
+        return block.isLeaves(worldIn, x, y, z) ? -2 : (block.canSustainLeaves(worldIn, x, y, z) ? 0 : -1);
     }
 
     @Unique
@@ -138,15 +139,11 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     }
 
     @Unique
-    private void optimizationsAndTweaks$propagateDecayToNeighbors(int[] blockArray, int index, int areaSize,
-        int iteration) {
-        for (int offset : new int[] { -1, 1 }) {
+    private void optimizationsAndTweaks$propagateDecayToNeighbors(int[] blockArray, int index, int areaSize, int iteration) {
+        for (int offset : new int[]{-1, 1}) {
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset, iteration);
             optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize, iteration);
-            optimizationsAndTweaks$propagateDecayToNeighbor(
-                blockArray,
-                index + offset * areaSize * areaSize,
-                iteration);
+            optimizationsAndTweaks$propagateDecayToNeighbor(blockArray, index + offset * areaSize * areaSize, iteration);
         }
     }
 
