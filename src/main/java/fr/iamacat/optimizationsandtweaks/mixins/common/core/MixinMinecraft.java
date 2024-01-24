@@ -151,7 +151,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     @Shadow
     public EntityClientPlayerMP thePlayer;
     /**
-     * The Entity from which the renderer determines the render viewpoint. Currently is always the parent Minecraft
+     * The Entity from which the renderer determines the render viewpoint. Currently, is always the parent Minecraft
      * class's 'thePlayer' instance. Modification of its location, rotation, or other settings at render time will
      * modify the camera likewise, with the caveat of triggering chunk rebuilds as it moves, making it unsuitable for
      * changing the viewpoint mid-render.
@@ -346,15 +346,13 @@ public abstract class MixinMinecraft implements IPlayerUsage {
             logger.info("Stopping!");
 
             try {
-                this.loadWorld((WorldClient) null);
+                this.loadWorld(null);
             } catch (Throwable throwable1) {
-                ;
             }
 
             try {
                 GLAllocation.deleteTexturesAndDisplayLists();
             } catch (Throwable throwable) {
-                ;
             }
 
             this.mcSoundHandler.unloadSounds();
@@ -408,18 +406,13 @@ public abstract class MixinMinecraft implements IPlayerUsage {
             0,
             bufferedimage.getWidth(),
             bufferedimage.getHeight(),
-            (int[]) null,
+                null,
             0,
             bufferedimage.getWidth());
         ByteBuffer bytebuffer = ByteBuffer.allocate(4 * aint.length);
-        int[] aint1 = aint;
-        int i = aint.length;
-
-        for (int j = 0; j < i; ++j) {
-            int k = aint1[j];
+        for (int k : aint) {
             bytebuffer.putInt(k << 8 | k >> 24 & 255);
         }
-
         bytebuffer.flip();
         return bytebuffer;
     }
@@ -448,7 +441,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
 
         executor.schedule(() -> future.complete(null), Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
-
+    @Shadow
     private void startGame() throws LWJGLException {
         this.gameSettings = new GameSettings(theMinecraft, this.mcDataDir);
 
@@ -492,14 +485,14 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                         new ByteBuffer[] { this.func_152340_a(inputstream), this.func_152340_a(inputstream1) });
                 }
             } catch (IOException ioexception) {
-                logger.error("Couldn\'t set icon", ioexception);
+                logger.error("Couldn't set icon", ioexception);
             }
         }
 
         try {
             net.minecraftforge.client.ForgeHooksClient.createDisplay();
         } catch (LWJGLException lwjglexception) {
-            logger.error("Couldn\'t set pixel format", lwjglexception);
+            logger.error("Couldn't set pixel format", lwjglexception);
 
             if (this.fullscreen) {
                 this.updateDisplayMode();
@@ -513,10 +506,10 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         try {
             this.field_152353_at = new TwitchStream(
                 theMinecraft,
-                (String) Iterables.getFirst(this.field_152356_J.get("twitch_access_token"), (Object) null));
+                (String) Iterables.getFirst(this.field_152356_J.get("twitch_access_token"), null));
         } catch (Throwable throwable) {
             this.field_152353_at = new NullStream(throwable);
-            logger.error("Couldn\'t initialize twitch stream");
+            logger.error("Couldn't initialize twitch stream");
         }
 
         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);
@@ -590,7 +583,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 try {
                     return String.format(
                         p_74535_1_,
-                        new Object[] { GameSettings.getKeyDisplayString(gameSettings.keyBindInventory.getKeyCode()) });
+                            GameSettings.getKeyDisplayString(gameSettings.keyBindInventory.getKeyCode()));
                 } catch (Exception exception) {
                     return "Error: " + exception.getLocalizedMessage();
                 }
@@ -668,25 +661,16 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 this.displayHeight = Display.getDisplayMode()
                     .getHeight();
 
-                if (this.displayWidth <= 0) {
-                    this.displayWidth = 1;
-                }
-
-                if (this.displayHeight <= 0) {
-                    this.displayHeight = 1;
-                }
             } else {
                 Display.setDisplayMode(new DisplayMode(this.tempDisplayWidth, this.tempDisplayHeight));
                 this.displayWidth = this.tempDisplayWidth;
                 this.displayHeight = this.tempDisplayHeight;
-
-                if (this.displayWidth <= 0) {
-                    this.displayWidth = 1;
-                }
-
-                if (this.displayHeight <= 0) {
-                    this.displayHeight = 1;
-                }
+            }
+            if (this.displayWidth <= 0) {
+                this.displayWidth = 1;
+            }
+            if (this.displayHeight <= 0) {
+                this.displayHeight = 1;
             }
 
             if (this.currentScreen != null) {
@@ -699,7 +683,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
             Display.setVSyncEnabled(this.gameSettings.enableVsync);
             this.func_147120_f();
         } catch (Exception exception) {
-            logger.error("Couldn\'t toggle fullscreen", exception);
+            logger.error("Couldn't toggle fullscreen", exception);
         }
     }
 
@@ -782,7 +766,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 .clearChatMessages();
         }
 
-        this.currentScreen = (GuiScreen) guiScreenIn;
+        this.currentScreen = guiScreenIn;
 
         if (guiScreenIn != null) {
             this.setIngameNotInFocus();
@@ -792,7 +776,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 this.displayHeight);
             int i = scaledresolution.getScaledWidth();
             int j = scaledresolution.getScaledHeight();
-            ((GuiScreen) guiScreenIn).setWorldAndResolution(theMinecraft, i, j);
+            guiScreenIn.setWorldAndResolution(theMinecraft, i, j);
             this.skipRenderWorld = false;
         } else {
             this.mcSoundHandler.resumeSounds();
@@ -811,13 +795,11 @@ public abstract class MixinMinecraft implements IPlayerUsage {
 
     @Shadow
     public void setIngameFocus() {
-        if (Display.isActive()) {
-            if (!this.inGameHasFocus) {
+        if (Display.isActive() && (!this.inGameHasFocus)) {
                 this.inGameHasFocus = true;
                 this.mouseHelper.grabMouseCursor();
-                this.displayGuiScreen((GuiScreen) null);
+                this.displayGuiScreen(null);
                 this.leftClickCounter = 10000;
-            }
         }
     }
 
@@ -840,10 +822,9 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         DisplayMode displaymode = Display.getDesktopDisplayMode();
 
         if (!hashset.contains(displaymode) && Util.getOSType() == Util.EnumOS.OSX) {
-            Iterator iterator = macDisplayModes.iterator();
 
-            while (iterator.hasNext()) {
-                DisplayMode displaymode1 = (DisplayMode) iterator.next();
+            for (Object macDisplayMode : macDisplayModes) {
+                DisplayMode displaymode1 = (DisplayMode) macDisplayMode;
                 boolean flag = true;
                 Iterator iterator1 = hashset.iterator();
                 DisplayMode displaymode2;
@@ -852,7 +833,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                     displaymode2 = (DisplayMode) iterator1.next();
 
                     if (displaymode2.getBitsPerPixel() == 32 && displaymode2.getWidth() == displaymode1.getWidth()
-                        && displaymode2.getHeight() == displaymode1.getHeight()) {
+                            && displaymode2.getHeight() == displaymode1.getHeight()) {
                         flag = false;
                         break;
                     }
@@ -865,8 +846,8 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                         displaymode2 = (DisplayMode) iterator1.next();
 
                         if (displaymode2.getBitsPerPixel() == 32
-                            && displaymode2.getWidth() == displaymode1.getWidth() / 2
-                            && displaymode2.getHeight() == displaymode1.getHeight() / 2) {
+                                && displaymode2.getWidth() == displaymode1.getWidth() / 2
+                                && displaymode2.getHeight() == displaymode1.getHeight() / 2) {
                             displaymode = displaymode2;
                             break;
                         }
@@ -1245,7 +1226,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         theCrash.getCategory()
             .addCrashSectionCallable("Is Modded", () -> {
                 String s = ClientBrandRetriever.getClientModName();
-                return !s.equals("vanilla") ? "Definitely; Client brand changed to \'" + s + "\'"
+                return !s.equals("vanilla") ? "Definitely; Client brand changed to '" + s + "'"
                     : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated"
                         : "Probably not. Jar signature remains and client brand is untouched.");
             });
@@ -1610,7 +1591,6 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 while (true) {
                     if (!this.gameSettings.keyBindAttack.isPressed()) {
                         while (this.gameSettings.keyBindUseItem.isPressed()) {
-                            ;
                         }
 
                         while (true) {
@@ -1780,8 +1760,8 @@ public abstract class MixinMinecraft implements IPlayerUsage {
             double d0 = 0.0D;
             int i1;
 
-            for (int l = 0; l < list.size(); ++l) {
-                Profiler.Result result1 = (Profiler.Result) list.get(l);
+            for (Object o : list) {
+                Profiler.Result result1 = (Profiler.Result) o;
                 i1 = MathHelper.floor_double(result1.field_76332_a / 4.0D) + 1;
                 tessellator.startDrawing(6);
                 tessellator.setColorOpaque_I(result1.func_76329_a());
@@ -1822,7 +1802,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
                 s = s + "[0] ";
             }
 
-            if (result.field_76331_c.length() == 0) {
+            if (result.field_76331_c.isEmpty()) {
                 s = s + "ROOT ";
             } else {
                 s = s + result.field_76331_c + " ";
@@ -1866,11 +1846,9 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     @Shadow
     public void refreshResources() {
         ArrayList arraylist = Lists.newArrayList(this.defaultResourcePacks);
-        Iterator iterator = this.mcResourcePackRepository.getRepositoryEntries()
-            .iterator();
 
-        while (iterator.hasNext()) {
-            ResourcePackRepository.Entry entry = (ResourcePackRepository.Entry) iterator.next();
+        for (Object o : this.mcResourcePackRepository.getRepositoryEntries()) {
+            ResourcePackRepository.Entry entry = (ResourcePackRepository.Entry) o;
             arraylist.add(entry.getResourcePack());
         }
 
@@ -1917,7 +1895,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
 
                 if (keyCount < list.size()
                     && !((Profiler.Result) list.get(keyCount)).field_76331_c.equals("unspecified")) {
-                    if (this.debugProfilerName.length() > 0) {
+                    if (!this.debugProfilerName.isEmpty()) {
                         this.debugProfilerName = this.debugProfilerName + ".";
                     }
 
@@ -1935,7 +1913,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         ItemStack itemstack = this.thePlayer.inventory.getCurrentItem();
 
         if (this.objectMouseOver == null) {
-            logger.warn("Null returned as \'hitResult\', this shouldn\'t happen!");
+            logger.warn("Null returned as 'hitResult', this shouldn't happen!");
         } else {
             switch (Classers.SwitchMovingObjectType.field_152390_a[this.objectMouseOver.typeOfHit.ordinal()]) {
                 case 1:
@@ -2016,7 +1994,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
             this.thePlayer.swingItem();
 
             if (this.objectMouseOver == null) {
-                logger.error("Null returned as \'hitResult\', this shouldn\'t happen!");
+                logger.error("Null returned as 'hitResult', this shouldn't happen!");
 
                 if (this.playerController.isNotCreative()) {
                     this.leftClickCounter = 10;

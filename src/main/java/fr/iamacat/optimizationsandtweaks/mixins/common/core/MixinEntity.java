@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.StatCollector;
@@ -12,9 +13,8 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
-
-    @Unique
-    private Entity entity;
+    @Shadow
+    protected DataWatcher dataWatcher;
     @Shadow
     public final AxisAlignedBB boundingBox;
     @Shadow
@@ -28,15 +28,10 @@ public abstract class MixinEntity {
     /** Entity position Z */
     @Shadow
     public double posZ;
-    /** Entity motion X */
-    @Shadow
-    public double motionX;
     /** Entity motion Y */
     @Shadow
     public double motionY;
     /** Entity motion Z */
-    @Shadow
-    public double motionZ;
 
     @Shadow
     public World worldObj;
@@ -48,22 +43,10 @@ public abstract class MixinEntity {
         this.boundingBox = AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     }
 
-    @Shadow
-    public float getEyeHeight() {
-        return 0.0F;
-    }
 
-    /**
-     * @author
-     * @reason
-     */
     @Unique
     private String optimizationsAndTweaks$cachedEntityName = null;
 
-    /**
-     * @author
-     * @reason
-     */
     @Shadow
     public abstract String getEntityString();
 
@@ -84,5 +67,15 @@ public abstract class MixinEntity {
         optimizationsAndTweaks$cachedEntityName = translatedName;
 
         return translatedName;
+    }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    protected void setFlag(int flag, boolean set) {
+        byte data = this.dataWatcher.getWatchableObjectByte(0);
+        data = set ? (byte) (data | (1 << flag & 0xff)) : (byte) (data & ~(1 << flag & 0xff));
+        this.dataWatcher.updateObject(0, data);
     }
 }

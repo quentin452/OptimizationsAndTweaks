@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -410,8 +411,7 @@ public abstract class MixinMinecraftServer {
                 optimizationsAndTweaks$logger.info("Saving worlds");
                 this.saveAllWorlds(false);
 
-                for (int i = 0; i < this.worldServers.length; ++i) {
-                    WorldServer worldserver = this.worldServers[i];
+                for (WorldServer worldserver : this.worldServers) {
                     MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
                     worldserver.flush();
                 }
@@ -550,6 +550,7 @@ public abstract class MixinMinecraftServer {
      * @author
      * @reason
      */
+
     @Overwrite
     public void tick() {
         long i = System.nanoTime();
@@ -586,8 +587,10 @@ public abstract class MixinMinecraftServer {
 
         if (this.tickCounter % 900 == 0) {
             this.theProfiler.startSection("save");
-            this.serverConfigManager.saveAllPlayerData();
-            this.saveAllWorlds(true);
+
+            CompletableFuture.runAsync(() -> this.serverConfigManager.saveAllPlayerData());
+            CompletableFuture.runAsync(() -> this.saveAllWorlds(true));
+
             this.theProfiler.endSection();
         }
 
@@ -609,6 +612,7 @@ public abstract class MixinMinecraftServer {
         FMLCommonHandler.instance()
             .onPostServerTick();
     }
+
 
     @Shadow
     protected void systemExitNow() {}

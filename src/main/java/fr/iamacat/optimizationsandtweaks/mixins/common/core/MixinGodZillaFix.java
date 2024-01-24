@@ -22,17 +22,14 @@ public abstract class MixinGodZillaFix {
             target = "Lcpw/mods/fml/common/FMLLog;warning(Ljava/lang/String;[Ljava/lang/Object;)V"),
         remap = false)
     private void onEntityJoinWorldRedirect(String message, Object[] params, EntityJoinWorldEvent event) {
-        if (event.entity instanceof EntityItem && OptimizationsandTweaksConfig.enableMixinGodZillaFix) {
+        if (event.entity instanceof EntityItem) {
             EntityItem entityItem = (EntityItem) event.entity;
             ItemStack itemStack = entityItem.getEntityItem();
-            if (OptimizationsandTweaksConfig.enableMixinGodZillaFix) {
-
                 if (itemStack == null || itemStack.getItem() == null) {
                     return;
                 }
             } else {
                 FMLLog.warning(message, params);
-            }
         }
     }
 }

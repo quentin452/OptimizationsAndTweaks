@@ -39,22 +39,24 @@ public class CreatureCountTask implements Runnable {
 
     @Override
     public void run() {
-        assert creatureType != null;
-        assert eligibleChunks != null;
+        if (creatureType == null || eligibleChunks == null || world == null || result == null) {
+            System.err.println("SpawnerAnimalsThread.run(): One or more required fields are null:");
+            if (creatureType == null) System.err.println(" - creatureType is null");
+            if (eligibleChunks == null) System.err.println(" - eligibleChunks is null");
+            if (world == null) System.err.println(" - world is null");
+            if (result == null) System.err.println(" - result is null");
+            return;
+        }
+
         int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
-        assert world != null;
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         int totalCreatureCount = forkJoinPool.invoke(new CreatureCountRecursiveTask(world.loadedEntityList.iterator(), creatureType, maxCreatureCount, eligibleChunks));
 
-        assert result != null;
         result.set(totalCreatureCount);
     }
 
     private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
-        if (creatureType == null) {
-            return 0;
-        }
         return creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
 
@@ -76,7 +78,7 @@ public class CreatureCountTask implements Runnable {
     }
 
     private static class CreatureCountRecursiveTask extends RecursiveTask<Integer> {
-        private final Iterator<?> entityIterator;
+        private final transient Iterator<?> entityIterator;
         private final EnumCreatureType creatureType;
         private final int maxCreatureCount;
         private final Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks;

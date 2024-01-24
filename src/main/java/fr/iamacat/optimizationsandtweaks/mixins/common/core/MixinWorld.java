@@ -12,10 +12,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Facing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ReportedException;
+import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -31,12 +28,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Mixin(value = World.class, priority = 999)
-public class MixinWorld {
+public abstract class MixinWorld {
+    @Shadow
+    protected Set activeChunkSet = new HashSet();
 
     @Shadow
     public Random rand = new Random();
@@ -96,16 +93,25 @@ public class MixinWorld {
     @Shadow
     public final Profiler theProfiler;
 
+
+    @Inject(method = "tick", at = @At(value = "INVOKE"))
+    private void onTickInject(CallbackInfo info) {
+        activeChunkSet = new TreeSet();
+        if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
+            TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
+        }
+    }
+
     public MixinWorld(World world, WorldProvider provider, Profiler theProfiler) {
         this.world = world;
         this.provider = provider;
         this.theProfiler = theProfiler;
     }
 
-    @Shadow
+    @Overwrite
     public void onEntityRemoved(Entity p_72847_1_) {
-        for (int i = 0; i < this.worldAccesses.size(); ++i) {
-            ((IWorldAccess) this.worldAccesses.get(i)).onEntityDestroy(p_72847_1_);
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).onEntityDestroy(p_72847_1_);
         }
     }
 
@@ -128,70 +134,52 @@ public class MixinWorld {
         }
     }
 
+
+    /**
+    * @author
+    * @reason
+    */
+    @Overwrite
+    public Block getBlock(int x, int y, int z) {
+        if (blockExists(x, y, z)) {
+            Chunk chunk = null;
+            try {
+                chunk = getChunkFromChunkCoords(x >> 4, z >> 4);
+                return chunk.getBlock(x & 15, y, z & 15);
+            } catch (Throwable throwable) {
+                CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Exception getting block type in world");
+                CrashReportCategory crashReportCategory = crashReport.makeCategory("Requested block coordinates");
+                crashReportCategory.addCrashSection("Found chunk", chunk == null);
+                crashReportCategory.addCrashSection("Location", CrashReportCategory.getLocationInfo(x, y, z));
+                throw new ReportedException(crashReport);
+            }
+        } else {
+            return Blocks.air;
+        }
+    }
+
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public Block getBlock(int x, int y, int z) {
-        if (!optimizationsAndTweaks$isValidCoordinates(x, y, z)) {
-            return Blocks.air;
+    public boolean isAirBlock(int x, int y, int z)
+    {
+        if (blockExists(x, y, z)) {
+            Block block = this.getBlock(x, y, z);
+            return block.isAir(world, x, y, z);
+        } else {
+            return true;
         }
-
-        try {
-            Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-            if (chunk == null) {
-                System.out.println(
-                    "(Optimizationsandtweaks logging)Chunk is null at coordinates - x: " + (x >> 4)
-                        + ", z: "
-                        + (z >> 4));
-                return Blocks.air;
-            }
-
-            Block block = chunk.getBlock(x & 15, y, z & 15);
-            if (block == null) {
-                optimizationsAndTweaks$logNullBlockDetails(x, y, z, chunk);
-                return Blocks.air;
-            }
-
-            return block;
-        } catch (Throwable throwable) {
-            optimizationsAndTweaks$logExceptionDetails(x, y, z, throwable);
-        }
-
-        return Blocks.air;
     }
 
-    @Unique
-    private boolean optimizationsAndTweaks$isValidCoordinates(int x, int y, int z) {
-        return x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256;
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$logNullBlockDetails(int x, int y, int z, Chunk chunk) {
-        Block blockAtCoordinates = chunk.getBlock(x & 15, y, z & 15);
-        System.out.println(
-            "(Optimizationsandtweaks logging)Block is null at coordinates - x: " + x + ", y: " + y + ", z: " + z);
-        System.out.println(
-            "(Optimizationsandtweaks logging)Block type: "
-                + (blockAtCoordinates != null ? blockAtCoordinates.getUnlocalizedName() : "Unknown"));
-        System.out.println("(Optimizationsandtweaks logging)Chunk: " + chunk);
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$logExceptionDetails(int x, int y, int z, Throwable throwable) {
-        System.out.println(
-            "(Optimizationsandtweaks logging)Exception getting block type in world at coordinates - x: " + x
-                + ", y: "
-                + y
-                + ", z: "
-                + z);
-        System.out.println("(Optimizationsandtweaks logging)Exception details: " + throwable);
-    }
-
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public boolean blockExists(int p_72899_1_, int p_72899_2_, int p_72899_3_) {
-        return p_72899_2_ >= 0 && p_72899_2_ < 256 ? this.chunkExists(p_72899_1_ >> 4, p_72899_3_ >> 4) : false;
+        return p_72899_2_ >= 0 && p_72899_2_ < 256 && this.chunkExists(p_72899_1_ >> 4, p_72899_3_ >> 4);
     }
 
     @Shadow
@@ -201,19 +189,6 @@ public class MixinWorld {
 
     @Shadow
     public void updateAllPlayersSleepingFlag() {}
-
-    @Unique
-    private void optimizationsAndTweaks$handleBlockUpdates(int x, int y, int z, Chunk chunk, Block block1,
-        Block blockIn, int flags) {
-        this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$handleLightingUpdates(int x, int y, int z) {
-        this.theProfiler.startSection("checkLight");
-        this.func_147451_t(x, y, z);
-        this.theProfiler.endSection();
-    }
 
     @Shadow
     public void markAndNotifyBlock(int x, int y, int z, Chunk chunk, Block oldBlock, Block newBlock, int flag) {
@@ -850,19 +825,11 @@ public class MixinWorld {
 
     @Unique
     private int optimizationsAndTweaks$getMaxNeighborLightValue(int x, int y, int z) {
-        int[] neighborValues = new int[5];
-
-        neighborValues[0] = getBlockLightValue_do(x, y + 1, z, false);
-        neighborValues[1] = getBlockLightValue_do(x + 1, y, z, false);
-        neighborValues[2] = getBlockLightValue_do(x - 1, y, z, false);
-        neighborValues[3] = getBlockLightValue_do(x, y, z + 1, false);
-        neighborValues[4] = getBlockLightValue_do(x, y, z - 1, false);
-
-        int max = neighborValues[0];
-        for (int i = 1; i < neighborValues.length; i++) {
-            max = Math.max(max, neighborValues[i]);
-        }
-
+        int max = getBlockLightValue_do(x, y + 1, z, false);
+        max = Math.max(max, getBlockLightValue_do(x + 1, y, z, false));
+        max = Math.max(max, getBlockLightValue_do(x - 1, y, z, false));
+        max = Math.max(max, getBlockLightValue_do(x, y, z + 1, false));
+        max = Math.max(max, getBlockLightValue_do(x, y, z - 1, false));
         return max;
     }
 
@@ -900,13 +867,6 @@ public class MixinWorld {
             .count();
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE"))
-    private void onTickInject(CallbackInfo info) {
-        if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
-            TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
-        }
-    }
-
     @Shadow
     public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_) {
         if (p_72883_2_ < 0) {
@@ -931,16 +891,26 @@ public class MixinWorld {
      * @author
      * @reason
      */
+    // playMoodSoundAndCheckLight method
     @Overwrite
     public void func_147467_a(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
+        optimizationsAndTweaks$playMoodSound(p_147467_1_, p_147467_2_, p_147467_3_);
+        optimizationsAndTweaks$checkLight(p_147467_3_);
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$playMoodSound(int p_147467_1_, int p_147467_2_, Chunk p_147467_3_) {
         this.theProfiler.endStartSection("moodSound");
 
         if (optimizationsAndTweaks$shouldPlayAmbientSound()) {
             optimizationsAndTweaks$playAmbientCaveSound(p_147467_1_, p_147467_2_, p_147467_3_);
         }
+    }
 
+    @Unique
+    private void optimizationsAndTweaks$checkLight(Chunk chunk) {
         this.theProfiler.endStartSection("checkLight");
-        p_147467_3_.enqueueRelightChecks();
+        chunk.enqueueRelightChecks();
     }
 
     @Unique
@@ -980,4 +950,61 @@ public class MixinWorld {
             this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
         }
     }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void setActivePlayerChunksAndCheckLight()
+    {
+        this.activeChunkSet.clear();
+        this.theProfiler.startSection("buildList");
+        this.activeChunkSet.addAll(getPersistentChunks().keySet());
+        int i;
+        EntityPlayer entityplayer;
+        int j;
+        int k;
+        int l;
+
+        for (i = 0; i < this.playerEntities.size(); ++i)
+        {
+            entityplayer = (EntityPlayer)this.playerEntities.get(i);
+            j = MathHelper.floor_double(entityplayer.posX / 16.0D);
+            k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
+            l = this.func_152379_p();
+
+            for (int i1 = -l; i1 <= l; ++i1)
+            {
+                for (int j1 = -l; j1 <= l; ++j1)
+                {
+                    this.activeChunkSet.add(new ChunkCoordIntPair(i1 + j, j1 + k));
+                }
+            }
+        }
+
+        this.theProfiler.endSection();
+
+        if (this.ambientTickCountdown > 0)
+        {
+            --this.ambientTickCountdown;
+        }
+
+        this.theProfiler.startSection("playerCheckLight");
+
+        if (!this.playerEntities.isEmpty())
+        {
+            i = this.rand.nextInt(this.playerEntities.size());
+            entityplayer = (EntityPlayer)this.playerEntities.get(i);
+            j = MathHelper.floor_double(entityplayer.posX) + this.rand.nextInt(11) - 5;
+            k = MathHelper.floor_double(entityplayer.posY) + this.rand.nextInt(11) - 5;
+            l = MathHelper.floor_double(entityplayer.posZ) + this.rand.nextInt(11) - 5;
+            this.func_147451_t(j, k, l);
+        }
+
+        this.theProfiler.endSection();
+    }
+
+    @Shadow
+    protected abstract int func_152379_p();
 }

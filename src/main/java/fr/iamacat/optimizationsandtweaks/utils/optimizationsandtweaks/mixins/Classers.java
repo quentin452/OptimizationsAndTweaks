@@ -1,7 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins;
 
 import java.util.Comparator;
+import java.util.Objects;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.LongHashMap2;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -249,6 +251,55 @@ public class Classers {
             this.z = z;
             this.recurseDepth = recurseDepth;
             this.adjSide = adjSide;
+        }
+    }
+
+    // MixinLongHashMap
+
+    public static class Entry {
+
+        /** the key as a long (for playerInstances it is the x in the most significant 32 bits and then y) */
+        public final long key;
+        /** the value held by the hash at the specified key */
+        public Object value;
+        /** the next hashentry in the table */
+        public Entry nextEntry;
+        public final int hash;
+
+        public Entry(int p_i1553_1_, long p_i1553_2_, Object p_i1553_4_, Entry p_i1553_5_) {
+            this.value = p_i1553_4_;
+            this.nextEntry = p_i1553_5_;
+            this.key = p_i1553_2_;
+            this.hash = p_i1553_1_;
+        }
+
+        public final long getKey() {
+            return this.key;
+        }
+
+        public final Object getValue() {
+            return this.value;
+        }
+
+        public final boolean equals(Object p_equals_1_) {
+            if (!(p_equals_1_ instanceof Entry)) {
+                return false;
+            }
+
+            Entry entry = (Entry) p_equals_1_;
+            return this.getKey() == entry.getKey() && Objects.equals(this.getValue(), entry.getValue());
+        }
+
+        public final int hashCode() {
+            return getHashedKey(this.key);
+        }
+
+        public final String toString() {
+            return this.getKey() + "=" + this.getValue();
+        }
+
+        public static int getHashedKey(long p_76155_0_) {
+            return (int) p_76155_0_ + (int) (p_76155_0_ >>> 32) * 92821;
         }
     }
 }

@@ -20,6 +20,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.lang.reflect.Constructor;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CreatureCountTask.optimizationsAndTweaks$eligibleChunksForSpawning;
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CreatureCountTask.optimizationsAndTweaks$shouldSpawnCreature;
 
@@ -46,43 +49,31 @@ public class MixinPatchSpawnerAnimals {
      */
     @Overwrite
     public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z) {
-        if (!optimizationsAndTweaks$checkIfBlockExists(world, x, y, z)) {
-            return false;
-        }
-
         Block block = world.getBlock(x, y, z);
+        Block blockAbove = world.getBlock(x, y + 1, z);
+
         if (creatureType.getCreatureMaterial() == Material.water) {
-            return optimizationsAndTweaks$canCreatureSpawnInWater(world, x, y, z, block);
+            return optimizationsAndTweaks$canCreatureSpawnInWater(world, x, y, z, block, blockAbove);
         } else {
-            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block);
+            return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, blockAbove);
         }
     }
 
     @Unique
-    private static boolean optimizationsAndTweaks$checkIfBlockExists(World world, int x, int y, int z) {
-        return world.blockExists(x, y, z);
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(World world, int x, int y, int z, Block block) {
-        Block blockBelow = world.getBlock(x, y - 1, z);
-        Block blockAbove = world.getBlock(x, y + 1, z);
-        return optimizationsAndTweaks$canCreatureSpawnInWater(block, blockBelow, blockAbove);
-    }
-
-    @Unique
-    private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block) {
-        return optimizationsAndTweaks$canCreatureSpawnOnLand(creatureType, world, x, y, z, block, world.getBlock(x, y + 1, z));
+    private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(World world, int x, int y, int z, Block block, Block blockAbove) {
+        return optimizationsAndTweaks$canCreatureSpawnInWater(block, world.getBlock(x, y - 1, z), blockAbove);
     }
 
     @Unique
     private static boolean optimizationsAndTweaks$isNormalCube(Block block) {
         return block.isNormalCube();
     }
+
     @Unique
     private static boolean optimizationsAndTweaks$doesBlockHaveSolidTopSurface(World world, int x, int y, int z) {
         return World.doesBlockHaveSolidTopSurface(world, x, y, z);
     }
+
 
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z, Block block, Block blockAbove) {
@@ -101,6 +92,7 @@ public class MixinPatchSpawnerAnimals {
         }
         return false;
     }
+
     @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnInWater(Block block, Block blockBelow, Block blockAbove) {
         Material blockMaterial = block.getMaterial();
@@ -180,6 +172,7 @@ public class MixinPatchSpawnerAnimals {
     // do not refactor this method into smaller methods: it can cause Entity is already tracked! errors
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
+
     @Unique
     private int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
@@ -226,8 +219,7 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private BiomeGenBase.SpawnListEntry optimizationsAndTweaks$createSpawnListEntry(EnumCreatureType creatureType, World world, int x, int y,
-                                                                                    int z) {
+    private BiomeGenBase.SpawnListEntry optimizationsAndTweaks$createSpawnListEntry(EnumCreatureType creatureType, World world, int x, int y, int z) {
         WorldServer worldServer = (WorldServer) world;
         return worldServer.spawnRandomCreature(creatureType, x, y, z);
     }
@@ -235,8 +227,18 @@ public class MixinPatchSpawnerAnimals {
     @Unique
     private boolean optimizationsAndTweaks$isSpawnLocationValid(EnumCreatureType creatureType, World world, float spawnX, float spawnY,
                                                                 float spawnZ, float distanceSquared) {
-        return distanceSquared >= 576.0F
-            && canCreatureTypeSpawnAtLocation(creatureType, world, (int) spawnX, (int) spawnY, (int) spawnZ);
+        return optimizationsAndTweaks$isDistanceSquaredValid(distanceSquared) && optimizationsAndTweaks$canCreatureTypeSpawnAtLocation(creatureType, world, spawnX, spawnY, spawnZ);
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$isDistanceSquaredValid(float distanceSquared) {
+        return distanceSquared >= 576.0F;
+    }
+
+    @Unique
+    private boolean optimizationsAndTweaks$canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, float spawnX, float spawnY,
+                                                                          float spawnZ) {
+        return canCreatureTypeSpawnAtLocation(creatureType, world, (int) spawnX, (int) spawnY, (int) spawnZ);
     }
 
     @Unique
@@ -245,9 +247,25 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
+    private final ConcurrentHashMap<Class<? extends EntityLiving>, Constructor<? extends EntityLiving>> optimizationsAndTweaks$constructorCache = new ConcurrentHashMap<>();
+
+    @Unique
     private EntityLiving optimizationsAndTweaks$createEntityInstance(WorldServer world, BiomeGenBase.SpawnListEntry spawnListEntry) {
+        Class<? extends EntityLiving> entityClass = spawnListEntry.entityClass;
+
+        Constructor<? extends EntityLiving> constructor = optimizationsAndTweaks$constructorCache.get(entityClass);
+        if (constructor == null) {
+            try {
+                constructor = entityClass.getConstructor(World.class);
+                optimizationsAndTweaks$constructorCache.put(entityClass, constructor);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                return null;
+            }
+        }
+
         try {
-            return (EntityLiving) spawnListEntry.entityClass.getConstructor(World.class).newInstance(world);
+            return constructor.newInstance(world);
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

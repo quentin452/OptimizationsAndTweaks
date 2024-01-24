@@ -199,8 +199,7 @@ public class MixinEntityTracker {
         {
             if (this.trackedEntityIDs.containsItem(p_72785_1_.getEntityId()))
             {
-               // throw new IllegalStateException("Entity is already tracked!");
-                return;
+                throw new IllegalStateException("Entity is already tracked!");
             }
 
             EntityTrackerEntry entitytrackerentry = new EntityTrackerEntry(p_72785_1_, p_72785_2_, p_72785_3_, p_72785_4_);

@@ -144,14 +144,14 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
 
         Object value;
         while (null != (value = entries[keyIndex + 1])) {
-            if (Objects.equals(entries[keyIndex], key)) {
-                break;
+            if (entries[keyIndex] == key || entries[keyIndex].equals(key)) {
+                return (V) value;
             }
 
             keyIndex = next(keyIndex, mask);
         }
 
-        return (V) value;
+        return null;
     }
 
     /**
@@ -199,25 +199,25 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
 
     private void rehash(final int newCapacity) {
         final Object[] oldEntries = entries;
-        final int length = entries.length;
+        final int oldCapacity = oldEntries.length;
 
         capacity(newCapacity);
 
         final Object[] newEntries = entries;
-        final int mask = entries.length - 1;
+        final int newMask = newEntries.length - 1;
 
-        for (int keyIndex = 0; keyIndex < length; keyIndex += 2) {
+        for (int keyIndex = 0; keyIndex < oldCapacity; keyIndex += 2) {
             final Object value = oldEntries[keyIndex + 1];
             if (null != value) {
                 final Object key = oldEntries[keyIndex];
-                int index = Hashing.evenHash(key.hashCode(), mask);
+                int newIndex = Hashing.evenHash(key.hashCode(), newMask);
 
-                while (null != newEntries[index + 1]) {
-                    index = next(index, mask);
+                while (null != newEntries[newIndex + 1]) {
+                    newIndex = (newIndex + 2) & newMask;
                 }
 
-                newEntries[index] = key;
-                newEntries[index + 1] = value;
+                newEntries[newIndex] = key;
+                newEntries[newIndex + 1] = value;
             }
         }
     }
@@ -457,8 +457,8 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
 
         Object mappedValue;
         while (null != (mappedValue = entries[keyIndex + 1])) {
-            if (Objects.equals(entries[keyIndex], key)) {
-                break;
+            if (entries[keyIndex] == key || entries[keyIndex].equals(key)) {
+                return unmapNullValue(mappedValue);
             }
 
             keyIndex = next(keyIndex, mask);
@@ -467,16 +467,13 @@ public class Object2ObjectHashMap<K, V> implements Map<K, V> {
         V value = unmapNullValue(mappedValue);
         if (value == null && (value = mappingFunction.apply(key)) != null) {
             entries[keyIndex + 1] = value;
-            if (mappedValue == null) {
-                entries[keyIndex] = key;
-                ++size;
-                increaseCapacity();
-            }
+            entries[keyIndex] = key;
+            ++size;
+            increaseCapacity();
         }
 
         return value;
     }
-
     /**
      * {@inheritDoc}
      */

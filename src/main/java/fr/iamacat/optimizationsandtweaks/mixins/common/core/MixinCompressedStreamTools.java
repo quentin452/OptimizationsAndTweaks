@@ -2,7 +2,11 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.io.*;
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CompressTask;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.nbt.*;
@@ -72,14 +76,16 @@ public abstract class MixinCompressedStreamTools {
      * @reason
      */
     @Overwrite
-    public static byte[] compress(NBTTagCompound p_74798_0_) throws IOException {
-        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+    public static byte[] compress(NBTTagCompound p_74798_0_) {
+        CompressTask compressTask = new CompressTask(p_74798_0_);
+        CompletableFuture<byte[]> future = compressTask.compressAsync();
 
-        try (DataOutputStream dataoutputstream = new DataOutputStream(new GZIPOutputStream2(bytearrayoutputstream))) {
-            write(p_74798_0_, dataoutputstream);
+        try {
+            return future.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
         }
-
-        return bytearrayoutputstream.toByteArray();
     }
 
     /**

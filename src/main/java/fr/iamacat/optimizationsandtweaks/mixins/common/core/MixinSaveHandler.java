@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @Mixin(SaveHandler.class)
 public abstract class MixinSaveHandler implements ISaveHandler, IPlayerFileData {
@@ -35,7 +36,7 @@ public abstract class MixinSaveHandler implements ISaveHandler, IPlayerFileData 
         try
         {
             File file1 = new File(this.worldDirectory, "session.lock");
-            try (DataInputStream datainputstream = new DataInputStream(new FileInputStream(file1))) {
+            try (DataInputStream datainputstream = new DataInputStream(Files.newInputStream(file1.toPath()))) {
                 if (datainputstream.readLong() != this.initializationTime) {
                     throw new MinecraftException("The save is being accessed from another location, aborting");
                 }

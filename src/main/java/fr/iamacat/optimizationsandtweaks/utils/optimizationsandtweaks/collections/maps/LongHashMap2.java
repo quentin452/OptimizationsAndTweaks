@@ -1,5 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps;
 
+import java.util.Objects;
+
 public class LongHashMap2 {
 
     /** the array of all elements in the hash */
@@ -63,15 +65,14 @@ public class LongHashMap2 {
     }
 
     final LongHashMap2.Entry getEntry(long p_76160_1_) {
-        int j = getHashedKey(p_76160_1_);
-
-        for (LongHashMap2.Entry entry = this.hashArray[getHashIndex(j, this.hashArray.length)]; entry
-            != null; entry = entry.nextEntry) {
+        int index = getHashIndex(getHashedKey(p_76160_1_), this.hashArray.length);
+        LongHashMap2.Entry entry = this.hashArray[index];
+        while (entry != null) {
             if (entry.key == p_76160_1_) {
                 return entry;
             }
+            entry = entry.nextEntry;
         }
-
         return null;
     }
 
@@ -106,7 +107,7 @@ public class LongHashMap2 {
             LongHashMap2.Entry[] aentry1 = new LongHashMap2.Entry[p_76153_1_];
             this.copyHashTableTo(aentry1);
             this.hashArray = aentry1;
-            this.capacity = (int) ((float) p_76153_1_ * this.percentUseable);
+            this.capacity = (int) (p_76153_1_ * this.percentUseable);
         }
     }
 
@@ -215,22 +216,10 @@ public class LongHashMap2 {
         public final boolean equals(Object p_equals_1_) {
             if (!(p_equals_1_ instanceof LongHashMap2.Entry)) {
                 return false;
-            } else {
-                LongHashMap2.Entry entry = (LongHashMap2.Entry) p_equals_1_;
-                Long olong = Long.valueOf(this.getKey());
-                Long olong1 = Long.valueOf(entry.getKey());
-
-                if (olong == olong1 || olong != null && olong.equals(olong1)) {
-                    Object object1 = this.getValue();
-                    Object object2 = entry.getValue();
-
-                    if (object1 == object2 || object1 != null && object1.equals(object2)) {
-                        return true;
-                    }
-                }
-
-                return false;
             }
+
+            LongHashMap2.Entry entry = (LongHashMap2.Entry) p_equals_1_;
+            return this.getKey() == entry.getKey() && Objects.equals(this.getValue(), entry.getValue());
         }
 
         public final int hashCode() {

@@ -9,6 +9,7 @@ import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -80,7 +81,14 @@ public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShear
     private void optimizationsAndTweaks$populateBlockArray(World worldIn, int x, int y, int z, int areaSize,
         int halfArea, int[] blockArray) {
         int searchRadius = 4;
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
 
+        Chunk chunk = worldIn.getChunkFromChunkCoords(chunkX, chunkZ);
+
+        if (!chunk.isChunkLoaded) {
+            return;
+        }
         for (int xOffset = -searchRadius; xOffset <= searchRadius; ++xOffset) {
             for (int yOffset = -searchRadius; yOffset <= searchRadius; ++yOffset) {
                 for (int zOffset = -searchRadius; zOffset <= searchRadius; ++zOffset) {

@@ -47,74 +47,51 @@ public class MixinWorldGenMinable extends WorldGenerator {
      */
     @Overwrite
     public boolean generate(World world, Random random, int x, int y, int z) {
-        float f = random.nextFloat() * (float) Math.PI;
-        double d0 = x + 8
-            + SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
-                / 8.0f;
-        double d1 = x + 8
-            - SIN_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
-                / 8.0f;
-        double d2 = z + 8
-            + COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
-                / 8.0f;
-        double d3 = z + 8
-            - COS_TABLE[MathHelper.floor_float(f * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks
-                / 8.0f;
-        double d4 = y + random.nextInt(3) - (double) 2;
-        double d5 = y + random.nextInt(3) - (double) 2;
+        float angle = random.nextFloat() * (float) Math.PI;
+        double centerX = x + 8 + SIN_TABLE[MathHelper.floor_float(angle * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
+        double centerY = y + random.nextInt(3) - 2.0;
+        double centerZ = z + 8 + COS_TABLE[MathHelper.floor_float(angle * SIN_COS_PRECISION) & (SIN_COS_PRECISION - 1)] * numberOfBlocks / 8.0f;
 
-        optimizationsAndTweaks$generateEllipse(world, random, d0, d1, d2, d3, d4, d5);
+        optimizationsAndTweaks$generateEllipse(world, random, centerX, centerY, centerZ);
 
         return true;
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double d0, double d1, double d2,
-        double d3, double d4, double d5) {
+    private void optimizationsAndTweaks$generateEllipse(World world, Random random, double centerX, double centerY, double centerZ) {
         for (int l = 0; l <= numberOfBlocks; ++l) {
-            double d6 = d0 + (d1 - d0) * l / numberOfBlocks;
-            double d7 = d4 + (d5 - d4) * l / numberOfBlocks;
-            double d8 = d2 + (d3 - d2) * l / numberOfBlocks;
-            double d9 = random.nextDouble() * numberOfBlocks / 16.0D;
-            double d10 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION)
-                & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
-            double d11 = (SIN_TABLE[MathHelper.floor_float(l * (float) Math.PI / numberOfBlocks * SIN_COS_PRECISION)
-                & (SIN_COS_PRECISION - 1)] + 1.0f) * d9 + 1.0D;
+            double ellipseX = centerX - SIN_TABLE[l] * numberOfBlocks / 8.0;
+            double ellipseY = centerY + random.nextDouble() * numberOfBlocks / 16.0;
+            double ellipseZ = centerZ - COS_TABLE[l] * numberOfBlocks / 8.0;
 
-            optimizationsAndTweaks$generateEllipseLayer(world, d6, d7, d8, d10, d11);
+            optimizationsAndTweaks$generateEllipseLayer(world, ellipseX, ellipseY, ellipseZ);
         }
     }
 
     @Unique
-    private void optimizationsAndTweaks$generateEllipseLayer(World world, double d6, double d7, double d8, double d10,
-        double d11) {
-        int minX = MathHelper.floor_double(d6 - d10 / 2.0D);
-        int maxX = MathHelper.floor_double(d6 + d10 / 2.0D);
+    private void optimizationsAndTweaks$generateEllipseLayer(World world, double ellipseX, double ellipseY, double ellipseZ) {
+        int minX = MathHelper.floor_double(ellipseX - 1.0);
+        int maxX = MathHelper.floor_double(ellipseX + 1.0);
+        int minY = MathHelper.floor_double(ellipseY - 1.0);
+        int maxY = MathHelper.floor_double(ellipseY + 1.0);
+        int minZ = MathHelper.floor_double(ellipseZ - 1.0);
+        int maxZ = MathHelper.floor_double(ellipseZ + 1.0);
 
-        int minY = MathHelper.floor_double(d7 - d11 / 2.0D);
-        int maxY = MathHelper.floor_double(d7 + d11 / 2.0D);
-
-        int minZ = MathHelper.floor_double(d8 - d10 / 2.0D);
-        int maxZ = MathHelper.floor_double(d8 + d10 / 2.0D);
-
-        optimizationsAndTweaks$iterateOverEllipse(world, d6, d7, d8, d10, d11, minX, maxX, minY, maxY, minZ, maxZ);
+        optimizationsAndTweaks$iterateOverEllipse(world, ellipseX, ellipseY, ellipseZ, minX, maxX, minY, maxY, minZ, maxZ);
     }
 
     @Unique
-    private void optimizationsAndTweaks$iterateOverEllipse(World world, double d6, double d7, double d8, double d10,
-                                                           double d11, int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+    private void optimizationsAndTweaks$iterateOverEllipse(World world, double ellipseX, double ellipseY, double ellipseZ,
+                                                           int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
         Block oreGenBlock = field_150518_c;
 
         if (oreGenBlock != null) {
             for (int k2 = minX; k2 <= maxX; ++k2) {
-                double d12 = (k2 + 0.5D - d6) / (d10 / 2.0D);
-
+                double d12 = (k2 + 0.5D - ellipseX);
                 for (int l2 = minY; l2 <= maxY; ++l2) {
-                    double d13 = (l2 + 0.5D - d7) / (d11 / 2.0D);
-
+                    double d13 = (l2 + 0.5D - ellipseY);
                     for (int i3 = minZ; i3 <= maxZ; ++i3) {
-                        double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
-
+                        double d14 = (i3 + 0.5D - ellipseZ);
                         if (optimizationsAndTweaks$isInsideEllipse(d12, d13, d14)) {
                             optimizationsAndTweaks$processBlock(world, k2, l2, i3);
                         }
@@ -123,7 +100,6 @@ public class MixinWorldGenMinable extends WorldGenerator {
             }
         }
     }
-
     @Unique
     private void optimizationsAndTweaks$processBlock(World world, int x, int y, int z) {
         Block oreGenBlock = optimizationsAndTweaks$getField_150518_c();

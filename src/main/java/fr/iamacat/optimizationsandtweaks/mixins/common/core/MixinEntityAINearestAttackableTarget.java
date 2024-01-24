@@ -39,7 +39,7 @@ public class MixinEntityAINearestAttackableTarget extends EntityAITarget {
 
     public MixinEntityAINearestAttackableTarget(EntityCreature p_i1664_1_, Class p_i1664_2_, int p_i1664_3_,
         boolean p_i1664_4_, boolean p_i1664_5_) {
-        this(p_i1664_1_, p_i1664_2_, p_i1664_3_, p_i1664_4_, p_i1664_5_, (IEntitySelector) null);
+        this(p_i1664_1_, p_i1664_2_, p_i1664_3_, p_i1664_4_, p_i1664_5_, null);
     }
 
     public MixinEntityAINearestAttackableTarget(EntityCreature p_i1665_1_, Class p_i1665_2_, int p_i1665_3_,

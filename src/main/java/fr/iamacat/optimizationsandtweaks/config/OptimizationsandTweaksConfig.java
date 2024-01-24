@@ -107,10 +107,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-    @Config.Comment("Optimiz World Class")
+    @Config.Comment("Optimize World Class(Require enableMixinChunkCoordIntPair)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
+    @Config.Comment("Optimize ChunkCoordIntPair Class(Required by enableMixinWorld)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinChunkCoordIntPair;
     @Config.Comment("Optimize EnchantmentHelper Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -257,7 +261,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinThreadedFileIOBase;
     @Config.Comment("Optimize WorldServer")
-    @Config.DefaultBoolean(false)
+    @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
     @Config.Comment("Optimize MathHelper Class")
@@ -476,6 +480,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinItemRenderer;
+
+    @Config.Comment("Optimize LongHashMap")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinLongHashMap;
     @Config.Comment("Optimize TextureManager")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -1059,10 +1068,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGrimModule;
-    @Config.Comment("Remove COFH mod Version Checker")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinUpdateCheckThreadCOFH;
     @Config.Comment("Tidy Chunk Backport feature(EntityItem remover at first chunk generation to reduce tps lags)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

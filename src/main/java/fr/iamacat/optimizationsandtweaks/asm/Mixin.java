@@ -12,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
+    common_core_MixinChunkCoordIntPair(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkCoordIntPair && OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinChunkCoordIntPair"),
 
-    common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
+    common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld && OptimizationsandTweaksConfig.enableMixinChunkCoordIntPair , "core.MixinWorld"),
     common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper,
         "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
@@ -325,9 +326,6 @@ public enum Mixin implements IMixin {
     common_aether_MixinPlayerAetherEvents(Side.COMMON,
         require(TargetedMod.AETHER).and(m -> OptimizationsandTweaksConfig.enableMixinPlayerAetherEvents),
         "aether.MixinPlayerAetherEvents"),
-    common_cofhcore_MixinUpdateCheckThreadCOFH(Side.COMMON,
-        require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinUpdateCheckThreadCOFH),
-        "cofhcore.MixinUpdateCheckThreadCOFH"),
     common_cofhcore_MixinHooksCore(Side.COMMON,
         require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinHooksCore),
         "cofhcore.MixinHooksCore"),
@@ -422,6 +420,9 @@ public enum Mixin implements IMixin {
         "core.MixinEntityLookHelper"),
     common_core_MixinBlockFalling(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFalling,
         "core.MixinBlockFalling"),
+
+    common_core_MixinLongHashMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLongHashMap,
+        "core.MixinLongHashMap"),
 
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         require(TargetedMod.KINGDOMSOFTHEOVERWORLD).and(
@@ -696,6 +697,9 @@ public enum Mixin implements IMixin {
     common_cofhcore_MixinCOFHCORE(Side.COMMON,
         require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinCOFHCORE),
         "cofhcore.MixinCOFHCORE"),
+    common_cofhcore_MixinUpdateCheckThreadCOFH(Side.COMMON,
+        require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinCOFHCORE),
+        "cofhcore.MixinUpdateCheckThreadCOFH"),
     common_cofhcore_fixoredictcrash_MixinOreDictionaryArbiter(Side.COMMON,
         require(TargetedMod.COFHCORE).and(m -> OptimizationsandTweaksConfig.enableMixinOreDictCofhFix),
         "cofhcore.fixoredictcrash.MixinOreDictionaryArbiter"),

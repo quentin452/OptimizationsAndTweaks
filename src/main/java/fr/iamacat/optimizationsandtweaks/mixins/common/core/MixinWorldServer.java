@@ -15,6 +15,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.server.S2BPacketChangeGameState;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.ScoreboardSaveData;
 import net.minecraft.scoreboard.ServerScoreboard;
@@ -43,9 +44,8 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
-
     @Unique
-    private WorldServer worldServer;
+    private WorldServer optimizationsAndTweaks$worldServer;
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Shadow
@@ -56,57 +56,21 @@ public abstract class MixinWorldServer extends World {
     private final PlayerManager thePlayerManager;
     @Unique
     private ConcurrentHashMapV8<NextTickListEntry, Boolean> optimizationsAndTweaks$pendingTickListEntriesHashSet = new ConcurrentHashMapV8<>();
-
-    /** All work to do in future ticks. */
     @Unique
     private NavigableSet<NextTickListEntry> optimizationsAndTweaks$pendingTickListEntriesTreeSet = new ConcurrentSkipListSet<>();
     @Shadow
-    public ChunkProviderServer theChunkProviderServer;
-    /** Whether or not level saving is enabled */
-    @Shadow
-    public boolean levelSaving;
-    /** is false if there are no players */
-    @Shadow
-    private boolean allPlayersSleeping;
-    @Shadow
-    private int updateEntityTick;
-    /** the teleporter to use when the entity is being transferred into the dimension */
-    @Shadow
     private final Teleporter worldTeleporter;
     @Shadow
-    private final SpawnerAnimals animalSpawner = new SpawnerAnimals();
-    @Shadow
-    private int blockEventCacheIndex;
-    @Shadow
-    public static final WeightedRandomChestContent[] bonusChestContent = new WeightedRandomChestContent[] {
-        new WeightedRandomChestContent(Items.stick, 0, 1, 3, 10),
-        new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.planks), 0, 1, 3, 10),
-        new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log), 0, 1, 3, 10),
-        new WeightedRandomChestContent(Items.stone_axe, 0, 1, 1, 3),
-        new WeightedRandomChestContent(Items.wooden_axe, 0, 1, 1, 5),
-        new WeightedRandomChestContent(Items.stone_pickaxe, 0, 1, 1, 3),
-        new WeightedRandomChestContent(Items.wooden_pickaxe, 0, 1, 1, 5),
-        new WeightedRandomChestContent(Items.apple, 0, 2, 3, 5),
-        new WeightedRandomChestContent(Items.bread, 0, 2, 3, 3),
-        new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log2), 0, 1, 3, 10) };
-    @Shadow
     private List pendingTickListEntriesThisTick = new ArrayList();
-    /** An IntHashMap of entity IDs (integers) to their Entity objects. */
     @Shadow
     private IntHashMap entityIdMap;
-
-    /** Stores the recently processed (lighting) chunks */
-    @Shadow
-    protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
-    @Shadow
-    public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 
     public MixinWorldServer(MinecraftServer p_i45284_1_, ISaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_,
                             WorldSettings p_i45284_5_, Profiler p_i45284_6_) {
         super(p_i45284_2_, p_i45284_3_, p_i45284_5_, WorldProvider.getProviderForDimension(p_i45284_4_), p_i45284_6_);
         this.mcServer = p_i45284_1_;
-        this.theEntityTracker = new EntityTracker(worldServer);
-        this.thePlayerManager = new PlayerManager(worldServer);
+        this.theEntityTracker = new EntityTracker(optimizationsAndTweaks$worldServer);
+        this.thePlayerManager = new PlayerManager(optimizationsAndTweaks$worldServer);
 
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
@@ -120,7 +84,7 @@ public abstract class MixinWorldServer extends World {
             this.optimizationsAndTweaks$pendingTickListEntriesTreeSet = new ConcurrentSkipListSet<>();
         }
 
-        this.worldTeleporter = new Teleporter(worldServer);
+        this.worldTeleporter = new Teleporter(optimizationsAndTweaks$worldServer);
         this.worldScoreboard = new ServerScoreboard(p_i45284_1_);
         ScoreboardSaveData scoreboardsavedata = (ScoreboardSaveData) this.mapStorage
             .loadData(ScoreboardSaveData.class, "scoreboard");
@@ -130,14 +94,14 @@ public abstract class MixinWorldServer extends World {
             this.mapStorage.setData("scoreboard", scoreboardsavedata);
         }
 
-        if (!(worldServer instanceof WorldServerMulti)) // Forge: We fix the global mapStorage, which causes us to share
+        if (!(optimizationsAndTweaks$worldServer instanceof WorldServerMulti)) // Forge: We fix the global mapStorage, which causes us to share
         // scoreboards early. So don't associate the save data with the
         // temporary scoreboard
         {
             scoreboardsavedata.func_96499_a(this.worldScoreboard);
         }
         ((ServerScoreboard) this.worldScoreboard).func_96547_a(scoreboardsavedata);
-        DimensionManager.setWorld(p_i45284_4_, worldServer);
+        DimensionManager.setWorld(p_i45284_4_, optimizationsAndTweaks$worldServer);
     }
 
     /**
@@ -458,16 +422,17 @@ public abstract class MixinWorldServer extends World {
         int maxZ = minZ + 16 + 2;
 
         for (int i = 0; i < 2; ++i) {
-            Iterator<NextTickListEntry> iterator = (i == 0) ? this.optimizationsAndTweaks$pendingTickListEntriesTreeSet.iterator()
-                : this.pendingTickListEntriesThisTick.iterator();
+            Collection<NextTickListEntry> tickListEntries = (i == 0) ? this.optimizationsAndTweaks$pendingTickListEntriesTreeSet
+                : this.pendingTickListEntriesThisTick;
 
             if (i == 1 && !this.pendingTickListEntriesThisTick.isEmpty()) {
                 logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
             }
 
+            Collection<NextTickListEntry> tickListEntriesCopy = new ArrayList<>(tickListEntries);
+            Iterator<NextTickListEntry> iterator = tickListEntriesCopy.iterator();
             while (iterator.hasNext()) {
                 NextTickListEntry nextticklistentry = iterator.next();
-
                 if (optimizationsAndTweaks$isWithinBounds(nextticklistentry, minX, maxX, minZ, maxZ)) {
                     if (p_72920_2_) {
                         iterator.remove();
@@ -586,5 +551,37 @@ public abstract class MixinWorldServer extends World {
     @Shadow
     public MinecraftServer func_73046_m() {
         return this.mcServer;
+    }
+
+    @Overwrite
+    public void updateWeather()
+    {
+        boolean flag = this.isRaining();
+        super.updateWeather();
+
+        if (this.prevRainingStrength != this.rainingStrength)
+        {
+            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
+        }
+
+        if (this.prevThunderingStrength != this.thunderingStrength)
+        {
+            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
+        }
+
+        if (flag != this.isRaining())
+        {
+            if (flag)
+            {
+                this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(2, 0.0F), this.provider.dimensionId);
+            }
+            else
+            {
+                this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(1, 0.0F), this.provider.dimensionId);
+            }
+
+            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
+            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
+        }
     }
 }
