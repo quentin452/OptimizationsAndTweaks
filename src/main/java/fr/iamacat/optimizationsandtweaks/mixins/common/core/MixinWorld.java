@@ -770,11 +770,11 @@ public abstract class MixinWorld {
     @Overwrite
     public int getBlockLightValue_do(int p_72849_1_, int p_72849_2_, int p_72849_3_, boolean p_72849_4_) {
         if (optimizationsAndTweaks$isWithinBounds(p_72849_1_, p_72849_2_, p_72849_3_)) {
-            if (p_72849_4_ && this.getBlock(p_72849_1_, p_72849_2_, p_72849_3_).getUseNeighborBrightness()) {
+            if (p_72849_4_ && blockExists(p_72849_1_, p_72849_2_, p_72849_3_)) {
                 return optimizationsAndTweaks$getMaxNeighborLightValue(p_72849_1_, p_72849_2_, p_72849_3_);
             } else if (p_72849_2_ < 0) {
                 return 0;
-            } else {
+            } else if (chunkExists(p_72849_1_ >> 4, p_72849_3_ >> 4)) {
                 int maxLightValue = 0;
 
                 for (EnumFacing facing : EnumFacing.values()) {
@@ -790,12 +790,13 @@ public abstract class MixinWorld {
                 }
 
                 return maxLightValue;
+            } else {
+                return 0;
             }
         } else {
             return 15;
         }
     }
-
 
     @Unique
     private boolean optimizationsAndTweaks$isWithinBounds(int x, int y, int z) {
