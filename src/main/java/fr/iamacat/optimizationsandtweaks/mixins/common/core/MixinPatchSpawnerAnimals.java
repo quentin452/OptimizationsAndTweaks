@@ -20,6 +20,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.SpawnerAnimalsTask.optimizationsAndTweaks$eligibleChunksForSpawning;
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.SpawnerAnimalsTask.optimizationsAndTweaks$shouldSpawnCreature;
 
@@ -113,8 +118,9 @@ public class MixinPatchSpawnerAnimals {
      * @author iamacatfr
      * @reason optimize findChunksForSpawning
      */
+
     @Overwrite
-    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
+    public synchronized int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
         if (!peaceful && !hostile) {
             return 0;
         }
@@ -126,12 +132,26 @@ public class MixinPatchSpawnerAnimals {
 
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
-                for (Object chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning.keySet()) {
+                List<CompletableFuture<Integer>> spawnTasks = new ArrayList<>();
+                Iterator<Object> iterator = optimizationsAndTweaks$eligibleChunksForSpawning.keySet().iterator();
+
+                while (iterator.hasNext()) {
+                    Object chunkCoord = iterator.next();
                     Boolean isChunkEligible = (Boolean) optimizationsAndTweaks$eligibleChunksForSpawning.get(chunkCoord);
+
                     if (isChunkEligible != null && !isChunkEligible) {
-                        spawnedEntities = optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord);
+                        CompletableFuture<Integer> task = CompletableFuture.supplyAsync(() ->
+                            optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, (ChunkCoordinates) chunkCoord)
+                        );
+
+                        spawnTasks.add(task);
+                        iterator.remove();
                     }
                 }
+
+                spawnedEntities += CompletableFuture.allOf(spawnTasks.toArray(new CompletableFuture[0]))
+                    .thenApply(v -> spawnTasks.stream().mapToInt(CompletableFuture::join).sum())
+                    .join();
             }
         }
 

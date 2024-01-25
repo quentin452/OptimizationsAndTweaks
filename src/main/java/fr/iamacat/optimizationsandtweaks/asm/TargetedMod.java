@@ -171,6 +171,7 @@ public enum TargetedMod implements ITargetedMod {
     SGSTREASURE("Treasure", false, startsWith("Treasure")),
     ALFHEIM("Alfheim", false, startsWith("Alfheim")),
     AUTOMAGY("Automagy", false, startsWith("Automagy")),
+    TUMBLEWEED("tumbleweed", false, startsWith("tumbleweed")),
 
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;

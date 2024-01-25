@@ -1,31 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
-import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.event.ForgeEventFactory;
-import org.spongepowered.asm.mixin.Unique;
 
-import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static net.minecraft.world.SpawnerAnimals.canCreatureTypeSpawnAtLocation;
 
 public class SpawnerAnimalsTask implements Runnable {
     public static final Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
     private static final Thread countThread = new Thread(new SpawnerAnimalsTask(), "SpawnerAnimals-Thread");
+    private static final Object LOCK = new Object();
     private static boolean threadStarted = false;
 
     private final EnumCreatureType creatureType;
@@ -82,9 +74,11 @@ public class SpawnerAnimalsTask implements Runnable {
     }
 
     public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
-        if (!threadStarted) {
-            countThread.start();
-            threadStarted = true;
+        synchronized (LOCK) {
+            if (!threadStarted) {
+                countThread.start();
+                threadStarted = true;
+            }
         }
 
         int totalCreatureCount = new SpawnerAnimalsTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
@@ -93,7 +87,7 @@ public class SpawnerAnimalsTask implements Runnable {
     }
 
     private static class CreatureCountRecursiveTask extends RecursiveTask<Integer> {
-        private final Iterator<?> entityIterator;
+        private final transient Iterator<?> entityIterator;
         private final EnumCreatureType creatureType;
         private final int maxCreatureCount;
         private final Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks;

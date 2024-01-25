@@ -632,6 +632,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRegisterOreDict;
+
+    @Config.Comment("Fix Don't know how to add class tumbleweed.common.EntityTumbleweed! from Tumbleweed mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTumbleweed;
     @Config.Comment("Fix ClassCastException net.minecraft.block.BlockStaticLiquid cannot be cast to net.minecraftforge.fluids.BlockFluidBase")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

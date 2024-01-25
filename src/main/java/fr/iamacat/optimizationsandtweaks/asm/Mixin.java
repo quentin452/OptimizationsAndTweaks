@@ -779,6 +779,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.MINEFACTORYRELOADED)
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixNoSuchMethodException),
         "minefactoryreloaded.MixinFixNoSuchMethodException"),
+
+    common_tumbleweed_MixinTumbleweed(Side.COMMON,
+        require(TargetedMod.TUMBLEWEED)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinTumbleweed),
+        "tumbleweed.MixinTumbleweed"),
     common_core_MixinGodZillaFix(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinGodZillaFix,
         "core.MixinGodZillaFix"),
 
