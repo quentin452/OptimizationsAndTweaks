@@ -684,19 +684,6 @@ public abstract class MixinWorld {
      * @reason
      */
     @Overwrite
-    public static boolean doesBlockHaveSolidTopSurface(IBlockAccess worldIn, int x, int y, int z) {
-        Block block = worldIn.getBlock(x, y, z);
-        Material material = block.getMaterial();
-
-        // Check if the block's material has a solid top surface
-        return material.blocksMovement() && material.isSolid();
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
     public boolean isMaterialInBB(AxisAlignedBB bb, Material material) {
         int minX = MathHelper.floor_double(bb.minX);
         int maxX = MathHelper.floor_double(bb.maxX + 1.0D);

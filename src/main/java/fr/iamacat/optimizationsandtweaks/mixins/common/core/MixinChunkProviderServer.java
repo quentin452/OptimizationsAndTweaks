@@ -144,7 +144,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      * @reason
      */
     @Overwrite
-    public Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
+    public synchronized Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
         return loadChunk(p_73158_1_, p_73158_2_, null);
     }
 

@@ -848,7 +848,8 @@ public enum Mixin implements IMixin {
      * .and(m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals),
      * "core.MixinPatchSpawnerAnimals"),
      */
-
+    common_core_MixinNetHandlerPlayClient(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNetHandlerPlayClient,
+        "core.MixinNetHandlerPlayClient"),
     common_core_MixinPatchSpawnerAnimals(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals,
         "core.MixinPatchSpawnerAnimals"),
     client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,

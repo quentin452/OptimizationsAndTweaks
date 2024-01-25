@@ -74,17 +74,11 @@ public class MixinPatchSpawnerAnimals {
     }
 
     @Unique
-    private static boolean optimizationsAndTweaks$doesBlockHaveSolidTopSurface(World world, int x, int y, int z) {
-        Block block = world.getBlock(x, y, z);
-        return block.isOpaqueCube() && block.isNormalCube();
-    }
-
-    @Unique
     private static boolean optimizationsAndTweaks$canCreatureSpawnOnLand(EnumCreatureType creatureType, World world, int x, int y, int z) {
         boolean hasSolidTopSurface = false;
 
         if (y > 0) {
-            hasSolidTopSurface = optimizationsAndTweaks$doesBlockHaveSolidTopSurface(world, x, y - 1, z);
+            hasSolidTopSurface = World.doesBlockHaveSolidTopSurface(world, x, y - 1, z);
         }
 
         if (!hasSolidTopSurface) {
@@ -116,8 +110,8 @@ public class MixinPatchSpawnerAnimals {
      * @author iamacatfr
      * @reason optimize findChunksForSpawning
      */
-    @Overwrite
-    public int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
+  /*  @Overwrite
+    public synchronized int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
         if (!peaceful && !hostile) {
             return 0;
         }
@@ -131,14 +125,19 @@ public class MixinPatchSpawnerAnimals {
 
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
-                for (ChunkCoordinates chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning) {
+                List<ChunkCoordinates> chunksCopy = new ArrayList<>(optimizationsAndTweaks$eligibleChunksForSpawning);
+                for (ChunkCoordinates chunkCoord : chunksCopy) {
                     CompletableFuture<Integer> spawnEntitiesFuture = SpawnerAnimalsTask.spawnEntitiesInChunkAsync(world, creatureType, chunkCoord)
-                        .thenApplyAsync(spawnedEntities -> spawnedEntities);
-
+                        .thenApplyAsync(spawnedEntities -> spawnedEntities)
+                        .exceptionally(e -> {
+                            e.printStackTrace();
+                            return 0;
+                        });
                     spawnEntitiesFutures.add(spawnEntitiesFuture);
                 }
             }
         }
+
 
         CompletableFuture<Void> allOf = CompletableFuture.allOf(spawnEntitiesFutures.toArray(new CompletableFuture[0]));
 
@@ -156,6 +155,34 @@ public class MixinPatchSpawnerAnimals {
         return optimizationsAndTweaks$spawnedEntities;
     }
 
+   */
+    @Overwrite
+    public synchronized int findChunksForSpawning(WorldServer world, boolean peaceful, boolean hostile, boolean animals) {
+        if (!peaceful && !hostile) {
+            return 0;
+        }
+
+        optimizationsAndTweaks$clearEligibleChunksForSpawning();
+        optimizationsAndTweaks$populateEligibleChunks(world);
+
+        optimizationsAndTweaks$spawnedEntities = 0;
+
+        for (EnumCreatureType creatureType : EnumCreatureType.values()) {
+            if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
+                List<ChunkCoordinates> chunksCopy = new ArrayList<>(optimizationsAndTweaks$eligibleChunksForSpawning);
+                for (ChunkCoordinates chunkCoord : chunksCopy) {
+                    try {
+                        int spawnedEntities = SpawnerAnimalsTask.spawnEntitiesInChunk(world, creatureType, chunkCoord);
+                        optimizationsAndTweaks$spawnedEntities += spawnedEntities;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        return optimizationsAndTweaks$spawnedEntities;
+    }
     @Unique
     private void optimizationsAndTweaks$clearEligibleChunksForSpawning() {
         optimizationsAndTweaks$eligibleChunksForSpawning.clear();
@@ -184,14 +211,5 @@ public class MixinPatchSpawnerAnimals {
             }
         }
 
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$shouldSpawnCreatureType(EnumCreatureType creatureType, WorldServer world, boolean peaceful,
-                                                                   boolean hostile, boolean animals) {
-        return (!creatureType.getPeacefulCreature() || hostile) && (creatureType.getPeacefulCreature() || peaceful)
-            && (!creatureType.getAnimal() || animals)
-            && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature()
-            * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
     }
 }

@@ -411,7 +411,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPuppetKadz;
-    @Config.Comment("Optimize Chunk ticking(You should never disable this,if its disabled it can cause large issues caused by threading)")
+    @Config.Comment("Optimize Chunk ticking")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunk;
@@ -465,7 +465,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockFluidClassic;
-    @Config.Comment("Optimize ChunkProviderServer Class")
+    @Config.Comment("Optimize ChunkProviderServer Class(You should never disable this,if its disabled it can cause large issues caused by threading)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;
@@ -808,6 +808,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean MixinLOTRWorldProvider;
+
+    @Config.Comment("Fix Server attempted to spawn an unknown entity caused by thread unsafety from NetHandlerPlayClient class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNetHandlerPlayClient;
     @Config.Comment("Add configs options to change Potion Ids from Minegicka mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -1010,7 +1015,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMobSpawnerGoblinLogic;
-    @Config.Comment("Reduce tps lags caused by SpawnerAnimals(Can reduce spawn speed of entities)")
+    @Config.Comment("Reduce tps lags caused by SpawnerAnimals(Can reduce spawn speed of entities)(Require MixinChunk)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPatchSpawnerAnimals;

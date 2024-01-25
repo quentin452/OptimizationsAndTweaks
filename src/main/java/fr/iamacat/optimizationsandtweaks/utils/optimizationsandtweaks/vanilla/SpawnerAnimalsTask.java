@@ -12,6 +12,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -97,14 +98,25 @@ public class SpawnerAnimalsTask implements Runnable {
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
     public static CompletableFuture<Integer> spawnEntitiesInChunkAsync(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
-        return CompletableFuture.supplyAsync(() -> spawnEntitiesInChunk(world, creatureType, chunkCoord));
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                if (world != null && creatureType != null && chunkCoord != null) {
+                    return spawnEntitiesInChunk(world, creatureType, chunkCoord);
+                } else {
+                    return 0;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        });
     }
 
-    private static int spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
+    public static int spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         optimizationsAndTweaks$spawnedEntities = 0;
-        optimizationsAndTweaks$maxSpawnAttempts = 15;
+        optimizationsAndTweaks$maxSpawnAttempts = 12;
 
         for (int attempt = 0; attempt < optimizationsAndTweaks$maxSpawnAttempts; attempt++) {
             int x = chunkPosition.chunkPosX + rand.nextInt(6) - rand.nextInt(6);
@@ -142,6 +154,14 @@ public class SpawnerAnimalsTask implements Runnable {
         return optimizationsAndTweaks$spawnedEntities;
     }
 
+    public static boolean optimizationsAndTweaks$shouldSpawnCreatureType(EnumCreatureType creatureType, WorldServer world, boolean peaceful,
+                                                                   boolean hostile, boolean animals) {
+        return (!creatureType.getPeacefulCreature() || hostile) && (creatureType.getPeacefulCreature() || peaceful)
+            && (!creatureType.getAnimal() || animals)
+            && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature()
+            * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
+    }
+
     private static boolean optimizationsAndTweaks$isSpawnLocationValid(EnumCreatureType creatureType, World world, float spawnX, float spawnY,
                                                                        float spawnZ) {
         boolean canSpawn = optimizationsAndTweaks$canCreatureTypeSpawnAtLocation(creatureType, world, spawnX, spawnY, spawnZ);
@@ -154,13 +174,16 @@ public class SpawnerAnimalsTask implements Runnable {
     }
 
     private static boolean optimizationsAndTweaks$canEntitySpawn(EntityLiving entity, World world, double x, double y, double z) {
-        Chunk chunk = world.getChunkFromChunkCoords(MathHelper.floor_double(x) >> 4, MathHelper.floor_double(z) >> 4);
+        Chunk chunk;
+        chunk = world.getChunkFromChunkCoords(MathHelper.floor_double(x) >> 4, MathHelper.floor_double(z) >> 4);
         if (!chunk.isChunkLoaded) {
             return false;
         }
         Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entity, world, (float) x, (float) y, (float) z);
         return canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entity.getCanSpawnHere());
     }
+
+
 
     private static boolean optimizationsAndTweaks$doSpecialSpawn(EntityLiving entity, World world, double x, double y, double z) {
         return ForgeEventFactory.doSpecialSpawn(entity, world, (float) x, (float) y, (float) z);

@@ -16,6 +16,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,9 +69,6 @@ public class MixinChunk {
     /** A Map of ChunkPositions to TileEntities in this chunk */
     @Shadow
     public Map chunkTileEntityMap;
-    /** Array of Lists containing the entities in this Chunk. Each List represents a 16 block subchunk. */
-    @Shadow
-    public List[] entityLists;
     /** Boolean value indicating if the terrain is populated. */
     @Shadow
     public boolean isTerrainPopulated;
@@ -104,10 +102,8 @@ public class MixinChunk {
     @Shadow
     private int queuedLightChecks;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void initializeThreadSafeList(CallbackInfo ci) {
-        entityLists = new CopyOnWriteArrayList[]{new CopyOnWriteArrayList<>()};
-    }
+    @Shadow
+    public List[] entityLists;
 
     public MixinChunk(int xPosition, int zPosition) {
         this.xPosition = xPosition;
@@ -165,9 +161,9 @@ public class MixinChunk {
     @Unique
     private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity,
                                                                AxisAlignedBB aabb, IEntitySelector entitySelector) {
-        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb)
-            && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
+        return targetEntity != null && targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb) && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
     }
+
     @Unique
     private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb,
         IEntitySelector entitySelector, List<Entity> listToFill, Entity targetEntity) {
@@ -327,5 +323,28 @@ public class MixinChunk {
         int x = (xPosition << 4) + p_150808_1_;
         int z = (zPosition << 4) + p_150808_3_;
         return this.getBlock(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(worldObj, x, p_150808_2_, z);
+    }
+    @Overwrite
+    public synchronized void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
+    {
+        if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ + 1))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_ - 1);
+        }
+
+        if (p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_ - 1) && !p_76624_1_.provideChunk(p_76624_3_ - 1, p_76624_4_ - 1).isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ - 1) && p_76624_1_.chunkExists(p_76624_3_ - 1, p_76624_4_))
+        {
+            p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
+        }
     }
 }
