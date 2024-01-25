@@ -7,6 +7,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -20,39 +21,26 @@ public class ThaumcraftWorldGenerator {
     private static final int SEARCH_RADIUS = 5;
 
     public static int countBlocksAroundPlayer(World world, int cx, int cy, int cz, Material material) {
-        int chunkX = cx >> 4;
-        int chunkZ = cz >> 4;
-
-        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-        if (!chunk.isChunkLoaded) {
-            return 0;
-        }
-
         int radius = SEARCH_RADIUS;
         int count = 0;
-
-        int minX = Math.max(cx - radius, chunkX << 4);
-        int maxX = Math.min(cx + radius, (chunkX << 4) + 15);
-        int minZ = Math.max(cz - radius, chunkZ << 4);
-        int maxZ = Math.min(cz + radius, (chunkZ << 4) + 15);
-
+        int minX = Math.max(cx - radius, (cx >> 4) << 4);
+        int maxX = Math.min(cx + radius, ((cx >> 4) << 4) + 15);
+        int minZ = Math.max(cz - radius, (cz >> 4) << 4);
+        int maxZ = Math.min(cz + radius, ((cz >> 4) << 4) + 15);
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 int maxY = world.getHeightValue(x, z);
-
                 for (int y = 0; y < maxY; y++) {
-                    Block block = chunk.getBlock(x & 15, y, z & 15);
-
+                    Block block = world.getBlock(x, y, z);
                     if (block.getMaterial() == material) {
                         count++;
                     }
                 }
             }
         }
-
         return count;
     }
+
 
     public static int optimizationsAndTweaks$countFoliageAroundPlayer(World world, int x, int y, int z) {
         int chunkX = x >> 4;

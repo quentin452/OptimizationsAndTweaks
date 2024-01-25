@@ -827,14 +827,19 @@ public abstract class MixinWorld {
 
     @Unique
     private int optimizationsAndTweaks$getChunkBlockLightValue(int x, int y, int z) {
-        if (y >= 256) y = 255;
-
+        if (y >= 256 || y < 0) {
+            return 0;
+        }
         Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
         x &= 15;
         z &= 15;
 
+        if (chunk == null) {
+            return 0;
+        }
         return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
     }
+
 
     /**
      * @author

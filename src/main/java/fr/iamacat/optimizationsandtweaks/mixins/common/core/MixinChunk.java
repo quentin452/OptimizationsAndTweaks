@@ -177,8 +177,8 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    public void getEntitiesOfTypeWithinAAAB(Class entityClass, AxisAlignedBB aabb, List listToFill,
-        IEntitySelector entitySelector) {
+    public void getEntitiesOfTypeWithinAAAB(Class<? extends Entity> entityClass, AxisAlignedBB aabb, List<Entity> listToFill,
+                                            IEntitySelector entitySelector) {
         int minY = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
         int maxY = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
         minY = MathHelper.clamp_int(minY, 0, this.entityLists.length - 1);
@@ -186,15 +186,18 @@ public class MixinChunk {
 
         for (int y = minY; y <= maxY; ++y) {
             for (Object entityObj : this.entityLists[y]) {
-                Entity entity = (Entity) entityObj;
+                if (entityObj instanceof Entity) {
+                    Entity entity = (Entity) entityObj;
 
-                if (entityClass.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(aabb)
-                    && (entitySelector == null || entitySelector.isEntityApplicable(entity))) {
-                    listToFill.add(entity);
+                    if (entityClass.isAssignableFrom(entity.getClass()) && entity.boundingBox.intersectsWith(aabb)
+                        && (entitySelector == null || entitySelector.isEntityApplicable(entity))) {
+                        listToFill.add(entity);
+                    }
                 }
             }
         }
     }
+
     /**
      * @author
      * @reason

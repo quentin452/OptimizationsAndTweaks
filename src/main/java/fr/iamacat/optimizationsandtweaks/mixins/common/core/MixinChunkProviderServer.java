@@ -74,64 +74,6 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
             }
         }
     }
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public Chunk loadChunk(int par1, int par2, Runnable runnable) {
-        long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
-        this.chunksToUnload.remove(k);
-
-        // Check if the chunk is already loaded
-        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
-        if (chunk != null) {
-            // Chunk is already loaded, no need to load it again
-            if (runnable != null) {
-                runnable.run();
-            }
-            return chunk;
-        }
-
-        // Use the class-level set to keep track of chunks that are currently being loaded
-        if (loadingChunks.contains(k)) {
-            // Chunk is already being loaded, no need to load it again
-            if (runnable != null) {
-                runnable.run();
-            }
-            return null;
-        }
-
-        AnvilChunkLoader loader = null;
-
-        if (this.currentChunkLoader instanceof AnvilChunkLoader) {
-            loader = (AnvilChunkLoader) this.currentChunkLoader;
-        }
-
-        // We can only use the queue for already generated chunks
-        if (loader != null && loader.chunkExists(this.worldObj, par1, par2)) {
-            if (runnable != null) {
-                ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, (ChunkProviderServer)(Object)this, par1, par2, () -> {
-                    runnable.run();
-                    loadingChunks.remove(k);
-                });
-                loadingChunks.add(k);
-                return null;
-            } else {
-                chunk = ChunkIOExecutor.syncChunkLoad(this.worldObj, loader, (ChunkProviderServer)(Object)this, par1, par2);
-            }
-        } else {
-            chunk = this.originalLoadChunk(par1, par2);
-        }
-
-        // If we didn't load the chunk async and have a callback, run it now
-        if (runnable != null) {
-            runnable.run();
-        }
-
-        return chunk;
-    }
-
 
     @Shadow
     public Chunk originalLoadChunk(int p_73158_1_, int p_73158_2_)
@@ -191,5 +133,40 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     {
         Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
         return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(p_73154_1_, p_73154_2_)) : chunk;
+    }
+    @Overwrite
+    public synchronized Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
+        return loadChunk(p_73158_1_, p_73158_2_, null);
+    }
+
+    @Overwrite(remap = false)
+    public Chunk loadChunk(int par1, int par2, Runnable runnable) {
+        long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
+        this.chunksToUnload.remove(k);
+        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
+        AnvilChunkLoader loader = null;
+
+        if (this.currentChunkLoader instanceof AnvilChunkLoader) {
+            loader = (AnvilChunkLoader) this.currentChunkLoader;
+        }
+
+        // We can only use the queue for already generated chunks
+        if (chunk == null && loader != null && loader.chunkExists(this.worldObj, par1, par2)) {
+            if (runnable != null) {
+                ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, (ChunkProviderServer) (Object)this, par1, par2, runnable);
+                return null;
+            } else {
+                chunk = ChunkIOExecutor.syncChunkLoad(this.worldObj, loader, (ChunkProviderServer) (Object)this, par1, par2);
+            }
+        } else if (chunk == null) {
+            chunk = this.originalLoadChunk(par1, par2);
+        }
+
+        // If we didn't load the chunk async and have a callback run it now
+        if (runnable != null) {
+            runnable.run();
+        }
+
+        return chunk;
     }
 }
