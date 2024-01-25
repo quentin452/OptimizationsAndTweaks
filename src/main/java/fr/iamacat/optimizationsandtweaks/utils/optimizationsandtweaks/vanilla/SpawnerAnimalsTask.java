@@ -51,16 +51,23 @@ public class SpawnerAnimalsTask implements Runnable {
     public void run() {
         assert creatureType != null;
         assert eligibleChunks != null;
+
         int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
         assert world != null;
 
-        ForkJoinPool forkJoinPool = new ForkJoinPool();
-        int totalCreatureCount = forkJoinPool.invoke(new CreatureCountRecursiveTask(world.loadedEntityList.iterator(), creatureType, maxCreatureCount, eligibleChunks));
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() ->
+            countCreaturesAsync(world.loadedEntityList.iterator(), creatureType, maxCreatureCount, eligibleChunks));
+
+        int totalCreatureCount = future.join();
 
         assert result != null;
         result.set(totalCreatureCount);
     }
-
+    private int countCreaturesAsync(Iterator<?> entityIterator, EnumCreatureType creatureType,
+                                    int maxCreatureCount, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        return forkJoinPool.invoke(new CreatureCountRecursiveTask(entityIterator, creatureType, maxCreatureCount, eligibleChunks));
+    }
     private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
         if (creatureType == null) {
             return 0;
