@@ -1,11 +1,13 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,27 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.world.SpawnerAnimals.canCreatureTypeSpawnAtLocation;
 
 public class SpawnerAnimalsTask implements Runnable {
-    private static final ThreadLocalRandom rand = ThreadLocalRandom.current();
-    public static final Set<ChunkCoordinates> optimizationsAndTweaks$eligibleChunksForSpawning = new CopyOnWriteArraySet<>();
-    private static List<Constructor<? extends EntityLiving>> optimizationsAndTweaks$constructorCache = new CopyOnWriteArrayList<>();
-    private final Set<ChunkCoordinates> eligibleChunks;
+    public static final Object2ObjectHashMap optimizationsAndTweaks$eligibleChunksForSpawning = new Object2ObjectHashMap();
+    private static final Thread countThread = new Thread(new SpawnerAnimalsTask(), "SpawnerAnimals-Thread");
+    private static boolean threadStarted = false;
+
     private final EnumCreatureType creatureType;
     private final World world;
+    private final Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks;
     private final AtomicInteger result;
-    private static int chunkX;
-    private static int chunkZ;
-    private static int totalCreatureCount;
-    private static int maxCreatureCount;
-    private static float optimizationsAndTweaks$distanceSquared;
-    private static int optimizationsAndTweaks$spawnedEntities;
-    private static int optimizationsAndTweaks$maxSpawnAttempts;
-    private static int optimizationsAndTweaks$x;
-    private static int optimizationsAndTweaks$z;
-    private static int optimizationsAndTweaks$minY;
-    private static int optimizationsAndTweaks$maxY;
-    private static int optimizationsAndTweaks$y;
-    private static float optimizationsAndTweaks$spawnX;
-    private static float optimizationsAndTweaks$spawnZ;
 
     private SpawnerAnimalsTask() {
         this.creatureType = null;
@@ -51,7 +40,7 @@ public class SpawnerAnimalsTask implements Runnable {
         this.result = null;
     }
 
-    public SpawnerAnimalsTask(EnumCreatureType creatureType, World world, Set<ChunkCoordinates> eligibleChunks, AtomicInteger result) {
+    public SpawnerAnimalsTask(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks, AtomicInteger result) {
         this.creatureType = creatureType;
         this.world = world;
         this.eligibleChunks = eligibleChunks;
@@ -60,188 +49,49 @@ public class SpawnerAnimalsTask implements Runnable {
 
     @Override
     public void run() {
-        Thread countThread = new Thread(this, "SpawnerAnimals-Thread");
-        countThread.start();
-        if (creatureType == null || eligibleChunks == null || world == null || result == null) {
-            System.err.println("SpawnerAnimalsThread.run(): One or more required fields are null:");
-            if (creatureType == null) System.err.println(" - creatureType is null");
-            if (eligibleChunks == null) System.err.println(" - eligibleChunks is null");
-            if (world == null) System.err.println(" - world is null");
-            if (result == null) System.err.println(" - result is null");
-            return;
-        }
-        maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
+        assert creatureType != null;
+        assert eligibleChunks != null;
+        int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
+        assert world != null;
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        totalCreatureCount = forkJoinPool.invoke(new CreatureCountRecursiveTask(world.loadedEntityList.iterator(), creatureType, maxCreatureCount, eligibleChunks));
+        int totalCreatureCount = forkJoinPool.invoke(new CreatureCountRecursiveTask(world.loadedEntityList.iterator(), creatureType, maxCreatureCount, eligibleChunks));
 
+        assert result != null;
         result.set(totalCreatureCount);
-
     }
 
-    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Set<ChunkCoordinates> eligibleChunks) {
+    private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
+        if (creatureType == null) {
+            return 0;
+        }
         return creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
+
 
     public int getTotalCreatureCount() {
         assert result != null;
         return result.get();
     }
 
-    public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Set<ChunkCoordinates> eligibleChunks) {
-        totalCreatureCount = new SpawnerAnimalsTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
-        maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
+    public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
+        if (!threadStarted) {
+            countThread.start();
+            threadStarted = true;
+        }
+
+        int totalCreatureCount = new SpawnerAnimalsTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
+        int maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
         return totalCreatureCount <= maxCreatureCount;
     }
 
-    // do not refactor this method into smaller methods: it can cause Entity is already tracked! errors
-    // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
-    // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
-    public static CompletableFuture<Integer> spawnEntitiesInChunkAsync(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                if (world != null && creatureType != null && chunkCoord != null) {
-                    return spawnEntitiesInChunk(world, creatureType, chunkCoord);
-                } else {
-                    return 0;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 0;
-            }
-        });
-    }
-
-    public static int spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
-        ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
-
-        optimizationsAndTweaks$spawnedEntities = 0;
-        optimizationsAndTweaks$maxSpawnAttempts = 12;
-
-        for (int attempt = 0; attempt < optimizationsAndTweaks$maxSpawnAttempts; attempt++) {
-            int x = chunkPosition.chunkPosX + rand.nextInt(6) - rand.nextInt(6);
-            int y = chunkPosition.chunkPosY + rand.nextInt(1) - rand.nextInt(1);
-            int z = chunkPosition.chunkPosZ + rand.nextInt(6) - rand.nextInt(6);
-
-            optimizationsAndTweaks$spawnX = x + 0.5F;
-            optimizationsAndTweaks$spawnZ = z + 0.5F;
-
-            optimizationsAndTweaks$distanceSquared = optimizationsAndTweaks$spawnX * optimizationsAndTweaks$spawnX + optimizationsAndTweaks$spawnZ * optimizationsAndTweaks$spawnZ;
-
-            if (optimizationsAndTweaks$isSpawnLocationValid(creatureType, world, optimizationsAndTweaks$spawnX, y, optimizationsAndTweaks$spawnZ) && optimizationsAndTweaks$isPlayerCloseEnough(world, optimizationsAndTweaks$spawnX, y, optimizationsAndTweaks$spawnZ)) {
-                BiomeGenBase.SpawnListEntry spawnListEntry = optimizationsAndTweaks$createSpawnListEntry(creatureType, world, x, y, z);
-
-                if (spawnListEntry != null) {
-                    EntityLiving entityLiving = optimizationsAndTweaks$createEntityInstance(world, spawnListEntry);
-
-                    if (entityLiving != null) {
-                        entityLiving.setLocationAndAngles(optimizationsAndTweaks$spawnX, y, optimizationsAndTweaks$spawnZ, rand.nextFloat() * 360.0F, 0.0F);
-
-                        if (optimizationsAndTweaks$canEntitySpawn(entityLiving, world, optimizationsAndTweaks$spawnX, y, optimizationsAndTweaks$spawnZ)) {
-                            world.spawnEntityInWorld(entityLiving);
-
-                            if (!optimizationsAndTweaks$doSpecialSpawn(entityLiving, world, optimizationsAndTweaks$spawnX, y, optimizationsAndTweaks$spawnZ)) {
-                                entityLiving.onSpawnWithEgg(null);
-                            }
-
-                            optimizationsAndTweaks$spawnedEntities++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return optimizationsAndTweaks$spawnedEntities;
-    }
-
-    public static boolean optimizationsAndTweaks$shouldSpawnCreatureType(EnumCreatureType creatureType, WorldServer world, boolean peaceful,
-                                                                   boolean hostile, boolean animals) {
-        return (!creatureType.getPeacefulCreature() || hostile) && (creatureType.getPeacefulCreature() || peaceful)
-            && (!creatureType.getAnimal() || animals)
-            && world.countEntities(creatureType, true) <= creatureType.getMaxNumberOfCreature()
-            * optimizationsAndTweaks$eligibleChunksForSpawning.size() / 256;
-    }
-
-    private static boolean optimizationsAndTweaks$isSpawnLocationValid(EnumCreatureType creatureType, World world, float spawnX, float spawnY,
-                                                                       float spawnZ) {
-        boolean canSpawn = optimizationsAndTweaks$canCreatureTypeSpawnAtLocation(creatureType, world, spawnX, spawnY, spawnZ);
-        return optimizationsAndTweaks$distanceSquared >= 576.0F && canSpawn;
-    }
-
-    private static boolean optimizationsAndTweaks$canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, float spawnX, float spawnY,
-                                                                                 float spawnZ) {
-        return canCreatureTypeSpawnAtLocation(creatureType, world, (int) spawnX, (int) spawnY, (int) spawnZ);
-    }
-
-    private static boolean optimizationsAndTweaks$canEntitySpawn(EntityLiving entity, World world, double x, double y, double z) {
-        Chunk chunk;
-        chunk = world.getChunkFromChunkCoords(MathHelper.floor_double(x) >> 4, MathHelper.floor_double(z) >> 4);
-        if (!chunk.isChunkLoaded) {
-            return false;
-        }
-        Event.Result canSpawn = ForgeEventFactory.canEntitySpawn(entity, world, (float) x, (float) y, (float) z);
-        return canSpawn == Event.Result.ALLOW || (canSpawn == Event.Result.DEFAULT && entity.getCanSpawnHere());
-    }
-
-
-
-    private static boolean optimizationsAndTweaks$doSpecialSpawn(EntityLiving entity, World world, double x, double y, double z) {
-        return ForgeEventFactory.doSpecialSpawn(entity, world, (float) x, (float) y, (float) z);
-    }
-
-    private static EntityLiving optimizationsAndTweaks$createEntityInstance(WorldServer world, BiomeGenBase.SpawnListEntry spawnListEntry) {
-        Class<? extends EntityLiving> entityClass = spawnListEntry.entityClass;
-        Constructor<? extends EntityLiving> constructor = optimizationsAndTweaks$constructorCache.stream()
-            .filter(c -> c.getDeclaringClass() == entityClass)
-            .findFirst()
-            .orElseGet(() -> {
-                try {
-                    Constructor<? extends EntityLiving> newConstructor = entityClass.getConstructor(World.class);
-                    optimizationsAndTweaks$constructorCache.add(newConstructor);
-                    return newConstructor;
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    return null;
-                }
-            });
-
-        if (constructor == null) {
-            return null;
-        }
-
-        try {
-            return constructor.newInstance(world);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
-        }
-    }
-
-    private static BiomeGenBase.SpawnListEntry optimizationsAndTweaks$createSpawnListEntry(EnumCreatureType creatureType, World world, int x, int y, int z) {
-        WorldServer worldServer = (WorldServer) world;
-        return worldServer.spawnRandomCreature(creatureType, x, y, z);
-    }
-
-    private static boolean optimizationsAndTweaks$isPlayerCloseEnough(World world, float spawnX, float spawnY, float spawnZ) {
-        return world.getClosestPlayer(spawnX, spawnY, spawnZ, 24.0D) == null;
-    }
-
-    protected static ChunkPosition func_151350_a(World world, int chunkX, int chunkZ) {
-        optimizationsAndTweaks$x = chunkX * 16 + rand.nextInt(16);
-        optimizationsAndTweaks$z = chunkZ * 16 + rand.nextInt(16);
-        optimizationsAndTweaks$minY = 0;
-        optimizationsAndTweaks$maxY = world.getActualHeight();
-        optimizationsAndTweaks$y = rand.nextInt(optimizationsAndTweaks$maxY - optimizationsAndTweaks$minY) + optimizationsAndTweaks$minY;
-        return new ChunkPosition(optimizationsAndTweaks$x, optimizationsAndTweaks$y, optimizationsAndTweaks$z);
-    }
-
     private static class CreatureCountRecursiveTask extends RecursiveTask<Integer> {
-        private final transient Iterator<?> entityIterator;
+        private final Iterator<?> entityIterator;
         private final EnumCreatureType creatureType;
         private final int maxCreatureCount;
-        private final Set<ChunkCoordinates> eligibleChunks;
+        private final Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks;
 
-        public CreatureCountRecursiveTask(Iterator<?> entityIterator, EnumCreatureType creatureType, int maxCreatureCount, Set<ChunkCoordinates> eligibleChunks) {
+        public CreatureCountRecursiveTask(Iterator<?> entityIterator, EnumCreatureType creatureType, int maxCreatureCount, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
             this.entityIterator = entityIterator;
             this.creatureType = creatureType;
             this.maxCreatureCount = maxCreatureCount;
@@ -250,7 +100,7 @@ public class SpawnerAnimalsTask implements Runnable {
 
         @Override
         protected Integer compute() {
-            totalCreatureCount = 0;
+            int totalCreatureCount = 0;
             Class<?> creatureClass = Objects.requireNonNull(creatureType.getCreatureClass());
 
             while (entityIterator.hasNext() && totalCreatureCount < maxCreatureCount) {
@@ -263,13 +113,14 @@ public class SpawnerAnimalsTask implements Runnable {
             return totalCreatureCount;
         }
 
-        private static boolean isEntityInEligibleChunk(Entity entity, Set<ChunkCoordinates> eligibleChunks) {
+        private boolean isEntityInEligibleChunk(Entity entity, Object2ObjectHashMap<ChunkCoordIntPair,Boolean> eligibleChunks) {
             double entityPosX = entity.posX;
             double entityPosZ = entity.posZ;
-            chunkX = MathHelper.floor_double(entityPosX) >> 4;
-            chunkZ = MathHelper.floor_double(entityPosZ) >> 4;
-            ChunkCoordinates chunkCoord = new ChunkCoordinates(chunkX,0, chunkZ);
-            return eligibleChunks.contains(chunkCoord);
+            int chunkX = MathHelper.floor_double(entityPosX) >> 4;
+            int chunkZ = MathHelper.floor_double(entityPosZ) >> 4;
+            ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(chunkX, chunkZ);
+            Boolean isChunkEligible = eligibleChunks.get(chunkCoord);
+            return isChunkEligible != null && isChunkEligible;
         }
     }
 }
