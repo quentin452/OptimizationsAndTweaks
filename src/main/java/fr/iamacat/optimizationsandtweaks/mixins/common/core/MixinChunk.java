@@ -156,10 +156,8 @@ public class MixinChunk {
     @Unique
     private boolean optimizationsAndTweaks$isTargetEntityValid(Entity sourceEntity, Entity targetEntity,
                                                                AxisAlignedBB aabb, IEntitySelector entitySelector) {
-        return Stream.of(targetEntity)
-            .filter(entity -> entity != sourceEntity)
-            .filter(entity -> entity.boundingBox.intersectsWith(aabb))
-            .anyMatch(entity -> entitySelector == null || entitySelector.isEntityApplicable(entity));
+        return targetEntity != sourceEntity && targetEntity.boundingBox.intersectsWith(aabb)
+            && (entitySelector == null || entitySelector.isEntityApplicable(targetEntity));
     }
     @Unique
     private void optimizationsAndTweaks$addPartsIfValid(Entity sourceEntity, AxisAlignedBB aabb,
@@ -294,27 +292,14 @@ public class MixinChunk {
      * @reason
      */
     @Overwrite
-    public Block getBlock(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
-    {
+    public Block getBlock(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_) {
         Block block = Blocks.air;
 
-        if (p_150810_2_ >> 4 < this.storageArrays.length)
-        {
+        if (p_150810_2_ >> 4 < this.storageArrays.length) {
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[p_150810_2_ >> 4];
 
-            if (extendedblockstorage != null)
-            {
-                try
-                {
-                    block = extendedblockstorage.getBlockByExtId(p_150810_1_, p_150810_2_ & 15, p_150810_3_);
-                }
-                catch (Throwable throwable)
-                {
-                    CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting block");
-                    CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being got");
-                    crashreportcategory.addCrashSectionCallable("Location", () -> CrashReportCategory.getLocationInfo(p_150810_1_, p_150810_2_, p_150810_3_));
-                    throw new ReportedException(crashreport);
-                }
+            if (extendedblockstorage != null) {
+                block = extendedblockstorage.getBlockByExtId(p_150810_1_, p_150810_2_ & 15, p_150810_3_);
             }
         }
 

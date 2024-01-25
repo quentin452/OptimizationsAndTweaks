@@ -1,9 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.crash.CrashReport;
@@ -53,8 +50,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     @Shadow
     public WorldServer worldObj;
     @Shadow
-    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
-
+    private final Set<Long> loadingChunks = Collections.newSetFromMap(new ConcurrentHashMap<>());
     @Shadow
     private Chunk safeLoadChunk(int p_73239_1_, int p_73239_2_) {
         if (this.currentChunkLoader == null) {
@@ -86,14 +82,9 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
     public Chunk loadChunk(int par1, int par2, Runnable runnable) {
         long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
         this.chunksToUnload.remove(k);
-        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
-        AnvilChunkLoader loader = null;
-
-        if (this.currentChunkLoader instanceof AnvilChunkLoader) {
-            loader = (AnvilChunkLoader) this.currentChunkLoader;
-        }
 
         // Check if the chunk is already loaded
+        Chunk chunk = (Chunk) this.loadedChunkHashMap.getValueByKey(k);
         if (chunk != null) {
             // Chunk is already loaded, no need to load it again
             if (runnable != null) {
@@ -102,10 +93,29 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
             return chunk;
         }
 
+        // Use the class-level set to keep track of chunks that are currently being loaded
+        if (loadingChunks.contains(k)) {
+            // Chunk is already being loaded, no need to load it again
+            if (runnable != null) {
+                runnable.run();
+            }
+            return null;
+        }
+
+        AnvilChunkLoader loader = null;
+
+        if (this.currentChunkLoader instanceof AnvilChunkLoader) {
+            loader = (AnvilChunkLoader) this.currentChunkLoader;
+        }
+
         // We can only use the queue for already generated chunks
         if (loader != null && loader.chunkExists(this.worldObj, par1, par2)) {
             if (runnable != null) {
-                ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, (ChunkProviderServer)(Object)this, par1, par2, runnable);
+                ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, (ChunkProviderServer)(Object)this, par1, par2, () -> {
+                    runnable.run();
+                    loadingChunks.remove(k);
+                });
+                loadingChunks.add(k);
                 return null;
             } else {
                 chunk = ChunkIOExecutor.syncChunkLoad(this.worldObj, loader, (ChunkProviderServer)(Object)this, par1, par2);
@@ -121,6 +131,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
 
         return chunk;
     }
+
 
     @Shadow
     public Chunk originalLoadChunk(int p_73158_1_, int p_73158_2_)

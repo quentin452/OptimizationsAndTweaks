@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,12 +42,9 @@ public class MixinEntityAITasks {
         return flag;
     }
 
-    /**
-     * Returns whether two EntityAITaskEntries can be executed concurrently
-     */
     @Shadow
     private boolean areTasksCompatible(EntityAITasks.EntityAITaskEntry p_75777_1_,
-        EntityAITasks.EntityAITaskEntry p_75777_2_) {
+                                       EntityAITasks.EntityAITaskEntry p_75777_2_) {
         return (p_75777_1_.action.getMutexBits() & p_75777_2_.action.getMutexBits()) == 0;
     }
 
@@ -56,7 +54,7 @@ public class MixinEntityAITasks {
      */
     @Overwrite
     public void onUpdateTasks() {
-        ArrayList arraylist = new ArrayList();
+        HashSet arraylist = new HashSet();
         Iterator iterator;
         EntityAITasks.EntityAITaskEntry entityaitaskentry;
 
@@ -126,26 +124,27 @@ public class MixinEntityAITasks {
     private boolean canUse(EntityAITasks.EntityAITaskEntry p_75775_1_) {
         this.theProfiler.startSection("canUse");
 
+        HashSet executingTaskEntriesSet = new HashSet<>(this.executingTaskEntries);
+
         for (Object taskEntry : this.taskEntries) {
             EntityAITasks.EntityAITaskEntry entityaitaskentry = (EntityAITasks.EntityAITaskEntry) taskEntry;
 
             if (entityaitaskentry != p_75775_1_) {
                 if (p_75775_1_.priority >= entityaitaskentry.priority) {
-                    if (this.executingTaskEntries.contains(entityaitaskentry)
+                    if (executingTaskEntriesSet.contains(entityaitaskentry)
                         && !this.areTasksCompatible(p_75775_1_, entityaitaskentry)) {
                         this.theProfiler.endSection();
                         return false;
                     }
-                } else if (this.executingTaskEntries.contains(entityaitaskentry)
+                } else if (executingTaskEntriesSet.contains(entityaitaskentry)
                     && !entityaitaskentry.action.isInterruptible()) {
-                        this.theProfiler.endSection();
-                        return false;
-                    }
+                    this.theProfiler.endSection();
+                    return false;
+                }
             }
         }
 
         this.theProfiler.endSection();
         return true;
     }
-
 }

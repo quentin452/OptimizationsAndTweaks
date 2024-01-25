@@ -90,14 +90,6 @@ public class ThaumcraftWorldGenerator {
 
     public static void applyThresholds(World world, int x, int y, int z, Random random, int value, NodeType type,
         NodeModifier modifier) {
-        int chunkX = x >> 4;
-        int chunkZ = z >> 4;
-
-        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-        if (!chunk.isChunkLoaded) {
-            return;
-        }
         int water = countBlocksAroundPlayer(world, x, y, z, Material.water);
         int lava = countBlocksAroundPlayer(world, x, y, z, Material.lava);
         int stone = countBlocksAroundPlayer(world, x, y, z, Blocks.stone.getMaterial());

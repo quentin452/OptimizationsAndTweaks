@@ -37,11 +37,19 @@ public class MixinBlockGrass {
 
     @Unique
     private boolean optimizationsAndTweaks$isGrassTurningToDirt(World worldIn, int x, int y, int z) {
+        if (!worldIn.blockExists(x, y + 1, z)) {
+            return false;
+        }
+
         return worldIn.getBlockLightValue(x, y + 1, z) < 4 && worldIn.getBlockLightOpacity(x, y + 1, z) > 2;
     }
 
     @Unique
     private boolean optimizationsAndTweaks$canSpreadGrass(World worldIn, int x, int y, int z) {
+        if (!worldIn.blockExists(x, y + 1, z)) {
+            return false;
+        }
+
         return worldIn.getBlockLightValue(x, y + 1, z) >= 9;
     }
 }

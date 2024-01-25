@@ -29,16 +29,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Mixin(value = World.class, priority = 999)
 public abstract class MixinWorld {
     @Shadow
+    public boolean restoringBlockSnapshots = false;
+    @Shadow
     protected final Set activeChunkSet = new TreeSet();
 
+    @Unique
+    private final ThreadLocalRandom optimizationsAndTweaks$rand = ThreadLocalRandom.current();
     @Shadow
-    public Random rand = new Random();
-    @Shadow
-    protected int updateLCG = (rand).nextInt();
+    protected int updateLCG = (optimizationsAndTweaks$rand).nextInt();
 
     @Shadow
     private int ambientTickCountdown;
@@ -139,13 +142,11 @@ public abstract class MixinWorld {
     */
     @Overwrite
     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (blockExists(p_147439_1_, p_147439_2_, p_147439_3_)) {
         if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256) {
             Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
             if (chunk != null) {
                 return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
             }
-        }
         }
         return Blocks.air;
     }
@@ -787,11 +788,21 @@ public abstract class MixinWorld {
             } else if (p_72849_2_ < 0) {
                 return 0;
             } else {
-                return Arrays.stream(EnumFacing.values()).parallel()
-                    .mapToInt(facing -> optimizationsAndTweaks$getChunkBlockLightValue(p_72849_1_ + facing.getFrontOffsetX(),
-                        p_72849_2_ + facing.getFrontOffsetY(), p_72849_3_ + facing.getFrontOffsetZ()))
-                    .max()
-                    .orElse(0);
+                int maxLightValue = 0;
+
+                for (EnumFacing facing : EnumFacing.values()) {
+                    // Exclude EnumFacing.DOWN to prevent negative y values
+                    if (facing != EnumFacing.DOWN) {
+                        int lightValue = optimizationsAndTweaks$getChunkBlockLightValue(
+                            p_72849_1_ + facing.getFrontOffsetX(),
+                            p_72849_2_ + facing.getFrontOffsetY(),
+                            p_72849_3_ + facing.getFrontOffsetZ()
+                        );
+                        maxLightValue = Math.max(maxLightValue, lightValue);
+                    }
+                }
+
+                return maxLightValue;
             }
         } else {
             return 15;
@@ -918,7 +929,7 @@ public abstract class MixinWorld {
     @Unique
     private boolean optimizationsAndTweaks$shouldPlayCaveSound(Block block, int l, int j1, int i1) {
         return block.getMaterial() == Material.air
-            && this.getFullBlockLightValue(l, j1, i1) <= this.rand.nextInt(8)
+            && this.getFullBlockLightValue(l, j1, i1) <= this.optimizationsAndTweaks$rand.nextInt(8)
             && this.getSavedLightValue(EnumSkyBlock.Sky, l, j1, i1) <= 0;
     }
 
@@ -927,8 +938,8 @@ public abstract class MixinWorld {
         EntityPlayer entityplayer = this.getClosestPlayer(l + 0.5D, j1 + 0.5D, i1 + 0.5D, 8.0D);
 
         if (entityplayer != null && entityplayer.getDistanceSq(l + 0.5D, j1 + 0.5D, i1 + 0.5D) > 4.0D) {
-            this.playSoundEffect(l + 0.5D, j1 + 0.5D, i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
-            this.ambientTickCountdown = this.rand.nextInt(12000) + 6000;
+            this.playSoundEffect(l + 0.5D, j1 + 0.5D, i1 + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.optimizationsAndTweaks$rand.nextFloat() * 0.2F);
+            this.ambientTickCountdown = this.optimizationsAndTweaks$rand.nextInt(12000) + 6000;
         }
     }
 
@@ -975,11 +986,11 @@ public abstract class MixinWorld {
 
         if (!this.playerEntities.isEmpty())
         {
-            i = this.rand.nextInt(this.playerEntities.size());
+            i = this.optimizationsAndTweaks$rand.nextInt(this.playerEntities.size());
             entityplayer = (EntityPlayer)this.playerEntities.get(i);
-            j = MathHelper.floor_double(entityplayer.posX) + this.rand.nextInt(11) - 5;
-            k = MathHelper.floor_double(entityplayer.posY) + this.rand.nextInt(11) - 5;
-            l = MathHelper.floor_double(entityplayer.posZ) + this.rand.nextInt(11) - 5;
+            j = MathHelper.floor_double(entityplayer.posX) + this.optimizationsAndTweaks$rand.nextInt(11) - 5;
+            k = MathHelper.floor_double(entityplayer.posY) + this.optimizationsAndTweaks$rand.nextInt(11) - 5;
+            l = MathHelper.floor_double(entityplayer.posZ) + this.optimizationsAndTweaks$rand.nextInt(11) - 5;
             this.func_147451_t(j, k, l);
         }
 
@@ -989,4 +1000,11 @@ public abstract class MixinWorld {
     @Shadow
     protected abstract int func_152379_p();
 
+    @Overwrite
+    public void onEntityAdded(Entity p_72923_1_)
+    {
+        for (Object worldAccess : this.worldAccesses) {
+            ((IWorldAccess) worldAccess).onEntityCreate(p_72923_1_);
+        }
+    }
 }

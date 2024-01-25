@@ -36,14 +36,13 @@ public class MixinPathFinder {
      */
     @Overwrite
     public static int func_82565_a(Entity entity, int x, int y, int z, PathPoint pathPoint, boolean canPassFluids,
-        boolean canOpenDoors, boolean canEnterDoors) {
-        boolean hasTrapdoor = false;
-
+                                   boolean canOpenDoors, boolean canEnterDoors) {
         World world = entity.worldObj;
-
         int pathX = pathPoint.xCoord;
         int pathY = pathPoint.yCoord;
         int pathZ = pathPoint.zCoord;
+
+        boolean hasTrapdoor = false;
 
         for (int l = x; l < x + pathX; ++l) {
             for (int i1 = y; i1 < y + pathY; ++i1) {
@@ -56,51 +55,38 @@ public class MixinPathFinder {
                         } else if (block != Blocks.flowing_water && block != Blocks.water) {
                             if (!canEnterDoors && block == Blocks.wooden_door) {
                                 return 0;
-                            }
-                        } else {
-                            if (canPassFluids) {
+                            } else if (!canPassFluids && block.getMaterial() == Material.water) {
                                 return -1;
-                            }
-                            hasTrapdoor = true;
-                        }
+                            } else if (!block.getBlocksMovement(world, l, i1, j1) && (!canOpenDoors || block != Blocks.wooden_door)) {
+                                int renderType = block.getRenderType();
 
-                        int renderType = block.getRenderType();
+                                if (renderType == 9) {
+                                    int posX = MathHelper.floor_double(entity.posX);
+                                    int posY = MathHelper.floor_double(entity.posY);
+                                    int posZ = MathHelper.floor_double(entity.posZ);
 
-                        if (renderType == 9) {
-                            int posX = MathHelper.floor_double(entity.posX);
-                            int posY = MathHelper.floor_double(entity.posY);
-                            int posZ = MathHelper.floor_double(entity.posZ);
-
-                            if (world.getBlock(posX, posY, posZ)
-                                .getRenderType() != 9
-                                && world.getBlock(posX, posY - 1, posZ)
-                                    .getRenderType() != 9) {
-                                return -3;
-                            }
-                        } else if (!block.getBlocksMovement(world, l, i1, j1)
-                            && (!canOpenDoors || block != Blocks.wooden_door)) {
-                                if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
+                                    if (world.getBlock(posX, posY, posZ).getRenderType() != 9
+                                        && world.getBlock(posX, posY - 1, posZ).getRenderType() != 9) {
+                                        return -3;
+                                    }
+                                } else if (renderType == 11 || block == Blocks.fence_gate || renderType == 32) {
                                     return -3;
-                                }
-
-                                if (block == Blocks.trapdoor) {
-                                    return -4;
-                                }
-
-                                Material material = block.getMaterial();
-
-                                if (material != Material.lava) {
+                                } else if (block.getMaterial() == Material.lava) {
+                                    if (!entity.handleLavaMovement()) {
+                                        return -2;
+                                    }
+                                } else {
                                     return 0;
                                 }
-
-                                if (!entity.handleLavaMovement()) {
-                                    return -2;
-                                }
                             }
+                        } else {
+                            hasTrapdoor = true;
+                        }
                     }
                 }
             }
         }
+
         return hasTrapdoor ? 2 : 1;
     }
 

@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-import fr.iamacat.optimizationsandtweaks.utilsformods.entity.ai.EntityAITasks2;
 
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityLiving extends EntityLivingBase {
@@ -139,8 +138,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
         profiler.endSection();
     }
 
-    public MixinEntityLiving(World p_i1594_1_, World pI15951, EntityAITasks2 tasks, EntityAITasks2 targetTasks,
-        EntityAITasks targetTasks1, EntityLiving entityLiving) {
+    public MixinEntityLiving(World p_i1594_1_, World pI15951,EntityLiving entityLiving) {
         super(p_i1594_1_);
         p_i1595_1_ = pI15951;
         this.entityLiving = entityLiving;

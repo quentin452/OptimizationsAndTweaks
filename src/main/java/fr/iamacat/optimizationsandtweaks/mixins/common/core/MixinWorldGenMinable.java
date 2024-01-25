@@ -117,13 +117,8 @@ public class MixinWorldGenMinable extends WorldGenerator {
             int currentBlockMeta = world.getBlockMetadata(x, y, z);
 
             if (world.isAirBlock(x, y, z) || world.getBlock(x, y, z).isReplaceableOreGen(world, x, y, z, oreGenBlock)) {
-                Stream.of(Blocks.air, replaceBlock)
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .ifPresent(block -> {
-                        world.setBlock(x, y, z, block, currentBlockMeta, 2);
-                        world.setBlockMetadataWithNotify(x, y, z, currentBlockMeta, 2);
-                    });
+                world.setBlock(x, y, z, replaceBlock, mineableBlockMeta, 2);
+                world.setBlockMetadataWithNotify(x, y, z, currentBlockMeta, 2);
             }
         }
     }
