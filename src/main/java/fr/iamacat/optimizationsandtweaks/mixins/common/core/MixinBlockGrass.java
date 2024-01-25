@@ -17,39 +17,22 @@ import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.van
 @Mixin(BlockGrass.class)
 public class MixinBlockGrass {
 
-    /**
-     * @author
-     * @reason
-     */
+    private static final int LIGHT_THRESHOLD_GRASS_TO_DIRT = 4;
+    private static final int LIGHT_THRESHOLD_SPREAD_GRASS = 9;
+
     @Inject(method = "updateTick", at = @At("HEAD"), cancellable = true)
     public void updateTick(World worldIn, int x, int y, int z, Random random, CallbackInfo ci) {
-        if (worldIn.isRemote) {
+        if (worldIn.isRemote || !worldIn.blockExists(x, y + 1, z)) {
             return;
         }
 
-        if (optimizationsAndTweaks$isGrassTurningToDirt(worldIn, x, y, z)) {
+        if (worldIn.getBlockLightValue(x, y + 1, z) < LIGHT_THRESHOLD_GRASS_TO_DIRT &&
+            worldIn.getBlockLightOpacity(x, y + 1, z) > 2) {
             worldIn.setBlock(x, y, z, Blocks.dirt);
-        } else if (optimizationsAndTweaks$canSpreadGrass(worldIn, x, y, z)) {
+        } else if (worldIn.getBlockLightValue(x, y + 1, z) >= LIGHT_THRESHOLD_SPREAD_GRASS) {
             optimizationsAndTweaks$spreadGrass(worldIn, x, y, z, random);
         }
         ci.cancel();
     }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isGrassTurningToDirt(World worldIn, int x, int y, int z) {
-        if (!worldIn.blockExists(x, y + 1, z)) {
-            return false;
-        }
-
-        return worldIn.getBlockLightValue(x, y + 1, z) < 4 && worldIn.getBlockLightOpacity(x, y + 1, z) > 2;
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$canSpreadGrass(World worldIn, int x, int y, int z) {
-        if (!worldIn.blockExists(x, y + 1, z)) {
-            return false;
-        }
-
-        return worldIn.getBlockLightValue(x, y + 1, z) >= 9;
-    }
 }
+

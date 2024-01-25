@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.SpawnerAnimalsTask;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
@@ -14,6 +15,11 @@ import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.SpawnerAnimalsTask.*;
 
@@ -121,13 +127,31 @@ public class MixinPatchSpawnerAnimals {
 
         optimizationsAndTweaks$spawnedEntities = 0;
 
+        List<CompletableFuture<Integer>> spawnEntitiesFutures = new ArrayList<>();
+
         for (EnumCreatureType creatureType : EnumCreatureType.values()) {
             if (optimizationsAndTweaks$shouldSpawnCreatureType(creatureType, world, peaceful, hostile, animals)) {
                 for (ChunkCoordinates chunkCoord : optimizationsAndTweaks$eligibleChunksForSpawning) {
-                    optimizationsAndTweaks$spawnedEntities = optimizationsAndTweaks$spawnEntitiesInChunk(world, creatureType, chunkCoord);
+                    CompletableFuture<Integer> spawnEntitiesFuture = SpawnerAnimalsTask.spawnEntitiesInChunkAsync(world, creatureType, chunkCoord)
+                        .thenApplyAsync(spawnedEntities -> spawnedEntities);
+
+                    spawnEntitiesFutures.add(spawnEntitiesFuture);
                 }
             }
         }
+
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(spawnEntitiesFutures.toArray(new CompletableFuture[0]));
+
+        try {
+            allOf.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        optimizationsAndTweaks$spawnedEntities = spawnEntitiesFutures.stream()
+            .map(CompletableFuture::join)
+            .reduce(Integer::sum)
+            .orElse(0);
 
         return optimizationsAndTweaks$spawnedEntities;
     }

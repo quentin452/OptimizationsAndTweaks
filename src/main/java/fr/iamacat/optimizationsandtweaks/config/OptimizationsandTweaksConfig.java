@@ -411,7 +411,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinPuppetKadz;
-    @Config.Comment("Optimize Chunk ticking")
+    @Config.Comment("Optimize Chunk ticking(You should never disable this,if its disabled it can cause large issues caused by threading)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunk;
@@ -465,7 +465,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockFluidClassic;
-    @Config.Comment("Optimize ChunkProviderServer Class(You should never disable this,if its disabled it can cause large issues caused by threading)")
+    @Config.Comment("Optimize ChunkProviderServer Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinChunkProviderServer;

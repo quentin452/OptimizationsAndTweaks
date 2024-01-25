@@ -142,7 +142,7 @@ public abstract class MixinWorld {
     */
     @Overwrite
     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256) {
+        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256 && this.blockExists(p_147439_1_, p_147439_2_, p_147439_3_)) {
             Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
             if (chunk != null) {
                 return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
@@ -830,16 +830,17 @@ public abstract class MixinWorld {
         if (y >= 256 || y < 0) {
             return 0;
         }
+
         Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-        x &= 15;
-        z &= 15;
 
-        if (chunk == null) {
-            return 0;
+        if (chunk != null) {
+            x &= 15;
+            z &= 15;
+            return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
         }
-        return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
-    }
 
+        return 0;
+    }
 
     /**
      * @author

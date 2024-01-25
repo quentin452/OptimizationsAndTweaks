@@ -14,10 +14,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,14 +22,11 @@ import static net.minecraft.world.SpawnerAnimals.canCreatureTypeSpawnAtLocation;
 
 public class SpawnerAnimalsTask implements Runnable {
     private static final ThreadLocalRandom rand = ThreadLocalRandom.current();
-    public static final Set<ChunkCoordinates> optimizationsAndTweaks$eligibleChunksForSpawning = new HashSet<>();
-    private static final Set<Constructor<? extends EntityLiving>> optimizationsAndTweaks$constructorCache = new HashSet<>();
-    private static final Thread countThread = new Thread(new SpawnerAnimalsTask(), "SpawnerAnimals-Thread");
-    private static boolean threadStarted = false;
-
+    public static final Set<ChunkCoordinates> optimizationsAndTweaks$eligibleChunksForSpawning = new CopyOnWriteArraySet<>();
+    private static List<Constructor<? extends EntityLiving>> optimizationsAndTweaks$constructorCache = new CopyOnWriteArrayList<>();
+    private final Set<ChunkCoordinates> eligibleChunks;
     private final EnumCreatureType creatureType;
     private final World world;
-    private final Set<ChunkCoordinates> eligibleChunks;
     private final AtomicInteger result;
     private static int chunkX;
     private static int chunkZ;
@@ -65,6 +59,8 @@ public class SpawnerAnimalsTask implements Runnable {
 
     @Override
     public void run() {
+        Thread countThread = new Thread(this, "SpawnerAnimals-Thread");
+        countThread.start();
         if (creatureType == null || eligibleChunks == null || world == null || result == null) {
             System.err.println("SpawnerAnimalsThread.run(): One or more required fields are null:");
             if (creatureType == null) System.err.println(" - creatureType is null");
@@ -92,11 +88,6 @@ public class SpawnerAnimalsTask implements Runnable {
     }
 
     public static boolean optimizationsAndTweaks$shouldSpawnCreature(EnumCreatureType creatureType, World world, Set<ChunkCoordinates> eligibleChunks) {
-        if (!threadStarted) {
-            countThread.start();
-            threadStarted = true;
-        }
-
         totalCreatureCount = new SpawnerAnimalsTask(creatureType, world, eligibleChunks, new AtomicInteger()).getTotalCreatureCount();
         maxCreatureCount = optimizationsAndTweaks$getMaxCreatureCount(creatureType, eligibleChunks);
         return totalCreatureCount <= maxCreatureCount;
@@ -105,7 +96,11 @@ public class SpawnerAnimalsTask implements Runnable {
     // do not refactor this method into smaller methods: it can cause Entity is already tracked! errors
     // todo fix Entity is already tracked! errors while refactoring the method into smaller methods
     // why i want to refactor this method into smallers : because for maintanibility, detecting performances bottlenecks
-    public static int optimizationsAndTweaks$spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
+    public static CompletableFuture<Integer> spawnEntitiesInChunkAsync(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
+        return CompletableFuture.supplyAsync(() -> spawnEntitiesInChunk(world, creatureType, chunkCoord));
+    }
+
+    private static int spawnEntitiesInChunk(WorldServer world, EnumCreatureType creatureType, ChunkCoordinates chunkCoord) {
         ChunkPosition chunkPosition = func_151350_a(world, chunkCoord.posX, chunkCoord.posZ);
 
         optimizationsAndTweaks$spawnedEntities = 0;

@@ -33,7 +33,7 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
      * first out)
      */
     @Shadow
-    private Set chunksToUnload = Collections.newSetFromMap(new ConcurrentHashMap());
+    private Set chunksToUnload = Collections.newSetFromMap(new ConcurrentHashMap<>());
     @Shadow
     private Chunk defaultEmptyChunk;
     @Shadow
@@ -128,17 +128,30 @@ public abstract class MixinChunkProviderServer implements IChunkProvider {
 
         return chunk;
     }
+
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
-    public Chunk provideChunk(int p_73154_1_, int p_73154_2_)
-    {
+    public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
         Chunk chunk = (Chunk)this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(p_73154_1_, p_73154_2_));
         return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(p_73154_1_, p_73154_2_)) : chunk;
     }
+
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
-    public synchronized Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
+    public Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
         return loadChunk(p_73158_1_, p_73158_2_, null);
     }
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite(remap = false)
     public Chunk loadChunk(int par1, int par2, Runnable runnable) {
         long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);

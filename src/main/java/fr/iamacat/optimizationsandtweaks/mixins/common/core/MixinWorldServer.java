@@ -4,6 +4,7 @@ import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
@@ -210,7 +211,7 @@ public abstract class MixinWorldServer extends World {
 
     @Unique
     private void optimizationsAndTweaks$updateSingleBlockTick(ExtendedBlockStorage extendedblockstorage, int k, int l) {
-        int randomValue = optimizationsAndTweaks$random.nextInt(1013904223);
+        int randomValue = ThreadLocalRandom.current().nextInt(1013904223);
         int j2 = randomValue & 15;
         int k2 = randomValue >> 8 & 15;
         int l2 = randomValue >> 16 & 15;

@@ -2,6 +2,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
@@ -23,6 +24,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chunk.class)
 public class MixinChunk {
@@ -99,6 +103,11 @@ public class MixinChunk {
     /** Contains the current round-robin relight check index, and is implied as the relight check location as well. */
     @Shadow
     private int queuedLightChecks;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void initializeThreadSafeList(CallbackInfo ci) {
+        entityLists = new CopyOnWriteArrayList[]{new CopyOnWriteArrayList<>()};
+    }
 
     public MixinChunk(int xPosition, int zPosition) {
         this.xPosition = xPosition;
