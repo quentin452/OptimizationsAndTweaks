@@ -61,6 +61,9 @@ public class SpawnerAnimalsTask implements Runnable {
         return forkJoinPool.invoke(new CreatureCountRecursiveTask(entityIterator, creatureType, maxCreatureCount, eligibleChunks));
     }
     private static int optimizationsAndTweaks$getMaxCreatureCount(EnumCreatureType creatureType, Object2ObjectHashMap<ChunkCoordIntPair, Boolean> eligibleChunks) {
+        if (creatureType == null) {
+            return 0;
+        }
         return creatureType.getMaxNumberOfCreature() * eligibleChunks.size() / 256;
     }
 
