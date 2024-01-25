@@ -149,15 +149,18 @@ public class MixinPatchSpawnerAnimals {
                     }
                 }
 
-                spawnedEntities += CompletableFuture.allOf(spawnTasks.toArray(new CompletableFuture[0]))
-                    .thenApply(v -> spawnTasks.stream().mapToInt(CompletableFuture::join).sum())
-                    .join();
+                List<CompletableFuture<Integer>> allTasks = new ArrayList<>(spawnTasks);
+
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(allTasks.toArray(new CompletableFuture[0]));
+
+                allOf.join();
+
+                spawnedEntities += allTasks.stream().mapToInt(CompletableFuture::join).sum();
             }
         }
 
         return spawnedEntities;
     }
-
     @Unique
     private void optimizationsAndTweaks$clearEligibleChunksForSpawning() {
         optimizationsAndTweaks$eligibleChunksForSpawning.clear();
