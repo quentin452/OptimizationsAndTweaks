@@ -8,8 +8,6 @@ import net.minecraft.world.gen.ChunkProviderFlat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import static net.minecraft.world.WorldType.FLAT;
-
 @Mixin(WorldType.class)
 public class MixinWorldType {
     /**
@@ -19,7 +17,6 @@ public class MixinWorldType {
     @Overwrite(remap = false)
     public IChunkProvider getChunkGenerator(World world, String generatorOptions)
     {
-        WorldType worldType = new WorldType(generatorOptions);
-        return (worldType.equals(FLAT) ? new ChunkProviderFlat(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions) : new ChunkProviderGenerateTwo(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled()));
+        return (this.equals(WorldType.FLAT) ? new ChunkProviderFlat(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions) : new ChunkProviderGenerateTwo(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled()));
     }
 }
