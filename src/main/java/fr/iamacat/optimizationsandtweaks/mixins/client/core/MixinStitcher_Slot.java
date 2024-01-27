@@ -67,7 +67,6 @@ public class MixinStitcher_Slot {
                 if (i == this.width && j == this.height)
                 {
                     this.holder = p_94182_1_;
-                    return true;
                 }
                 else
                 {
@@ -118,8 +117,8 @@ public class MixinStitcher_Slot {
                     }
                     while (!slot.addSlot(p_94182_1_));
 
-                    return true;
                 }
+                return true;
             }
             else
             {
