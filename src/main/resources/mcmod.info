@@ -3,7 +3,7 @@
   "modid": "optimizationsandtweaks",
   "name": "Optimizations and Tweaks",
   "description": "Just a mods targetted on Optimizations ,Tweaking and Bugfixings.",
-  "version": "0.8.7.4.2",
+  "version": "${modVersion}",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",
