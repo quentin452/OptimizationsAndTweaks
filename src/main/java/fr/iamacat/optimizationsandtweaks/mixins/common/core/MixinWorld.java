@@ -750,7 +750,7 @@ public abstract class MixinWorld {
             Material blockMaterial = block.getMaterial();
 
             if (blockMaterial.blocksMovement() && blockMaterial != Material.leaves
-                && !block.isFoliage(world, x, k, z)) {
+                && world != null && !block.isFoliage(world, x, k, z)) {
                 return k + 1;
             }
         }
