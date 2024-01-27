@@ -18,18 +18,18 @@ import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static net.minecraft.world.biome.BiomeGenBase.*;
 
 @Mixin(WorldChunkManager.class)
 public class MixinWorldChunkManager {
     @Shadow
-    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
+    private static final List<BiomeGenBase> allowedBiomes = Collections.synchronizedList(
+        new ArrayList<>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills))
+    );
     @Shadow
     private GenLayer genBiomes;
     /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
@@ -80,12 +80,15 @@ public class MixinWorldChunkManager {
     {
         return this.biomeCache.getBiomeGenAt(p_76935_1_, p_76935_2_);
     }
-
+    @Unique
+    private static List<BiomeGenBase> getAllowedBiomes() {
+        return allowedBiomes;
+    }
     /**
      * Returns a list of rainfall values for the specified blocks. Args: listToReuse, x, z, width, length.
      */
     @Overwrite
-    public float[] getRainfall(float[] p_76936_1_, int p_76936_2_, int p_76936_3_, int p_76936_4_, int p_76936_5_)
+    public synchronized float[] getRainfall(float[] p_76936_1_, int p_76936_2_, int p_76936_3_, int p_76936_4_, int p_76936_5_)
     {
         IntCache.resetIntCache();
 
