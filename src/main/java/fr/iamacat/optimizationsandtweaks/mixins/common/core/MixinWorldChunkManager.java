@@ -299,7 +299,7 @@ public class MixinWorldChunkManager {
         this.biomeCache.cleanupCache();
     }
 
-    @Overwrite
+    @Overwrite(remap = false)
     public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)
     {
         WorldTypeEvent.InitBiomeGens event = new WorldTypeEvent.InitBiomeGens(worldType, seed, original);
