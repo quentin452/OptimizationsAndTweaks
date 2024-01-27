@@ -184,7 +184,7 @@ public abstract class MixinMinecraftServer {
      * @reason
      */
     @Overwrite
-    public void updateTimeLightAndEntities() {
+    public synchronized void updateTimeLightAndEntities() {
         this.theProfiler.startSection("levels");
         net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
         int i;

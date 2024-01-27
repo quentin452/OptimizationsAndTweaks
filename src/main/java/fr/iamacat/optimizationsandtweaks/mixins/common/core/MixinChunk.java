@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,6 +12,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
@@ -19,6 +21,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -201,6 +206,86 @@ public class MixinChunk {
                 }
             }
         }
+    }
+
+    @Overwrite
+    public synchronized void addEntity(Entity p_76612_1_)
+    {
+        this.hasEntities = true;
+        int i = MathHelper.floor_double(p_76612_1_.posX / 16.0D);
+        int j = MathHelper.floor_double(p_76612_1_.posZ / 16.0D);
+
+        if (i != this.xPosition || j != this.zPosition)
+        {
+            logger.warn("Wrong location! " + p_76612_1_ + " (at " + i + ", " + j + " instead of " + this.xPosition + ", " + this.zPosition + ")");
+            Thread.dumpStack();
+        }
+
+        int k = MathHelper.floor_double(p_76612_1_.posY / 16.0D);
+
+        if (k < 0)
+        {
+            k = 0;
+        }
+
+        if (k >= this.entityLists.length)
+        {
+            k = this.entityLists.length - 1;
+        }
+
+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(p_76612_1_, this.xPosition, this.zPosition, p_76612_1_.chunkCoordX, p_76612_1_.chunkCoordZ));
+        p_76612_1_.addedToChunk = true;
+        p_76612_1_.chunkCoordX = this.xPosition;
+        p_76612_1_.chunkCoordY = k;
+        p_76612_1_.chunkCoordZ = this.zPosition;
+        this.entityLists[k].add(p_76612_1_);
+    }
+    @Overwrite
+    public synchronized void removeEntityAtIndex(Entity p_76608_1_, int p_76608_2_)
+    {
+        if (p_76608_2_ < 0)
+        {
+            p_76608_2_ = 0;
+        }
+
+        if (p_76608_2_ >= this.entityLists.length)
+        {
+            p_76608_2_ = this.entityLists.length - 1;
+        }
+
+        this.entityLists[p_76608_2_].remove(p_76608_1_);
+    }
+    @Overwrite
+    public synchronized void onChunkLoad()
+    {
+        this.isChunkLoaded = true;
+        this.worldObj.func_147448_a(this.chunkTileEntityMap.values());
+
+        for (List entityList : this.entityLists) {
+
+            for (Object o : entityList) {
+                Entity entity = (Entity) o;
+                entity.onChunkLoad();
+            }
+
+            this.worldObj.addLoadedEntities(entityList);
+        }
+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load((Chunk)(Object)this));
+    }
+    @Overwrite
+    public synchronized void onChunkUnload()
+    {
+        this.isChunkLoaded = false;
+
+        for (Object o : this.chunkTileEntityMap.values()) {
+            TileEntity tileentity = (TileEntity) o;
+            this.worldObj.func_147457_a(tileentity);
+        }
+
+        for (List entityList : this.entityLists) {
+            this.worldObj.unloadEntities(entityList);
+        }
+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload((Chunk)(Object)this));
     }
 
     /**

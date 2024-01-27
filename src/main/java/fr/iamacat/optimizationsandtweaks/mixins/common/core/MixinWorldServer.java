@@ -107,7 +107,7 @@ public abstract class MixinWorldServer extends World {
      * @reason optimize getPendingBlockUpdates from WorldServer to reduce Tps lags
      */
     @Overwrite
-    public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
+    public synchronized List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
         List<NextTickListEntry> pendingBlockUpdates = optimizationsAndTweaks$collectPendingBlockUpdates(p_72920_1_, p_72920_2_);
         optimizationsAndTweaks$removeProcessedEntries(p_72920_2_);
         return pendingBlockUpdates;
@@ -189,6 +189,93 @@ public abstract class MixinWorldServer extends World {
 
             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
+        }
+    }
+    @Overwrite
+    public synchronized boolean tickUpdates(boolean p_72955_1_)
+    {
+        int i = this.pendingTickListEntriesTreeSet.size();
+
+        if (i != this.pendingTickListEntriesHashSet.size())
+        {
+            throw new IllegalStateException("TickNextTick list out of synch");
+        }
+        else
+        {
+            if (i > 1000)
+            {
+                i = 1000;
+            }
+
+            this.theProfiler.startSection("cleaning");
+            NextTickListEntry nextticklistentry;
+
+            for (int j = 0; j < i; ++j)
+            {
+                nextticklistentry = (NextTickListEntry)this.pendingTickListEntriesTreeSet.first();
+
+                if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime())
+                {
+                    break;
+                }
+
+                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
+                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
+                this.pendingTickListEntriesThisTick.add(nextticklistentry);
+            }
+
+            this.theProfiler.endSection();
+            this.theProfiler.startSection("ticking");
+            Iterator iterator = this.pendingTickListEntriesThisTick.iterator();
+
+            while (iterator.hasNext())
+            {
+                nextticklistentry = (NextTickListEntry)iterator.next();
+                iterator.remove();
+                //Keeping here as a note for future when it may be restored.
+                //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
+                //byte b0 = isForced ? 0 : 8;
+                byte b0 = 0;
+
+                if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
+                {
+                    Block block = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+
+                    if (block.getMaterial() != Material.air && Block.isEqualTo(block, nextticklistentry.func_151351_a()))
+                    {
+                        try
+                        {
+                            block.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
+                        }
+                        catch (Throwable throwable1)
+                        {
+                            CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception while ticking a block");
+                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being ticked");
+                            int k;
+
+                            try
+                            {
+                                k = this.getBlockMetadata(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+                            }
+                            catch (Throwable throwable)
+                            {
+                                k = -1;
+                            }
+
+                            CrashReportCategory.func_147153_a(crashreportcategory, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, block, k);
+                            throw new ReportedException(crashreport);
+                        }
+                    }
+                }
+                else
+                {
+                    this.scheduleBlockUpdate(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, nextticklistentry.func_151351_a(), 0);
+                }
+            }
+
+            this.theProfiler.endSection();
+            this.pendingTickListEntriesThisTick.clear();
+            return !this.pendingTickListEntriesTreeSet.isEmpty();
         }
     }
 }

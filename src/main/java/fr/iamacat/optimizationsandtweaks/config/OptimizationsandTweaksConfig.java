@@ -21,7 +21,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinAxisAlignedBB;
 
-    @Config.Comment("Optimize IntCache Class.")
+    @Config.Comment("Optimize IntCache Class.(You should never disable this,if its disabled it can cause large issues caused by threading)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinIntCache;
@@ -217,7 +217,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityEagle;
-    @Config.Comment("Optimize MinecraftServer")
+    @Config.Comment("Optimize MinecraftServer(You should never disable this,if its disabled it can cause large issues caused by threading)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
@@ -260,7 +260,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThreadedFileIOBase;
-    @Config.Comment("Optimize WorldServer")
+    @Config.Comment("Optimize WorldServer(You should never disable this,if its disabled it can cause large issues caused by threading)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldServer;
@@ -830,6 +830,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinAddConfigForLOTRBIOMEIDS;
+    @Config.Comment("Fix Concurrent Modification Exceptions caused by ForgeChunkManager(You should never disable this,if its disabled it can cause large issues caused by threading)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinForgeChunkManager;
+    @Config.Comment("Fix Concurrent Modification Exceptions caused by AnvilChunkLoader(You should never disable this,if its disabled it can cause large issues caused by threading)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAnvilChunkLoader;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenTreeBase class from ObsGreenery mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
