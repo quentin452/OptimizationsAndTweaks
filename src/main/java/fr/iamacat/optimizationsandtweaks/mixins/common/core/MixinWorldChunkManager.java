@@ -27,9 +27,7 @@ import static net.minecraft.world.biome.BiomeGenBase.*;
 @Mixin(WorldChunkManager.class)
 public class MixinWorldChunkManager {
     @Shadow
-    private static final List<BiomeGenBase> allowedBiomes = Collections.synchronizedList(
-        new ArrayList<>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills))
-    );
+    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle, jungleHills));
     @Shadow
     private GenLayer genBiomes;
     /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
@@ -80,10 +78,7 @@ public class MixinWorldChunkManager {
     {
         return this.biomeCache.getBiomeGenAt(p_76935_1_, p_76935_2_);
     }
-    @Unique
-    private static List<BiomeGenBase> getAllowedBiomes() {
-        return allowedBiomes;
-    }
+
     /**
      * Returns a list of rainfall values for the specified blocks. Args: listToReuse, x, z, width, length.
      */
