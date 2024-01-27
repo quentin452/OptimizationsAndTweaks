@@ -35,7 +35,7 @@ public class MixinIntCache {
     private static Queue<int[]> optimizationsAndTweaks$inUseLargeArrays = new ConcurrentLinkedQueue<>();
 
     @Overwrite
-    public static int[] getIntCache(int p_76445_0_) {
+    public static synchronized int[] getIntCache(int p_76445_0_) {
         int[] aint;
 
         if (p_76445_0_ <= 256) {
@@ -77,7 +77,7 @@ public class MixinIntCache {
      * @reason
      */
     @Overwrite
-    public static void resetIntCache() {
+    public static synchronized void resetIntCache() {
         optimizationsAndTweaks$freeLargeArrays.addAll(optimizationsAndTweaks$inUseLargeArrays);
         optimizationsAndTweaks$inUseLargeArrays.clear();
 
