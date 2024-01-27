@@ -83,6 +83,10 @@ public class OptimizationsandTweaksConfig {
     @Config.RangeInt(min = 1, max = 100)
     @Config.RequiresWorldRestart
     public static int batchsize;
+    @Config.Comment("Optimize WorldChunkManager class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldChunkManager;
     @Config.Comment("Optimize MixinEntitySquid class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

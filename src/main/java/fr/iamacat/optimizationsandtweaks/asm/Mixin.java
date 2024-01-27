@@ -403,6 +403,8 @@ public enum Mixin implements IMixin {
         "core.MixinLaunchClassLoader"),
     common_core_entity_MixinEntitySquid(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntitySquid,
         "core.entity.MixinEntitySquid"),
+    common_core_MixinWorldChunkManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldChunkManager,
+        "core.MixinWorldChunkManager"),
     common_core_MixinEntityAITasks(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITasks,
         "core.MixinEntityAITasks"),
 
