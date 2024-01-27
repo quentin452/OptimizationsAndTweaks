@@ -1,10 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.DataWatcher;
@@ -13,15 +11,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ReportedException;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.io.IOException;
+import java.util.*;
 
 @Mixin(value = DataWatcher.class, priority = 999)
 public class MixinDataWatcher {
@@ -31,15 +28,13 @@ public class MixinDataWatcher {
     /** When isBlank is true the DataWatcher is not watching any objects */
     @Shadow
     private boolean isBlank = true;
-    @Shadow
-    private static final HashMap dataTypes = new HashMap();
-    @Shadow
-    private final Map watchedObjects = new HashMap();
+    @Unique
+    private static final ConcurrentHashMapV8 optimizationsAndTweaks$dataTypes = new ConcurrentHashMapV8();
+    @Unique
+    private final ConcurrentHashMapV8 optimizationsAndTweaks$watchedObjects = new ConcurrentHashMapV8();
     /** true if one or more object was changed */
     @Shadow
     private boolean objectChanged;
-    @Shadow
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public MixinDataWatcher(Entity p_i45313_1_) {
         this.field_151511_a = p_i45313_1_;
@@ -51,26 +46,24 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public void addObject(int p_75682_1_, Object p_75682_2_) {
-        Integer integer = (Integer) dataTypes.get(p_75682_2_.getClass());
+        synchronized (optimizationsAndTweaks$watchedObjects) {
+        Integer integer = (Integer) optimizationsAndTweaks$dataTypes.get(p_75682_2_.getClass());
 
         if (integer == null) {
             throw new IllegalArgumentException("Unknown data type: " + p_75682_2_.getClass());
         } else if (p_75682_1_ > 31) {
             throw new IllegalArgumentException("Data value id is too big with " + p_75682_1_ + "! (Max is " + 31 + ")");
-        } else if (this.watchedObjects.containsKey(p_75682_1_)) {
+        } else if (this.optimizationsAndTweaks$watchedObjects.containsKey(p_75682_1_)) {
             throw new IllegalArgumentException("Duplicate id value for " + p_75682_1_ + "!");
         } else {
             DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(
                 integer,
                 p_75682_1_,
                 p_75682_2_);
-            this.lock.writeLock()
-                .lock();
-            this.watchedObjects.put(p_75682_1_, watchableobject);
-            this.lock.writeLock()
-                .unlock();
+
+            this.optimizationsAndTweaks$watchedObjects.put(p_75682_1_, watchableobject);
             this.isBlank = false;
-        }
+        } }
     }
 
     /**
@@ -78,13 +71,11 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public void addObjectByDataType(int p_82709_1_, int p_82709_2_) {
+        synchronized (optimizationsAndTweaks$watchedObjects) {
         DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, null);
-        this.lock.writeLock()
-            .lock();
-        this.watchedObjects.put(p_82709_1_, watchableobject);
-        this.lock.writeLock()
-            .unlock();
+        this.optimizationsAndTweaks$watchedObjects.put(p_82709_1_, watchableobject);
         this.isBlank = false;
+        }
     }
 
     /**
@@ -102,9 +93,10 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public short getWatchableObjectShort(int p_75693_1_) {
+        synchronized (optimizationsAndTweaks$watchedObjects) {
         return (Short) this.optimizationsAndTweaks$getWatchedObject(p_75693_1_)
             .getObject();
-    }
+    }  }
 
     /**
      * gets a watchable object and returns it as a Integer
@@ -144,10 +136,11 @@ public class MixinDataWatcher {
      */
     @Unique
     public DataWatcher.WatchableObject optimizationsAndTweaks$getWatchedObject(int p_75691_1_) {
-        DataWatcher.WatchableObject watchableobject = null;
+        synchronized (optimizationsAndTweaks$watchedObjects) {
+        DataWatcher.WatchableObject watchableobject;
 
         try {
-            watchableobject = (DataWatcher.WatchableObject) this.watchedObjects.get(p_75691_1_);
+            watchableobject = (DataWatcher.WatchableObject) this.optimizationsAndTweaks$watchedObjects.get(p_75691_1_);
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting synched entity data");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Synched entity data");
@@ -156,13 +149,14 @@ public class MixinDataWatcher {
         }
 
         return watchableobject;
-    }
+    } }
 
     /**
      * updates an already existing object
      */
     @Overwrite
     public void updateObject(int p_75692_1_, Object p_75692_2_) {
+        synchronized (optimizationsAndTweaks$watchedObjects) {
         DataWatcher.WatchableObject watchableobject = this.optimizationsAndTweaks$getWatchedObject(p_75692_1_);
 
         if (ObjectUtils.notEqual(p_75692_2_, watchableobject.getObject())) {
@@ -170,7 +164,7 @@ public class MixinDataWatcher {
             this.field_151511_a.func_145781_i(p_75692_1_);
             watchableobject.setWatched(true);
             this.objectChanged = true;
-        }
+        }  }
     }
 
     /**
@@ -212,13 +206,11 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public List getChanged() {
+        synchronized (optimizationsAndTweaks$watchedObjects) {
         ArrayList arraylist = null;
 
         if (this.objectChanged) {
-            this.lock.readLock()
-                .lock();
-
-            for (Object o : this.watchedObjects.values()) {
+            for (Object o : this.optimizationsAndTweaks$watchedObjects.values()) {
                 DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
 
                 if (watchableobject.isWatched()) {
@@ -231,13 +223,10 @@ public class MixinDataWatcher {
                     arraylist.add(watchableobject);
                 }
             }
-
-            this.lock.readLock()
-                .unlock();
         }
-
         this.objectChanged = false;
         return arraylist;
+        }
     }
 
     /**
@@ -246,16 +235,12 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public void func_151509_a(PacketBuffer p_151509_1_) throws IOException {
-        this.lock.readLock()
-            .lock();
 
-        for (Object o : this.watchedObjects.values()) {
+        for (Object o : this.optimizationsAndTweaks$watchedObjects.values()) {
             DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
             writeWatchableObjectToPacketBuffer(p_151509_1_, watchableobject);
         }
 
-        this.lock.readLock()
-            .unlock();
         p_151509_1_.writeByte(127);
     }
 
@@ -266,11 +251,9 @@ public class MixinDataWatcher {
     @Overwrite
     public List getAllWatched() {
         ArrayList arraylist = null;
-        this.lock.readLock()
-            .lock();
         DataWatcher.WatchableObject watchableobject;
 
-        for (Iterator iterator = this.watchedObjects.values()
+        for (Iterator iterator = this.optimizationsAndTweaks$watchedObjects.values()
             .iterator(); iterator.hasNext(); arraylist.add(watchableobject)) {
             watchableobject = (DataWatcher.WatchableObject) iterator.next();
 
@@ -278,9 +261,6 @@ public class MixinDataWatcher {
                 arraylist = new ArrayList();
             }
         }
-
-        this.lock.readLock()
-            .unlock();
         return arraylist;
     }
 
@@ -378,22 +358,17 @@ public class MixinDataWatcher {
     @SideOnly(Side.CLIENT)
     @Overwrite
     public void updateWatchedObjectsFromList(List p_75687_1_) {
-        this.lock.writeLock()
-            .lock();
-
+        synchronized (optimizationsAndTweaks$watchedObjects) {
         for (Object o : p_75687_1_) {
             DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject) o;
-            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject) this.watchedObjects
+            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject) this.optimizationsAndTweaks$watchedObjects
                 .get(watchableobject.getDataValueId());
 
             if (watchableobject1 != null) {
                 watchableobject1.setObject(watchableobject.getObject());
                 this.field_151511_a.func_145781_i(watchableobject.getDataValueId());
             }
-        }
-
-        this.lock.writeLock()
-            .unlock();
+        } }
         this.objectChanged = true;
     }
 
@@ -408,12 +383,12 @@ public class MixinDataWatcher {
     }
 
     static {
-        dataTypes.put(Byte.class, 0);
-        dataTypes.put(Short.class, 1);
-        dataTypes.put(Integer.class, 2);
-        dataTypes.put(Float.class, 3);
-        dataTypes.put(String.class, 4);
-        dataTypes.put(ItemStack.class, 5);
-        dataTypes.put(ChunkCoordinates.class, 6);
+        optimizationsAndTweaks$dataTypes.put(Byte.class, 0);
+        optimizationsAndTweaks$dataTypes.put(Short.class, 1);
+        optimizationsAndTweaks$dataTypes.put(Integer.class, 2);
+        optimizationsAndTweaks$dataTypes.put(Float.class, 3);
+        optimizationsAndTweaks$dataTypes.put(String.class, 4);
+        optimizationsAndTweaks$dataTypes.put(ItemStack.class, 5);
+        optimizationsAndTweaks$dataTypes.put(ChunkCoordinates.class, 6);
     }
 }
