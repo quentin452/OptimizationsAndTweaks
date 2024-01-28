@@ -74,8 +74,6 @@ public class MixinFixCascadingFromShinColleWorldGen implements IWorldGenerator {
                 int posX = x + rand.nextInt(16);
                 int posZ = z + rand.nextInt(16);
                 int posY = world.getTopSolidOrLiquidBlock(posX, posZ);
-
-                // Generate the block directly without threading
                 genPolyGravel.generate(world, rand, posX, posY, posZ);
             }
         }

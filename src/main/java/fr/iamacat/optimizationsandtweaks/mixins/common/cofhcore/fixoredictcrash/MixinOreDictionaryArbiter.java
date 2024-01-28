@@ -87,12 +87,9 @@ public class MixinOreDictionaryArbiter {
      */
     @Overwrite
     public static void registerOreDictionaryEntry(ItemStack var0, String var1) {
-        if (OptimizationsandTweaksConfig.enableMixinOreDictCofhFix) {
-            if (var0 != null && var0.getItem() != null && !Strings.isNullOrEmpty(var1)) {
+        if (OptimizationsandTweaksConfig.enableMixinOreDictCofhFix && (var0 != null && var0.getItem() != null && !Strings.isNullOrEmpty(var1))) {
                 int var2 = OreDictionary.getOreID(var1);
                 oreIDs.put(var1, var2);
-
-                // Check if data structures are already initialized
                 if (oreStacks == null) {
                     oreStacks = new THashMap<>(32);
                 }
@@ -102,8 +99,6 @@ public class MixinOreDictionaryArbiter {
                 if (stackNames == null) {
                     stackNames = new THashMap<>(32);
                 }
-
-                // Wrap the registerOreDictionaryEntry call in a try/catch block
                 try {
                     if (!oreStacks.containsKey(var2)) {
                         oreStacks.put(var2, new ArrayList<>());
@@ -116,16 +111,13 @@ public class MixinOreDictionaryArbiter {
                         stackIDs.put(var3, new ArrayList<>());
                         stackNames.put(var3, new ArrayList<>());
                     }
-
                     stackIDs.get(var3)
                         .add(var2);
                     stackNames.get(var3)
                         .add(var1);
                 } catch (Exception e) {
-                    // Handle the exception here or log it
                     e.printStackTrace();
                 }
-            }
         }
     }
 }

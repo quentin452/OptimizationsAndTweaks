@@ -20,9 +20,6 @@ public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGener
      */
     @Override
     public boolean generate(World world, Random random, int x, int y, int z) {
-        if (OptimizationsandTweaksConfig.enableMixinFixCascadingFromShinColleWorldGen) {
-            return false;
-        }
         return false;
     }
 }
