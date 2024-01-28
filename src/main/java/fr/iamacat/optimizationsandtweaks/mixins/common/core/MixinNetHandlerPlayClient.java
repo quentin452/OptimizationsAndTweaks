@@ -29,6 +29,7 @@ public class MixinNetHandlerPlayClient {
         EntityLivingBase entitylivingbase = (EntityLivingBase) EntityList.createEntityByID(packetIn.func_149025_e(), this.gameController.theWorld);
         if (entitylivingbase == null)
         {
+            // todo : fix this warn (probably caused by usage of CompletableFuture in SpawnerAnimals)
             cpw.mods.fml.common.FMLLog.info("Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!", packetIn.func_149025_e(), d0, d1, d2);
             return;
         }
