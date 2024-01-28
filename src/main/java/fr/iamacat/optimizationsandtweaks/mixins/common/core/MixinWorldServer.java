@@ -274,6 +274,7 @@ public abstract class MixinWorldServer extends World {
      * @reason
      * @method func_147456_g = onTick
      */
+    // todo fix lags caused by ExtendedBlockStorage.getID when using 32 chunks of render distance
     @Overwrite
     public void func_147456_g() {
         super.func_147456_g();
