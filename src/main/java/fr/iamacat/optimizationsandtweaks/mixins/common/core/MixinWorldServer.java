@@ -1,12 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ThreadLocalRandom;
-
-import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -24,20 +17,18 @@ import net.minecraft.util.IntHashMap;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraft.world.storage.ISaveHandler;
-import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DimensionManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
+import java.util.*;
 
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
@@ -276,6 +267,108 @@ public abstract class MixinWorldServer extends World {
             this.theProfiler.endSection();
             this.pendingTickListEntriesThisTick.clear();
             return !this.pendingTickListEntriesTreeSet.isEmpty();
+        }
+    }
+    /**
+     * @author
+     * @reason
+     * @method func_147456_g = onTick
+     */
+    @Overwrite
+    public void func_147456_g() {
+        super.func_147456_g();
+
+        for (Object o : this.activeChunkSet) {
+            processChunk((ChunkCoordIntPair) o);
+        }
+    }
+
+    @Unique
+    private void processChunk(ChunkCoordIntPair chunkCoordIntPair) {
+        int chunkX = chunkCoordIntPair.chunkXPos * 16;
+        int chunkZ = chunkCoordIntPair.chunkZPos * 16;
+        Chunk chunk = this.getChunkFromChunkCoords(chunkCoordIntPair.chunkXPos, chunkCoordIntPair.chunkZPos);
+
+        optimizationsAndTweaks$handleChunk(chunkX, chunkZ, chunk);
+        optimizationsAndTweaks$handleBlockTicks(chunk,chunkX,chunkZ);
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleChunk(int chunkX, int chunkZ, Chunk chunk) {
+        this.theProfiler.startSection("getChunk");
+        this.func_147467_a(chunkX, chunkZ, chunk);
+        this.theProfiler.endStartSection("tickChunk");
+        chunk.func_150804_b(false);
+        this.theProfiler.endStartSection("thunder");
+        optimizationsAndTweaks$handleThunder(chunkX, chunkZ, chunk);
+        this.theProfiler.endStartSection("iceandsnow");
+        optimizationsAndTweaks$handleIceAndSnow(chunkX, chunkZ, chunk);
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleThunder(int chunkX, int chunkZ, Chunk chunk) {
+        if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering()) {
+            this.updateLCG = this.updateLCG * 3 + 1013904223;
+            int i1 = this.updateLCG >> 2;
+            int j1 = chunkX + (i1 & 15);
+            int k1 = chunkZ + (i1 >> 8 & 15);
+            int l1 = this.getPrecipitationHeight(j1, k1);
+
+            if (this.canLightningStrikeAt(j1, l1, k1)) {
+                this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
+            }
+        }
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleIceAndSnow(int chunkX, int chunkZ, Chunk chunk) {
+        if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0) {
+            this.updateLCG = this.updateLCG * 3 + 1013904223;
+            int i1 = this.updateLCG >> 2;
+            int j1 = i1 & 15;
+            int k1 = i1 >> 8 & 15;
+            int l1 = this.getPrecipitationHeight(j1 + chunkX, k1 + chunkZ);
+
+            if (this.isBlockFreezableNaturally(j1 + chunkX, l1 - 1, k1 + chunkZ)) {
+                this.setBlock(j1 + chunkX, l1 - 1, k1 + chunkZ, Blocks.ice);
+            }
+
+            if (this.isRaining() && this.func_147478_e(j1 + chunkX, l1, k1 + chunkZ, true)) {
+                this.setBlock(j1 + chunkX, l1, k1 + chunkZ, Blocks.snow_layer);
+            }
+
+            if (this.isRaining()) {
+                BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + chunkX, k1 + chunkZ);
+
+                if (biomegenbase.canSpawnLightningBolt()) {
+                    this.getBlock(j1 + chunkX, l1 - 1, k1 + chunkZ).fillWithRain(this, j1 + chunkX, l1 - 1, k1 + chunkZ);
+                }
+            }
+        }
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleBlockTicks(Chunk chunk, int chunkX, int chunkZ) {
+        this.theProfiler.endStartSection("tickBlocks");
+        ExtendedBlockStorage[] aextendedblockstorage = chunk.getBlockStorageArray();
+
+        for (ExtendedBlockStorage extendedblockstorage : aextendedblockstorage) {
+            if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
+                for (int i3 = 0; i3 < 3; ++i3) {
+                    optimizationsAndTweaks$handleBlockTick(extendedblockstorage,chunkX,chunkZ);
+                }
+            }
+        }
+
+        this.theProfiler.endSection();
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleBlockTick(ExtendedBlockStorage extendedblockstorage, int chunkX, int chunkZ) {
+        this.updateLCG = this.updateLCG * 3 + 1013904223;
+        int i2 = this.updateLCG >> 2;
+        int j2 = i2 & 15;
+        int k2 = i2 >> 8 & 15;
+        int l2 = i2 >> 16 & 15;
+        Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
+
+        if (block.getTickRandomly()) {
+            block.updateTick(this, j2 + chunkX, l2 + extendedblockstorage.getYLocation(), k2 + chunkZ, this.rand);
         }
     }
 }
