@@ -21,7 +21,7 @@ public class BlockGrass2 {
                 int i1 = x + random.nextInt(3) - 1;
                 int j1 = y + random.nextInt(5) - 3;
                 int k1 = z + random.nextInt(3) - 1;
-
+                if(worldIn.blockExists(i1, j1+1, k1)) {
                 int lightValue = worldIn.getBlockLightValue_do(i1, j1 + 1, k1,true);
                 int lightOpacity = worldIn.getBlockLightOpacity(i1, j1 + 1, k1);
 
@@ -36,7 +36,7 @@ public class BlockGrass2 {
                         worldIn.setBlock(i1, j1, k1, Blocks.grass, 0, 2);
                     }
                 }
-            }
+            } }
         }
     }
 }
