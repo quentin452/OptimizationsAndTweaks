@@ -6,11 +6,17 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.network.play.server.S0FPacketSpawnMob;
+import net.minecraft.network.play.server.S20PacketEntityProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Iterator;
 import java.util.List;
 @Mixin(NetHandlerPlayClient.class)
 public class MixinNetHandlerPlayClient {
@@ -61,4 +67,36 @@ public class MixinNetHandlerPlayClient {
             entitylivingbase.getDataWatcher().updateWatchedObjectsFromList(list);
         }
     }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void handleEntityProperties(S20PacketEntityProperties packetIn) {
+        Entity entity = this.clientWorldController.getEntityByID(packetIn.func_149442_c());
+        if (entity != null) {
+            if (!(entity instanceof EntityLivingBase)) {
+                return;
+            }
+            BaseAttributeMap baseAttributeMap = ((EntityLivingBase) entity).getAttributeMap();
+
+            for (Object object : packetIn.func_149441_d()) {
+                S20PacketEntityProperties.Snapshot snapshot = (S20PacketEntityProperties.Snapshot) object;
+                IAttributeInstance attributeInstance = baseAttributeMap.getAttributeInstanceByName(snapshot.func_151409_a());
+
+                if (attributeInstance == null) {
+                    attributeInstance = baseAttributeMap.registerAttribute(new RangedAttribute(snapshot.func_151409_a(), 0.0D, 2.2250738585072014E-308D, Double.MAX_VALUE));
+                }
+
+                attributeInstance.setBaseValue(snapshot.func_151410_b());
+                attributeInstance.removeAllModifiers();
+
+                for (Object o : snapshot.func_151408_c()) {
+                    AttributeModifier attributeModifier = (AttributeModifier) o;
+                    attributeInstance.applyModifier(attributeModifier);
+                }
+            }
+        }
+    }
+
 }
