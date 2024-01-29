@@ -82,9 +82,12 @@ public class MixinDataWatcher {
      * gets the bytevalue of a watchable object
      */
     @Overwrite
-    public byte getWatchableObjectByte(int p_75683_1_) {
-        return (Byte) this.optimizationsAndTweaks$getWatchedObject(p_75683_1_)
-            .getObject();
+    public byte getWatchableObjectByte(int id) {
+        Object obj = getWatchedObject(id).getObject();
+        if(obj instanceof Integer) {
+            return ((Integer)obj).byteValue();
+        }
+        return (Byte)obj;
     }
 
     /**
@@ -94,7 +97,7 @@ public class MixinDataWatcher {
     @Overwrite
     public short getWatchableObjectShort(int p_75693_1_) {
         synchronized (optimizationsAndTweaks$watchedObjects) {
-        return (Short) this.optimizationsAndTweaks$getWatchedObject(p_75693_1_)
+        return (Short) this.getWatchedObject(p_75693_1_)
             .getObject();
     }  }
 
@@ -103,13 +106,17 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public int getWatchableObjectInt(int p_75679_1_) {
-        return (Integer) this.optimizationsAndTweaks$getWatchedObject(p_75679_1_)
-            .getObject();
+        Object obj = this.getWatchedObject(p_75679_1_).getObject();
+        if (obj instanceof Byte) {
+            return ((Byte)obj).intValue();
+        } else {
+            return (Integer) obj;
+        }
     }
 
     @Overwrite
     public float getWatchableObjectFloat(int p_111145_1_) {
-        return (Float) this.optimizationsAndTweaks$getWatchedObject(p_111145_1_)
+        return (Float) this.getWatchedObject(p_111145_1_)
             .getObject();
     }
 
@@ -118,7 +125,7 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public String getWatchableObjectString(int p_75681_1_) {
-        return (String) this.optimizationsAndTweaks$getWatchedObject(p_75681_1_)
+        return (String) this.getWatchedObject(p_75681_1_)
             .getObject();
     }
 
@@ -127,15 +134,15 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public ItemStack getWatchableObjectItemStack(int p_82710_1_) {
-        return (ItemStack) this.optimizationsAndTweaks$getWatchedObject(p_82710_1_)
+        return (ItemStack) this.getWatchedObject(p_82710_1_)
             .getObject();
     }
 
     /**
      * is threadsafe, unless it throws an exception, then
      */
-    @Unique
-    public DataWatcher.WatchableObject optimizationsAndTweaks$getWatchedObject(int p_75691_1_) {
+    @Overwrite
+    public DataWatcher.WatchableObject getWatchedObject(int p_75691_1_) {
         synchronized (optimizationsAndTweaks$watchedObjects) {
         DataWatcher.WatchableObject watchableobject;
 
@@ -157,7 +164,7 @@ public class MixinDataWatcher {
     @Overwrite
     public void updateObject(int p_75692_1_, Object p_75692_2_) {
         synchronized (optimizationsAndTweaks$watchedObjects) {
-        DataWatcher.WatchableObject watchableobject = this.optimizationsAndTweaks$getWatchedObject(p_75692_1_);
+        DataWatcher.WatchableObject watchableobject = this.getWatchedObject(p_75692_1_);
 
         if (ObjectUtils.notEqual(p_75692_2_, watchableobject.getObject())) {
             watchableobject.setObject(p_75692_2_);
@@ -173,7 +180,7 @@ public class MixinDataWatcher {
      */
     @Overwrite
     public void setObjectWatched(int p_82708_1_) {
-        this.optimizationsAndTweaks$getWatchedObject(p_82708_1_)
+        this.getWatchedObject(p_82708_1_)
             .setWatched(true);
         this.objectChanged = true;
     }
