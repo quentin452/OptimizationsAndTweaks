@@ -69,7 +69,7 @@ public class MixinNetHandlerPlayClient {
     }
     /**
      * @author
-     * @reason
+     * @reason prevent non-living entity to add attributes crash
      */
     @Overwrite
     public void handleEntityProperties(S20PacketEntityProperties packetIn) {
