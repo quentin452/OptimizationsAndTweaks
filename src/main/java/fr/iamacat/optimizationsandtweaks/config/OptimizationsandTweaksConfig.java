@@ -25,10 +25,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinIntCache;
-    @Config.Comment("Optimize EntityTrackerEntry Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityTrackerEntry;
 
     @Config.Comment("Optimize EntityTracker Class.")
     @Config.DefaultBoolean(true)
@@ -196,6 +192,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
+    @Config.Comment("Tweak Init for Basic class from Mythical Creatures")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinBasic;
     @Config.Comment("Tweak BlockBuildCraftFluid class from Buildcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -463,7 +463,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinSaveHandler;
-
     @Config.Comment("Optimize BlockFLuid Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

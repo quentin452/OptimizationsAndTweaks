@@ -161,7 +161,9 @@ public enum Mixin implements IMixin {
     common_buildcraft_MixinBlockBuildCraftFluid(Side.COMMON,
         require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinBlockBuildCraftFluid),
         "buildcraft.MixinBlockBuildCraftFluid"),
-
+    common_mythicalcreatures_MixinBasic(Side.COMMON,
+        require(TargetedMod.MYTICALCREATURES).and(require(TargetedMod.CONFIGHELPER).and(m -> OptimizationsandTweaksConfig.enableMixinBasic)),
+        "mythicalcreatures.MixinBasic"),
     common_sgstreasure_MixinObsidianChestGenerator(Side.COMMON,
         require(TargetedMod.SGSTREASURE).and(m -> OptimizationsandTweaksConfig.enableMixinObsidianChestGenerator),
         "sgstreasure.MixinObsidianChestGenerator"),
@@ -198,8 +200,6 @@ public enum Mixin implements IMixin {
     common_core_MixinModifiableAttributeInstance(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinModifiableAttributeInstance,
         "core.MixinModifiableAttributeInstance"),
-    common_core_MixinEntityTrackerEntry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTrackerEntry,
-        "core.MixinEntityTrackerEntry"),
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),

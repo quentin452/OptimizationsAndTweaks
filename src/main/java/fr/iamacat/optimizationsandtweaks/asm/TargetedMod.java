@@ -172,7 +172,7 @@ public enum TargetedMod implements ITargetedMod {
     ALFHEIM("Alfheim", false, startsWith("Alfheim")),
     AUTOMAGY("Automagy", false, startsWith("Automagy")),
     TUMBLEWEED("tumbleweed", false, startsWith("tumbleweed")),
-
+    MYTICALCREATURES("MythicalC", false, startsWith("MythicalC")),
     APPLIEDENERGISTICS("appliedenergistics2", false, startsWith("appliedenergistics2")),
     AETHER("aether", false, startsWith("aether")),;
 
