@@ -12,9 +12,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
-    common_core_MixinChunkCoordIntPair(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkCoordIntPair && OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinChunkCoordIntPair"),
-
-    common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld && OptimizationsandTweaksConfig.enableMixinChunkCoordIntPair , "core.MixinWorld"),
+    common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld , "core.MixinWorld"),
+    common_core_MixinEventBus(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventBus , "core.MixinEventBus"),
     common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper,
         "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
@@ -71,9 +70,10 @@ public enum Mixin implements IMixin {
         "core.MixinBlockFluidClassic"),
     common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
         "core.MixinChunkProviderServer"),
+  /*  common_core_MixinEntityRegistry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityRegistry,
+        "core.MixinEntityRegistry"),
 
-    server_core_MixinDedicatedServer(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinDedicatedServer,
-        "core.MixinDedicatedServer"),
+   */
     common_core_MixinWorldType(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinWorldType, "core.MixinWorldType"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
@@ -161,9 +161,6 @@ public enum Mixin implements IMixin {
     common_buildcraft_MixinBlockBuildCraftFluid(Side.COMMON,
         require(TargetedMod.BUILDCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinBlockBuildCraftFluid),
         "buildcraft.MixinBlockBuildCraftFluid"),
-    common_mythicalcreatures_MixinBasic(Side.COMMON,
-        require(TargetedMod.MYTICALCREATURES).and(require(TargetedMod.CONFIGHELPER).and(m -> OptimizationsandTweaksConfig.enableMixinBasic)),
-        "mythicalcreatures.MixinBasic"),
     common_sgstreasure_MixinObsidianChestGenerator(Side.COMMON,
         require(TargetedMod.SGSTREASURE).and(m -> OptimizationsandTweaksConfig.enableMixinObsidianChestGenerator),
         "sgstreasure.MixinObsidianChestGenerator"),
@@ -203,6 +200,8 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),
+    common_core_pathfinding_MixinPathNavigate(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
+        "core.pathfinding.MixinPathNavigate"),
     common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
         "core.pathfinding.MixinPathFinder"),
 
@@ -295,8 +294,7 @@ public enum Mixin implements IMixin {
         require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticEvents),
         "fantasticfish.MixinFantasticEvents"),
     common_fantasticfish_MixinFantasticMod(Side.COMMON,
-        require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticMod)
-            .and(require(TargetedMod.CONFIGHELPER)),
+        require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticMod),
         "fantasticfish.MixinFantasticMod"),
     common_eldritchempire_MixinEldritchEmpireRegistration(Side.COMMON,
         require(TargetedMod.ELDRITCHEMPIRE).and(m -> OptimizationsandTweaksConfig.enableMixinEldritchEmpireRegistration)

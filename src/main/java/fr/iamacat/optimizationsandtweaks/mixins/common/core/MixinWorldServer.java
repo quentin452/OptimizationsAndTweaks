@@ -1,9 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.HashSetThreadSafe;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.WorldServerTwo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
@@ -14,12 +14,14 @@ import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
 import net.minecraft.util.IntHashMap;
-import net.minecraft.util.ReportedException;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DimensionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,10 +31,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.WorldServerTwo.*;
+import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
-
     @Unique
     private WorldServer optimizationsAndTweaks$worldServer;
     @Shadow
@@ -44,13 +49,7 @@ public abstract class MixinWorldServer extends World {
     @Shadow
     private final PlayerManager thePlayerManager;
     @Shadow
-    private Set pendingTickListEntriesHashSet;
-    @Shadow
-    private TreeSet pendingTickListEntriesTreeSet;
-    @Shadow
     private final Teleporter worldTeleporter;
-    @Shadow
-    private List pendingTickListEntriesThisTick = new ArrayList();
     @Shadow
     private IntHashMap entityIdMap;
 
@@ -63,14 +62,6 @@ public abstract class MixinWorldServer extends World {
 
         if (this.entityIdMap == null) {
             this.entityIdMap = new IntHashMap();
-        }
-
-        if (this.pendingTickListEntriesHashSet == null) {
-            this.pendingTickListEntriesHashSet = new HashSet();
-        }
-
-        if (this.pendingTickListEntriesTreeSet == null) {
-            this.pendingTickListEntriesTreeSet = new TreeSet();
         }
 
         this.worldTeleporter = new Teleporter(optimizationsAndTweaks$worldServer);
@@ -99,82 +90,33 @@ public abstract class MixinWorldServer extends World {
      */
     @Overwrite
     public synchronized List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
-        List<NextTickListEntry> pendingBlockUpdates = optimizationsAndTweaks$collectPendingBlockUpdates(p_72920_1_, p_72920_2_);
+        List<NextTickListEntry> pendingBlockUpdates = optimizationsAndTweaks$collectPendingBlockUpdates((WorldServer)(Object)this,p_72920_1_, p_72920_2_);
         optimizationsAndTweaks$removeProcessedEntries(p_72920_2_);
         return pendingBlockUpdates;
     }
 
-    @Unique
-    private List<NextTickListEntry> optimizationsAndTweaks$collectPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_) {
-        List<NextTickListEntry> pendingBlockUpdates = new ArrayList<>();
-        ChunkCoordIntPair chunkcoordintpair = p_72920_1_.getChunkCoordIntPair();
-        int minX = (chunkcoordintpair.chunkXPos << 4) - 2;
-        int maxX = minX + 16 + 2;
-        int minZ = (chunkcoordintpair.chunkZPos << 4) - 2;
-        int maxZ = minZ + 16 + 2;
-        for (int i = 0; i < 2; ++i) {
-            if (i == 1 && !this.pendingTickListEntriesThisTick.isEmpty()) {
-                logger.debug("toBeTicked = " + this.pendingTickListEntriesThisTick.size());
-            }
-
-            Iterator<NextTickListEntry> iterator = this.pendingTickListEntriesThisTick.iterator();
-            while (iterator.hasNext()) {
-                NextTickListEntry nextticklistentry = iterator.next();
-                iterator.remove();
-                if (optimizationsAndTweaks$isWithinBounds(nextticklistentry, minX, maxX, minZ, maxZ)) {
-                    if (p_72920_2_) {
-                        iterator.remove();
-                    }
-
-                    pendingBlockUpdates.add(nextticklistentry);
-                }
-            }
-        }
-        return pendingBlockUpdates;
-    }
-
-    @Unique
-    private boolean optimizationsAndTweaks$isWithinBounds(NextTickListEntry entry, int minX, int maxX, int minZ, int maxZ) {
-        return entry.xCoord >= minX && entry.xCoord < maxX &&
-            entry.zCoord >= minZ && entry.zCoord < maxZ;
-    }
-
-    @Unique
-    private void optimizationsAndTweaks$removeProcessedEntries(boolean p_72920_2_) {
-        if (p_72920_2_) {
-            this.pendingTickListEntriesThisTick.clear();
-            this.pendingTickListEntriesTreeSet.clear();
-        }
-    }
 
     /**
      * @author
      * @reason
      */
     @Overwrite
-    public void updateWeather()
-    {
+    public void updateWeather() {
         boolean flag = this.isRaining();
         super.updateWeather();
 
-        if (this.prevRainingStrength != this.rainingStrength)
-        {
+        if (this.prevRainingStrength != this.rainingStrength) {
             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
         }
 
-        if (this.prevThunderingStrength != this.thunderingStrength)
-        {
+        if (this.prevThunderingStrength != this.thunderingStrength) {
             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
         }
 
-        if (flag != this.isRaining())
-        {
-            if (flag)
-            {
+        if (flag != this.isRaining()) {
+            if (flag) {
                 this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(2, 0.0F), this.provider.dimensionId);
-            }
-            else
-            {
+            } else {
                 this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(1, 0.0F), this.provider.dimensionId);
             }
 
@@ -182,93 +124,21 @@ public abstract class MixinWorldServer extends World {
             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
         }
     }
+
     @Overwrite
-    public synchronized boolean tickUpdates(boolean p_72955_1_)
-    {
-        int i = this.pendingTickListEntriesTreeSet.size();
-
-        if (i != this.pendingTickListEntriesHashSet.size())
-        {
-            throw new IllegalStateException("TickNextTick list out of synch");
-        }
-        else
-        {
-            if (i > 1000)
-            {
-                i = 1000;
-            }
-
-            this.theProfiler.startSection("cleaning");
-            NextTickListEntry nextticklistentry;
-
-            for (int j = 0; j < i; ++j)
-            {
-                nextticklistentry = (NextTickListEntry)this.pendingTickListEntriesTreeSet.first();
-
-                if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime())
-                {
-                    break;
-                }
-
-                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
-                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
-                this.pendingTickListEntriesThisTick.add(nextticklistentry);
-            }
-
-            this.theProfiler.endSection();
-            this.theProfiler.startSection("ticking");
-            Iterator iterator = this.pendingTickListEntriesThisTick.iterator();
-
-            while (iterator.hasNext())
-            {
-                nextticklistentry = (NextTickListEntry)iterator.next();
-                iterator.remove();
-                //Keeping here as a note for future when it may be restored.
-                //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
-                //byte b0 = isForced ? 0 : 8;
-                byte b0 = 0;
-
-                if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-                {
-                    Block block = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
-
-                    if (block.getMaterial() != Material.air && Block.isEqualTo(block, nextticklistentry.func_151351_a()))
-                    {
-                        try
-                        {
-                            block.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
-                        }
-                        catch (Throwable throwable1)
-                        {
-                            CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception while ticking a block");
-                            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being ticked");
-                            int k;
-
-                            try
-                            {
-                                k = this.getBlockMetadata(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
-                            }
-                            catch (Throwable throwable)
-                            {
-                                k = -1;
-                            }
-
-                            CrashReportCategory.func_147153_a(crashreportcategory, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, block, k);
-                            throw new ReportedException(crashreport);
-                        }
-                    }
-                }
-                else
-                {
-                    this.scheduleBlockUpdate(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, nextticklistentry.func_151351_a(), 0);
-                }
-            }
-
-            this.theProfiler.endSection();
-            this.pendingTickListEntriesThisTick.clear();
-            return !this.pendingTickListEntriesTreeSet.isEmpty();
-        }
+    public void scheduleBlockUpdate(int p_147464_1_, int p_147464_2_, int p_147464_3_, Block p_147464_4_, int p_147464_5_) {
+        this.scheduleBlockUpdateWithPriority(p_147464_1_, p_147464_2_, p_147464_3_, p_147464_4_, p_147464_5_, 0);
     }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public boolean tickUpdates(boolean p_72955_1_) {
+        return WorldServerTwo.tickUpdates(p_72955_1_, this);
+    }
+
     /**
      * @author
      * @reason
@@ -280,96 +150,86 @@ public abstract class MixinWorldServer extends World {
         super.func_147456_g();
 
         for (Object o : this.activeChunkSet) {
-            processChunk((ChunkCoordIntPair) o);
+            ChunkCoordIntPair chunkCoordIntPair = (ChunkCoordIntPair) o;
+            optimizationsAndTweaks$processChunk(this,chunkCoordIntPair);
         }
     }
 
-    @Unique
-    private void processChunk(ChunkCoordIntPair chunkCoordIntPair) {
-        int chunkX = chunkCoordIntPair.chunkXPos * 16;
-        int chunkZ = chunkCoordIntPair.chunkZPos * 16;
-        Chunk chunk = this.getChunkFromChunkCoords(chunkCoordIntPair.chunkXPos, chunkCoordIntPair.chunkZPos);
-
-        optimizationsAndTweaks$handleChunk(chunkX, chunkZ, chunk);
-        optimizationsAndTweaks$handleBlockTicks(chunk,chunkX,chunkZ);
-    }
-    @Unique
-    private void optimizationsAndTweaks$handleChunk(int chunkX, int chunkZ, Chunk chunk) {
-        this.theProfiler.startSection("getChunk");
-        this.func_147467_a(chunkX, chunkZ, chunk);
-        this.theProfiler.endStartSection("tickChunk");
-        chunk.func_150804_b(false);
-        this.theProfiler.endStartSection("thunder");
-        optimizationsAndTweaks$handleThunder(chunkX, chunkZ, chunk);
-        this.theProfiler.endStartSection("iceandsnow");
-        optimizationsAndTweaks$handleIceAndSnow(chunkX, chunkZ, chunk);
-    }
-    @Unique
-    private void optimizationsAndTweaks$handleThunder(int chunkX, int chunkZ, Chunk chunk) {
-        if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering()) {
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int i1 = this.updateLCG >> 2;
-            int j1 = chunkX + (i1 & 15);
-            int k1 = chunkZ + (i1 >> 8 & 15);
-            int l1 = this.getPrecipitationHeight(j1, k1);
-
-            if (this.canLightningStrikeAt(j1, l1, k1)) {
-                this.addWeatherEffect(new EntityLightningBolt(this, j1, l1, k1));
-            }
+    @Overwrite
+    public void initialize(WorldSettings p_72963_1_) {
+        if (this.entityIdMap == null) {
+            this.entityIdMap = new IntHashMap();
         }
+
+        this.createSpawnPosition(p_72963_1_);
+        super.initialize(p_72963_1_);
     }
-    @Unique
-    private void optimizationsAndTweaks$handleIceAndSnow(int chunkX, int chunkZ, Chunk chunk) {
-        if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0) {
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int i1 = this.updateLCG >> 2;
-            int j1 = i1 & 15;
-            int k1 = i1 >> 8 & 15;
-            int l1 = this.getPrecipitationHeight(j1 + chunkX, k1 + chunkZ);
 
-            if (this.isBlockFreezableNaturally(j1 + chunkX, l1 - 1, k1 + chunkZ)) {
-                this.setBlock(j1 + chunkX, l1 - 1, k1 + chunkZ, Blocks.ice);
+    @Shadow
+    public void createSpawnPosition(WorldSettings p_73052_1_) {
+        if (!this.provider.canRespawnHere()) {
+            this.worldInfo.setSpawnPosition(0, this.provider.getAverageGroundLevel(), 0);
+        } else {
+            if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, p_73052_1_)) return;
+            this.findingSpawnPoint = true;
+            WorldChunkManager worldchunkmanager = this.provider.worldChunkMgr;
+            List list = worldchunkmanager.getBiomesToSpawnIn();
+            Random random = new Random(this.getSeed());
+            ChunkPosition chunkposition = worldchunkmanager.findBiomePosition(0, 0, 256, list, random);
+            int i = 0;
+            int j = this.provider.getAverageGroundLevel();
+            int k = 0;
+
+            if (chunkposition != null) {
+                i = chunkposition.chunkPosX;
+                k = chunkposition.chunkPosZ;
+            } else {
+                logger.warn("Unable to find spawn biome");
             }
 
-            if (this.isRaining() && this.func_147478_e(j1 + chunkX, l1, k1 + chunkZ, true)) {
-                this.setBlock(j1 + chunkX, l1, k1 + chunkZ, Blocks.snow_layer);
-            }
+            int l = 0;
 
-            if (this.isRaining()) {
-                BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + chunkX, k1 + chunkZ);
+            while (!this.provider.canCoordinateBeSpawn(i, k)) {
+                i += random.nextInt(64) - random.nextInt(64);
+                k += random.nextInt(64) - random.nextInt(64);
+                ++l;
 
-                if (biomegenbase.canSpawnLightningBolt()) {
-                    this.getBlock(j1 + chunkX, l1 - 1, k1 + chunkZ).fillWithRain(this, j1 + chunkX, l1 - 1, k1 + chunkZ);
+                if (l == 1000) {
+                    break;
                 }
             }
-        }
-    }
-    @Unique
-    private void optimizationsAndTweaks$handleBlockTicks(Chunk chunk, int chunkX, int chunkZ) {
-        this.theProfiler.endStartSection("tickBlocks");
-        ExtendedBlockStorage[] aextendedblockstorage = chunk.getBlockStorageArray();
 
-        for (ExtendedBlockStorage extendedblockstorage : aextendedblockstorage) {
-            if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
-                for (int i3 = 0; i3 < 3; ++i3) {
-                    optimizationsAndTweaks$handleBlockTick(extendedblockstorage,chunkX,chunkZ);
-                }
+            this.worldInfo.setSpawnPosition(i, j, k);
+            this.findingSpawnPoint = false;
+
+            if (p_73052_1_.isBonusChestEnabled()) {
+                this.createBonusChest();
             }
         }
-
-        this.theProfiler.endSection();
     }
-    @Unique
-    private void optimizationsAndTweaks$handleBlockTick(ExtendedBlockStorage extendedblockstorage, int chunkX, int chunkZ) {
-        this.updateLCG = this.updateLCG * 3 + 1013904223;
-        int i2 = this.updateLCG >> 2;
-        int j2 = i2 & 15;
-        int k2 = i2 >> 8 & 15;
-        int l2 = i2 >> 16 & 15;
-        Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
 
-        if (block.getTickRandomly()) {
-            block.updateTick(this, j2 + chunkX, l2 + extendedblockstorage.getYLocation(), k2 + chunkZ, this.rand);
+    @Shadow
+    public void createBonusChest() {
+        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, rand), ChestGenHooks.getCount(BONUS_CHEST, rand));
+
+        for (int i = 0; i <10; ++i) {
+            int j = this.worldInfo.getSpawnX() + this.rand.nextInt(6) - this.rand.nextInt(6);
+            int k = this.worldInfo.getSpawnZ() + this.rand.nextInt(6) - this.rand.nextInt(6);
+            int l = this.getTopSolidOrLiquidBlock(j, k) +1;
+
+            if (worldgeneratorbonuschest.generate(this, this.rand, j, l, k)) {
+                break;
+            }
         }
+    }
+
+    @Overwrite
+    public synchronized void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_) {
+      WorldServerTwo.scheduleBlockUpdateWithPriority(this,p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_, p_147454_5_, p_147454_6_);
+    }
+
+    @Overwrite
+    public synchronized void func_147446_b(int p_147446_1_, int p_147446_2_, int p_147446_3_, Block p_147446_4_, int p_147446_5_, int p_147446_6_) {
+        WorldServerTwo.func_147446_b(this,p_147446_1_, p_147446_2_, p_147446_3_, p_147446_4_, p_147446_5_, p_147446_6_);
     }
 }

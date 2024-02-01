@@ -54,7 +54,7 @@ public class MixinBiomeGenBase {
      * @reason
      */
     @Overwrite
-    public final void genBiomeTerrain(World p_150560_1_, Random p_150560_2_, Block[] p_150560_3_, byte[] p_150560_4_,
+    public synchronized final void genBiomeTerrain(World p_150560_1_, Random p_150560_2_, Block[] p_150560_3_, byte[] p_150560_4_,
         int p_150560_5_, int p_150560_6_, double p_150560_7_) {
         optimizationsAndTweaks$Initialize(p_150560_2_, p_150560_3_, p_150560_5_, p_150560_6_, p_150560_7_);
         for (optimizationsAndTweaks$l1 = 255; optimizationsAndTweaks$l1 >= 0; --optimizationsAndTweaks$l1) {

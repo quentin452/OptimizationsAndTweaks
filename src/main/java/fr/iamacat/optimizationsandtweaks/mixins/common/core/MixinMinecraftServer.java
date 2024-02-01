@@ -8,10 +8,13 @@ import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkSystem;
@@ -552,7 +555,7 @@ public abstract class MixinMinecraftServer {
      */
 
     @Overwrite
-    public void tick() {
+    public synchronized void tick() {
         long i = System.nanoTime();
         FMLCommonHandler.instance()
             .onPreServerTick();
@@ -584,15 +587,21 @@ public abstract class MixinMinecraftServer {
             this.field_147147_p.func_151318_b()
                 .func_151330_a(agameprofile);
         }
-
         if (this.tickCounter % 900 == 0) {
             this.theProfiler.startSection("save");
 
-            CompletableFuture.runAsync(() -> this.serverConfigManager.saveAllPlayerData());
-            CompletableFuture.runAsync(() -> this.saveAllWorlds(true));
+            ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("SaveThread-%d")
+                .build();
+
+            CompletableFuture<Void> savePlayerDataFuture = CompletableFuture.runAsync(() -> this.serverConfigManager.saveAllPlayerData(), Executors.newCachedThreadPool(namedThreadFactory));
+            CompletableFuture<Void> saveWorldsFuture = CompletableFuture.runAsync(() -> this.saveAllWorlds(true), Executors.newCachedThreadPool(namedThreadFactory));
+
+            CompletableFuture.allOf(savePlayerDataFuture, saveWorldsFuture).join();
 
             this.theProfiler.endSection();
         }
+
 
         this.theProfiler.startSection("tallying");
         this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - i;

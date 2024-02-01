@@ -2,10 +2,7 @@ package fr.iamacat.optimizationsandtweaks.noise;
 
 import java.util.Random;
 
-public class NoiseGeneratorImprovedMultithread {
-
-    // multithreading not enabled due to Height bug
-    // todo fixme
+public class NoiseGeneratorImprovedTwo {
     private final int[] permutations;
     public double xCoord;
     public double yCoord;
@@ -21,11 +18,11 @@ public class NoiseGeneratorImprovedMultithread {
     private static final double[] field_152385_i = new double[] { 0.0D, 0.0D, 0.0D, 0.0D, 1.0D, 1.0D, -1.0D, -1.0D,
         1.0D, 1.0D, -1.0D, -1.0D, 0.0D, 1.0D, 0.0D, -1.0D };
 
-    public NoiseGeneratorImprovedMultithread() {
+    public NoiseGeneratorImprovedTwo() {
         this(new Random());
     }
 
-    public NoiseGeneratorImprovedMultithread(Random p_i45469_1_) {
+    public NoiseGeneratorImprovedTwo(Random p_i45469_1_) {
         this.permutations = new int[512];
         this.xCoord = p_i45469_1_.nextDouble() * 256.0D;
         this.yCoord = p_i45469_1_.nextDouble() * 256.0D;

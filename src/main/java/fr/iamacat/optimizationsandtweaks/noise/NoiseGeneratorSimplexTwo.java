@@ -5,12 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class NoiseGeneratorSimplexMultithread {
+public class NoiseGeneratorSimplexTwo {
 
-    // ATTENTION IT BREAK VANILLA SEED PARITY
-    private final ExecutorService executorService = Executors.newFixedThreadPool(
-        Runtime.getRuntime()
-            .availableProcessors());
     private static final int[][] field_151611_e = new int[][] { { 1, 1, 0 }, { -1, 1, 0 }, { 1, -1, 0 }, { -1, -1, 0 },
         { 1, 0, 1 }, { -1, 0, 1 }, { 1, 0, -1 }, { -1, 0, -1 }, { 0, 1, 1 }, { 0, -1, 1 }, { 0, 1, -1 },
         { 0, -1, -1 } };
@@ -22,11 +18,11 @@ public class NoiseGeneratorSimplexMultithread {
     private static final double field_151609_g = 0.5D * (field_151614_a - 1.0D);
     private static final double field_151615_h = (3.0D - field_151614_a) / 6.0D;
 
-    public NoiseGeneratorSimplexMultithread() {
+    public NoiseGeneratorSimplexTwo() {
         this(new Random());
     }
 
-    public NoiseGeneratorSimplexMultithread(Random p_i45471_1_) {
+    public NoiseGeneratorSimplexTwo(Random p_i45471_1_) {
         this.field_151608_f = new int[512];
         this.field_151612_b = p_i45471_1_.nextDouble() * 256.0D;
         this.field_151613_c = p_i45471_1_.nextDouble() * 256.0D;
@@ -117,85 +113,72 @@ public class NoiseGeneratorSimplexMultithread {
     }
 
     public void func_151606_a(double[] p_151606_1_, double p_151606_2_, double p_151606_4_, int p_151606_6_,
-        int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
-
-        Future<?>[] futures = new Future[p_151606_7_];
+                              int p_151606_7_, double p_151606_8_, double p_151606_10_, double p_151606_12_) {
 
         for (int l = 0; l < p_151606_7_; ++l) {
-            int finalL = l;
-            futures[l] = executorService.submit(() -> {
-                double d5 = (p_151606_4_ + finalL) * p_151606_10_ + this.field_151613_c;
-                for (int i1 = 0; i1 < p_151606_6_; ++i1) {
-                    double d6 = (p_151606_2_ + i1) * p_151606_8_ + this.field_151612_b;
-                    double d10 = (d6 + d5) * field_151609_g;
-                    int j1 = func_151607_a(d6 + d10);
-                    int k1 = func_151607_a(d5 + d10);
-                    double d11 = (j1 + k1) * field_151615_h;
-                    double d12 = j1 - d11;
-                    double d13 = k1 - d11;
-                    double d14 = d6 - d12;
-                    double d15 = d5 - d13;
-                    byte b0;
-                    byte b1;
+            double d5 = (p_151606_4_ + l) * p_151606_10_ + this.field_151613_c;
+            for (int i1 = 0; i1 < p_151606_6_; ++i1) {
+                double d6 = (p_151606_2_ + i1) * p_151606_8_ + this.field_151612_b;
+                double d10 = (d6 + d5) * field_151609_g;
+                int j1 = func_151607_a(d6 + d10);
+                int k1 = func_151607_a(d5 + d10);
+                double d11 = (j1 + k1) * field_151615_h;
+                double d12 = j1 - d11;
+                double d13 = k1 - d11;
+                double d14 = d6 - d12;
+                double d15 = d5 - d13;
+                byte b0;
+                byte b1;
 
-                    if (d14 > d15) {
-                        b0 = 1;
-                        b1 = 0;
-                    } else {
-                        b0 = 0;
-                        b1 = 1;
-                    }
-
-                    double d16 = d14 - b0 + field_151615_h;
-                    double d17 = d15 - b1 + field_151615_h;
-                    double d18 = d14 - 1.0D + 2.0D * field_151615_h;
-                    double d19 = d15 - 1.0D + 2.0D * field_151615_h;
-                    int k = j1 & 255;
-                    int l1 = k1 & 255;
-                    int i2 = this.field_151608_f[k + this.field_151608_f[l1]] % 12;
-                    int j2 = this.field_151608_f[k + b0 + this.field_151608_f[l1 + b1]] % 12;
-                    int k2 = this.field_151608_f[k + 1 + this.field_151608_f[l1 + 1]] % 12;
-                    double d20 = 0.5D - d14 * d14 - d15 * d15;
-                    double d7;
-
-                    if (d20 < 0.0D) {
-                        d7 = 0.0D;
-                    } else {
-                        d20 *= d20;
-                        d7 = d20 * d20 * func_151604_a(field_151611_e[i2], d14, d15);
-                    }
-
-                    double d21 = 0.5D - d16 * d16 - d17 * d17;
-                    double d8;
-
-                    if (d21 < 0.0D) {
-                        d8 = 0.0D;
-                    } else {
-                        d21 *= d21;
-                        d8 = d21 * d21 * func_151604_a(field_151611_e[j2], d16, d17);
-                    }
-
-                    double d22 = 0.5D - d18 * d18 - d19 * d19;
-                    double d9;
-
-                    if (d22 < 0.0D) {
-                        d9 = 0.0D;
-                    } else {
-                        d22 *= d22;
-                        d9 = d22 * d22 * func_151604_a(field_151611_e[k2], d18, d19);
-                    }
-
-                    int i3 = finalL * p_151606_6_ + i1;
-                    p_151606_1_[i3] += 70.0D * (d7 + d8 + d9) * p_151606_12_;
+                if (d14 > d15) {
+                    b0 = 1;
+                    b1 = 0;
+                } else {
+                    b0 = 0;
+                    b1 = 1;
                 }
-            });
-        }
 
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                e.printStackTrace();
+                double d16 = d14 - b0 + field_151615_h;
+                double d17 = d15 - b1 + field_151615_h;
+                double d18 = d14 - 1.0D + 2.0D * field_151615_h;
+                double d19 = d15 - 1.0D + 2.0D * field_151615_h;
+                int k = j1 & 255;
+                int l1 = k1 & 255;
+                int i2 = this.field_151608_f[k + this.field_151608_f[l1]] % 12;
+                int j2 = this.field_151608_f[k + b0 + this.field_151608_f[l1 + b1]] % 12;
+                int k2 = this.field_151608_f[k + 1 + this.field_151608_f[l1 + 1]] % 12;
+                double d20 = 0.5D - d14 * d14 - d15 * d15;
+                double d7;
+
+                if (d20 < 0.0D) {
+                    d7 = 0.0D;
+                } else {
+                    d20 *= d20;
+                    d7 = d20 * d20 * func_151604_a(field_151611_e[i2], d14, d15);
+                }
+
+                double d21 = 0.5D - d16 * d16 - d17 * d17;
+                double d8;
+
+                if (d21 < 0.0D) {
+                    d8 = 0.0D;
+                } else {
+                    d21 *= d21;
+                    d8 = d21 * d21 * func_151604_a(field_151611_e[j2], d16, d17);
+                }
+
+                double d22 = 0.5D - d18 * d18 - d19 * d19;
+                double d9;
+
+                if (d22 < 0.0D) {
+                    d9 = 0.0D;
+                } else {
+                    d22 *= d22;
+                    d9 = d22 * d22 * func_151604_a(field_151611_e[k2], d18, d19);
+                }
+
+                int i3 = l * p_151606_6_ + i1;
+                p_151606_1_[i3] += 70.0D * (d7 + d8 + d9) * p_151606_12_;
             }
         }
     }

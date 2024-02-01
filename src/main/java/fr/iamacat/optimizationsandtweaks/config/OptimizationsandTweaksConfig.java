@@ -107,14 +107,16 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIAttackOnCollide;
-    @Config.Comment("Optimize World Class(Require enableMixinChunkCoordIntPair)")
+    @Config.Comment("Optimize World Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorld;
-    @Config.Comment("Optimize ChunkCoordIntPair Class(Required by enableMixinWorld)")
+
+    @Config.Comment("Optimize EventBus Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkCoordIntPair;
+    public static boolean enableMixinEventBus;
+
     @Config.Comment("Optimize EnchantmentHelper Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -192,10 +194,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityItem;
-    @Config.Comment("Tweak Init for Basic class from Mythical Creatures")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinBasic;
     @Config.Comment("Tweak BlockBuildCraftFluid class from Buildcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -225,10 +223,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMinecraftServer;
-    @Config.Comment("Optimize DedicatedServer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinDedicatedServer;
     @Config.Comment("Optimize FMLClientHandler")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -331,6 +325,12 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockAiry;
+   /* @Config.Comment("Patch EntityRegistry availableIndicies")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityRegistry;
+
+    */
     @Config.Comment("Optimize ThaumcraftHelper class From Extra Utilities")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

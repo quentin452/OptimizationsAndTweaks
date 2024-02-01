@@ -425,22 +425,9 @@ public abstract class MixinMinecraft implements IPlayerUsage {
     @Overwrite
     private void startTimerHackThread() {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-
-        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-            while (running) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(Long.MAX_VALUE);
-                } catch (InterruptedException e) {
-                    Thread.currentThread()
-                        .interrupt();
-                }
-            }
-        });
-
-        future.thenRun(() -> running = false);
-
-        executor.schedule(() -> future.complete(null), Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        executor.schedule(() -> running = false, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
+
     @Shadow
     private void startGame() throws LWJGLException {
         this.gameSettings = new GameSettings(theMinecraft, this.mcDataDir);

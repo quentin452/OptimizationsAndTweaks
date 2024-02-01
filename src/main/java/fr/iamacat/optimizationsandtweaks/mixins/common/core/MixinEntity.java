@@ -85,7 +85,7 @@ public abstract class MixinEntity {
         int j = MathHelper.floor_double(this.posZ);
         if (this.worldObj.blockExists(i, 0, j)) {
             double d0 = (this.boundingBox.maxY - this.boundingBox.minY) * 0.66D;
-            int k = MathHelper.floor_double(this.posY - (double)this.yOffset + d0);
+            int k = MathHelper.floor_double(this.posY - this.yOffset + d0);
             return this.worldObj.getLightBrightness(i, k, j);
         }
         return 0.0F;

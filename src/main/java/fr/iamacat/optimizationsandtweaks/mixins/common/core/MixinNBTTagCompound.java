@@ -3,6 +3,7 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinNBTTagCompound extends NBTBase {
 
     @Shadow
-    private Map tagMap = new HashMap();
+    private Map tagMap = new ConcurrentHashMapV8();
 
     @Shadow
     public boolean hasKey(String key) {

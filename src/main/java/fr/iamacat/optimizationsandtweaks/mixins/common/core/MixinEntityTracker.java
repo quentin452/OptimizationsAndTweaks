@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.HashSetThreadSafe;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -42,7 +43,7 @@ public class MixinEntityTracker {
     private final WorldServer theWorld;
     /** List of tracked entities, used for iteration operations on tracked entities. */
     @Shadow
-    private Set trackedEntities = new HashSet();
+    private Set trackedEntities = new HashSetThreadSafe();
     @Shadow
     private IntHashMap trackedEntityIDs = new IntHashMap();
     @Shadow

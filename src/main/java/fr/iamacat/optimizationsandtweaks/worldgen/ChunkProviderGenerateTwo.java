@@ -6,8 +6,9 @@ import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.Ev
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
-import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.random.MersenneTwister;
+import fr.iamacat.optimizationsandtweaks.noise.NoiseGeneratorPerlinTwo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EnumCreatureType;
@@ -37,24 +38,22 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
-import fr.iamacat.optimizationsandtweaks.noise.NoiseGeneratorOctavesMultithread;
-import fr.iamacat.optimizationsandtweaks.noise.NoiseGeneratorPerlinMultithread;
-import org.spongepowered.asm.mixin.Unique;
+import fr.iamacat.optimizationsandtweaks.noise.NoiseGeneratorOctavesTwo;
 
 public class ChunkProviderGenerateTwo implements IChunkProvider {
 
     // ATTENTION IT BREAK VANILLA SEED PARITY
     /** RNG. */
     private final Random rand;
-    private NoiseGeneratorOctavesMultithread field_147431_j;
-    private NoiseGeneratorOctavesMultithread field_147432_k;
-    private NoiseGeneratorOctavesMultithread field_147429_l;
-    private NoiseGeneratorPerlinMultithread field_147430_m;
+    private NoiseGeneratorOctavesTwo field_147431_j;
+    private NoiseGeneratorOctavesTwo field_147432_k;
+    private NoiseGeneratorOctavesTwo field_147429_l;
+    private NoiseGeneratorPerlinTwo field_147430_m;
     /** A NoiseGeneratorOctaves used in generating terrain */
-    public NoiseGeneratorOctavesMultithread noiseGen5;
+    public NoiseGeneratorOctavesTwo noiseGen5;
     /** A NoiseGeneratorOctaves used in generating terrain */
-    public NoiseGeneratorOctavesMultithread noiseGen6;
-    public NoiseGeneratorOctavesMultithread mobSpawnerNoise;
+    public NoiseGeneratorOctavesTwo noiseGen6;
+    public NoiseGeneratorOctavesTwo mobSpawnerNoise;
     /** Reference to the World object. */
     private final World worldObj;
     /** are map structures going to be generated (e.g., strongholds) */
@@ -79,7 +78,8 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     double[] field_147428_e;
     double[] field_147425_f;
     double[] field_147426_g;
-    int[][] field_73219_j = new int[32][32];
+    private final ConcurrentHashMap<Integer, Block[]> terrainBlocksMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, byte[]> biomeDataMap = new ConcurrentHashMap<>();
 
     {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
@@ -97,13 +97,13 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         this.field_147435_p = p_i2006_1_.getWorldInfo()
             .getTerrainType();
         this.rand = new Random(p_i2006_2_);
-        this.field_147431_j = new NoiseGeneratorOctavesMultithread(this.rand, 16);
-        this.field_147432_k = new NoiseGeneratorOctavesMultithread(this.rand, 16);
-        this.field_147429_l = new NoiseGeneratorOctavesMultithread(this.rand, 8);
-        this.field_147430_m = new NoiseGeneratorPerlinMultithread(this.rand, 4);
-        this.noiseGen5 = new NoiseGeneratorOctavesMultithread(this.rand, 10);
-        this.noiseGen6 = new NoiseGeneratorOctavesMultithread(this.rand, 16);
-        this.mobSpawnerNoise = new NoiseGeneratorOctavesMultithread(this.rand, 8);
+        this.field_147431_j = new NoiseGeneratorOctavesTwo(this.rand, 16);
+        this.field_147432_k = new NoiseGeneratorOctavesTwo(this.rand, 16);
+        this.field_147429_l = new NoiseGeneratorOctavesTwo(this.rand, 8);
+        this.field_147430_m = new NoiseGeneratorPerlinTwo(this.rand, 4);
+        this.noiseGen5 = new NoiseGeneratorOctavesTwo(this.rand, 10);
+        this.noiseGen6 = new NoiseGeneratorOctavesTwo(this.rand, 16);
+        this.mobSpawnerNoise = new NoiseGeneratorOctavesTwo(this.rand, 8);
         this.field_147434_q = new double[825];
         this.parabolicField = new float[25];
 
@@ -117,13 +117,13 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         NoiseGenerator[] noiseGens = { field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5,
             noiseGen6, mobSpawnerNoise };
         noiseGens = TerrainGen.getModdedNoiseGenerators(p_i2006_1_, this.rand, noiseGens);
-        this.field_147431_j = (NoiseGeneratorOctavesMultithread) noiseGens[0];
-        this.field_147432_k = (NoiseGeneratorOctavesMultithread) noiseGens[1];
-        this.field_147429_l = (NoiseGeneratorOctavesMultithread) noiseGens[2];
-        this.field_147430_m = (NoiseGeneratorPerlinMultithread) noiseGens[3];
-        this.noiseGen5 = (NoiseGeneratorOctavesMultithread) noiseGens[4];
-        this.noiseGen6 = (NoiseGeneratorOctavesMultithread) noiseGens[5];
-        this.mobSpawnerNoise = (NoiseGeneratorOctavesMultithread) noiseGens[6];
+        this.field_147431_j = (NoiseGeneratorOctavesTwo) noiseGens[0];
+        this.field_147432_k = (NoiseGeneratorOctavesTwo) noiseGens[1];
+        this.field_147429_l = (NoiseGeneratorOctavesTwo) noiseGens[2];
+        this.field_147430_m = (NoiseGeneratorPerlinTwo) noiseGens[3];
+        this.noiseGen5 = (NoiseGeneratorOctavesTwo) noiseGens[4];
+        this.noiseGen6 = (NoiseGeneratorOctavesTwo) noiseGens[5];
+        this.mobSpawnerNoise = (NoiseGeneratorOctavesTwo) noiseGens[6];
     }
 
     public void func_147424_a(int p_147424_1_, int p_147424_2_, Block[] p_147424_3_) {
@@ -204,7 +204,7 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         double d0 = 0.03125D;
         generateStoneNoise(p_147422_1_, p_147422_2_, d0);
 
-        generateTerrainBlocks(p_147422_1_, p_147422_2_, p_147422_3_, p_147422_4_, p_147422_5_);
+        generateTerrainBlocks(p_147422_1_, p_147422_2_, p_147422_3_,p_147422_4_, p_147422_5_);
     }
 
     private ChunkProviderEvent.ReplaceBiomeBlocks createReplaceBiomeBlocksEvent(int p_147422_1_, int p_147422_2_, Block[] p_147422_3_,
@@ -237,17 +237,13 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
             }
         }
     }
-    /**
-     * loads or generates the chunk at the chunk location specified
-     */
+
+
     public Chunk loadChunk(int p_73158_1_, int p_73158_2_) {
         return this.provideChunk(p_73158_1_, p_73158_2_);
     }
 
-    /**
-     * Will return a chunk if it doesn't exist and it's not an MP client it will generate all the blocks for the
-     * specified chunk from the map seed and chunk seed
-     */
+
     public Chunk provideChunk(int p_73154_1_, int p_73154_2_) {
         this.rand.setSeed(p_73154_1_ * 341873128712L + p_73154_2_ * 132897987541L);
         Block[] ablock = new Block[65536];
@@ -412,17 +408,9 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
         return d12;
     }
 
-    /**
-     * Checks to see if a chunk exists at x, y
-     */
     public boolean chunkExists(int p_73149_1_, int p_73149_2_) {
         return true;
     }
-
-    /**
-     * Populates chunk with ores etc. etc
-     */
-    private final HashMap<Integer, BiomeGenBase> biomeCache = new HashMap<>();
     private final Random random = new Random();
 
     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_) {
@@ -508,53 +496,31 @@ public class ChunkProviderGenerateTwo implements IChunkProvider {
     }
 
     private BiomeGenBase getBiomeForChunk(int p_73153_2_, int p_73153_3_) {
-        Integer key = p_73153_2_ << 4 | p_73153_3_;
-        BiomeGenBase biome = biomeCache.get(key);
-        if (biome == null) {
-            biome = this.worldObj.getBiomeGenForCoords(p_73153_2_ * 16 + 8, p_73153_3_ * 16 + 8);
-            biomeCache.put(key, biome);
-        }
-        return biome;
+        int biomeId = this.worldObj.getBiomeGenForCoords(p_73153_2_ * 16 + 8, p_73153_3_ * 16 + 8).biomeID;
+        return BiomeGenBase.getBiome(biomeId);
     }
 
-    /**
-     * Two modes of operation: if passed true, save all Chunks in one go. If passed false, save up to two chunks.
-     * Return true if all chunks have been saved.
-     */
     public boolean saveChunks(boolean p_73151_1_, IProgressUpdate p_73151_2_) {
         return true;
     }
 
-    /**
-     * Save extra data not associated with any Chunk. Not saved during autosave, only during world unload. Currently
-     * unimplemented.
-     */
+
     public void saveExtraData() {}
 
-    /**
-     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     */
+
     public boolean unloadQueuedChunks() {
         return false;
     }
 
-    /**
-     * Returns if the IChunkProvider supports saving.
-     */
     public boolean canSave() {
         return true;
     }
 
-    /**
-     * Converts the instance data to a readable string.
-     */
+
     public String makeString() {
         return "RandomLevelSource";
     }
 
-    /**
-     * Returns a list of creatures of the specified type that can spawn at the given location.
-     */
     public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_) {
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(p_73155_2_, p_73155_4_);
         if (p_73155_1_ == EnumCreatureType.monster && this.scatteredFeatureGenerator.func_143030_a(p_73155_2_, p_73155_3_, p_73155_4_)) {

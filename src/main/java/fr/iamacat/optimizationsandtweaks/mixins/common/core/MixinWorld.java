@@ -1,8 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import com.google.common.collect.ImmutableSetMultimap;
+import cpw.mods.fml.common.FMLLog;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.ArrayListThreadSafe;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.HashSetThreadSafe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -12,11 +15,13 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -36,7 +41,7 @@ public abstract class MixinWorld {
     @Shadow
     public boolean restoringBlockSnapshots = false;
     @Shadow
-    protected final Set activeChunkSet = new TreeSet();
+    protected final Set activeChunkSet = new HashSetThreadSafe();
 
     @Unique
     private final ThreadLocalRandom optimizationsAndTweaks$rand = ThreadLocalRandom.current();
@@ -68,25 +73,25 @@ public abstract class MixinWorld {
     protected IChunkProvider chunkProvider;
 
     @Shadow
-    protected List worldAccesses = new ArrayList();
+    protected List worldAccesses = new ArrayListThreadSafe();
     @Shadow
-    public List loadedEntityList = new ArrayList();
+    public List loadedEntityList = new ArrayListThreadSafe();
     @Shadow
-    protected List unloadedEntityList = new ArrayList();
+    protected List unloadedEntityList = new ArrayListThreadSafe();
     /** A list of the loaded tile entities in the world */
     @Shadow
-    public List loadedTileEntityList = new ArrayList();
+    public List loadedTileEntityList = new ArrayListThreadSafe();
     @Shadow
-    private List addedTileEntityList = new ArrayList();
+    private List addedTileEntityList = new ArrayListThreadSafe();
     @Shadow
-    private List field_147483_b = new ArrayList();
+    private List field_147483_b = new ArrayListThreadSafe();
     /** Array list of players in the world. */
     @Shadow
-    public List playerEntities = new ArrayList();
+    public List playerEntities = new ArrayListThreadSafe();
 
     /** a list of all the lightning entities */
     @Shadow
-    public List weatherEffects = new ArrayList();
+    public List weatherEffects = new ArrayListThreadSafe();
 
     @Shadow
     private boolean field_147481_N;
@@ -993,11 +998,291 @@ public abstract class MixinWorld {
     @Shadow
     protected abstract int func_152379_p();
 
+    /**
+     * @author
+     * @reason
+     */
     @Overwrite
     public void onEntityAdded(Entity p_72923_1_)
     {
         for (Object worldAccess : this.worldAccesses) {
             ((IWorldAccess) worldAccess).onEntityCreate(p_72923_1_);
+        }
+    }
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public synchronized void updateEntities() {
+        this.theProfiler.startSection("entities");
+        this.theProfiler.startSection("global");
+
+        optimizationsAndTweaks$updateWeatherEffects();
+        optimizationsAndTweaks$removeUnloadedEntities();
+        optimizationsAndTweaks$updateLoadedEntities();
+        optimizationsAndTweaks$updateTileEntities();
+
+        this.theProfiler.endSection();
+        this.theProfiler.endSection();
+    }
+    @Unique
+    private void optimizationsAndTweaks$updateWeatherEffects() {
+        Iterator<Entity> iterator = this.weatherEffects.iterator();
+        while (iterator.hasNext()) {
+            Entity entity = iterator.next();
+            try {
+                entity.ticksExisted++;
+                entity.onUpdate();
+            } catch (Throwable throwable) {
+                optimizationsAndTweaks$handleEntityCrash(entity, throwable);
+            }
+            if (entity.isDead) {
+                iterator.remove();
+            }
+        }
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleEntityCrash(Entity entity, Throwable throwable) {
+        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
+        CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being ticked");
+
+        if (entity == null) {
+            crashreportcategory.addCrashSection("Entity", "~~NULL~~");
+        } else {
+            entity.addEntityCrashInfo(crashreportcategory);
+        }
+
+        if (ForgeModContainer.removeErroringEntities) {
+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
+            if (entity != null) {
+                removeEntity(entity);
+            }
+        } else {
+            throw new ReportedException(crashreport);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$removeUnloadedEntities() {
+        for (Object obj : this.unloadedEntityList) {
+            if (obj instanceof Entity) {
+                Entity entity = (Entity) obj;
+                int chunkX = entity.chunkCoordX;
+                int chunkZ = entity.chunkCoordZ;
+                if (entity.addedToChunk && this.chunkExists(chunkX, chunkZ)) {
+                    this.getChunkFromChunkCoords(chunkX, chunkZ).removeEntity(entity);
+                }
+                onEntityRemoved(entity);
+            }
+        }
+        this.unloadedEntityList.clear();
+    }
+    @Unique
+    private void optimizationsAndTweaks$updateLoadedEntities() {
+        Iterator<Entity> iterator = this.loadedEntityList.iterator();
+        while (iterator.hasNext()) {
+            Entity entity = iterator.next();
+            if (entity.ridingEntity != null && (entity.ridingEntity.isDead || entity.ridingEntity.riddenByEntity != entity)) {
+                entity.ridingEntity.riddenByEntity = null;
+                entity.ridingEntity = null;
+            }
+            this.theProfiler.startSection("tick");
+            if (!entity.isDead) {
+                try {
+                    this.updateEntity(entity);
+                } catch (Throwable throwable) {
+                    optimizationsAndTweaks$handleEntityCrash(entity, throwable);
+                }
+            }
+            if (entity.isDead) {
+                int chunkX = entity.chunkCoordX;
+                int chunkZ = entity.chunkCoordZ;
+                if (entity.addedToChunk && this.chunkExists(chunkX, chunkZ)) {
+                    this.getChunkFromChunkCoords(chunkX, chunkZ).removeEntity(entity);
+                }
+                iterator.remove();
+                onEntityRemoved(entity);
+            }
+            this.theProfiler.endSection();
+        }
+    }
+    @Unique
+    private void optimizationsAndTweaks$updateTileEntities() {
+        this.field_147481_N = true;
+        Iterator<TileEntity> iterator = this.loadedTileEntityList.iterator();
+        while (iterator.hasNext()) {
+            TileEntity tileentity = iterator.next();
+            if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord)) {
+                try {
+                    tileentity.updateEntity();
+                } catch (Throwable throwable) {
+                    optimizationsAndTweaks$handleTileEntityCrash(tileentity, throwable);
+                }
+            }
+            if (tileentity.isInvalid()) {
+                iterator.remove();
+                if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4)) {
+                    Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                    if (chunk != null) {
+                        chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
+                    }
+                }
+            }
+        }
+        optimizationsAndTweaks$handlePendingTileEntities();
+        this.field_147481_N = false;
+    }
+    @Unique
+    private void optimizationsAndTweaks$handleTileEntityCrash(TileEntity tileentity, Throwable throwable) {
+        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+        CrashReportCategory crashreportcategory = crashreport.makeCategory("Block entity being ticked");
+        tileentity.func_145828_a(crashreportcategory);
+        if (ForgeModContainer.removeErroringTileEntities) {
+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
+            tileentity.invalidate();
+            setBlockToAir(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
+        } else {
+            throw new ReportedException(crashreport);
+        }
+    }
+
+    @Unique
+    private void optimizationsAndTweaks$handlePendingTileEntities() {
+        for (Object obj : this.addedTileEntityList) {
+            if (obj instanceof TileEntity) {
+                TileEntity tileentity1 = (TileEntity) obj;
+                if (!tileentity1.isInvalid()) {
+                    if (!this.loadedTileEntityList.contains(tileentity1)) {
+                        this.loadedTileEntityList.add(tileentity1);
+                    }
+                } else {
+                    if (this.chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4)) {
+                        Chunk chunk1 = this.getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
+                        if (chunk1 != null) {
+                            chunk1.removeInvalidTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15);
+                        }
+                    }
+                }
+            }
+        }
+        this.addedTileEntityList.clear();
+    }
+
+    @Shadow
+    public boolean setBlockToAir(int x, int y, int z)
+    {
+        return this.setBlock(x, y, z, Blocks.air, 0, 3);
+    }
+    @Shadow
+    public boolean setBlock(int x, int y, int z, Block blockIn, int metadataIn, int flags)
+    {
+        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
+        {
+            if (y < 0)
+            {
+                return false;
+            }
+            else if (y >= 256)
+            {
+                return false;
+            }
+            else
+            {
+                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+                Block block1 = null;
+                net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
+
+                if ((flags & 1) != 0)
+                {
+                    block1 = chunk.getBlock(x & 15, y, z & 15);
+                }
+
+                if (this.captureBlockSnapshots && !this.isRemote)
+                {
+                    blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot((World) (Object)this, x, y, z, flags);
+                    this.capturedBlockSnapshots.add(blockSnapshot);
+                }
+
+                boolean flag = chunk.func_150807_a(x & 15, y, z & 15, blockIn, metadataIn);
+
+                if (!flag && blockSnapshot != null)
+                {
+                    this.capturedBlockSnapshots.remove(blockSnapshot);
+                    blockSnapshot = null;
+                }
+
+                this.theProfiler.startSection("checkLight");
+                this.func_147451_t(x, y, z);
+                this.theProfiler.endSection();
+
+                if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
+                {
+                    // Modularize client and physic updates
+                    this.markAndNotifyBlock(x, y, z, chunk, block1, blockIn, flags);
+                }
+
+                return flag;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    @Overwrite
+    public synchronized TileEntity getTileEntity(int x, int y, int z)
+    {
+        if (y >= 0 && y < 256)
+        {
+            TileEntity tileentity = null;
+            int l;
+            TileEntity tileentity1;
+
+            if (this.field_147481_N)
+            {
+                for (l = 0; l < this.addedTileEntityList.size(); ++l)
+                {
+                    tileentity1 = (TileEntity)this.addedTileEntityList.get(l);
+
+                    if (!tileentity1.isInvalid() && tileentity1.xCoord == x && tileentity1.yCoord == y && tileentity1.zCoord == z)
+                    {
+                        tileentity = tileentity1;
+                        break;
+                    }
+                }
+            }
+
+            if (tileentity == null)
+            {
+                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+
+                if (chunk != null)
+                {
+                    tileentity = chunk.func_150806_e(x & 15, y, z & 15);
+                }
+            }
+
+            if (tileentity == null)
+            {
+                for (l = 0; l < this.addedTileEntityList.size(); ++l)
+                {
+                    tileentity1 = (TileEntity)this.addedTileEntityList.get(l);
+
+                    if (!tileentity1.isInvalid() && tileentity1.xCoord == x && tileentity1.yCoord == y && tileentity1.zCoord == z)
+                    {
+                        tileentity = tileentity1;
+                        break;
+                    }
+                }
+            }
+
+            return tileentity;
+        }
+        else
+        {
+            return null;
         }
     }
 }
