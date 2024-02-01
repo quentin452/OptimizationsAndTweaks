@@ -196,9 +196,16 @@ public class MixinEldritchEmpireRegistration {
                 " EE", " SE", "S  ", 'E', condensedEssence, 'S', Items.stick);
     }
 
-    @Shadow
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
     public static void registerEntity(Class entityClass, String name) {
-        int entityID = EntityRegistry.findGlobalUniqueEntityId();
+        int entityID;
+        do {
+            entityID = EntityRegistry.findGlobalUniqueEntityId();
+        } while (entityID < 1001);
         long seed = name.hashCode();
         Random rand = new Random(seed);
         int primaryColor = rand.nextInt() * 16777215;
