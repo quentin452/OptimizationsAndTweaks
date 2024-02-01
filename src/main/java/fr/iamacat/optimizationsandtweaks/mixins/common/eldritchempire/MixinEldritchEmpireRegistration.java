@@ -153,53 +153,53 @@ public class MixinEldritchEmpireRegistration {
         GameRegistry.registerItem(herosCrystal, "Hero's Crystal");
         GameRegistry.addRecipe(
             new ItemStack(collector, 1, 0),
-            new Object[] { "ROR", "ORO", "ROR", 'R', Items.redstone, 'O', new ItemStack(Blocks.obsidian, 1) });
+                "ROR", "ORO", "ROR", 'R', Items.redstone, 'O', new ItemStack(Blocks.obsidian, 1));
         GameRegistry.addRecipe(
             new ItemStack(portal, 1, 0),
-            new Object[] { "CRC", "RER", "CRC", 'R', Items.redstone, 'E', Items.emerald, 'C',
-                new ItemStack(Blocks.cobblestone, 1) });
+                "CRC", "RER", "CRC", 'R', Items.redstone, 'E', Items.emerald, 'C',
+                new ItemStack(Blocks.cobblestone, 1));
         GameRegistry.addRecipe(
             new ItemStack(spawner, 1, 0),
-            new Object[] { " E ", "GBG", "GEG", 'G', golemPart, 'B', Items.bow, 'E', condensedEssence });
+                " E ", "GBG", "GEG", 'G', golemPart, 'B', Items.bow, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(spawner, 1, 1),
-            new Object[] { " E ", "GRG", "GEG", 'G', golemPart, 'R', new ItemStack(Blocks.redstone_torch), 'E',
-                condensedEssence });
+                " E ", "GRG", "GEG", 'G', golemPart, 'R', new ItemStack(Blocks.redstone_torch), 'E',
+                condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(spawner, 1, 2),
-            new Object[] { " E ", "GSG", "GEG", 'G', golemPart, 'S', Items.iron_sword, 'E', condensedEssence });
+                " E ", "GSG", "GEG", 'G', golemPart, 'S', Items.iron_sword, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(golemPart, 1),
-            new Object[] { "CCC", "III", "CCC", 'C', new ItemStack(Blocks.cobblestone, 1), 'I', Items.iron_ingot });
+                "CCC", "III", "CCC", 'C', new ItemStack(Blocks.cobblestone, 1), 'I', Items.iron_ingot);
         GameRegistry.addRecipe(
             new ItemStack(iceCrystal, 1),
-            new Object[] { "SSS", "SES", "SSS", 'S', Items.snowball, 'E', condensedEssence });
+                "SSS", "SES", "SSS", 'S', Items.snowball, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(fireCrystal, 1),
-            new Object[] { " L ", " E ", " L ", 'L', Items.lava_bucket, 'E', condensedEssence });
+                " L ", " E ", " L ", 'L', Items.lava_bucket, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(darkCrystal, 1),
-            new Object[] { "EP", 'P', Items.ender_pearl, 'E', condensedEssence });
+                "EP", 'P', Items.ender_pearl, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(poisonCrystal, 1),
-            new Object[] { " F ", " E ", " F ", 'F', Items.fermented_spider_eye, 'E', condensedEssence });
+                " F ", " E ", " F ", 'F', Items.fermented_spider_eye, 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(earthCrystal, 1),
-            new Object[] { " C ", " E ", " C ", 'C', new ItemStack(Items.dye, 1, 3), 'E', condensedEssence });
+                " C ", " E ", " C ", 'C', new ItemStack(Items.dye, 1, 3), 'E', condensedEssence);
         GameRegistry.addRecipe(
             new ItemStack(herosCrystal, 1),
-            new Object[] { " Q ", " E ", " Q ", 'Q', Items.quartz, 'E', condensedEssence });
+                " Q ", " E ", " Q ", 'Q', Items.quartz, 'E', condensedEssence);
         GameRegistry
             .addRecipe(new ItemStack(Items.diamond, 1, 0), new Object[] { "EEE", "EEE", "EEE", 'E', condensedEssence });
         GameRegistry.addRecipe(
             new ItemStack(golemTool, 1),
-            new Object[] { " EE", " SE", "S  ", 'E', condensedEssence, 'S', Items.stick });
+                " EE", " SE", "S  ", 'E', condensedEssence, 'S', Items.stick);
     }
 
     @Shadow
     public static void registerEntity(Class entityClass, String name) {
         int entityID = EntityRegistry.findGlobalUniqueEntityId();
-        long seed = (long) name.hashCode();
+        long seed = name.hashCode();
         Random rand = new Random(seed);
         int primaryColor = rand.nextInt() * 16777215;
         int secondaryColor = rand.nextInt() * 16777215;
