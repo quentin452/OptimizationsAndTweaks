@@ -736,33 +736,6 @@ public abstract class MixinWorld {
         return closestPlayer;
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public int getTopSolidOrLiquidBlock(int p_72825_1_, int p_72825_2_) {
-        Chunk chunk = this.getChunkFromBlockCoords(p_72825_1_, p_72825_2_);
-        int chunkTopSegment = chunk.getTopFilledSegment() + 15;
-        p_72825_1_ &= 15;
-        p_72825_2_ &= 15;
-
-        int x = p_72825_1_;
-        int z = p_72825_2_;
-
-        for (int k = chunkTopSegment; k > 0; --k) {
-            Block block = chunk.getBlock(p_72825_1_, k, p_72825_2_);
-            Material blockMaterial = block.getMaterial();
-
-            if (blockMaterial.blocksMovement() && blockMaterial != Material.leaves
-                && world != null && !block.isFoliage(world, x, k, z)) {
-                return k + 1;
-            }
-        }
-
-        return -1;
-    }
-
     @Shadow
     public Chunk getChunkFromBlockCoords(int p_72938_1_, int p_72938_2_) {
         return this.getChunkFromChunkCoords(p_72938_1_ >> 4, p_72938_2_ >> 4);
