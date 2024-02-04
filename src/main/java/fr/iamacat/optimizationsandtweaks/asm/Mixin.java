@@ -200,10 +200,12 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),
-    common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
+    /*common_core_pathfinding_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
         "core.pathfinding.MixinPathEntity"),
     common_core_pathfinding_MixinPathNavigate(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
         "core.pathfinding.MixinPathNavigate"),
+
+     */
     common_core_pathfinding_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
         "core.pathfinding.MixinPathFinder"),
 
