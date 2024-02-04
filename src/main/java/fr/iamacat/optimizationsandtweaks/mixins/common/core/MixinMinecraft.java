@@ -372,7 +372,7 @@ public abstract class MixinMinecraft implements IPlayerUsage {
      * @reason
      */
     @Overwrite
-    private static boolean isJvm64bit() {
+    public static boolean isJvm64bit() {
         String[] astring = new String[] { "sun.arch.data.model", "com.ibm.vm.bitmode", "os.arch" };
         int i = astring.length;
 
