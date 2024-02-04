@@ -102,7 +102,7 @@ public class MixinPathPoint {
     }
 
     @Unique
-    private synchronized static int optimizationsAndTweaks$hilbertCurve(int x, int y, int z, int n) {
+    private static synchronized int optimizationsAndTweaks$hilbertCurve(int x, int y, int z, int n) {
         int t = x ^ y ^ z;
         int s = (x & y) | (~x & z);
         int u = (y & z) | (~y & x);
