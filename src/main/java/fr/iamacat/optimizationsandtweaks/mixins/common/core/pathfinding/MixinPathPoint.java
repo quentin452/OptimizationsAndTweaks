@@ -93,7 +93,7 @@ public class MixinPathPoint {
         }
     }
     @Overwrite
-    public int hashCode() {
+    public synchronized int hashCode() {
         int h = 0;
         for (int i = 0; i < HILBERT_CURVE_ORDER; ++i) {
             h ^= optimizationsAndTweaks$hilbertCurve(this.xCoord, this.yCoord, this.zCoord, i) << (i * 2);
@@ -102,7 +102,7 @@ public class MixinPathPoint {
     }
 
     @Unique
-    private static int optimizationsAndTweaks$hilbertCurve(int x, int y, int z, int n) {
+    private synchronized static int optimizationsAndTweaks$hilbertCurve(int x, int y, int z, int n) {
         int t = x ^ y ^ z;
         int s = (x & y) | (~x & z);
         int u = (y & z) | (~y & x);
