@@ -91,7 +91,7 @@ public abstract class MixinWorld {
 
     /** a list of all the lightning entities */
     @Shadow
-    public List weatherEffects = new ArrayListThreadSafe();
+    public List<Entity> weatherEffects = new ArrayListThreadSafe();
 
     @Shadow
     private boolean field_147481_N;
@@ -1002,20 +1002,21 @@ public abstract class MixinWorld {
     }
     @Unique
     private void optimizationsAndTweaks$updateWeatherEffects() {
-        Iterator<Entity> iterator = this.weatherEffects.iterator();
-        while (iterator.hasNext()) {
-            Entity entity = iterator.next();
+        List<Entity> entitiesToRemove = new ArrayListThreadSafe<>();
+        for (Entity entity : this.weatherEffects) {
+            entity.ticksExisted++;
             try {
-                entity.ticksExisted++;
                 entity.onUpdate();
             } catch (Throwable throwable) {
                 optimizationsAndTweaks$handleEntityCrash(entity, throwable);
             }
             if (entity.isDead) {
-                iterator.remove();
+                entitiesToRemove.add(entity);
             }
         }
+        this.weatherEffects.removeAll(entitiesToRemove);
     }
+
     @Unique
     private void optimizationsAndTweaks$handleEntityCrash(Entity entity, Throwable throwable) {
         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking entity");
