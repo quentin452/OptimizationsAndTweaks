@@ -818,17 +818,6 @@ public abstract class MixinWorld {
             ((IWorldAccess) worldAccess).spawnParticle(particleName, x, y, z, velocityX, velocityY, velocityZ);
         }
     }
-    /**
-     * @author
-     * @reason
-     */
-
-    @Overwrite
-    public int countEntities(Class<?> entityClass) {
-        return (int) this.loadedEntityList.stream()
-            .filter(entity -> entityClass.isInstance(entity) && (!(entity instanceof EntityLiving) || !((EntityLiving) entity).isNoDespawnRequired()))
-            .count();
-    }
 
     @Shadow
     public int getFullBlockLightValue(int p_72883_1_, int p_72883_2_, int p_72883_3_) {
