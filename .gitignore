@@ -31,3 +31,5 @@ src/main/resources/mixins.*([!.]).json
 *.bat
 *.DS_Store
 !gradlew.bat
+libs/ChromatiCraft 1.7.10 V33a.jar
+libs/DragonAPI 1.7.10 V33b.jar

@@ -826,7 +826,12 @@ public enum Mixin implements IMixin {
         require(TargetedMod.GRIM3212).and(m -> OptimizationsandTweaksConfig.enableMixinGrimModule),
         "grim3212.MixinGrimModule"),
 
+    common_chromaticraft_MixinDungeonGenerator(Side.COMMON,
+        require(TargetedMod.CHROMATICRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinDungeonGeneratorChromaticraft),
+        "chromaticraft.MixinDungeonGenerator"),
+
     // CLIENT MIXINS
+
 
     client_core_MixinGuiNewChat(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGuiNewChat,
         "core.MixinGuiNewChat"),

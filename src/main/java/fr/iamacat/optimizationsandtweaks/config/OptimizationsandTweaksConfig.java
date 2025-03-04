@@ -1110,6 +1110,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGrimModule;
+
+    @Config.Comment("Add a cache to DungeonGenerator from Chromaticraft to avoid reloading the dungeon every time from file")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinDungeonGeneratorChromaticraft;
     @Config.Comment("Tidy Chunk Backport feature(EntityItem remover at first chunk generation to reduce tps lags)(require MixinWorld)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
