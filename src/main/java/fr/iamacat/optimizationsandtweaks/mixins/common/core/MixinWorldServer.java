@@ -1,7 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import static fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.WorldServerTwo.*;
-import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 
 import java.util.*;
 
@@ -14,13 +13,8 @@ import net.minecraft.scoreboard.ScoreboardSaveData;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
-import net.minecraft.util.IntHashMap;
 import net.minecraft.world.*;
-import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraft.world.storage.ISaveHandler;
-import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DimensionManager;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,8 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.WorldServerTwo;
 
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {

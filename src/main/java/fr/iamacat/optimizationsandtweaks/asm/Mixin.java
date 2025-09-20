@@ -209,11 +209,12 @@ public enum Mixin implements IMixin {
      * common_core_pathfinding_MixinPathNavigate(Side.COMMON, m ->
      * OptimizationsandTweaksConfig.enablePathfinderOptimizations,
      * "core.pathfinding.MixinPathNavigate"),
-     * common_core_pathfinding_MixinPathPoint(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
+     * common_core_pathfinding_MixinPathPoint(Side.COMMON, m ->
+     * OptimizationsandTweaksConfig.enablePathfinderOptimizations,
      * "core.pathfinding.MixinPathPoint"),
      */
-    common_core_entity_MixinEntityAIControlledByPlayer(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations,
-        "core.entity.MixinEntityAIControlledByPlayer"),
+    common_core_entity_MixinEntityAIControlledByPlayer(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations, "core.entity.MixinEntityAIControlledByPlayer"),
     common_core_MixinWorldServer(Side.COMMON,
         avoid(TargetedMod.LAGGOOGLES).and(m -> OptimizationsandTweaksConfig.enableMixinWorldServer),
         "core.MixinWorldServer"),
@@ -635,8 +636,7 @@ public enum Mixin implements IMixin {
         require(TargetedMod.GEMSNJEWELS).and(m -> OptimizationsandTweaksConfig.enableMixinModBlocksGemsNJewels),
         "gemsnjewels.MixinModBlocksGemsNJewels"),
     common_farlanders_MixinVillageRoad(Side.COMMON,
-        require(TargetedMod.FARLANDERS)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinMixinVillageRoad),
+        require(TargetedMod.FARLANDERS).and(m -> OptimizationsandTweaksConfig.enableMixinMixinVillageRoad),
         "farlanders.MixinVillageRoad"),
     common_farlanders_MixinEntityEnderGolem(Side.COMMON,
         require(TargetedMod.FARLANDERS)
@@ -800,8 +800,7 @@ public enum Mixin implements IMixin {
             .and(m -> OptimizationsandTweaksConfig.enableMixinFixNoSuchMethodException),
         "minefactoryreloaded.MixinFixNoSuchMethodException"),
     common_entityculling_MixinCullTask(Side.COMMON,
-        require(TargetedMod.ENTITYCULLING)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinCullTask),
+        require(TargetedMod.ENTITYCULLING).and(m -> OptimizationsandTweaksConfig.enableMixinCullTask),
         "entityculling.MixinCullTask"),
 
     common_core_MixinGodZillaFix(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinGodZillaFix,
@@ -827,11 +826,11 @@ public enum Mixin implements IMixin {
         "grim3212.MixinGrimModule"),
 
     common_chromaticraft_MixinDungeonGenerator(Side.COMMON,
-        require(TargetedMod.CHROMATICRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinDungeonGeneratorChromaticraft),
+        require(TargetedMod.CHROMATICRAFT)
+            .and(m -> OptimizationsandTweaksConfig.enableMixinDungeonGeneratorChromaticraft),
         "chromaticraft.MixinDungeonGenerator"),
 
     // CLIENT MIXINS
-
 
     client_core_MixinGuiNewChat(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinGuiNewChat,
         "core.MixinGuiNewChat"),

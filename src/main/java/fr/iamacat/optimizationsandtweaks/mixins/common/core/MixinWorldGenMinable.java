@@ -131,7 +131,6 @@ public class MixinWorldGenMinable extends WorldGenerator {
         }
     }
 
-
     @Unique
     private Block optimizationsAndTweaks$getField_150518_c() {
         return field_150518_c;

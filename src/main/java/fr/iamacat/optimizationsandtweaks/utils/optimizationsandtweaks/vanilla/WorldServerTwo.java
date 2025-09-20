@@ -1,9 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -14,8 +10,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
-
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.ConcurrentSkipListSetThreadSafe;
 
 public class WorldServerTwo {
 

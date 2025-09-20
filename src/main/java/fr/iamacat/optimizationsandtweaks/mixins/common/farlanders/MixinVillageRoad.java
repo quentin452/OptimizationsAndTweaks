@@ -1,22 +1,33 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.farlanders;
 
-import com.fabiulu.farlanders.common.worldgen.village.*;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Random;
+import com.fabiulu.farlanders.common.worldgen.village.*;
 
 @Mixin(VillageRoad.class)
 public class MixinVillageRoad {
 
     private boolean multithreadingandtweaks$isValidBlock(Block block) {
-        return block == Blocks.air || block == Blocks.tallgrass || block == Blocks.sapling || block == Blocks.sand ||
-            block == Blocks.deadbush || block == Blocks.cactus || block == Blocks.red_flower ||
-            block == Blocks.yellow_flower || block == Blocks.water || block == Blocks.lava ||
-            block == Blocks.log || block == Blocks.leaves || block == Blocks.vine || block == Blocks.snow;
+        return block == Blocks.air || block == Blocks.tallgrass
+            || block == Blocks.sapling
+            || block == Blocks.sand
+            || block == Blocks.deadbush
+            || block == Blocks.cactus
+            || block == Blocks.red_flower
+            || block == Blocks.yellow_flower
+            || block == Blocks.water
+            || block == Blocks.lava
+            || block == Blocks.log
+            || block == Blocks.leaves
+            || block == Blocks.vine
+            || block == Blocks.snow;
     }
 
     private void multithreadingandtweaks$placeGravelIfValid(World world, int x, int y, int z) {
@@ -29,30 +40,32 @@ public class MixinVillageRoad {
     public boolean func_76484_a(World world, Random rand, int i, int j, int k) {
         for (int posX = i + 1; posX <= i + 4; ++posX) {
             for (int posZ = k - 1; posZ >= k - 16; --posZ) {
-                if (multithreadingandtweaks$isValidBlock(world.getBlock(posX, j, posZ)) || multithreadingandtweaks$isValidBlock(world.getBlock(posX, j + 1, posZ))) {
+                if (multithreadingandtweaks$isValidBlock(world.getBlock(posX, j, posZ))
+                    || multithreadingandtweaks$isValidBlock(world.getBlock(posX, j + 1, posZ))) {
                     multithreadingandtweaks$placeGravelIfValid(world, posX, j, posZ);
                 }
             }
         }
         for (int var10 = i + 1; var10 <= i + 4; ++var10) {
             for (int posZ = k + 6; posZ <= k + 26; ++posZ) {
-                if (multithreadingandtweaks$isValidBlock(world.getBlock(var10, j, posZ)) || multithreadingandtweaks$isValidBlock(world.getBlock(var10, j + 1, posZ))) {
+                if (multithreadingandtweaks$isValidBlock(world.getBlock(var10, j, posZ))
+                    || multithreadingandtweaks$isValidBlock(world.getBlock(var10, j + 1, posZ))) {
                     multithreadingandtweaks$placeGravelIfValid(world, var10, j, posZ);
                 }
             }
         }
         for (int posZ = k + 1; posZ <= k + 4; ++posZ) {
             for (int var11 = i - 1; var11 >= i - 25; --var11) {
-                if (multithreadingandtweaks$isValidBlock(world.getBlock(var11, j, posZ)) || multithreadingandtweaks$isValidBlock(world.getBlock(var11, j + 1, posZ))) {
+                if (multithreadingandtweaks$isValidBlock(world.getBlock(var11, j, posZ))
+                    || multithreadingandtweaks$isValidBlock(world.getBlock(var11, j + 1, posZ))) {
                     multithreadingandtweaks$placeGravelIfValid(world, var11, j, posZ);
                 }
             }
         }
-        for (int var22 = k + 1; var22 <= k +
-            4; ++var22) {
+        for (int var22 = k + 1; var22 <= k + 4; ++var22) {
             for (int var12 = i + 6; var12 <= i + 25; ++var12) {
-                if (multithreadingandtweaks$isValidBlock(world.getBlock(var12, j, var22)) ||
-                    multithreadingandtweaks$isValidBlock(world.getBlock(var12, j + 1, var22))) {
+                if (multithreadingandtweaks$isValidBlock(world.getBlock(var12, j, var22))
+                    || multithreadingandtweaks$isValidBlock(world.getBlock(var12, j + 1, var22))) {
                     multithreadingandtweaks$placeGravelIfValid(world, var12, j, var22);
                 } else {
                     world.setBlock(var12, j, var22, Blocks.gravel, 0, 2);

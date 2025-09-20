@@ -6,18 +6,21 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeModContainer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ForgeHooksClient.class)
 public class MixinForgeHooksClient {
+
     @Shadow
     private static int skyX, skyZ;
     @Shadow
     private static boolean skyInit;
     @Shadow
     private static int skyRGBMultiplier;
+
     /**
      * @author quentin452
      * @reason fix null crashes from getSkyBlendColour from ForgeHooksClient
@@ -48,7 +51,8 @@ public class MixinForgeHooksClient {
 
         int[] ranges = ForgeModContainer.blendRanges;
         int distance = 0;
-        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0 && settings.renderDistanceChunks < ranges.length) {
+        if (settings.fancyGraphics && settings.renderDistanceChunks >= 0
+            && settings.renderDistanceChunks < ranges.length) {
             distance = ranges[settings.renderDistanceChunks];
         }
 
@@ -61,13 +65,15 @@ public class MixinForgeHooksClient {
             for (int z = -distance; z <= distance; ++z) {
                 BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z);
                 if (biome == null) {
-                    // System.err.println("[OptimizationsAndTweaks] Biome is null at coordinates: " + (playerX + x) + ", " + (playerZ + z));
+                    // System.err.println("[OptimizationsAndTweaks] Biome is null at coordinates: " + (playerX + x) + ",
+                    // " + (playerZ + z));
                     continue;
                 }
 
                 Float temperature = biome.getFloatTemperature(playerX + x, playerY, playerZ + z);
                 if (temperature == null) {
-                    //System.err.println("[OptimizationsAndTweaks] Temperature is null for biome at coordinates: " + (playerX + x) + ", " + (playerZ + z));
+                    // System.err.println("[OptimizationsAndTweaks] Temperature is null for biome at coordinates: " +
+                    // (playerX + x) + ", " + (playerZ + z));
                     continue;
                 }
 
@@ -80,7 +86,7 @@ public class MixinForgeHooksClient {
         }
 
         if (divider == 0) {
-            //System.err.println("[OptimizationsAndTweaks] Divider is zero, returning default sky color");
+            // System.err.println("[OptimizationsAndTweaks] Divider is zero, returning default sky color");
             return 0;
         }
 

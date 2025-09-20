@@ -1,28 +1,32 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.chromaticraft;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import net.minecraft.world.World;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
 import Reika.ChromatiCraft.Registry.ChromaStructures;
 import Reika.ChromatiCraft.World.IWG.DungeonGenerator;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Math.Noise.VoronoiNoiseGenerator;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import fr.iamacat.optimizationsandtweaks.utilsformods.chromaticraft.ChromaticraftUtils;
-import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 @Mixin(DungeonGenerator.class)
 public class MixinDungeonGenerator {
+
     @Shadow
     private EnumMap<ChromaStructures, VoronoiNoiseGenerator> structs = new EnumMap(ChromaStructures.class);
 
     @Unique
     private final Map<ChromaticraftUtils.WorldStructureKey, VoronoiNoiseGenerator> optimizationsAndTweaks$noiseCache = new WeakHashMap<>();
+
     /**
      * @author quentin452
      * @reason Add a cache to DungeonGenerator from Chromaticraft to avoid reloading the dungeon every time from file
@@ -47,10 +51,12 @@ public class MixinDungeonGenerator {
     }
 
     private long calculateStructureSeed(World world, ReikaWorldHelper.WorldID id, ChromaStructures s) {
-        return world.getSeed()
-            ^ (s.ordinal() * 41381L)
+        return world.getSeed() ^ (s.ordinal() * 41381L)
             ^ ~id.worldCreationTime
-            ^ ReikaFileReader.getRealPath(world.getSaveHandler().getWorldDirectory()).hashCode();
+            ^ ReikaFileReader.getRealPath(
+                world.getSaveHandler()
+                    .getWorldDirectory())
+                .hashCode();
     }
 
     private VoronoiNoiseGenerator createNewGenerator(ChromaStructures s, long seed) {

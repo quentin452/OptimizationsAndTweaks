@@ -1,25 +1,28 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.entityculling;
 
-import dev.tr7zw.entityculling.CullTask;
-import dev.tr7zw.entityculling.EntityCullingModBase;
-import dev.tr7zw.entityculling.access.Cullable;
-import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.OcclusionCullingInstance;
-import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.util.Vec3d;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.Set;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.Set;
+import dev.tr7zw.entityculling.CullTask;
+import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.access.Cullable;
+import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.OcclusionCullingInstance;
+import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.util.Vec3d;
 
 @Mixin(CullTask.class)
-public class MixinCullTask  implements Runnable {
+public class MixinCullTask implements Runnable {
+
     @Shadow
     public boolean requestCull = false;
     @Shadow
@@ -58,14 +61,19 @@ public class MixinCullTask  implements Runnable {
             try {
                 Thread.sleep(sleepDelay);
 
-                if (EntityCullingModBase.enabled && client.theWorld != null && client.thePlayer != null && client.thePlayer.ticksExisted > 10 && client.renderViewEntity != null) {
+                if (EntityCullingModBase.enabled && client.theWorld != null
+                    && client.thePlayer != null
+                    && client.thePlayer.ticksExisted > 10
+                    && client.renderViewEntity != null) {
                     Vec3 cameraMC;
                     if (EntityCullingModBase.instance.config.debugMode) {
-                        cameraMC = client.thePlayer.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
+                        cameraMC = client.thePlayer.getPosition(0)
+                            .addVector(0, client.thePlayer.getEyeHeight(), 0);
                     } else {
                         cameraMC = getCameraPos();
                     }
-                    if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y && cameraMC.zCoord == lastPos.z)) {
+                    if (requestCull || !(cameraMC.xCoord == lastPos.x && cameraMC.yCoord == lastPos.y
+                        && cameraMC.zCoord == lastPos.z)) {
                         long start = System.currentTimeMillis();
                         requestCull = false;
                         lastPos.set(cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord);
@@ -76,10 +84,14 @@ public class MixinCullTask  implements Runnable {
                         while (iterator.hasNext()) {
                             try {
                                 TileEntity entry = iterator.next();
-                                if (entry == null || entry.getBlockType() == null || entry.getBlockType().getUnlocalizedName() == null) {
+                                if (entry == null || entry.getBlockType() == null
+                                    || entry.getBlockType()
+                                        .getUnlocalizedName() == null) {
                                     continue;
                                 }
-                                if (unCullable.contains(entry.getBlockType().getUnlocalizedName())) {
+                                if (unCullable.contains(
+                                    entry.getBlockType()
+                                        .getUnlocalizedName())) {
                                     continue;
                                 }
                                 Cullable cullable = (Cullable) entry;
@@ -88,7 +100,13 @@ public class MixinCullTask  implements Runnable {
                                         cullable.setCulled(false);
                                         continue;
                                     }
-                                    if (distanceSq(entry.xCoord, entry.yCoord, entry.zCoord, cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) < 64 * 64) { // 64 is the fixed max tile view distance
+                                    if (distanceSq(
+                                        entry.xCoord,
+                                        entry.yCoord,
+                                        entry.zCoord,
+                                        cameraMC.xCoord,
+                                        cameraMC.yCoord,
+                                        cameraMC.zCoord) < 64 * 64) { // 64 is the fixed max tile view distance
                                         aabbMin.set(entry.xCoord, entry.yCoord, entry.zCoord);
                                         aabbMax.set(entry.xCoord + 1, entry.yCoord + 1, entry.zCoord + 1);
                                         boolean visible = culling.isAABBVisible(aabbMin, aabbMax, camera);
@@ -99,7 +117,8 @@ public class MixinCullTask  implements Runnable {
                                 continue; // Skip to next iteration on exception
                             }
                         }
-                        Iterator<Entity> iterable = client.theWorld.getLoadedEntityList().iterator();
+                        Iterator<Entity> iterable = client.theWorld.getLoadedEntityList()
+                            .iterator();
                         while (iterable.hasNext()) {
                             try {
                                 Entity entity = iterable.next();
@@ -112,12 +131,23 @@ public class MixinCullTask  implements Runnable {
                                         cullable.setCulled(false);
                                         continue;
                                     }
-                                    if (distanceSq(entity.posX, entity.posY, entity.posZ, cameraMC.xCoord, cameraMC.yCoord, cameraMC.zCoord) > EntityCullingModBase.instance.config.tracingDistance * EntityCullingModBase.instance.config.tracingDistance) {
-                                        cullable.setCulled(false); // If your entity view distance is larger than tracingDistance just render it
+                                    if (distanceSq(
+                                        entity.posX,
+                                        entity.posY,
+                                        entity.posZ,
+                                        cameraMC.xCoord,
+                                        cameraMC.yCoord,
+                                        cameraMC.zCoord)
+                                        > EntityCullingModBase.instance.config.tracingDistance
+                                            * EntityCullingModBase.instance.config.tracingDistance) {
+                                        cullable.setCulled(false); // If your entity view distance is larger than
+                                                                   // tracingDistance just render it
                                         continue;
                                     }
                                     AxisAlignedBB boundingBox = entity.boundingBox;
-                                    if (boundingBox.maxX - boundingBox.minX > hitboxLimit || boundingBox.maxY - boundingBox.minY > hitboxLimit || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
+                                    if (boundingBox.maxX - boundingBox.minX > hitboxLimit
+                                        || boundingBox.maxY - boundingBox.minY > hitboxLimit
+                                        || boundingBox.maxZ - boundingBox.minZ > hitboxLimit) {
                                         cullable.setCulled(false); // Too big to bother to cull
                                         continue;
                                     }
@@ -140,14 +170,16 @@ public class MixinCullTask  implements Runnable {
         System.out.println("Shutting down culling task!");
     }
 
-
     @Shadow
     private Vec3 getCameraPos() {
         if (client.gameSettings.thirdPersonView == 0) {
-            return client.renderViewEntity.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
+            return client.renderViewEntity.getPosition(0)
+                .addVector(0, client.thePlayer.getEyeHeight(), 0);
         }
-        return client.renderViewEntity.getPosition(0).addVector(0, client.thePlayer.getEyeHeight(), 0);
+        return client.renderViewEntity.getPosition(0)
+            .addVector(0, client.thePlayer.getEyeHeight(), 0);
     }
+
     @Shadow
     private double distanceSq(double x1, double y1, double z1, double x2, double y2, double z2) {
         double d3 = x1 - x2;
