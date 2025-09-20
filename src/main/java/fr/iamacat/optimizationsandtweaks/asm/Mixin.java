@@ -67,10 +67,9 @@ public enum Mixin implements IMixin {
         "minestones.MixinMSEvents"),
     common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
         "core.MixinBlockFluidClassic"),
-    common_core_MixinChunkProviderServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinChunkProviderServer,
-        "core.MixinChunkProviderServer"),
     /*
-     * common_core_MixinEntityRegistry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityRegistry,
+     * common_core_MixinEntityRegistry(Side.COMMON, m ->
+     * OptimizationsandTweaksConfig.enableMixinEntityRegistry,
      * "core.MixinEntityRegistry"),
      */
     common_core_MixinWorldType(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldType,
@@ -81,8 +80,8 @@ public enum Mixin implements IMixin {
         "core.MixinFMLServerHandler"),
     /*
      * todo need to fix was loaded to early crash
-     * common_core_MixinLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLoader,
-     * "core.MixinLoader"),
+     * common_core_MixinLoader(Side.COMMON, m ->
+     * OptimizationsandTweaksConfig.enableMixinLoader, "core.MixinLoader"),
      */
     common_core_MixinMinecraft(Side.COMMON,
         avoid(TargetedMod.FALSETWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinMinecraft),
@@ -171,11 +170,8 @@ public enum Mixin implements IMixin {
         "sgstreasure.MixinWorldUtilSGSTREASURE"),
     common_core_MixinSaveHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinSaveHandler,
         "core.MixinSaveHandler"),
-    common_core_MixinMinecraftServer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMinecraftServer,
-        "core.MixinMinecraftServer"),
     common_core_MixinMathHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinMathHelper,
         "core.MixinMathHelper"),
-    common_core_MixinIntCache(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinIntCache, "core.MixinIntCache"),
     common_core_MixinNetworkManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNetworkManager,
         "core.MixinNetworkManager"),
     common_core_MixinEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntity, "core.MixinEntity"),
@@ -221,8 +217,6 @@ public enum Mixin implements IMixin {
     common_core_MixinStatsComponent(Side.SERVER, m -> OptimizationsandTweaksConfig.enableMixinStatsComponent,
         "core.MixinStatsComponent"),
 
-    common_core_MixinChunk(Side.COMMON,
-        avoid(TargetedMod.BLENDTRONIC).and(m -> OptimizationsandTweaksConfig.enableMixinChunk), "core.MixinChunk"),
     common_netherlicious_MixinVentGeneratorSingle(Side.COMMON,
         require(TargetedMod.NETHERLICIOUS).and(m -> OptimizationsandTweaksConfig.enableMixinVentGeneratorSingle),
         "netherlicious.MixinVentGeneratorSingle"),
@@ -399,14 +393,8 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.DRAGONAPI)
             .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenBase)),
         "core.biomes.MixinBiomeGenBase"),
-    common_core_MixinChunkProviderGenerate(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinChunkProviderGenerate, "core.MixinChunkProviderGenerate"),
     common_core_MixinCompressedStreamTools(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinCompressedStreamTools, "core.MixinCompressedStreamTools"),
-    common_core_MixinForgeChunkManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinForgeChunkManager,
-        "core.MixinForgeChunkManager"),
-    common_core_MixinAnvilChunkLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAnvilChunkLoader,
-        "core.MixinAnvilChunkLoader"),
     common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
         "core.MixinBlockGrass"),
     common_core_MixinLaunchClassLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLaunchClassLoader,
@@ -875,19 +863,9 @@ public enum Mixin implements IMixin {
     client_core_MixinTesselator(Side.CLIENT,
         avoid(TargetedMod.OPTIFINE).and(m -> OptimizationsandTweaksConfig.enableMixinTesselator),
         "core.MixinTesselator"),
-    /*
-     * common_core_MixinPatchSpawnerAnimals(Side.COMMON,
-     * avoid(TargetedMod.JAS)
-     * .and(avoid(TargetedMod.DRAGONBLOCKC))
-     * .and(m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals),
-     * "core.MixinPatchSpawnerAnimals"),
-     */
+
     common_core_MixinNetHandlerPlayClient(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinNetHandlerPlayClient, "core.MixinNetHandlerPlayClient"),
-    common_core_MixinPatchSpawnerAnimals(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPatchSpawnerAnimals,
-        "core.MixinPatchSpawnerAnimals"),
-    client_core_MixinOpenGlHelper(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinOpenGlHelper,
-        "core.MixinOpenGlHelper"),
     client_core_MixinEntityRenderer(Side.CLIENT, avoid(TargetedMod.OPTIFINE).and(avoid(TargetedMod.FASTCRAFT))
         .and(avoid(TargetedMod.ALFHEIM).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRenderer)),
         "core.MixinEntityRenderer"),
@@ -910,8 +888,8 @@ public enum Mixin implements IMixin {
 
     // MOD-FILTERED MIXINS
 
-    // The modFilter argument is a predicate, so you can also use the .and(), .or(), and .negate() methods to mix and
-    // match multiple predicates.
+    // The modFilter argument is a predicate, so you can also use the .and(),
+    // .or(), and .negate() methods to mix and match multiple predicates.
     ;
 
     @Getter
