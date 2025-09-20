@@ -61,7 +61,7 @@ public abstract class MixinMapGenStructure extends MapGenBase {
      * @reason
      */
     @Overwrite
-    private void func_143027_a(World p_143027_1_) {
+    public void func_143027_a(World p_143027_1_) {
         if (this.field_143029_e == null) {
             this.field_143029_e = (MapGenStructureData) p_143027_1_.perWorldStorage
                 .loadData(MapGenStructureData.class, this.func_143025_a());
@@ -107,7 +107,7 @@ public abstract class MixinMapGenStructure extends MapGenBase {
      * @reason
      */
     @Overwrite
-    protected StructureStart func_143028_c(int p_143028_1_, int p_143028_2_, int p_143028_3_) {
+    public StructureStart func_143028_c(int p_143028_1_, int p_143028_2_, int p_143028_3_) {
         for (Object object : this.structureMap.values()) {
             StructureStart structurestart = (StructureStart) object;
             if (structurestart.isSizeableStructure() && structurestart.getBoundingBox()
