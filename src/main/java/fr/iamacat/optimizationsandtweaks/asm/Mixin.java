@@ -36,6 +36,9 @@ public enum Mixin implements IMixin {
     common_animalsplus_MixinEntitySwimming(Side.COMMON,
         require(TargetedMod.ANIMALSPLUS).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySwimming),
         "animalsplus.MixinEntitySwimming"),
+    common_animalsplus_MixinEntityManager(Side.COMMON,
+        require(TargetedMod.ANIMALSPLUS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityManager),
+        "animalsplus.MixinEntityManager"),
     common_lotr_MixinLOTRMod(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGS).and(
             avoid(TargetedMod.LORDOFTHERINGSFORK)

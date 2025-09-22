@@ -460,6 +460,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitySwimming;
+    @Config.Comment("Fix entity name collisions between Orespawn and Animals+ mods")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityManager;
     @Config.Comment("Optimize MapGenStructure Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
