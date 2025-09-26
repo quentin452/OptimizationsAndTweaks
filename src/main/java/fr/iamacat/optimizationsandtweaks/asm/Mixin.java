@@ -853,6 +853,10 @@ public enum Mixin implements IMixin {
         require(TargetedMod.PRACTICALLOGISTICS).and(m -> OptimizationsandTweaksConfig.enableMixinEventRegistry),
         "practicallogistics.MixinEventRegistry"),
 
+    common_core_MixinEntityPlayer(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableMixinEntityPlayer,
+        "core.MixinEntityPlayer"),
+
     common_angelica_MixinClientProxy(Side.COMMON,
         require(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinClientProxy),
         "angelica.MixinClientProxy"),

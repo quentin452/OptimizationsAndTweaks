@@ -34,21 +34,27 @@ public class TidyChunkBackportWorldContext {
 
     // Search for and remove EntityItems that meet certain criteria
     public void searchAndDestroy(@Nonnull final World world) {
-        if (!this.chunks.isEmpty()) {
-            List<EntityItem> entitiesToRemove = new ArrayList<>();
+        if (world.isRemote || this.chunks.isEmpty()) {
+            return;
+        }
+        
+        List<EntityItem> entitiesToRemove = new ArrayList<>();
 
-            for (Object entityObject : world.loadedEntityList) {
-                if (entityObject instanceof EntityItem) {
-                    EntityItem itemEntity = (EntityItem) entityObject;
+        for (Object entityObject : world.loadedEntityList) {
+            if (entityObject instanceof EntityItem) {
+                EntityItem itemEntity = (EntityItem) entityObject;
 
-                    if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
-                        entitiesToRemove.add(itemEntity);
-                    }
+                if (PlayerDroppedItemTracker.isPlayerDropped(itemEntity)) {
+                    continue;
+                }
+
+                if (isTargetEntity(itemEntity) && isContained(itemEntity)) {
+                    entitiesToRemove.add(itemEntity);
                 }
             }
-
-            removeEntities(entitiesToRemove, world);
         }
+
+        removeEntities(entitiesToRemove, world);
     }
 
     private void removeEntities(List<EntityItem> entities, World world) {
@@ -80,6 +86,10 @@ public class TidyChunkBackportWorldContext {
 
     // Remove an entity from the world
     public void removeEntity(Entity entity, World world) {
+        if (entity instanceof EntityItem) {
+            PlayerDroppedItemTracker.untrackItem((EntityItem) entity);
+        }
+        
         entity.setDead();
         world.removeEntity(entity);
         ++this.removeCount;

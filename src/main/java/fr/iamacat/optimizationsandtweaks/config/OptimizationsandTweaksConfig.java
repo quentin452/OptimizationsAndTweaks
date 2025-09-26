@@ -1053,6 +1053,11 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinClientProxy;
 
+    @Config.Comment("Fixed player-thrown items being incorrectly removed during chunk generation (Tidy Chunk)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityPlayer;
+
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

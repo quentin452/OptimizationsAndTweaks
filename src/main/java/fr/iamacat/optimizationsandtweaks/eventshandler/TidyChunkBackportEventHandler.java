@@ -13,6 +13,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.PlayerDroppedItemTracker;
 
 public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.
@@ -32,6 +33,7 @@ public class TidyChunkBackportEventHandler {
         if (!w.isRemote) {
             getWorldContext(w).searchAndDestroy(w);
             worldData.remove(w.provider.dimensionId);
+            PlayerDroppedItemTracker.clearAll();
         }
     }
 
@@ -54,6 +56,10 @@ public class TidyChunkBackportEventHandler {
         }
 
         EntityItem itemEntity = (EntityItem) entity;
+
+        if (PlayerDroppedItemTracker.isPlayerDropped(itemEntity)) {
+            return;
+        }
 
         final TidyChunkBackportWorldContext ctx = getWorldContext(world);
 
