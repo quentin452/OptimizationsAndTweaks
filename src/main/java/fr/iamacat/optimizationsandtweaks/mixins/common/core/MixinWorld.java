@@ -95,16 +95,12 @@ public abstract class MixinWorld {
      * @reason
      */
     @Overwrite
-    public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000
-            && p_147439_1_ < 30000000
-            && p_147439_3_ < 30000000
-            && p_147439_2_ >= 0
-            && p_147439_2_ < 256
-            && this.blockExists(p_147439_1_, p_147439_2_, p_147439_3_)) {
-            Chunk chunk = this.getChunkFromChunkCoords(p_147439_1_ >> 4, p_147439_3_ >> 4);
+    public Block getBlock(int x, int y, int z) {
+        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
+            Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
             if (chunk != null) {
-                return chunk.getBlock(p_147439_1_ & 15, p_147439_2_, p_147439_3_ & 15);
+                int clampedY = MathHelper.clamp_int(y, 0, 255);
+                return chunk.getBlock(x & 15, clampedY, z & 15);
             }
         }
         return Blocks.air;
