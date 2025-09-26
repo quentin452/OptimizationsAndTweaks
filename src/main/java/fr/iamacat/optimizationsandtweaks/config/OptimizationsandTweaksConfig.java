@@ -1043,6 +1043,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMobSpawnerGoblinLogic;
+    @Config.Comment("Fix Goblin mod is incorrectly setting nametag range and so made all tags to be invisible")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGoblinClientProxy;
     @Config.Comment("Fix Entity God From XTractCraft Causing Crash On Servers " + "(by disabling his boss bar)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
