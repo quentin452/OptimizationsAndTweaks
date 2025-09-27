@@ -525,7 +525,7 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAIFollowParent;
-    @Config.Comment("Optimize EntityMob Class")
+    @Config.Comment("Optimize EntityMob Class + avoid mobs can attack through blocks")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMob;
