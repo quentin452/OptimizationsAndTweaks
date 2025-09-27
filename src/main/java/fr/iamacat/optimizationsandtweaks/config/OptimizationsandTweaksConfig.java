@@ -1080,6 +1080,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinTinkerGears;
+    @Config.Comment("Fix concurrent modification exception from TileEntityRendererDispatcher")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTileEntityRendererDispatcher;
     @Config.Comment("Disable LocalizationUpdater from RemoteIO")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
