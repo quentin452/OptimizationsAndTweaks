@@ -1108,7 +1108,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenHandlerExperienceOre;
-    @Config.Comment("Remove unecessary println in KitchenCraftMachines class " + "from KitchenCraft Mod")
+    @Config.Comment("Add a config to generate or not ores from spirit ores mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableCreateConfigurableOresForSpiritOres;
+    @Config.Comment("Remove unecessary println in KictchenCraftMachines class " + "from KitchenCraft Mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinKitchenCraftMachines;
