@@ -610,6 +610,9 @@ public enum Mixin implements IMixin {
     common_atum_MixinWorldGenRuins(Side.COMMON,
         require(TargetedMod.ATUM2).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenRuins),
         "atum.MixinWorldGenRuins"),
+    common_atum_MixinAtumWeightedLootSet(Side.COMMON,
+        require(TargetedMod.ATUM2).and(m -> OptimizationsandTweaksConfig.enableMixinAtumWeightedLootSet),
+        "atum.MixinAtumWeightedLootSet"),
     common_mythandmonsters_MixinMAMWorldGenerator(Side.COMMON,
         require(TargetedMod.MYTHANDMONSTERS).and(
             require(TargetedMod.RECURRENTCOMPLEX).and(m -> OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator)),

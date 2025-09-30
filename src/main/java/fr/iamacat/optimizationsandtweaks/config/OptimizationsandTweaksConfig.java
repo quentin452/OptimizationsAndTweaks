@@ -960,6 +960,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenRuins;
+    @Config.Comment("Fix enchantment npe from Atum mod (AtumWeightedLootSet)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinAtumWeightedLootSet;
     @Config.Comment("Fix Some Cascading Worldgen caused by NetherWorldGen " + "Class from Gany's Nether mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
