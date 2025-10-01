@@ -570,7 +570,7 @@ public enum Mixin implements IMixin {
     common_goblins_MixinMobSpawnerGoblinLogic(Side.COMMON,
         require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinMobSpawnerGoblinLogic),
         "goblins.MixinMobSpawnerGoblinLogic"),
-    common_goblins_MixinGoblinClientProxy(Side.COMMON,
+    client_goblins_MixinGoblinClientProxy(Side.CLIENT,
         require(TargetedMod.GOBLINS).and(m -> OptimizationsandTweaksConfig.enableMixinGoblinClientProxy),
         "goblins.MixinGoblinClientProxy"),
     common_xtracraft_MixinXCEntityGod(Side.COMMON,

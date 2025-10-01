@@ -1,4 +1,4 @@
-package fr.iamacat.optimizationsandtweaks.mixins.common.goblins;
+package fr.iamacat.optimizationsandtweaks.mixins.client.goblins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
