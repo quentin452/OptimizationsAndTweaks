@@ -650,6 +650,14 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEFConfiguration;
+    @Config.Comment("Fix eternalfrost mob spawners")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableEternalFrostMobSpawningFix;
+    @Config.Comment("Fix eternalfrost ClassCastException crash")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableEternalFrostClassCastExceptionFix;
     @Config.Comment("Fix Null Crash caused by Better Burning")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
