@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
@@ -114,6 +116,7 @@ public abstract class MixinEntity {
      * @reason Massive performance improvement by caching render distance calculations
      */
     @Overwrite
+    @SideOnly(Side.CLIENT)
     public boolean isInRangeToRender3d(double x, double y, double z) {
         long currentTime = System.currentTimeMillis();
         
