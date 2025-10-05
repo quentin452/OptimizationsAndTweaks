@@ -27,6 +27,7 @@ import org.lwjgl.opengl.GL12;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -34,6 +35,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 @Mixin(value = ItemRenderer.class, priority = 999)
 public class MixinItemRenderer {
+
+    @Unique
+    private static boolean optimizationsAndTweaks$lastTexParam1 = false;
+    @Unique
+    private static boolean optimizationsAndTweaks$lastTexParam2 = false;
+    @Unique
+    private static float optimizationsAndTweaks$lastTexParam3 = 0.0F;
+    @Unique 
+    private static boolean optimizationsAndTweaks$texUtilCacheValid = false;
 
     @Shadow
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation(
@@ -111,7 +121,7 @@ public class MixinItemRenderer {
 
                         texturemanager
                             .bindTexture(texturemanager.getResourceLocation(p_78443_2_.getItemSpriteNumber()));
-                        TextureUtil.func_152777_a(false, false, 1.0F);
+                        cachedTextureUtilFunc152777a(false, false, 1.0F);
                         Tessellator tessellator = Tessellator.instance;
                         float f = iicon.getMinU();
                         float f1 = iicon.getMaxU();
@@ -262,4 +272,16 @@ public class MixinItemRenderer {
         p_78439_0_.draw();
     }
 
+    /**
+     * Cached version of TextureUtil.func_152777_a to avoid redundant calls with same parameters
+     */
+    private static void cachedTextureUtilFunc152777a(boolean param1, boolean param2, float param3) {
+        if (!optimizationsAndTweaks$texUtilCacheValid || optimizationsAndTweaks$lastTexParam1 != param1 || optimizationsAndTweaks$lastTexParam2 != param2 || optimizationsAndTweaks$lastTexParam3 != param3) {
+            optimizationsAndTweaks$lastTexParam1 = param1;
+            optimizationsAndTweaks$lastTexParam2 = param2;
+            optimizationsAndTweaks$lastTexParam3 = param3;
+            optimizationsAndTweaks$texUtilCacheValid = true;
+            TextureUtil.func_152777_a(param1, param2, param3);
+        }
+    }
 }
