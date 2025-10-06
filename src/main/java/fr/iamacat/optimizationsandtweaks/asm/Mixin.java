@@ -398,8 +398,6 @@ public enum Mixin implements IMixin {
         "core.biomes.MixinBiomeGenBase"),
     common_core_MixinCompressedStreamTools(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinCompressedStreamTools, "core.MixinCompressedStreamTools"),
-    common_core_MixinBlockGrass(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockGrass,
-        "core.MixinBlockGrass"),
     common_core_MixinLaunchClassLoader(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLaunchClassLoader,
         "core.MixinLaunchClassLoader"),
     common_core_entity_MixinEntitySquid(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntitySquid,
