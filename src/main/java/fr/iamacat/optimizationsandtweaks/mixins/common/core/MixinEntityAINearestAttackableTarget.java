@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.command.IEntitySelector;
@@ -67,16 +68,20 @@ public class MixinEntityAINearestAttackableTarget extends EntityAITarget {
      */
     @Overwrite
     public boolean shouldExecute() {
-        if (this.targetChance > 0 && this.taskOwner.getRNG()
-            .nextInt(this.targetChance) != 0) {
+        if (this.targetChance > 0 && this.taskOwner.getRNG().nextInt(this.targetChance) != 0) {
             return false;
         }
 
         double d0 = this.getTargetDistance();
-        List<EntityLivingBase> list = this.taskOwner.worldObj
+        List<Entity> entities = this.taskOwner.worldObj
             .getEntitiesWithinAABB(this.targetClass, this.taskOwner.boundingBox.expand(d0, 4.0D, d0));
 
-        list.removeIf(entity -> !this.targetEntitySelector.isEntityApplicable(entity));
+        List<EntityLivingBase> list = new ArrayList<>();
+        for (Entity e : entities) {
+            if (e instanceof EntityLivingBase && this.targetEntitySelector.isEntityApplicable(e)) {
+                list.add((EntityLivingBase) e);
+            }
+        }
 
         if (list.isEmpty()) {
             return false;
@@ -86,6 +91,7 @@ public class MixinEntityAINearestAttackableTarget extends EntityAITarget {
         this.targetEntity = list.get(0);
         return true;
     }
+
 
     /**
      * Execute a one shot task or start executing a continuous task
