@@ -128,7 +128,13 @@ public enum TargetedMod implements ITargetedMod {
     XTRACRAFT("xtracraft", false, startsWith("xtracraft")),
     ENTITYCULLING("entityculling", false, startsWith("entityculling")),
     CHROMATICRAFT("chromaticraft", false, startsWith("chromaticraft")),
-    AETHER("aether", false, startsWith("aether")),;
+    AETHER("aether", false, startsWith("aether")),
+    LOTSOFTHINGS("LOT", false, startsWith("LotsOfThings")),
+    THEMISTOFRIOV("The Mists of RioV", false, startsWith("The Mists of RioV")),
+    STRUCTPRO("structpro", false, startsWith("structpro")),
+    ALIENVSPREDATOR("aliensvspredator", false, startsWith("[1.7.10-10.13.4.1614-1.7.10][4.0.0.822] aliensvspredator")),
+    THECAMPINGMOD("TheCampingMod", false, startsWith("TheCampingMod"))
+    ;
 
     @Getter
     private final String modName;

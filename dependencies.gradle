@@ -202,6 +202,10 @@ dependencies {
     implementation files("libs/entityculling-1.6.4-mc1.7.10.jar")
     implementation files("libs/DragonAPI 1.7.10 V33b.jar")
     implementation files("libs/ChromatiCraft 1.7.10 V33a.jar")
+    implementation files("libs/LotsOfThings-1.2-[1.7.10].jar")
+    implementation files("libs/The Mists of RioV-v2.5.2.jar")
+    implementation files("libs/structpro-4.0-1.7.10.jar")
+    implementation files("libs/TheCampingMod_2.1g.jar")
 
     compileOnly("com.github.GTNewHorizons:ThaumicHorizons:1.6.3:dev")
     compileOnly("com.github.GTNewHorizons:HoloInventory:2.4.12-GTNH:dev")

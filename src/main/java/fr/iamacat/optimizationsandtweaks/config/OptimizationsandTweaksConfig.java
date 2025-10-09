@@ -694,6 +694,22 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBiomeRegistryLotsOMobs;
+    @Config.Comment("Fix Worldgen lags caused by GenRainbowFlowers from LotOfThings mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinGenRainbowFlowers;
+    @Config.Comment("Fix Worldgen lags caused by WorldGenBalance from The Mist of RioV mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGenBalance;
+    @Config.Comment("Fix Worldgen lags caused by UWorld from structpro mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinUWorld;
+    @Config.Comment("Fix Worldgen lags caused by The Camping Mod")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldGeneratorTheCamping;
     @Config.Comment("Fix null crash caused by PPAPEventHandler from PPAP MOD")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
