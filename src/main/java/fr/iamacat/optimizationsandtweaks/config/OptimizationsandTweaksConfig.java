@@ -322,12 +322,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockAiry;
-    /*
-     * @Config.Comment("Patch EntityRegistry availableIndicies")
-     * @Config.DefaultBoolean(true)
-     * @Config.RequiresWorldRestart
-     * public static boolean enableMixinEntityRegistry;
-     */
+    @Config.Comment("Fix ids and names conflicts caused by some mods")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEntityRegistry;
     @Config.Comment("Optimize ThaumcraftHelper class From Extra Utilities")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -460,10 +458,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntitySwimming;
-    @Config.Comment("Fix entity name collisions between Orespawn and Animals+ mods")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityManager;
     @Config.Comment("Optimize MapGenStructure Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -791,38 +785,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinGenerateCoral;
-    @Config.Comment("(DISABLED BY DEFAULT,causing freezes)Made sure that "
-        + "EntityID from TooMuchTNT mod is above 1000 to prevent "
-        + "crash with unknown mod(Need endlessids installed)")
-    @Config.DefaultBoolean(false)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinTooMuchTNT;
-    @Config.Comment("Made sure that EntityID from EldritchEmpire mod is above 1000 to "
-        + "prevent crash with unknown mod(Need config helper installed)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEldritchEmpireRegistration;
-    @Config.Comment("Made sure that EntityID from elijahs Chocolate mod is above 1000 "
-        + "to prevent crash with unknown mod(Need config helper installed)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityChocolateCreeper;
-    @Config.Comment("Made sure that EntityID from RunicDungeons is above 1000 to "
-        + "prevent crash with Minenautica(Need config helper installed)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinCommonProxyRunicDungeons;
-    @Config.Comment("Made sure that EntityID from The Real Keter is above 1000 to "
-        + "prevent crash with an unknown mod(Need config helper installed)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinKMOD_Main_Entities;
-
-    @Config.Comment("Made sure that EntityID from OreSpiders is above 1000 to prevent "
-        + "crash with unknown mod(Need config helper installed)")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityRegistererOreSpiders;
     @Config.Comment("Fix Spam logs when minefactory reloaded is installed with "
         + "several mod(see the mixin to find which")
     @Config.DefaultBoolean(true)

@@ -36,9 +36,6 @@ public enum Mixin implements IMixin {
     common_animalsplus_MixinEntitySwimming(Side.COMMON,
         require(TargetedMod.ANIMALSPLUS).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySwimming),
         "animalsplus.MixinEntitySwimming"),
-    common_animalsplus_MixinEntityManager(Side.COMMON,
-        require(TargetedMod.ANIMALSPLUS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityManager),
-        "animalsplus.MixinEntityManager"),
     common_lotr_MixinLOTRMod(Side.COMMON,
         require(TargetedMod.LORDOFTHERINGS).and(
             avoid(TargetedMod.LORDOFTHERINGSFORK)
@@ -70,11 +67,9 @@ public enum Mixin implements IMixin {
         "minestones.MixinMSEvents"),
     common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
         "core.MixinBlockFluidClassic"),
-    /*
-     * common_core_MixinEntityRegistry(Side.COMMON, m ->
-     * OptimizationsandTweaksConfig.enableMixinEntityRegistry,
-     * "core.MixinEntityRegistry"),
-     */
+     common_core_MixinEntityRegistry(Side.COMMON, m ->
+     OptimizationsandTweaksConfig.enableMixinEntityRegistry,
+     "core.MixinEntityRegistry"),
     common_core_MixinWorldType(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldType,
         "core.MixinWorldType"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
@@ -296,38 +291,12 @@ public enum Mixin implements IMixin {
     common_minenautica_MixinBiomeGenKelpForest(Side.COMMON,
         require(TargetedMod.MINENAUTICA).and(m -> OptimizationsandTweaksConfig.enableMixinBiomeGenKelpForest),
         "minenautica.MixinBiomeGenKelpForest"),
-    common_runicdungeons_MixinCommonProxyRunicDungeons(Side.COMMON,
-        require(TargetedMod.RUNICDUNGEONS).and(m -> OptimizationsandTweaksConfig.enableMixinCommonProxyRunicDungeons)
-            .and(require(TargetedMod.CONFIGHELPER)),
-        "runicdungeons.MixinCommonProxyRunicDungeons"),
-
-    common_toomuchtnt_MixinTooMuchTNT(Side.COMMON,
-        require(TargetedMod.TOOMUCHTNT).and(m -> OptimizationsandTweaksConfig.enableMixinTooMuchTNT)
-            .and(require(TargetedMod.ENDLESSIDS)),
-        "toomuchtnt.MixinTooMuchTNT"),
-    common_elijahschocolate_MixinEntityChocolateCreeper(Side.COMMON,
-        require(TargetedMod.ELIJAHSCHOCOLATEMOD)
-            .and(m -> OptimizationsandTweaksConfig.enableMixinEntityChocolateCreeper)
-            .and(require(TargetedMod.CONFIGHELPER)),
-        "elijahschocolate.MixinEntityChocolateCreeper"),
     common_fantasticfish_MixinFantasticEvents(Side.COMMON,
         require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticEvents),
         "fantasticfish.MixinFantasticEvents"),
     common_fantasticfish_MixinFantasticMod(Side.COMMON,
         require(TargetedMod.FANTASTICFISH).and(m -> OptimizationsandTweaksConfig.enableMixinFantasticMod),
         "fantasticfish.MixinFantasticMod"),
-    common_eldritchempire_MixinEldritchEmpireRegistration(Side.COMMON,
-        require(TargetedMod.ELDRITCHEMPIRE).and(m -> OptimizationsandTweaksConfig.enableMixinEldritchEmpireRegistration)
-            .and(require(TargetedMod.CONFIGHELPER)),
-        "eldritchempire.MixinEldritchEmpireRegistration"),
-    common_therealketer_MixinKMOD_Main_Entities(Side.COMMON,
-        require(TargetedMod.THEREALKETER).and(m -> OptimizationsandTweaksConfig.enableMixinKMOD_Main_Entities)
-            .and(require(TargetedMod.CONFIGHELPER)),
-        "therealketer.MixinKMOD_Main_Entities"),
-    common_orespiders_MixinEntityRegistererOreSpiders(Side.COMMON,
-        require(TargetedMod.ORESPIDERS).and(m -> OptimizationsandTweaksConfig.enableMixinEntityRegistererOreSpiders)
-            .and(require(TargetedMod.CONFIGHELPER)),
-        "orespiders.MixinEntityRegistererOreSpiders"),
     common_akatsuki_MixinEntitySasori(Side.COMMON,
         require(TargetedMod.AKATSUKI).and(m -> OptimizationsandTweaksConfig.enableMixinEntitySasosri),
         "akatsuki.MixinEntitySasori"),
