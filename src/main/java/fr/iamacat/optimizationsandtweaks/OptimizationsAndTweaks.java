@@ -14,6 +14,7 @@ import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHa
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.WorldUnloadEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
+import fr.iamacat.optimizationsandtweaks.utils.natives.RustFFI;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.FileInjector;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.ModConfig;
@@ -34,6 +35,23 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
+        // Initialize Rust FFI
+        try {
+            File minecraftDir = event.getModConfigurationDirectory()
+                .getParentFile();
+            if (RustFFI.initialize(minecraftDir)) {
+                // Test the Rust FFI
+                RustFFI.printHelloWorld();
+                String helloMsg = RustFFI.getHelloString();
+                if (helloMsg != null) {
+                    FMLLog.info("[OptimizationsAndTweaks] Rust says: %s", helloMsg);
+                }
+                RustFFI.printMessage("Hello from OptimizationsAndTweaks mod!");
+            }
+        } catch (Throwable t) {
+            FMLLog.info("[OptimizationsAndTweaks] Rust FFI initialization skipped (optional feature): %s", t.getMessage());
+        }
+
         if (FMLCommonHandler.instance()
             .findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
             File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");
