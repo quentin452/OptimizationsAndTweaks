@@ -704,6 +704,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinWorldGenBalance;
+    @Config.Comment("Prevent The Titan mod to dispawn mobs from another mods or vanilla unexpectedly")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinWorldHandlerTitan;
     @Config.Comment("Fix Worldgen lags caused by UWorld from structpro mod")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

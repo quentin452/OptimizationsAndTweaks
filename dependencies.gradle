@@ -208,6 +208,7 @@ dependencies {
     implementation files("libs/TheCampingMod_2.1g.jar")
     implementation files("libs/Salutation-1.7.10-1.0.0.jar")
     implementation files("libs/CarbonConfig-1.7.10-1.1.5.jar")
+    implementation files("libs/The Titans MC 1.7.10 version-0.5 beta v0712.jar")
 
     compileOnly("com.github.GTNewHorizons:ThaumicHorizons:1.6.3:dev")
     compileOnly("com.github.GTNewHorizons:HoloInventory:2.4.12-GTNH:dev")
