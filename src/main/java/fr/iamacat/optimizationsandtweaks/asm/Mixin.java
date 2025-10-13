@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
-
+    
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
     common_core_MixinEventBus(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventBus, "core.MixinEventBus"),
     common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper,
@@ -860,6 +860,9 @@ public enum Mixin implements IMixin {
     client_practicallogistics_MixinEventRegistry(Side.CLIENT,
         require(TargetedMod.PRACTICALLOGISTICS).and(m -> OptimizationsandTweaksConfig.enableMixinEventRegistry),
         "practicallogistics.MixinEventRegistry"),
+    client_salutation_MixinSalutationClientHandler(Side.CLIENT,
+        require(TargetedMod.SALUTATION).and(m -> OptimizationsandTweaksConfig.enableMixinSalutationClientHandler),
+        "salutation.MixinSalutationClientHandler"),
 
     common_core_MixinEntityPlayer(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinEntityPlayer,

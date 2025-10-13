@@ -307,6 +307,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEventRegistry;
+    @Config.Comment("Fix Stackoverflow caused by Salutation mod on servers")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinSalutationClientHandler;
 
     @Config.Comment("Optimize ThaumcraftCraftingManager from Thaumcraft To " + "Reduce loading time")
     @Config.DefaultBoolean(true)
