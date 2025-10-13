@@ -112,6 +112,11 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEventBus;
 
+    @Config.Comment("Optimize Explosion Class")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinExplosion;
+
     @Config.Comment("Optimize EnchantmentHelper Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
