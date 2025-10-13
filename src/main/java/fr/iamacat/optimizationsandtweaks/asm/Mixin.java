@@ -76,6 +76,8 @@ public enum Mixin implements IMixin {
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
         "core.MixinFMLServerHandler"),
+    common_core_MixinStartupQuery(Side.COMMON, m -> OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation,
+        "core.MixinStartupQuery"),
     /*
      * todo need to fix was loaded to early crash
      * common_core_MixinLoader(Side.COMMON, m ->

@@ -227,6 +227,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinFMLServerHandler;
+    @Config.Comment("Auto-confirm future FML queries after first confirmation")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableFMLAutoConfirmAfterFirstConfirmation;
     /*
      * todo need to fix was loaded to early crash
      * @Config.Comment("Optimize Loader")

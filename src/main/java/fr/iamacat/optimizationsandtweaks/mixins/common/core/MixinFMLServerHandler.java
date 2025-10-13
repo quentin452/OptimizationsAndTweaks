@@ -12,6 +12,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
@@ -19,14 +20,35 @@ import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.functions.GenericIterableFactory;
 import cpw.mods.fml.server.FMLServerHandler;
 
+import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+
 @Mixin(FMLServerHandler.class)
 public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
 
     @Shadow
     private MinecraftServer server;
+    
+    @Unique
+    private MinecraftServer lastServer;
+
+    @Unique
+    private static boolean hasConfirmedOnce = false;
 
     @Override
     public void queryUser(StartupQuery query) throws InterruptedException {
+        if (OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation) {
+            if (server != lastServer) {
+                // reset confirmation when new world/server
+                hasConfirmedOnce = false;
+                lastServer = server;
+            }
+            if (hasConfirmedOnce) {
+                FMLLog.info("Auto-confirming query due to previous confirmation.");
+                query.setResult(true);
+                query.finish();
+                return;
+            }
+        }
         if (query.getResult() == null) {
             FMLLog.warning("%s", query.getText());
             query.finish();
@@ -61,6 +83,9 @@ public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
                                     query.setResult(true);
                                     done.set(true);
                                     it.remove();
+                                    if (OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation) {   
+                                        hasConfirmedOnce = true;
+                                    }
                                     break;
                                 case "/fml cancel":
                                     FMLLog.info("cancelled");

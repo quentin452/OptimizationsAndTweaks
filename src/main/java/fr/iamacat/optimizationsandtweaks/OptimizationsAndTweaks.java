@@ -12,6 +12,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
+import fr.iamacat.optimizationsandtweaks.eventshandler.WorldUnloadEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.FileInjector;
@@ -56,6 +57,10 @@ public class OptimizationsAndTweaks {
         if (OptimizationsandTweaksConfig.enableEntityItemSpawningDebugger) {
             EntityItemSpawningEventHandler eventHandler = new EntityItemSpawningEventHandler();
             MinecraftForge.EVENT_BUS.register(eventHandler);
+        }
+        if (OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation) {
+            WorldUnloadEventHandler worldUnloadHandler = new WorldUnloadEventHandler();
+            MinecraftForge.EVENT_BUS.register(worldUnloadHandler);
         }
         MinecraftForge.EVENT_BUS.register(proxy);
     }
