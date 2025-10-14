@@ -60,11 +60,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RangeInt(min = 1, max = 64)
     @Config.RequiresWorldRestart
     public static int numberofcpus;
-    @Config.Comment("Batch size ,if you have tps issues try lowering or " + "highering the batch size.")
-    @Config.DefaultInt(150)
-    @Config.RangeInt(min = 1, max = 100)
-    @Config.RequiresWorldRestart
-    public static int batchsize;
     @Config.Comment("Optimize WorldChunkManager class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
