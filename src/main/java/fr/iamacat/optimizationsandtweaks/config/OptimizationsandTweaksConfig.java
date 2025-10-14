@@ -453,10 +453,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMapGenStructure;
-    @Config.Comment("Optimize ItemRenderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinItemRenderer;
     @Config.Comment("Optimize IntHashMap")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
