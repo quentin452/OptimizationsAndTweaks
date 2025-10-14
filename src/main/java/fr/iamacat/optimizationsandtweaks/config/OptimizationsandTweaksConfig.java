@@ -412,10 +412,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinVec3;
-    @Config.Comment("Optimize FontRenderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinFontRenderer;
     @Config.Comment("Optimize ModelRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
