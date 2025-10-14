@@ -477,11 +477,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAnimal;
-
-    @Config.Comment("Optimize ChunkProviderGenerate")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkProviderGenerate;
     @Config.Comment("Optimize CompressedStreamTools (CAN CAUSE CRASHES CAUSED " + "BY GZIPInputStream2)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
