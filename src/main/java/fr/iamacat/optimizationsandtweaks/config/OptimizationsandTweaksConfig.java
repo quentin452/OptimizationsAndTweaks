@@ -7,11 +7,6 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
 
-    @Config.Comment("Optimize EntityAITarget Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAITarget;
-
     @Config.Comment("Enabling Block Name Debugger for getPendingBlockUpdates " + "from WorldServer Class?.")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -37,10 +32,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRandomPositionGenerator;
-    @Config.Comment("Optimize EntityAIWander Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAIWander;
     @Config.Comment("Optimize EntityAIPlay Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -98,10 +89,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinServersideAttributeMap;
-    @Config.Comment("Optimize EntityAIAttackOnCollide performances")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAIAttackOnCollide;
     @Config.Comment("Optimize World Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -275,10 +262,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStitcher;
-    @Config.Comment("Optimize Pathfinding for entities")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enablePathfinderOptimizations;
     @Config.Comment("Optimize StatsComponent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -1068,6 +1051,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityPlayer;
+
+    @Config.Comment("Enable Rust-powered pathfinding optimization for PathFinder (significant performance improvement)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinPathFinder;
 
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)

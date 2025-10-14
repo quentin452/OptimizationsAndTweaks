@@ -15,6 +15,7 @@ import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHan
 import fr.iamacat.optimizationsandtweaks.eventshandler.WorldUnloadEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
 import fr.iamacat.optimizationsandtweaks.utils.natives.RustFFI;
+import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfinding;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.FileInjector;
 import fr.iamacat.optimizationsandtweaks.utilsformods.mythandmonsters.recurrentcomplextrewrite.ModConfig;
@@ -47,9 +48,14 @@ public class OptimizationsAndTweaks {
                     FMLLog.info("[OptimizationsAndTweaks] Rust says: %s", helloMsg);
                 }
                 RustFFI.printMessage("Hello from OptimizationsAndTweaks mod!");
+
+                // Initialize Rust pathfinding
+                RustPathfinding.initialize();
             }
         } catch (Throwable t) {
-            FMLLog.info("[OptimizationsAndTweaks] Rust FFI initialization skipped (optional feature): %s", t.getMessage());
+            FMLLog.info(
+                "[OptimizationsAndTweaks] Rust FFI initialization skipped (optional feature): %s",
+                t.getMessage());
         }
 
         if (FMLCommonHandler.instance()

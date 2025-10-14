@@ -12,10 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
-    
+
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
     common_core_MixinEventBus(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventBus, "core.MixinEventBus"),
-    common_core_MixinExplosion(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinExplosion, "core.MixinExplosion"),
+    common_core_MixinExplosion(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinExplosion,
+        "core.MixinExplosion"),
     common_core_MixinEnchantmentHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEnchantmentHelper,
         "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON,
@@ -68,17 +69,16 @@ public enum Mixin implements IMixin {
         "minestones.MixinMSEvents"),
     common_core_MixinBlockFluidClassic(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFluidClassic,
         "core.MixinBlockFluidClassic"),
-     common_core_MixinEntityRegistry(Side.COMMON, m ->
-     OptimizationsandTweaksConfig.enableMixinEntityRegistry,
-     "core.MixinEntityRegistry"),
+    common_core_MixinEntityRegistry(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityRegistry,
+        "core.MixinEntityRegistry"),
     common_core_MixinWorldType(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldType,
         "core.MixinWorldType"),
     common_core_MixinFMLClientHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLClientHandler,
         "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinFMLServerHandler,
         "core.MixinFMLServerHandler"),
-    common_core_MixinStartupQuery(Side.COMMON, m -> OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation,
-        "core.MixinStartupQuery"),
+    common_core_MixinStartupQuery(Side.COMMON,
+        m -> OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation, "core.MixinStartupQuery"),
     /*
      * todo need to fix was loaded to early crash
      * common_core_MixinLoader(Side.COMMON, m ->
@@ -111,8 +111,6 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityArrowAttack(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityArrowAttack,
         "core.MixinEntityArrowAttack"),
-    common_core_MixinEntityAITarget(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITarget,
-        "core.MixinEntityAITarget"),
     common_core_MixinAxisAlignedBB(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinAxisAlignedBB,
         "core.MixinAxisAlignedBB"),
     common_core_MixinEntityAITempt(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITempt,
@@ -123,13 +121,8 @@ public enum Mixin implements IMixin {
         "easybreeding.MixinEntityAIEatDroppedFood"),
     common_core_MixinRandomPositionGenerator(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinRandomPositionGenerator, "core.MixinRandomPositionGenerator"),
-    common_core_MixinEntityAIWander(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAIWander,
-        "core.MixinEntityAIWander"),
     common_core_MixinEntityAIPlay(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAIPlay,
         "core.MixinEntityAIPlay"),
-    common_core_MixinEntityAIAttackOnCollide(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEntityAIAttackOnCollide, "core.MixinEntityAIAttackOnCollide"),
-
     common_core_MixinServersideAttributeMap(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinServersideAttributeMap, "core.MixinServersideAttributeMap"),
     common_core_MixinLowerStringMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLowerStringMap,
@@ -199,19 +192,6 @@ public enum Mixin implements IMixin {
 
     common_core_MixinEntityTracker(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityTracker,
         "core.MixinEntityTracker"),
-    /*
-     * common_core_pathfinding_MixinPathEntity(Side.COMMON, m ->
-     * OptimizationsandTweaksConfig.enablePathfinderOptimizations,
-     * "core.pathfinding.MixinPathEntity"),
-     * common_core_pathfinding_MixinPathNavigate(Side.COMMON, m ->
-     * OptimizationsandTweaksConfig.enablePathfinderOptimizations,
-     * "core.pathfinding.MixinPathNavigate"),
-     * common_core_pathfinding_MixinPathPoint(Side.COMMON, m ->
-     * OptimizationsandTweaksConfig.enablePathfinderOptimizations,
-     * "core.pathfinding.MixinPathPoint"),
-     */
-    common_core_entity_MixinEntityAIControlledByPlayer(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enablePathfinderOptimizations, "core.entity.MixinEntityAIControlledByPlayer"),
     common_core_MixinWorldServer(Side.COMMON,
         avoid(TargetedMod.LAGGOOGLES).and(m -> OptimizationsandTweaksConfig.enableMixinWorldServer),
         "core.MixinWorldServer"),
@@ -537,7 +517,8 @@ public enum Mixin implements IMixin {
         require(TargetedMod.ETERNALFROST).and(m -> OptimizationsandTweaksConfig.enableEternalFrostMobSpawningFix),
         "eternalfrost.mobspawningfix.MixinVanillaMobSpawnerBaseLogic"),
     common_eternalfrost_classcastexceptionfix_MixinTileEntitySnowbarkChestRenderer(Side.COMMON,
-        require(TargetedMod.ETERNALFROST).and(m -> OptimizationsandTweaksConfig.enableEternalFrostClassCastExceptionFix),
+        require(TargetedMod.ETERNALFROST)
+            .and(m -> OptimizationsandTweaksConfig.enableEternalFrostClassCastExceptionFix),
         "eternalfrost.classcastexceptionfix.MixinTileEntitySnowbarkChestRenderer"),
     common_blocklings_MixinItemBlockling(Side.COMMON,
         require(TargetedMod.BLOCKLINGS).and(m -> OptimizationsandTweaksConfig.enableMixinItemBlockling),
@@ -749,10 +730,12 @@ public enum Mixin implements IMixin {
         require(TargetedMod.SLIMECARNAGE).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenMadLab),
         "slimecarnage.MixinWorldGenMadLab"),
     common_spiriteores_MixinSpiritOres(Side.COMMON,
-        require(TargetedMod.SPIRITEORES).and(m -> OptimizationsandTweaksConfig.enableCreateConfigurableOresForSpiritOres),
+        require(TargetedMod.SPIRITEORES)
+            .and(m -> OptimizationsandTweaksConfig.enableCreateConfigurableOresForSpiritOres),
         "spiriteores.MixinSpiritOres"),
     common_spiriteores_MixinSpiritOresGenerator(Side.COMMON,
-        require(TargetedMod.SPIRITEORES).and(m -> OptimizationsandTweaksConfig.enableCreateConfigurableOresForSpiritOres),
+        require(TargetedMod.SPIRITEORES)
+            .and(m -> OptimizationsandTweaksConfig.enableCreateConfigurableOresForSpiritOres),
         "spiriteores.MixinSpiritOresGenerator"),
     common_familliarsAPI_MixinFamiliar(Side.COMMON,
         require(TargetedMod.FAMILIARSAPI).and(m -> OptimizationsandTweaksConfig.enableMixinFamiliar),
@@ -873,10 +856,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.SALUTATION).and(m -> OptimizationsandTweaksConfig.enableMixinSalutationClientHandler),
         "salutation.MixinSalutationClientHandler"),
 
-    common_core_MixinEntityPlayer(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinEntityPlayer,
+    common_core_MixinEntityPlayer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityPlayer,
         "core.MixinEntityPlayer"),
 
+    common_core_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
+        "core.MixinPathFinder"),
     common_angelica_MixinClientProxy(Side.COMMON,
         require(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinClientProxy),
         "angelica.MixinClientProxy"),

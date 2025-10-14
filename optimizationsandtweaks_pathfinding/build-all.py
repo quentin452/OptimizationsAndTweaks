@@ -53,12 +53,12 @@ def build_for_target(target, os_dir, lib_name):
 
 # Linux x86_64
 check_target("x86_64-unknown-linux-gnu")
-build_for_target("x86_64-unknown-linux-gnu", "linux", "liboptimizationsandtweaks_ffi.so")
+build_for_target("x86_64-unknown-linux-gnu", "linux", "liboptimizationsandtweaks_pathfinding.so")
 
 # Windows x86_64
 check_target("x86_64-pc-windows-gnu")
 if shutil.which("x86_64-w64-mingw32-gcc"):
-    build_for_target("x86_64-pc-windows-gnu", "windows", "optimizationsandtweaks_ffi.dll")
+    build_for_target("x86_64-pc-windows-gnu", "windows", "optimizationsandtweaks_pathfinding.dll")
 else:
     print("⚠ Warning: MinGW-w64 not found. Skipping Windows build.\n  Install with: sudo apt-get install mingw-w64")
 
@@ -88,9 +88,9 @@ if macos_x86_built and macos_arm_built:
     dest_dir = os.path.join(DEST_BASE, "macos")
     os.makedirs(dest_dir, exist_ok=True)
     
-    x86_lib = os.path.join(SCRIPT_DIR, "target", "x86_64-apple-darwin", "release", "liboptimizationsandtweaks_ffi.dylib")
-    arm_lib = os.path.join(SCRIPT_DIR, "target", "aarch64-apple-darwin", "release", "liboptimizationsandtweaks_ffi.dylib")
-    universal_lib = os.path.join(dest_dir, "liboptimizationsandtweaks_ffi.dylib")
+    x86_lib = os.path.join(SCRIPT_DIR, "target", "x86_64-apple-darwin", "release", "liboptimizationsandtweaks_pathfinding.dylib")
+    arm_lib = os.path.join(SCRIPT_DIR, "target", "aarch64-apple-darwin", "release", "liboptimizationsandtweaks_pathfinding.dylib")
+    universal_lib = os.path.join(dest_dir, "liboptimizationsandtweaks_pathfinding.dylib")
     
     if shutil.which("lipo"):
         run(["lipo", "-create", "-output", universal_lib, x86_lib, arm_lib])
@@ -102,15 +102,15 @@ if macos_x86_built and macos_arm_built:
 elif macos_x86_built:
     dest_dir = os.path.join(DEST_BASE, "macos")
     os.makedirs(dest_dir, exist_ok=True)
-    x86_lib = os.path.join(SCRIPT_DIR, "target", "x86_64-apple-darwin", "release", "liboptimizationsandtweaks_ffi.dylib")
-    dest_path = os.path.join(dest_dir, "liboptimizationsandtweaks_ffi.dylib")
+    x86_lib = os.path.join(SCRIPT_DIR, "target", "x86_64-apple-darwin", "release", "liboptimizationsandtweaks_pathfinding.dylib")
+    dest_path = os.path.join(dest_dir, "liboptimizationsandtweaks_pathfinding.dylib")
     shutil.copy2(x86_lib, dest_path)
     print(f"✓ Copied x86_64 library to {dest_path}")
 elif macos_arm_built:
     dest_dir = os.path.join(DEST_BASE, "macos")
     os.makedirs(dest_dir, exist_ok=True)
-    arm_lib = os.path.join(SCRIPT_DIR, "target", "aarch64-apple-darwin", "release", "liboptimizationsandtweaks_ffi.dylib")
-    dest_path = os.path.join(dest_dir, "liboptimizationsandtweaks_ffi.dylib")
+    arm_lib = os.path.join(SCRIPT_DIR, "target", "aarch64-apple-darwin", "release", "liboptimizationsandtweaks_pathfinding.dylib")
+    dest_path = os.path.join(dest_dir, "liboptimizationsandtweaks_pathfinding.dylib")
     shutil.copy2(arm_lib, dest_path)
     print(f"✓ Copied ARM64 library to {dest_path}")
 

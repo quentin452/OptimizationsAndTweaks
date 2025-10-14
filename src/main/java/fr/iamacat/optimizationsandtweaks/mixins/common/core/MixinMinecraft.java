@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -28,7 +27,6 @@ import net.minecraft.client.gui.stream.GuiStreamUnavailable;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.*;
@@ -50,10 +48,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.handshake.client.C00Handshake;
-import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.profiler.IPlayerUsage;
 import net.minecraft.profiler.PlayerUsageSnooper;
@@ -62,15 +57,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.stats.IStatStringFormat;
-import net.minecraft.stats.StatFileWriter;
 import net.minecraft.util.*;
 import net.minecraft.util.Timer;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 import net.minecraft.world.storage.ISaveFormat;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,7 +87,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.StartupQuery;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
 @Mixin(value = Minecraft.class, priority = 999)
@@ -333,36 +323,6 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         this.jvm64bit = isJvm64bit();
         ImageIO.setUseCache(false);
         Bootstrap.func_151354_b();
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void shutdownMinecraftApplet() {
-        try {
-            this.field_152353_at.func_152923_i();
-            logger.info("Stopping!");
-
-            try {
-                this.loadWorld(null);
-            } catch (Throwable throwable1) {}
-
-            try {
-                GLAllocation.deleteTexturesAndDisplayLists();
-            } catch (Throwable throwable) {}
-
-            this.mcSoundHandler.unloadSounds();
-        } finally {
-            Display.destroy();
-
-            if (!this.hasCrashed) {
-                System.exit(0);
-            }
-        }
-
-        // System.gc();
     }
 
     /**
@@ -840,181 +800,9 @@ public abstract class MixinMinecraft implements IPlayerUsage {
         this.displayHeight = displaymode.getHeight();
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    // @Overwrite idk why but now this method causing crash so not injected
-    public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn) {
-        FMLClientHandler.instance()
-            .startIntegratedServer(folderName, worldName, worldSettingsIn);
-        this.loadWorld(null);
-        // System.gc();
-        ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
-        WorldInfo worldinfo = isavehandler.loadWorldInfo();
-
-        if (worldinfo == null && worldSettingsIn != null) {
-            worldinfo = new WorldInfo(worldSettingsIn, folderName);
-            isavehandler.saveWorldInfo(worldinfo);
-        }
-
-        if (worldSettingsIn == null) {
-            assert worldinfo != null;
-            worldSettingsIn = new WorldSettings(worldinfo);
-        }
-
-        try {
-            this.theIntegratedServer = new IntegratedServer(theMinecraft, folderName, worldName, worldSettingsIn);
-            this.theIntegratedServer.startServerThread();
-            this.integratedServerIsRunning = true;
-        } catch (Throwable throwable) {
-            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Starting integrated server");
-            CrashReportCategory crashreportcategory = crashreport.makeCategory("Starting integrated server");
-            crashreportcategory.addCrashSection("Level ID", folderName);
-            crashreportcategory.addCrashSection("Level Name", worldName);
-            throw new ReportedException(crashreport);
-        }
-
-        this.loadingScreen.displayProgressMessage(I18n.format("menu.loadingLevel"));
-
-        while (!this.theIntegratedServer.serverIsInRunLoop()) {
-            if (!StartupQuery.check()) {
-                loadWorld(null);
-                displayGuiScreen(null);
-                return;
-            }
-            String s2 = this.theIntegratedServer.getUserMessage();
-
-            if (s2 != null) {
-                this.loadingScreen.resetProgresAndWorkingMessage(I18n.format(s2));
-            } else {
-                this.loadingScreen.resetProgresAndWorkingMessage("");
-            }
-
-            long startTime = System.currentTimeMillis();
-            long delay = 200L;
-
-            while (System.currentTimeMillis() - startTime < delay) {
-                if (!StartupQuery.check()) {
-                    loadWorld(null);
-                    displayGuiScreen(null);
-                    return;
-                }
-            }
-        }
-
-        this.displayGuiScreen(null);
-        SocketAddress socketaddress = this.theIntegratedServer.func_147137_ag()
-            .addLocalEndpoint();
-        NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
-        networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, theMinecraft, null));
-        networkmanager
-            .scheduleOutboundPacket(new C00Handshake(5, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
-        networkmanager.scheduleOutboundPacket(
-            new C00PacketLoginStart(
-                this.getSession()
-                    .func_148256_e()));
-        this.myNetworkManager = networkmanager;
-    }
-
     @Shadow
     public Session getSession() {
         return this.session;
-    }
-
-    @Shadow
-    public void loadWorld(WorldClient worldClientIn) {
-        this.loadWorld(worldClientIn, "");
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-
-    @Overwrite
-    public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
-        if (theWorld != null) {
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS
-                .post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
-        }
-
-        if (worldClientIn == null) {
-            NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
-
-            if (nethandlerplayclient != null) {
-                nethandlerplayclient.cleanup();
-            }
-
-            if (this.theIntegratedServer != null) {
-                this.theIntegratedServer.initiateShutdown();
-                if (loadingScreen != null) {
-                    this.loadingScreen.resetProgresAndWorkingMessage(I18n.format("forge.client.shutdown.internal"));
-                }
-                while (!theIntegratedServer.isServerStopped()) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(10);
-                    } catch (InterruptedException ie) {
-
-                    }
-                }
-            }
-
-            this.theIntegratedServer = null;
-            this.guiAchievement.func_146257_b();
-            this.entityRenderer.getMapItemRenderer()
-                .func_148249_a();
-        }
-
-        this.renderViewEntity = null;
-        this.myNetworkManager = null;
-
-        if (this.loadingScreen != null) {
-            this.loadingScreen.resetProgressAndMessage(loadingMessage);
-            this.loadingScreen.resetProgresAndWorkingMessage("");
-        }
-
-        if (worldClientIn == null && this.theWorld != null) {
-            if (this.mcResourcePackRepository.func_148530_e() != null) {
-                this.scheduleResourcesRefresh();
-            }
-
-            this.mcResourcePackRepository.func_148529_f();
-            this.setServerData(null);
-            this.integratedServerIsRunning = false;
-            FMLClientHandler.instance()
-                .handleClientWorldClosing(this.theWorld);
-        }
-
-        this.mcSoundHandler.stopSounds();
-        this.theWorld = worldClientIn;
-
-        if (worldClientIn != null) {
-            if (this.renderGlobal != null) {
-                this.renderGlobal.setWorldAndLoadRenderers(worldClientIn);
-            }
-
-            if (this.effectRenderer != null) {
-                this.effectRenderer.clearEffects(worldClientIn);
-            }
-
-            if (this.thePlayer == null) {
-                this.thePlayer = this.playerController.func_147493_a(worldClientIn, new StatFileWriter());
-                this.playerController.flipPlayer(this.thePlayer);
-            }
-
-            this.thePlayer.preparePlayerToSpawn();
-            worldClientIn.spawnEntityInWorld(this.thePlayer);
-            this.thePlayer.movementInput = new MovementInputFromOptions(this.gameSettings);
-            this.playerController.setPlayerCapabilities(this.thePlayer);
-            this.renderViewEntity = this.thePlayer;
-        } else {
-            this.saveLoader.flushCache();
-            this.thePlayer = null;
-        }
-
-        // System.gc();
-        this.systemTime = 0L;
     }
 
     @Shadow

@@ -1,19 +1,18 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -26,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
-import fr.iamacat.optimizationsandtweaks.utilsformods.entity.pathfinding.PathFinder2;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CachedEntitySearch;
 
 @Mixin(value = World.class, priority = 999)
@@ -46,16 +44,15 @@ public abstract class MixinWorld {
 
     @Unique
     private static final Map<Integer, CachedEntitySearch> entitySearchCache = new ConcurrentHashMap<>();
-    
+
     @Unique
     private static final int CACHE_DURATION_TICKS = 40;
-    
+
     @Unique
     private static long lastCacheCleanup = 0;
-    
+
     @Unique
     private static final int CLEANUP_INTERVAL = 200;
-    
 
     @Inject(method = "tick", at = @At(value = "INVOKE"))
     private void onTickInject(CallbackInfo info) {
@@ -67,48 +64,6 @@ public abstract class MixinWorld {
     public MixinWorld(WorldProvider provider, Profiler theProfiler) {
         this.provider = provider;
         this.theProfiler = theProfiler;
-    }
-
-    @Overwrite // FIX java.lang.NoClassDefFoundError: net.minecraft.pathfinding.PathFinder
-    public PathEntity getPathEntityToEntity(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_,
-        boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_) {
-        this.theProfiler.startSection("pathfind");
-        int i = MathHelper.floor_double(p_72865_1_.posX);
-        int j = MathHelper.floor_double(p_72865_1_.posY + 1.0D);
-        int k = MathHelper.floor_double(p_72865_1_.posZ);
-        int l = (int) (p_72865_3_ + 16.0F);
-        int i1 = i - l;
-        int j1 = j - l;
-        int k1 = k - l;
-        int l1 = i + l;
-        int i2 = j + l;
-        int j2 = k + l;
-        ChunkCache chunkcache = new ChunkCache((World) (Object) this, i1, j1, k1, l1, i2, j2, 0);
-        PathEntity pathentity = (new PathFinder2(chunkcache, p_72865_4_, p_72865_5_, p_72865_6_, p_72865_7_))
-            .createEntityPathTo(p_72865_1_, p_72865_2_, p_72865_3_);
-        this.theProfiler.endSection();
-        return pathentity;
-    }
-
-    @Overwrite // FIX java.lang.NoClassDefFoundError: net.minecraft.pathfinding.PathFinder
-    public PathEntity getEntityPathToXYZ(Entity p_72844_1_, int p_72844_2_, int p_72844_3_, int p_72844_4_,
-        float p_72844_5_, boolean p_72844_6_, boolean p_72844_7_, boolean p_72844_8_, boolean p_72844_9_) {
-        this.theProfiler.startSection("pathfind");
-        int l = MathHelper.floor_double(p_72844_1_.posX);
-        int i1 = MathHelper.floor_double(p_72844_1_.posY);
-        int j1 = MathHelper.floor_double(p_72844_1_.posZ);
-        int k1 = (int) (p_72844_5_ + 8.0F);
-        int l1 = l - k1;
-        int i2 = i1 - k1;
-        int j2 = j1 - k1;
-        int k2 = l + k1;
-        int l2 = i1 + k1;
-        int i3 = j1 + k1;
-        ChunkCache chunkcache = new ChunkCache((World) (Object) this, l1, i2, j2, k2, l2, i3, 0);
-        PathEntity pathentity = (new PathFinder2(chunkcache, p_72844_6_, p_72844_7_, p_72844_8_, p_72844_9_))
-            .createEntityPathTo(p_72844_1_, p_72844_2_, p_72844_3_, p_72844_4_, p_72844_5_);
-        this.theProfiler.endSection();
-        return pathentity;
     }
 
     /**
@@ -142,70 +97,51 @@ public abstract class MixinWorld {
         return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
     }
 
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void cacheEntitySearchForMinions(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
+    @Inject(method = "getEntitiesWithinAABBExcludingEntity", at = @At("HEAD"), cancellable = true)
+    private void cacheEntitySearchForMinions(Entity entity, AxisAlignedBB aabb, CallbackInfoReturnable<List> cir) {
         if (entity == null) {
             return;
         }
         World world = (World) (Object) this;
         long currentTick = world.getTotalWorldTime();
-        
+
         if (currentTick - lastCacheCleanup > CLEANUP_INTERVAL) {
             lastCacheCleanup = currentTick;
-            entitySearchCache.entrySet().removeIf(
-                entry -> (currentTick - entry.getValue().timestamp) > CACHE_DURATION_TICKS * 2
-            );
+            entitySearchCache.entrySet()
+                .removeIf(entry -> (currentTick - entry.getValue().timestamp) > CACHE_DURATION_TICKS * 2);
         }
-        
+
         int cacheKey = generateCacheKey(entity, aabb);
         CachedEntitySearch cached = entitySearchCache.get(cacheKey);
-        
+
         if (cached != null && (currentTick - cached.timestamp) < CACHE_DURATION_TICKS) {
             cir.setReturnValue(new ArrayList<>(cached.entities));
             return;
         }
     }
-    
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("RETURN")
-    )
-    private void cacheEntitySearchResult(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
+
+    @Inject(method = "getEntitiesWithinAABBExcludingEntity", at = @At("RETURN"))
+    private void cacheEntitySearchResult(Entity entity, AxisAlignedBB aabb, CallbackInfoReturnable<List> cir) {
         if (entity == null) {
             return;
         }
-            
+
         World world = (World) (Object) this;
         long currentTick = world.getTotalWorldTime();
-        
+
         int cacheKey = generateCacheKey(entity, aabb);
         List result = cir.getReturnValue();
-        
-        entitySearchCache.put(
-            cacheKey,
-            new CachedEntitySearch(new ArrayList<>(result), currentTick)
-        );
+
+        entitySearchCache.put(cacheKey, new CachedEntitySearch(new ArrayList<>(result), currentTick));
     }
-    
+
     @Unique
     private static int generateCacheKey(Entity entity, AxisAlignedBB aabb) {
         int hash = entity.getEntityId();
         hash = 31 * hash + (int) aabb.minX;
         hash = 31 * hash + (int) aabb.minY;
         hash = 31 * hash + (int) aabb.minZ;
-        hash = 31 * hash + (int) (aabb.maxX - aabb.minX); 
+        hash = 31 * hash + (int) (aabb.maxX - aabb.minX);
         hash = 31 * hash + (int) (aabb.maxY - aabb.minY);
         hash = 31 * hash + (int) (aabb.maxZ - aabb.minZ);
         return hash;

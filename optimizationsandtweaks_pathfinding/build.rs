@@ -14,11 +14,11 @@ fn main() {
     
     // Determine OS-specific subdirectory and library name based on target triple
     let (os_dir, lib_name) = if target.contains("windows") {
-        ("windows", "optimizationsandtweaks_ffi.dll")
+        ("windows", "optimizationsandtweaks_pathfinding.dll")
     } else if target.contains("darwin") || target.contains("apple") {
-        ("macos", "optimizationsandtweaks_ffi.dylib")
+        ("macos", "optimizationsandtweaks_pathfinding.dylib")
     } else if target.contains("linux") {
-        ("linux", "optimizationsandtweaks_ffi.so")
+        ("linux", "optimizationsandtweaks_pathfinding.so")
     } else {
         panic!("Unsupported target OS: {}", target);
     };

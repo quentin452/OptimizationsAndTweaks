@@ -9,15 +9,17 @@ import cpw.mods.fml.common.FMLLog;
  * Provides access to native Rust functions from Java without external dependencies
  */
 public class RustFFI {
-    
+
     private static boolean initialized = false;
     private static boolean libraryAvailable = false;
-    
+
     // Native method declarations - these will be implemented in Rust
     private static native void rust_hello_world();
+
     private static native String rust_get_hello_string();
+
     private static native void rust_print_message(String message);
-    
+
     /**
      * Initializes the Rust FFI library
      * Must be called before using any Rust functions
@@ -29,31 +31,34 @@ public class RustFFI {
         if (initialized) {
             return libraryAvailable;
         }
-        
+
         initialized = true;
-        
+
         try {
             // Load the native library using NativeLibraryLoader
-            if (NativeLibraryLoader.loadLibrary("optimizationsandtweaks_ffi", minecraftDir)) {
+            if (NativeLibraryLoader.loadLibrary("optimizationsandtweaks_pathfinding", minecraftDir)) {
                 libraryAvailable = true;
                 FMLLog.info("[OptimizationsAndTweaks] Rust FFI initialized successfully using JNI");
                 return true;
             } else {
-                FMLLog.info("[OptimizationsAndTweaks] Rust native library not available, FFI features will be disabled");
+                FMLLog
+                    .info("[OptimizationsAndTweaks] Rust native library not available, FFI features will be disabled");
                 return false;
             }
-            
+
         } catch (UnsatisfiedLinkError e) {
             FMLLog.info("[OptimizationsAndTweaks] Rust native library not found: %s", e.getMessage());
-            FMLLog.info("[OptimizationsAndTweaks] Rust FFI features will be disabled. This is optional and does not affect core functionality.");
+            FMLLog.info(
+                "[OptimizationsAndTweaks] Rust FFI features will be disabled. This is optional and does not affect core functionality.");
             return false;
         } catch (Exception e) {
             FMLLog.info("[OptimizationsAndTweaks] Could not initialize Rust FFI: %s", e.getMessage());
-            FMLLog.info("[OptimizationsAndTweaks] Rust FFI features will be disabled. This is optional and does not affect core functionality.");
+            FMLLog.info(
+                "[OptimizationsAndTweaks] Rust FFI features will be disabled. This is optional and does not affect core functionality.");
             return false;
         }
     }
-    
+
     /**
      * Prints "Hello World from Rust!" to stdout
      */
@@ -61,7 +66,7 @@ public class RustFFI {
         if (!libraryAvailable) {
             return;
         }
-        
+
         try {
             rust_hello_world();
         } catch (UnsatisfiedLinkError e) {
@@ -71,7 +76,7 @@ public class RustFFI {
             FMLLog.warning("[OptimizationsAndTweaks] Error calling rust_hello_world: %s", e.getMessage());
         }
     }
-    
+
     /**
      * Gets "Hello World from Rust!" as a Java String
      * 
@@ -81,7 +86,7 @@ public class RustFFI {
         if (!libraryAvailable) {
             return null;
         }
-        
+
         try {
             return rust_get_hello_string();
         } catch (UnsatisfiedLinkError e) {
@@ -93,7 +98,7 @@ public class RustFFI {
             return null;
         }
     }
-    
+
     /**
      * Sends a message to Rust to print
      * 
@@ -103,7 +108,7 @@ public class RustFFI {
         if (!libraryAvailable) {
             return;
         }
-        
+
         try {
             rust_print_message(message);
         } catch (UnsatisfiedLinkError e) {
@@ -113,7 +118,7 @@ public class RustFFI {
             FMLLog.warning("[OptimizationsAndTweaks] Error calling rust_print_message: %s", e.getMessage());
         }
     }
-    
+
     /**
      * Checks if the Rust FFI is initialized and ready to use
      * 

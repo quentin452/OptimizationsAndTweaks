@@ -11,10 +11,10 @@ import cpw.mods.fml.common.FMLLog;
  * Handles extraction and loading of native libraries from mod resources
  */
 public class NativeLibraryLoader {
-    
+
     private static final String NATIVES_DIR = "natives";
     private static boolean libraryLoaded = false;
-    
+
     /**
      * Loads a native library from the mod's resources
      * Extracts it to the Minecraft instance natives folder if different
@@ -26,21 +26,21 @@ public class NativeLibraryLoader {
         if (libraryLoaded) {
             return true;
         }
-        
+
         try {
             // Determine OS and platform-specific library name
             String osDir = getOSDirectory();
             String platformLibName = getPlatformLibraryName(libraryName);
             String resourcePath = "/assets/optimizationsandtweaks/natives/" + osDir + "/" + platformLibName;
-            
+
             // Create natives directory in Minecraft instance
             File nativesDir = new File(minecraftDir, NATIVES_DIR);
             if (!nativesDir.exists()) {
                 nativesDir.mkdirs();
             }
-            
+
             File targetFile = new File(nativesDir, platformLibName);
-            
+
             // Extract library if it doesn't exist or is different
             if (shouldExtractLibrary(resourcePath, targetFile)) {
                 extractLibrary(resourcePath, targetFile);
@@ -48,26 +48,27 @@ public class NativeLibraryLoader {
             } else {
                 FMLLog.info("[OptimizationsAndTweaks] Native library already up to date: %s", platformLibName);
             }
-            
+
             // Load the library
             System.load(targetFile.getAbsolutePath());
             libraryLoaded = true;
             FMLLog.info("[OptimizationsAndTweaks] Successfully loaded native library: %s", platformLibName);
             return true;
-            
+
         } catch (Exception e) {
             FMLLog.severe("[OptimizationsAndTweaks] Failed to load native library: %s", e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
      * Gets the OS-specific directory name for native libraries
      */
     private static String getOSDirectory() {
-        String os = System.getProperty("os.name").toLowerCase();
-        
+        String os = System.getProperty("os.name")
+            .toLowerCase();
+
         if (os.contains("win")) {
             return "windows";
         } else if (os.contains("mac")) {
@@ -77,13 +78,14 @@ public class NativeLibraryLoader {
             return "linux";
         }
     }
-    
+
     /**
      * Gets the platform-specific library name
      */
     private static String getPlatformLibraryName(String baseName) {
-        String os = System.getProperty("os.name").toLowerCase();
-        
+        String os = System.getProperty("os.name")
+            .toLowerCase();
+
         if (os.contains("win")) {
             return baseName + ".dll";
         } else if (os.contains("mac")) {
@@ -93,7 +95,7 @@ public class NativeLibraryLoader {
             return "lib" + baseName + ".so";
         }
     }
-    
+
     /**
      * Checks if the library should be extracted
      * Returns true if the file doesn't exist or has different content
@@ -102,12 +104,12 @@ public class NativeLibraryLoader {
         if (!targetFile.exists()) {
             return true;
         }
-        
+
         try {
             // Compare checksums
             String resourceChecksum = getResourceChecksum(resourcePath);
             String fileChecksum = getFileChecksum(targetFile);
-            
+
             return !resourceChecksum.equals(fileChecksum);
         } catch (Exception e) {
             // If we can't compare, extract to be safe
@@ -115,7 +117,7 @@ public class NativeLibraryLoader {
             return true;
         }
     }
-    
+
     /**
      * Extracts the library from resources to the target file
      */
@@ -124,11 +126,12 @@ public class NativeLibraryLoader {
         if (in == null) {
             throw new IOException("Native library not found in resources: " + resourcePath);
         }
-        
+
         try {
             // Create parent directories if needed
-            targetFile.getParentFile().mkdirs();
-            
+            targetFile.getParentFile()
+                .mkdirs();
+
             // Extract the file
             FileOutputStream out = new FileOutputStream(targetFile);
             try {
@@ -143,12 +146,12 @@ public class NativeLibraryLoader {
         } finally {
             in.close();
         }
-        
+
         // Make the file executable on Unix-like systems
         targetFile.setExecutable(true);
         targetFile.setReadable(true);
     }
-    
+
     /**
      * Calculates MD5 checksum of a resource
      */
@@ -157,22 +160,22 @@ public class NativeLibraryLoader {
         if (in == null) {
             throw new IOException("Resource not found: " + resourcePath);
         }
-        
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[8192];
             int bytesRead;
-            
+
             while ((bytesRead = in.read(buffer)) != -1) {
                 md.update(buffer, 0, bytesRead);
             }
-            
+
             return bytesToHex(md.digest());
         } finally {
             in.close();
         }
     }
-    
+
     /**
      * Calculates MD5 checksum of a file
      */
@@ -182,17 +185,17 @@ public class NativeLibraryLoader {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[8192];
             int bytesRead;
-            
+
             while ((bytesRead = in.read(buffer)) != -1) {
                 md.update(buffer, 0, bytesRead);
             }
-            
+
             return bytesToHex(md.digest());
         } finally {
             in.close();
         }
     }
-    
+
     /**
      * Converts byte array to hex string
      */
@@ -203,7 +206,7 @@ public class NativeLibraryLoader {
         }
         return sb.toString();
     }
-    
+
     /**
      * Checks if the native library is loaded
      */

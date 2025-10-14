@@ -5,13 +5,10 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,9 +31,6 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
     public final EntityAITasks tasks;
     @Shadow
     private EntitySenses senses;
-
-    @Shadow
-    private PathNavigate navigator;
 
     @Shadow
     private EntityLookHelper lookHelper;
@@ -90,52 +84,6 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
     @Shadow
     protected boolean canDespawn() {
         return true;
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    protected void updateAITasks() {
-        Profiler profiler = this.worldObj.theProfiler;
-
-        ++this.entityAge;
-
-        profiler.startSection("checkDespawn");
-        this.despawnEntity();
-        profiler.endSection();
-
-        profiler.startSection("sensing");
-        this.senses.clearSensingCache();
-        profiler.endSection();
-
-        profiler.startSection("targetSelector");
-        this.targetTasks.onUpdateTasks();
-        profiler.endSection();
-
-        profiler.startSection("goalSelector");
-        this.tasks.onUpdateTasks();
-        profiler.endSection();
-
-        profiler.startSection("navigation");
-        this.navigator.onUpdateNavigation();
-        profiler.endSection();
-
-        profiler.startSection("mob tick");
-        this.updateAITick();
-        profiler.endSection();
-
-        profiler.startSection("controls");
-        profiler.startSection("move");
-        this.moveHelper.onUpdateMoveHelper();
-        profiler.endStartSection("look");
-        this.lookHelper.onUpdateLook();
-        profiler.endStartSection("jump");
-        this.jumpHelper.doJump();
-        profiler.endSection();
-
-        profiler.endSection();
     }
 
     public MixinEntityLiving(World p_i1594_1_, World pI15951, EntityLiving entityLiving) {
