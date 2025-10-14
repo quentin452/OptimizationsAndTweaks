@@ -141,63 +141,6 @@ public abstract class MixinWorld {
     protected boolean chunkExists(int p_72916_1_, int p_72916_2_) {
         return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
     }
-
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void cacheEntitySearchForMinions(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
-        if (entity == null) {
-            return;
-        }
-        World world = (World) (Object) this;
-        long currentTick = world.getTotalWorldTime();
-        
-        if (currentTick - lastCacheCleanup > CLEANUP_INTERVAL) {
-            lastCacheCleanup = currentTick;
-            entitySearchCache.entrySet().removeIf(
-                entry -> (currentTick - entry.getValue().timestamp) > CACHE_DURATION_TICKS * 2
-            );
-        }
-        
-        int cacheKey = generateCacheKey(entity, aabb);
-        CachedEntitySearch cached = entitySearchCache.get(cacheKey);
-        
-        if (cached != null && (currentTick - cached.timestamp) < CACHE_DURATION_TICKS) {
-            cir.setReturnValue(new ArrayList<>(cached.entities));
-            return;
-        }
-    }
-    
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("RETURN")
-    )
-    private void cacheEntitySearchResult(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
-        if (entity == null) {
-            return;
-        }
-            
-        World world = (World) (Object) this;
-        long currentTick = world.getTotalWorldTime();
-        
-        int cacheKey = generateCacheKey(entity, aabb);
-        List result = cir.getReturnValue();
-        
-        entitySearchCache.put(
-            cacheKey,
-            new CachedEntitySearch(new ArrayList<>(result), currentTick)
-        );
-    }
     
     @Unique
     private static int generateCacheKey(Entity entity, AxisAlignedBB aabb) {
