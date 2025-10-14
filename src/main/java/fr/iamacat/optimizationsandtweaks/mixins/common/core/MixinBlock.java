@@ -45,32 +45,6 @@ public class MixinBlock {
         return !this.canProvidePower() && this.blockMaterial.isOpaque() && this.renderAsNormalBlock();
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void addCollisionBoxesToList(World worldIn, int x, int y, int z, AxisAlignedBB mask,
-        List<AxisAlignedBB> list, Entity collider) {
-        AxisAlignedBB axisalignedbb1 = this.getCollisionBoundingBoxFromPool(worldIn, x, y, z);
-        if (axisalignedbb1 != null && mask.intersectsWith(axisalignedbb1)) {
-            if (list == null) {
-                list = new ArrayList<>();
-            }
-            list.add(axisalignedbb1);
-        }
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World worldIn, int x, int y, int z) {
-        return AxisAlignedBB
-            .getBoundingBox(x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + this.maxY, z + this.maxZ);
-    }
-
     @Shadow
     public boolean canProvidePower() {
         return false;
