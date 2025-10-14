@@ -380,6 +380,12 @@ impl PathFinder {
         let path_len = path.len();
         let reach_tolerance: f32 = if self.is_pathing_in_water { 2.5 } else { 1.0 };
 
+        // Update profiler memory stats before cleanup
+        if crate::profiler::is_profiler_enabled() {
+            crate::profiler::MEMORY_STATS.set_point_map_size(self.point_map.len() as u64);
+            crate::profiler::MEMORY_STATS.set_visited_cache_size(self.visited_cache.len() as u64);
+        }
+
         if closest_distance > reach_tolerance && path_len <= 1 {
             if self.debug_always_reach {
                 let direct = PathEntity::new(vec![
