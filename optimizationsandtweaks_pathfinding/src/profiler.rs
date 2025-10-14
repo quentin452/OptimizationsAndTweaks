@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use crate::log_native_line;
 
 /// Global profiler enable flag
-static PROFILER_ENABLED: AtomicBool = AtomicBool::new(true);
+static PROFILER_ENABLED: AtomicBool = AtomicBool::new(false);
 
 /// Enable or disable the profiler
 pub fn set_profiler_enabled(enabled: bool) {
