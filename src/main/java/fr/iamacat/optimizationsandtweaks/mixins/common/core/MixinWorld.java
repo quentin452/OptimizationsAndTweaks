@@ -26,6 +26,8 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CachedEntitySearch;
 
+import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfinding;
+
 @Mixin(World.class)
 public abstract class MixinWorld {
 
@@ -46,6 +48,13 @@ public abstract class MixinWorld {
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
         }
+        if (OptimizationsandTweaksConfig.enableMixinPathFinder) {
+            long worldTime = ((World) (Object) this).getTotalWorldTime();
+            if (worldTime % 200 == 0 && RustPathfinding.isAvailable()) {
+                RustPathfinding.printProfilerStats();
+            }
+        }
+
     }
 
     @Inject(

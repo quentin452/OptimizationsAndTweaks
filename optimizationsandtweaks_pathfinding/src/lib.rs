@@ -58,6 +58,7 @@ fn init_panic_logging() {
 
 // Pathfinding module
 pub mod pathfinding;
+pub mod profiler;
 
 use pathfinding::{PathFinder, PathEntity};
 
@@ -199,13 +200,14 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
         .expect("Couldn't get java string!")
         .into();
     
-    println!("Rust received: {}", message_str);
+    log_native_line(&format!("Rust received: {}", message_str));
 }
 
 // ============================================================================
 // Pathfinding JNI Functions
 // ============================================================================
 
+/// Creates a new PathFinder instance and returns its handle
 /// Creates a new PathFinder instance and returns its handle
 /// JNI signature: (ZZZZ)J
 #[no_mangle]
@@ -217,6 +219,7 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     is_pathing_in_water: jboolean,
     can_entity_drown: jboolean,
 ) -> jlong {
+    profiler::MEMORY_STATS.increment_pathfinder();
 
     // Encode flags into handle
     let mut handle: i64 = 0;
@@ -249,6 +252,7 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     _class: JClass,
     handle: jlong,
 ) {
+    profiler::MEMORY_STATS.decrement_pathfinder();
 }
 
 /// Destroys a PathEntity instance
@@ -260,6 +264,9 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     handle: jlong,
 ) {
     let removed = PATH_ENTITIES.lock().unwrap().remove(&handle).is_some();
+    if removed {
+        profiler::MEMORY_STATS.decrement_path_entity();
+    }
 }
 
 /// Gets the current path index from a PathEntity
@@ -642,16 +649,27 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
         max_jump_height: 1,
     };
 
-    if let Some(path_entity) = pathfinder.create_entity_path_to(
-        &world_access,
-        &entity_data,
-        target_x,
-        target_y,
-        target_z,
-        max_distance,
-    ) {
+    let path_entity = {
+        let _guard = if profiler::is_profiler_enabled() {
+            Some(profiler::ProfileGuard::new("PathFinder::create_entity_path_to"))
+        } else {
+            None
+        };
+        
+        pathfinder.create_entity_path_to(
+            &world_access,
+            &entity_data,
+            target_x,
+            target_y,
+            target_z,
+            max_distance,
+        )
+    };
+
+    if let Some(path_entity) = path_entity {
         let id = get_next_id();
         PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
+        profiler::MEMORY_STATS.increment_path_entity();
         return id as jlong;
     }
 
@@ -723,16 +741,27 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
         max_jump_height: 1,
     };
 
-    if let Some(path_entity) = pathfinder.create_entity_path_to(
-        &world_access,
-        &entity_data,
-        target_x,
-        target_y,
-        target_z,
-        max_distance,
-    ) {
+    let path_entity = {
+        let _guard = if profiler::is_profiler_enabled() {
+            Some(profiler::ProfileGuard::new("PathFinder::create_entity_path_to_cached"))
+        } else {
+            None
+        };
+        
+        pathfinder.create_entity_path_to(
+            &world_access,
+            &entity_data,
+            target_x,
+            target_y,
+            target_z,
+            max_distance,
+        )
+    };
+
+    if let Some(path_entity) = path_entity {
         let id = get_next_id();
         PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
+        profiler::MEMORY_STATS.increment_path_entity();
         return id as jlong;
     }
     0 as jlong
@@ -740,3 +769,86 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
 
 //
                
+// ============================================================================
+// Profiler JNI Functions
+// ============================================================================
+
+/// Enable or disable the profiler
+/// JNI signature: (Z)V
+#[no_mangle]
+pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_setProfilerEnabled(
+    _env: JNIEnv,
+    _class: JClass,
+    enabled: jboolean,
+) {
+    profiler::set_profiler_enabled(enabled != 0);
+    log_native_line(format!("Profiler {}", if enabled != 0 { "enabled" } else { "disabled" }));
+}
+
+/// Check if profiler is enabled
+/// JNI signature: ()Z
+#[no_mangle]
+pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_isProfilerEnabled(
+    _env: JNIEnv,
+    _class: JClass,
+) -> jboolean {
+    profiler::is_profiler_enabled() as jboolean
+}
+
+/// Clear profiler statistics
+/// JNI signature: ()V
+#[no_mangle]
+pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_clearProfilerStats(
+    _env: JNIEnv,
+    _class: JClass,
+) {
+    profiler::clear_stats();
+    log_native_line("Profiler stats cleared");
+}
+
+/// Print profiler statistics to log
+/// JNI signature: ()V
+#[no_mangle]
+pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_printProfilerStats(
+    _env: JNIEnv,
+    _class: JClass,
+) {
+    profiler::print_stats();
+    profiler::MEMORY_STATS.print();
+}
+
+/// Get profiler statistics as a formatted string
+/// JNI signature: ()Ljava/lang/String;
+#[no_mangle]
+pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_getProfilerStatsString(
+    mut env: JNIEnv,
+    _class: JClass,
+) -> jstring {
+    let stats = profiler::get_all_stats();
+    
+    let mut output = String::from("=== Pathfinding Profiler Statistics ===\n");
+    
+    let mut methods: Vec<_> = stats.iter().collect();
+    methods.sort_by(|a, b| b.1.total_time_ns.cmp(&a.1.total_time_ns));
+    
+    for (method, stat) in methods {
+        output.push_str(&format!(
+            "{:<40} | Calls: {:>8} | Total: {:>10.2}ms | Avg: {:>8.2}µs | Min: {:>8.2}µs | Max: {:>8.2}µs\n",
+            method,
+            stat.call_count,
+            stat.total_time_ns as f64 / 1_000_000.0,
+            stat.avg_time_ns as f64 / 1_000.0,
+            stat.min_time_ns as f64 / 1_000.0,
+            stat.max_time_ns as f64 / 1_000.0
+        ));
+    }
+    
+    output.push_str("\n=== Memory Statistics ===\n");
+    output.push_str(&format!("Active PathFinders: {}\n", profiler::MEMORY_STATS.pathfinder_count.load(std::sync::atomic::Ordering::Relaxed)));
+    output.push_str(&format!("Active PathEntities: {}\n", profiler::MEMORY_STATS.path_entity_count.load(std::sync::atomic::Ordering::Relaxed)));
+    output.push_str(&format!("Point Map Size: {}\n", profiler::MEMORY_STATS.point_map_size.load(std::sync::atomic::Ordering::Relaxed)));
+    output.push_str(&format!("Visited Cache Size: {}\n", profiler::MEMORY_STATS.visited_cache_size.load(std::sync::atomic::Ordering::Relaxed)));
+    
+    let result = env.new_string(output).expect("Failed to create string");
+    result.into_raw()
+}

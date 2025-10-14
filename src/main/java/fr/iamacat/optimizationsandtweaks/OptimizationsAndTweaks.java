@@ -40,7 +40,7 @@ public class OptimizationsAndTweaks {
         try {
             File minecraftDir = event.getModConfigurationDirectory()
                 .getParentFile();
-            if (RustFFI.initialize(minecraftDir)) {
+            if (OptimizationsandTweaksConfig.enableMixinPathFinder && RustFFI.initialize(minecraftDir)) {
                 // Test the Rust FFI
                 RustFFI.printHelloWorld();
                 String helloMsg = RustFFI.getHelloString();

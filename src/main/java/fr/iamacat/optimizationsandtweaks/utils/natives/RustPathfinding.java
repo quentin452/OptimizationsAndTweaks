@@ -94,6 +94,11 @@ public class RustPathfinding {
     );
 
     /**
+     * Prints profiler and memory statistics from Rust
+     */
+    public static native void printProfilerStats();
+
+    /**
      * Checks if Rust pathfinding is available
      * 
      * @return true if the native library is loaded and ready
