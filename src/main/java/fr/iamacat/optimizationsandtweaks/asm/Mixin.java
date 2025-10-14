@@ -402,10 +402,6 @@ public enum Mixin implements IMixin {
     common_core_MixinBlockFalling(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinBlockFalling,
         "core.MixinBlockFalling"),
 
-    common_core_MixinLongHashMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinLongHashMap,
-        "core.MixinLongHashMap"),
-    common_core_MixinIntHashMap(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinIntHashMap,
-        "core.MixinIntHashMap"),
     common_koto_MixinPatchWorldGenCloudNine(Side.COMMON,
         require(TargetedMod.KINGDOMSOFTHEOVERWORLD).and(
             m -> OptimizationsandTweaksConfig.enableMixinPatchWorldGenCloudNine),

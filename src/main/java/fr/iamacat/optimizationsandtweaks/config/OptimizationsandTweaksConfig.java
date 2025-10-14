@@ -453,14 +453,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMapGenStructure;
-    @Config.Comment("Optimize IntHashMap")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinIntHashMap;
-    @Config.Comment("Optimize LongHashMap")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLongHashMap;
     @Config.Comment("Optimize TextureManager")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
