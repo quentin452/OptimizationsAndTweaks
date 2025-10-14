@@ -1,6 +1,6 @@
 use super::{Path, PathEntity, PathPoint};
 use crate::log_native_line;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::Entry;
 
 /// Trait for accessing block data in the world
@@ -85,6 +85,8 @@ pub struct PathFinder {
     can_entity_drown: bool,
     /// Debug mode: when enabled, if no path is found, return a direct path to target
     debug_always_reach: bool,
+    /// Cache for visited nodes to avoid reprocessing
+    visited_cache: HashSet<i32>,
 }
 
 impl PathFinder {
@@ -104,6 +106,7 @@ impl PathFinder {
             is_pathing_in_water,
             can_entity_drown,
             debug_always_reach: false,
+            visited_cache: HashSet::with_capacity(2048),
         }
     }
 
@@ -119,6 +122,8 @@ impl PathFinder {
     ) -> Option<PathEntity> {
         self.path.clear_path();
         self.point_map.clear();
+        self.visited_cache.clear();
+        // Note: Block caching is now handled at the Java level (global shared cache)
 
         let mut start_y = (entity.pos_y + 0.5).floor() as i32;
 
@@ -180,7 +185,7 @@ impl PathFinder {
         self.add_to_path(world, entity, start_point, end_point, size_point, max_distance)
     }
 
-    /// Internal pathfinding algorithm (A* implementation)
+    /// Internal pathfinding algorithm (A* implementation) - Optimized
     fn add_to_path<W: IBlockAccess>(
         &mut self,
         world: &W,
@@ -196,15 +201,9 @@ impl PathFinder {
 
         self.path.clear_path();
 
-        if let Some(entry) = self.point_map.get_mut(&start.hash) {
-            entry.total_path_distance = start.total_path_distance;
-            entry.distance_to_next = start.distance_to_next;
-            entry.distance_to_target = start.distance_to_target;
-            entry.previous_hash = start.previous_hash;
-            entry.is_first = start.is_first;
-        } else {
-            self.point_map.insert(start.hash, start);
-        }
+        // Insert start point
+        self.point_map.insert(start.hash, start);
+        
         let idx = {
             let mut getd = |h: i32| self
                 .point_map
@@ -213,14 +212,14 @@ impl PathFinder {
                 .unwrap_or(f32::INFINITY);
             self.path.add_point_hash(start.hash, &mut getd).expect("enqueue start")
         };
-        if let Some(entry) = self.point_map.get_mut(&start.hash) {
-            entry.index = idx as i32;
-            start.index = entry.index;
-        }
+        
+        self.point_map.get_mut(&start.hash).unwrap().index = idx as i32;
+        start.index = idx as i32;
 
-        let mut closest_point = start.clone();
+        let mut closest_hash = start.hash;
         let mut closest_distance = start.distance_to(&end);
 
+        // Early exit if already at goal
         if closest_distance < 1.0 {
             let path = self.create_entity_path(&start, &start);
             self.point_map.clear();
@@ -229,11 +228,12 @@ impl PathFinder {
             return Some(path);
         }
 
-        let max_iterations = 2000;
+        // Reduced max iterations for better performance
+        let max_iterations = 1500;
         let mut iterations = 0;
-        let mut last_best = closest_distance;
         let mut last_improve_iter = 0usize;
-
+        
+        // OPTIMIZED: Main pathfinding loop with caching and early exits
         while !self.path.is_path_empty() && iterations < max_iterations {
             iterations += 1;
 
@@ -246,15 +246,31 @@ impl PathFinder {
                 Some(h) => h,
                 None => break,
             };
-            let mut current = *self.point_map.get(&cur_hash).expect("hash must exist in map");
-
-            if let Some(p) = self.point_map.get_mut(&current.hash) {
-                p.index = -1;
+            
+            // OPTIMIZATION: Skip if already visited (prevents reprocessing)
+            if self.visited_cache.contains(&cur_hash) {
+                continue;
+            }
+            self.visited_cache.insert(cur_hash);
+            
+            // Mark as visited in point_map
+            self.point_map.get_mut(&cur_hash).unwrap().index = -1;
+            
+            // Get current point data (avoid cloning)
+            let (current_x, current_y, current_z, current_dist, dist_to_end);
+            {
+                let current = self.point_map.get(&cur_hash).unwrap();
+                current_x = current.x_coord;
+                current_y = current.y_coord;
+                current_z = current.z_coord;
+                current_dist = current.total_path_distance;
+                dist_to_end = current.distance_to(&end);
             }
 
-            let dist_to_end = current.distance_to(&end);
+            // Check if we reached the goal
             let goal_eps: f32 = if self.is_pathing_in_water { 1.5 } else { 1.0 };
             if dist_to_end < goal_eps {
+                let current = *self.point_map.get(&cur_hash).unwrap();
                 let path = self.create_entity_path(&start, &current);
                 self.point_map.clear();
                 self.point_map.shrink_to_fit();
@@ -262,83 +278,96 @@ impl PathFinder {
                 return Some(path);
             }
 
-            // Prevent oscillation near blocked goals (like closed gate)
+            // Track closest point
             let improve_eps: f32 = if self.is_pathing_in_water { 0.25 } else { 0.5 };
             if dist_to_end + improve_eps < closest_distance {
                 closest_distance = dist_to_end;
-                closest_point = current.clone();
-                last_best = closest_distance;
+                closest_hash = cur_hash;
                 last_improve_iter = iterations;
             }
 
-            current.is_first = true;
-            if let Some(p) = self.point_map.get_mut(&current.hash) {
-                p.is_first = true;
-            }
+            // Mark as visited
+            self.point_map.get_mut(&cur_hash).unwrap().is_first = true;
 
-            if current.total_path_distance > max_distance * 2.0 {
+            // Skip if too far
+            if current_dist > max_distance * 2.0 {
                 continue;
             }
 
-            let options_count =
-                self.find_path_options(world, entity, &current, &size, &end, max_distance);
+            // Early termination if no improvement
+            if iterations.saturating_sub(last_improve_iter) > 100 && !self.is_pathing_in_water {
+                break;
+            }
 
+            // Find neighbors - need to clone current to avoid borrow checker issues
+            let current_for_options = *self.point_map.get(&cur_hash).unwrap();
+            let options_count =
+                self.find_path_options(world, entity, &current_for_options, &size, &end, max_distance);
+
+            // Process neighbors
             for i in 0..options_count {
                 if let Some(neighbor_hash) = self.path_options[i] {
-                    if let Some(neighbor) = self.point_map.get(&neighbor_hash) {
-                        let mut new_distance = current.total_path_distance + current.distance_to(neighbor);
+                    // OPTIMIZATION: Skip already visited neighbors
+                    if self.visited_cache.contains(&neighbor_hash) {
+                        continue;
+                    }
+                    
+                    let (neighbor_x, neighbor_y, neighbor_z, neighbor_assigned, old_dist);
+                    {
+                        let neighbor = self.point_map.get(&neighbor_hash).unwrap();
+                        neighbor_x = neighbor.x_coord;
+                        neighbor_y = neighbor.y_coord;
+                        neighbor_z = neighbor.z_coord;
+                        neighbor_assigned = neighbor.is_assigned();
+                        old_dist = neighbor.total_path_distance;
+                    }
 
-                        // Penalize water tiles if the entity is not in water
-                        let neighbor_block = world.get_block(neighbor.x_coord, neighbor.y_coord, neighbor.z_coord);
-                        if !self.is_pathing_in_water && matches!(neighbor_block, BlockType::Water | BlockType::FlowingWater) {
-                            new_distance += 10.0; 
+                    // OPTIMIZATION: Use cached distance calculation
+                    let dx = (current_x - neighbor_x) as f32;
+                    let dy = (current_y - neighbor_y) as f32;
+                    let dz = (current_z - neighbor_z) as f32;
+                    let step_dist = (dx * dx + dy * dy + dz * dz).sqrt();
+                    
+                    let mut new_distance = current_dist + step_dist;
+
+                    // Penalize water tiles if not in water
+                    // Note: Block queries are cached at Java level (global shared cache)
+                    if !self.is_pathing_in_water {
+                        let neighbor_block = world.get_block(neighbor_x, neighbor_y, neighbor_z);
+                        if matches!(neighbor_block, BlockType::Water | BlockType::FlowingWater) {
+                            new_distance += 10.0;
                         }
+                    }
 
-                        // Early break if search stagnates to allow responsive retargeting
-                        // In water, avoid early break to prevent oscillation and ensure full exploration
-                        if iterations.saturating_sub(last_improve_iter) > 128 {
-                            if !self.is_pathing_in_water {
-                                break;
-                            }
-                        }
+                    if new_distance > max_distance {
+                        continue;
+                    }
 
-                        if new_distance > max_distance {
-                            continue;
-                        }
+                    let should_update = !neighbor_assigned || new_distance < old_dist;
 
-                        let neighbor_assigned = neighbor.is_assigned();
-                        let should_update = if neighbor_assigned {
-                            new_distance < neighbor.total_path_distance
+                    if should_update {
+                        // Update neighbor
+                        let neighbor = self.point_map.get_mut(&neighbor_hash).unwrap();
+                        neighbor.previous_hash = Some(cur_hash);
+                        neighbor.total_path_distance = new_distance;
+                        neighbor.distance_to_next = neighbor.distance_to(&end);
+                        neighbor.distance_to_target = neighbor.total_path_distance + neighbor.distance_to_next;
+
+                        if neighbor_assigned {
+                            let mut getd = |h: i32| self
+                                .point_map
+                                .get(&h)
+                                .map(|p| p.distance_to_target)
+                                .unwrap_or(f32::INFINITY);
+                            let _ = self.path.reheapify_by_hash(neighbor_hash, &mut getd);
                         } else {
-                            true
-                        };
-
-                        if should_update {
-                            if let Some(updated_neighbor) = self.point_map.get_mut(&neighbor_hash) {
-                                updated_neighbor.previous_hash = Some(current.hash);
-                                updated_neighbor.total_path_distance = new_distance;
-                                updated_neighbor.distance_to_next = updated_neighbor.distance_to(&end);
-                                updated_neighbor.distance_to_target =
-                                    updated_neighbor.total_path_distance + updated_neighbor.distance_to_next;
-                            }
-                            if neighbor_assigned {
-                                let mut getd = |h: i32| self
-                                    .point_map
-                                    .get(&h)
-                                    .map(|p| p.distance_to_target)
-                                    .unwrap_or(f32::INFINITY);
-                                let _ = self.path.reheapify_by_hash(neighbor_hash, &mut getd);
-                            } else {
-                                let mut getd = |h: i32| self
-                                    .point_map
-                                    .get(&h)
-                                    .map(|p| p.distance_to_target)
-                                    .unwrap_or(f32::INFINITY);
-                                if let Ok(idx) = self.path.add_point_hash(neighbor_hash, &mut getd) {
-                                    if let Some(e) = self.point_map.get_mut(&neighbor_hash) {
-                                        e.index = idx as i32;
-                                    }
-                                }
+                            let mut getd = |h: i32| self
+                                .point_map
+                                .get(&h)
+                                .map(|p| p.distance_to_target)
+                                .unwrap_or(f32::INFINITY);
+                            if let Ok(idx) = self.path.add_point_hash(neighbor_hash, &mut getd) {
+                                self.point_map.get_mut(&neighbor_hash).unwrap().index = idx as i32;
                             }
                         }
                     }
@@ -346,6 +375,7 @@ impl PathFinder {
             }
         }
 
+        let closest_point = *self.point_map.get(&closest_hash).unwrap();
         let path = self.create_entity_path(&start, &closest_point);
         let path_len = path.len();
         let reach_tolerance: f32 = if self.is_pathing_in_water { 2.5 } else { 1.0 };
@@ -405,7 +435,7 @@ impl PathFinder {
             let mut below_front_y = current.y_coord - 1;
             let below_front_z = current.z_coord + dz;
 
-            // Block just in front and below
+            // Block queries are cached at Java level (global shared cache)
             let front_block = world.get_block(below_front_x, current.y_coord, below_front_z);
             let below_front_block = world.get_block(below_front_x, below_front_y, below_front_z);
 

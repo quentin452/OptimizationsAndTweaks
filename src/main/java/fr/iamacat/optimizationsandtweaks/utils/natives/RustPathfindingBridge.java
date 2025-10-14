@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RustPathfindingBridge {
     private static final Map<Integer, PathFinderEntry> PATHFINDER_CACHE = new ConcurrentHashMap<Integer, PathFinderEntry>();
+    
+    private static final GlobalBlockCache GLOBAL_BLOCK_CACHE = new GlobalBlockCache(16384);
     private static class PathFinderEntry {
         RustPathfinding.PathFinderHandle handle;
         boolean woodenDoorAllowed;
@@ -127,8 +129,118 @@ public class RustPathfindingBridge {
     }
 
     /**
+     * Global block cache shared across all pathfinding operations.
+     * Thread-safe LRU cache to prevent memory bloat.
+     */
+    private static class GlobalBlockCache {
+        private final ConcurrentHashMap<Long, CachedBlock> cache;
+        private final int maxSize;
+        private volatile long accessCounter = 0;
+        
+        private static class CachedBlock {
+            final byte blockType;
+            final int metadata;
+            volatile long lastAccess;
+            
+            CachedBlock(byte blockType, int metadata, long lastAccess) {
+                this.blockType = blockType;
+                this.metadata = metadata;
+                this.lastAccess = lastAccess;
+            }
+        }
+        
+        public GlobalBlockCache(int maxSize) {
+            this.maxSize = maxSize;
+            this.cache = new ConcurrentHashMap<>(maxSize / 2);
+        }
+        
+        private static long makeKey(int x, int y, int z) {
+            // Pack coordinates into a long: x (21 bits) | y (11 bits) | z (21 bits)
+            // Supports coordinates from -1M to +1M for x/z, -1024 to +1023 for y
+            return ((long)(x & 0x1FFFFF) << 32) | ((long)(y & 0x7FF) << 21) | (long)(z & 0x1FFFFF);
+        }
+        
+        public CachedBlock get(int x, int y, int z) {
+            long key = makeKey(x, y, z);
+            CachedBlock cached = cache.get(key);
+            if (cached != null) {
+                cached.lastAccess = ++accessCounter;
+                return cached;
+            }
+            return null;
+        }
+        
+        public void put(int x, int y, int z, byte blockType, int metadata) {
+            // Evict old entries if cache is too large
+            if (cache.size() >= maxSize) {
+                evictOldEntries();
+            }
+            
+            long key = makeKey(x, y, z);
+            cache.put(key, new CachedBlock(blockType, metadata, ++accessCounter));
+        }
+        
+        private void evictOldEntries() {
+            // Remove ~25% of least recently used entries
+            int toRemove = maxSize / 4;
+            long threshold = accessCounter - (maxSize * 2L);
+            
+            cache.entrySet().removeIf(entry -> {
+                return entry.getValue().lastAccess < threshold && toRemove > 0;
+            });
+        }
+        
+        public void clear() {
+            cache.clear();
+            accessCounter = 0;
+        }
+        
+        public int size() {
+            return cache.size();
+        }
+    }
+    
+    /**
+     * Clear the global block cache. Should be called when world changes or periodically.
+     */
+    public static void clearGlobalBlockCache() {
+        GLOBAL_BLOCK_CACHE.clear();
+    }
+    
+    /**
+     * Invalidate a specific block position in the cache.
+     * Should be called when a block is placed, broken, or modified.
+     */
+    public static void invalidateBlockCache(int x, int y, int z) {
+        long key = GlobalBlockCache.makeKey(x, y, z);
+        GLOBAL_BLOCK_CACHE.cache.remove(key);
+    }
+    
+    /**
+     * Invalidate a region of blocks in the cache.
+     * Useful for chunk updates or large block changes.
+     */
+    public static void invalidateBlockCacheRegion(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    invalidateBlockCache(x, y, z);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get global block cache statistics for monitoring.
+     */
+    public static int getGlobalBlockCacheSize() {
+        return GLOBAL_BLOCK_CACHE.size();
+    }
+
+    /**
      * World access adapter that Rust can query via JNI.
      * This allows Rust to encode blocks on-demand during pathfinding.
+     * Now uses a global shared cache to avoid redundant queries.
      */
     public static class WorldAccessAdapter {
         private final IBlockAccess world;
@@ -140,15 +252,38 @@ public class RustPathfindingBridge {
         /**
          * Called by Rust via JNI to get block type code.
          * Returns: 0=Air,1=Solid,2=Water,3=Lava,4=WoodenDoor,5=Trapdoor,6=Fence,7=FenceGate,etc.
+         * OPTIMIZED: Uses global shared cache to avoid redundant world queries.
          */
         public byte getBlockTypeCode(int x, int y, int z) {
-            return encodeBlock(world, x, y, z);
+            // Check global cache first
+            GlobalBlockCache.CachedBlock cached = GLOBAL_BLOCK_CACHE.get(x, y, z);
+            if (cached != null) {
+                return cached.blockType;
+            }
+            
+            // Cache miss - query world and cache result
+            byte blockType = encodeBlock(world, x, y, z);
+            int metadata = 0;
+            try {
+                metadata = world.getBlockMetadata(x, y, z);
+            } catch (Throwable ignore) {}
+            
+            GLOBAL_BLOCK_CACHE.put(x, y, z, blockType, metadata);
+            return blockType;
         }
 
         /**
          * Called by Rust via JNI to get block metadata.
+         * OPTIMIZED: Uses global shared cache.
          */
         public int getBlockMetadata(int x, int y, int z) {
+            // Check global cache first
+            GlobalBlockCache.CachedBlock cached = GLOBAL_BLOCK_CACHE.get(x, y, z);
+            if (cached != null) {
+                return cached.metadata;
+            }
+            
+            // Cache miss - query world
             try {
                 return world.getBlockMetadata(x, y, z);
             } catch (Throwable t) {

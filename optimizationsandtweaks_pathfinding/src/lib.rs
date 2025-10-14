@@ -616,8 +616,6 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     is_in_water: jboolean,
     max_safe_point_tries: jint,
 ) -> jlong {
-    log_native_line("findPathDirect");
-
     // Decode flags from handle
     let raw = (pathfinder_handle as i64).saturating_sub(1);
     let wd = (raw & 1) != 0;
@@ -654,11 +652,9 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     ) {
         let id = get_next_id();
         PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
-        log_native_line("findPathDirect: path found");
         return id as jlong;
     }
 
-    log_native_line("findPathDirect: no path found");
     0 as jlong
 }
 

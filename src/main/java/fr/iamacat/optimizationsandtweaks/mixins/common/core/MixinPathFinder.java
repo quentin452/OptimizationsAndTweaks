@@ -69,7 +69,6 @@ public abstract class MixinPathFinder {
         if (!optimizationsAndTweaks$rustPathfindingEnabled) {
             return; // Use vanilla implementation
         }
-
         try {
             // Get or create PathFinder handle for this instance
             long pathfinderHandle = optimizationsAndTweaks$getOrCreatePathFinderHandle();
