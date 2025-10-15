@@ -76,43 +76,4 @@ public class MixinNetHandlerPlayClient {
                 .updateWatchedObjectsFromList(list);
         }
     }
-
-    /**
-     * @author quentin452
-     * @reason Try to fix Default value cannot be lower than minimum value! when calling RangedAttribute
-     */
-    @Overwrite
-    public void handleEntityProperties(S20PacketEntityProperties packetIn) {
-        Entity entity = this.clientWorldController.getEntityByID(packetIn.func_149442_c());
-
-        if (entity != null) {
-            if (!(entity instanceof EntityLivingBase)) {
-                throw new IllegalStateException(
-                    "Server tried to update attributes of a non-living entity (actually: " + entity + ")");
-            } else {
-                BaseAttributeMap baseattributemap = ((EntityLivingBase) entity).getAttributeMap();
-                for (Object o : packetIn.func_149441_d()) {
-                    S20PacketEntityProperties.Snapshot snapshot = (S20PacketEntityProperties.Snapshot) o;
-                    IAttributeInstance iattributeinstance = baseattributemap
-                        .getAttributeInstanceByName(snapshot.func_151409_a());
-                    if (iattributeinstance == null) {
-                        // Use a valid default value that is at least as large as the minimum value
-                        double defaultValue = Math.max(2.2250738585072014E-308D, 0.1D);
-                        iattributeinstance = baseattributemap.registerAttribute(
-                            new RangedAttribute(
-                                snapshot.func_151409_a(),
-                                defaultValue,
-                                2.2250738585072014E-308D,
-                                Double.MAX_VALUE));
-                    }
-                    iattributeinstance.setBaseValue(snapshot.func_151410_b());
-                    iattributeinstance.removeAllModifiers();
-                    for (Object object : snapshot.func_151408_c()) {
-                        AttributeModifier attributemodifier = (AttributeModifier) object;
-                        iattributeinstance.applyModifier(attributemodifier);
-                    }
-                }
-            }
-        }
-    }
 }
