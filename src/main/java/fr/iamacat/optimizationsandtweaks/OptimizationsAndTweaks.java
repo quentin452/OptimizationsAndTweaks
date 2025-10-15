@@ -45,7 +45,7 @@ public class OptimizationsAndTweaks {
         try {
             File minecraftDir = event.getModConfigurationDirectory()
                 .getParentFile();
-            if (OptimizationsandTweaksConfig.enableMixinPathFinder && RustFFI.initialize(minecraftDir)) {
+            if (OptimizationsandTweaksConfig.enablePathFindingOptimizations && RustFFI.initialize(minecraftDir)) {
                 // Test the Rust FFI
                 RustFFI.printHelloWorld();
                 String helloMsg = RustFFI.getHelloString();
@@ -84,7 +84,7 @@ public class OptimizationsAndTweaks {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         // Register async pathfinding tick handler
-        if (OptimizationsandTweaksConfig.enableMixinPathFinder && AsyncPathfindingExecutor.isInitialized()) {
+        if (OptimizationsandTweaksConfig.enablePathFindingOptimizations && AsyncPathfindingExecutor.isInitialized()) {
             AsyncPathfindingTickHandler asyncTickHandler = new AsyncPathfindingTickHandler();
             FMLCommonHandler.instance().bus().register(asyncTickHandler);
             FMLLog.info("[OptimizationsAndTweaks] Async pathfinding tick handler registered");

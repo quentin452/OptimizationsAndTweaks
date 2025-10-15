@@ -477,10 +477,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMob;
-    @Config.Comment("Optimize EntityAITasks")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAITasks;
 
     @Config.Comment("Optimize ExtendedBlockStorage")
     @Config.DefaultBoolean(true)
@@ -1017,7 +1013,7 @@ public class OptimizationsandTweaksConfig {
     @Config.Comment("Enable Rust-powered pathfinding optimization for PathFinder (significant performance improvement)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
-    public static boolean enableMixinPathFinder;
+    public static boolean enablePathFindingOptimizations;
 
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)

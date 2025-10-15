@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
+    common_accessor_PathNavigateAccessor(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations, "accessor.PathNavigateAccessor"),
 
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
     common_core_MixinEventBus(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventBus, "core.MixinEventBus"),
@@ -219,8 +220,11 @@ public enum Mixin implements IMixin {
         require(TargetedMod.KORINBLUEBEDROCK).and(m -> OptimizationsandTweaksConfig.enableMixinKoRINEventHandler),
         "KoRIN.MixinKoRINEventHandler"),
     common_coroutil_MixinPFQueue(Side.COMMON,
-        require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enableMixinPFQueue),
+        require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations),
         "coroutil.MixinPFQueue"),
+    common_coroutil_MixinPFQueueTryPath(Side.COMMON,
+        require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations),
+        "coroutil.MixinPFQueueTryPath"),
     common_zombieawareness_MixinZAUtil(Side.COMMON,
         require(TargetedMod.COROUTIL).and(m -> OptimizationsandTweaksConfig.enableMixinZAUtil),
         "zombieawareness.MixinZAUtil"),
@@ -371,9 +375,6 @@ public enum Mixin implements IMixin {
         "core.entity.MixinEntitySquid"),
     common_core_MixinWorldChunkManager(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorldChunkManager,
         "core.MixinWorldChunkManager"),
-    common_core_MixinEntityAITasks(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAITasks,
-        "core.MixinEntityAITasks"),
-
     common_core_MixinExtendedBlockStorage(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableMixinExtendedBlockStorage, "core.MixinExtendedBlockStorage"),
     common_core_MixinEntityMoveHelper(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityMoveHelper,
@@ -850,8 +851,9 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityPlayer(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityPlayer,
         "core.MixinEntityPlayer"),
 
-    common_core_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinPathFinder,
+    common_core_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
         "core.MixinPathFinder"),
+    common_core_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations, "core.MixinPathEntity"),
     common_angelica_MixinClientProxy(Side.COMMON,
         require(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinClientProxy),
         "angelica.MixinClientProxy"),
