@@ -7,11 +7,6 @@ import fr.iamacat.optimizationsandtweaks.Tags;
 @Config(modid = Tags.MODID)
 public class OptimizationsandTweaksConfig {
 
-    @Config.Comment("Optimize EntityAITarget Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAITarget;
-
     @Config.Comment("Enabling Block Name Debugger for getPendingBlockUpdates " + "from WorldServer Class?.")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -33,14 +28,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinModifiableAttributeInstance;
-    @Config.Comment("Optimize RandomPositionGenerator Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinRandomPositionGenerator;
-    @Config.Comment("Optimize EntityAIWander Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAIWander;
     @Config.Comment("Optimize EntityAIPlay Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -69,11 +56,6 @@ public class OptimizationsandTweaksConfig {
     @Config.RangeInt(min = 1, max = 64)
     @Config.RequiresWorldRestart
     public static int numberofcpus;
-    @Config.Comment("Batch size ,if you have tps issues try lowering or " + "highering the batch size.")
-    @Config.DefaultInt(150)
-    @Config.RangeInt(min = 1, max = 100)
-    @Config.RequiresWorldRestart
-    public static int batchsize;
     @Config.Comment("Optimize WorldChunkManager class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -98,10 +80,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinServersideAttributeMap;
-    @Config.Comment("Optimize EntityAIAttackOnCollide performances")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAIAttackOnCollide;
     @Config.Comment("Optimize World Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -275,10 +253,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinStitcher;
-    @Config.Comment("Optimize Pathfinding for entities")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enablePathfinderOptimizations;
     @Config.Comment("Optimize StatsComponent")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -348,10 +322,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockBreakingRegistry;
-    @Config.Comment("Optimize NibbleArray")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinNibbleArray;
     @Config.Comment("Optimize EntityLiving")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -434,10 +404,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinVec3;
-    @Config.Comment("Optimize FontRenderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinFontRenderer;
     @Config.Comment("Optimize ModelRenderer")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
@@ -475,22 +441,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinMapGenStructure;
-    @Config.Comment("Optimize ItemRenderer")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinItemRenderer;
-    @Config.Comment("Optimize IntHashMap")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinIntHashMap;
-    @Config.Comment("Optimize LongHashMap")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinLongHashMap;
-    @Config.Comment("Optimize TextureManager")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinTextureManager;
     @Config.Comment("Fix Godzilla Spam Log from orespawn")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -511,11 +461,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityAnimal;
-
-    @Config.Comment("Optimize ChunkProviderGenerate")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinChunkProviderGenerate;
     @Config.Comment("Optimize CompressedStreamTools (CAN CAUSE CRASHES CAUSED " + "BY GZIPInputStream2)")
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
@@ -532,10 +477,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityMob;
-    @Config.Comment("Optimize EntityAITasks")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinEntityAITasks;
 
     @Config.Comment("Optimize ExtendedBlockStorage")
     @Config.DefaultBoolean(true)
@@ -1068,6 +1009,11 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityPlayer;
+
+    @Config.Comment("Enable Rust-powered pathfinding optimization for PathFinder (significant performance improvement) (async)")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enablePathFindingOptimizations;
 
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)

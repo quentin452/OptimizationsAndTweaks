@@ -492,31 +492,4 @@ public class MixinRenderGlobal {
     public void onStaticEntitiesChanged() {
         this.displayListEntitiesDirty = true;
     }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void rebuildDisplayListEntities() {
-        this.theWorld.theProfiler.startSection("staticentityrebuild");
-        GL11.glPushMatrix();
-        GL11.glNewList(this.displayListEntities, GL11.GL_COMPILE);
-        List list = this.theWorld.getLoadedEntityList();
-        this.displayListEntitiesDirty = false;
-
-        for (Object o : list) {
-            Entity entity = (Entity) o;
-
-            if (RenderManager.instance.getEntityRenderObject(entity)
-                .isStaticEntity()) {
-                this.displayListEntitiesDirty = this.displayListEntitiesDirty
-                    || !RenderManager.instance.renderEntityStatic(entity, 0.0F, true);
-            }
-        }
-
-        GL11.glEndList();
-        GL11.glPopMatrix();
-        this.theWorld.theProfiler.endSection();
-    }
 }
