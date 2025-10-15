@@ -98,6 +98,45 @@ public class RustPathfinding {
      */
     public static native void printProfilerStats();
 
+    // ========== Async Pathfinding Executor Methods ==========
+
+    /**
+     * Initialize the async pathfinding executor
+     */
+    public static native void initAsyncExecutor(int workerCount, int queueSize);
+
+    /**
+     * Submit an async pathfinding request to the Rust executor
+     */
+    public static native long submitAsyncPathfinding(
+        long requestId, int priority,
+        boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
+        boolean isPathingInWater, boolean canEntityDrown,
+        int offsetX, int offsetY, int offsetZ,
+        int width, int height, int depth,
+        byte[] blockCache,
+        double entityX, double entityY, double entityZ,
+        double targetX, double targetY, double targetZ,
+        float entityWidth, float entityHeight,
+        float maxDistance, boolean isInWater, int maxSafePointTries
+    );
+
+    /**
+     * Try to receive a completed async pathfinding result (non-blocking)
+     */
+    public static native long tryRecvAsyncResult(int[] outRequestId);
+
+    /**
+     * Get async executor statistics
+     */
+    public static native int[] getAsyncExecutorStats();
+
+    /**
+     * Shutdown the async executor gracefully
+     */
+    public static native void shutdownAsyncExecutor();
+
+
     /**
      * Checks if Rust pathfinding is available
      * 

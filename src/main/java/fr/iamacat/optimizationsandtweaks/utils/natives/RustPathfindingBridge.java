@@ -507,6 +507,30 @@ public class RustPathfindingBridge {
         }
     }
 
+    /**
+     * Encode a region of blocks into a byte array for async pathfinding
+     * This is used by AsyncPathfindingExecutor to prepare block data
+     */
+    public static byte[] encodeBlockCache(IBlockAccess world, int offsetX, int offsetY, int offsetZ,
+                                         int width, int height, int depth) {
+        byte[] cache = new byte[width * height * depth];
+        int index = 0;
+        
+        for (int y = 0; y < height; y++) {
+            for (int z = 0; z < depth; z++) {
+                for (int x = 0; x < width; x++) {
+                    int worldX = offsetX + x;
+                    int worldY = offsetY + y;
+                    int worldZ = offsetZ + z;
+                    
+                    cache[index++] = encodeBlock(world, worldX, worldY, worldZ);
+                }
+            }
+        }
+        
+        return cache;
+    }
+    
     private static byte encodeBlock(IBlockAccess world, int x, int y, int z) {
         try {
             net.minecraft.block.Block b = world.getBlock(x, y, z);

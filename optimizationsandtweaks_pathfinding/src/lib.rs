@@ -59,6 +59,7 @@ fn init_panic_logging() {
 // Pathfinding module
 pub mod pathfinding;
 pub mod profiler;
+pub mod async_executor;
 
 use pathfinding::{PathFinder, PathEntity};
 
@@ -852,3 +853,5 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     let result = env.new_string(output).expect("Failed to create string");
     result.into_raw()
 }
+
+//

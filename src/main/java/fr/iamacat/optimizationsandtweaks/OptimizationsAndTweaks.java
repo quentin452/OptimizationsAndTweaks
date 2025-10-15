@@ -9,11 +9,14 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
+import fr.iamacat.optimizationsandtweaks.eventshandler.AsyncPathfindingTickHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.WorldUnloadEventHandler;
 import fr.iamacat.optimizationsandtweaks.proxy.CommonProxy;
+import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
 import fr.iamacat.optimizationsandtweaks.utils.natives.RustFFI;
 import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfinding;
 import fr.iamacat.optimizationsandtweaks.utilsformods.experienceore.ExperienceOreConfig;
@@ -51,6 +54,10 @@ public class OptimizationsAndTweaks {
 
                 // Initialize Rust pathfinding
                 RustPathfinding.initialize();
+                
+                // Initialize async pathfinding executor
+                AsyncPathfindingExecutor.initializeAuto();
+                FMLLog.info("[OptimizationsAndTweaks] Async pathfinding executor initialized");
             }
         } catch (Throwable t) {
             FMLLog.info(
@@ -74,6 +81,13 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        // Register async pathfinding tick handler
+        if (OptimizationsandTweaksConfig.enableMixinPathFinder && AsyncPathfindingExecutor.isInitialized()) {
+            AsyncPathfindingTickHandler asyncTickHandler = new AsyncPathfindingTickHandler();
+            FMLCommonHandler.instance().bus().register(asyncTickHandler);
+            FMLLog.info("[OptimizationsAndTweaks] Async pathfinding tick handler registered");
+        }
+        
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
             MinecraftForge.EVENT_BUS.register(eventHandler);
@@ -91,4 +105,13 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {}
+    
+    @Mod.EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        // Shutdown async pathfinding executor
+        if (AsyncPathfindingExecutor.isInitialized()) {
+            FMLLog.info("[OptimizationsAndTweaks] Shutting down async pathfinding executor");
+            AsyncPathfindingExecutor.shutdown();
+        }
+    }
 }

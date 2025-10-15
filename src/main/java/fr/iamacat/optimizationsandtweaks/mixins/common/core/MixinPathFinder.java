@@ -12,10 +12,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfinding;
+import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
+import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
+
+import fr.iamacat.optimizationsandtweaks.utils.pathfinding.PendingPathRequest;
+import fr.iamacat.optimizationsandtweaks.utils.pathfinding.CachedPath;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Mixin for PathFinder to use Rust pathfinding implementation
+ * Mixin for PathFinder to use async Rust pathfinding implementation
+ * 
+ * This mixin intercepts pathfinding requests and submits them to the async executor.
+ * Results are cached per entity and reused when available.
  */
 @Mixin(PathFinder.class)
 public abstract class MixinPathFinder {
@@ -36,27 +46,38 @@ public abstract class MixinPathFinder {
     private boolean canEntityDrown;
 
     @Unique
-    private static boolean optimizationsAndTweaks$rustPathfindingEnabled = false;
+    private static boolean optimizationsAndTweaks$asyncPathfindingEnabled = false;
 
     @Unique
-    private static boolean optimizationsAndTweaks$rustPathfindingChecked = false;
+    private static boolean optimizationsAndTweaks$asyncPathfindingChecked = false;
 
+    // Cache for pending async pathfinding requests per entity
     @Unique
-    private RustPathfinding.PathFinderHandle optimizationsAndTweaks$rustPathFinderHandle = null;
+    private static final Map<Integer, PendingPathRequest> optimizationsAndTweaks$pendingPaths = new ConcurrentHashMap<>();
+
+    // Cache for completed paths per entity
+    @Unique
+    private static final Map<Integer, CachedPath> optimizationsAndTweaks$cachedPaths = new ConcurrentHashMap<>();
 
     /**
-     * Check if Rust pathfinding is available (only once)
+     * Check if async pathfinding is available (only once)
      */
     @Unique
-    private static void optimizationsAndTweaks$checkRustPathfinding() {
-        if (!optimizationsAndTweaks$rustPathfindingChecked) {
-            optimizationsAndTweaks$rustPathfindingChecked = true;
-            optimizationsAndTweaks$rustPathfindingEnabled = RustPathfinding.isAvailable();
+    private static void optimizationsAndTweaks$checkAsyncPathfinding() {
+        if (!optimizationsAndTweaks$asyncPathfindingChecked) {
+            optimizationsAndTweaks$asyncPathfindingChecked = true;
+            optimizationsAndTweaks$asyncPathfindingEnabled = AsyncPathfindingExecutor.isInitialized();
+            
+            if (!optimizationsAndTweaks$asyncPathfindingEnabled) {
+                // Try to initialize automatically
+                AsyncPathfindingExecutor.initializeAuto();
+                optimizationsAndTweaks$asyncPathfindingEnabled = AsyncPathfindingExecutor.isInitialized();
+            }
         }
     }
 
     /**
-     * Intercept createEntityPathTo(Entity, Entity, float) to use Rust implementation
+     * Intercept createEntityPathTo(Entity, Entity, float) to use async Rust implementation
      */
     @Inject(
         method = "createEntityPathTo(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;F)Lnet/minecraft/pathfinding/PathEntity;",
@@ -64,39 +85,35 @@ public abstract class MixinPathFinder {
         cancellable = true)
     private void optimizationsAndTweaks$createEntityPathToEntity(Entity entity, Entity target, float maxDistance,
         CallbackInfoReturnable<PathEntity> cir) {
-        optimizationsAndTweaks$checkRustPathfinding();
+        optimizationsAndTweaks$checkAsyncPathfinding();
 
-        if (!optimizationsAndTweaks$rustPathfindingEnabled) {
+        if (!optimizationsAndTweaks$asyncPathfindingEnabled) {
             return; // Use vanilla implementation
         }
-        try {
-            // Get or create PathFinder handle for this instance
-            long pathfinderHandle = optimizationsAndTweaks$getOrCreatePathFinderHandle();
 
-            // Use Rust pathfinding
-            PathEntity path = fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge.findPathDirect(
-                this.worldMap,
+        try {
+            PathEntity path = optimizationsAndTweaks$getOrRequestPath(
                 entity,
                 target.posX,
                 target.boundingBox.minY,
                 target.posZ,
-                maxDistance,
-                this.isWoddenDoorAllowed,
-                this.isMovementBlockAllowed,
-                this.isPathingInWater,
-                this.canEntityDrown);
+                maxDistance
+            );
 
-            cir.setReturnValue(path);
+            if (path != null) {
+                cir.setReturnValue(path);
+            }
+            // If path is null, fall through to vanilla (request is pending)
         } catch (Exception e) {
             // Fall back to vanilla on error
             cpw.mods.fml.common.FMLLog.warning(
-                "[OptimizationsAndTweaks] Rust pathfinding failed, falling back to vanilla: %s",
+                "[OptimizationsAndTweaks] Async pathfinding failed, falling back to vanilla: %s",
                 e.getMessage());
         }
     }
 
     /**
-     * Intercept createEntityPathTo(Entity, int, int, int, float) to use Rust implementation
+     * Intercept createEntityPathTo(Entity, int, int, int, float) to use async Rust implementation
      */
     @Inject(
         method = "createEntityPathTo(Lnet/minecraft/entity/Entity;IIIF)Lnet/minecraft/pathfinding/PathEntity;",
@@ -104,50 +121,91 @@ public abstract class MixinPathFinder {
         cancellable = true)
     private void optimizationsAndTweaks$createEntityPathToCoords(Entity entity, int x, int y, int z, float maxDistance,
         CallbackInfoReturnable<PathEntity> cir) {
-        optimizationsAndTweaks$checkRustPathfinding();
+        optimizationsAndTweaks$checkAsyncPathfinding();
 
-        if (!optimizationsAndTweaks$rustPathfindingEnabled) {
+        if (!optimizationsAndTweaks$asyncPathfindingEnabled) {
             return; // Use vanilla implementation
         }
 
         try {
-            // Get or create PathFinder handle for this instance
-            long pathfinderHandle = optimizationsAndTweaks$getOrCreatePathFinderHandle();
-
-            // Use Rust pathfinding
-            PathEntity path = fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge.findPathDirect(
-                this.worldMap,
+            PathEntity path = optimizationsAndTweaks$getOrRequestPath(
                 entity,
                 (double) x + 0.5,
                 (double) y + 0.5,
                 (double) z + 0.5,
-                maxDistance,
-                this.isWoddenDoorAllowed,
-                this.isMovementBlockAllowed,
-                this.isPathingInWater,
-                this.canEntityDrown);
+                maxDistance
+            );
 
-            cir.setReturnValue(path);
+            if (path != null) {
+                cir.setReturnValue(path);
+            }
+            // If path is null, fall through to vanilla (request is pending)
         } catch (Exception e) {
             // Fall back to vanilla on error
             cpw.mods.fml.common.FMLLog.warning(
-                "[OptimizationsAndTweaks] Rust pathfinding failed, falling back to vanilla: %s",
+                "[OptimizationsAndTweaks] Async pathfinding failed, falling back to vanilla: %s",
                 e.getMessage());
         }
     }
 
     /**
-     * Get or create the Rust PathFinder handle for this instance
+     * Get cached path or submit async request
+     * Returns cached path if available, null if request is pending or needs to be submitted
      */
     @Unique
-    private long optimizationsAndTweaks$getOrCreatePathFinderHandle() {
-        if (optimizationsAndTweaks$rustPathFinderHandle == null) {
-            optimizationsAndTweaks$rustPathFinderHandle = new RustPathfinding.PathFinderHandle(
-                this.isWoddenDoorAllowed,
-                this.isMovementBlockAllowed,
-                this.isPathingInWater,
-                this.canEntityDrown);
+    private PathEntity optimizationsAndTweaks$getOrRequestPath(
+            Entity entity,
+            double targetX,
+            double targetY,
+            double targetZ,
+            float maxDistance) {
+        
+        int entityId = entity.getEntityId();
+        long currentTime = System.currentTimeMillis();
+
+        // Check if we have a cached path that's still valid
+        CachedPath cached = optimizationsAndTweaks$cachedPaths.get(entityId);
+        if (cached != null && cached.isValid(entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, currentTime)) {
+            return cached.getPath();
         }
-        return optimizationsAndTweaks$rustPathFinderHandle.getHandle();
+
+        // Check if we have a pending request
+        PendingPathRequest pending = optimizationsAndTweaks$pendingPaths.get(entityId);
+        if (pending != null && pending.isStillValid(targetX, targetY, targetZ, currentTime)) {
+            // Request is still pending and target hasn't changed significantly
+            // Return null to fall through to vanilla (entity will retry next tick)
+            return null;
+        }
+
+        // Submit new async pathfinding request
+        long requestId = AsyncPathfindingExecutor.submitPathfindingWithCallback(
+                worldMap,
+                entity,
+                targetX,
+                targetY,
+                targetZ,
+                maxDistance,
+                path -> {
+                    optimizationsAndTweaks$cachedPaths.put(entityId, new CachedPath(path, entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, System.currentTimeMillis()));
+                    optimizationsAndTweaks$pendingPaths.remove(entityId);
+                },
+                error -> optimizationsAndTweaks$pendingPaths.remove(entityId),
+                isWoddenDoorAllowed,
+                isMovementBlockAllowed,
+                isPathingInWater,
+                canEntityDrown
+        );
+
+        if (requestId != 0) {
+            // Request submitted successfully
+            optimizationsAndTweaks$pendingPaths.put(
+                entityId,
+                new PendingPathRequest(requestId, targetX, targetY, targetZ, currentTime)
+            );
+        }
+
+        // Return null to fall through to vanilla for this tick
+        // The async result will be available on subsequent ticks
+        return null;
     }
 }
