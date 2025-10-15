@@ -188,6 +188,12 @@ public abstract class MixinPathFinder {
                 path -> {
                     optimizationsAndTweaks$cachedPaths.put(entityId, new CachedPath(path, entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, System.currentTimeMillis()));
                     optimizationsAndTweaks$pendingPaths.remove(entityId);
+                    // Immediately apply the path so early-priority AIs (e.g., AttackOnCollide at 2) don't stall
+                    try {
+                        if (entity instanceof net.minecraft.entity.EntityLiving && path != null) {
+                            ((net.minecraft.entity.EntityLiving) entity).getNavigator().setPath(path, 1.0D);
+                        }
+                    } catch (Throwable ignored) {}
                 },
                 error -> optimizationsAndTweaks$pendingPaths.remove(entityId),
                 isWoddenDoorAllowed,
