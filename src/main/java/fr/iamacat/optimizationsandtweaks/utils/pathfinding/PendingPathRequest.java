@@ -15,11 +15,11 @@ public class PendingPathRequest {
 
     /**
      * Check if pending request is still valid
-     * Request expires after 2 seconds or if target moved significantly
+     * Request expires after 0.4 seconds or if target moved significantly
      */
     public boolean isStillValid(double curTargetX, double curTargetY, double curTargetZ, long currentTime) {
-        // Request expires after 2 seconds
-        if (currentTime - timestamp > 2000) {
+        // Request expires after 0.4 seconds
+        if (currentTime - timestamp > 400) {
             return false;
         }
 

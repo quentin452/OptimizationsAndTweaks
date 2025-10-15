@@ -26,25 +26,25 @@ public class CachedPath {
 
     /**
      * Check if cached path is still valid
-     * Cache expires after 1 second or if entity/target moved significantly
+     * Cache expires after 0.6 second or if entity/target moved significantly
      */
     public boolean isValid(double curEntityX, double curEntityY, double curEntityZ,
                     double curTargetX, double curTargetY, double curTargetZ,
                     long currentTime) {
-        // Cache expires after 1 second (20 ticks)
-        if (currentTime - timestamp > 1000) {
+        // Cache expires after 0.6 second (13 ticks)
+        if (currentTime - timestamp > 600) {
             return false;
         }
 
-        // Check if entity moved significantly (more than 0.5 blocks)
+        // Check if entity moved significantly (more than 0.25 blocks)
         double entityDist = distanceSquared(entityX, entityY, entityZ, curEntityX, curEntityY, curEntityZ);
-        if (entityDist > 0.25) { // 0.5^2
+        if (entityDist > 0.36) { // ~0.6^2
             return false;
         }
 
         // Check if target moved significantly (more than 1.0 blocks)
         double targetDist = distanceSquared(targetX, targetY, targetZ, curTargetX, curTargetY, curTargetZ);
-        if (targetDist > 1.0) { // 1.0^2
+        if (targetDist > 1.44) { // ~1.2^2
             return false;
         }
 

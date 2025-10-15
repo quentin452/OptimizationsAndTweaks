@@ -338,6 +338,16 @@ public class AsyncPathfindingExecutor {
      * Determine priority based on entity characteristics
      */
     private static int determinePriority(Entity entity, IBlockAccess world) {
+        // Boost priority for entities with an active attack target to shorten queue latency
+        try {
+            if (entity instanceof EntityLiving) {
+                EntityLiving el = (EntityLiving) entity;
+                if (el.getAttackTarget() != null && el.getAttackTarget().isEntityAlive()) {
+                    return 80; // treat as high priority
+                }
+            }
+        } catch (Throwable ignore) {}
+
         if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
             return 100;
         }
