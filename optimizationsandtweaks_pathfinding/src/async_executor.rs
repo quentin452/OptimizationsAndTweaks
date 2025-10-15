@@ -1,317 +1,19 @@
-use std::sync::{Arc, Mutex};
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
-use crossbeam::channel::{bounded, Sender, Receiver};
-use std::thread;
-use std::time::{Duration, Instant};
+use std::sync::{
+    atomic::{AtomicU64, AtomicUsize, Ordering},
+    mpsc::{self, Receiver, SyncSender, TryRecvError},
+    Arc, Mutex,
+};
+use std::thread::{self, JoinHandle};
 
-use crate::pathfinding::{PathFinder, PathEntity, path_finder::{EntityData, IBlockAccess}};
 use crate::log_native_line;
+use crate::pathfinding::{self, PathFinder};
+use crate::profiler;
+use crate::{get_next_id, PATH_ENTITIES};
 
-/// Priority levels for pathfinding tasks
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Priority {
-    Background = 10,
-    Low = 25,
-    Normal = 50,
-    High = 75,
-    Critical = 100,
-}
+// =====================================================================================
+// Internal cached world accessor identical to the one used in lib.rs for cached paths
+// =====================================================================================
 
-/// A pathfinding request with priority
-pub struct PathfindingRequest {
-    pub id: u64,
-    pub priority: Priority,
-    pub pathfinder_flags: PathFinderFlags,
-    pub entity_data: EntityData,
-    pub target_x: f64,
-    pub target_y: f64,
-    pub target_z: f64,
-    pub max_distance: f32,
-    pub world_data: WorldData,
-    pub submitted_at: Instant,
-}
-
-/// PathFinder configuration flags
-#[derive(Debug, Clone, Copy)]
-pub struct PathFinderFlags {
-    pub is_wooden_door_allowed: bool,
-    pub is_movement_block_allowed: bool,
-    pub is_pathing_in_water: bool,
-    pub can_entity_drown: bool,
-}
-
-/// World data for pathfinding (cached block data)
-pub struct WorldData {
-    pub blocks: Vec<i8>,
-    pub width: i32,
-    pub height: i32,
-    pub depth: i32,
-    pub offset_x: i32,
-    pub offset_y: i32,
-    pub offset_z: i32,
-}
-
-/// Result of a pathfinding operation
-pub struct PathfindingResult {
-    pub id: u64,
-    pub path: Option<PathEntity>,
-    pub execution_time: Duration,
-    pub success: bool,
-}
-
-/// Statistics for the async executor
-#[derive(Debug, Clone)]
-pub struct ExecutorStats {
-    pub total_submitted: u64,
-    pub total_completed: u64,
-    pub total_failed: u64,
-    pub total_timed_out: u64,
-    pub queue_size: usize,
-    pub active_workers: usize,
-    pub worker_count: usize,
-}
-
-/// Async pathfinding executor using Rust threads
-pub struct AsyncPathfindingExecutor {
-    workers: Vec<thread::JoinHandle<()>>,
-    request_tx: Sender<PathfindingRequest>,
-    result_rx: Receiver<PathfindingResult>,
-    result_tx: Sender<PathfindingResult>,
-    
-    // Statistics
-    total_submitted: Arc<AtomicU64>,
-    total_completed: Arc<AtomicU64>,
-    total_failed: Arc<AtomicU64>,
-    total_timed_out: Arc<AtomicU64>,
-    active_workers: Arc<AtomicUsize>,
-    
-    // Shutdown flag
-    shutdown: Arc<Mutex<bool>>,
-}
-
-impl AsyncPathfindingExecutor {
-    /// Create a new async pathfinding executor
-    /// 
-    /// # Arguments
-    /// * `worker_count` - Number of worker threads
-    /// * `queue_size` - Maximum queue size for backpressure
-    pub fn new(worker_count: usize, queue_size: usize) -> Self {
-        let (request_tx, request_rx) = bounded::<PathfindingRequest>(queue_size);
-        let (result_tx, result_rx) = bounded::<PathfindingResult>(queue_size * 2);
-        
-        let total_submitted = Arc::new(AtomicU64::new(0));
-        let total_completed = Arc::new(AtomicU64::new(0));
-        let total_failed = Arc::new(AtomicU64::new(0));
-        let total_timed_out = Arc::new(AtomicU64::new(0));
-        let active_workers = Arc::new(AtomicUsize::new(0));
-        let shutdown = Arc::new(Mutex::new(false));
-        
-        // Spawn worker threads
-        let mut workers = Vec::new();
-        for worker_id in 0..worker_count {
-            let request_rx = request_rx.clone();
-            let result_tx = result_tx.clone();
-            let active_workers = active_workers.clone();
-            let total_completed = total_completed.clone();
-            let total_failed = total_failed.clone();
-            let shutdown = shutdown.clone();
-            
-            let handle = thread::Builder::new()
-                .name(format!("RustPathfindingWorker-{}", worker_id))
-                .spawn(move || {
-                    Self::worker_loop(
-                        worker_id,
-                        request_rx,
-                        result_tx,
-                        active_workers,
-                        total_completed,
-                        total_failed,
-                        shutdown,
-                    );
-                })
-                .expect("Failed to spawn worker thread");
-            
-            workers.push(handle);
-        }
-        
-        log_native_line(format!(
-            "AsyncPathfindingExecutor initialized with {} workers and queue size {}",
-            worker_count, queue_size
-        ));
-        
-        AsyncPathfindingExecutor {
-            workers,
-            request_tx,
-            result_rx,
-            result_tx,
-            total_submitted,
-            total_completed,
-            total_failed,
-            total_timed_out,
-            active_workers,
-            shutdown,
-        }
-    }
-    
-    /// Worker thread loop
-    fn worker_loop(
-        worker_id: usize,
-        request_rx: Receiver<PathfindingRequest>,
-        result_tx: Sender<PathfindingResult>,
-        active_workers: Arc<AtomicUsize>,
-        total_completed: Arc<AtomicU64>,
-        total_failed: Arc<AtomicU64>,
-        shutdown: Arc<Mutex<bool>>,
-    ) {
-        log_native_line(format!("Worker {} started", worker_id));
-        
-        loop {
-            // Check shutdown flag
-            if *shutdown.lock().unwrap() {
-                break;
-            }
-            
-            // Wait for a request with timeout
-            match request_rx.recv_timeout(Duration::from_millis(100)) {
-                Ok(request) => {
-                    active_workers.fetch_add(1, Ordering::Relaxed);
-                    
-                    let start = Instant::now();
-                    let result = Self::process_request(request);
-                    let execution_time = start.elapsed();
-                    
-                    if result.success {
-                        total_completed.fetch_add(1, Ordering::Relaxed);
-                    } else {
-                        total_failed.fetch_add(1, Ordering::Relaxed);
-                    }
-                    
-                    // Send result back
-                    let _ = result_tx.send(PathfindingResult {
-                        id: result.id,
-                        path: result.path,
-                        execution_time,
-                        success: result.success,
-                    });
-                    
-                    active_workers.fetch_sub(1, Ordering::Relaxed);
-                }
-                Err(crossbeam::channel::RecvTimeoutError::Timeout) => {
-                    // Timeout - continue loop
-                    continue;
-                }
-                Err(crossbeam::channel::RecvTimeoutError::Disconnected) => {
-                    // Channel disconnected - shutdown
-                    break;
-                }
-            }
-        }
-        
-        log_native_line(format!("Worker {} stopped", worker_id));
-    }
-    
-    /// Process a single pathfinding request
-    fn process_request(request: PathfindingRequest) -> PathfindingResult {
-        // Create world access from cached data
-        let world_access = CachedWorldAccess {
-            blocks: request.world_data.blocks,
-            width: request.world_data.width,
-            height: request.world_data.height,
-            depth: request.world_data.depth,
-            offset_x: request.world_data.offset_x,
-            offset_y: request.world_data.offset_y,
-            offset_z: request.world_data.offset_z,
-        };
-        
-        // Create pathfinder
-        let mut pathfinder = PathFinder::new(
-            request.pathfinder_flags.is_wooden_door_allowed,
-            request.pathfinder_flags.is_movement_block_allowed,
-            request.pathfinder_flags.is_pathing_in_water,
-            request.pathfinder_flags.can_entity_drown,
-        );
-        
-        // Execute pathfinding
-        let path = pathfinder.create_entity_path_to(
-            &world_access,
-            &request.entity_data,
-            request.target_x,
-            request.target_y,
-            request.target_z,
-            request.max_distance,
-        );
-
-        let success = path.is_some();
-
-        PathfindingResult {
-            id: request.id,
-            path,
-            execution_time: Duration::from_secs(0),
-            success,
-        }
-    }
-    
-    /// Submit a pathfinding request
-    /// Returns the request ID, or None if the queue is full
-    pub fn submit(&self, request: PathfindingRequest) -> Option<u64> {
-        let id = request.id;
-        self.total_submitted.fetch_add(1, Ordering::Relaxed);
-        
-        match self.request_tx.try_send(request) {
-            Ok(_) => Some(id),
-            Err(_) => {
-                // Queue full - request rejected
-                None
-            }
-        }
-    }
-    
-    /// Try to receive a completed result (non-blocking)
-    pub fn try_recv_result(&self) -> Option<PathfindingResult> {
-        self.result_rx.try_recv().ok()
-    }
-    
-    /// Receive a completed result with timeout
-    pub fn recv_result_timeout(&self, timeout: Duration) -> Option<PathfindingResult> {
-        self.result_rx.recv_timeout(timeout).ok()
-    }
-    
-    /// Get current statistics
-    pub fn get_stats(&self) -> ExecutorStats {
-        ExecutorStats {
-            total_submitted: self.total_submitted.load(Ordering::Relaxed),
-            total_completed: self.total_completed.load(Ordering::Relaxed),
-            total_failed: self.total_failed.load(Ordering::Relaxed),
-            total_timed_out: self.total_timed_out.load(Ordering::Relaxed),
-            queue_size: self.request_tx.len(),
-            active_workers: self.active_workers.load(Ordering::Relaxed),
-            worker_count: self.workers.len(),
-        }
-    }
-    
-    /// Shutdown the executor gracefully
-    pub fn shutdown(self) {
-        log_native_line("Shutting down AsyncPathfindingExecutor");
-        
-        // Set shutdown flag
-        *self.shutdown.lock().unwrap() = true;
-        
-        // Drop sender to signal workers
-        drop(self.request_tx);
-        drop(self.result_tx);
-        
-        // Wait for workers to finish
-        for (i, worker) in self.workers.into_iter().enumerate() {
-            if let Err(e) = worker.join() {
-                log_native_line(format!("Worker {} failed to join: {:?}", i, e));
-            }
-        }
-        
-        log_native_line("AsyncPathfindingExecutor shutdown complete");
-    }
-}
-
-/// Cached world access implementation
 struct CachedWorldAccess {
     blocks: Vec<i8>,
     width: i32,
@@ -323,6 +25,26 @@ struct CachedWorldAccess {
 }
 
 impl CachedWorldAccess {
+    fn new(
+        blocks: Vec<i8>,
+        width: i32,
+        height: i32,
+        depth: i32,
+        offset_x: i32,
+        offset_y: i32,
+        offset_z: i32,
+    ) -> Self {
+        CachedWorldAccess {
+            blocks,
+            width,
+            height,
+            depth,
+            offset_x,
+            offset_y,
+            offset_z,
+        }
+    }
+
     fn get_block_code(&self, x: i32, y: i32, z: i32) -> i8 {
         let local_x = x - self.offset_x;
         let local_y = y - self.offset_y;
@@ -359,59 +81,361 @@ impl CachedWorldAccess {
     }
 }
 
-impl IBlockAccess for CachedWorldAccess {
-    fn get_block(&self, x: i32, y: i32, z: i32) -> crate::pathfinding::path_finder::BlockType {
-        use crate::pathfinding::path_finder::BlockType;
-        
+impl pathfinding::path_finder::IBlockAccess for CachedWorldAccess {
+    fn get_block(&self, x: i32, y: i32, z: i32) -> pathfinding::path_finder::BlockType {
         match self.get_block_code(x, y, z) {
-            0 => BlockType::Air,
-            1 => BlockType::Solid,
-            2 => BlockType::Water,
-            3 => BlockType::Lava,
-            4 => BlockType::WoodenDoor,
-            5 => BlockType::Trapdoor,
-            6 => BlockType::Fence,
-            7 => BlockType::FenceGate,
-            8 => BlockType::Slime,
-            9 => BlockType::Vine,
-            10 => BlockType::Ladder,
-            11 => BlockType::Cobweb,
-            _ => BlockType::NonSolid,
+            0 => pathfinding::path_finder::BlockType::Air,
+            1 => pathfinding::path_finder::BlockType::Solid,
+            2 => pathfinding::path_finder::BlockType::Water,
+            3 => pathfinding::path_finder::BlockType::Lava,
+            4 => pathfinding::path_finder::BlockType::WoodenDoor,
+            5 => pathfinding::path_finder::BlockType::Trapdoor,
+            6 => pathfinding::path_finder::BlockType::Fence,
+            7 => pathfinding::path_finder::BlockType::FenceGate,
+            8 => pathfinding::path_finder::BlockType::Slime,
+            9 => pathfinding::path_finder::BlockType::Vine,
+            10 => pathfinding::path_finder::BlockType::Ladder,
+            11 => pathfinding::path_finder::BlockType::Cobweb,
+            _ => pathfinding::path_finder::BlockType::NonSolid,
         }
     }
-    
+
     fn get_block_metadata(&self, _x: i32, _y: i32, _z: i32) -> i32 {
         0
     }
-    
+
     fn can_block_see_sky(&self, _x: i32, y: i32, _z: i32) -> bool {
         y >= self.offset_y + self.height - 1
     }
 }
 
-/// Global executor instance
-static mut GLOBAL_EXECUTOR: Option<AsyncPathfindingExecutor> = None;
-static EXECUTOR_INIT: std::sync::Once = std::sync::Once::new();
+// =====================================================================================
+// Async executor core
+// =====================================================================================
 
-/// Initialize the global executor
-pub fn init_global_executor(worker_count: usize, queue_size: usize) {
-    unsafe {
-        EXECUTOR_INIT.call_once(|| {
-            GLOBAL_EXECUTOR = Some(AsyncPathfindingExecutor::new(worker_count, queue_size));
-        });
+#[derive(Clone)]
+struct Job {
+    request_id: i64,
+    _priority: i32,
+    // flags
+    wd: bool,
+    mb: bool,
+    pw: bool,
+    cd: bool,
+    // cached volume
+    offset_x: i32,
+    offset_y: i32,
+    offset_z: i32,
+    width: i32,
+    height: i32,
+    depth: i32,
+    block_cache: Vec<i8>,
+    // entity and target
+    entity_x: f64,
+    entity_y: f64,
+    entity_z: f64,
+    target_x: f64,
+    target_y: f64,
+    target_z: f64,
+    entity_width: f32,
+    entity_height: f32,
+    max_distance: f32,
+    is_in_water: bool,
+    max_safe_point_tries: i32,
+}
+
+#[derive(Clone, Copy)]
+struct Completed {
+    request_id: i64,
+    path_handle: i64, // >0 valid handle, <0 no-path sentinel
+}
+
+struct ExecutorState {
+    job_tx: SyncSender<Job>,
+    result_rx: Receiver<Completed>,
+    workers: Vec<JoinHandle<()>>,
+    worker_count: usize,
+    queue_len: Arc<AtomicUsize>,
+    active_workers: Arc<AtomicUsize>,
+    total_submitted: Arc<AtomicU64>,
+    total_completed: Arc<AtomicU64>,
+    total_failed: Arc<AtomicU64>,
+}
+
+lazy_static::lazy_static! {
+    static ref EXECUTOR: Mutex<Option<ExecutorState>> = Mutex::new(None);
+}
+
+pub fn init(worker_count: usize, queue_size: usize) {
+    let mut guard = EXECUTOR.lock().unwrap();
+    if guard.is_some() {
+        log_native_line("AsyncExecutor already initialized");
+        return;
+    }
+
+    let (job_tx, job_rx_base) = mpsc::sync_channel::<Job>(queue_size.max(1));
+    let job_rx = Arc::new(Mutex::new(job_rx_base));
+    let (result_tx, result_rx) = mpsc::channel::<Completed>();
+
+    let mut workers = Vec::with_capacity(worker_count.max(1));
+
+    let queue_len = Arc::new(AtomicUsize::new(0));
+    let active_workers = Arc::new(AtomicUsize::new(0));
+    let total_submitted = Arc::new(AtomicU64::new(0));
+    let total_completed = Arc::new(AtomicU64::new(0));
+    let total_failed = Arc::new(AtomicU64::new(0));
+
+    for i in 0..worker_count.max(1) {
+        let rx = Arc::clone(&job_rx);
+        let rtx = result_tx.clone();
+        let ql = Arc::clone(&queue_len);
+        let aw = Arc::clone(&active_workers);
+        let tc = Arc::clone(&total_completed);
+        let tf = Arc::clone(&total_failed);
+
+        let handle = thread::Builder::new()
+            .name(format!("async-path-worker-{}", i))
+            .spawn(move || loop {
+                match rx.lock().unwrap().recv() {
+                    Ok(job) => {
+                        // One item leaves the queue
+                        ql.fetch_sub(1, Ordering::Relaxed);
+                        aw.fetch_add(1, Ordering::Relaxed);
+
+                        let req = job.request_id;
+                        let completed = match std::panic::catch_unwind(|| process_job(job)) {
+                            Ok(c) => c,
+                            Err(_) => {
+                                log_native_line("AsyncExecutor worker panicked during process_job");
+                                Completed { request_id: req, path_handle: -1 }
+                            }
+                        };
+                        if completed.path_handle > 0 {
+                            tc.fetch_add(1, Ordering::Relaxed);
+                        } else {
+                            tf.fetch_add(1, Ordering::Relaxed);
+                        }
+                        let _ = rtx.send(completed);
+                        aw.fetch_sub(1, Ordering::Relaxed);
+                    }
+                    Err(_) => break, // shutdown
+                }
+            })
+            .expect("Failed to spawn async path worker");
+        workers.push(handle);
+    }
+
+    *guard = Some(ExecutorState {
+        job_tx,
+        result_rx,
+        workers,
+        worker_count: worker_count.max(1),
+        queue_len,
+        active_workers,
+        total_submitted,
+        total_completed,
+        total_failed,
+    });
+
+    log_native_line(format!(
+        "AsyncExecutor initialized: workers={} queue_size={}",
+        worker_count.max(1),
+        queue_size.max(1)
+    ));
+}
+
+pub fn shutdown() {
+    let mut guard = EXECUTOR.lock().unwrap();
+    if let Some(mut state) = guard.take() {
+        // Drop sender to stop workers, then join
+        drop(state.job_tx);
+        for h in state.workers.drain(..) {
+            let _ = h.join();
+        }
+        log_native_line("AsyncExecutor shutdown complete");
     }
 }
 
-/// Get the global executor
-pub fn get_global_executor() -> Option<&'static AsyncPathfindingExecutor> {
-    unsafe { GLOBAL_EXECUTOR.as_ref() }
+pub fn submit_request(
+    request_id: i64,
+    priority: i32,
+    wd: bool,
+    mb: bool,
+    pw: bool,
+    cd: bool,
+    offset_x: i32,
+    offset_y: i32,
+    offset_z: i32,
+    width: i32,
+    height: i32,
+    depth: i32,
+    block_cache: Vec<i8>,
+    entity_x: f64,
+    entity_y: f64,
+    entity_z: f64,
+    target_x: f64,
+    target_y: f64,
+    target_z: f64,
+    entity_width: f32,
+    entity_height: f32,
+    max_distance: f32,
+    is_in_water: bool,
+    max_safe_point_tries: i32,
+) -> bool {
+    let guard = EXECUTOR.lock().unwrap();
+    if let Some(state) = guard.as_ref() {
+        let job = Job {
+            request_id,
+            _priority: priority,
+            wd,
+            mb,
+            pw,
+            cd,
+            offset_x,
+            offset_y,
+            offset_z,
+            width,
+            height,
+            depth,
+            block_cache,
+            entity_x,
+            entity_y,
+            entity_z,
+            target_x,
+            target_y,
+            target_z,
+            entity_width,
+            entity_height,
+            max_distance,
+            is_in_water,
+            max_safe_point_tries,
+        };
+
+        match state.job_tx.try_send(job) {
+            Ok(_) => {
+                state.queue_len.fetch_add(1, Ordering::Relaxed);
+                state.total_submitted.fetch_add(1, Ordering::Relaxed);
+                true
+            }
+            Err(mpsc::TrySendError::Full(_)) => false,
+            Err(mpsc::TrySendError::Disconnected(_)) => false,
+        }
+    } else {
+        false
+    }
 }
 
-/// Shutdown the global executor
-pub fn shutdown_global_executor() {
-    unsafe {
-        if let Some(executor) = GLOBAL_EXECUTOR.take() {
-            executor.shutdown();
+pub fn try_recv() -> Option<(i64, i64)> {
+    let guard = EXECUTOR.lock().unwrap();
+    if let Some(state) = guard.as_ref() {
+        match state.result_rx.try_recv() {
+            Ok(path_handle) => Some((path_handle.request_id, path_handle.path_handle)),
+            Err(TryRecvError::Empty) => None,
+            Err(TryRecvError::Disconnected) => None,
         }
+    } else {
+        None
+    }
+}
+
+pub fn get_stats() -> [i32; 7] {
+    let guard = EXECUTOR.lock().unwrap();
+    if let Some(state) = guard.as_ref() {
+        [
+            state.total_submitted.load(Ordering::Relaxed) as i32, // total_submitted
+            state.total_completed.load(Ordering::Relaxed) as i32, // total_completed
+            state.total_failed.load(Ordering::Relaxed) as i32,    // total_failed
+            0,                                                   // total_timed_out (not implemented)
+            state.queue_len.load(Ordering::Relaxed) as i32,       // queue_size (current queued)
+            state.active_workers.load(Ordering::Relaxed) as i32,  // active_workers
+            state.worker_count as i32,                            // worker_count
+        ]
+    } else {
+        [0; 7]
+    }
+}
+
+// ===============
+// Job processing
+// ===============
+fn process_job(job: Job) -> Completed {
+    let Job {
+        request_id,
+        wd,
+        mb,
+        pw,
+        cd,
+        offset_x,
+        offset_y,
+        offset_z,
+        width,
+        height,
+        depth,
+        block_cache,
+        entity_x,
+        entity_y,
+        entity_z,
+        target_x,
+        target_y,
+        target_z,
+        entity_width,
+        entity_height,
+        max_distance,
+        is_in_water,
+        max_safe_point_tries,
+        ..
+    } = job;
+
+    let path_handle = {
+        let _guard = if profiler::is_profiler_enabled() {
+            Some(profiler::ProfileGuard::new("AsyncExecutor::process_job"))
+        } else {
+            None
+        };
+
+        let mut pathfinder = PathFinder::new(wd, mb, pw, cd);
+        let world_access = CachedWorldAccess::new(
+            block_cache,
+            width,
+            height,
+            depth,
+            offset_x,
+            offset_y,
+            offset_z,
+        );
+
+        let entity_data = pathfinding::path_finder::EntityData {
+            pos_x: entity_x,
+            pos_y: entity_y,
+            pos_z: entity_z,
+            width: entity_width,
+            height: entity_height,
+            is_in_water,
+            max_safe_point_tries,
+            max_jump_height: 1,
+        };
+
+        let path_entity = pathfinder.create_entity_path_to(
+            &world_access,
+            &entity_data,
+            target_x,
+            target_y,
+            target_z,
+            max_distance,
+        );
+
+        if let Some(path_entity) = path_entity {
+            let id = get_next_id();
+            PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
+            profiler::MEMORY_STATS.increment_path_entity();
+            id
+        } else {
+            -1 // special sentinel for no-path; must be non-zero
+        }
+    };
+
+    Completed {
+        request_id,
+        path_handle,
     }
 }

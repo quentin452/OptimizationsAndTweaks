@@ -64,15 +64,11 @@ public abstract class MixinPathFinder {
      */
     @Unique
     private static void optimizationsAndTweaks$checkAsyncPathfinding() {
-        if (!optimizationsAndTweaks$asyncPathfindingChecked) {
-            optimizationsAndTweaks$asyncPathfindingChecked = true;
+        // Always re-check and (re)initialize if necessary, to handle world restarts
+        optimizationsAndTweaks$asyncPathfindingEnabled = AsyncPathfindingExecutor.isInitialized();
+        if (!optimizationsAndTweaks$asyncPathfindingEnabled) {
+            AsyncPathfindingExecutor.initializeAuto();
             optimizationsAndTweaks$asyncPathfindingEnabled = AsyncPathfindingExecutor.isInitialized();
-            
-            if (!optimizationsAndTweaks$asyncPathfindingEnabled) {
-                // Try to initialize automatically
-                AsyncPathfindingExecutor.initializeAuto();
-                optimizationsAndTweaks$asyncPathfindingEnabled = AsyncPathfindingExecutor.isInitialized();
-            }
         }
     }
 

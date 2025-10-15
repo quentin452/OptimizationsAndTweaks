@@ -1,6 +1,6 @@
 use jni::JNIEnv;
-use jni::objects::{JClass, JString, JByteArray, JObject, JValue};
-use jni::sys::{jstring, jlong, jint, jboolean, jintArray, jdouble, jfloat};
+use jni::objects::{JClass, JString, JByteArray, JObject, JValue, JIntArray};
+use jni::sys::{jstring, jlong, jint, jboolean, jintArray, jlongArray, jdouble, jfloat};
 use std::sync::Mutex;
 use std::collections::HashMap;
 use std::fs::{OpenOptions, create_dir_all};
@@ -20,7 +20,7 @@ fn init_panic_logging() {
     INIT_PANIC.call_once(|| {
         // Enable backtraces if not already enabled by environment
         let _ = env::set_var("RUST_BACKTRACE", "1");
-        panic::set_hook(Box::new(|info| {
+        panic::set_hook(Box::new(|info: &panic::PanicHookInfo<'_>| {
             // Extract panic metadata
             let thread_name = std::thread::current().name().unwrap_or("unnamed").to_string();
             let location = info
@@ -768,11 +768,229 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     0 as jlong
 }
 
+// =====================================================================================
+// Async Executor JNI Functions
+// =====================================================================================
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_initAsyncExecutor(
+    _env: JNIEnv,
+    _class: JClass,
+    worker_count: jint,
+    queue_size: jint,
+) {
+    init_panic_logging();
+    async_executor::init(worker_count as usize, queue_size as usize);
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_submitAsyncPathfinding(
+    env: JNIEnv,
+    _class: JClass,
+    request_id: jlong,
+    priority: jint,
+    wd: jboolean,
+    mb: jboolean,
+    pw: jboolean,
+    cd: jboolean,
+    offset_x: jint,
+    offset_y: jint,
+    offset_z: jint,
+    width: jint,
+    height: jint,
+    depth: jint,
+    block_cache: JByteArray,
+    entity_x: jdouble,
+    entity_y: jdouble,
+    entity_z: jdouble,
+    target_x: jdouble,
+    target_y: jdouble,
+    target_z: jdouble,
+    entity_width: jfloat,
+    entity_height: jfloat,
+    max_distance: jfloat,
+    is_in_water: jboolean,
+    max_safe_point_tries: jint,
+) -> jlong {
+    init_panic_logging();
+
+    let block_cache_vec: Vec<i8> = match env.convert_byte_array(block_cache) {
+        Ok(arr) => arr.into_iter().map(|b| b as i8).collect(),
+        Err(_) => {
+            log_native_line("Failed to convert block_cache byte array (RustPathfinding.submitAsyncPathfinding)");
+            return 0;
+        }
+    };
+
+    let success = async_executor::submit_request(
+        request_id,
+        priority,
+        wd != 0,
+        mb != 0,
+        pw != 0,
+        cd != 0,
+        offset_x,
+        offset_y,
+        offset_z,
+        width,
+        height,
+        depth,
+        block_cache_vec,
+        entity_x,
+        entity_y,
+        entity_z,
+        target_x,
+        target_y,
+        target_z,
+        entity_width,
+        entity_height,
+        max_distance,
+        is_in_water != 0,
+        max_safe_point_tries,
+    );
+
+    if success { request_id } else { 0 }
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_getAsyncExecutorStats(
+    env: JNIEnv,
+    _class: JClass,
+) -> jintArray {
+    init_panic_logging();
+    let stats = async_executor::get_stats();
+    let result = env.new_int_array(7).unwrap();
+    env.set_int_array_region(&result, 0, &stats).unwrap();
+    result.into_raw()
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_shutdownAsyncExecutor(
+    _env: JNIEnv,
+    _class: JClass,
+) {
+    init_panic_logging();
+    async_executor::shutdown();
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_org_nothing_optimizationsandtweaks_OptimizationsAndTweaks_submitAsyncPathfinding(
+    env: JNIEnv,
+    _class: JClass,
+    request_id: jlong,
+    priority: jint,
+    wd: jboolean,
+    mb: jboolean,
+    pw: jboolean,
+    cd: jboolean,
+    offset_x: jint,
+    offset_y: jint,
+    offset_z: jint,
+    width: jint,
+    height: jint,
+    depth: jint,
+    block_cache: JByteArray,
+    entity_x: jdouble,
+    entity_y: jdouble,
+    entity_z: jdouble,
+    target_x: jdouble,
+    target_y: jdouble,
+    target_z: jdouble,
+    entity_width: jfloat,
+    entity_height: jfloat,
+    max_distance: jfloat,
+    is_in_water: jboolean,
+    max_safe_point_tries: jint,
+) -> jboolean {
+    init_panic_logging();
+    
+    let block_cache_vec: Vec<i8> = if let Ok(arr) = env.convert_byte_array(block_cache) {
+        arr.into_iter().map(|b| b as i8).collect()
+    } else {
+        log_native_line("Failed to convert block_cache byte array");
+        return false as jboolean;
+    };
+
+    let success = async_executor::submit_request(
+        request_id,
+        priority,
+        wd != 0,
+        mb != 0,
+        pw != 0,
+        cd != 0,
+        offset_x,
+        offset_y,
+        offset_z,
+        width,
+        height,
+        depth,
+        block_cache_vec,
+        entity_x,
+        entity_y,
+        entity_z,
+        target_x,
+        target_y,
+        target_z,
+        entity_width,
+        entity_height,
+        max_distance,
+        is_in_water != 0,
+        max_safe_point_tries,
+    );
+
+    success as jboolean
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_tryRecvAsyncResult(
+    env: JNIEnv,
+    _class: JClass,
+    out_request_id: jintArray,
+) -> jlong {
+    init_panic_logging();
+
+    let out_request_id = JIntArray::from_raw(out_request_id);
+
+    if let Some((request_id, path_handle)) = async_executor::try_recv() {
+        let buf = [request_id as jint];
+        env.set_int_array_region(&out_request_id, 0, &buf)
+            .expect("Failed to write to out_request_id");
+
+        path_handle as jlong
+    } else {
+        0
+    }
+}
+
+
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_org_nothing_optimizationsandtweaks_OptimizationsAndTweaks_getAsyncExecutorStats(
+    env: JNIEnv,
+    _class: JClass,
+) -> jintArray {
+    init_panic_logging();
+    
+    let stats = async_executor::get_stats();
+    let result = env.new_int_array(7).unwrap();
+    env.set_int_array_region(&result, 0, &stats).unwrap();
+    result.into_raw()
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_org_nothing_optimizationsandtweaks_OptimizationsAndTweaks_shutdownAsyncExecutor(
+    _env: JNIEnv,
+    _class: JClass,
+) {
+    init_panic_logging();
+    async_executor::shutdown();
+}
+
 //
-               
-// ============================================================================
-// Profiler JNI Functions
-// ============================================================================
+
+// =====================================================================================
+// Profiler JNI Functions  
+// =====================================================================================
 
 /// Enable or disable the profiler
 /// JNI signature: (Z)V
@@ -853,5 +1071,6 @@ pub extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_Rust
     let result = env.new_string(output).expect("Failed to create string");
     result.into_raw()
 }
+
 
 //

@@ -3,6 +3,8 @@ package fr.iamacat.optimizationsandtweaks.utils.natives;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -32,6 +34,7 @@ public class AsyncPathfindingExecutor {
     
     private static boolean initialized = false;
     private static final AtomicLong nextRequestId = new AtomicLong(1);
+    private static ExecutorService executor;
     
     // Track pending requests and their callbacks
     private static final ConcurrentHashMap<Long, RequestContext> pendingRequests = new ConcurrentHashMap<>();
@@ -54,12 +57,11 @@ public class AsyncPathfindingExecutor {
         }
         
         try {
-            RustPathfinding.initAsyncExecutor(workerCount, queueSize);
+            executor = Executors.newFixedThreadPool(Math.max(1, workerCount));
             initialized = true;
-            FMLLog.info("[AsyncPathfinding] Initialized with %d workers and queue size %d", 
-                        workerCount, queueSize);
-        } catch (UnsatisfiedLinkError e) {
-            FMLLog.warning("[AsyncPathfinding] Async executor not available in native library: %s", e.getMessage());
+            FMLLog.info("[AsyncPathfinding] Initialized with %d workers (direct world accessor)", workerCount);
+        } catch (Throwable e) {
+            FMLLog.warning("[AsyncPathfinding] Failed to initialize executor: %s", e.getMessage());
             initialized = false;
             return;
         }
@@ -126,48 +128,36 @@ public class AsyncPathfindingExecutor {
 
         long requestId = nextRequestId.getAndIncrement();
 
-        // Prepare block cache
-        int radius = (int) Math.ceil(maxDistance) + 16;
-        int offsetX = (int) Math.floor(entity.posX) - radius;
-        int offsetY = (int) Math.floor(entity.posY) - radius;
-        int offsetZ = (int) Math.floor(entity.posZ) - radius;
-        int width = radius * 2;
-        int height = radius * 2;
-        int depth = radius * 2;
-
-        byte[] blockCache = RustPathfindingBridge.encodeBlockCache(
-            world, offsetX, offsetY, offsetZ, width, height, depth
-        );
-
-        float pathfindingRange = 16F; // default fallback
-        if (entity instanceof EntityLivingBase) {
-            pathfindingRange = (float)((EntityLivingBase) entity)
-                .getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue();
-        }
-
-        long submittedId = RustPathfinding.submitAsyncPathfinding(
-            requestId,
-            priority,
-            isWoodenDoorAllowed,
-            isMovementBlockAllowed,
-            isPathingInWater,
-            canEntityDrown,
-            offsetX, offsetY, offsetZ,
-            width, height, depth,
-            blockCache,
-            entity.posX, entity.posY, entity.posZ,
-            targetX, targetY, targetZ,
-            entity.width, entity.height,
-            maxDistance,
-            entity.isInWater(),
-            (int) pathfindingRange
-        );
-
-        if (submittedId == 0) {
-            return 0;
-        }
-
         pendingRequests.put(requestId, new RequestContext(entity));
+        executor.submit(() -> {
+            try {
+                PathEntity path = RustPathfindingBridge.findPathDirect(
+                    world, entity,
+                    targetX, targetY, targetZ,
+                    maxDistance,
+                    isWoodenDoorAllowed,
+                    isMovementBlockAllowed,
+                    isPathingInWater,
+                    canEntityDrown
+                );
+
+                RequestContext context = pendingRequests.remove(requestId);
+                if (context != null) {
+                    if (path != null && context.onComplete != null) {
+                        context.onComplete.accept(path);
+                    } else if (path == null && context.onFailure != null) {
+                        context.onFailure.accept("No path found");
+                    }
+                }
+            } catch (Throwable e) {
+                RequestContext context = pendingRequests.remove(requestId);
+                if (context != null && context.onFailure != null) {
+                    context.onFailure.accept("Error: " + e.getMessage());
+                }
+                FMLLog.warning("[AsyncPathfinding] Error in direct pathfinding task: %s", e.getMessage());
+            }
+        });
+
         return requestId;
     }
 
@@ -334,7 +324,16 @@ public class AsyncPathfindingExecutor {
         FMLLog.info("[AsyncPathfinding] Shutting down - %d pending requests", pendingRequests.size());
         FMLLog.info(getStatisticsString());
         
-        RustPathfinding.shutdownAsyncExecutor();
+        try {
+            if (executor != null) {
+                executor.shutdownNow();
+                executor = null;
+            }
+        } catch (Throwable ignore) {}
+        try {
+            RustPathfindingBridge.clearGlobalBlockCache();
+            RustPathfindingBridge.clearPathResultCache();
+        } catch (Throwable ignore) {}
         pendingRequests.clear();
         initialized = false;
     }
