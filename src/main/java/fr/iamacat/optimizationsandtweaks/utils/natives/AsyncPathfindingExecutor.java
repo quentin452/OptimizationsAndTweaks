@@ -411,6 +411,12 @@ public class AsyncPathfindingExecutor {
                 int z = allPoints[i * 3 + 2];
                 points[i] = new PathPoint(x, y, z);
             }
+            // Safety: ensure at least 2 points to avoid navigator indexing past length
+            if (pointCount == 1) {
+                PathPoint p = points[0];
+                PathPoint[] doubled = new PathPoint[] { p, new PathPoint(p.xCoord, p.yCoord, p.zCoord) };
+                return new PathEntity(doubled);
+            }
             
             return new PathEntity(points);
         } catch (Exception e) {
