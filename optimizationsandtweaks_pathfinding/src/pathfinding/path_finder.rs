@@ -279,8 +279,7 @@ impl PathFinder {
             }
 
             // Track closest point
-            let improve_eps: f32 = if self.is_pathing_in_water { 0.25 } else { 0.5 };
-            if dist_to_end + improve_eps < closest_distance {
+            if dist_to_end < closest_distance {
                 closest_distance = dist_to_end;
                 closest_hash = cur_hash;
                 last_improve_iter = iterations;
