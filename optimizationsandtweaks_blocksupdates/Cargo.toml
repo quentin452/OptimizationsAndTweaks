@@ -1,10 +1,10 @@
 [package]
-name = "optimizationsandtweaks_pathfinding"
+name = "optimizationsandtweaks_blocksupdates"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "optimizationsandtweaks_pathfinding"
+name = "optimizationsandtweaks_blocksupdates"
 crate-type = ["cdylib"]
 
 [dependencies]

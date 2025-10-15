@@ -36,7 +36,10 @@ public class RustFFI {
 
         try {
             // Load the native library using NativeLibraryLoader
-            if (NativeLibraryLoader.loadLibrary("optimizationsandtweaks_pathfinding", minecraftDir)) {
+            boolean ok = true;
+            ok &= NativeLibraryLoader.loadLibrary("optimizationsandtweaks_pathfinding", minecraftDir);
+            ok &= NativeLibraryLoader.loadLibrary("optimizationsandtweaks_blocksupdates", minecraftDir);
+            if (ok) {
                 libraryAvailable = true;
                 FMLLog.info("[OptimizationsAndTweaks] Rust FFI initialized successfully using JNI");
                 return true;

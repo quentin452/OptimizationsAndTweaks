@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import cpw.mods.fml.common.FMLLog;
+import java.util.*;
 
 /**
  * Handles extraction and loading of native libraries from mod resources
@@ -13,7 +14,7 @@ import cpw.mods.fml.common.FMLLog;
 public class NativeLibraryLoader {
 
     private static final String NATIVES_DIR = "natives";
-    private static boolean libraryLoaded = false;
+    private static final Set<String> loadedLibraries = Collections.synchronizedSet(new HashSet<String>());
 
     /**
      * Loads a native library from the mod's resources
@@ -23,14 +24,13 @@ public class NativeLibraryLoader {
      * @return true if the library was loaded successfully
      */
     public static boolean loadLibrary(String libraryName, File minecraftDir) {
-        if (libraryLoaded) {
-            return true;
-        }
-
         try {
             // Determine OS and platform-specific library name
             String osDir = getOSDirectory();
             String platformLibName = getPlatformLibraryName(libraryName);
+            if (loadedLibraries.contains(platformLibName)) {
+                return true;
+            }
             String resourcePath = "/assets/optimizationsandtweaks/natives/" + osDir + "/" + platformLibName;
 
             // Create natives directory in Minecraft instance
@@ -51,7 +51,7 @@ public class NativeLibraryLoader {
 
             // Load the library
             System.load(targetFile.getAbsolutePath());
-            libraryLoaded = true;
+            loadedLibraries.add(platformLibName);
             FMLLog.info("[OptimizationsAndTweaks] Successfully loaded native library: %s", platformLibName);
             return true;
 
@@ -211,6 +211,6 @@ public class NativeLibraryLoader {
      * Checks if the native library is loaded
      */
     public static boolean isLibraryLoaded() {
-        return libraryLoaded;
+        return !loadedLibraries.isEmpty();
     }
 }

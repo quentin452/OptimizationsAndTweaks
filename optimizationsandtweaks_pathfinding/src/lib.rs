@@ -1,3 +1,4 @@
+use optimizationsandtweaks_shared::{init_panic_logging, log_native_line};
 use jni::JNIEnv;
 use jni::objects::{JClass, JString, JByteArray, JObject, JValue, JIntArray};
 use jni::sys::{jstring, jlong, jint, jboolean, jintArray, jlongArray, jdouble, jfloat};
@@ -10,51 +11,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::os::raw::c_void;
 use jni::sys::JNI_VERSION_1_6;
 use std::panic;
-use std::backtrace::Backtrace;
-use std::sync::Once;
-use std::env;
 
-static INIT_PANIC: Once = Once::new();
-
-fn init_panic_logging() {
-    INIT_PANIC.call_once(|| {
-        // Enable backtraces if not already enabled by environment
-        let _ = env::set_var("RUST_BACKTRACE", "1");
-        panic::set_hook(Box::new(|info: &panic::PanicHookInfo<'_>| {
-            // Extract panic metadata
-            let thread_name = std::thread::current().name().unwrap_or("unnamed").to_string();
-            let location = info
-                .location()
-                .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()))
-                .unwrap_or_else(|| "unknown".to_string());
-            let msg = if let Some(s) = info.payload().downcast_ref::<&str>() {
-                (*s).to_string()
-            } else if let Some(s) = info.payload().downcast_ref::<String>() {
-                s.clone()
-            } else {
-                "panic payload not string".to_string()
-            };
-
-            // Capture backtrace (force to include frames even if env var not set)
-            let bt = format!("{:?}", Backtrace::force_capture());
-
-            // Write to native log
-            log_native_line(format!(
-                "[PANIC] thread='{}' at {}: {}",
-                thread_name, location, msg
-            ));
-            log_native_line("[PANIC] backtrace begin");
-            log_native_line(bt);
-            log_native_line("[PANIC] backtrace end");
-
-            // Also write to stderr which Forge/FML usually captures into fml-client-latest.log
-            eprintln!(
-                "[OptimizationsAndTweaks/native][PANIC] thread='{}' at {}: {} (see native.log for backtrace)",
-                thread_name, location, msg
-            );
-        }));
-    });
-}
 
 // Pathfinding module
 pub mod pathfinding;
@@ -76,41 +33,6 @@ lazy_static::lazy_static! {
 #[global_allocator]
 static ALLOCATOR: leaktracer::LeaktracerAllocator = leaktracer::LeaktracerAllocator::init();
 
-// Logging utilities
-const LOG_FILE_PATH: &str = "/home/iamacat/.local/share/gdlauncher_carbon/data/instances/Forge 1.7.10 TEST/instance/logs/optimizationsandtweaks/native.log";
-
-lazy_static::lazy_static! {
-    static ref LOG_FILE: Mutex<Option<std::fs::File>> = Mutex::new(None);
-}
-
-fn ensure_logger() {
-    let mut guard = LOG_FILE.lock().unwrap();
-    if guard.is_none() {
-        if let Some(parent) = Path::new(LOG_FILE_PATH).parent() {
-            let _ = create_dir_all(parent);
-        }
-        match OpenOptions::new().create(true).write(true).truncate(true).open(LOG_FILE_PATH) {
-            Ok(file) => {
-                *guard = Some(file);
-            }
-            Err(e) => {
-                eprintln!("[OptimizationsAndTweaks/native] Failed to open log file {}: {}", LOG_FILE_PATH, e);
-            }
-        }
-    }
-}
-
-pub(crate) fn log_native_line<S: AsRef<str>>(msg: S) {
-    ensure_logger();
-    let ts = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
-
-    if let Some(ref mut file) = *LOG_FILE.lock().unwrap() {
-        let _ = writeln!(file, "[{}][native] {}", ts, msg.as_ref());
-        let _ = file.flush();
-    } else {
-        eprintln!("[{}][native] {}", ts, msg.as_ref());
-    }
-}
 
 fn get_next_id() -> i64 {
     let mut id = NEXT_ID.lock().unwrap();

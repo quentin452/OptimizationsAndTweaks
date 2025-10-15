@@ -45,7 +45,7 @@ public class OptimizationsAndTweaks {
         try {
             File minecraftDir = event.getModConfigurationDirectory()
                 .getParentFile();
-            if (OptimizationsandTweaksConfig.enablePathFindingOptimizations && RustFFI.initialize(minecraftDir)) {
+            if (RustFFI.initialize(minecraftDir)) {
                 // Test the Rust FFI
                 RustFFI.printHelloWorld();
                 String helloMsg = RustFFI.getHelloString();
