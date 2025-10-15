@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
-
+//  todo add compat when endless ids is not installed
 @Mixin(EntityRegistry.class)
 public class MixinEntityRegistry {
 
