@@ -15,8 +15,6 @@ public class WorldUnloadEventHandler {
 
         // Stop async pathfinding workers and clear global/native caches
         try { AsyncPathfindingExecutor.shutdown(); } catch (Throwable ignored) {}
-        try { RustPathfindingBridge.clearGlobalBlockCache(); } catch (Throwable ignored) {}
-        try { RustPathfindingBridge.clearPathResultCache(); } catch (Throwable ignored) {}
 
         // Clear any Java-side pending/cached paths and native pathfinder handles via reflection
         try { clearAsyncPathfindingCaches(); } catch (Throwable ignored) {}

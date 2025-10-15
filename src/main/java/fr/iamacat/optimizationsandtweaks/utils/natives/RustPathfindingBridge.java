@@ -14,11 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RustPathfindingBridge {
     private static final Map<Integer, PathFinderEntry> PATHFINDER_CACHE = new ConcurrentHashMap<Integer, PathFinderEntry>();
-    
-    private static final GlobalBlockCache GLOBAL_BLOCK_CACHE = new GlobalBlockCache(16384);
-    
-    // Path result cache to prevent redundant pathfinding calls
-    private static final PathResultCache PATH_RESULT_CACHE = new PathResultCache(512);
+        
     private static class PathFinderEntry {
         RustPathfinding.PathFinderHandle handle;
         boolean woodenDoorAllowed;
@@ -86,17 +82,7 @@ public class RustPathfindingBridge {
         if (!RustPathfinding.isAvailable()) {
             return null;
         }
-        
-        // OPTIMIZATION: Check path result cache first to avoid redundant pathfinding
-        int entityId = entity.getEntityId();
-        PathResultCache.CachedPathResult cachedResult = PATH_RESULT_CACHE.get(
-            entityId, entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ);
-        
-        if (cachedResult != null) {
-            // Cache hit! Return cached path without recalculating
-            return cachedResult.path;
-        }
-        
+
         RustPathfinding.PathFinderHandle handleObj = getOrCreatePathFinder(
             entity, isWoodenDoorAllowed, isMovementBlockAllowed, isPathingInWater, canEntityDrown);
         long handle = handleObj.getHandle();
@@ -139,306 +125,7 @@ public class RustPathfindingBridge {
             }
         }
 
-        PathEntity result = new PathEntity(points);
-        
-        // OPTIMIZATION: Cache the result for future requests
-        PATH_RESULT_CACHE.put(entityId, result, entity.posX, entity.posY, entity.posZ,
-                             targetX, targetY, targetZ);
-        
-        return result;
-    }
-
-    /**
-     * Path result cache to prevent redundant pathfinding calculations.
-     * Caches recent pathfinding results and reuses them if entity/target haven't moved significantly.
-     */
-    private static class PathResultCache {
-        private final ConcurrentHashMap<Integer, CachedPathResult> cache;
-        private final int maxSize;
-        private volatile long accessCounter = 0;
-        
-        private static class CachedPathResult {
-            final PathEntity path;
-            final double entityX, entityY, entityZ;
-            final double targetX, targetY, targetZ;
-            final long timestamp;
-            volatile long lastAccess;
-            
-            CachedPathResult(PathEntity path, double entityX, double entityY, double entityZ,
-                           double targetX, double targetY, double targetZ, long timestamp, long lastAccess) {
-                this.path = path;
-                this.entityX = entityX;
-                this.entityY = entityY;
-                this.entityZ = entityZ;
-                this.targetX = targetX;
-                this.targetY = targetY;
-                this.targetZ = targetZ;
-                this.timestamp = timestamp;
-                this.lastAccess = lastAccess;
-            }
-            
-            /**
-             * Check if cached path is still valid given current positions.
-             * Returns true if entity and target haven't moved significantly.
-             */
-            boolean isStillValid(double curEntityX, double curEntityY, double curEntityZ,
-                               double curTargetX, double curTargetY, double curTargetZ,
-                               long currentTime) {
-                // Cache expires after 1 second (20 ticks)
-                if (currentTime - timestamp > 1000) {
-                    return false;
-                }
-                
-                // Check if entity moved significantly (more than 0.5 blocks)
-                double entityDist = distanceSquared(entityX, entityY, entityZ, curEntityX, curEntityY, curEntityZ);
-                if (entityDist > 0.25) { // 0.5^2
-                    return false;
-                }
-                
-                // Check if target moved significantly (more than 1.0 blocks)
-                double targetDist = distanceSquared(targetX, targetY, targetZ, curTargetX, curTargetY, curTargetZ);
-                if (targetDist > 1.0) { // 1.0^2
-                    return false;
-                }
-                
-                return true;
-            }
-            
-            private static double distanceSquared(double x1, double y1, double z1, double x2, double y2, double z2) {
-                double dx = x2 - x1;
-                double dy = y2 - y1;
-                double dz = z2 - z1;
-                return dx * dx + dy * dy + dz * dz;
-            }
-        }
-        
-        public PathResultCache(int maxSize) {
-            this.maxSize = maxSize;
-            this.cache = new ConcurrentHashMap<>(maxSize / 2);
-        }
-        
-        public CachedPathResult get(int entityId, double entityX, double entityY, double entityZ,
-                                   double targetX, double targetY, double targetZ) {
-            CachedPathResult cached = cache.get(entityId);
-            if (cached != null) {
-                long currentTime = System.currentTimeMillis();
-                if (cached.isStillValid(entityX, entityY, entityZ, targetX, targetY, targetZ, currentTime)) {
-                    cached.lastAccess = ++accessCounter;
-                    return cached;
-                } else {
-                    // Invalid cache entry, remove it
-                    cache.remove(entityId);
-                }
-            }
-            return null;
-        }
-        
-        public void put(int entityId, PathEntity path, double entityX, double entityY, double entityZ,
-                       double targetX, double targetY, double targetZ) {
-            // Evict old entries if cache is too large
-            if (cache.size() >= maxSize) {
-                evictOldEntries();
-            }
-            
-            long currentTime = System.currentTimeMillis();
-            cache.put(entityId, new CachedPathResult(path, entityX, entityY, entityZ,
-                                                     targetX, targetY, targetZ, currentTime, ++accessCounter));
-        }
-        
-        private void evictOldEntries() {
-            // Remove ~25% of least recently used entries
-            int toRemove = maxSize / 4;
-            long threshold = accessCounter - (maxSize * 2L);
-            
-            cache.entrySet().removeIf(entry -> {
-                return entry.getValue().lastAccess < threshold && toRemove > 0;
-            });
-        }
-        
-        public void clear() {
-            cache.clear();
-            accessCounter = 0;
-        }
-        
-        public void invalidate(int entityId) {
-            cache.remove(entityId);
-        }
-        
-        public int size() {
-            return cache.size();
-        }
-    }
-    
-    /**
-     * Global block cache shared across all pathfinding operations.
-     * OPTIMIZED: Uses simple random eviction instead of expensive LRU traversal.
-     */
-    private static class GlobalBlockCache {
-        private final ConcurrentHashMap<Long, CachedBlock> cache;
-        private final int maxSize;
-        private final int evictionThreshold;
-        private volatile boolean isEvicting = false;
-        
-        private static class CachedBlock {
-            final byte blockType;
-            final int metadata;
-            
-            CachedBlock(byte blockType, int metadata) {
-                this.blockType = blockType;
-                this.metadata = metadata;
-            }
-        }
-        
-        public GlobalBlockCache(int maxSize) {
-            this.maxSize = maxSize;
-            // Start eviction when we reach 90% capacity
-            this.evictionThreshold = (int)(maxSize * 0.9);
-            this.cache = new ConcurrentHashMap<>(maxSize / 2);
-        }
-        
-        private static long makeKey(int x, int y, int z) {
-            // Pack coordinates into a long: x (21 bits) | y (11 bits) | z (21 bits)
-            // Supports coordinates from -1M to +1M for x/z, -1024 to +1023 for y
-            return ((long)(x & 0x1FFFFF) << 32) | ((long)(y & 0x7FF) << 21) | (long)(z & 0x1FFFFF);
-        }
-        
-        public CachedBlock get(int x, int y, int z) {
-            long key = makeKey(x, y, z);
-            return cache.get(key);
-        }
-        
-        public void put(int x, int y, int z, byte blockType, int metadata) {
-            long key = makeKey(x, y, z);
-            
-            // Fast path: just insert if below threshold
-            int currentSize = cache.size();
-            if (currentSize < evictionThreshold) {
-                cache.put(key, new CachedBlock(blockType, metadata));
-                return;
-            }
-            
-            // OPTIMIZATION: Use simple random eviction instead of expensive LRU
-            // Only one thread should evict at a time
-            if (currentSize >= maxSize && !isEvicting) {
-                if (tryEvictRandomEntries()) {
-                    // Eviction successful, now insert
-                    cache.put(key, new CachedBlock(blockType, metadata));
-                } else {
-                    // Another thread is evicting, just insert anyway (may exceed maxSize temporarily)
-                    cache.put(key, new CachedBlock(blockType, metadata));
-                }
-            } else {
-                cache.put(key, new CachedBlock(blockType, metadata));
-            }
-        }
-        
-        /**
-         * OPTIMIZED: Fast random eviction instead of expensive LRU traversal.
-         * Removes ~10% of entries randomly, which is O(n/10) instead of O(n) for full scan.
-         */
-        private boolean tryEvictRandomEntries() {
-            // Try to acquire eviction lock
-            if (!isEvicting) {
-                synchronized (this) {
-                    if (isEvicting) {
-                        return false;
-                    }
-                    isEvicting = true;
-                }
-                
-                try {
-                    int targetRemove = maxSize / 10; // Remove 10% of entries
-                    int removed = 0;
-                    int checked = 0;
-                    int maxCheck = maxSize / 5; // Check at most 20% of entries
-                    
-                    // Use iterator for efficient removal
-                    var iterator = cache.entrySet().iterator();
-                    while (iterator.hasNext() && removed < targetRemove && checked < maxCheck) {
-                        iterator.next();
-                        checked++;
-                        
-                        // Remove every other entry we check (50% probability)
-                        if ((checked & 1) == 0) {
-                            iterator.remove();
-                            removed++;
-                        }
-                    }
-                    
-                    return true;
-                } finally {
-                    isEvicting = false;
-                }
-            }
-            return false;
-        }
-        
-        public void clear() {
-            cache.clear();
-        }
-        
-        public int size() {
-            return cache.size();
-        }
-    }
-    
-    /**
-     * Clear the global block cache. Should be called when world changes or periodically.
-     */
-    public static void clearGlobalBlockCache() {
-        GLOBAL_BLOCK_CACHE.clear();
-    }
-    
-    /**
-     * Invalidate a specific block position in the cache.
-     * Should be called when a block is placed, broken, or modified.
-     */
-    public static void invalidateBlockCache(int x, int y, int z) {
-        long key = GlobalBlockCache.makeKey(x, y, z);
-        GLOBAL_BLOCK_CACHE.cache.remove(key);
-    }
-    
-    /**
-     * Invalidate a region of blocks in the cache.
-     * Useful for chunk updates or large block changes.
-     */
-    public static void invalidateBlockCacheRegion(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    invalidateBlockCache(x, y, z);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Get global block cache statistics for monitoring.
-     */
-    public static int getGlobalBlockCacheSize() {
-        return GLOBAL_BLOCK_CACHE.size();
-    }
-    
-    /**
-     * Clear the path result cache. Should be called when entities are removed or world changes.
-     */
-    public static void clearPathResultCache() {
-        PATH_RESULT_CACHE.clear();
-    }
-    
-    /**
-     * Invalidate a specific entity's cached path.
-     * Should be called when an entity's pathfinding parameters change.
-     */
-    public static void invalidateEntityPathCache(int entityId) {
-        PATH_RESULT_CACHE.invalidate(entityId);
-    }
-    
-    /**
-     * Get path result cache statistics for monitoring.
-     */
-    public static int getPathResultCacheSize() {
-        return PATH_RESULT_CACHE.size();
+        return new PathEntity(points);
     }
 
     /**
@@ -458,13 +145,7 @@ public class RustPathfindingBridge {
          * Returns: 0=Air,1=Solid,2=Water,3=Lava,4=WoodenDoor,5=Trapdoor,6=Fence,7=FenceGate,etc.
          * OPTIMIZED: Uses global shared cache to avoid redundant world queries.
          */
-        public byte getBlockTypeCode(int x, int y, int z) {
-            // Check global cache first
-            GlobalBlockCache.CachedBlock cached = GLOBAL_BLOCK_CACHE.get(x, y, z);
-            if (cached != null) {
-                return cached.blockType;
-            }
-            
+        public byte getBlockTypeCode(int x, int y, int z) {            
             // Cache miss - query world and cache result
             byte blockType = encodeBlock(world, x, y, z);
             int metadata = 0;
@@ -472,7 +153,6 @@ public class RustPathfindingBridge {
                 metadata = world.getBlockMetadata(x, y, z);
             } catch (Throwable ignore) {}
             
-            GLOBAL_BLOCK_CACHE.put(x, y, z, blockType, metadata);
             return blockType;
         }
 
@@ -480,13 +160,7 @@ public class RustPathfindingBridge {
          * Called by Rust via JNI to get block metadata.
          * OPTIMIZED: Uses global shared cache.
          */
-        public int getBlockMetadata(int x, int y, int z) {
-            // Check global cache first
-            GlobalBlockCache.CachedBlock cached = GLOBAL_BLOCK_CACHE.get(x, y, z);
-            if (cached != null) {
-                return cached.metadata;
-            }
-            
+        public int getBlockMetadata(int x, int y, int z) {            
             // Cache miss - query world
             try {
                 return world.getBlockMetadata(x, y, z);

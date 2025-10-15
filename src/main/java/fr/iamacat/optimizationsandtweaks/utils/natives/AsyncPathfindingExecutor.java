@@ -330,10 +330,6 @@ public class AsyncPathfindingExecutor {
                 executor = null;
             }
         } catch (Throwable ignore) {}
-        try {
-            RustPathfindingBridge.clearGlobalBlockCache();
-            RustPathfindingBridge.clearPathResultCache();
-        } catch (Throwable ignore) {}
         pendingRequests.clear();
         initialized = false;
     }

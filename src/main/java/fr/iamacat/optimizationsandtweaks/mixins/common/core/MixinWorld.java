@@ -57,26 +57,6 @@ public abstract class MixinWorld {
 
     }
 
-    @Inject(
-        method = "setBlock(IIILnet/minecraft/block/Block;II)Z",
-        at = @At("RETURN"))
-    private void optimizationsAndTweaks$onBlockSet(int x, int y, int z, Block block, int metadata, int flags,
-        CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValue()) {
-            RustPathfindingBridge.invalidateBlockCacheRegion(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
-        }
-    }
-
-    @Inject(
-        method = "setBlockMetadataWithNotify",
-        at = @At("RETURN"))
-    private void optimizationsAndTweaks$onBlockMetadataChange(int x, int y, int z, int metadata, int flags,
-        CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValue()) {
-            RustPathfindingBridge.invalidateBlockCache(x, y, z);
-        }
-    }
-
     /**
      * Cache reads only for EntityLivingBase entities
      */
