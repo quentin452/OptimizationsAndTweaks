@@ -28,10 +28,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinModifiableAttributeInstance;
-    @Config.Comment("Optimize RandomPositionGenerator Class.")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinRandomPositionGenerator;
     @Config.Comment("Optimize EntityAIPlay Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

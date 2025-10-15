@@ -119,8 +119,6 @@ public enum Mixin implements IMixin {
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON,
         require(TargetedMod.EASYBREEDING).and(m -> OptimizationsandTweaksConfig.enableMixinEntityAIEatDroppedFood),
         "easybreeding.MixinEntityAIEatDroppedFood"),
-    common_core_MixinRandomPositionGenerator(Side.COMMON,
-        m -> OptimizationsandTweaksConfig.enableMixinRandomPositionGenerator, "core.MixinRandomPositionGenerator"),
     common_core_MixinEntityAIPlay(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEntityAIPlay,
         "core.MixinEntityAIPlay"),
     common_core_MixinServersideAttributeMap(Side.COMMON,
