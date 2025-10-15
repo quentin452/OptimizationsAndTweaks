@@ -1010,7 +1010,7 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enableMixinEntityPlayer;
 
-    @Config.Comment("Enable Rust-powered pathfinding optimization for PathFinder (significant performance improvement)")
+    @Config.Comment("Enable Rust-powered pathfinding optimization for PathFinder (significant performance improvement) (async)")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enablePathFindingOptimizations;
