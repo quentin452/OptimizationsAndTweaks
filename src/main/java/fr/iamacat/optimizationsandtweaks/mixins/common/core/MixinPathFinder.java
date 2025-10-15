@@ -98,8 +98,10 @@ public abstract class MixinPathFinder {
 
             if (path != null) {
                 cir.setReturnValue(path);
+            } else {
+                // Prevent running the heavy vanilla pathfinder while async result is pending
+                cir.setReturnValue(null);
             }
-            // If path is null, fall through to vanilla (request is pending)
         } catch (Exception e) {
             // Fall back to vanilla on error
             cpw.mods.fml.common.FMLLog.warning(
@@ -134,8 +136,10 @@ public abstract class MixinPathFinder {
 
             if (path != null) {
                 cir.setReturnValue(path);
+            } else {
+                // Prevent running the heavy vanilla pathfinder while async result is pending
+                cir.setReturnValue(null);
             }
-            // If path is null, fall through to vanilla (request is pending)
         } catch (Exception e) {
             // Fall back to vanilla on error
             cpw.mods.fml.common.FMLLog.warning(
