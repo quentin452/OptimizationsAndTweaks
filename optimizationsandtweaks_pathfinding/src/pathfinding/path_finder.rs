@@ -268,7 +268,7 @@ impl PathFinder {
             }
 
             // Check if we reached the goal
-            let goal_eps: f32 = if self.is_pathing_in_water { 1.5 } else { 1.0 };
+            let goal_eps: f32 = (entity.width * 0.5).max(0.25);
             if dist_to_end < goal_eps {
                 let current = *self.point_map.get(&cur_hash).unwrap();
                 let path = self.create_entity_path(&start, &current);
