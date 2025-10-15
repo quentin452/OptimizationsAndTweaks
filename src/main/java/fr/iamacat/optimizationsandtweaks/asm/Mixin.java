@@ -129,9 +129,6 @@ public enum Mixin implements IMixin {
         "core.MixinEntityLivingBase"),
     common_core_MixinDataWatcher(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinDataWatcher,
         "core.MixinDataWatcher"),
-
-    common_core_MixinNibbleArray(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinNibbleArray,
-        "core.MixinNibbleArray"),
     common_blocklings_MixinEntityBlockling(Side.COMMON,
         require(TargetedMod.BLOCKLINGS).and(m -> OptimizationsandTweaksConfig.enableMixinSteamcraftEventHandler),
         "blocklings.MixinEntityBlockling"),

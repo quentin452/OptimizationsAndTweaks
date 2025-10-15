@@ -322,10 +322,6 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinBlockBreakingRegistry;
-    @Config.Comment("Optimize NibbleArray")
-    @Config.DefaultBoolean(true)
-    @Config.RequiresWorldRestart
-    public static boolean enableMixinNibbleArray;
     @Config.Comment("Optimize EntityLiving")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
