@@ -26,7 +26,7 @@ public abstract class MixinMapGenStructure extends MapGenBase {
      * placed.
      */
     @Shadow
-    protected Map structureMap = new HashMap();
+    protected Map structureMap;
 
     @Shadow
     public abstract String func_143025_a();
