@@ -9,6 +9,8 @@ The original ArchaicFix doesn't work with my mod due to MixinMapGenStructure on 
 # Optimization / Feature List
 [Wiki](https://github.com/quentin452/OptimizationsAndTweaks/wiki)
 
+- Notable feature: **Rewrite Minecraft Pathfinding in Rust asynchronously**
+
 # Links for my project
 - [GitHub](https://github.com/quentin452/OptimizationsAndTweaks)
 - [Modrinth](https://modrinth.com/mod/optimizationsandtweaks)
