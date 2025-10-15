@@ -11,7 +11,6 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.EntityRegistry;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,13 +22,14 @@ import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import com.google.common.primitives.UnsignedBytes;
-
 @Mixin(EntityRegistry.class)
 public abstract class MixinEntityRegistry {
 
     @Unique
     private static final AtomicInteger ENTITY_COUNTER = new AtomicInteger(0);
+
+    @Accessor("availableIndicies")
+    abstract BitSet getAvailableIndices();
 
     @Unique
     private static boolean isEndlessIDsLoaded() {
@@ -54,8 +54,8 @@ public abstract class MixinEntityRegistry {
     )
     private static void interceptEntityRegistration(Class<?> entityClass, String entityName, int id, CallbackInfo ci) {
         String finalName = resolveEntityNameConflict(entityName);
-        EntityRegistry registryInstance = EntityRegistry.instance();
-        int finalId = ((MixinEntityRegistry)(Object) registryInstance).resolveEntityIdConflict(id);
+        int finalId = resolveEntityIdConflict(id);
+
         EntityList.addMapping(entityClass, finalName, finalId);
         ci.cancel();
     }
@@ -68,8 +68,8 @@ public abstract class MixinEntityRegistry {
     )
     private static void interceptEntityRegistrationEgg(Class<?> entityClass, String entityName, int id, int eggPrimary, int eggSecondary, CallbackInfo ci) {
         String finalName = resolveEntityNameConflict(entityName);
-        EntityRegistry registryInstance = EntityRegistry.instance();
-        int finalId = ((MixinEntityRegistry)(Object) registryInstance).resolveEntityIdConflict(id);
+        int finalId = resolveEntityIdConflict(id);
+
         EntityList.addMapping(entityClass, finalName, finalId, eggPrimary, eggSecondary);
         ci.cancel();
     }
@@ -85,9 +85,9 @@ public abstract class MixinEntityRegistry {
     }
 
     @Unique
-    private int resolveEntityIdConflict(int id) {
+    private static int resolveEntityIdConflict(int id) {
         if (isEndlessIDsLoaded()) {
-            // If EndlessIDs is loaded
+            // If EndlessIDs is loaded, use simple ID checking
             int finalId = id;
             if (EntityList.IDtoClassMapping.containsKey(finalId)) {
                 finalId = EntityRegistry.instance().findGlobalUniqueEntityId();
@@ -95,18 +95,21 @@ public abstract class MixinEntityRegistry {
             }
             return finalId;
         } else {
-            // If EndlessIDs is not loaded
+            // If EndlessIDs is not loaded, use the original BitSet-based logic
             try {
-                BitSet availableIndices = EntityRegistry.instance().availableIndicies;
+                // Get the instance and check if the ID is available using the bitset
+                EntityRegistry instance = EntityRegistry.instance();
+                BitSet availableIndices = ((MixinEntityRegistry) (Object) instance).getAvailableIndices();
                 
-                int realId = optimizationsandtweaks$validateAndClaimId(id);
+                // Apply the same ID adjustment logic as the original validateAndClaimId
+                int realId = adjustEntityId(id);
                 
                 if (availableIndices.get(realId)) {
                     availableIndices.clear(realId);
                     return realId;
                 } else {
                     FMLLog.log(Level.WARN, "Entity ID %d (adjusted to %d) is already reserved, finding alternative", id, realId);
-                    return EntityRegistry.instance().findGlobalUniqueEntityId();
+                    return instance.findGlobalUniqueEntityId();
                 }
             } catch (Exception e) {
                 FMLLog.log(Level.WARN, e, "Error during entity ID allocation, using fallback");
@@ -116,28 +119,17 @@ public abstract class MixinEntityRegistry {
     }
 
     @Unique
-    public int optimizationsandtweaks$validateAndClaimId(int id)
-    {
+    private static int adjustEntityId(int id) {
+        // Replicate the ID adjustment logic from validateAndClaimId
         int realId = id;
-        if (id < Byte.MIN_VALUE)
-        {
-            FMLLog.warning("Compensating for modloader out of range compensation by mod : entityId %d for mod %s is now %d", id, Loader.instance().activeModContainer().getModId(), realId);
+        if (id < Byte.MIN_VALUE) {
             realId += 3000;
         }
-        try
-        {
-            UnsignedBytes.checkedCast(realId);
-        }
-        catch (IllegalArgumentException e)
-        {
-            FMLLog.log(Level.ERROR, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
-        }
 
-        if (!EntityRegistry.instance().availableIndicies.get(realId))
-        {
-            FMLLog.severe("The mod %s has attempted to register an entity ID %d which is already reserved. This could cause severe problems", Loader.instance().activeModContainer().getModId(), id);
+        if (realId < 0) {
+            realId += Byte.MAX_VALUE;
         }
-        EntityRegistry.instance().availableIndicies.clear(realId);
+        
         return realId;
     }
 }
