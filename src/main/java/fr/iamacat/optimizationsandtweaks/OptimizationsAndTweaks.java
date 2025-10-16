@@ -56,7 +56,20 @@ public class OptimizationsAndTweaks {
 
                 // Initialize Rust pathfinding
                 RustPathfinding.initialize();
-                
+
+                try {
+                    RustPathfinding.class
+                        .getDeclaredMethod("setProfilerEnabled", boolean.class)
+                        .invoke(null, OptimizationsandTweaksConfig.enableRustProfiler);
+                    FMLLog.info("[OptimizationsAndTweaks] Rust profiler %s", OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
+                } catch (Throwable t) { }
+                try {
+                    RustFFI.class
+                        .getDeclaredMethod("setPanicGuardEnabled", boolean.class)
+                        .invoke(null, OptimizationsandTweaksConfig.enableRustPanicGuard);
+                    FMLLog.info("[OptimizationsAndTweaks] Rust panic guard %s", OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
+                } catch (Throwable t) { }
+
                 // Initialize async pathfinding executor
                 AsyncPathfindingExecutor.initializeAuto();
                 FMLLog.info("[OptimizationsAndTweaks] Async pathfinding executor initialized");

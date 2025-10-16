@@ -85,20 +85,6 @@ public class AsyncPathfindingExecutor {
     public static boolean isInitialized() {
         return initialized;
     }
-    // TODO
-    public boolean canBreakDoors(EntityLiving entity) {
-        if (entity.tasks.taskEntries != null) {
-            for (Object entryObj : entity.tasks.taskEntries) {
-                // taskEntries is a List<EntityAITasks.EntityAITaskEntry>
-                net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry entry =
-                    (net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry) entryObj;
-                if (entry.action instanceof net.minecraft.entity.ai.EntityAIBreakDoor) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * Submit an async pathfinding request with explicit pathing flags

@@ -1,3 +1,8 @@
+// NOTE: This module implements the native Rust async pathfinding executor.
+// TODO: Re-enable usage from the Java integration once we migrate back from the
+// Java-based thread pool. Currently, pathfinding runs on a Java executor and
+// invokes the Rust pathfinder via JNI with direct world access. Keep interfaces
+// stable to allow a clean switch back when ready.
 use std::sync::{
     atomic::{AtomicU64, AtomicUsize, Ordering},
     mpsc::{self, Receiver, SyncSender, TryRecvError},
@@ -7,14 +12,15 @@ use std::thread::{self, JoinHandle};
 
 use crate::log_native_line;
 use crate::pathfinding::{self, PathFinder};
-use crate::profiler;
+pub use optimizationsandtweaks_profiler as profiler;
 use crate::{get_next_id, PATH_ENTITIES};
+use crate::{ffi_panic_guard, ffi_panic_guard_void};
 
 // =====================================================================================
 // Internal cached world accessor identical to the one used in lib.rs for cached paths
 // =====================================================================================
 
-struct CachedWorldAccess {
+pub struct CachedWorldAccess {
     blocks: Vec<i8>,
     width: i32,
     height: i32,
@@ -25,7 +31,7 @@ struct CachedWorldAccess {
 }
 
 impl CachedWorldAccess {
-    fn new(
+    pub fn new(
         blocks: Vec<i8>,
         width: i32,
         height: i32,
@@ -167,93 +173,96 @@ lazy_static::lazy_static! {
 }
 
 pub fn init(worker_count: usize, queue_size: usize) {
-    let mut guard = EXECUTOR.lock().unwrap();
-    if guard.is_some() {
-        log_native_line("AsyncExecutor already initialized");
-        return;
-    }
+    ffi_panic_guard_void("async_executor::init", || {
+        let mut guard = EXECUTOR.lock().unwrap();
+        if guard.is_some() {
+            log_native_line("AsyncExecutor already initialized");
+            return;
+        }
 
-    let (job_tx, job_rx_base) = mpsc::sync_channel::<Job>(queue_size.max(1));
-    let job_rx = Arc::new(Mutex::new(job_rx_base));
-    let (result_tx, result_rx) = mpsc::channel::<Completed>();
+        let (job_tx, job_rx_base) = mpsc::sync_channel::<Job>(queue_size.max(1));
+        let job_rx = Arc::new(Mutex::new(job_rx_base));
+        let (result_tx, result_rx) = mpsc::channel::<Completed>();
 
-    let mut workers = Vec::with_capacity(worker_count.max(1));
+        let mut workers = Vec::with_capacity(worker_count.max(1));
 
-    let queue_len = Arc::new(AtomicUsize::new(0));
-    let active_workers = Arc::new(AtomicUsize::new(0));
-    let total_submitted = Arc::new(AtomicU64::new(0));
-    let total_completed = Arc::new(AtomicU64::new(0));
-    let total_failed = Arc::new(AtomicU64::new(0));
+        let queue_len = Arc::new(AtomicUsize::new(0));
+        let active_workers = Arc::new(AtomicUsize::new(0));
+        let total_submitted = Arc::new(AtomicU64::new(0));
+        let total_completed = Arc::new(AtomicU64::new(0));
+        let total_failed = Arc::new(AtomicU64::new(0));
 
-    for i in 0..worker_count.max(1) {
-        let rx = Arc::clone(&job_rx);
-        let rtx = result_tx.clone();
-        let ql = Arc::clone(&queue_len);
-        let aw = Arc::clone(&active_workers);
-        let tc = Arc::clone(&total_completed);
-        let tf = Arc::clone(&total_failed);
+        for i in 0..worker_count.max(1) {
+            let rx = Arc::clone(&job_rx);
+            let rtx = result_tx.clone();
+            let ql = Arc::clone(&queue_len);
+            let aw = Arc::clone(&active_workers);
+            let tc = Arc::clone(&total_completed);
+            let tf = Arc::clone(&total_failed);
 
-        let handle = thread::Builder::new()
-            .name(format!("async-path-worker-{}", i))
-            .spawn(move || loop {
-                match rx.lock().unwrap().recv() {
-                    Ok(job) => {
-                        // One item leaves the queue
-                        ql.fetch_sub(1, Ordering::Relaxed);
-                        aw.fetch_add(1, Ordering::Relaxed);
+            let handle = thread::Builder::new()
+                .name(format!("async-path-worker-{}", i))
+                .spawn(move || loop {
+                    match rx.lock().unwrap().recv() {
+                        Ok(job) => {
+                            // One item leaves the queue
+                            ql.fetch_sub(1, Ordering::Relaxed);
+                            aw.fetch_add(1, Ordering::Relaxed);
 
-                        let req = job.request_id;
-                        let completed = match std::panic::catch_unwind(|| process_job(job)) {
-                            Ok(c) => c,
-                            Err(_) => {
-                                log_native_line("AsyncExecutor worker panicked during process_job");
-                                Completed { request_id: req, path_handle: -1 }
+                            let req = job.request_id;
+                            let completed = ffi_panic_guard(
+                                "async_executor::process_job",
+                                Completed { request_id: req, path_handle: -1 },
+                                || process_job(job),
+                            );
+
+                            if completed.path_handle > 0 {
+                                tc.fetch_add(1, Ordering::Relaxed);
+                            } else {
+                                tf.fetch_add(1, Ordering::Relaxed);
                             }
-                        };
-                        if completed.path_handle > 0 {
-                            tc.fetch_add(1, Ordering::Relaxed);
-                        } else {
-                            tf.fetch_add(1, Ordering::Relaxed);
+                            let _ = rtx.send(completed);
+                            aw.fetch_sub(1, Ordering::Relaxed);
                         }
-                        let _ = rtx.send(completed);
-                        aw.fetch_sub(1, Ordering::Relaxed);
+                        Err(_) => break, // shutdown
                     }
-                    Err(_) => break, // shutdown
-                }
-            })
-            .expect("Failed to spawn async path worker");
-        workers.push(handle);
-    }
+                })
+                .expect("Failed to spawn async path worker");
+            workers.push(handle);
+        }
 
-    *guard = Some(ExecutorState {
-        job_tx,
-        result_rx,
-        workers,
-        worker_count: worker_count.max(1),
-        queue_len,
-        active_workers,
-        total_submitted,
-        total_completed,
-        total_failed,
+        *guard = Some(ExecutorState {
+            job_tx,
+            result_rx,
+            workers,
+            worker_count: worker_count.max(1),
+            queue_len,
+            active_workers,
+            total_submitted,
+            total_completed,
+            total_failed,
+        });
+
+        log_native_line(format!(
+            "AsyncExecutor initialized: workers={} queue_size={}",
+            worker_count.max(1),
+            queue_size.max(1)
+        ));
     });
-
-    log_native_line(format!(
-        "AsyncExecutor initialized: workers={} queue_size={}",
-        worker_count.max(1),
-        queue_size.max(1)
-    ));
 }
 
 pub fn shutdown() {
-    let mut guard = EXECUTOR.lock().unwrap();
-    if let Some(mut state) = guard.take() {
-        // Drop sender to stop workers, then join
-        drop(state.job_tx);
-        for h in state.workers.drain(..) {
-            let _ = h.join();
+    ffi_panic_guard_void("async_executor::shutdown", || {
+        let mut guard = EXECUTOR.lock().unwrap();
+        if let Some(mut state) = guard.take() {
+            // Drop sender to stop workers, then join
+            drop(state.job_tx);
+            for h in state.workers.drain(..) {
+                let _ = h.join();
+            }
+            log_native_line("AsyncExecutor shutdown complete");
         }
-        log_native_line("AsyncExecutor shutdown complete");
-    }
+    });
 }
 
 pub fn submit_request(
@@ -282,77 +291,83 @@ pub fn submit_request(
     is_in_water: bool,
     max_safe_point_tries: i32,
 ) -> bool {
-    let guard = EXECUTOR.lock().unwrap();
-    if let Some(state) = guard.as_ref() {
-        let job = Job {
-            request_id,
-            _priority: priority,
-            wd,
-            mb,
-            pw,
-            cd,
-            offset_x,
-            offset_y,
-            offset_z,
-            width,
-            height,
-            depth,
-            block_cache,
-            entity_x,
-            entity_y,
-            entity_z,
-            target_x,
-            target_y,
-            target_z,
-            entity_width,
-            entity_height,
-            max_distance,
-            is_in_water,
-            max_safe_point_tries,
-        };
+    ffi_panic_guard("async_executor::submit_request", false, || {
+        let guard = EXECUTOR.lock().unwrap();
+        if let Some(state) = guard.as_ref() {
+            let job = Job {
+                request_id,
+                _priority: priority,
+                wd,
+                mb,
+                pw,
+                cd,
+                offset_x,
+                offset_y,
+                offset_z,
+                width,
+                height,
+                depth,
+                block_cache,
+                entity_x,
+                entity_y,
+                entity_z,
+                target_x,
+                target_y,
+                target_z,
+                entity_width,
+                entity_height,
+                max_distance,
+                is_in_water,
+                max_safe_point_tries,
+            };
 
-        match state.job_tx.try_send(job) {
-            Ok(_) => {
-                state.queue_len.fetch_add(1, Ordering::Relaxed);
-                state.total_submitted.fetch_add(1, Ordering::Relaxed);
-                true
+            match state.job_tx.try_send(job) {
+                Ok(_) => {
+                    state.queue_len.fetch_add(1, Ordering::Relaxed);
+                    state.total_submitted.fetch_add(1, Ordering::Relaxed);
+                    true
+                }
+                Err(mpsc::TrySendError::Full(_)) => false,
+                Err(mpsc::TrySendError::Disconnected(_)) => false,
             }
-            Err(mpsc::TrySendError::Full(_)) => false,
-            Err(mpsc::TrySendError::Disconnected(_)) => false,
+        } else {
+            false
         }
-    } else {
-        false
-    }
+    })
 }
 
 pub fn try_recv() -> Option<(i64, i64)> {
-    let guard = EXECUTOR.lock().unwrap();
-    if let Some(state) = guard.as_ref() {
-        match state.result_rx.try_recv() {
-            Ok(path_handle) => Some((path_handle.request_id, path_handle.path_handle)),
-            Err(TryRecvError::Empty) => None,
-            Err(TryRecvError::Disconnected) => None,
+    ffi_panic_guard("async_executor::try_recv", None, || {
+        let guard = EXECUTOR.lock().unwrap();
+        if let Some(state) = guard.as_ref() {
+            match state.result_rx.try_recv() {
+                Ok(path_handle) => Some((path_handle.request_id, path_handle.path_handle)),
+                Err(TryRecvError::Empty) => None,
+                Err(TryRecvError::Disconnected) => None,
+            }
+        } else {
+            None
         }
-    } else {
-        None
-    }
+    })
 }
 
 pub fn get_stats() -> [i32; 7] {
-    let guard = EXECUTOR.lock().unwrap();
-    if let Some(state) = guard.as_ref() {
-        [
-            state.total_submitted.load(Ordering::Relaxed) as i32, // total_submitted
-            state.total_completed.load(Ordering::Relaxed) as i32, // total_completed
-            state.total_failed.load(Ordering::Relaxed) as i32,    // total_failed
-            0,                                                   // total_timed_out (not implemented)
-            state.queue_len.load(Ordering::Relaxed) as i32,       // queue_size (current queued)
-            state.active_workers.load(Ordering::Relaxed) as i32,  // active_workers
-            state.worker_count as i32,                            // worker_count
-        ]
-    } else {
-        [0; 7]
-    }
+    ffi_panic_guard("async_executor::get_stats", [0; 7], || {
+        let guard = EXECUTOR.lock().unwrap();
+        if let Some(state) = guard.as_ref() {
+            [
+                state.total_submitted.load(Ordering::Relaxed) as i32, // total_submitted
+                state.total_completed.load(Ordering::Relaxed) as i32, // total_completed
+                state.total_failed.load(Ordering::Relaxed) as i32,    // total_failed
+                0,                                                   // total_timed_out (not implemented)
+                state.queue_len.load(Ordering::Relaxed) as i32,       // queue_size (current queued)
+                state.active_workers.load(Ordering::Relaxed) as i32,  // active_workers
+                state.worker_count as i32,                            // worker_count
+            ]
+        } else {
+            [0; 7]
+        }
+    })
 }
 
 // ===============
@@ -427,7 +442,6 @@ fn process_job(job: Job) -> Completed {
         if let Some(path_entity) = path_entity {
             let id = get_next_id();
             PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
-            profiler::MEMORY_STATS.increment_path_entity();
             id
         } else {
             -1 // special sentinel for no-path; must be non-zero

@@ -5,6 +5,7 @@ edition = "2021"
 
 [lib]
 name = "optimizationsandtweaks_shared"
+crate-type = ["rlib", "cdylib"]
 
 [dependencies]
 jni = "0.21"

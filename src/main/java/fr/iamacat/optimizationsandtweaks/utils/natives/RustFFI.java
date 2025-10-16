@@ -20,6 +20,8 @@ public class RustFFI {
 
     private static native void rust_print_message(String message);
 
+    public static native void setPanicGuardEnabled(boolean enabled);
+
     /**
      * Initializes the Rust FFI library
      * Must be called before using any Rust functions
@@ -39,6 +41,7 @@ public class RustFFI {
             boolean ok = true;
             ok &= NativeLibraryLoader.loadLibrary("optimizationsandtweaks_pathfinding", minecraftDir);
             ok &= NativeLibraryLoader.loadLibrary("optimizationsandtweaks_blocksupdates", minecraftDir);
+            ok &= NativeLibraryLoader.loadLibrary("optimizationsandtweaks_shared", minecraftDir);
             if (ok) {
                 libraryAvailable = true;
                 FMLLog.info("[OptimizationsAndTweaks] Rust FFI initialized successfully using JNI");

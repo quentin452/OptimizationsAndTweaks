@@ -14,8 +14,6 @@ public class RustPathfinding {
     private static native long createPathFinder(boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
         boolean isPathingInWater, boolean canEntityDrown);
 
-    private static native void destroyPathFinder(long handle);
-
     private static native void destroyPathEntity(long handle);
 
     private static native int pathEntityGetCurrentIndex(long handle);
@@ -42,22 +40,8 @@ public class RustPathfinding {
         return findPathDirect(pathfinderHandle, worldAdapter, entityX, entityY, entityZ, 
             targetX, targetY, targetZ, entityWidth, entityHeight, maxDistance, isInWater, maxSafePointTries);
     }
-
-    // Cached-volume pathfinding: pushes a pre-encoded block byte array to Rust
-    public static native long findPathWithCache(long pathfinderHandle,
-        int offsetX, int offsetY, int offsetZ,
-        int width, int height, int depth,
-        byte[] blockCodes,
-        double entityX, double entityY, double entityZ,
-        double targetX, double targetY, double targetZ,
-        float entityWidth, float entityHeight,
-        float maxDistance,
-        boolean isInWater,
-        int maxSafePointTries);
-
     /**
      * Batch pathfinding - processes multiple pathfinding requests in parallel
-     * This is significantly faster than calling findPathWithCache multiple times
      * 
      * @param pathfinderHandles Array of pathfinder handles
      * @param offsetX Array of X offsets for block caches
@@ -93,10 +77,12 @@ public class RustPathfinding {
         int[] maxSafePointTries
     );
 
-    /**
-     * Prints profiler and memory statistics from Rust
-     */
-    public static native void printProfilerStats();
+    /** Enable/disable Rust profiler */
+    public static native void setProfilerEnabled(boolean enabled);
+    /** Query if Rust profiler is enabled */
+    public static native boolean isProfilerEnabled();
+    /** Clear collected profiler stats */
+    public static native void clearProfilerStats();
 
     // ========== Async Pathfinding Executor Methods ==========
 
@@ -155,19 +141,7 @@ public class RustPathfinding {
             FMLLog.info("[OptimizationsAndTweaks] Cannot initialize Rust pathfinding - RustFFI not initialized");
             return;
         }
-
-        try {
-            // Test if pathfinding methods are available
-            long testHandle = createPathFinder(true, false, false, false);
-            destroyPathFinder(testHandle);
-            available = true;
-        } catch (UnsatisfiedLinkError e) {
-            FMLLog.info("[OptimizationsAndTweaks] Rust pathfinding methods not available: %s", e.getMessage());
-            available = false;
-        } catch (Exception e) {
-            FMLLog.warning("[OptimizationsAndTweaks] Error initializing Rust pathfinding: %s", e.getMessage());
-            available = false;
-        }
+        available = true;
     }
 
     /**
@@ -198,12 +172,7 @@ public class RustPathfinding {
         }
 
         @Override
-        public void close() {
-            if (!closed) {
-                destroyPathFinder(handle);
-                closed = true;
-            }
-        }
+        public void close() { }
 
         @Override
         protected void finalize() throws Throwable {

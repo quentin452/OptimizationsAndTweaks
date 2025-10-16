@@ -1,0 +1,12 @@
+[package]
+name = "optimizationsandtweaks_profiler"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "optimizationsandtweaks_profiler"
+crate-type = ["rlib"]
+
+[dependencies]
+lazy_static = "1.5.0"
+optimizationsandtweaks_shared = { path = "../optimizationsandtweaks_shared" }

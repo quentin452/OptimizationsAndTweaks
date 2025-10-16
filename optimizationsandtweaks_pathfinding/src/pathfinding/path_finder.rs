@@ -16,7 +16,7 @@ pub trait IBlockAccess {
     fn can_block_see_sky(&self, x: i32, y: i32, z: i32) -> bool;
 }
 
-/// block type enum for pathfinding
+/// block type enum
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BlockType {
     Air,
@@ -195,6 +195,11 @@ impl PathFinder {
         size: PathPoint,
         max_distance: f32,
     ) -> Option<PathEntity> {
+        let _guard = if optimizationsandtweaks_profiler::is_profiler_enabled() {
+            Some(optimizationsandtweaks_profiler::ProfileGuard::new("PathFinder::add_to_path"))
+        } else {
+            None
+        };
         start.total_path_distance = 0.0;
         start.distance_to_next = start.distance_to(&end);
         start.distance_to_target = start.distance_to_next;
@@ -379,12 +384,7 @@ impl PathFinder {
         let path_len = path.len();
         let reach_tolerance: f32 = if self.is_pathing_in_water { 2.5 } else { 1.0 };
 
-        // Update profiler memory stats before cleanup
-        if crate::profiler::is_profiler_enabled() {
-            crate::profiler::MEMORY_STATS.set_point_map_size(self.point_map.len() as u64);
-            crate::profiler::MEMORY_STATS.set_visited_cache_size(self.visited_cache.len() as u64);
-        }
-
+        
         if closest_distance > reach_tolerance && path_len <= 1 {
             if self.debug_always_reach {
                 let direct = PathEntity::new(vec![
@@ -418,6 +418,11 @@ impl PathFinder {
         target: &PathPoint,
         max_distance: f32,
     ) -> usize {
+        let _guard = if optimizationsandtweaks_profiler::is_profiler_enabled() {
+            Some(optimizationsandtweaks_profiler::ProfileGuard::new("PathFinder::find_path_options"))
+        } else {
+            None
+        };
         let mut count = 0;
         let mut vertical_offset = 0;
 
@@ -546,6 +551,11 @@ impl PathFinder {
         size: &PathPoint,
         vertical_offset: i32,
     ) -> Option<PathPoint> {
+        let _guard = if optimizationsandtweaks_profiler::is_profiler_enabled() {
+            Some(optimizationsandtweaks_profiler::ProfileGuard::new("PathFinder::get_safe_point"))
+        } else {
+            None
+        };
         let vertical_check = self.get_vertical_offset(world, entity, x, y, z, size);
 
         // Can stand here

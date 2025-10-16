@@ -1015,6 +1015,16 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresWorldRestart
     public static boolean enablePathFindingOptimizations;
 
+    @Config.Comment("Enable optimizationsandtweaks Rust profiler")
+    @Config.DefaultBoolean(false)
+    @Config.RequiresWorldRestart
+    public static boolean enableRustProfiler;
+
+    @Config.Comment("Enable optimizationsandtweaks Rust panic guards")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableRustPanicGuard;
+
     @Config.Comment("Reduce tps lags caused by BiomeGenMagicalForest from Thaumcraft")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

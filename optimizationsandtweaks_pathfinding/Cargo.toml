@@ -15,3 +15,4 @@ rayon = "1.10"
 crossbeam = "0.8"
 lru = "0.12"
 optimizationsandtweaks_shared = { path = "../optimizationsandtweaks_shared" }
+optimizationsandtweaks_profiler = { path = "../optimizationsandtweaks_profiler" }

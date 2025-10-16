@@ -48,13 +48,6 @@ public abstract class MixinWorld {
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler.injectInWorldTick((World) (Object) this);
         }
-        if (OptimizationsandTweaksConfig.enablePathFindingOptimizations) {
-            long worldTime = ((World) (Object) this).getTotalWorldTime();
-            if (worldTime % 200 == 0 && RustPathfinding.isAvailable()) {
-                RustPathfinding.printProfilerStats();
-            }
-        }
-
     }
 
     /**
