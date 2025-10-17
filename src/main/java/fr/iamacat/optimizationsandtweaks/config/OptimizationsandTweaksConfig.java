@@ -421,6 +421,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRenderGlobal;
+    @Config.Comment("Optimize EventFog from Manametal")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinEventFog;
     @Config.Comment("Optimize TextureUtil")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

@@ -881,6 +881,8 @@ public enum Mixin implements IMixin {
     client_core_MixinStitcher(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinStitcher, "core.MixinStitcher"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),
+    client_manametal_MixinEventFog(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinEventFog,
+        "manametal.MixinEventFog"),
 
     // MOD-FILTERED MIXINS
 

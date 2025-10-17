@@ -135,7 +135,8 @@ public enum TargetedMod implements ITargetedMod {
     ALIENVSPREDATOR("aliensvspredator", false, startsWith("[1.7.10-10.13.4.1614-1.7.10][4.0.0.822] aliensvspredator")),
     THECAMPINGMOD("TheCampingMod", false, startsWith("TheCampingMod")),
     SALUTATION("Salutation", false, startsWith("Salutation")),
-    THETITANS("The Titans", false, startsWith("The Titans"))
+    THETITANS("The Titans", false, startsWith("The Titans")),
+    MANAMETAL("manametal", false, startsWith("manametal"))
     ;
 
     @Getter
