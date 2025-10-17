@@ -57,7 +57,8 @@ public class MixinModifiableAttributeInstance {
     public void applyModifier(AttributeModifier modifier) {
         UUID id = modifier.getID();
         if (this.mapByUUID.containsKey(id)) {
-            throw new IllegalArgumentException("Modifier is already applied on this attribute!");
+            // Return silently if the modifier is already present
+            return; 
         }
 
         Set<AttributeModifier> operationSet = (Set<AttributeModifier>) this.mapByOperation
