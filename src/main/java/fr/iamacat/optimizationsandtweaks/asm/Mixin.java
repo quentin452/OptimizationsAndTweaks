@@ -105,7 +105,9 @@ public enum Mixin implements IMixin {
     common_core_MixinNBTTagCompound(Side.COMMON,
         avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound),
         "core.MixinNBTTagCompound"),
-
+    common_core_MixinNBTBase(Side.COMMON,
+        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTBase),
+        "core.MixinNBTBase"),
     common_core_MixinMapGenStructure(Side.COMMON,
         avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure),
         "core.MixinMapGenStructure"),

@@ -266,6 +266,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinNBTTagCompound;
+    @Config.Comment("Optimize NBTBase to reduce equals() overhead")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinNBTBase;
     @Config.Comment("Optimize EntityList")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
