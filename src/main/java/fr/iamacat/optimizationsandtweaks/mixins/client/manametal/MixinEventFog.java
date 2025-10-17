@@ -16,13 +16,19 @@ import project.studio.manametalmod.core.IBiomeFogM3;
 import project.studio.manametalmod.event.EventFog;
 
 @Mixin(EventFog.class)
-public class MixinEventFog {
+public abstract class MixinEventFog {
     @Shadow private static double fogX;
     @Shadow private static double fogZ;
     @Shadow private static boolean fogInit;
     @Shadow private static float fogFarPlaneDistance;
+    
     @Unique
-    private BiomeGenBase[][] biomeCache = new BiomeGenBase[41][41]; 
+    private final BiomeGenBase[][] biomeCache = new BiomeGenBase[41][41];
+    
+    @Unique
+    private int cacheOriginX = Integer.MAX_VALUE;
+    @Unique
+    private int cacheOriginZ = Integer.MAX_VALUE;
 
     @SubscribeEvent
     @Overwrite(remap = false)
@@ -35,71 +41,82 @@ public class MixinEventFog {
         
         if ((double)playerX == fogX && (double)playerZ == fogZ && fogInit) {
             renderFog(event.fogMode, fogFarPlaneDistance, 0.75F);
-        } else {
-            fogInit = true;
-            int distance = 20;
-            float fpDistanceBiomeFog = 0.0F;
-            float weightBiomeFog = 0.0F;
+            return; 
+        }
+        
+        final int distance = 20;
+        boolean isCacheInvalid = playerX != cacheOriginX || playerZ != cacheOriginZ;
 
+        if (isCacheInvalid) {
+            cacheOriginX = playerX;
+            cacheOriginZ = playerZ;
+            
             for (int x = -distance; x <= distance; ++x) {
                 for (int z = -distance; z <= distance; ++z) {
-                    
                     int cacheX = x + distance;
                     int cacheZ = z + distance;
-
-                    BiomeGenBase biome = biomeCache[cacheX][cacheZ];
-                    if (biome == null) {
-                        biome = world.getBiomeGenForCoords(playerX + x, playerZ + z); 
-                        biomeCache[cacheX][cacheZ] = biome;
-                    }
-
-                    if (biome instanceof IBiomeFogM3) {
-                        float distancePart = ((IBiomeFogM3)biome).getFogDensity(playerX + x, playerY, playerZ + z);
-                        float weightPart = 1.0F;
-                        
-                        if (x == -distance) {
-                            double xDiff = (double)1.0F - (entity.posX - (double)playerX);
-                            distancePart = (float)((double)distancePart * xDiff);
-                            weightPart = (float)((double)weightPart * xDiff);
-                        } else if (x == distance) {
-                            double xDiff = entity.posX - (double)playerX;
-                            distancePart = (float)((double)distancePart * xDiff);
-                            weightPart = (float)((double)weightPart * xDiff);
-                        }
-
-                        if (z == -distance) {
-                            double zDiff = (double)1.0F - (entity.posZ - (double)playerZ);
-                            distancePart = (float)((double)distancePart * zDiff);
-                            weightPart = (float)((double)weightPart * zDiff);
-                        } else if (z == distance) {
-                            double zDiff = entity.posZ - (double)playerZ;
-                            distancePart = (float)((double)distancePart * zDiff);
-                            weightPart = (float)((double)weightPart * zDiff);
-                        }
-
-                        fpDistanceBiomeFog += distancePart;
-                        weightBiomeFog += weightPart;
-                    } else {
-                        biomeCache[cacheX][cacheZ] = null;
-                    }
+                    
+                    BiomeGenBase biome = world.getBiomeGenForCoords(playerX + x, playerZ + z); 
+                    biomeCache[cacheX][cacheZ] = biome;
                 }
             }
-
-            float weightMixed = (float)(distance * 2 * distance * 2);
-            float weightDefault = weightMixed - weightBiomeFog;
-            float fpDistanceBiomeFogAvg = weightBiomeFog == 0.0F ? 0.0F : fpDistanceBiomeFog / weightBiomeFog;
-            float farPlaneDistance = (fpDistanceBiomeFog * 240.0F + event.farPlaneDistance * weightDefault) / weightMixed;
-            float farPlaneDistanceScaleBiome = 0.1F * (1.0F - fpDistanceBiomeFogAvg) + 0.75F * fpDistanceBiomeFogAvg;
-            float farPlaneDistanceScale = (farPlaneDistanceScaleBiome * weightBiomeFog + 0.75F * weightDefault) / weightMixed;
-            fogX = entity.posX; 
-            fogZ = entity.posZ;
-            fogFarPlaneDistance = Math.min(farPlaneDistance, event.farPlaneDistance);
-            renderFog(event.fogMode, fogFarPlaneDistance, farPlaneDistanceScale);
         }
+
+        fogInit = true;
+        float fpDistanceBiomeFog = 0.0F;
+        float weightBiomeFog = 0.0F;
+
+        for (int x = -distance; x <= distance; ++x) {
+            for (int z = -distance; z <= distance; ++z) {
+                int cacheX = x + distance;
+                int cacheZ = z + distance;
+
+                BiomeGenBase biome = biomeCache[cacheX][cacheZ];
+
+                if (biome instanceof IBiomeFogM3) {
+                    float distancePart = ((IBiomeFogM3)biome).getFogDensity(playerX + x, playerY, playerZ + z);
+                    float weightPart = 1.0F;
+                    
+                    if (x == -distance) {
+                        double xDiff = (double)1.0F - (entity.posX - (double)playerX);
+                        distancePart = (float)((double)distancePart * xDiff);
+                        weightPart = (float)((double)weightPart * xDiff);
+                    } else if (x == distance) {
+                        double xDiff = entity.posX - (double)playerX;
+                        distancePart = (float)((double)distancePart * xDiff);
+                        weightPart = (float)((double)weightPart * xDiff);
+                    }
+
+                    if (z == -distance) {
+                        double zDiff = (double)1.0F - (entity.posZ - (double)playerZ);
+                        distancePart = (float)((double)distancePart * zDiff);
+                        weightPart = (float)((double)weightPart * zDiff);
+                    } else if (z == distance) {
+                        double zDiff = entity.posZ - (double)playerZ;
+                        distancePart = (float)((double)distancePart * zDiff);
+                        weightPart = (float)((double)weightPart * zDiff);
+                    }
+
+                    fpDistanceBiomeFog += distancePart;
+                    weightBiomeFog += weightPart;
+                } 
+            }
+        }
+        
+        float weightMixed = (float)(distance * 2 * distance * 2);
+        float weightDefault = weightMixed - weightBiomeFog;
+        float fpDistanceBiomeFogAvg = weightBiomeFog == 0.0F ? 0.0F : fpDistanceBiomeFog / weightBiomeFog;
+        float farPlaneDistance = (fpDistanceBiomeFog * 240.0F + event.farPlaneDistance * weightDefault) / weightMixed;
+        float farPlaneDistanceScaleBiome = 0.1F * (1.0F - fpDistanceBiomeFogAvg) + 0.75F * fpDistanceBiomeFogAvg;
+        float farPlaneDistanceScale = (farPlaneDistanceScaleBiome * weightBiomeFog + 0.75F * weightDefault) / weightMixed;
+        
+        fogX = entity.posX; 
+        fogZ = entity.posZ;
+        fogFarPlaneDistance = Math.min(farPlaneDistance, event.farPlaneDistance);
+        
+        renderFog(event.fogMode, fogFarPlaneDistance, farPlaneDistanceScale);
     }
 
     @Shadow
-    private static void renderFog(int fogMode, float farPlaneDistance, float farPlaneDistanceScale) {
-    }
-
+    private static void renderFog(int fogMode, float farPlaneDistance, float farPlaneDistanceScale) {}
 }
