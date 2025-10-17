@@ -261,10 +261,10 @@ public class MixinOilTweakEventHandler {
      */
     @Overwrite(remap = false)
     private boolean isOil(Block block) {
-        if (optimizationsAndTweaks$oilBlockCache.containsKey(block)) {
-            return optimizationsAndTweaks$oilBlockCache.get(block);
+        Boolean cachedValue = optimizationsAndTweaks$oilBlockCache.get(block);
+        if (cachedValue != null) {
+            return cachedValue.booleanValue(); 
         }
-
         boolean isOilBlock = false;
 
         if (block != null && block != Blocks.air) {
