@@ -680,6 +680,9 @@ public enum Mixin implements IMixin {
     common_thaumcraft_MixinThaumcraftUtils(Side.COMMON,
         require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinThaumcraftUtils),
         "thaumcraft.MixinThaumcraftUtils"),
+    common_thaumcraft_MixinTileNode(Side.COMMON,
+        require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinTileNode),
+        "thaumcraft.MixinTileNode"),
 
     common_thaumcraft_MixinWorldGenCustomFlowersSide(Side.COMMON,
         require(TargetedMod.THAUMCRAFT4).and(m -> OptimizationsandTweaksConfig.enableMixinWorldGenCustomFlowers),

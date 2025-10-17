@@ -895,6 +895,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinThaumcraftUtils;
+    @Config.Comment("Fix NPE caused by TileNode from Thaumcraft")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinTileNode;
     @Config.Comment("Fix Some Cascading Worldgen caused by WorldGenMisStructures Class "
         + "from Fossil And Archeology Revival mod")
     @Config.DefaultBoolean(true)
