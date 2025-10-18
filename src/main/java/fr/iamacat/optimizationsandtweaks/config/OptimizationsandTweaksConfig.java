@@ -404,6 +404,10 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart
     public static boolean enableMixinRenderItem;
+    @Config.Comment("Optimize ItemRenderer")
+    @Config.DefaultBoolean(true)
+    @Config.RequiresWorldRestart
+    public static boolean enableMixinItemRenderer;
     @Config.Comment("Optimize Vec3 Class")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

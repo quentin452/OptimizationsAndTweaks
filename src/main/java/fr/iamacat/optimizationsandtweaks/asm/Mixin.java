@@ -830,6 +830,9 @@ public enum Mixin implements IMixin {
     client_core_MixinRenderItem(Side.CLIENT,
         avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderItem),
         "core.MixinRenderItem"),
+    client_core_MixinItemRenderer(Side.CLIENT,
+        m -> OptimizationsandTweaksConfig.enableMixinItemRenderer,
+        "core.MixinItemRenderer"),
     client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
         .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
     client_core_MixinRenderManager(Side.CLIENT,
