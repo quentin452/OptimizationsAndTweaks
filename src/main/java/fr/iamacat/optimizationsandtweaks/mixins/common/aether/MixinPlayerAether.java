@@ -40,7 +40,6 @@ import com.gildedgames.the_aether.registry.achievements.AchievementsAether;
 import com.gildedgames.the_aether.world.TeleporterAether;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(PlayerAether.class)
 public class MixinPlayerAether {
@@ -118,7 +117,7 @@ public class MixinPlayerAether {
 
     @Inject(method = "onUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void onUpdate(CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinPlayerAether) {
+        if (true) {
             if (!this.player.worldObj.isRemote) {
 
                 AetherNetwork.sendToAll(

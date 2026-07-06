@@ -6,7 +6,6 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import ic2.core.util.Config;
 
 @Mixin(Config.class)
@@ -18,7 +17,7 @@ public class MixinConfig {
      */
     @Overwrite
     private static List<String> split(String str, char splitChar) {
-        if (OptimizationsandTweaksConfig.enableMixinConfig) {
+        if (true) {
             List<String> ret = new ArrayList();
             StringBuilder current = new StringBuilder();
             boolean empty = true;

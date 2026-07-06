@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.eventhandler.Event;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityLiving extends EntityLivingBase {
@@ -105,7 +104,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
     @Inject(method = "canPickUpLoot", at = @At("HEAD"), remap = false, cancellable = true)
     public boolean canPickUpLoot(CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinEntityLiving) {
+        if (true) {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {

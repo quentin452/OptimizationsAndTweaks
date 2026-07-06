@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
 import sonar.logistics.api.cache.INetworkCache;
 import sonar.logistics.api.cache.IRefreshCache;
@@ -25,7 +24,7 @@ public class MixinEventRegistry {
     @Overwrite(remap = false)
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (OptimizationsandTweaksConfig.enableMixinEventRegistry) {
+        if (true) {
             if (event.phase == TickEvent.Phase.START) {
                 THashMap<Integer, INetworkCache> networks = new THashMap<>();
                 networks.putAll(CacheRegistry.getNetworkCache());

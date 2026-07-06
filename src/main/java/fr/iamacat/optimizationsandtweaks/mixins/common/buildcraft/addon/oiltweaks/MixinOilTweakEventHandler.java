@@ -37,7 +37,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.buildcraft.InOil2;
 
 @Mixin(OilTweakEventHandler.class)
@@ -104,7 +103,7 @@ public class MixinOilTweakEventHandler {
     @Overwrite(remap = false)
     @SideOnly(Side.CLIENT)
     public void onPlayerClientUpdate(TickEvent.ClientTickEvent e) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
+        if (true) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -136,7 +135,7 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onBreakSpeed(PlayerEvent.BreakSpeed e) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
+        if (true) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }
@@ -154,7 +153,7 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onTeleportAttempt(EnderTeleportEvent e) {
-        if (OptimizationsandTweaksConfig.enableMixinOilTweakEventHandler) {
+        if (true) {
             if (!BuildCraftOilTweak.config.isOilDense()) {
                 return;
             }

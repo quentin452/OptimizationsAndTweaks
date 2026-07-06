@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.utilsformods.industrialcraft2.FixedPriorityQueue2;
 import fr.iamacat.optimizationsandtweaks.utilsformods.industrialcraft2.ThreadFactoryImpl2;
 import ic2.core.util.PriorityExecutor;
@@ -33,7 +32,7 @@ public class MixinPriorityExecutor extends ThreadPoolExecutor {
      */
     @Inject(method = "executeAll", at = @At("HEAD"), remap = false, cancellable = true)
     public void executeAll(List<? extends Runnable> tasks, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinPriorityExecutor) {
+        if (true) {
             if (!this.isShutdown()) {
                 this.getQueue()
                     .addAll(tasks);

@@ -15,7 +15,6 @@ import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(AnimTickHandler.class)
 public class MixinAnimTickHandler {
@@ -25,7 +24,7 @@ public class MixinAnimTickHandler {
 
     @Inject(method = "addEntity", at = @At("HEAD"), remap = false, cancellable = true)
     public void addEntity(IMCAnimatedEntity entity, CallbackInfo ci) {
-        if (OptimizationsandTweaksConfig.enableMixinAnimTickHandler) {
+        if (true) {
             this.optimizationsAndTweaks$activeEntities.add(entity);
             ci.cancel();
         }

@@ -13,8 +13,6 @@ import org.spongepowered.asm.mixin.*;
 
 import com.pam.harvestcraft.WorldGenPamFruitTree;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(WorldGenPamFruitTree.class)
 public class MixinFixWorldGenPamFruitTree extends WorldGenAbstractTree {
 
@@ -45,7 +43,7 @@ public class MixinFixWorldGenPamFruitTree extends WorldGenAbstractTree {
     @Override
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5) {
 
-        if (OptimizationsandTweaksConfig.enableMixinFixWorldGenPamFruitTree) {
+        if (true) {
             int l = par2Random.nextInt(3) + this.minTreeHeight;
             boolean flag = true;
             if (par4 >= 1 && par4 + l + 1 <= 256) {

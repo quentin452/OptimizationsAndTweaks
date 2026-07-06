@@ -17,8 +17,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(value = Tessellator.class, priority = 999)
 public class MixinTesselator {
 
@@ -116,7 +114,7 @@ public class MixinTesselator {
      */
     @Overwrite
     public int draw() {
-        if (OptimizationsandTweaksConfig.enableMixinTesselator) {
+        if (true) {
             if (!this.isDrawing) {
                 throw new IllegalStateException("Not tesselating!");
             } else {

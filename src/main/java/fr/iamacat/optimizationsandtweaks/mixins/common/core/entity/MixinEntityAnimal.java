@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.*;
 
-import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
-
 @Mixin(EntityAnimal.class)
 public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimals {
 
@@ -32,7 +30,7 @@ public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimal
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (OptimizationsandTweaksConfig.enableMixinEntityAnimal) {
+        if (true) {
             super.onLivingUpdate();
 
             if (this.getGrowingAge() != 0) {

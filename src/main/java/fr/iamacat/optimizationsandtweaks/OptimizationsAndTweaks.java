@@ -10,6 +10,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import fr.iamacat.optimizationsandtweaks.asm.Mixin;
+import fr.iamacat.optimizationsandtweaks.asm.MixinConfigResolver;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.AsyncPathfindingTickHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
@@ -81,7 +83,8 @@ public class OptimizationsAndTweaks {
         }
 
         if (FMLCommonHandler.instance()
-            .findContainerFor("mam") != null && OptimizationsandTweaksConfig.enableMixinMAMWorldGenerator) {
+            .findContainerFor("mam") != null
+            && MixinConfigResolver.INSTANCE.isEnabled(Mixin.common_mythandmonsters_MixinMAMWorldGenerator)) {
             File configFile = new File(event.getModConfigurationDirectory(), "MYTH_AND_MONSTER_structureconfig.cfg");
             ModConfig modConfig = new ModConfig(configFile, event);
             FileInjector.setModConfig(modConfig);
@@ -89,7 +92,7 @@ public class OptimizationsAndTweaks {
         }
         if (FMLCommonHandler.instance()
             .findContainerFor("ExpOre") != null
-            && OptimizationsandTweaksConfig.enableMixinWorldGenHandlerExperienceOre) {
+            && MixinConfigResolver.INSTANCE.isEnabled(Mixin.common_experienceore_MixinWorldGenHandlerExperienceOre)) {
             ExperienceOreConfig.setupAndLoad(event);
         }
     }
