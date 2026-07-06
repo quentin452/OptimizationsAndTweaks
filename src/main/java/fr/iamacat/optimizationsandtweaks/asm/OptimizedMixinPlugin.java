@@ -17,12 +17,16 @@ public class OptimizedMixinPlugin implements IMixinPlugin {
     private final Logger logger = IMixinPlugin.createLogger("OptimizationsAndTweaks");
 
     public OptimizedMixinPlugin() {
+        // Resolve mixins FIRST: its one-shot migrator reads the old
+        // optimizationsandtweaks.cfg while it still holds the pre-refactor
+        // per-mixin booleans. ConfigurationManager.initialize() rewrites that
+        // file down to the surviving fields, so it must run AFTER the migrator.
+        MixinConfigResolver.INSTANCE.load();
         try {
             ConfigurationManager.initialize(OptimizationsandTweaksConfig.class);
         } catch (ConfigException e) {
             throw new RuntimeException(e);
         }
-        MixinConfigResolver.INSTANCE.load();
     }
 
     @Override
