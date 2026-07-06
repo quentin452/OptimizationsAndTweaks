@@ -135,5 +135,8 @@ public class OptimizationsAndTweaks {
             FMLLog.info("[OptimizationsAndTweaks] Shutting down async pathfinding executor");
             AsyncPathfindingExecutor.shutdown();
         }
+        // Aspects are inferred lazily IN-GAME (after LoadComplete): the world
+        // exit is the only moment the cache actually has something to persist.
+        fr.iamacat.optimizationsandtweaks.utilsformods.thaumcraft.AspectCache.saveIfDirty();
     }
 }
