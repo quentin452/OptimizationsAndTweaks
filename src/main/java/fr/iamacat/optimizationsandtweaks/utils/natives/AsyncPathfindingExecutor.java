@@ -1,47 +1,44 @@
 package fr.iamacat.optimizationsandtweaks.utils.natives;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.world.IBlockAccess;
 
 import cpw.mods.fml.common.FMLLog;
 
 /**
- * Java wrapper for Rust async pathfinding executor
- * 
- * This provides a clean Java API over the native Rust thread pool,
- * giving you all the benefits of Rust's performance and safety
- * with Java's ease of use.
- * 
- * Benefits:
- * - Concurrent Processing: Multiple pathfinding requests processed simultaneously
- * - Non-blocking: Game thread never blocks waiting for pathfinding
- * - Resource Management: Controlled worker threads prevent system overload
- * - Progress Tracking: Check completion status without blocking
- * - Backpressure: Queue management prevents memory exhaustion
+ * Java front-end for the native Rust async pathfinding executor.
+ *
+ * <p>
+ * Threading contract (this is the whole point of the class):
+ * <ul>
+ * <li>{@link #submitSnapshotPathfinding} is called on the <b>server thread</b> during an
+ * entity AI tick. The caller has already copied the relevant block region into an immutable
+ * {@code byte[]} snapshot, so the Rust worker threads never touch the live {@code World}.</li>
+ * <li>{@link #pollResults()} is called on the <b>server tick</b> only. It drains completed
+ * results and runs their callbacks on the server thread, so applying a path
+ * ({@code navigator.setPath}) is a same-thread mutation.</li>
+ * </ul>
+ * Neither world reads nor entity mutation ever happen on a worker thread. That is the
+ * difference from the previous "direct world access via JNI" implementation, which read the
+ * world and mutated entities off-thread and could crash/corrupt intermittently.
  */
 public class AsyncPathfindingExecutor {
 
     private static boolean initialized = false;
     private static final AtomicLong nextRequestId = new AtomicLong(1);
-    private static ExecutorService executor;
 
-    // Track pending requests and their callbacks
+    // Track pending requests and their callbacks (keyed by request id).
     private static final ConcurrentHashMap<Long, RequestContext> pendingRequests = new ConcurrentHashMap<>();
 
     /**
-     * Initialize the async pathfinding executor
-     * 
-     * @param workerCount Number of worker threads (recommended: CPU cores / 2)
+     * Initialize the native Rust async executor.
+     *
+     * @param workerCount Number of Rust worker threads
      * @param queueSize   Maximum queue size for backpressure
      */
     public static synchronized void initialize(int workerCount, int queueSize) {
@@ -56,18 +53,19 @@ public class AsyncPathfindingExecutor {
         }
 
         try {
-            executor = Executors.newFixedThreadPool(Math.max(1, workerCount));
+            RustPathfinding.initAsyncExecutor(Math.max(1, workerCount), Math.max(1, queueSize));
             initialized = true;
-            FMLLog.info("[AsyncPathfinding] Initialized with %d workers (direct world accessor)", workerCount);
+            FMLLog.info(
+                "[AsyncPathfinding] Native executor initialized with %d workers (immutable region snapshots)",
+                Math.max(1, workerCount));
         } catch (Throwable e) {
-            FMLLog.warning("[AsyncPathfinding] Failed to initialize executor: %s", e.getMessage());
+            FMLLog.warning("[AsyncPathfinding] Failed to initialize native executor: %s", e.getMessage());
             initialized = false;
-            return;
         }
     }
 
     /**
-     * Initialize with automatic worker count based on CPU cores
+     * Initialize with automatic worker count based on CPU cores.
      */
     public static synchronized void initializeAuto() {
         int cores = Runtime.getRuntime()
@@ -80,127 +78,82 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
-     * Check if the executor is initialized
+     * Check if the executor is initialized.
      */
     public static boolean isInitialized() {
         return initialized;
     }
 
     /**
-     * Submit an async pathfinding request with explicit pathing flags
+     * Submit a pathfinding request against a pre-encoded, immutable block-region snapshot.
+     * <b>Must be called on the server thread</b> (the snapshot must be taken there too).
      *
-     * @param isWoodenDoorAllowed    whether wooden doors are considered passable
-     * @param isMovementBlockAllowed whether movement-blocking tiles are considered passable
-     * @param isPathingInWater       whether the entity is pathing in water
-     * @param canEntityDrown         whether the entity can drown
+     * @param priority           scheduling hint for the Rust queue
+     * @param offsetX/Y/Z        world coordinate of the snapshot's minimum corner
+     * @param width/height/depth snapshot dimensions (x/y/z)
+     * @param blockCache         encoded block codes, layout [y][z][x] (x fastest) — see
+     *                           {@link RustPathfindingBridge#encodeBlockCache}
+     * @param onComplete         run on the server tick when a path is found (may be null)
+     * @param onFailure          run on the server tick when no path is found (may be null)
+     * @return request id, or 0 if the native queue is full (caller should fall back to vanilla)
      */
-    public static long submitPathfinding(IBlockAccess world, Entity entity, double targetX, double targetY,
-        double targetZ, float maxDistance, int priority, boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
-        boolean isPathingInWater, boolean canEntityDrown) {
+    public static long submitSnapshotPathfinding(Entity entity, int priority, boolean isWoodenDoorAllowed,
+        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown, int offsetX, int offsetY,
+        int offsetZ, int width, int height, int depth, byte[] blockCache, double targetX, double targetY,
+        double targetZ, float maxDistance, Consumer<PathEntity> onComplete, Consumer<String> onFailure) {
 
         if (!initialized) {
-            FMLLog.warning("[AsyncPathfinding] Not initialized");
             return 0;
         }
 
         long requestId = nextRequestId.getAndIncrement();
 
-        pendingRequests.put(requestId, new RequestContext(entity));
-        executor.submit(() -> {
-            try {
-                PathEntity path = RustPathfindingBridge.findPathDirect(
-                    world,
-                    entity,
-                    targetX,
-                    targetY,
-                    targetZ,
-                    maxDistance,
-                    isWoodenDoorAllowed,
-                    isMovementBlockAllowed,
-                    isPathingInWater,
-                    canEntityDrown);
+        RequestContext context = new RequestContext(entity);
+        context.onComplete = onComplete;
+        context.onFailure = onFailure;
+        pendingRequests.put(requestId, context);
 
-                RequestContext context = pendingRequests.remove(requestId);
-                if (context != null) {
-                    if (path != null && context.onComplete != null) {
-                        context.onComplete.accept(path);
-                    } else if (path == null && context.onFailure != null) {
-                        context.onFailure.accept("No path found");
-                    }
-                }
-            } catch (Throwable e) {
-                RequestContext context = pendingRequests.remove(requestId);
-                if (context != null && context.onFailure != null) {
-                    context.onFailure.accept("Error: " + e.getMessage());
-                }
-                FMLLog.warning("[AsyncPathfinding] Error in direct pathfinding task: %s", e.getMessage());
-            }
-        });
-
-        return requestId;
-    }
-
-    /**
-     * Submit with automatic priority and explicit pathing flags
-     */
-    public static long submitPathfinding(IBlockAccess world, Entity entity, double targetX, double targetY,
-        double targetZ, float maxDistance, boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
-        boolean isPathingInWater, boolean canEntityDrown) {
-
-        int priority = determinePriority(entity, world);
-        return submitPathfinding(
-            world,
-            entity,
-            targetX,
-            targetY,
-            targetZ,
-            maxDistance,
+        long accepted = RustPathfinding.submitAsyncPathfinding(
+            requestId,
             priority,
             isWoodenDoorAllowed,
             isMovementBlockAllowed,
             isPathingInWater,
-            canEntityDrown);
-    }
-
-    /**
-     * Submit pathfinding with a callback
-     * 
-     * @param onComplete Callback invoked when pathfinding completes (may be null)
-     * @param onFailure  Callback invoked when pathfinding fails (may be null)
-     * @return Request ID, or 0 if queue is full
-     */
-    public static long submitPathfindingWithCallback(IBlockAccess world, Entity entity, double targetX, double targetY,
-        double targetZ, float maxDistance, Consumer<PathEntity> onComplete, Consumer<String> onFailure,
-        boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown) {
-
-        long requestId = submitPathfinding(
-            world,
-            entity,
+            canEntityDrown,
+            offsetX,
+            offsetY,
+            offsetZ,
+            width,
+            height,
+            depth,
+            blockCache,
+            entity.posX,
+            entity.posY,
+            entity.posZ,
             targetX,
             targetY,
             targetZ,
+            (float) entity.width,
+            (float) entity.height,
             maxDistance,
-            determinePriority(entity, world),
-            isWoodenDoorAllowed,
-            isMovementBlockAllowed,
-            isPathingInWater,
-            canEntityDrown);
+            entity.isInWater(),
+            entity.getMaxSafePointTries());
 
-        if (requestId != 0) {
-            RequestContext context = pendingRequests.get(requestId);
-            if (context != null) {
-                context.onComplete = onComplete;
-                context.onFailure = onFailure;
-            }
+        if (accepted == 0) {
+            // Queue full or executor unavailable: drop the context, caller runs vanilla.
+            pendingRequests.remove(requestId);
+            return 0;
         }
+
         return requestId;
     }
 
     /**
-     * Poll for completed pathfinding results
-     * Call this periodically (e.g., in a tick handler) to process results
-     * 
-     * @return Number of results processed
+     * Poll for completed pathfinding results and run their callbacks.
+     * <b>Must be called on the server tick only</b> so callbacks mutate entities on the
+     * server thread.
+     *
+     * @return number of results processed
      */
     public static int pollResults() {
         if (!initialized) {
@@ -210,7 +163,6 @@ public class AsyncPathfindingExecutor {
         int processed = 0;
         int[] outRequestId = new int[1];
 
-        // Process all available results
         while (true) {
             long pathHandle = RustPathfinding.tryRecvAsyncResult(outRequestId);
 
@@ -224,7 +176,7 @@ public class AsyncPathfindingExecutor {
 
             if (context != null) {
                 try {
-                    // Convert Rust path to Java PathEntity
+                    // pathHandle < 0 is the "no path" sentinel; convertRustPath returns null for it.
                     PathEntity path = convertRustPath(pathHandle);
 
                     if (path != null && context.onComplete != null) {
@@ -238,6 +190,13 @@ public class AsyncPathfindingExecutor {
                     }
                     FMLLog.warning("[AsyncPathfinding] Error processing result: %s", e.getMessage());
                 }
+            } else {
+                // Orphan result (entity died / request cancelled): free the native handle.
+                if (pathHandle > 0) {
+                    try (RustPathfinding.PathEntityHandle h = new RustPathfinding.PathEntityHandle(pathHandle)) {
+                        // close() frees it
+                    } catch (Throwable ignore) {}
+                }
             }
 
             processed++;
@@ -247,7 +206,7 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
-     * Get current executor statistics
+     * Get current executor statistics.
      * Returns: [total_submitted, total_completed, total_failed, total_timed_out, queue_size, active_workers,
      * worker_count]
      */
@@ -259,7 +218,7 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
-     * Get a formatted statistics string
+     * Get a formatted statistics string.
      */
     public static String getStatisticsString() {
         int[] stats = getStatistics();
@@ -275,22 +234,21 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
-     * Cancel a pending request
-     * Note: If the request is already being processed, it cannot be cancelled
+     * Cancel a pending request. If the result already came back it is a no-op.
      */
     public static void cancelRequest(long requestId) {
         pendingRequests.remove(requestId);
     }
 
     /**
-     * Get the number of pending requests
+     * Get the number of pending requests.
      */
     public static int getPendingCount() {
         return pendingRequests.size();
     }
 
     /**
-     * Shutdown the executor gracefully
+     * Shutdown the native executor gracefully.
      */
     public static synchronized void shutdown() {
         if (!initialized) {
@@ -301,82 +259,17 @@ public class AsyncPathfindingExecutor {
         FMLLog.info(getStatisticsString());
 
         try {
-            if (executor != null) {
-                executor.shutdownNow();
-                executor = null;
-            }
+            RustPathfinding.shutdownAsyncExecutor();
         } catch (Throwable ignore) {}
         pendingRequests.clear();
         initialized = false;
     }
 
     /**
-     * Determine priority based on entity characteristics
-     */
-    private static int determinePriority(Entity entity, IBlockAccess world) {
-        // Boost priority for entities with an active attack target to shorten queue latency
-        try {
-            if (entity instanceof EntityLiving) {
-                EntityLiving el = (EntityLiving) entity;
-                if (el.getAttackTarget() != null && el.getAttackTarget()
-                    .isEntityAlive()) {
-                    return 80; // treat as high priority
-                }
-            }
-        } catch (Throwable ignore) {}
-
-        if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
-            return 100;
-        }
-
-        if ((entity instanceof EntityLiving && ((EntityLiving) entity).hasCustomNameTag())
-            || (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getMaxHealth() > 100.0f)) {
-            return 100;
-        }
-
-        // Hostile mobs
-        if (entity instanceof net.minecraft.entity.monster.EntityMob) {
-            // Distance to nearest player
-            if (world instanceof net.minecraft.world.World) {
-                net.minecraft.world.World worldObj = (net.minecraft.world.World) world;
-                net.minecraft.entity.player.EntityPlayer nearestPlayer = worldObj
-                    .getClosestPlayerToEntity(entity, -1.0);
-
-                if (nearestPlayer != null) {
-                    double distance = entity.getDistanceToEntity(nearestPlayer);
-                    if (distance < 32.0) {
-                        return 75; // HIGH - hostile near player
-                    } else if (distance < 64.0) {
-                        return 50; // NORMAL
-                    }
-                }
-            }
-            return 50; // NORMAL
-        }
-
-        // Passive mobs - check distance to player
-        if (world instanceof net.minecraft.world.World) {
-            net.minecraft.world.World worldObj = (net.minecraft.world.World) world;
-            net.minecraft.entity.player.EntityPlayer nearestPlayer = worldObj.getClosestPlayerToEntity(entity, -1.0);
-
-            if (nearestPlayer != null) {
-                double distance = entity.getDistanceToEntity(nearestPlayer);
-                if (distance < 64.0) {
-                    return 50; // NORMAL
-                } else if (distance < 128.0) {
-                    return 25; // LOW
-                }
-            }
-        }
-
-        return 10; // BACKGROUND
-    }
-
-    /**
-     * Convert Rust path handle to Java PathEntity
+     * Convert a Rust path handle to a Java PathEntity, freeing the native handle.
      */
     private static PathEntity convertRustPath(long pathHandle) {
-        if (pathHandle == 0) {
+        if (pathHandle <= 0) {
             return null;
         }
 
@@ -387,7 +280,6 @@ public class AsyncPathfindingExecutor {
                 return null;
             }
 
-            // Convert flattened array to PathPoint array
             int pointCount = allPoints.length / 3;
             PathPoint[] points = new PathPoint[pointCount];
 
@@ -412,7 +304,64 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
-     * Context for a pending pathfinding request
+     * Determine priority based on entity characteristics. Called on the server thread.
+     */
+    public static int determinePriority(Entity entity) {
+        try {
+            if (entity instanceof net.minecraft.entity.EntityLiving) {
+                net.minecraft.entity.EntityLiving el = (net.minecraft.entity.EntityLiving) entity;
+                if (el.getAttackTarget() != null && el.getAttackTarget()
+                    .isEntityAlive()) {
+                    return 80; // high priority: actively chasing
+                }
+            }
+        } catch (Throwable ignore) {}
+
+        if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
+            return 100;
+        }
+
+        if ((entity instanceof net.minecraft.entity.EntityLiving
+            && ((net.minecraft.entity.EntityLiving) entity).hasCustomNameTag())
+            || (entity instanceof net.minecraft.entity.EntityLivingBase
+                && ((net.minecraft.entity.EntityLivingBase) entity).getMaxHealth() > 100.0f)) {
+            return 100;
+        }
+
+        if (entity instanceof net.minecraft.entity.monster.EntityMob) {
+            if (entity.worldObj != null) {
+                net.minecraft.entity.player.EntityPlayer nearestPlayer = entity.worldObj
+                    .getClosestPlayerToEntity(entity, -1.0);
+                if (nearestPlayer != null) {
+                    double distance = entity.getDistanceToEntity(nearestPlayer);
+                    if (distance < 32.0) {
+                        return 75;
+                    } else if (distance < 64.0) {
+                        return 50;
+                    }
+                }
+            }
+            return 50;
+        }
+
+        if (entity.worldObj != null) {
+            net.minecraft.entity.player.EntityPlayer nearestPlayer = entity.worldObj
+                .getClosestPlayerToEntity(entity, -1.0);
+            if (nearestPlayer != null) {
+                double distance = entity.getDistanceToEntity(nearestPlayer);
+                if (distance < 64.0) {
+                    return 50;
+                } else if (distance < 128.0) {
+                    return 25;
+                }
+            }
+        }
+
+        return 10; // background
+    }
+
+    /**
+     * Context for a pending pathfinding request.
      */
     private static class RequestContext {
 

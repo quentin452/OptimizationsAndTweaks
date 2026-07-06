@@ -1,207 +1,28 @@
 package fr.iamacat.optimizationsandtweaks.utils.natives;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
 
 /**
- * Bridge class to convert between Minecraft pathfinding and Rust pathfinding
- * 
+ * Encodes Minecraft block regions into the compact byte format the Rust pathfinder consumes.
+ *
+ * <p>
+ * Only the snapshot path remains: the caller copies a region of the world into an immutable
+ * {@code byte[]} on the server thread, then hands it to the async executor. There is no live
+ * world access from worker threads anymore (the old {@code WorldAccessAdapter} / per-block JNI
+ * path, which read the world off-thread, has been removed).
  */
 public class RustPathfindingBridge {
 
-    private static final Map<Integer, PathFinderEntry> PATHFINDER_CACHE = new ConcurrentHashMap<Integer, PathFinderEntry>();
-
-    private static class PathFinderEntry {
-
-        RustPathfinding.PathFinderHandle handle;
-        boolean woodenDoorAllowed;
-        boolean movementBlockAllowed;
-        boolean pathingInWater;
-        boolean canEntityDrown;
-
-        PathFinderEntry(RustPathfinding.PathFinderHandle handle, boolean w, boolean m, boolean p, boolean d) {
-            this.handle = handle;
-            this.woodenDoorAllowed = w;
-            this.movementBlockAllowed = m;
-            this.pathingInWater = p;
-            this.canEntityDrown = d;
-        }
-    }
-
-    private static RustPathfinding.PathFinderHandle getOrCreatePathFinder(Entity entity, boolean isWoodenDoorAllowed,
-        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown) {
-        int key = entity.getEntityId();
-        PathFinderEntry entry = PATHFINDER_CACHE.get(key);
-        if (entry != null) {
-            if (entry.woodenDoorAllowed == isWoodenDoorAllowed && entry.movementBlockAllowed == isMovementBlockAllowed
-                && entry.pathingInWater == isPathingInWater
-                && entry.canEntityDrown == canEntityDrown) {
-                return entry.handle;
-            }
-            // Flags changed: replace the handle
-            try {
-                entry.handle.close();
-            } catch (Throwable t) {
-                // ignore
-            }
-        }
-        RustPathfinding.PathFinderHandle newHandle = new RustPathfinding.PathFinderHandle(
-            isWoodenDoorAllowed,
-            isMovementBlockAllowed,
-            isPathingInWater,
-            canEntityDrown);
-        PATHFINDER_CACHE.put(
-            key,
-            new PathFinderEntry(
-                newHandle,
-                isWoodenDoorAllowed,
-                isMovementBlockAllowed,
-                isPathingInWater,
-                canEntityDrown));
-        return newHandle;
-    }
-
     /**
-     * Finds a path using Rust pathfinding with direct world access (no pre-encoding).
-     * This method passes the world object directly to Rust, which queries blocks on-demand.
-     * 
-     * @param world                  The world
-     * @param entity                 The entity
-     * @param targetX                Target X coordinate
-     * @param targetY                Target Y coordinate
-     * @param targetZ                Target Z coordinate
-     * @param maxDistance            Maximum pathfinding distance
-     * @param isWoodenDoorAllowed    Whether wooden doors are passable
-     * @param isMovementBlockAllowed Whether movement-blocking blocks are allowed
-     * @param isPathingInWater       Whether pathfinding can occur in water
-     * @param canEntityDrown         Whether the entity can drown
-     * @return PathEntity or null if no path found
-     */
-    public static PathEntity findPathDirect(IBlockAccess world, Entity entity, double targetX, double targetY,
-        double targetZ, float maxDistance, boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
-        boolean isPathingInWater, boolean canEntityDrown) {
-
-        if (!RustPathfinding.isAvailable()) {
-            return null;
-        }
-
-        RustPathfinding.PathFinderHandle handleObj = getOrCreatePathFinder(
-            entity,
-            isWoodenDoorAllowed,
-            isMovementBlockAllowed,
-            isPathingInWater,
-            canEntityDrown);
-        long handle = handleObj.getHandle();
-
-        float width = (float) entity.width;
-        float height = (float) entity.height;
-
-        // Create a world adapter that Rust can query directly
-        WorldAccessAdapter adapter = new WorldAccessAdapter(world);
-
-        // Call Rust pathfinding with direct world access (no pre-encoding)
-        long pathEntityHandle = RustPathfinding.findPathDirectWorld(
-            handle,
-            adapter,
-            entity.posX,
-            entity.posY,
-            entity.posZ,
-            targetX,
-            targetY,
-            targetZ,
-            width,
-            height,
-            maxDistance,
-            entity.isInWater(),
-            entity.getMaxSafePointTries());
-
-        if (pathEntityHandle == 0L) {
-            return null;
-        }
-
-        PathPoint[] points;
-        try (RustPathfinding.PathEntityHandle rustPath = new RustPathfinding.PathEntityHandle(pathEntityHandle)) {
-            int[] allPoints = rustPath.getAllPoints();
-            if (allPoints == null || allPoints.length == 0) {
-                return null;
-            }
-            int numPoints = allPoints.length / 3;
-            points = new PathPoint[numPoints];
-            for (int i = 0; i < numPoints; i++) {
-                int x = allPoints[i * 3];
-                int y = allPoints[i * 3 + 1];
-                int z = allPoints[i * 3 + 2];
-                points[i] = new PathPoint(x, y, z);
-            }
-        }
-
-        return new PathEntity(points);
-    }
-
-    /**
-     * World access adapter that Rust can query via JNI.
-     * This allows Rust to encode blocks on-demand during pathfinding.
-     * Now uses a global shared cache to avoid redundant queries.
-     */
-    public static class WorldAccessAdapter {
-
-        private final IBlockAccess world;
-
-        public WorldAccessAdapter(IBlockAccess world) {
-            this.world = world;
-        }
-
-        /**
-         * Called by Rust via JNI to get block type code.
-         * Returns: 0=Air,1=Solid,2=Water,3=Lava,4=WoodenDoor,5=Trapdoor,6=Fence,7=FenceGate,etc.
-         * OPTIMIZED: Uses global shared cache to avoid redundant world queries.
-         */
-        public byte getBlockTypeCode(int x, int y, int z) {
-            // Cache miss - query world and cache result
-            byte blockType = encodeBlock(world, x, y, z);
-            int metadata = 0;
-            try {
-                metadata = world.getBlockMetadata(x, y, z);
-            } catch (Throwable ignore) {}
-
-            return blockType;
-        }
-
-        /**
-         * Called by Rust via JNI to get block metadata.
-         * OPTIMIZED: Uses global shared cache.
-         */
-        public int getBlockMetadata(int x, int y, int z) {
-            // Cache miss - query world
-            try {
-                return world.getBlockMetadata(x, y, z);
-            } catch (Throwable t) {
-                return 0;
-            }
-        }
-
-        /**
-         * Called by Rust via JNI to check if block can see sky.
-         */
-        public boolean canBlockSeeSky(int x, int y, int z) {
-            try {
-                return world.getBlock(x, y, z)
-                    .getMaterial()
-                    .isOpaque() == false;
-            } catch (Throwable t) {
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Encode a region of blocks into a byte array for async pathfinding
-     * This is used by AsyncPathfindingExecutor to prepare block data
+     * Encode a region of blocks into a byte array for async pathfinding.
+     *
+     * <p>
+     * Layout matches the Rust {@code CachedWorldAccess}: index = {@code y*(width*depth) + z*width + x}
+     * (x varies fastest). {@code offsetX/Y/Z} is the world coordinate of the minimum corner; the Rust
+     * side treats anything outside the region as air.
+     *
+     * <p>
+     * Must run on the server thread (it reads the live world).
      */
     public static byte[] encodeBlockCache(IBlockAccess world, int offsetX, int offsetY, int offsetZ, int width,
         int height, int depth) {
@@ -211,11 +32,7 @@ public class RustPathfindingBridge {
         for (int y = 0; y < height; y++) {
             for (int z = 0; z < depth; z++) {
                 for (int x = 0; x < width; x++) {
-                    int worldX = offsetX + x;
-                    int worldY = offsetY + y;
-                    int worldZ = offsetZ + z;
-
-                    cache[index++] = encodeBlock(world, worldX, worldY, worldZ);
+                    cache[index++] = encodeBlock(world, offsetX + x, offsetY + y, offsetZ + z);
                 }
             }
         }

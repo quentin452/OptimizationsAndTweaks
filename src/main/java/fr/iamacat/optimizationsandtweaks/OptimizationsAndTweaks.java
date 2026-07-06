@@ -110,6 +110,9 @@ public class OptimizationsAndTweaks {
             FMLCommonHandler.instance()
                 .bus()
                 .register(asyncTickHandler);
+            // LivingDeathEvent lives on the Forge bus, not the FML bus.
+            MinecraftForge.EVENT_BUS
+                .register(new fr.iamacat.optimizationsandtweaks.eventshandler.AsyncPathCleanupHandler());
             FMLLog.info("[OptimizationsAndTweaks] Async pathfinding tick handler registered");
         }
 

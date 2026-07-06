@@ -10,25 +10,32 @@ import CoroUtil.pathfinding.IPFCallback;
 import CoroUtil.pathfinding.PFCallbackItem;
 import CoroUtil.pathfinding.PFQueue;
 import fr.iamacat.optimizationsandtweaks.mixins.common.accessor.PathNavigateAccessor;
-import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
+import fr.iamacat.optimizationsandtweaks.utils.pathfinding.AsyncPathRequestDispatcher;
 
 @Mixin(PFQueue.class)
 public class MixinPFQueueTryPath {
 
     /**
-     * @reason Redirect to async pathfinding
+     * @reason Redirect to async pathfinding. Reached via PFQueue.getPath(...) from mob AI, i.e.
+     *         on the server thread, so the snapshot read is safe; the completion callback runs on
+     *         the server tick (never off-thread). Returns false to fall back to CoroUtil's own
+     *         pathfinding when the request is declined (region too large / native queue full).
      */
     @Overwrite
     public static boolean tryPath(Entity var1, int x, int y, int z, float var2, int priority, IPFCallback parCallback) {
         if (var1 instanceof EntityLiving) {
             EntityLiving entity = (EntityLiving) var1;
-            AsyncPathfindingExecutor.submitPathfindingWithCallback(
-                entity.worldObj,
+            long requestId = AsyncPathRequestDispatcher.submit(
                 entity,
+                entity.worldObj,
                 (double) x,
                 (double) y,
                 (double) z,
                 var2,
+                true, // isWoodenDoorAllowed
+                true, // isMovementBlockAllowed
+                ((PathNavigateAccessor) entity.getNavigator()).getCanSwim(),
+                !entity.canBreatheUnderwater(),
                 (path) -> {
                     if (path != null) {
                         if (parCallback != null) {
@@ -39,12 +46,8 @@ public class MixinPFQueueTryPath {
                         }
                     }
                 },
-                (error) -> {},
-                true, // isWoodenDoorAllowed
-                true, // isMovementBlockAllowed
-                ((PathNavigateAccessor) entity.getNavigator()).getCanSwim(),
-                !entity.canBreatheUnderwater());
-            return true;
+                (error) -> {});
+            return requestId != 0;
         }
         return false;
     }
