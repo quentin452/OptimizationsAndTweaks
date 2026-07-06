@@ -49,6 +49,7 @@ public enum Mixin implements IMixin {
     common_minestones_MixinMSEvents(Side.COMMON, require(TargetedMod.MINESTONES), "minestones.MixinMSEvents"),
     common_core_MixinBlockFluidClassic(Side.COMMON, always(), "core.MixinBlockFluidClassic"),
     common_core_MixinEntityRegistry(Side.COMMON, always(), "core.MixinEntityRegistry"),
+    common_core_MixinEnchantment(Side.COMMON, always(), "core.MixinEnchantment"),
     common_core_MixinWorldType(Side.COMMON, always(), "core.MixinWorldType"),
     common_core_MixinFMLClientHandler(Side.COMMON, always(), "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, always(), "core.MixinFMLServerHandler"),
