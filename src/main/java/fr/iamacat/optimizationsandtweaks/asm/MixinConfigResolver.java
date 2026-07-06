@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import com.falsepattern.lib.mixin.IMixin;
 
@@ -85,6 +86,10 @@ public final class MixinConfigResolver {
         try {
             cfg.load();
 
+            // One-shot import of the pre-refactor per-mixin booleans so existing pack
+            // configs that disabled individual mixins keep honouring those choices.
+            migrateLegacyConfig(cfg);
+
             coreEnabled = cfg.getBoolean(
                 "core",
                 "categories",
@@ -111,13 +116,7 @@ public final class MixinConfigResolver {
             }
 
             disabledMixins.addAll(
-                Arrays.asList(
-                    cfg.getStringList(
-                        "disabledMixins",
-                        "advanced",
-                        new String[0],
-                        "Exact Mixin enum entry names to force-disable, regardless of the category "
-                            + "toggles above. Use this for surgical opt-out / crash bisecting.")));
+                Arrays.asList(cfg.getStringList("disabledMixins", "advanced", new String[0], DISABLED_MIXINS_COMMENT)));
             forceEnabledMixins.addAll(
                 Arrays.asList(
                     cfg.getStringList(
@@ -132,6 +131,62 @@ public final class MixinConfigResolver {
             }
             loaded = true;
         }
+    }
+
+    private static final String DISABLED_MIXINS_COMMENT = "Exact Mixin enum entry names to force-disable, regardless of the category "
+        + "toggles above. Use this for surgical opt-out / crash bisecting.";
+
+    /**
+     * One-shot migration: before the refactor each mixin had its own
+     * {@code enableMixinX} boolean in {@code config/optimizationsandtweaks.cfg}. A pack that
+     * disabled some of them by setting {@code enableMixinX=false} would silently lose those
+     * choices once the fields are gone, re-enabling mixins it deliberately turned off. This
+     * translates every {@code enableMixin*=false} from the old file into a {@code disabledMixins}
+     * entry (matched to the enum entry whose mixin class name is {@code MixinX}), then records a
+     * flag so it never runs twice. Non-mixin {@code false} options (debuggers, rust profiler…)
+     * have no matching enum entry and are ignored. Coremod-safe: only Forge {@link Configuration}
+     * classes, no {@code net.minecraft.*}.
+     */
+    private void migrateLegacyConfig(Configuration cfg) {
+        boolean alreadyMigrated = cfg.getBoolean(
+            "migratedFromLegacyConfig",
+            "advanced",
+            false,
+            "Internal flag: set once the per-mixin booleans from the old "
+                + "optimizationsandtweaks.cfg have been imported into disabledMixins. "
+                + "Do not edit.");
+        if (alreadyMigrated) return;
+
+        File legacy = new File("config", "optimizationsandtweaks.cfg");
+        if (legacy.isFile()) {
+            Configuration old = new Configuration(legacy);
+            old.load();
+            Set<String> migrated = new TreeSet<>();
+            for (String categoryName : old.getCategoryNames()) {
+                for (Property property : old.getCategory(categoryName)
+                    .getValues()
+                    .values()) {
+                    String propName = property.getName();
+                    if (propName.startsWith("enableMixin") && "false".equalsIgnoreCase(property.getString())) {
+                        String mixinClassName = propName.substring("enable".length());
+                        for (Mixin mixin : Mixin.values()) {
+                            String path = mixin.getMixin();
+                            if (path.equals(mixinClassName) || path.endsWith("." + mixinClassName)) {
+                                migrated.add(mixin.name());
+                            }
+                        }
+                    }
+                }
+            }
+            if (!migrated.isEmpty()) {
+                Property disabled = cfg.get("advanced", "disabledMixins", new String[0], DISABLED_MIXINS_COMMENT);
+                Set<String> merged = new TreeSet<>(Arrays.asList(disabled.getStringList()));
+                merged.addAll(migrated);
+                disabled.set(merged.toArray(new String[0]));
+            }
+        }
+        cfg.get("advanced", "migratedFromLegacyConfig", false, null)
+            .set(true);
     }
 
     public boolean isEnabled(Mixin mixin) {
