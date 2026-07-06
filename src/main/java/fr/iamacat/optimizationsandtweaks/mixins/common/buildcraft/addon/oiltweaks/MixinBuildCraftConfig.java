@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Unique;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.oiltweak.integration.simplyjetpacks.BuildCraftConfig;
 import buildcraft.oiltweak.reference.Mods;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
 
 @Mixin(BuildCraftConfig.class)
@@ -25,7 +26,10 @@ public class MixinBuildCraftConfig {
         if (optimizationsAndTweaks$cachedIsOilDense) {
             return true;
         }
-        optimizationsAndTweaks$cachedIsOilDense = Mods.isBCEnergyLoaded && isOilDense_BC();
+        // Mods.isBCEnergyLoaded only exists in OilTweak >= 1.1.3 (the pack ships
+        // 1.1.0) — NoSuchFieldError at runtime. Mods.BuildCraftEnergy is a String
+        // constant, inlined at compile time, so FML Loader is version-proof here.
+        optimizationsAndTweaks$cachedIsOilDense = Loader.isModLoaded(Mods.BuildCraftEnergy) && isOilDense_BC();
         return optimizationsAndTweaks$cachedIsOilDense;
     }
 
