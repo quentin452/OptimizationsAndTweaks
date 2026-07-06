@@ -22,6 +22,7 @@ public class OptimizedMixinPlugin implements IMixinPlugin {
         } catch (ConfigException e) {
             throw new RuntimeException(e);
         }
+        MixinConfigResolver.INSTANCE.load();
     }
 
     @Override
