@@ -41,10 +41,16 @@ public class ThaumcraftCraftingManager2 {
         if (ThaumcraftApi.exists(item, meta)) {
             tags = getObjectTags(new ItemStack(item, 1, meta));
         } else {
-            optimizationsAndTweaks$history2.add(itemstack);
-            tags = optimizationsAndTweaks$generateTagsFromRecipes(item, meta == 32767 ? 0 : meta);
-            optimizationsAndTweaks$history2.remove(itemstack);
-            tags = capAspects(tags, 64);
+            AspectList cached = AspectCache.get(item, meta);
+            if (cached != null) {
+                tags = cached.size() == 0 ? null : cached;
+            } else {
+                optimizationsAndTweaks$history2.add(itemstack);
+                tags = optimizationsAndTweaks$generateTagsFromRecipes(item, meta == 32767 ? 0 : meta);
+                optimizationsAndTweaks$history2.remove(itemstack);
+                tags = capAspects(tags, 64);
+                AspectCache.put(item, meta, tags);
+            }
             ThaumcraftApi.registerObjectTag(new ItemStack(item, 1, meta), tags);
         }
         return tags;

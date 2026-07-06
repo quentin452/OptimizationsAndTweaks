@@ -11,6 +11,12 @@ public class OptimizationsandTweaksConfig {
     @Config.DefaultBoolean(false)
     @Config.RequiresWorldRestart
     public static boolean enablegetPendingBlockUpdatesDebugger;
+
+    @Config.Comment("Cache Thaumcraft inferred aspects to disk (config/optimizationsandtweaks/"
+        + "thaumcraft-aspect-cache.txt). First boot generates it (~unchanged), later boots skip the "
+        + "~40s recipe-graph inference. Auto-invalidated when the modlist or MineTweaker scripts change.")
+    @Config.DefaultBoolean(true)
+    public static boolean enableThaumcraftAspectCache;
     @Config.Comment("Optimize AxisAlignedBB Class.")
     @Config.DefaultBoolean(true)
     @Config.RequiresWorldRestart

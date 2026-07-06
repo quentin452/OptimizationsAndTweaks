@@ -9,9 +9,7 @@ import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.AsyncPathfindingTickHandler;
 import fr.iamacat.optimizationsandtweaks.eventshandler.EntityItemSpawningEventHandler;
@@ -58,17 +56,19 @@ public class OptimizationsAndTweaks {
                 RustPathfinding.initialize();
 
                 try {
-                    RustPathfinding.class
-                        .getDeclaredMethod("setProfilerEnabled", boolean.class)
+                    RustPathfinding.class.getDeclaredMethod("setProfilerEnabled", boolean.class)
                         .invoke(null, OptimizationsandTweaksConfig.enableRustProfiler);
-                    FMLLog.info("[OptimizationsAndTweaks] Rust profiler %s", OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
-                } catch (Throwable t) { }
+                    FMLLog.info(
+                        "[OptimizationsAndTweaks] Rust profiler %s",
+                        OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
+                } catch (Throwable t) {}
                 try {
-                    RustFFI.class
-                        .getDeclaredMethod("setPanicGuardEnabled", boolean.class)
+                    RustFFI.class.getDeclaredMethod("setPanicGuardEnabled", boolean.class)
                         .invoke(null, OptimizationsandTweaksConfig.enableRustPanicGuard);
-                    FMLLog.info("[OptimizationsAndTweaks] Rust panic guard %s", OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
-                } catch (Throwable t) { }
+                    FMLLog.info(
+                        "[OptimizationsAndTweaks] Rust panic guard %s",
+                        OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
+                } catch (Throwable t) {}
 
                 // Initialize async pathfinding executor
                 AsyncPathfindingExecutor.initializeAuto();
@@ -95,14 +95,21 @@ public class OptimizationsAndTweaks {
     }
 
     @Mod.EventHandler
+    public void loadComplete(cpw.mods.fml.common.event.FMLLoadCompleteEvent event) {
+        fr.iamacat.optimizationsandtweaks.utilsformods.thaumcraft.AspectCache.saveIfDirty();
+    }
+
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         // Register async pathfinding tick handler
         if (OptimizationsandTweaksConfig.enablePathFindingOptimizations && AsyncPathfindingExecutor.isInitialized()) {
             AsyncPathfindingTickHandler asyncTickHandler = new AsyncPathfindingTickHandler();
-            FMLCommonHandler.instance().bus().register(asyncTickHandler);
+            FMLCommonHandler.instance()
+                .bus()
+                .register(asyncTickHandler);
             FMLLog.info("[OptimizationsAndTweaks] Async pathfinding tick handler registered");
         }
-        
+
         if (OptimizationsandTweaksConfig.enableTidyChunkBackport) {
             TidyChunkBackportEventHandler eventHandler = new TidyChunkBackportEventHandler();
             MinecraftForge.EVENT_BUS.register(eventHandler);
@@ -120,7 +127,7 @@ public class OptimizationsAndTweaks {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {}
-    
+
     @Mod.EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
         // Shutdown async pathfinding executor

@@ -46,6 +46,13 @@ configurations {
     testCompileClasspath.extendsFrom(transformedMod, transformedModCompileOnly)
     testRuntimeClasspath.extendsFrom(transformedMod)
 }
+// The GTNH maven purges old jars: force dead transitive pins to live versions.
+configurations.all {
+    resolutionStrategy {
+        force("com.github.GTNewHorizons:BuildCraft:7.1.61")
+    }
+}
+
 dependencies {
     //Dev-only deps
     compileOnly("org.projectlombok:lombok:[1.18.24,1.19)") {
@@ -154,15 +161,15 @@ dependencies {
     implementation "curse.maven:manametal-531708:6943759-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
-    transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.10.11-GTNH:dev')
-    transformedMod("com.github.GTNewHorizons:harvestcraft:1.1.1-GTNH:dev")
-    transformedMod("com.github.GTNewHorizons:BuildCraftOilTweak:1.0.4:dev")
-    transformedMod("com.github.GTNewHorizons:Botania:1.10.1-GTNH:dev")
-    transformedMod("com.github.GTNewHorizons:ForbiddenMagic:0.6.7-GTNH:dev")
-    transformedMod("com.github.GTNewHorizons:Opis:1.3.8-mapless:dev")
-    transformedMod("com.github.GTNewHorizons:EnderIO:2.5.8:dev")
-    transformedMod("com.github.GTNewHorizons:OpenComputers:1.10.0-GTNH:sources")
-    transformedMod("com.github.GTNewHorizons:Mantle:0.3.7:sources")
+    transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.14.93-GTNH:dev')
+    transformedMod("com.github.GTNewHorizons:harvestcraft:1.3.9-GTNH:dev")
+    transformedMod("com.github.GTNewHorizons:BuildCraftOilTweak:1.1.3:dev")
+    transformedMod("com.github.GTNewHorizons:Botania:1.13.9-GTNH-pre:dev")
+    transformedMod("com.github.GTNewHorizons:ForbiddenMagic:0.9.9-GTNH:dev")
+    transformedMod("com.github.GTNewHorizons:Opis:1.4.8-mapless:dev")
+    transformedMod("com.github.GTNewHorizons:EnderIO:2.9.28:dev")
+    transformedMod("com.github.GTNewHorizons:OpenComputers:1.12.9-GTNH:sources")
+    transformedMod("com.github.GTNewHorizons:Mantle:0.5.4:sources")
 
     implementation files("libs/angelica-1.0.0-beta18.jar")
     implementation files("libs/fossilsarcheology-7.3.2.jar")
@@ -211,8 +218,8 @@ dependencies {
     implementation files("libs/CarbonConfig-1.7.10-1.1.5.jar")
     implementation files("libs/The Titans MC 1.7.10 version-0.5 beta v0712.jar")
 
-    compileOnly("com.github.GTNewHorizons:ThaumicHorizons:1.6.3:dev")
-    compileOnly("com.github.GTNewHorizons:HoloInventory:2.4.12-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:ThaumicHorizons:1.6.3:dev") { transitive = false } // Baubles 1.0.4 purged from the GTNH maven
+    compileOnly("com.github.GTNewHorizons:HoloInventory:2.5.9-GTNH-pre:dev")
 }
 
 jar {

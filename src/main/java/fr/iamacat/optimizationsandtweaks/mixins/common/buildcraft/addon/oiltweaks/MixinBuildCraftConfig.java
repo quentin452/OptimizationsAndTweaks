@@ -25,7 +25,7 @@ public class MixinBuildCraftConfig {
         if (optimizationsAndTweaks$cachedIsOilDense) {
             return true;
         }
-        optimizationsAndTweaks$cachedIsOilDense = Mods.isLoaded(Mods.BuildCraftEnergy) && isOilDense_BC();
+        optimizationsAndTweaks$cachedIsOilDense = Mods.isBCEnergyLoaded && isOilDense_BC();
         return optimizationsAndTweaks$cachedIsOilDense;
     }
 
