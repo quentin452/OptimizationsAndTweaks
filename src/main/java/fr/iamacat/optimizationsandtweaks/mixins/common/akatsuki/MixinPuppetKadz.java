@@ -35,47 +35,45 @@ public abstract class MixinPuppetKadz extends EntityMob implements IMCAnimatedEn
 
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
-        if (true) {
 
-            ++this.Fire;
+        ++this.Fire;
 
-            if (this.getHealth() < 10.0F) {
-                if (!animationHandler.isAnimationActive("dead")) {
-                    animationHandler.activateAnimation("dead", 0.0F);
-                }
-
-                ++this.field_70729_aU;
-
-                if (this.field_70729_aU > 40) {
-                    this.attackEntityFrom(DamageSource.cactus, 11111.0F);
-                }
+        if (this.getHealth() < 10.0F) {
+            if (!animationHandler.isAnimationActive("dead")) {
+                animationHandler.activateAnimation("dead", 0.0F);
             }
 
-            if (this.Fire == 200) {
-                if (!animationHandler.isAnimationActive("plivok")) {
-                    animationHandler.activateAnimation("plivok", 0.0F);
-                }
+            ++this.field_70729_aU;
 
-                if (!this.worldObj.isRemote) {
-                    double yOffset = this.boundingBox.minY + (double) (this.height / 2.0F)
-                        - (this.posY + (double) (this.height / 2.0F));
-                    float f1 = MathHelper.sqrt_float(5.0F) * 0.5F;
-                    EntityPlevok entitysmallfireball = new EntityPlevok(this.worldObj, this, 10);
-                    entitysmallfireball.posY = this.posY + (double) (this.height / 2.0F) + 0.5;
-                    this.worldObj.spawnEntityInWorld(entitysmallfireball);
-                    this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 200, 15));
-                    this.addPotionEffect(new PotionEffect(Potion.resistance.id, 80, 30));
-                }
-
-                this.Fire = 0;
+            if (this.field_70729_aU > 40) {
+                this.attackEntityFrom(DamageSource.cactus, 11111.0F);
             }
-
-            if (!animationHandler.isAnimationActive("hodba")) {
-                animationHandler.activateAnimation("hodba", 0.0F);
-            }
-
-            super.onUpdate();
         }
+
+        if (this.Fire == 200) {
+            if (!animationHandler.isAnimationActive("plivok")) {
+                animationHandler.activateAnimation("plivok", 0.0F);
+            }
+
+            if (!this.worldObj.isRemote) {
+                double yOffset = this.boundingBox.minY + (double) (this.height / 2.0F)
+                    - (this.posY + (double) (this.height / 2.0F));
+                float f1 = MathHelper.sqrt_float(5.0F) * 0.5F;
+                EntityPlevok entitysmallfireball = new EntityPlevok(this.worldObj, this, 10);
+                entitysmallfireball.posY = this.posY + (double) (this.height / 2.0F) + 0.5;
+                this.worldObj.spawnEntityInWorld(entitysmallfireball);
+                this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 200, 15));
+                this.addPotionEffect(new PotionEffect(Potion.resistance.id, 80, 30));
+            }
+
+            this.Fire = 0;
+        }
+
+        if (!animationHandler.isAnimationActive("hodba")) {
+            animationHandler.activateAnimation("hodba", 0.0F);
+        }
+
+        super.onUpdate();
         ci.cancel();
     }
 }

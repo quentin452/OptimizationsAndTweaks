@@ -24,25 +24,23 @@ public class MixinEventRegistry {
     @Overwrite(remap = false)
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (true) {
-            if (event.phase == TickEvent.Phase.START) {
-                THashMap<Integer, INetworkCache> networks = new THashMap<>();
-                networks.putAll(CacheRegistry.getNetworkCache());
-                if (networks.isEmpty()) {
-                    return;
+        if (event.phase == TickEvent.Phase.START) {
+            THashMap<Integer, INetworkCache> networks = new THashMap<>();
+            networks.putAll(CacheRegistry.getNetworkCache());
+            if (networks.isEmpty()) {
+                return;
+            }
+
+            for (Map.Entry<Integer, INetworkCache> integerINetworkCacheEntry : networks.entrySet()) {
+                INetworkCache cache = integerINetworkCacheEntry.getValue();
+                if (cache instanceof IRefreshCache) {
+                    ((IRefreshCache) cache).updateNetwork(cache.getNetworkID());
                 }
 
-                for (Map.Entry<Integer, INetworkCache> integerINetworkCacheEntry : networks.entrySet()) {
-                    INetworkCache cache = integerINetworkCacheEntry.getValue();
-                    if (cache instanceof IRefreshCache) {
-                        ((IRefreshCache) cache).updateNetwork(cache.getNetworkID());
-                    }
-
-                    if (CableRegistry.getCables(cache.getNetworkID())
-                        .size() == 0) {
-                        CacheRegistry.getNetworkCache()
-                            .remove(cache.getNetworkID());
-                    }
+                if (CableRegistry.getCables(cache.getNetworkID())
+                    .size() == 0) {
+                    CacheRegistry.getNetworkCache()
+                        .remove(cache.getNetworkID());
                 }
             }
         }

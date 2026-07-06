@@ -45,95 +45,89 @@ public class MixinCommonProxy {
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
-        if (true) {
 
-            EntityLivingBase e = event.entityLiving;
-            BlockCoord coord = this.getLadderCoord(e);
-            CatwalkEntityProperties catwalkEP = CatwalkUtil.getOrCreateEP(e);
+        EntityLivingBase e = event.entityLiving;
+        BlockCoord coord = this.getLadderCoord(e);
+        CatwalkEntityProperties catwalkEP = CatwalkUtil.getOrCreateEP(e);
 
-            if (coord.y < 0) {
-                return;
-            }
-
-            Block b = e.worldObj.getBlock(coord.x, coord.y, coord.z);
-            ICustomLadder icl = CustomLadderRegistry.getCustomLadderOrNull(b);
-            double upSpeed = icl.getLadderVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
-            double downSpeed = icl.getLadderFallVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
-
-            double motY = e.posY - catwalkEP.lastPosY;
-            double dY = e.posY - catwalkEP.lastStepY;
-
-            if (e.isCollidedHorizontally) {
-                if (e.motionY < upSpeed) {
-                    e.motionY = upSpeed;
-                    catwalkEP.highSpeedLadder = true;
-                }
-            } else {
-                if (downSpeed > 0.0) {
-                    e.fallDistance = 0.0F;
-                }
-
-                if (downSpeed > 0.0 && e.motionY < -downSpeed) {
-                    e.motionY = -downSpeed;
-                }
-
-                boolean shouldStopOnLadder = icl.shouldHoldOn(e.worldObj, coord.x, coord.y, coord.z, e);
-                boolean shouldClimbDown = icl.shouldClimbDown(e.worldObj, coord.x, coord.y, coord.z, e);
-                double climbDownSpeed = icl.getClimbDownVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
-
-                if (shouldStopOnLadder && !shouldClimbDown && e.motionY < 0.0) {
-                    e.motionY = 0.0;
-                }
-
-                if (shouldClimbDown && e.motionY <= 0.0) {
-                    e.motionY = -climbDownSpeed;
-                }
-
-                if (motY >= 0.0) {
-                    e.fallDistance = 0.0F;
-                }
-
-                double climbDownSpeedAbs = Math.abs(dY);
-                double distanceRequired = upSpeed * 10.0;
-
-                if (catwalkEP.isSlidingDownLadder && dY >= 0.0) {
-                    distanceRequired = 0.0;
-                }
-
-                catwalkEP.isSlidingDownLadder = dY < 0.0;
-
-                if (climbDownSpeedAbs > distanceRequired && distanceRequired > 0.0) {
-                    catwalkEP.lastStepX = e.posX;
-                    catwalkEP.lastStepY = e.posY;
-                    catwalkEP.lastStepZ = e.posZ;
-                    boolean shouldPlay = dY < 0.0
-                        ? icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, true)
-                        : icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, false);
-
-                    if (shouldPlay) {
-                        Block.SoundType soundtype = b.stepSound;
-                        e.playSound(
-                            soundtype.getStepResourcePath(),
-                            soundtype.getVolume() * 0.15F,
-                            soundtype.getPitch());
-                    }
-                }
-            }
-
-            catwalkEP.lastPosX = e.posX;
-            catwalkEP.lastPosY = e.posY;
-            catwalkEP.lastPosZ = e.posZ;
-
-            if (catwalkEP.highSpeedLadder && !e.isCollidedHorizontally) {
-                if (e.motionY > 0.2) {
-                    e.motionY = 0.2;
-                }
-
-                catwalkEP.highSpeedLadder = false;
-            }
-
-            ci.cancel();
+        if (coord.y < 0) {
+            return;
         }
+
+        Block b = e.worldObj.getBlock(coord.x, coord.y, coord.z);
+        ICustomLadder icl = CustomLadderRegistry.getCustomLadderOrNull(b);
+        double upSpeed = icl.getLadderVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+        double downSpeed = icl.getLadderFallVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+
+        double motY = e.posY - catwalkEP.lastPosY;
+        double dY = e.posY - catwalkEP.lastStepY;
+
+        if (e.isCollidedHorizontally) {
+            if (e.motionY < upSpeed) {
+                e.motionY = upSpeed;
+                catwalkEP.highSpeedLadder = true;
+            }
+        } else {
+            if (downSpeed > 0.0) {
+                e.fallDistance = 0.0F;
+            }
+
+            if (downSpeed > 0.0 && e.motionY < -downSpeed) {
+                e.motionY = -downSpeed;
+            }
+
+            boolean shouldStopOnLadder = icl.shouldHoldOn(e.worldObj, coord.x, coord.y, coord.z, e);
+            boolean shouldClimbDown = icl.shouldClimbDown(e.worldObj, coord.x, coord.y, coord.z, e);
+            double climbDownSpeed = icl.getClimbDownVelocity(e.worldObj, coord.x, coord.y, coord.z, e);
+
+            if (shouldStopOnLadder && !shouldClimbDown && e.motionY < 0.0) {
+                e.motionY = 0.0;
+            }
+
+            if (shouldClimbDown && e.motionY <= 0.0) {
+                e.motionY = -climbDownSpeed;
+            }
+
+            if (motY >= 0.0) {
+                e.fallDistance = 0.0F;
+            }
+
+            double climbDownSpeedAbs = Math.abs(dY);
+            double distanceRequired = upSpeed * 10.0;
+
+            if (catwalkEP.isSlidingDownLadder && dY >= 0.0) {
+                distanceRequired = 0.0;
+            }
+
+            catwalkEP.isSlidingDownLadder = dY < 0.0;
+
+            if (climbDownSpeedAbs > distanceRequired && distanceRequired > 0.0) {
+                catwalkEP.lastStepX = e.posX;
+                catwalkEP.lastStepY = e.posY;
+                catwalkEP.lastStepZ = e.posZ;
+                boolean shouldPlay = dY < 0.0 ? icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, true)
+                    : icl.shouldPlayStepSound(e.worldObj, coord.x, coord.y, coord.z, e, false);
+
+                if (shouldPlay) {
+                    Block.SoundType soundtype = b.stepSound;
+                    e.playSound(soundtype.getStepResourcePath(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+                }
+            }
+        }
+
+        catwalkEP.lastPosX = e.posX;
+        catwalkEP.lastPosY = e.posY;
+        catwalkEP.lastPosZ = e.posZ;
+
+        if (catwalkEP.highSpeedLadder && !e.isCollidedHorizontally) {
+            if (e.motionY > 0.2) {
+                e.motionY = 0.2;
+            }
+
+            catwalkEP.highSpeedLadder = false;
+        }
+
+        ci.cancel();
     }
 
     @Unique
@@ -192,54 +186,48 @@ public class MixinCommonProxy {
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
-        if (true) {
-            double catwalkSpeedBonus = CatwalkMod.speedModifier.getAmount()
-                * (double) CatwalkMod.options.speedPotionLevel;
-            if (event.phase == TickEvent.Phase.END) {
-                List<EntityPlayerMP> players = MinecraftServer.getServer()
-                    .getConfigurationManager().playerEntityList;
-                players.forEach(player -> {
-                    boolean shouldHaveModifier = this.isPlayerOnCatwalk(player);
-                    IAttributeInstance playerSpeedAttribute = player
-                        .getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-                    AttributeModifier catwalksModifier = playerSpeedAttribute
-                        .getModifier(CatwalkMod.speedModifier.getID());
-                    boolean hasModifier = catwalksModifier != null;
+        double catwalkSpeedBonus = CatwalkMod.speedModifier.getAmount() * (double) CatwalkMod.options.speedPotionLevel;
+        if (event.phase == TickEvent.Phase.END) {
+            List<EntityPlayerMP> players = MinecraftServer.getServer()
+                .getConfigurationManager().playerEntityList;
+            players.forEach(player -> {
+                boolean shouldHaveModifier = this.isPlayerOnCatwalk(player);
+                IAttributeInstance playerSpeedAttribute = player
+                    .getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+                AttributeModifier catwalksModifier = playerSpeedAttribute.getModifier(CatwalkMod.speedModifier.getID());
+                boolean hasModifier = catwalksModifier != null;
 
-                    if (hasModifier) {
-                        if (!shouldHaveModifier || catwalksModifier.getAmount() != catwalkSpeedBonus) {
-                            playerSpeedAttribute.removeModifier(CatwalkMod.speedModifier);
-                            hasModifier = false;
-                        }
+                if (hasModifier) {
+                    if (!shouldHaveModifier || catwalksModifier.getAmount() != catwalkSpeedBonus) {
+                        playerSpeedAttribute.removeModifier(CatwalkMod.speedModifier);
+                        hasModifier = false;
                     }
+                }
 
-                    if (shouldHaveModifier && !hasModifier) {
-                        catwalksModifier = new AttributeModifier(
-                            CatwalkMod.speedModifier.getID(),
-                            "catwalkmod.speedup",
-                            catwalkSpeedBonus,
-                            2);
-                        catwalksModifier.setSaved(false);
-                        playerSpeedAttribute.applyModifier(catwalksModifier);
-                    }
-                });
-            }
-            ci.cancel();
+                if (shouldHaveModifier && !hasModifier) {
+                    catwalksModifier = new AttributeModifier(
+                        CatwalkMod.speedModifier.getID(),
+                        "catwalkmod.speedup",
+                        catwalkSpeedBonus,
+                        2);
+                    catwalksModifier.setSaved(false);
+                    playerSpeedAttribute.applyModifier(catwalksModifier);
+                }
+            });
         }
+        ci.cancel();
     }
 
     @Inject(method = "blockPlaceEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
     public void blockPlaceEvent(BlockEvent.PlaceEvent event, CallbackInfo ci) {
-        if (true) {
-            if (event.blockSnapshot.replacedBlock instanceof BlockScaffold) {
-                CatwalkUtil.giveItemsToPlayer(
-                    event.player,
-                    event.blockSnapshot.replacedBlock
-                        .getDrops(event.world, event.x, event.y, event.z, event.blockMetadata, 0));
-            }
-            ci.cancel();
+        if (event.blockSnapshot.replacedBlock instanceof BlockScaffold) {
+            CatwalkUtil.giveItemsToPlayer(
+                event.player,
+                event.blockSnapshot.replacedBlock
+                    .getDrops(event.world, event.x, event.y, event.z, event.blockMetadata, 0));
         }
+        ci.cancel();
     }
 
 }

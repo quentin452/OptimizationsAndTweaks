@@ -104,19 +104,15 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
     @Inject(method = "canPickUpLoot", at = @At("HEAD"), remap = false, cancellable = true)
     public boolean canPickUpLoot(CallbackInfo ci) {
-        if (true) {
-            long currentTime = System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
 
-            if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {
-                return cachedCanPickUpLoot;
-            } else {
-                boolean canPickUpLoot = this.canPickUpLoot;
-                cachedCanPickUpLoot = canPickUpLoot;
-                lastCheckTime = currentTime;
-                return canPickUpLoot;
-            }
+        if (currentTime - lastCheckTime < CACHE_EXPIRATION_TIME) {
+            return cachedCanPickUpLoot;
+        } else {
+            boolean canPickUpLoot = this.canPickUpLoot;
+            cachedCanPickUpLoot = canPickUpLoot;
+            lastCheckTime = currentTime;
+            return canPickUpLoot;
         }
-        ci.cancel();
-        return false;
     }
 }

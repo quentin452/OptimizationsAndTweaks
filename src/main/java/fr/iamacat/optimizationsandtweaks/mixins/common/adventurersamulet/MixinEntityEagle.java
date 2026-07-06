@@ -34,30 +34,28 @@ public abstract class MixinEntityEagle extends EntityAnimal {
      */
     @Inject(method = "func_70636_d", at = @At("HEAD"), remap = false, cancellable = true)
     public void onLivingUpdate(CallbackInfo ci) {
-        if (true) {
-            super.onLivingUpdate();
+        super.onLivingUpdate();
 
-            float previousDestPos = this.destPos;
-            float previousField70889i = this.field_70889_i;
+        float previousDestPos = this.destPos;
+        float previousField70889i = this.field_70889_i;
 
-            this.field_70888_h = this.field_70886_e;
-            this.field_70884_g = previousDestPos;
+        this.field_70888_h = this.field_70886_e;
+        this.field_70884_g = previousDestPos;
 
-            this.destPos = (float) ((double) previousDestPos + (double) (this.onGround ? -1 : 4) * 0.3);
-            this.destPos = Math.max(0.0F, Math.min(1.0F, this.destPos));
+        this.destPos = (float) ((double) previousDestPos + (double) (this.onGround ? -1 : 4) * 0.3);
+        this.destPos = Math.max(0.0F, Math.min(1.0F, this.destPos));
 
-            if (!this.onGround && previousField70889i < 1.0F) {
-                previousField70889i = 1.0F;
-            }
-
-            this.field_70889_i = (float) ((double) previousField70889i * 0.9);
-
-            if (!this.onGround && this.motionY < 0.0) {
-                this.motionY *= 0.6;
-            }
-
-            this.field_70886_e += this.field_70889_i * 2.0F;
-            ci.cancel();
+        if (!this.onGround && previousField70889i < 1.0F) {
+            previousField70889i = 1.0F;
         }
+
+        this.field_70889_i = (float) ((double) previousField70889i * 0.9);
+
+        if (!this.onGround && this.motionY < 0.0) {
+            this.motionY *= 0.6;
+        }
+
+        this.field_70886_e += this.field_70889_i * 2.0F;
+        ci.cancel();
     }
 }

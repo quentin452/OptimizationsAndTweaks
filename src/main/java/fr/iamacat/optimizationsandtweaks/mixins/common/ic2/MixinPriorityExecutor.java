@@ -32,12 +32,10 @@ public class MixinPriorityExecutor extends ThreadPoolExecutor {
      */
     @Inject(method = "executeAll", at = @At("HEAD"), remap = false, cancellable = true)
     public void executeAll(List<? extends Runnable> tasks, CallbackInfo ci) {
-        if (true) {
-            if (!this.isShutdown()) {
-                this.getQueue()
-                    .addAll(tasks);
-            }
-            ci.cancel();
+        if (!this.isShutdown()) {
+            this.getQueue()
+                .addAll(tasks);
         }
+        ci.cancel();
     }
 }

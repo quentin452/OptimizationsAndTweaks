@@ -103,29 +103,27 @@ public class MixinOilTweakEventHandler {
     @Overwrite(remap = false)
     @SideOnly(Side.CLIENT)
     public void onPlayerClientUpdate(TickEvent.ClientTickEvent e) {
-        if (true) {
-            if (!BuildCraftOilTweak.config.isOilDense()) {
-                return;
-            }
-            EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-            if (player == null) {
-                return;
-            }
-            if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
-                this.setNotInOil(player);
-                return;
-            }
-            player.motionY = Math.min(0.0D, player.motionY);
-            if (player.motionY < -0.05D) {
-                player.motionY *= 0.05D;
-            }
-
-            player.motionX = Math.max(-0.05D, Math.min(0.05D, player.motionX * 0.05D));
-            player.motionY -= 0.05D;
-            player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
-            player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
-            setStepHeight(player, 0.0F);
+        if (!BuildCraftOilTweak.config.isOilDense()) {
+            return;
         }
+        EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+        if (player == null) {
+            return;
+        }
+        if (!optimizationsAndTweaks$getInOil(player).halfOfFull()) {
+            this.setNotInOil(player);
+            return;
+        }
+        player.motionY = Math.min(0.0D, player.motionY);
+        if (player.motionY < -0.05D) {
+            player.motionY *= 0.05D;
+        }
+
+        player.motionX = Math.max(-0.05D, Math.min(0.05D, player.motionX * 0.05D));
+        player.motionY -= 0.05D;
+        player.motionZ = Math.max(-0.05D, Math.min(0.05D, player.motionZ * 0.05D));
+        player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
+        setStepHeight(player, 0.0F);
     }
 
     /**
@@ -135,14 +133,12 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onBreakSpeed(PlayerEvent.BreakSpeed e) {
-        if (true) {
-            if (!BuildCraftOilTweak.config.isOilDense()) {
-                return;
-            }
-            EntityPlayer player = e.entityPlayer;
-            if (optimizationsAndTweaks$getInOil(player).halfOfFull()) {
-                e.newSpeed = e.originalSpeed <= e.newSpeed ? e.originalSpeed / 3f : e.newSpeed / 3f;
-            }
+        if (!BuildCraftOilTweak.config.isOilDense()) {
+            return;
+        }
+        EntityPlayer player = e.entityPlayer;
+        if (optimizationsAndTweaks$getInOil(player).halfOfFull()) {
+            e.newSpeed = e.originalSpeed <= e.newSpeed ? e.originalSpeed / 3f : e.newSpeed / 3f;
         }
     }
 
@@ -153,17 +149,15 @@ public class MixinOilTweakEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
     public void onTeleportAttempt(EnderTeleportEvent e) {
-        if (true) {
-            if (!BuildCraftOilTweak.config.isOilDense()) {
-                return;
-            }
-            EntityLivingBase player = e.entityLiving;
-            if (!(player instanceof EntityPlayer && ((EntityPlayer) player).capabilities.isCreativeMode)
-                && optimizationsAndTweaks$getInOil(player).halfOfFull()) {
-                e.setCanceled(true);
-                e.setResult(Event.Result.DENY);
+        if (!BuildCraftOilTweak.config.isOilDense()) {
+            return;
+        }
+        EntityLivingBase player = e.entityLiving;
+        if (!(player instanceof EntityPlayer && ((EntityPlayer) player).capabilities.isCreativeMode)
+            && optimizationsAndTweaks$getInOil(player).halfOfFull()) {
+            e.setCanceled(true);
+            e.setResult(Event.Result.DENY);
 
-            }
         }
     }
 

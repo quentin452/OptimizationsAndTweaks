@@ -49,42 +49,40 @@ public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimate
 
     @Inject(method = "func_70071_h_", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70071_h_(CallbackInfo ci) {
-        if (true) {
 
-            if (this.TimeKykla == 0 && this.getHealth() <= 190.0F) {
-                activateAnimationIfNeeded("prisiv", 0.0F);
-                if (!this.worldObj.isRemote) {
-                    spawnPuppetKadz();
-                }
-                this.TimeKykla = 1;
+        if (this.TimeKykla == 0 && this.getHealth() <= 190.0F) {
+            activateAnimationIfNeeded("prisiv", 0.0F);
+            if (!this.worldObj.isRemote) {
+                spawnPuppetKadz();
             }
-
-            if (this.getHealth() <= 50.0F && this.Kykl100 == 0) {
-                activateAnimationIfNeeded("100kykl", 0.0F);
-                if (!this.worldObj.isRemote) {
-                    spawnPuppets();
-                }
-                this.Kykl100 = 1;
-            }
-
-            if (this.getHealth() <= 100.0F && this.Phase2 == 1) {
-                this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, 24));
-                activateAnimationIfNeeded("krutilka", 0.0F);
-            }
-
-            if (this.getHealth() < 100.0F) {
-                handleTimerFire();
-            }
-
-            if (this.getHealth() <= 200.0F && this.getHealth() > 100.0F) {
-                handleTimerFireAnim();
-            }
-
-            applyPotionEffect();
-
-            super.onUpdate();
-            ci.cancel();
+            this.TimeKykla = 1;
         }
+
+        if (this.getHealth() <= 50.0F && this.Kykl100 == 0) {
+            activateAnimationIfNeeded("100kykl", 0.0F);
+            if (!this.worldObj.isRemote) {
+                spawnPuppets();
+            }
+            this.Kykl100 = 1;
+        }
+
+        if (this.getHealth() <= 100.0F && this.Phase2 == 1) {
+            this.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 60, 24));
+            activateAnimationIfNeeded("krutilka", 0.0F);
+        }
+
+        if (this.getHealth() < 100.0F) {
+            handleTimerFire();
+        }
+
+        if (this.getHealth() <= 200.0F && this.getHealth() > 100.0F) {
+            handleTimerFireAnim();
+        }
+
+        applyPotionEffect();
+
+        super.onUpdate();
+        ci.cancel();
     }
 
     @Unique

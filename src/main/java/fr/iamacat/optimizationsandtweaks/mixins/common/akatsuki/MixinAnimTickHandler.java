@@ -24,10 +24,8 @@ public class MixinAnimTickHandler {
 
     @Inject(method = "addEntity", at = @At("HEAD"), remap = false, cancellable = true)
     public void addEntity(IMCAnimatedEntity entity, CallbackInfo ci) {
-        if (true) {
-            this.optimizationsAndTweaks$activeEntities.add(entity);
-            ci.cancel();
-        }
+        this.optimizationsAndTweaks$activeEntities.add(entity);
+        ci.cancel();
     }
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)

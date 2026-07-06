@@ -26,17 +26,15 @@ public class MixinFixCascadingFromShinColleWorldGen implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
         IChunkProvider chunkProvider) {
         int dimension = world.provider.dimensionId;
-        if (true) {
 
-            switch (dimension) {
-                case -1:
-                case 1:
-                    break;
+        switch (dimension) {
+            case -1:
+            case 1:
+                break;
 
-                default:
-                    generateSurface(world, random, chunkX * 16, chunkZ * 16);
-                    generateSea(world, random, chunkX * 16, chunkZ * 16);
-            }
+            default:
+                generateSurface(world, random, chunkX * 16, chunkZ * 16);
+                generateSea(world, random, chunkX * 16, chunkZ * 16);
         }
     }
 

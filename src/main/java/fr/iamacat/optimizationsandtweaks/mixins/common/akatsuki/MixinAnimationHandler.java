@@ -41,28 +41,26 @@ public class MixinAnimationHandler {
 
     @Inject(method = "animationsUpdate", at = @At("HEAD"), remap = false, cancellable = true)
     public void animationsUpdate(CallbackInfo ci) {
-        if (true) {
-            Iterator<Channel> channelIterator = this.animCurrentChannels.iterator();
+        Iterator<Channel> channelIterator = this.animCurrentChannels.iterator();
 
-            while (channelIterator.hasNext()) {
-                Channel anim = channelIterator.next();
-                float prevFrame = this.animCurrentFrame.get(anim.name);
-                boolean animStatus = updateAnimation(anim);
+        while (channelIterator.hasNext()) {
+            Channel anim = channelIterator.next();
+            float prevFrame = this.animCurrentFrame.get(anim.name);
+            boolean animStatus = updateAnimation(anim);
 
-                if (prevFrame != -1.0f) {
-                    this.fireAnimationEvent(anim, prevFrame, this.animCurrentFrame.get(anim.name));
-                }
-
-                if (!animStatus) {
-                    channelIterator.remove();
-                    this.animPrevTime.remove(anim.name);
-                    this.animCurrentFrame.remove(anim.name);
-                    this.animationEvents.get(anim.name)
-                        .clear();
-                }
+            if (prevFrame != -1.0f) {
+                this.fireAnimationEvent(anim, prevFrame, this.animCurrentFrame.get(anim.name));
             }
-            ci.cancel();
+
+            if (!animStatus) {
+                channelIterator.remove();
+                this.animPrevTime.remove(anim.name);
+                this.animCurrentFrame.remove(anim.name);
+                this.animationEvents.get(anim.name)
+                    .clear();
+            }
         }
+        ci.cancel();
     }
 
     @Unique

@@ -117,44 +117,42 @@ public class MixinFixNoSuchMethodException {
      */
     @Overwrite
     public static void sendMessage(String message, Object value) {
-        if (true) {
-            try {
-                Class.forName("powercrystals.minefactoryreloaded.api.FactoryRegistry");
-            } catch (ClassNotFoundException e) {
-                System.err.println("[OptimizationsAndTweaks] MFR not present, cannot override sendMessage");
-                return; // MFR not present, exit early
-            }
-            if (!Loader.isModLoaded("minefactoryreloaded") || Loader.instance()
-                .activeModContainer() == null) {
-                return;
-            }
-            try {
-                Method m = FMLInterModComms.class
-                    .getDeclaredMethod("enqueueMessage", Object.class, String.class, FMLInterModComms.IMCMessage.class);
-                m.setAccessible(true);
-                Constructor<FMLInterModComms.IMCMessage> c = FMLInterModComms.IMCMessage.class
-                    .getDeclaredConstructor(String.class, Object.class);
-                c.setAccessible(true);
-                m.invoke(
-                    null,
-                    Loader.instance()
-                        .activeModContainer(),
-                    "minefactoryreloaded",
-                    c.newInstance(message, value));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                System.err.println(
-                    "[OptimizationsAndTweaks] Method not found while invoking sendMessage using reflection" + e);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                System.err
-                    .println("[OptimizationsAndTweaks] Illegal access while invoking sendMessage using reflection" + e);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                System.err.println("[OptimizationsAndTweaks] Error invoking sendMessage using reflection" + e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Class.forName("powercrystals.minefactoryreloaded.api.FactoryRegistry");
+        } catch (ClassNotFoundException e) {
+            System.err.println("[OptimizationsAndTweaks] MFR not present, cannot override sendMessage");
+            return; // MFR not present, exit early
+        }
+        if (!Loader.isModLoaded("minefactoryreloaded") || Loader.instance()
+            .activeModContainer() == null) {
+            return;
+        }
+        try {
+            Method m = FMLInterModComms.class
+                .getDeclaredMethod("enqueueMessage", Object.class, String.class, FMLInterModComms.IMCMessage.class);
+            m.setAccessible(true);
+            Constructor<FMLInterModComms.IMCMessage> c = FMLInterModComms.IMCMessage.class
+                .getDeclaredConstructor(String.class, Object.class);
+            c.setAccessible(true);
+            m.invoke(
+                null,
+                Loader.instance()
+                    .activeModContainer(),
+                "minefactoryreloaded",
+                c.newInstance(message, value));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            System.err
+                .println("[OptimizationsAndTweaks] Method not found while invoking sendMessage using reflection" + e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            System.err
+                .println("[OptimizationsAndTweaks] Illegal access while invoking sendMessage using reflection" + e);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            System.err.println("[OptimizationsAndTweaks] Error invoking sendMessage using reflection" + e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
         }
 
         // Perform any necessary actions or fallbacks here

@@ -44,38 +44,36 @@ public class MixinOreDictionaryArbiter {
      */
     @Overwrite
     public static void initialize() {
-        if (true) {
-            if (!optimizationsAndTweaks$initialized) {
-                oreIDs = HashBiMap.create(32);
-                oreStacks = new THashMap<>(32);
-                stackIDs = new THashMap<>(32);
-                stackNames = new THashMap<>(32);
-                oreNames = OreDictionary.getOreNames();
+        if (!optimizationsAndTweaks$initialized) {
+            oreIDs = HashBiMap.create(32);
+            oreStacks = new THashMap<>(32);
+            stackIDs = new THashMap<>(32);
+            stackNames = new THashMap<>(32);
+            oreNames = OreDictionary.getOreNames();
 
-                for (String oreName : oreNames) {
-                    ArrayList<ItemStack> var1 = OreDictionary.getOres(oreName);
+            for (String oreName : oreNames) {
+                ArrayList<ItemStack> var1 = OreDictionary.getOres(oreName);
 
-                    for (ItemStack itemStack : var1) {
-                        OreDictionaryArbiter.registerOreDictionaryEntry(itemStack, oreName);
-                    }
+                for (ItemStack itemStack : var1) {
+                    OreDictionaryArbiter.registerOreDictionaryEntry(itemStack, oreName);
                 }
-
-                for (ItemWrapper var4 : stackIDs.keySet()) {
-                    if (var4.metadata != 32767) {
-                        ItemWrapper var5 = new ItemWrapper(var4.item, 32767);
-                        if (stackIDs.containsKey(var5)) {
-                            stackIDs.get(var4)
-                                .addAll(stackIDs.get(var5));
-                            stackNames.get(var4)
-                                .addAll(stackNames.get(var5));
-                        }
-                    }
-                }
-
-                ItemHelper.oreProxy = new OreDictionaryArbiterProxy();
-
-                optimizationsAndTweaks$initialized = true;
             }
+
+            for (ItemWrapper var4 : stackIDs.keySet()) {
+                if (var4.metadata != 32767) {
+                    ItemWrapper var5 = new ItemWrapper(var4.item, 32767);
+                    if (stackIDs.containsKey(var5)) {
+                        stackIDs.get(var4)
+                            .addAll(stackIDs.get(var5));
+                        stackNames.get(var4)
+                            .addAll(stackNames.get(var5));
+                    }
+                }
+            }
+
+            ItemHelper.oreProxy = new OreDictionaryArbiterProxy();
+
+            optimizationsAndTweaks$initialized = true;
         }
 
     }

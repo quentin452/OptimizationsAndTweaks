@@ -94,52 +94,49 @@ public abstract class MixinEntityBlockling extends EntityTameable implements IIn
      */
     @Inject(method = "func_70636_d", at = @At("HEAD"), remap = false, cancellable = true)
     public void func_70636_d(CallbackInfo ci) {
-        if (true) {
-            super.onLivingUpdate();
+        super.onLivingUpdate();
 
-            World world = this.worldObj;
-            boolean isRemote = world.isRemote;
+        World world = this.worldObj;
+        boolean isRemote = world.isRemote;
 
-            if (attackTimer > 0.0F) {
-                attackTimer--;
-            }
-
-            if (attackTimer == 7.0F && !isRemote) {
-                setXP((int) (attackDamage + random.nextInt((int) (attackDamage * Blocklings.xp)) + currentXP));
-            }
-
-            if (currentSpecialTier >= 8 && !isRemote) {
-                regenTimer++;
-            }
-
-            if (regenTimer == 150 && !isRemote) {
-                heal(1.0F);
-                regenTimer = 0;
-            }
-
-            if (isDead && !isRemote && isTamed()) {
-                image = 0;
-                Blocklings.itemBlockling.setBlockling(entityBlockling);
-                world.spawnEntityInWorld(
-                    new EntityItem(world, posX, posY, posZ, new ItemStack(Blocklings.itemBlockling)));
-            }
-
-            isImmuneToFire = currentUpgradeTier >= 10;
-
-            setEntitySize();
-            setBlocklingLevel();
-            calculateRequiredXP();
-            checkUpgrades();
-            checkSpecials();
-            setMaxHealth();
-            setAttackDamage();
-            setMoveSpeed();
-
-            if (!isRemote) {
-                CreatePacketServerSide.sendS2CEntitySync(this);
-            }
-            ci.cancel();
+        if (attackTimer > 0.0F) {
+            attackTimer--;
         }
+
+        if (attackTimer == 7.0F && !isRemote) {
+            setXP((int) (attackDamage + random.nextInt((int) (attackDamage * Blocklings.xp)) + currentXP));
+        }
+
+        if (currentSpecialTier >= 8 && !isRemote) {
+            regenTimer++;
+        }
+
+        if (regenTimer == 150 && !isRemote) {
+            heal(1.0F);
+            regenTimer = 0;
+        }
+
+        if (isDead && !isRemote && isTamed()) {
+            image = 0;
+            Blocklings.itemBlockling.setBlockling(entityBlockling);
+            world.spawnEntityInWorld(new EntityItem(world, posX, posY, posZ, new ItemStack(Blocklings.itemBlockling)));
+        }
+
+        isImmuneToFire = currentUpgradeTier >= 10;
+
+        setEntitySize();
+        setBlocklingLevel();
+        calculateRequiredXP();
+        checkUpgrades();
+        checkSpecials();
+        setMaxHealth();
+        setAttackDamage();
+        setMoveSpeed();
+
+        if (!isRemote) {
+            CreatePacketServerSide.sendS2CEntitySync(this);
+        }
+        ci.cancel();
     }
 
     @Shadow

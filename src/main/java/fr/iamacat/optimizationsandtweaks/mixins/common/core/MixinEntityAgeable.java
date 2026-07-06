@@ -55,16 +55,14 @@ public abstract class MixinEntityAgeable extends EntityCreature {
      */
     @Overwrite
     public void addGrowth(int p_110195_1_) {
-        if (true) {
-            int currentAge = optimizationsAndTweaks$getGrowingAge();
-            currentAge += p_110195_1_ * 20;
+        int currentAge = optimizationsAndTweaks$getGrowingAge();
+        currentAge += p_110195_1_ * 20;
 
-            if (currentAge > 0) {
-                currentAge = 0;
-            }
-
-            optimizationsAndTweaks$setGrowingAge(currentAge);
+        if (currentAge > 0) {
+            currentAge = 0;
         }
+
+        optimizationsAndTweaks$setGrowingAge(currentAge);
     }
 
     /**
@@ -73,21 +71,19 @@ public abstract class MixinEntityAgeable extends EntityCreature {
      */
     @Overwrite
     public void onLivingUpdate() {
-        if (true) {
-            super.onLivingUpdate();
+        super.onLivingUpdate();
 
-            if (this.worldObj.isRemote) {
-                optimizationsAndTweaks$setScaleForAge(this.isChild());
-            } else {
-                int currentAge = optimizationsAndTweaks$getGrowingAge();
+        if (this.worldObj.isRemote) {
+            optimizationsAndTweaks$setScaleForAge(this.isChild());
+        } else {
+            int currentAge = optimizationsAndTweaks$getGrowingAge();
 
-                if (currentAge < 0) {
-                    ++currentAge;
-                    optimizationsAndTweaks$setGrowingAge(currentAge);
-                } else if (currentAge > 0) {
-                    --currentAge;
-                    optimizationsAndTweaks$setGrowingAge(currentAge);
-                }
+            if (currentAge < 0) {
+                ++currentAge;
+                optimizationsAndTweaks$setGrowingAge(currentAge);
+            } else if (currentAge > 0) {
+                --currentAge;
+                optimizationsAndTweaks$setGrowingAge(currentAge);
             }
         }
     }

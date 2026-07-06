@@ -114,85 +114,82 @@ public class MixinTesselator {
      */
     @Overwrite
     public int draw() {
-        if (true) {
-            if (!this.isDrawing) {
-                throw new IllegalStateException("Not tesselating!");
-            } else {
-                this.isDrawing = false;
+        if (!this.isDrawing) {
+            throw new IllegalStateException("Not tesselating!");
+        } else {
+            this.isDrawing = false;
 
-                // Move GL enable/disable calls outside the loop
-                if (this.hasTexture) {
-                    floatBuffer.position(3);
-                    GL11.glTexCoordPointer(2, 32, MixinTesselator.floatBuffer);
-                    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                }
-
-                if (this.hasBrightness) {
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-                    shortBuffer.position(14);
-                    GL11.glTexCoordPointer(2, 32, shortBuffer);
-                    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-                }
-
-                if (this.hasColor) {
-                    byteBuffer.position(20);
-                    GL11.glColorPointer(4, true, 32, byteBuffer);
-                    GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-                }
-
-                if (this.hasNormals) {
-                    byteBuffer.position(24);
-                    GL11.glNormalPointer(32, MixinTesselator.byteBuffer);
-                    GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-                }
-
-                int offs = 0;
-                while (offs < vertexCount) {
-                    int vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
-                    intBuffer.clear();
-                    intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
-                    byteBuffer.position(0);
-                    byteBuffer.limit(vtc * 32);
-                    offs += vtc;
-
-                    floatBuffer.position(0);
-                    GL11.glVertexPointer(3, 32, floatBuffer);
-                    GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-                    GL11.glDrawArrays(this.drawMode, 0, vtc);
-                    GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-                }
-
-                // Move GL enable/disable calls outside the loop
-                if (this.hasTexture) {
-                    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                }
-
-                if (this.hasBrightness) {
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-                    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-                }
-
-                if (this.hasColor) {
-                    GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-                }
-
-                if (this.hasNormals) {
-                    GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-                }
-
-                if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3)) {
-                    rawBufferSize = 0x10000;
-                    rawBuffer = new int[rawBufferSize];
-                }
-
-                int i = this.rawBufferIndex * 4;
-                this.optimizationsAndTweaks$reset();
-                return i;
+            // Move GL enable/disable calls outside the loop
+            if (this.hasTexture) {
+                floatBuffer.position(3);
+                GL11.glTexCoordPointer(2, 32, MixinTesselator.floatBuffer);
+                GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
             }
+
+            if (this.hasBrightness) {
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+                shortBuffer.position(14);
+                GL11.glTexCoordPointer(2, 32, shortBuffer);
+                GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+            }
+
+            if (this.hasColor) {
+                byteBuffer.position(20);
+                GL11.glColorPointer(4, true, 32, byteBuffer);
+                GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            }
+
+            if (this.hasNormals) {
+                byteBuffer.position(24);
+                GL11.glNormalPointer(32, MixinTesselator.byteBuffer);
+                GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+            }
+
+            int offs = 0;
+            while (offs < vertexCount) {
+                int vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
+                intBuffer.clear();
+                intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
+                byteBuffer.position(0);
+                byteBuffer.limit(vtc * 32);
+                offs += vtc;
+
+                floatBuffer.position(0);
+                GL11.glVertexPointer(3, 32, floatBuffer);
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+                GL11.glDrawArrays(this.drawMode, 0, vtc);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            // Move GL enable/disable calls outside the loop
+            if (this.hasTexture) {
+                GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            }
+
+            if (this.hasBrightness) {
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+                GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+            }
+
+            if (this.hasColor) {
+                GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+            }
+
+            if (this.hasNormals) {
+                GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+            }
+
+            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3)) {
+                rawBufferSize = 0x10000;
+                rawBuffer = new int[rawBufferSize];
+            }
+
+            int i = this.rawBufferIndex * 4;
+            this.optimizationsAndTweaks$reset();
+            return i;
         }
-        return 0;
     }
 
     /**
