@@ -58,7 +58,7 @@ public class MixinModifiableAttributeInstance {
         UUID id = modifier.getID();
         if (this.mapByUUID.containsKey(id)) {
             // Return silently if the modifier is already present
-            return; 
+            return;
         }
 
         Set<AttributeModifier> operationSet = (Set<AttributeModifier>) this.mapByOperation

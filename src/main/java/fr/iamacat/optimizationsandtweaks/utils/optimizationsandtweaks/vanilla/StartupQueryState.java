@@ -7,8 +7,7 @@ public final class StartupQueryState {
     private static boolean hasConfirmedOnce = false;
     private static String lastQueryText = "";
 
-    private StartupQueryState() {
-    }
+    private StartupQueryState() {}
 
     public static boolean hasConfirmedOnce() {
         return hasConfirmedOnce;
@@ -25,14 +24,13 @@ public final class StartupQueryState {
     public static boolean isWorldRepairQuery(String text) {
         if (text == null || text.isEmpty()) return false;
 
-        return text.contains("save is damaged") ||
-               text.contains("automatic repair") ||
-               text.contains("world backup") ||
-               text.contains("items need to be removed") ||
-               text.contains("items need to be relocated") ||
-               text.contains("mods are missing") ||
-               text.contains("Missing mods") ||
-               text.contains("Forge Mod Loader detected");
+        return text.contains("save is damaged") || text.contains("automatic repair")
+            || text.contains("world backup")
+            || text.contains("items need to be removed")
+            || text.contains("items need to be relocated")
+            || text.contains("mods are missing")
+            || text.contains("Missing mods")
+            || text.contains("Forge Mod Loader detected");
     }
 
     public static void resetConfirmation() {

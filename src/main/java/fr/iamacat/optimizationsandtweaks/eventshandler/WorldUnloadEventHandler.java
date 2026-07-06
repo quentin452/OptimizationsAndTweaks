@@ -1,10 +1,10 @@
 package fr.iamacat.optimizationsandtweaks.eventshandler;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.StartupQueryState;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
-import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.StartupQueryState;
 
 public class WorldUnloadEventHandler {
 
@@ -14,10 +14,14 @@ public class WorldUnloadEventHandler {
         StartupQueryState.resetConfirmation();
 
         // Stop async pathfinding workers and clear global/native caches
-        try { AsyncPathfindingExecutor.shutdown(); } catch (Throwable ignored) {}
+        try {
+            AsyncPathfindingExecutor.shutdown();
+        } catch (Throwable ignored) {}
 
         // Clear any Java-side pending/cached paths and native pathfinder handles via reflection
-        try { clearAsyncPathfindingCaches(); } catch (Throwable ignored) {}
+        try {
+            clearAsyncPathfindingCaches();
+        } catch (Throwable ignored) {}
     }
 
     private void clearAsyncPathfindingCaches() throws Exception {

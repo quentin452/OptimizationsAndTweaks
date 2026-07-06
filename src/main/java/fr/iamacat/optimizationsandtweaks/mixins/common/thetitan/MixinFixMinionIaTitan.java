@@ -1,34 +1,33 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.thetitan;
 
-import net.minecraft.entity.titan.minion.IMinion;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAITasks;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAITasks;
 
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thetitan.EntityAIFindEntityNearestInjuredAllyPatch;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thetitan.IMinionHealer;
 
-@Mixin(value = {
-    net.minecraft.entity.titan.minion.EntitySkeletonMinion.class,
-    net.minecraft.entity.titan.minion.EntityZombieMinion.class,
-    net.minecraft.entity.titan.minion.EntitySpiderMinion.class,
-    net.minecraft.entity.titan.minion.EntityCreeperMinion.class,
-    net.minecraft.entity.titan.minion.EntityBlazeMinion.class,
-    net.minecraft.entity.titan.minion.EntityEndermanMinion.class,
-    net.minecraft.entity.titan.minion.EntityGhastMinion.class,
-    net.minecraft.entity.titan.minion.EntityPigZombieMinion.class,
-    net.minecraft.entity.titan.minion.EntitySilverfishMinion.class,
-    net.minecraft.entity.titan.minion.EntityCaveSpiderMinion.class
-}, priority = 999)
+@Mixin(
+    value = { net.minecraft.entity.titan.minion.EntitySkeletonMinion.class,
+        net.minecraft.entity.titan.minion.EntityZombieMinion.class,
+        net.minecraft.entity.titan.minion.EntitySpiderMinion.class,
+        net.minecraft.entity.titan.minion.EntityCreeperMinion.class,
+        net.minecraft.entity.titan.minion.EntityBlazeMinion.class,
+        net.minecraft.entity.titan.minion.EntityEndermanMinion.class,
+        net.minecraft.entity.titan.minion.EntityGhastMinion.class,
+        net.minecraft.entity.titan.minion.EntityPigZombieMinion.class,
+        net.minecraft.entity.titan.minion.EntitySilverfishMinion.class,
+        net.minecraft.entity.titan.minion.EntityCaveSpiderMinion.class },
+    priority = 999)
 public abstract class MixinFixMinionIaTitan extends EntityLiving implements IMinionHealer {
 
-    @Shadow(remap = false) private EntityLiving entityToHeal;
+    @Shadow(remap = false)
+    private EntityLiving entityToHeal;
 
     public MixinFixMinionIaTitan(net.minecraft.world.World world) {
         super(world);
@@ -39,8 +38,9 @@ public abstract class MixinFixMinionIaTitan extends EntityLiving implements IMin
         tasks.taskEntries.removeIf(obj -> {
             if (obj instanceof EntityAITasks.EntityAITaskEntry) {
                 EntityAITasks.EntityAITaskEntry entry = (EntityAITasks.EntityAITaskEntry) obj;
-                return entry.action != null &&
-                    entry.action.getClass().getSimpleName().equals("EntityAIFindEntityNearestInjuredAlly");
+                return entry.action != null && entry.action.getClass()
+                    .getSimpleName()
+                    .equals("EntityAIFindEntityNearestInjuredAlly");
             }
             return false;
         });

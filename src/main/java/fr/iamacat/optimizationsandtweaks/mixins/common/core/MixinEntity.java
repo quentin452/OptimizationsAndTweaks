@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -49,7 +50,7 @@ public abstract class MixinEntity {
 
     @Unique
     private String optimizationsAndTweaks$cachedEntityName = null;
-    
+
     @Unique
     private boolean optimizationsAndTweaks$cachedRenderRange = false;
     @Unique
@@ -65,7 +66,7 @@ public abstract class MixinEntity {
 
     @Shadow
     public abstract String getEntityString();
-    
+
     @Shadow
     public double renderDistanceWeight;
 
@@ -113,36 +114,38 @@ public abstract class MixinEntity {
 
     /**
      * Optimized version of isInRangeToRender3d with caching to reduce lag
+     * 
      * @reason Massive performance improvement by caching render distance calculations
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
     public boolean isInRangeToRender3d(double x, double y, double z) {
         long currentTime = System.currentTimeMillis();
-        
+
         // Check if cache is still valid (position hasn't changed much and time hasn't expired)
-        boolean positionChanged = Math.abs(this.optimizationsAndTweaks$lastCacheX - x) > 1.0D ||
-                                 Math.abs(this.optimizationsAndTweaks$lastCacheY - y) > 1.0D ||
-                                 Math.abs(this.optimizationsAndTweaks$lastCacheZ - z) > 1.0D;
-        
-        boolean cacheExpired = (currentTime - this.optimizationsAndTweaks$lastCacheTime) > optimizationsAndTweaks$CACHE_INTERVAL_MS;
-        
+        boolean positionChanged = Math.abs(this.optimizationsAndTweaks$lastCacheX - x) > 1.0D
+            || Math.abs(this.optimizationsAndTweaks$lastCacheY - y) > 1.0D
+            || Math.abs(this.optimizationsAndTweaks$lastCacheZ - z) > 1.0D;
+
+        boolean cacheExpired = (currentTime - this.optimizationsAndTweaks$lastCacheTime)
+            > optimizationsAndTweaks$CACHE_INTERVAL_MS;
+
         if (!positionChanged && !cacheExpired) {
             return this.optimizationsAndTweaks$cachedRenderRange;
         }
-        
+
         // Recalculate render range
         double distanceX = this.posX - x;
         double distanceY = this.posY - y;
         double distanceZ = this.posZ - z;
         double distanceSq = distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ;
-        
+
         // Use a more efficient calculation - average edge length approximation
         double averageEdge = (this.width + this.width) * 0.5D; // Use width as approximation
         double renderDistance = averageEdge * 64.0D * this.renderDistanceWeight;
-        
+
         boolean inRange = distanceSq < renderDistance * renderDistance;
-        
+
         this.optimizationsAndTweaks$cachedRenderRange = inRange;
         this.optimizationsAndTweaks$lastCacheX = x;
         this.optimizationsAndTweaks$lastCacheY = y;

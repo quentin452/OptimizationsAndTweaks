@@ -17,12 +17,8 @@ public abstract class MixinItemRenderer {
      */
     @Redirect(
         method = "renderItem(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;ILnet/minecraftforge/client/IItemRenderer$ItemRenderType;)V",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/texture/TextureUtil;func_152777_a(ZZF)V"
-        ),
-        remap = false
-    )
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureUtil;func_152777_a(ZZF)V"),
+        remap = false)
     private void redirectSetTextureBlur(boolean blur, boolean clamp, float mipmap) {}
 
     /**
@@ -32,11 +28,7 @@ public abstract class MixinItemRenderer {
      */
     @Redirect(
         method = "renderItem(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;ILnet/minecraftforge/client/IItemRenderer$ItemRenderType;)V",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/texture/TextureUtil;func_147945_b()V"
-        ),
-        remap = false
-    )
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureUtil;func_147945_b()V"),
+        remap = false)
     private void redirectResetTextureBlur() {}
 }

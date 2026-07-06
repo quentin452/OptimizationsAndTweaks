@@ -12,8 +12,8 @@ import com.falsepattern.lib.compat.ChunkPos;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.PlayerDroppedItemTracker;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.TidyChunkBackportWorldContext;
 
 public class TidyChunkBackportEventHandler {
     // Remove almost all EntityItem during initial chunk generation.

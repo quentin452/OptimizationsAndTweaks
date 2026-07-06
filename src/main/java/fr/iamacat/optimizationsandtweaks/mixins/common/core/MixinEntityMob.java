@@ -1,22 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import net.minecraft.block.BlockDoor;
+import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.block.Block;
-import net.minecraft.util.Vec3;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.Shadow;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
@@ -65,7 +63,8 @@ public abstract class MixinEntityMob extends EntityCreature implements IMob {
             return false;
         }
 
-        float damage = (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+        float damage = (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
+            .getAttributeValue();
         int knockback = 0;
 
         if (target instanceof EntityLivingBase) {
@@ -80,8 +79,7 @@ public abstract class MixinEntityMob extends EntityCreature implements IMob {
                 target.addVelocity(
                     -MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F,
                     0.1D,
-                    MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F
-                );
+                    MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F);
                 this.motionX *= 0.6D;
                 this.motionZ *= 0.6D;
             }
@@ -113,7 +111,8 @@ public abstract class MixinEntityMob extends EntityCreature implements IMob {
 
         if (hit != null && hit.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
             Block block = this.worldObj.getBlock(hit.blockX, hit.blockY, hit.blockZ);
-            return block.getMaterial().isSolid();
+            return block.getMaterial()
+                .isSolid();
         }
         return false;
     }

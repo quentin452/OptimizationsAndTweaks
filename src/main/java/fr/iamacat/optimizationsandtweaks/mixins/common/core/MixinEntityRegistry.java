@@ -2,25 +2,19 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.registry.EntityRegistry;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.FMLLog;
-import org.apache.logging.log4j.Level;
-//  todo add compat when endless ids is not installed
+
+// todo add compat when endless ids is not installed
 @Mixin(EntityRegistry.class)
 public class MixinEntityRegistry {
 
@@ -29,20 +23,15 @@ public class MixinEntityRegistry {
 
     @Redirect(
         method = "doModEntityRegistration",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcpw/mods/fml/common/FMLLog;fine(Ljava/lang/String;[Ljava/lang/Object;)V"
-        ),
-        remap = false
-    )
-    private static void suppressSkipLog(String message, Object[] params) { }
+        at = @At(value = "INVOKE", target = "Lcpw/mods/fml/common/FMLLog;fine(Ljava/lang/String;[Ljava/lang/Object;)V"),
+        remap = false)
+    private static void suppressSkipLog(String message, Object[] params) {}
 
     @Inject(
         method = "registerGlobalEntityID(Ljava/lang/Class;Ljava/lang/String;I)V",
         at = @At("HEAD"),
         cancellable = true,
-        remap = false
-    )
+        remap = false)
     private static void interceptEntityRegistration(Class<?> entityClass, String entityName, int id, CallbackInfo ci) {
         String finalName = resolveEntityNameConflict(entityName);
         int finalId = resolveEntityIdConflict(id);
@@ -55,9 +44,9 @@ public class MixinEntityRegistry {
         method = "registerGlobalEntityID(Ljava/lang/Class;Ljava/lang/String;III)V",
         at = @At("HEAD"),
         cancellable = true,
-        remap = false
-    )
-    private static void interceptEntityRegistrationEgg(Class<?> entityClass, String entityName, int id, int eggPrimary, int eggSecondary, CallbackInfo ci) {
+        remap = false)
+    private static void interceptEntityRegistrationEgg(Class<?> entityClass, String entityName, int id, int eggPrimary,
+        int eggSecondary, CallbackInfo ci) {
         String finalName = resolveEntityNameConflict(entityName);
         int finalId = resolveEntityIdConflict(id);
 
@@ -70,7 +59,8 @@ public class MixinEntityRegistry {
         String finalName = entityName;
         if (EntityList.stringToClassMapping.containsKey(finalName)) {
             finalName = entityName + "_" + ENTITY_COUNTER.incrementAndGet();
-            LanguageRegistry.instance().addStringLocalization("entity." + finalName + ".name", "en_US", entityName);
+            LanguageRegistry.instance()
+                .addStringLocalization("entity." + finalName + ".name", "en_US", entityName);
         }
         return finalName;
     }
@@ -79,7 +69,8 @@ public class MixinEntityRegistry {
     private static int resolveEntityIdConflict(int id) {
         int finalId = id;
         if (EntityList.IDtoClassMapping.containsKey(finalId)) {
-            finalId = EntityRegistry.instance().findGlobalUniqueEntityId();
+            finalId = EntityRegistry.instance()
+                .findGlobalUniqueEntityId();
         }
         return finalId;
     }

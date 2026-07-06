@@ -68,7 +68,8 @@ public class MixinEntityAINearestAttackableTarget extends EntityAITarget {
      */
     @Overwrite
     public boolean shouldExecute() {
-        if (this.targetChance > 0 && this.taskOwner.getRNG().nextInt(this.targetChance) != 0) {
+        if (this.targetChance > 0 && this.taskOwner.getRNG()
+            .nextInt(this.targetChance) != 0) {
             return false;
         }
 
@@ -91,7 +92,6 @@ public class MixinEntityAINearestAttackableTarget extends EntityAITarget {
         this.targetEntity = list.get(0);
         return true;
     }
-
 
     /**
      * Execute a one shot task or start executing a continuous task

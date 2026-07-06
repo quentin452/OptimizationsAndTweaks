@@ -37,7 +37,7 @@ public class TidyChunkBackportWorldContext {
         if (world.isRemote || this.chunks.isEmpty()) {
             return;
         }
-        
+
         List<EntityItem> entitiesToRemove = new ArrayList<>();
 
         for (Object entityObject : world.loadedEntityList) {
@@ -89,7 +89,7 @@ public class TidyChunkBackportWorldContext {
         if (entity instanceof EntityItem) {
             PlayerDroppedItemTracker.untrackItem((EntityItem) entity);
         }
-        
+
         entity.setDead();
         world.removeEntity(entity);
         ++this.removeCount;

@@ -21,9 +21,10 @@ public class MixinEntityPlayer {
             PlayerDroppedItemTracker.markAsPlayerDropped(droppedItem);
         }
     }
-    
+
     @Inject(method = "func_146097_a", at = @At("RETURN"))
-    private void onDropItem(ItemStack itemStack, boolean dropAround, boolean traceItem, CallbackInfoReturnable<EntityItem> cir) {
+    private void onDropItem(ItemStack itemStack, boolean dropAround, boolean traceItem,
+        CallbackInfoReturnable<EntityItem> cir) {
         EntityItem droppedItem = cir.getReturnValue();
         if (droppedItem != null) {
             PlayerDroppedItemTracker.markAsPlayerDropped(droppedItem);

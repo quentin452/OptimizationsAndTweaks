@@ -1,24 +1,27 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.spiriteores;
 
-import howl01.spiritores.SpiritOresGenerator;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
-import java.util.Random;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import fr.iamacat.optimizationsandtweaks.utilsformods.spiritores.SpiritOreConfig;
 import howl01.spiritores.SpiritOres;
+import howl01.spiritores.SpiritOresGenerator;
 
 @Mixin(SpiritOresGenerator.class)
 public class MixinSpiritOresGenerator {
 
     @Inject(method = "generate", at = @At("HEAD"), cancellable = true, remap = false)
-    private void onGenerate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider, CallbackInfo ci) {
+    private void onGenerate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+        IChunkProvider chunkProvider, CallbackInfo ci) {
         int xBase = chunkX * 16;
         int zBase = chunkZ * 16;
 
@@ -71,7 +74,8 @@ public class MixinSpiritOresGenerator {
         ci.cancel();
     }
 
-    private void generateOre(World world, Random random, int xBase, int zBase, Block oreBlock, int veinSize, int iterations, int minY, int maxY, String targetBlockName) {
+    private void generateOre(World world, Random random, int xBase, int zBase, Block oreBlock, int veinSize,
+        int iterations, int minY, int maxY, String targetBlockName) {
         WorldGenMinable generator;
         if (targetBlockName != null) {
             generator = new WorldGenMinable(oreBlock, veinSize, (Block) Block.blockRegistry.getObject(targetBlockName));

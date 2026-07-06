@@ -1,5 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
@@ -13,13 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
-import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
-
-import fr.iamacat.optimizationsandtweaks.utils.pathfinding.PendingPathRequest;
 import fr.iamacat.optimizationsandtweaks.utils.pathfinding.CachedPath;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import fr.iamacat.optimizationsandtweaks.utils.pathfinding.PendingPathRequest;
 
 /**
  * Mixin for PathFinder to use async Rust pathfinding implementation
@@ -93,8 +91,7 @@ public abstract class MixinPathFinder {
                 target.posX,
                 target.boundingBox.minY,
                 target.posZ,
-                maxDistance
-            );
+                maxDistance);
 
             if (path != null) {
                 cir.setReturnValue(path);
@@ -131,8 +128,7 @@ public abstract class MixinPathFinder {
                 (double) x + 0.5,
                 (double) y + 0.5,
                 (double) z + 0.5,
-                maxDistance
-            );
+                maxDistance);
 
             if (path != null) {
                 cir.setReturnValue(path);
@@ -153,19 +149,16 @@ public abstract class MixinPathFinder {
      * Returns cached path if available, null if request is pending or needs to be submitted
      */
     @Unique
-    private PathEntity optimizationsAndTweaks$getOrRequestPath(
-            Entity entity,
-            double targetX,
-            double targetY,
-            double targetZ,
-            float maxDistance) {
-        
+    private PathEntity optimizationsAndTweaks$getOrRequestPath(Entity entity, double targetX, double targetY,
+        double targetZ, float maxDistance) {
+
         int entityId = entity.getEntityId();
         long currentTime = System.currentTimeMillis();
 
         // Check if we have a cached path that's still valid
         CachedPath cached = optimizationsAndTweaks$cachedPaths.get(entityId);
-        if (cached != null && cached.isValid(entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, currentTime)) {
+        if (cached != null
+            && cached.isValid(entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, currentTime)) {
             return cached.getPath();
         }
 
@@ -178,36 +171,38 @@ public abstract class MixinPathFinder {
         }
 
         // Submit new async pathfinding request
-        long requestId = AsyncPathfindingExecutor.submitPathfindingWithCallback(
-                worldMap,
-                entity,
-                targetX,
-                targetY,
-                targetZ,
-                maxDistance,
-                path -> {
-                    optimizationsAndTweaks$cachedPaths.put(entityId, new CachedPath(path, entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, System.currentTimeMillis()));
-                    optimizationsAndTweaks$pendingPaths.remove(entityId);
-                    // Immediately apply the path so early-priority AIs (e.g., AttackOnCollide at 2) don't stall
-                    try {
-                        if (entity instanceof net.minecraft.entity.EntityLiving && path != null) {
-                            ((net.minecraft.entity.EntityLiving) entity).getNavigator().setPath(path, 1.0D);
-                        }
-                    } catch (Throwable ignored) {}
-                },
+        long requestId = AsyncPathfindingExecutor
+            .submitPathfindingWithCallback(worldMap, entity, targetX, targetY, targetZ, maxDistance, path -> {
+                optimizationsAndTweaks$cachedPaths.put(
+                    entityId,
+                    new CachedPath(
+                        path,
+                        entity.posX,
+                        entity.posY,
+                        entity.posZ,
+                        targetX,
+                        targetY,
+                        targetZ,
+                        System.currentTimeMillis()));
+                optimizationsAndTweaks$pendingPaths.remove(entityId);
+                // Immediately apply the path so early-priority AIs (e.g., AttackOnCollide at 2) don't stall
+                try {
+                    if (entity instanceof net.minecraft.entity.EntityLiving && path != null) {
+                        ((net.minecraft.entity.EntityLiving) entity).getNavigator()
+                            .setPath(path, 1.0D);
+                    }
+                } catch (Throwable ignored) {}
+            },
                 error -> optimizationsAndTweaks$pendingPaths.remove(entityId),
                 isWoddenDoorAllowed,
                 isMovementBlockAllowed,
                 isPathingInWater,
-                canEntityDrown
-        );
+                canEntityDrown);
 
         if (requestId != 0) {
             // Request submitted successfully
-            optimizationsAndTweaks$pendingPaths.put(
-                entityId,
-                new PendingPathRequest(requestId, targetX, targetY, targetZ, currentTime)
-            );
+            optimizationsAndTweaks$pendingPaths
+                .put(entityId, new PendingPathRequest(requestId, targetX, targetY, targetZ, currentTime));
         }
 
         // Return null to fall through to vanilla for this tick

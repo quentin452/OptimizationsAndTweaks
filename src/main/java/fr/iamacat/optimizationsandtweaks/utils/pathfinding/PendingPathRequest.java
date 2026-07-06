@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utils.pathfinding;
 
 public class PendingPathRequest {
+
     final long requestId;
     final double targetX, targetY, targetZ;
     final long timestamp;

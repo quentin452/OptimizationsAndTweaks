@@ -1,12 +1,12 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.StartupQuery;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.StartupQuery;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.StartupQueryState;
 
 @Mixin(StartupQuery.class)
@@ -19,7 +19,7 @@ public class MixinStartupQuery {
             cir.setReturnValue(true);
             return;
         }
-        
+
         StartupQueryState.updateLastQueryText(text);
     }
 

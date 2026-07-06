@@ -19,7 +19,6 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.StartupQuery;
 import cpw.mods.fml.common.functions.GenericIterableFactory;
 import cpw.mods.fml.server.FMLServerHandler;
-
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
 @Mixin(FMLServerHandler.class)
@@ -27,7 +26,7 @@ public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
 
     @Shadow
     private MinecraftServer server;
-    
+
     @Unique
     private MinecraftServer lastServer;
 
@@ -83,7 +82,7 @@ public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
                                     query.setResult(true);
                                     done.set(true);
                                     it.remove();
-                                    if (OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation) {   
+                                    if (OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation) {
                                         hasConfirmedOnce = true;
                                     }
                                     break;

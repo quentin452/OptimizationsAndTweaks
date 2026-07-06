@@ -263,7 +263,7 @@ public class MixinOilTweakEventHandler {
     private boolean isOil(Block block) {
         Boolean cachedValue = optimizationsAndTweaks$oilBlockCache.get(block);
         if (cachedValue != null) {
-            return cachedValue.booleanValue(); 
+            return cachedValue.booleanValue();
         }
         boolean isOilBlock = false;
 

@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Mixin implements IMixin {
-    common_accessor_PathNavigateAccessor(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations, "accessor.PathNavigateAccessor"),
+
+    common_accessor_PathNavigateAccessor(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
+        "accessor.PathNavigateAccessor"),
 
     common_core_MixinWorld(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinWorld, "core.MixinWorld"),
     common_core_MixinEventBus(Side.COMMON, m -> OptimizationsandTweaksConfig.enableMixinEventBus, "core.MixinEventBus"),
@@ -106,8 +108,7 @@ public enum Mixin implements IMixin {
         avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTTagCompound),
         "core.MixinNBTTagCompound"),
     common_core_MixinNBTBase(Side.COMMON,
-        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTBase),
-        "core.MixinNBTBase"),
+        avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinNBTBase), "core.MixinNBTBase"),
     common_core_MixinMapGenStructure(Side.COMMON,
         avoid(TargetedMod.DRAGONAPI).and(m -> OptimizationsandTweaksConfig.enableMixinMapGenStructure),
         "core.MixinMapGenStructure"),
@@ -830,8 +831,7 @@ public enum Mixin implements IMixin {
     client_core_MixinRenderItem(Side.CLIENT,
         avoid(TargetedMod.FASTCRAFT).and(m -> OptimizationsandTweaksConfig.enableMixinRenderItem),
         "core.MixinRenderItem"),
-    client_core_MixinItemRenderer(Side.CLIENT,
-        m -> OptimizationsandTweaksConfig.enableMixinItemRenderer,
+    client_core_MixinItemRenderer(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinItemRenderer,
         "core.MixinItemRenderer"),
     client_core_MixinRenderGlobal(Side.CLIENT, avoid(TargetedMod.FASTCRAFT).and(avoid(TargetedMod.OPTIFINE))
         .and(m -> OptimizationsandTweaksConfig.enableMixinRenderGlobal), "core.MixinRenderGlobal"),
@@ -861,7 +861,8 @@ public enum Mixin implements IMixin {
 
     common_core_MixinPathFinder(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
         "core.MixinPathFinder"),
-    common_core_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations, "core.MixinPathEntity"),
+    common_core_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
+        "core.MixinPathEntity"),
     common_angelica_MixinClientProxy(Side.COMMON,
         require(TargetedMod.ANGELICA).and(m -> OptimizationsandTweaksConfig.enableMixinClientProxy),
         "angelica.MixinClientProxy"),
@@ -886,11 +887,9 @@ public enum Mixin implements IMixin {
     client_core_MixinStitcher_Slot(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinStitcher,
         "core.MixinStitcher_Slot"),
 
-    client_core_MixinStitcher(
-        Side.CLIENT, 
-        avoid(TargetedMod.FALSETWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinStitcher), 
-        "core.MixinStitcher"
-    ),
+    client_core_MixinStitcher(Side.CLIENT,
+        avoid(TargetedMod.FALSETWEAKS).and(m -> OptimizationsandTweaksConfig.enableMixinStitcher),
+        "core.MixinStitcher"),
     client_core_MixinTextureUtil(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinTextureUtil,
         "core.MixinTextureUtil"),
     client_manametal_MixinEventFog(Side.CLIENT, m -> OptimizationsandTweaksConfig.enableMixinEventFog,

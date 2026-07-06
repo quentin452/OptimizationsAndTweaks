@@ -1,6 +1,5 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum TargetedMod implements ITargetedMod {
+
     SPIRITEORES("spiriteores", false, startsWith("spiritores")),
     MOVINGWORLD("movingworld", false, startsWith("movingworld")),
     ESSENCEOFTHEGOD("Essence_of_the_Gods", false, startsWith("Essence_of_the_Gods")),
@@ -136,8 +137,7 @@ public enum TargetedMod implements ITargetedMod {
     THECAMPINGMOD("TheCampingMod", false, startsWith("TheCampingMod")),
     SALUTATION("Salutation", false, startsWith("Salutation")),
     THETITANS("The Titans", false, startsWith("The Titans")),
-    MANAMETAL("manametal", false, startsWith("manametal"))
-    ;
+    MANAMETAL("manametal", false, startsWith("manametal"));
 
     @Getter
     private final String modName;

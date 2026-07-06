@@ -10,17 +10,17 @@ import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
  * This ensures callbacks are executed on the main game thread
  */
 public class AsyncPathfindingTickHandler {
-    
+
     private int tickCounter = 0;
     private static final int STATS_LOG_INTERVAL = 1200; // Log stats every 60 seconds (20 ticks/sec * 60)
-    
+
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             // Poll for completed pathfinding results
             if (AsyncPathfindingExecutor.isInitialized()) {
                 AsyncPathfindingExecutor.pollResults();
-                
+
                 // Periodically log statistics
                 tickCounter++;
                 if (tickCounter >= STATS_LOG_INTERVAL) {
@@ -30,7 +30,7 @@ public class AsyncPathfindingTickHandler {
             }
         }
     }
-    
+
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -40,35 +40,37 @@ public class AsyncPathfindingTickHandler {
             }
         }
     }
-    
+
     private void logStatistics() {
         if (AsyncPathfindingExecutor.isInitialized()) {
             int[] stats = AsyncPathfindingExecutor.getStatistics();
-            
+
             // Only log if there's been activity
             if (stats[0] > 0) { // total_submitted > 0
                 FMLLog.info("[AsyncPathfinding] %s", AsyncPathfindingExecutor.getStatisticsString());
-                
+
                 // Warn if queue is getting full
                 int queueSize = stats[4];
                 int workerCount = stats[6];
                 int maxQueueSize = workerCount * 4;
-                
+
                 if (queueSize > maxQueueSize * 0.8) {
                     FMLLog.warning(
                         "[AsyncPathfinding] Queue nearly full: %d/%d (%.1f%%) - Consider increasing worker count",
-                        queueSize, maxQueueSize, (queueSize * 100.0 / maxQueueSize)
-                    );
+                        queueSize,
+                        maxQueueSize,
+                        (queueSize * 100.0 / maxQueueSize));
                 }
-                
+
                 // Warn if many failures
                 int totalSubmitted = stats[0];
                 int totalFailed = stats[2];
                 if (totalSubmitted > 100 && totalFailed > totalSubmitted * 0.1) {
                     FMLLog.warning(
                         "[AsyncPathfinding] High failure rate: %d/%d (%.1f%%)",
-                        totalFailed, totalSubmitted, (totalFailed * 100.0 / totalSubmitted)
-                    );
+                        totalFailed,
+                        totalSubmitted,
+                        (totalFailed * 100.0 / totalSubmitted));
                 }
             }
         }

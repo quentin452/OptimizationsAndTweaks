@@ -3,13 +3,14 @@ package fr.iamacat.optimizationsandtweaks.utils.pathfinding;
 import net.minecraft.pathfinding.PathEntity;
 
 public class CachedPath {
+
     final PathEntity path;
     final double entityX, entityY, entityZ;
     final double targetX, targetY, targetZ;
     final long timestamp;
 
-    public CachedPath(PathEntity path, double entityX, double entityY, double entityZ,
-                double targetX, double targetY, double targetZ, long timestamp) {
+    public CachedPath(PathEntity path, double entityX, double entityY, double entityZ, double targetX, double targetY,
+        double targetZ, long timestamp) {
         this.path = path;
         this.entityX = entityX;
         this.entityY = entityY;
@@ -28,9 +29,8 @@ public class CachedPath {
      * Check if cached path is still valid
      * Cache expires after 0.6 second or if entity/target moved significantly
      */
-    public boolean isValid(double curEntityX, double curEntityY, double curEntityZ,
-                    double curTargetX, double curTargetY, double curTargetZ,
-                    long currentTime) {
+    public boolean isValid(double curEntityX, double curEntityY, double curEntityZ, double curTargetX,
+        double curTargetY, double curTargetZ, long currentTime) {
         // Cache expires after 0.6 second (13 ticks)
         if (currentTime - timestamp > 600) {
             return false;

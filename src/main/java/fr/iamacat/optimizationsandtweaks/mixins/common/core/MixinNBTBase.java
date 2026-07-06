@@ -1,13 +1,14 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.core;
 
+import net.minecraft.nbt.NBTBase;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.nbt.NBTBase;
-
 @Mixin(NBTBase.class)
 public abstract class MixinNBTBase {
+
     @Shadow
     public abstract byte getId();
 
@@ -20,7 +21,7 @@ public abstract class MixinNBTBase {
         if (!(p_equals_1_ instanceof NBTBase)) {
             return false;
         }
-        NBTBase nbtbase = (NBTBase)p_equals_1_;
+        NBTBase nbtbase = (NBTBase) p_equals_1_;
         return this.getId() == nbtbase.getId();
     }
 }

@@ -1,19 +1,15 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thetitan;
 
-import net.minecraft.entity.titan.minion.IMinion;
+import java.util.List;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.titan.minion.EntityBlazeMinion;
 import net.minecraft.entity.titan.minion.EnumMinionType;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.entity.titan.minion.IMinion;
 
-import java.util.List;
+public class EntityAIFindEntityNearestInjuredAllyPatch extends EntityAIBase {
 
-public class EntityAIFindEntityNearestInjuredAllyPatch
-extends EntityAIBase {
     private final EntityLiving entityLiving;
     private EntityLivingBase entityTarget;
     private final float maxTargetRange;
@@ -35,10 +31,10 @@ extends EntityAIBase {
         if (entityTarget != null) return false;
 
         double range = maxTargetRange();
-        List<EntityLiving> list = entityLiving.worldObj.getEntitiesWithinAABB(EntityLiving.class, entityLiving.boundingBox.expand(range, range, range));
+        List<EntityLiving> list = entityLiving.worldObj
+            .getEntitiesWithinAABB(EntityLiving.class, entityLiving.boundingBox.expand(range, range, range));
 
-        list.removeIf(e -> !(e instanceof IMinion) || ((IMinion)e).getMinionType() == EnumMinionType.LOYALIST);
-
+        list.removeIf(e -> !(e instanceof IMinion) || ((IMinion) e).getMinionType() == EnumMinionType.LOYALIST);
 
         if (list.isEmpty()) return false;
 
@@ -69,11 +65,11 @@ extends EntityAIBase {
 
         return distanceSq <= d0 * d0;
     }
-    
+
     @Override
     public void startExecuting() {
         if (entityLiving instanceof IMinionHealer) {
-            ((IMinionHealer) entityLiving).setEntityToHeal((EntityLiving)this.entityTarget);
+            ((IMinionHealer) entityLiving).setEntityToHeal((EntityLiving) this.entityTarget);
         }
         super.startExecuting();
     }
@@ -86,7 +82,7 @@ extends EntityAIBase {
         entityTarget = null;
         super.resetTask();
     }
-    
+
     @Override
     public void updateTask() {
         if (!(entityLiving instanceof IMinionHealer)) return;
@@ -99,12 +95,14 @@ extends EntityAIBase {
             double distanceSq = dx * dx + dy * dy + dz * dz;
 
             if (distanceSq > 16.0 * 16.0) {
-                entityLiving.getNavigator().tryMoveToEntityLiving(entityToHeal, 1.0);
-                entityLiving.getLookHelper().setLookPositionWithEntity(entityToHeal, 10.0f, (float) entityLiving.getVerticalFaceSpeed());
+                entityLiving.getNavigator()
+                    .tryMoveToEntityLiving(entityToHeal, 1.0);
+                entityLiving.getLookHelper()
+                    .setLookPositionWithEntity(entityToHeal, 10.0f, (float) entityLiving.getVerticalFaceSpeed());
             }
         }
     }
-   
+
     protected double maxTargetRange() {
         return maxTargetRange;
     }

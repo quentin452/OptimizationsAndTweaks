@@ -37,50 +37,57 @@ public class RustPathfinding {
     public static long findPathDirectWorld(long pathfinderHandle, Object worldAdapter, double entityX, double entityY,
         double entityZ, double targetX, double targetY, double targetZ, float entityWidth, float entityHeight,
         float maxDistance, boolean isInWater, int maxSafePointTries) {
-        return findPathDirect(pathfinderHandle, worldAdapter, entityX, entityY, entityZ, 
-            targetX, targetY, targetZ, entityWidth, entityHeight, maxDistance, isInWater, maxSafePointTries);
+        return findPathDirect(
+            pathfinderHandle,
+            worldAdapter,
+            entityX,
+            entityY,
+            entityZ,
+            targetX,
+            targetY,
+            targetZ,
+            entityWidth,
+            entityHeight,
+            maxDistance,
+            isInWater,
+            maxSafePointTries);
     }
+
     /**
      * Batch pathfinding - processes multiple pathfinding requests in parallel
      * 
      * @param pathfinderHandles Array of pathfinder handles
-     * @param offsetX Array of X offsets for block caches
-     * @param offsetY Array of Y offsets for block caches
-     * @param offsetZ Array of Z offsets for block caches
-     * @param widths Array of cache widths
-     * @param heights Array of cache heights
-     * @param depths Array of cache depths
-     * @param blockCodes Array of block code arrays
-     * @param entityX Array of entity X positions (as long bits)
-     * @param entityY Array of entity Y positions (as long bits)
-     * @param entityZ Array of entity Z positions (as long bits)
-     * @param targetX Array of target X positions (as long bits)
-     * @param targetY Array of target Y positions (as long bits)
-     * @param targetZ Array of target Z positions (as long bits)
-     * @param entityWidths Array of entity widths (as int bits)
-     * @param entityHeights Array of entity heights (as int bits)
-     * @param maxDistances Array of max distances (as int bits)
-     * @param isInWater Array of water status flags
+     * @param offsetX           Array of X offsets for block caches
+     * @param offsetY           Array of Y offsets for block caches
+     * @param offsetZ           Array of Z offsets for block caches
+     * @param widths            Array of cache widths
+     * @param heights           Array of cache heights
+     * @param depths            Array of cache depths
+     * @param blockCodes        Array of block code arrays
+     * @param entityX           Array of entity X positions (as long bits)
+     * @param entityY           Array of entity Y positions (as long bits)
+     * @param entityZ           Array of entity Z positions (as long bits)
+     * @param targetX           Array of target X positions (as long bits)
+     * @param targetY           Array of target Y positions (as long bits)
+     * @param targetZ           Array of target Z positions (as long bits)
+     * @param entityWidths      Array of entity widths (as int bits)
+     * @param entityHeights     Array of entity heights (as int bits)
+     * @param maxDistances      Array of max distances (as int bits)
+     * @param isInWater         Array of water status flags
      * @param maxSafePointTries Array of max safe point tries
      * @return Array of path entity handles (0 = no path found)
      */
-    public static native long[] findPathBatch(
-        long[] pathfinderHandles,
-        int[] offsetX, int[] offsetY, int[] offsetZ,
-        int[] widths, int[] heights, int[] depths,
-        byte[][] blockCodes,
-        long[] entityX, long[] entityY, long[] entityZ,
-        long[] targetX, long[] targetY, long[] targetZ,
-        int[] entityWidths, int[] entityHeights,
-        int[] maxDistances,
-        int[] isInWater,
-        int[] maxSafePointTries
-    );
+    public static native long[] findPathBatch(long[] pathfinderHandles, int[] offsetX, int[] offsetY, int[] offsetZ,
+        int[] widths, int[] heights, int[] depths, byte[][] blockCodes, long[] entityX, long[] entityY, long[] entityZ,
+        long[] targetX, long[] targetY, long[] targetZ, int[] entityWidths, int[] entityHeights, int[] maxDistances,
+        int[] isInWater, int[] maxSafePointTries);
 
     /** Enable/disable Rust profiler */
     public static native void setProfilerEnabled(boolean enabled);
+
     /** Query if Rust profiler is enabled */
     public static native boolean isProfilerEnabled();
+
     /** Clear collected profiler stats */
     public static native void clearProfilerStats();
 
@@ -94,18 +101,11 @@ public class RustPathfinding {
     /**
      * Submit an async pathfinding request to the Rust executor
      */
-    public static native long submitAsyncPathfinding(
-        long requestId, int priority,
-        boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
-        boolean isPathingInWater, boolean canEntityDrown,
-        int offsetX, int offsetY, int offsetZ,
-        int width, int height, int depth,
-        byte[] blockCache,
-        double entityX, double entityY, double entityZ,
-        double targetX, double targetY, double targetZ,
-        float entityWidth, float entityHeight,
-        float maxDistance, boolean isInWater, int maxSafePointTries
-    );
+    public static native long submitAsyncPathfinding(long requestId, int priority, boolean isWoodenDoorAllowed,
+        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown, int offsetX, int offsetY,
+        int offsetZ, int width, int height, int depth, byte[] blockCache, double entityX, double entityY,
+        double entityZ, double targetX, double targetY, double targetZ, float entityWidth, float entityHeight,
+        float maxDistance, boolean isInWater, int maxSafePointTries);
 
     /**
      * Try to receive a completed async pathfinding result (non-blocking)
@@ -121,7 +121,6 @@ public class RustPathfinding {
      * Shutdown the async executor gracefully
      */
     public static native void shutdownAsyncExecutor();
-
 
     /**
      * Checks if Rust pathfinding is available
@@ -172,7 +171,7 @@ public class RustPathfinding {
         }
 
         @Override
-        public void close() { }
+        public void close() {}
 
         @Override
         protected void finalize() throws Throwable {

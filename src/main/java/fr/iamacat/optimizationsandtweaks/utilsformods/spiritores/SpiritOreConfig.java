@@ -1,6 +1,7 @@
 package fr.iamacat.optimizationsandtweaks.utilsformods.spiritores;
 
 public enum SpiritOreConfig {
+
     COPPER(true),
     ALUMINUM(true),
     STEEL(true),

@@ -5,28 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CachedEntitySearch;
-
-import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfinding;
 
 @Mixin(World.class)
 public abstract class MixinWorld {
@@ -53,16 +47,8 @@ public abstract class MixinWorld {
     /**
      * Cache reads only for EntityLivingBase entities
      */
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void cacheEntitySearchForMinions(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
+    @Inject(method = "getEntitiesWithinAABBExcludingEntity", at = @At("HEAD"), cancellable = true)
+    private void cacheEntitySearchForMinions(Entity entity, AxisAlignedBB aabb, CallbackInfoReturnable<List> cir) {
         if (!(entity instanceof EntityLivingBase) || (entity instanceof EntityPlayer)) {
             return;
         }
@@ -72,9 +58,8 @@ public abstract class MixinWorld {
 
         if (currentTick - lastCacheCleanup > CLEANUP_INTERVAL) {
             lastCacheCleanup = currentTick;
-            entitySearchCache.entrySet().removeIf(
-                entry -> (currentTick - entry.getValue().timestamp) > CACHE_DURATION_TICKS * 2
-            );
+            entitySearchCache.entrySet()
+                .removeIf(entry -> (currentTick - entry.getValue().timestamp) > CACHE_DURATION_TICKS * 2);
         }
 
         int cacheKey = generateCacheKey(entity, aabb);
@@ -88,15 +73,8 @@ public abstract class MixinWorld {
     /**
      * Cache writes only for EntityLivingBase entities
      */
-    @Inject(
-        method = "getEntitiesWithinAABBExcludingEntity",
-        at = @At("RETURN")
-    )
-    private void cacheEntitySearchResult(
-        Entity entity,
-        AxisAlignedBB aabb,
-        CallbackInfoReturnable<List> cir
-    ) {
+    @Inject(method = "getEntitiesWithinAABBExcludingEntity", at = @At("RETURN"))
+    private void cacheEntitySearchResult(Entity entity, AxisAlignedBB aabb, CallbackInfoReturnable<List> cir) {
         if (!(entity instanceof EntityLivingBase) || (entity instanceof EntityPlayer)) {
             return; // skip caching for players
         }
@@ -107,10 +85,7 @@ public abstract class MixinWorld {
         int cacheKey = generateCacheKey(entity, aabb);
         List result = cir.getReturnValue();
 
-        entitySearchCache.put(
-            cacheKey,
-            new CachedEntitySearch(new ArrayList<>(result), currentTick)
-        );
+        entitySearchCache.put(cacheKey, new CachedEntitySearch(new ArrayList<>(result), currentTick));
     }
 
     @Unique

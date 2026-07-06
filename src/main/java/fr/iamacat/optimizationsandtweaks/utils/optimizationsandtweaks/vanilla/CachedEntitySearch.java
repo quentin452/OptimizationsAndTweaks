@@ -1,9 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla;
 
-import net.minecraft.entity.Entity;
 import java.util.List;
 
+import net.minecraft.entity.Entity;
+
 public class CachedEntitySearch {
+
     public final List<Entity> entities;
     public final long timestamp;
 

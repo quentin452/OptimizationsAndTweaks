@@ -1,21 +1,23 @@
 package fr.iamacat.optimizationsandtweaks.utils.natives;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Bridge class to convert between Minecraft pathfinding and Rust pathfinding
-
+ * 
  */
 public class RustPathfindingBridge {
+
     private static final Map<Integer, PathFinderEntry> PATHFINDER_CACHE = new ConcurrentHashMap<Integer, PathFinderEntry>();
-        
+
     private static class PathFinderEntry {
+
         RustPathfinding.PathFinderHandle handle;
         boolean woodenDoorAllowed;
         boolean movementBlockAllowed;
@@ -31,16 +33,12 @@ public class RustPathfindingBridge {
         }
     }
 
-    private static RustPathfinding.PathFinderHandle getOrCreatePathFinder(Entity entity,
-        boolean isWoodenDoorAllowed,
-        boolean isMovementBlockAllowed,
-        boolean isPathingInWater,
-        boolean canEntityDrown) {
+    private static RustPathfinding.PathFinderHandle getOrCreatePathFinder(Entity entity, boolean isWoodenDoorAllowed,
+        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown) {
         int key = entity.getEntityId();
         PathFinderEntry entry = PATHFINDER_CACHE.get(key);
         if (entry != null) {
-            if (entry.woodenDoorAllowed == isWoodenDoorAllowed
-                && entry.movementBlockAllowed == isMovementBlockAllowed
+            if (entry.woodenDoorAllowed == isWoodenDoorAllowed && entry.movementBlockAllowed == isMovementBlockAllowed
                 && entry.pathingInWater == isPathingInWater
                 && entry.canEntityDrown == canEntityDrown) {
                 return entry.handle;
@@ -53,38 +51,51 @@ public class RustPathfindingBridge {
             }
         }
         RustPathfinding.PathFinderHandle newHandle = new RustPathfinding.PathFinderHandle(
-            isWoodenDoorAllowed, isMovementBlockAllowed, isPathingInWater, canEntityDrown);
-        PATHFINDER_CACHE.put(key, new PathFinderEntry(newHandle, isWoodenDoorAllowed, isMovementBlockAllowed,
-            isPathingInWater, canEntityDrown));
+            isWoodenDoorAllowed,
+            isMovementBlockAllowed,
+            isPathingInWater,
+            canEntityDrown);
+        PATHFINDER_CACHE.put(
+            key,
+            new PathFinderEntry(
+                newHandle,
+                isWoodenDoorAllowed,
+                isMovementBlockAllowed,
+                isPathingInWater,
+                canEntityDrown));
         return newHandle;
     }
+
     /**
      * Finds a path using Rust pathfinding with direct world access (no pre-encoding).
      * This method passes the world object directly to Rust, which queries blocks on-demand.
      * 
-     * @param world               The world
-     * @param entity              The entity
-     * @param targetX             Target X coordinate
-     * @param targetY             Target Y coordinate
-     * @param targetZ             Target Z coordinate
-     * @param maxDistance         Maximum pathfinding distance
-     * @param isWoodenDoorAllowed Whether wooden doors are passable
+     * @param world                  The world
+     * @param entity                 The entity
+     * @param targetX                Target X coordinate
+     * @param targetY                Target Y coordinate
+     * @param targetZ                Target Z coordinate
+     * @param maxDistance            Maximum pathfinding distance
+     * @param isWoodenDoorAllowed    Whether wooden doors are passable
      * @param isMovementBlockAllowed Whether movement-blocking blocks are allowed
-     * @param isPathingInWater    Whether pathfinding can occur in water
-     * @param canEntityDrown      Whether the entity can drown
+     * @param isPathingInWater       Whether pathfinding can occur in water
+     * @param canEntityDrown         Whether the entity can drown
      * @return PathEntity or null if no path found
      */
-    public static PathEntity findPathDirect(IBlockAccess world, Entity entity,
-            double targetX, double targetY, double targetZ, float maxDistance,
-            boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
-            boolean isPathingInWater, boolean canEntityDrown) {
+    public static PathEntity findPathDirect(IBlockAccess world, Entity entity, double targetX, double targetY,
+        double targetZ, float maxDistance, boolean isWoodenDoorAllowed, boolean isMovementBlockAllowed,
+        boolean isPathingInWater, boolean canEntityDrown) {
 
         if (!RustPathfinding.isAvailable()) {
             return null;
         }
 
         RustPathfinding.PathFinderHandle handleObj = getOrCreatePathFinder(
-            entity, isWoodenDoorAllowed, isMovementBlockAllowed, isPathingInWater, canEntityDrown);
+            entity,
+            isWoodenDoorAllowed,
+            isMovementBlockAllowed,
+            isPathingInWater,
+            canEntityDrown);
         long handle = handleObj.getHandle();
 
         float width = (float) entity.width;
@@ -97,14 +108,18 @@ public class RustPathfindingBridge {
         long pathEntityHandle = RustPathfinding.findPathDirectWorld(
             handle,
             adapter,
-            entity.posX, entity.posY, entity.posZ,
-            targetX, targetY, targetZ,
-            width, height,
+            entity.posX,
+            entity.posY,
+            entity.posZ,
+            targetX,
+            targetY,
+            targetZ,
+            width,
+            height,
             maxDistance,
             entity.isInWater(),
-            entity.getMaxSafePointTries()
-        );
-        
+            entity.getMaxSafePointTries());
+
         if (pathEntityHandle == 0L) {
             return null;
         }
@@ -134,6 +149,7 @@ public class RustPathfindingBridge {
      * Now uses a global shared cache to avoid redundant queries.
      */
     public static class WorldAccessAdapter {
+
         private final IBlockAccess world;
 
         public WorldAccessAdapter(IBlockAccess world) {
@@ -145,14 +161,14 @@ public class RustPathfindingBridge {
          * Returns: 0=Air,1=Solid,2=Water,3=Lava,4=WoodenDoor,5=Trapdoor,6=Fence,7=FenceGate,etc.
          * OPTIMIZED: Uses global shared cache to avoid redundant world queries.
          */
-        public byte getBlockTypeCode(int x, int y, int z) {            
+        public byte getBlockTypeCode(int x, int y, int z) {
             // Cache miss - query world and cache result
             byte blockType = encodeBlock(world, x, y, z);
             int metadata = 0;
             try {
                 metadata = world.getBlockMetadata(x, y, z);
             } catch (Throwable ignore) {}
-            
+
             return blockType;
         }
 
@@ -160,7 +176,7 @@ public class RustPathfindingBridge {
          * Called by Rust via JNI to get block metadata.
          * OPTIMIZED: Uses global shared cache.
          */
-        public int getBlockMetadata(int x, int y, int z) {            
+        public int getBlockMetadata(int x, int y, int z) {
             // Cache miss - query world
             try {
                 return world.getBlockMetadata(x, y, z);
@@ -174,7 +190,9 @@ public class RustPathfindingBridge {
          */
         public boolean canBlockSeeSky(int x, int y, int z) {
             try {
-                return world.getBlock(x, y, z).getMaterial().isOpaque() == false;
+                return world.getBlock(x, y, z)
+                    .getMaterial()
+                    .isOpaque() == false;
             } catch (Throwable t) {
                 return false;
             }
@@ -185,32 +203,34 @@ public class RustPathfindingBridge {
      * Encode a region of blocks into a byte array for async pathfinding
      * This is used by AsyncPathfindingExecutor to prepare block data
      */
-    public static byte[] encodeBlockCache(IBlockAccess world, int offsetX, int offsetY, int offsetZ,
-                                         int width, int height, int depth) {
+    public static byte[] encodeBlockCache(IBlockAccess world, int offsetX, int offsetY, int offsetZ, int width,
+        int height, int depth) {
         byte[] cache = new byte[width * height * depth];
         int index = 0;
-        
+
         for (int y = 0; y < height; y++) {
             for (int z = 0; z < depth; z++) {
                 for (int x = 0; x < width; x++) {
                     int worldX = offsetX + x;
                     int worldY = offsetY + y;
                     int worldZ = offsetZ + z;
-                    
+
                     cache[index++] = encodeBlock(world, worldX, worldY, worldZ);
                 }
             }
         }
-        
+
         return cache;
     }
-    
+
     private static byte encodeBlock(IBlockAccess world, int x, int y, int z) {
         try {
             net.minecraft.block.Block b = world.getBlock(x, y, z);
             int id = net.minecraft.block.Block.getIdFromBlock(b);
             int meta = 0;
-            try { meta = world.getBlockMetadata(x, y, z); } catch (Throwable ignore) {}
+            try {
+                meta = world.getBlockMetadata(x, y, z);
+            } catch (Throwable ignore) {}
 
             if (id == 0) return 0; // Air
             if (id == 8 || id == 9) return 2; // Water
@@ -220,7 +240,9 @@ public class RustPathfindingBridge {
             if (id == 64 || id == 71) {
                 int m = meta;
                 if ((m & 0x8) != 0) { // upper half
-                    try { m = world.getBlockMetadata(x, y - 1, z); } catch (Throwable ignore) {}
+                    try {
+                        m = world.getBlockMetadata(x, y - 1, z);
+                    } catch (Throwable ignore) {}
                 }
                 boolean open = (m & 0x4) != 0;
                 return open ? (byte) 0 : (byte) 4;
@@ -244,8 +266,18 @@ public class RustPathfindingBridge {
             // Slabs & stairs
             if (id == 44 || id == 126) return 0;
             switch (id) {
-                case 53: case 67: case 108: case 109: case 114: case 128:
-                case 134: case 135: case 136: case 156: case 163: case 164:
+                case 53:
+                case 67:
+                case 108:
+                case 109:
+                case 114:
+                case 128:
+                case 134:
+                case 135:
+                case 136:
+                case 156:
+                case 163:
+                case 164:
                     return 0;
                 default:
             }
