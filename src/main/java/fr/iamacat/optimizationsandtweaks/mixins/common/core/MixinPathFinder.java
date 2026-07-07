@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import fr.iamacat.optimizationsandtweaks.devtools.AiEventTrace;
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
 import fr.iamacat.optimizationsandtweaks.utils.pathfinding.AsyncPathCaches;
 import fr.iamacat.optimizationsandtweaks.utils.pathfinding.AsyncPathRequestDispatcher;
@@ -134,16 +135,20 @@ public abstract class MixinPathFinder {
         final int entityId = entity.getEntityId();
         final long now = System.currentTimeMillis();
 
+        final boolean traced = AiEventTrace.watched(entityId);
+
         // Fresh cached path?
         CachedPath cached = AsyncPathCaches.cachedPaths.get(entityId);
         if (cached != null && cached.isValid(entity.posX, entity.posY, entity.posZ, targetX, targetY, targetZ, now)) {
             out[0] = cached.getPath();
+            if (traced) AiEventTrace.record(entityId, "pathfinder.requestPath -> READY (cached)");
             return OPT$READY;
         }
 
         // Already in flight for (roughly) this target?
         PendingPathRequest pending = AsyncPathCaches.pendingPaths.get(entityId);
         if (pending != null && pending.isStillValid(targetX, targetY, targetZ, now)) {
+            if (traced) AiEventTrace.record(entityId, "pathfinder.requestPath -> PENDING (in flight, return null)");
             return OPT$PENDING;
         }
 
@@ -175,8 +180,21 @@ public abstract class MixinPathFinder {
                 AsyncPathCaches.pendingPaths.remove(entityId);
                 try {
                     if (!entity.isDead && path != null && entity instanceof EntityLiving) {
+                        // Restore the speed the AI originally asked for (panic 2.0, follow, ...),
+                        // captured by MixinPathNavigate; default 1.0 if never recorded.
+                        Double reqSpeed = AsyncPathCaches.requestedSpeed.get(entityId);
+                        double speed = reqSpeed != null ? reqSpeed : 1.0D;
                         ((EntityLiving) entity).getNavigator()
-                            .setPath(path, 1.0D);
+                            .setPath(path, speed);
+                        if (AiEventTrace.watched(entityId)) {
+                            AiEventTrace.record(
+                                entityId,
+                                "pathfinder.asyncApply setPath nodes=" + path.getCurrentPathLength()
+                                    + " speed="
+                                    + speed);
+                        }
+                    } else if (AiEventTrace.watched(entityId)) {
+                        AiEventTrace.record(entityId, "pathfinder.asyncApply skipped (dead/null path)");
                     }
                 } catch (Throwable ignored) {}
             },
@@ -185,10 +203,13 @@ public abstract class MixinPathFinder {
 
         if (requestId == 0) {
             // Region too large or native queue full: let vanilla run this tick.
+            if (traced) AiEventTrace.record(entityId, "pathfinder.requestPath -> DECLINE (queue full/region big)");
             return OPT$DECLINE;
         }
 
         AsyncPathCaches.pendingPaths.put(entityId, new PendingPathRequest(requestId, targetX, targetY, targetZ, now));
+        if (traced)
+            AiEventTrace.record(entityId, "pathfinder.requestPath -> SUBMIT id=" + requestId + " (return null)");
         return OPT$PENDING;
     }
 }

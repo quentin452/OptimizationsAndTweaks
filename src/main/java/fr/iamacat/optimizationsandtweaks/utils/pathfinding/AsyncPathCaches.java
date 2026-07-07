@@ -20,12 +20,21 @@ public final class AsyncPathCaches {
     /** entityId -> in-flight async request. */
     public static final Map<Integer, PendingPathRequest> pendingPaths = new ConcurrentHashMap<>();
 
+    /**
+     * entityId -> speed the navigator was last asked to move at (panic 2.0, follow/flee > 1, wander
+     * 1.0). Captured at {@code PathNavigate.setPath} so the async apply can restore the caller's
+     * intended speed instead of a hardcoded 1.0 — otherwise every async-pathed mob walks at normal
+     * speed and panic/flee never visibly sprints.
+     */
+    public static final Map<Integer, Double> requestedSpeed = new ConcurrentHashMap<>();
+
     private AsyncPathCaches() {}
 
     /** Drop all state for an entity (called on death). */
     public static void purge(int entityId) {
         cachedPaths.remove(entityId);
         pendingPaths.remove(entityId);
+        requestedSpeed.remove(entityId);
     }
 
     /**

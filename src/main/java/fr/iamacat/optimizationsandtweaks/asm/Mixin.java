@@ -494,6 +494,10 @@ public enum Mixin implements IMixin {
         "core.MixinPathFinder"),
     common_core_MixinPathEntity(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
         "core.MixinPathEntity"),
+    common_core_MixinPathNavigate(Side.COMMON, m -> OptimizationsandTweaksConfig.enablePathFindingOptimizations,
+        "core.MixinPathNavigate"),
+    // Devtools-only AI trace (see AiEventTrace) — applied only with -Doat.aitrace=true, never in prod.
+    common_ai_MixinEntityAIPanic(Side.COMMON, m -> Boolean.getBoolean("oat.aitrace"), "ai.MixinEntityAIPanic"),
     common_angelica_MixinClientProxy(Side.COMMON, require(TargetedMod.ANGELICA), "angelica.MixinClientProxy"),
     client_core_MixinEntitySpellParticleFX(Side.CLIENT, always(), "core.MixinEntitySpellParticleFX"),
     client_core_MixinCodecIBXM(Side.CLIENT, always(), "core.MixinCodecIBXM"),
