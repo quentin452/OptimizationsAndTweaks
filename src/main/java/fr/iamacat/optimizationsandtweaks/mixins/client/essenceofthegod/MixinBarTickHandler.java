@@ -15,7 +15,7 @@ public class MixinBarTickHandler {
 
     /**
      * @reason disable Essence of the Gods bar rendering (feature disabled by this pack). HEAD-cancel
-     *         instead of @Overwrite so any other transform on this method still applies.
+     *         instead of a full-method replace so any other transform on this method still applies.
      */
     @Inject(method = "onRender", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent

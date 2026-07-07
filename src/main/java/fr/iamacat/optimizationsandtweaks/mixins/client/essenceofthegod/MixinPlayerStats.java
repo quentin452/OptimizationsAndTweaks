@@ -16,7 +16,8 @@ public class MixinPlayerStats {
 
     /**
      * @reason disable Essence of the Gods player-stats HUD rendering (feature disabled by this pack).
-     *         HEAD-cancel instead of @Overwrite so any other transform on this method still applies.
+     *         HEAD-cancel instead of a full-method replace so any other transform on this method still
+     *         applies.
      */
     @Inject(method = "renderEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
@@ -26,7 +27,8 @@ public class MixinPlayerStats {
 
     /**
      * @reason disable Essence of the Gods player-stats tick handling (feature disabled by this pack).
-     *         HEAD-cancel instead of @Overwrite so any other transform on this method still applies.
+     *         HEAD-cancel instead of a full-method replace so any other transform on this method still
+     *         applies.
      */
     @Inject(method = "tickEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent

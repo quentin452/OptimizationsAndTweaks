@@ -15,7 +15,8 @@ public class MixinOnJoinWorldHandlerBird {
 
     /**
      * @reason disable Bird Nests' per-player-tick world-join scan (feature disabled by this pack).
-     *         HEAD-cancel instead of @Overwrite so any other transform on this method still applies.
+     *         HEAD-cancel instead of a full-method replace so any other transform on this method still
+     *         applies.
      */
     @Inject(method = "onEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
