@@ -1,0 +1,157 @@
+name: Build Rust natives
+
+# Builds the three shipped Rust FFI crates into per-OS native libraries, mirroring
+# build-all.py's output naming exactly:
+#   linux   -> liboptimizationsandtweaks_<crate>.so
+#   windows -> optimizationsandtweaks_<crate>.dll
+#   macos   -> liboptimizationsandtweaks_<crate>.dylib   (universal x86_64 + arm64)
+#
+# Each OS job uploads its libraries as an artifact. Download them and drop them into
+#   src/main/resources/assets/optimizationsandtweaks/natives/<os>/
+# then rebuild the mod jar and revalidate in game. See docs/rust-natives.md.
+#
+# NOTE ON TOOLCHAINS: the per-crate .cargo/config.toml files pin osxcross / mingw
+# cross-compilation linkers -- those exist ONLY for build-all.py, which cross-builds
+# every OS from a single Linux box. CI instead uses one native runner per OS, so it
+# relies on each runner's default toolchain. The macOS job explicitly overrides the
+# apple linker (see env there) to neutralize the osxcross pin from config.toml.
+#
+# The leaktracer dependency is only *used* under #[cfg(debug_assertions)] (release
+# builds omit it), and the crate itself is pure-Rust + backtrace -- it compiles on
+# Linux, Windows and macOS alike, so no feature-gating is required.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'optimizationsandtweaks_pathfinding/**'
+      - 'optimizationsandtweaks_blocksupdates/**'
+      - 'optimizationsandtweaks_shared/**'
+      - '.github/workflows/rust-natives.yml'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # bash is available on all three runner OSes (git-bash on Windows); keeps the
+    # build/collect scripts identical across jobs.
+    shell: bash
+
+jobs:
+  linux:
+    name: Linux (.so)
+    runs-on: ubuntu-latest
+    env:
+      TARGET: x86_64-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add "$TARGET"
+
+      - name: Build crates (release)
+        run: |
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            ( cd "$crate" && cargo build --release --target "$TARGET" )
+          done
+
+      - name: Collect natives
+        run: |
+          mkdir -p natives-out/linux
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            cp "$crate/target/$TARGET/release/lib$crate.so" natives-out/linux/
+          done
+          ls -l natives-out/linux
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: natives-linux
+          path: natives-out/linux/*.so
+          if-no-files-found: error
+
+  windows:
+    name: Windows (.dll)
+    runs-on: windows-latest
+    env:
+      # Native MSVC target (the runner default). Produces the same DLL filenames as
+      # build-all.py's mingw cross-build; leaktracer + backtrace build fine on MSVC.
+      TARGET: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add "$TARGET"
+
+      - name: Build crates (release)
+        run: |
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            ( cd "$crate" && cargo build --release --target "$TARGET" )
+          done
+
+      - name: Collect natives
+        run: |
+          mkdir -p natives-out/windows
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            cp "$crate/target/$TARGET/release/$crate.dll" natives-out/windows/
+          done
+          ls -l natives-out/windows
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: natives-windows
+          path: natives-out/windows/*.dll
+          if-no-files-found: error
+
+  macos:
+    name: macOS (universal .dylib)
+    runs-on: macos-latest
+    env:
+      # Neutralize the osxcross linker pinned in each crate's .cargo/config.toml so
+      # the native Apple clang is used for both arches on the runner.
+      CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER: clang
+      CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER: clang
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust targets
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
+      - name: Build crates (release, both arches)
+        run: |
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            ( cd "$crate" \
+              && cargo build --release --target x86_64-apple-darwin \
+              && cargo build --release --target aarch64-apple-darwin )
+          done
+
+      - name: Create universal binaries (lipo)
+        run: |
+          mkdir -p natives-out/macos
+          for crate in optimizationsandtweaks_shared \
+                       optimizationsandtweaks_blocksupdates \
+                       optimizationsandtweaks_pathfinding; do
+            lipo -create -output "natives-out/macos/lib$crate.dylib" \
+              "$crate/target/x86_64-apple-darwin/release/lib$crate.dylib" \
+              "$crate/target/aarch64-apple-darwin/release/lib$crate.dylib"
+            lipo -info "natives-out/macos/lib$crate.dylib"
+          done
+          ls -l natives-out/macos
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: natives-macos
+          path: natives-out/macos/*.dylib
+          if-no-files-found: error
