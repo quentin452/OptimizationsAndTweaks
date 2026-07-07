@@ -479,6 +479,7 @@ public enum Mixin implements IMixin {
         "core.MixinRenderManager"),
     client_essenceofthegod_MixinBarTickHandler(Side.CLIENT, always(), "essenceofthegod.MixinBarTickHandler"),
     client_essenceofthegod_MixinPlayerStats(Side.CLIENT, always(), "essenceofthegod.MixinPlayerStats"),
+    client_manametalmod_MixinEventGUI(Side.CLIENT, require(TargetedMod.MANAMETAL), "manametalmod.MixinEventGUI"),
 
     client_davincivessels_MixinShipKeyHandler(Side.CLIENT, require(TargetedMod.DAVINCIVESSELS),
         "davincivessels.MixinShipKeyHandler"),
