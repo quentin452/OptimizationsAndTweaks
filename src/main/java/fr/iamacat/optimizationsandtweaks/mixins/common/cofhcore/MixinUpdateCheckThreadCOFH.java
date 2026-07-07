@@ -1,7 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.cofhcore;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cofh.mod.updater.UpdateCheckThread;
 
@@ -9,11 +11,11 @@ import cofh.mod.updater.UpdateCheckThread;
 public class MixinUpdateCheckThreadCOFH {
 
     /**
-     * @author
-     * @reason disabling update checks to reduce CPU time from COFH mods
+     * @reason disabling update checks to reduce CPU time from COFH mods. HEAD-cancel instead of
+     * @Overwrite so any other transform on this method still applies.
      */
-    @Overwrite(remap = false)
-    public void run() {
-
+    @Inject(method = "run", at = @At("HEAD"), remap = false, cancellable = true)
+    public void run(CallbackInfo ci) {
+        ci.cancel();
     }
 }
