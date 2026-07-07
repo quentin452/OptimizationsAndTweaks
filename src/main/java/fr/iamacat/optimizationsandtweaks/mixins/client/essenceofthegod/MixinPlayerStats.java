@@ -4,7 +4,9 @@ import net.essence.client.PlayerStats;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -13,18 +15,22 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 public class MixinPlayerStats {
 
     /**
-     * @author
-     * @reason
+     * @reason disable Essence of the Gods player-stats HUD rendering (feature disabled by this pack).
+     *         HEAD-cancel instead of @Overwrite so any other transform on this method still applies.
      */
-    @Overwrite(remap = false)
+    @Inject(method = "renderEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
-    public void renderEvent(RenderGameOverlayEvent event) {}
+    public void renderEvent(RenderGameOverlayEvent event, CallbackInfo ci) {
+        ci.cancel();
+    }
 
     /**
-     * @author
-     * @reason
+     * @reason disable Essence of the Gods player-stats tick handling (feature disabled by this pack).
+     *         HEAD-cancel instead of @Overwrite so any other transform on this method still applies.
      */
-    @Overwrite(remap = false)
+    @Inject(method = "tickEvent", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
-    public void tickEvent(TickEvent.RenderTickEvent event) {}
+    public void tickEvent(TickEvent.RenderTickEvent event, CallbackInfo ci) {
+        ci.cancel();
+    }
 }
