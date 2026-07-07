@@ -289,11 +289,13 @@ public class AsyncPathfindingExecutor {
                 int z = allPoints[i * 3 + 2];
                 points[i] = new PathPoint(x, y, z);
             }
-            // Safety: ensure at least 2 points to avoid navigator indexing past length
-            if (pointCount == 1) {
-                PathPoint p = points[0];
-                PathPoint[] doubled = new PathPoint[] { p, new PathPoint(p.xCoord, p.yCoord, p.zCoord) };
-                return new PathEntity(doubled);
+            // A single-point path is just the start node — no reachable route. Return null so the
+            // request completes as "no path" (onFailure), matching vanilla PathFinder, which returns
+            // null rather than a degenerate path. The previous behaviour fabricated a 2-node path to
+            // the mob's own position ([p, p]); the navigator then held a path it could not advance,
+            // pinning one-shot movers in place instead of letting the AI re-path.
+            if (pointCount < 2) {
+                return null;
             }
 
             return new PathEntity(points);

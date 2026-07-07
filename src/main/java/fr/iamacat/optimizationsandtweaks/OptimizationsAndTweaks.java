@@ -72,9 +72,13 @@ public class OptimizationsAndTweaks {
                         OptimizationsandTweaksConfig.enableRustProfiler ? "enabled" : "disabled");
                 } catch (Throwable t) {}
 
-                // Initialize async pathfinding executor
-                AsyncPathfindingExecutor.initializeAuto();
-                FMLLog.info("[OptimizationsAndTweaks] Async pathfinding executor initialized");
+                // Initialize the async pathfinding executor only when the feature is enabled.
+                // Otherwise the native worker pool spun up here is pure waste, and getStatistics()
+                // would report the executor as "available" while pathfinding is meant to be off.
+                if (OptimizationsandTweaksConfig.enablePathFindingOptimizations) {
+                    AsyncPathfindingExecutor.initializeAuto();
+                    FMLLog.info("[OptimizationsAndTweaks] Async pathfinding executor initialized");
+                }
             }
         } catch (Throwable t) {
             FMLLog.info(
