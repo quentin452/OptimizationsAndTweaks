@@ -1,7 +1,9 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.lotrimprovements;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.jediexe.lotrimprovements.Main;
 
@@ -9,9 +11,11 @@ import com.jediexe.lotrimprovements.Main;
 public class MixinMain {
 
     /**
-     * @author iamacatfr
-     * @reason disable attackindicator from Lotr Improvements
+     * @reason disable attackindicator from Lotr Improvements. HEAD-cancel instead of full replace so
+     *         any other transform on this method still applies.
      */
-    @Overwrite
-    public static void LOTROverride() {}
+    @Inject(method = "LOTROverride", at = @At("HEAD"), remap = false, cancellable = true)
+    public static void LOTROverride(CallbackInfo ci) {
+        ci.cancel();
+    }
 }
