@@ -138,6 +138,7 @@ public enum TargetedMod implements ITargetedMod {
     SALUTATION("Salutation", false, startsWith("Salutation")),
     THETITANS("The Titans", false, startsWith("The Titans")),
     MANAMETAL("manametal", false, startsWith("manametal")),
+    BIOMESOPLENTY("BiomesOPlenty", false, startsWith("BiomesOPlenty")),
     MEKANISM("Mekanism", false, startsWith("Mekanism"));
 
     @Getter

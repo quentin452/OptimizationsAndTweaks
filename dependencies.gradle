@@ -161,6 +161,8 @@ dependencies {
     implementation "curse.maven:manametal-531708:6943759-deobf-sources-api"
     // Mixin target only (mekanism.common.util.MekanismUtils); the pack provides Mekanism CE at runtime.
     compileOnly "curse.maven:mekanism-community-edition-399904:7054600-deobf-sources-api"
+    // Mixin target only (biomesoplenty.api.biome.BiomeFeatures/BOPBiomeDecorator); the pack provides BoP at runtime.
+    compileOnly files("libs/BiomesOPlenty-BOP-1.7.10-2.1.0.2309.jar")
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.14.93-GTNH:dev')
