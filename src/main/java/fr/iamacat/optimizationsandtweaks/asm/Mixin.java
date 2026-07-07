@@ -520,7 +520,6 @@ public enum Mixin implements IMixin {
     common_mekanism_MixinMekanismUtils(Side.COMMON, require(TargetedMod.MEKANISM), "mekanism.MixinMekanismUtils"),
 
     common_stealth_MixinWorldRegister(Side.COMMON, require(TargetedMod.STEALTH), "stealth.MixinWorldRegister"),
-    common_stealth_MixinWorldGenStealth(Side.COMMON, require(TargetedMod.STEALTH), "stealth.MixinWorldGenStealth"),
 
     common_biomesoplenty_MixinBiomeFeatures(Side.COMMON, require(TargetedMod.BIOMESOPLENTY),
         "biomesoplenty.MixinBiomeFeatures"),
