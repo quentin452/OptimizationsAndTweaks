@@ -519,6 +519,8 @@ public enum Mixin implements IMixin {
     // .or(), and .negate() methods to mix and match multiple predicates.
     common_mekanism_MixinMekanismUtils(Side.COMMON, require(TargetedMod.MEKANISM), "mekanism.MixinMekanismUtils"),
 
+    common_stealth_MixinWorldRegister(Side.COMMON, require(TargetedMod.STEALTH), "stealth.MixinWorldRegister"),
+
     common_biomesoplenty_MixinBiomeFeatures(Side.COMMON, require(TargetedMod.BIOMESOPLENTY),
         "biomesoplenty.MixinBiomeFeatures"),
     common_biomesoplenty_MixinBOPBiomeDecorator(Side.COMMON, require(TargetedMod.BIOMESOPLENTY),
