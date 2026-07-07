@@ -137,7 +137,8 @@ public enum TargetedMod implements ITargetedMod {
     THECAMPINGMOD("TheCampingMod", false, startsWith("TheCampingMod")),
     SALUTATION("Salutation", false, startsWith("Salutation")),
     THETITANS("The Titans", false, startsWith("The Titans")),
-    MANAMETAL("manametal", false, startsWith("manametal"));
+    MANAMETAL("manametal", false, startsWith("manametal")),
+    MEKANISM("Mekanism", false, startsWith("Mekanism"));
 
     @Getter
     private final String modName;

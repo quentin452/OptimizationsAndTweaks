@@ -520,7 +520,7 @@ public enum Mixin implements IMixin {
 
     // The modFilter argument is a predicate, so you can also use the .and(),
     // .or(), and .negate() methods to mix and match multiple predicates.
-    ;
+    common_mekanism_MixinMekanismUtils(Side.COMMON, require(TargetedMod.MEKANISM), "mekanism.MixinMekanismUtils"),;
 
     @Getter
     public final Side side;

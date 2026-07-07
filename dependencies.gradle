@@ -159,6 +159,8 @@ dependencies {
     implementation "curse.maven:mlp-mythical-creatures-updated-to-1-7-10-226048:2277522-deobf-sources-api"
     implementation "curse.maven:spiritores-mod-72320:2214478-deobf-sources-api"
     implementation "curse.maven:manametal-531708:6943759-deobf-sources-api"
+    // Mixin target only (mekanism.common.util.MekanismUtils); the pack provides Mekanism CE at runtime.
+    compileOnly "curse.maven:mekanism-community-edition-399904:7054600-deobf-sources-api"
 
     runtimeOnly('com.github.GTNewHorizons:BuildCraft:7.1.36:dev')
     transformedMod('com.github.GTNewHorizons:TinkersConstruct:1.14.93-GTNH:dev')
