@@ -13,5 +13,5 @@ lazy_static = "1.5.0"
 leaktracer = "0.1"
 rayon = "1.10"
 crossbeam = "0.8"
-lru = "0.12"
+lru = "0.18"
 optimizationsandtweaks_shared = { path = "../optimizationsandtweaks_shared" }
