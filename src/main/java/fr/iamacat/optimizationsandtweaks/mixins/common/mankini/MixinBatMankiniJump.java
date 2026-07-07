@@ -3,7 +3,9 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.mankini;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import matgm50.mankini.util.BatMankiniJump;
@@ -12,10 +14,12 @@ import matgm50.mankini.util.BatMankiniJump;
 public class MixinBatMankiniJump {
 
     /**
-     * @author iamacatfr
-     * @reason disabling anti fall damage
+     * @reason disabling anti fall damage. HEAD-cancel instead of full replace so any other
+     *         transform on this method still applies.
      */
-    @Overwrite(remap = false)
+    @Inject(method = "PlayerFall", at = @At("HEAD"), remap = false, cancellable = true)
     @SubscribeEvent
-    public void PlayerFall(LivingFallEvent event) {}
+    public void PlayerFall(LivingFallEvent event, CallbackInfo ci) {
+        ci.cancel();
+    }
 }
