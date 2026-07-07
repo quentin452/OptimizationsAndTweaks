@@ -65,8 +65,6 @@ public enum Mixin implements IMixin {
     common_core_MixinSaveFormatOld(Side.COMMON, always(), "core.MixinSaveFormatOld"),
     common_core_MixinThreadedFileIOBase(Side.COMMON, always(), "core.MixinThreadedFileIOBase"),
 
-    common_core_MixinVec3(Side.COMMON, always(), "core.MixinVec3"),
-
     common_core_MixinEntityAINearestAttackableTarget(Side.COMMON, always(),
         "core.MixinEntityAINearestAttackableTarget"),
     common_core_MixinEntityList(Side.COMMON, always(), "core.MixinEntityList"),
@@ -75,7 +73,6 @@ public enum Mixin implements IMixin {
     common_core_MixinMapGenStructure(Side.COMMON, avoid(TargetedMod.DRAGONAPI), "core.MixinMapGenStructure"),
 
     common_core_MixinEntityArrowAttack(Side.COMMON, always(), "core.MixinEntityArrowAttack"),
-    common_core_MixinAxisAlignedBB(Side.COMMON, always(), "core.MixinAxisAlignedBB"),
     common_core_MixinEntityAITempt(Side.COMMON, always(), "core.MixinEntityAITempt"),
 
     common_easybreeding_MixinEntityAIEatDroppedFood(Side.COMMON, require(TargetedMod.EASYBREEDING),
