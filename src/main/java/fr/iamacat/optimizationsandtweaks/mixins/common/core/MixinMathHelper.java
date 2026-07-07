@@ -33,6 +33,9 @@ public class MixinMathHelper {
 
     /**
      * sin looked up in a table
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Replaces the per-call sine computation with a precomputed SIN_TABLE2 lookup.
      */
     @Overwrite
     public static float sin(float p_76126_0_) {
@@ -41,6 +44,9 @@ public class MixinMathHelper {
 
     /**
      * cos looked up in the sin table with the appropriate offset
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Replaces the per-call cosine computation with a SIN_TABLE2 lookup (sine table, quarter-period offset).
      */
     @Overwrite
     public static float cos(float p_76134_0_) {
@@ -48,8 +54,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static float sqrt_float(float p_76129_0_) {
@@ -57,8 +63,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static float sqrt_double(double p_76133_0_) {
@@ -67,6 +73,9 @@ public class MixinMathHelper {
 
     /**
      * Returns the greatest integer less than or equal to the float argument
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int floor_float(float p_76141_0_) {
@@ -75,6 +84,9 @@ public class MixinMathHelper {
 
     /**
      * returns par0 cast as an int, and no greater than Integer.MAX_VALUE-1024
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -84,6 +96,9 @@ public class MixinMathHelper {
 
     /**
      * Returns the greatest integer less than or equal to the double argument
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int floor_double(double p_76128_0_) {
@@ -92,12 +107,19 @@ public class MixinMathHelper {
 
     /**
      * Long version of floor_double
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static long floor_double_long(double p_76124_0_) {
         return (long) Math.floor(p_76124_0_);
     }
 
+    /**
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
+     */
     @Overwrite
     @SideOnly(Side.CLIENT)
     public static int func_154353_e(double p_154353_0_) {
@@ -105,8 +127,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static float abs(float p_76135_0_) {
@@ -115,18 +137,29 @@ public class MixinMathHelper {
 
     /**
      * Returns the unsigned value of an int.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int abs_int(int p_76130_0_) {
         return p_76130_0_ >= 0 ? p_76130_0_ : -p_76130_0_;
     }
 
+    /**
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
+     */
     @Overwrite
     public static int ceiling_float_int(float p_76123_0_) {
         int i = (int) p_76123_0_;
         return p_76123_0_ > i ? i + 1 : i;
     }
 
+    /**
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
+     */
     @Overwrite
     public static int ceiling_double_int(double p_76143_0_) {
         int i = (int) p_76143_0_;
@@ -136,6 +169,9 @@ public class MixinMathHelper {
     /**
      * Returns the value of the first parameter, clamped to be within the lower and upper limits given by the second and
      * third parameters.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int clamp_int(int p_76125_0_, int p_76125_1_, int p_76125_2_) {
@@ -145,6 +181,9 @@ public class MixinMathHelper {
     /**
      * Returns the value of the first parameter, clamped to be within the lower and upper limits given by the second and
      * third parameters
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static float clamp_float(float p_76131_0_, float p_76131_1_, float p_76131_2_) {
@@ -152,8 +191,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double clamp_double(double p_151237_0_, double p_151237_2_, double p_151237_4_) {
@@ -161,8 +200,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double denormalizeClamp(double p_151238_0_, double p_151238_2_, double p_151238_4_) {
@@ -172,6 +211,9 @@ public class MixinMathHelper {
 
     /**
      * Maximum of the absolute value of two numbers.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double abs_max(double p_76132_0_, double p_76132_2_) {
@@ -188,6 +230,9 @@ public class MixinMathHelper {
 
     /**
      * Buckets an integer with specifed bucket sizes. Args: i, bucketSize
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -197,6 +242,9 @@ public class MixinMathHelper {
 
     /**
      * Tests if a string is null or of length zero
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -204,6 +252,10 @@ public class MixinMathHelper {
         return p_76139_0_ == null || p_76139_0_.isEmpty();
     }
 
+    /**
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
+     */
     @Overwrite
     public static float randomFloatClamp(Random p_151240_0_, float p_151240_1_, float p_151240_2_) {
         return p_151240_1_ >= p_151240_2_ ? p_151240_1_
@@ -211,8 +263,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int getRandomIntegerInRange(Random p_76136_0_, int p_76136_1_, int p_76136_2_) {
@@ -222,14 +274,18 @@ public class MixinMathHelper {
         return p_76136_0_.nextInt(p_76136_2_ - p_76136_1_ + 1) + p_76136_1_;
     }
 
+    /**
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
+     */
     @Overwrite
     public static double getRandomDoubleInRange(Random p_82716_0_, double p_82716_1_, double p_82716_3_) {
         return p_82716_0_.nextDouble() * (p_82716_3_ - p_82716_1_) + p_82716_1_;
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double average(long[] p_76127_0_) {
@@ -244,6 +300,9 @@ public class MixinMathHelper {
 
     /**
      * the angle is reduced to an angle between -180 and +180 by mod, and a 360 check
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static float wrapAngleTo180_float(float angle) {
@@ -257,6 +316,9 @@ public class MixinMathHelper {
 
     /**
      * the angle is reduced to an angle between -180 and +180 by mod, and a 360 check
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double wrapAngleTo180_double(double angle) {
@@ -269,8 +331,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int parseIntWithDefault(String input, int defaultValue) {
@@ -282,6 +344,9 @@ public class MixinMathHelper {
 
     /**
      * parses the string as integer or returns the second parameter if it fails. this value is capped to par2
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static int parseIntWithDefaultAndMax(String p_82714_0_, int p_82714_1_, int p_82714_2_) {
@@ -300,6 +365,9 @@ public class MixinMathHelper {
 
     /**
      * parses the string as double or returns the second parameter if it fails.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double parseDoubleWithDefault(String p_82712_0_, double p_82712_1_) {
@@ -307,8 +375,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     public static double parseDoubleWithDefaultAndMax(String p_82713_0_, double p_82713_1_, double p_82713_3_) {
@@ -326,8 +394,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -347,6 +415,9 @@ public class MixinMathHelper {
 
     /**
      * Is the given value a power of two? (1, 2, 4, 8, 16, ...)
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -358,6 +429,9 @@ public class MixinMathHelper {
      * Uses a B(2, 5) De Bruijn sequence and a lookup table to efficiently calculate the log-base-two of the given
      * value. Optimized for cases where the input value is a power-of-two. If the input value is not a power-of-two,
      * then subtract 1 from the return value.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -369,6 +443,9 @@ public class MixinMathHelper {
     /**
      * Efficiently calculates the floor of the base-2 log of an integer value. This is effectively the index of the
      * highest bit that is set. For example, if the number in binary is 0...100101, this will return 5.
+     * 
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
@@ -381,8 +458,8 @@ public class MixinMathHelper {
     }
 
     /**
-     * @author
-     * @reason
+     * @author OptimizationsAndTweaks
+     * @reason Part of OaT's single-class MathHelper replacement centred on the SIN_TABLE2 trig lookup.
      */
     @Overwrite
     @SideOnly(Side.CLIENT)
