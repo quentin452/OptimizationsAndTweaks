@@ -19,6 +19,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Tries to fix ghost cascading worldgen caused by EntityMob from vanilla.
+ */
 @Mixin(EntityMob.class)
 public abstract class MixinEntityMob extends EntityCreature implements IMob {
 

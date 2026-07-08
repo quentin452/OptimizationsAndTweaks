@@ -18,6 +18,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Optimizes BlockFluidClassic class from Vanilla.
+ */
 @Mixin(BlockFluidClassic.class)
 public abstract class MixinBlockFluidClassic extends BlockFluidBase {
 

@@ -12,6 +12,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes EntityAITempt + add a max follower count to reduce TPS lags when a lot of entities try to follow
+ * you.
+ */
 @Mixin(EntityAITempt.class)
 public class MixinEntityAITempt {
 

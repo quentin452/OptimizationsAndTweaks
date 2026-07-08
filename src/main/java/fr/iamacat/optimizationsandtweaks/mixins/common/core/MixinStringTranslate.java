@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.google.common.collect.Maps;
 
+/**
+ * Optimizes StringTranslate class.
+ */
 @Mixin(StringTranslate.class)
 public class MixinStringTranslate {
 

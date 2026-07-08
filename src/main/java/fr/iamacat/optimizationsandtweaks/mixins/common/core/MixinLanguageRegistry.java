@@ -32,6 +32,9 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import fr.iamacat.optimizationsandtweaks.utils.trove.map.hash.THashMap;
 
+/**
+ * Optimizes LanguageRegistry class.
+ */
 @Mixin(LanguageRegistry.class)
 public class MixinLanguageRegistry {
 

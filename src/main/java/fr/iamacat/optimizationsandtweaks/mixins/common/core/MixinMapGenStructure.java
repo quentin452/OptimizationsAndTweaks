@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Optimizes MapGenStructure class from Vanilla (not injected if DragonAPI is present).
+ */
 @Mixin(MapGenStructure.class)
 public abstract class MixinMapGenStructure extends MapGenBase {
 

@@ -22,6 +22,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 
+/**
+ * Removes an unnecessary lock in the DataWatcher class that was causing lag.
+ */
 @Mixin(value = DataWatcher.class, priority = 999)
 public class MixinDataWatcher {
 

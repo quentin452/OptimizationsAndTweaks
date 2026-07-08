@@ -20,6 +20,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 
+/**
+ * Optimizes the LaunchClassLoader class (but it seems to do nothing in-game — needs testing).
+ */
 // todo fix : it seem that the mixin isn't loaded in game
 @Mixin(LaunchClassLoader.class)
 public abstract class MixinLaunchClassLoader extends URLClassLoader {

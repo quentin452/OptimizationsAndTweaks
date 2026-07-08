@@ -9,6 +9,10 @@ import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.*;
 
+/**
+ * Optimizes EntityAnimal and fixes a major TPS bottleneck when many baby animals are following their parents at
+ * once.
+ */
 @Mixin(EntityAnimal.class)
 public abstract class MixinEntityAnimal extends EntityAgeable implements IAnimals {
 

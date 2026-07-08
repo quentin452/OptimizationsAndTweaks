@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import cpw.mods.fml.common.FMLLog;
 
+/**
+ * Fixes Mobzilla log spam from orespawn by disabling the warning (disabled by default).
+ */
 @Mixin(ForgeInternalHandler.class)
 public abstract class MixinGodZillaFix {
 

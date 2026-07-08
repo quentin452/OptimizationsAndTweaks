@@ -10,6 +10,9 @@ import net.minecraft.util.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Optimizes EntityArrowAttack + should fix a large bottleneck with witchery entities like Guard.
+ */
 @Mixin(EntityAIArrowAttack.class)
 public class MixinEntityArrowAttack extends EntityAIBase {
 

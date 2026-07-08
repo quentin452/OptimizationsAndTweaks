@@ -9,6 +9,9 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.StartupQuery;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.StartupQueryState;
 
+/**
+ * Auto-confirms future FML startup queries after the first manual confirmation.
+ */
 @Mixin(StartupQuery.class)
 public class MixinStartupQuery {
 

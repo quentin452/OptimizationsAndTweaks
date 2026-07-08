@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes BiomeGenBase class (not injected if DRAGONAPI or Alfheim is installed).
+ */
 @Mixin(BiomeGenBase.class)
 public class MixinBiomeGenBase {
 

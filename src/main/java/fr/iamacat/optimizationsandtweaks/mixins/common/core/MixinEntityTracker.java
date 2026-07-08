@@ -33,6 +33,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.HashSetThreadSafe;
 
+/**
+ * Optimizes EntityTracker class.
+ */
 @Mixin(EntityTracker.class)
 public class MixinEntityTracker {
 

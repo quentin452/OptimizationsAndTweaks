@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Optimizes BlockDynamicLiquid class.
+ */
 @Mixin(BlockDynamicLiquid.class)
 public abstract class MixinBlockDynamicLiquid extends BlockLiquid {
 

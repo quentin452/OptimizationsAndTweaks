@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
+/**
+ * Optimizes the EntitySquid class.
+ */
 @Mixin(EntitySquid.class)
 public class MixinEntitySquid extends EntityWaterMob {
 

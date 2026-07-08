@@ -89,6 +89,9 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Optimizes Minecraft (skipped if falsetweaks is enabled, causing crashes with occlusion renderer).
+ */
 @Mixin(value = Minecraft.class, priority = 999)
 public abstract class MixinMinecraft implements IPlayerUsage {
 

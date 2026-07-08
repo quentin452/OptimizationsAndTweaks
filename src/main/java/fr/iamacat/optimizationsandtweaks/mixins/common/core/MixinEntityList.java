@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 
+/**
+ * (WIP) optimizes the EntityList class.
+ */
 @Mixin(EntityList.class)
 public class MixinEntityList {
 

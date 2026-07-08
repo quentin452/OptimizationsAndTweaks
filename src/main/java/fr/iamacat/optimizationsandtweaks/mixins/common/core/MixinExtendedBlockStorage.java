@@ -6,6 +6,10 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Optimizes ExtendedBlockStorage class from vanilla (Code is mostly disabled for now because cause TPS
+ * overhead).
+ */
 @Mixin(ExtendedBlockStorage.class)
 public class MixinExtendedBlockStorage {
 

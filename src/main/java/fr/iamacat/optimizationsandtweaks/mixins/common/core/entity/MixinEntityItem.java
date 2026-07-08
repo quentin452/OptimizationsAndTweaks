@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes EntityItem.
+ */
 @Mixin(EntityItem.class)
 public abstract class MixinEntityItem extends Entity {
 

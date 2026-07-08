@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
+/**
+ * Micro (TPS) optimizations on EntityLookHelper IA.
+ */
 @Mixin(EntityLookHelper.class)
 public class MixinEntityLookHelper {
 

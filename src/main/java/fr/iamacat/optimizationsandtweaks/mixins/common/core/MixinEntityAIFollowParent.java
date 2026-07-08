@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.agrona.collections.Object2ObjectHashMap;
 
+/**
+ * Reduces TPS lags caused by EntityAIFollowParent.
+ */
 @Mixin(EntityAIFollowParent.class)
 public class MixinEntityAIFollowParent {
 

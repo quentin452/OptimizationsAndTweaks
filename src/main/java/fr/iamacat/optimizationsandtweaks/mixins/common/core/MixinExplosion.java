@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * Optimizes Explosion class.
+ */
 @Mixin(Explosion.class)
 public abstract class MixinExplosion {
 

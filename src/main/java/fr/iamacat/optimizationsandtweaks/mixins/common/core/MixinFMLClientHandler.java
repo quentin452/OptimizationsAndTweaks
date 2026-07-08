@@ -15,6 +15,9 @@ import cpw.mods.fml.client.GuiNotification;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.StartupQuery;
 
+/**
+ * Optimizes FMLClientHandler.
+ */
 @Mixin(FMLClientHandler.class)
 public abstract class MixinFMLClientHandler implements IFMLSidedHandler {
 

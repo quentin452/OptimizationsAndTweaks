@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes NetworkManager class.
+ */
 @Mixin(NetworkManager.class)
 public class MixinNetworkManager {
 

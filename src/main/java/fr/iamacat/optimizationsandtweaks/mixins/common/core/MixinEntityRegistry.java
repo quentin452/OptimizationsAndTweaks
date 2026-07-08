@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
+/**
+ * Fixes EntityRegistry ids or names conflicts caused by some mods.
+ */
 // todo add compat when endless ids is not installed
 @Mixin(EntityRegistry.class)
 public class MixinEntityRegistry {

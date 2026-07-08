@@ -22,6 +22,10 @@ import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CachedEntitySearch;
 
+/**
+ * Performance optimizations for the vanilla World class; also improves the logging around "Exception getting
+ * block type in world" and avoids throwing a RuntimeException there to prevent a crash.
+ */
 @Mixin(World.class)
 public abstract class MixinWorld {
 

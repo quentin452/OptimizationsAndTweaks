@@ -6,6 +6,9 @@ import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 
+/**
+ * Optimizes EntityZombie class.
+ */
 @Mixin(EntityZombie.class)
 public class MixinEntityZombie extends EntityMob {
 

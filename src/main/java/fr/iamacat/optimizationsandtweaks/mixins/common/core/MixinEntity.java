@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Performance optimizations for the vanilla Entity class.
+ */
 @Mixin(Entity.class)
 public abstract class MixinEntity {
 

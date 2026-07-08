@@ -19,6 +19,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Optimizes BlockLeaves class.
+ */
 @Mixin(BlockLeaves.class)
 public abstract class MixinBlockLeaves extends BlockLeavesBase implements IShearable {
 

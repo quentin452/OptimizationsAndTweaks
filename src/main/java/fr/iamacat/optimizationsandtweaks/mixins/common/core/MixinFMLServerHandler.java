@@ -21,6 +21,9 @@ import cpw.mods.fml.common.functions.GenericIterableFactory;
 import cpw.mods.fml.server.FMLServerHandler;
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 
+/**
+ * Optimizes FMLServerHandler; auto-confirms future FML queries after the first confirmation.
+ */
 @Mixin(FMLServerHandler.class)
 public abstract class MixinFMLServerHandler implements IFMLSidedHandler {
 

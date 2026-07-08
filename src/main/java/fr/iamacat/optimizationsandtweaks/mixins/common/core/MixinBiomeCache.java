@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.collections.maps.LongHashMap2;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Optimizes BiomeCache class.
+ */
 @Mixin(BiomeCache.class)
 public class MixinBiomeCache {
 

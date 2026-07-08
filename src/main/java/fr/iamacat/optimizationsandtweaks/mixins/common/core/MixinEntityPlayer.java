@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.tidychunkbackport.PlayerDroppedItemTracker;
 
+/**
+ * Fixed player-thrown items being incorrectly removed during chunk generation.
+ */
 @Mixin(EntityPlayer.class)
 public class MixinEntityPlayer {
 

@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import fr.iamacat.optimizationsandtweaks.worldgen.ChunkProviderGenerateTwo;
 
+/**
+ * Optimizes WorldType class from vanilla.
+ */
 @Mixin(WorldType.class)
 public class MixinWorldType {
 

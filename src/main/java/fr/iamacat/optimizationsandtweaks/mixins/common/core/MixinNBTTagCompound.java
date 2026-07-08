@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import fr.iamacat.optimizationsandtweaks.utils.concurrentlinkedhashmap.ConcurrentHashMapV8;
 
+/**
+ * Optimizes MNBTTagCompound class (not injected if DragonAPI is installed).
+ */
 @Mixin(NBTTagCompound.class)
 public abstract class MixinNBTTagCompound extends NBTBase {
 

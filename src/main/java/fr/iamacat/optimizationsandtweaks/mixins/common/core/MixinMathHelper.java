@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes MathHelper class.
+ */
 @Mixin(MathHelper.class)
 public class MixinMathHelper {
 

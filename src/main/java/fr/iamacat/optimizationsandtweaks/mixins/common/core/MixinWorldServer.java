@@ -24,6 +24,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes WorldServer; calls findChunksForSpawning every 4 ticks instead of every tick.
+ */
 @Mixin(value = WorldServer.class, priority = 999)
 public abstract class MixinWorldServer extends World {
 

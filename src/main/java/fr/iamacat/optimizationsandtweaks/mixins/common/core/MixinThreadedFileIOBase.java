@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes ThreadedFileIOBase.
+ */
 @Mixin(ThreadedFileIOBase.class)
 public class MixinThreadedFileIOBase {
 

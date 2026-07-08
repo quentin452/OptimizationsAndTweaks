@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
+/**
+ * Reduces TPS lags caused by EntityMoveHelper.
+ */
 @Mixin(EntityMoveHelper.class)
 public class MixinEntityMoveHelper {
 

@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import com.google.common.collect.Maps;
 
+/**
+ * Optimizes ModifiableAttributeInstance class.
+ */
 @Mixin(ModifiableAttributeInstance.class)
 public class MixinModifiableAttributeInstance {
 

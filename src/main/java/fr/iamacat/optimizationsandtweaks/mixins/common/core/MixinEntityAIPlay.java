@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Optimizes EntityAIPlay class.
+ */
 @Mixin(EntityAIPlay.class)
 public class MixinEntityAIPlay extends EntityAIBase {
 

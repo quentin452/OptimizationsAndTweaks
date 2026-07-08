@@ -43,6 +43,9 @@ import cpw.mods.fml.relauncher.ModListHelper;
 import cpw.mods.fml.relauncher.Side;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Optimizes Loader class from Vanilla (Disabled due to crash on startup).
+ */
 @Mixin(Loader.class)
 public class MixinLoader {
 
