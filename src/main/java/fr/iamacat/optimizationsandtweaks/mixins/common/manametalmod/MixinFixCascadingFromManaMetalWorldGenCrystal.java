@@ -1,0 +1,60 @@
+package fr.iamacat.optimizationsandtweaks.mixins.common.manametalmod;
+
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
+/**
+ * Fixes cascading worldgen caused by ManaMetalMod's crystal decoration.
+ * <p>
+ * {@code project.studio.manametalmod.world.generate.WorldGenCrystal} is an {@code IWorldGenerator}
+ * registered for the overworld and the nether: for the chunk being generated it picks random columns
+ * strictly inside that chunk's 16x16 footprint ({@code dx/dz + rand.nextInt(16)}, where {@code dx/dz}
+ * is the chunk's own origin) and, if the target column already has the expected top block with air
+ * above, places a mana crystal there (methods {@code spawn} for the overworld, {@code spawnHell} for
+ * the nether). Every read ({@code World.func_147439_a}) and write stays inside the current chunk — but
+ * the write goes through the three-argument {@code World.setBlock(x,y,z,block)} ({@code func_147449_b}),
+ * which forwards to {@code setBlock(...,3)} whose flag&1 fires {@code notifyBlockChange}. A crystal
+ * placed at the chunk edge (offset 0 or 15 on either axis) therefore reaches into an adjacent,
+ * not-yet-generated chunk and forces it to generate mid-populate — a cascade, identical in mechanism to
+ * {@link MixinFixCascadingFromManaMetalEventCave}.
+ * <p>
+ * The write is redirected to a direct chunk-local write ({@code Chunk.func_150807_a}): the crystal is
+ * placed in the current chunk's block storage with no cross-chunk neighbour notify or light
+ * propagation, so the decoration is byte-for-byte the same but no neighbour chunk is dragged in. Light
+ * for these blocks is resolved when the chunk finishes lighting and the chunk is sent to clients whole
+ * (this runs before it is sent), so dropping the gen-time notify/relight changes nothing a player can
+ * observe. There is no six-argument {@code func_147465_d} call in this class (the crystal is placed
+ * with implicit meta 0), so only one redirect is needed.
+ *
+ * @author iamacatfr
+ */
+@Mixin(targets = "project.studio.manametalmod.world.generate.WorldGenCrystal", remap = false)
+public class MixinFixCascadingFromManaMetalWorldGenCrystal {
+
+    @Redirect(
+        method = { "spawn", "spawnHell" },
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
+        remap = false)
+    private boolean optimizationsAndTweaks$setBlockLocal(World world, int x, int y, int z, Block block) {
+        return optimizationsAndTweaks$chunkLocalSet(world, x, y, z, block);
+    }
+
+    /**
+     * Write a block straight into its (already-loaded, currently-populating) chunk, bypassing the
+     * neighbour notify and cross-chunk light propagation that {@code World.setBlock} would trigger.
+     */
+    @Unique
+    private static boolean optimizationsAndTweaks$chunkLocalSet(World world, int x, int y, int z, Block block) {
+        if (y < 0 || y >= 256) {
+            return false;
+        }
+        Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+        return chunk.func_150807_a(x & 15, y, z & 15, block, 0);
+    }
+}
