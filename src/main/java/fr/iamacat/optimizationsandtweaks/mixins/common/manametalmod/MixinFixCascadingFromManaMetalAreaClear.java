@@ -69,7 +69,7 @@ public class MixinFixCascadingFromManaMetalAreaClear {
         method = "clearArea",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_72825_h(II)I"),
         remap = false)
-    private int optimizationsAndTweaks$getTopSolidOrLiquidBlockGuarded(World world, int x, int z) {
+    private static int optimizationsAndTweaks$getTopSolidOrLiquidBlockGuarded(World world, int x, int z) {
         if (!world.getChunkProvider()
             .chunkExists(x >> 4, z >> 4)) {
             // Target column is outside the loaded/generated area: don't force that neighbour chunk to
@@ -87,7 +87,7 @@ public class MixinFixCascadingFromManaMetalAreaClear {
             value = "INVOKE",
             target = "Lnet/minecraft/world/World;func_72807_a(II)Lnet/minecraft/world/biome/BiomeGenBase;"),
         remap = false)
-    private BiomeGenBase optimizationsAndTweaks$getBiomeGenForCoordsGuarded(World world, int x, int z) {
+    private static BiomeGenBase optimizationsAndTweaks$getBiomeGenForCoordsGuarded(World world, int x, int z) {
         if (!world.getChunkProvider()
             .chunkExists(x >> 4, z >> 4)) {
             // Same reasoning as above: skip the read rather than force-generate the neighbour chunk.
@@ -102,7 +102,7 @@ public class MixinFixCascadingFromManaMetalAreaClear {
         method = "clearArea",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_147468_f(III)Z"),
         remap = false)
-    private boolean optimizationsAndTweaks$setBlockToAirGuarded(World world, int x, int y, int z) {
+    private static boolean optimizationsAndTweaks$setBlockToAirGuarded(World world, int x, int y, int z) {
         return optimizationsAndTweaks$chunkLocalSetIfLoaded(world, x, y, z, Blocks.air, 0);
     }
 
@@ -112,7 +112,7 @@ public class MixinFixCascadingFromManaMetalAreaClear {
             value = "INVOKE",
             target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
         remap = false)
-    private boolean optimizationsAndTweaks$setBlockGuarded(World world, int x, int y, int z, Block block) {
+    private static boolean optimizationsAndTweaks$setBlockGuarded(World world, int x, int y, int z, Block block) {
         return optimizationsAndTweaks$chunkLocalSetIfLoaded(world, x, y, z, block, 0);
     }
 
