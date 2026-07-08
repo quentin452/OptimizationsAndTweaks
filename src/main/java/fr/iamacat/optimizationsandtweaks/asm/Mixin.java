@@ -267,8 +267,6 @@ public enum Mixin implements IMixin {
     common_matmos_MixinSheetDataPackage(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinSheetDataPackage"),
     common_thaumcraftminusthaumcraft_MixinUnthaumic(Side.COMMON, require(TargetedMod.THAUMCRAFT4),
         "thaumcraftminusthaumcraft.MixinUnthaumic"),
-    common_automagy_MixinAutomagyEventHandler(Side.COMMON, require(TargetedMod.AUTOMAGY),
-        "automagy.MixinAutomagyEventHandler"),
     common_thaumcraft_MixinPatchBiomeGenMagicalForest(Side.COMMON, require(TargetedMod.THAUMCRAFT4),
         "thaumcraft.MixinPatchBiomeGenMagicalForest"),
     common_thaumcraft_MixinPatchBlockMagicalLeavesPerformances(Side.COMMON, require(TargetedMod.THAUMCRAFT4),
@@ -488,8 +486,6 @@ public enum Mixin implements IMixin {
     common_manametalmod_MixinFixCascadingFromManaMetalWorldGenCrystal(Side.COMMON, require(TargetedMod.MANAMETAL),
         "manametalmod.MixinFixCascadingFromManaMetalWorldGenCrystal"),
 
-    client_davincivessels_MixinShipKeyHandler(Side.CLIENT, require(TargetedMod.DAVINCIVESSELS),
-        "davincivessels.MixinShipKeyHandler"),
     client_practicallogistics_MixinEventRegistry(Side.CLIENT, require(TargetedMod.PRACTICALLOGISTICS),
         "practicallogistics.MixinEventRegistry"),
     client_salutation_MixinSalutationClientHandler(Side.CLIENT, require(TargetedMod.SALUTATION),
