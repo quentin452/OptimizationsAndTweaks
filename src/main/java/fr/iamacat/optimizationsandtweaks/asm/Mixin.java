@@ -19,7 +19,6 @@ public enum Mixin implements IMixin {
     common_core_MixinWorld(Side.COMMON, always(), "core.MixinWorld"),
     common_core_MixinEventBus(Side.COMMON, always(), "core.MixinEventBus"),
     common_core_MixinExplosion(Side.COMMON, always(), "core.MixinExplosion"),
-    common_core_MixinEnchantmentHelper(Side.COMMON, always(), "core.MixinEnchantmentHelper"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON, require(TargetedMod.PACKAGEDAUTO),
         "packagedauto.MixinNeiHandlerPackagedAuto"),
     common_lotrimprovements_MixinMain(Side.COMMON, require(TargetedMod.LORDOFTHERINGSFORK),
@@ -102,10 +101,8 @@ public enum Mixin implements IMixin {
         "sgstreasure.MixinWorldUtilSGSTREASURE"),
     common_core_MixinSaveHandler(Side.COMMON, always(), "core.MixinSaveHandler"),
     common_core_MixinMathHelper(Side.COMMON, always(), "core.MixinMathHelper"),
-    common_core_MixinNetworkManager(Side.COMMON, always(), "core.MixinNetworkManager"),
     common_core_MixinEntity(Side.COMMON, always(), "core.MixinEntity"),
 
-    common_core_MixinBlock(Side.COMMON, always(), "core.MixinBlock"),
     common_core_MixinBlockLeaves(Side.COMMON, always(), "core.MixinBlockLeaves"),
 
     common_core_MixinBiomeCache(Side.COMMON, always(), "core.MixinBiomeCache"),
@@ -463,7 +460,6 @@ public enum Mixin implements IMixin {
 
     // CLIENT MIXINS
 
-    client_core_MixinGuiNewChat(Side.CLIENT, always(), "core.MixinGuiNewChat"),
     client_instrumentus_MixinPlayerSpecials(Side.CLIENT, require(TargetedMod.INSTRUMENTUS),
         "instrumentus.MixinPlayerSpecials"),
 
