@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.akazuki.animation.common.MCACommonLibrary.IMCAnimatedEntity;
 import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
 /**
@@ -32,7 +31,6 @@ public class MixinAnimTickHandler {
     }
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
-    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         if (!optimizationsAndTweaks$activeEntities.isEmpty() && event.phase == TickEvent.Phase.START) {
             for (IMCAnimatedEntity entity : optimizationsAndTweaks$activeEntities) {

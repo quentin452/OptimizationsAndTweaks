@@ -31,7 +31,6 @@ import com.thecodewarrior.catwalks.block.BlockScaffold;
 import com.thecodewarrior.catwalks.util.*;
 
 import codechicken.lib.vec.BlockCoord;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
 /**
@@ -47,7 +46,6 @@ public class MixinCommonProxy {
     public LinkedList<WeakReference<EntityLivingBase>> entities = new LinkedList<>();
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"), remap = false, cancellable = true)
-    @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
 
         EntityLivingBase e = event.entityLiving;
@@ -188,7 +186,6 @@ public class MixinCommonProxy {
     }
 
     @Inject(method = "onServerTick", at = @At("HEAD"), remap = false, cancellable = true)
-    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event, CallbackInfo ci) {
         double catwalkSpeedBonus = CatwalkMod.speedModifier.getAmount() * (double) CatwalkMod.options.speedPotionLevel;
         if (event.phase == TickEvent.Phase.END) {
@@ -223,7 +220,6 @@ public class MixinCommonProxy {
     }
 
     @Inject(method = "blockPlaceEvent", at = @At("HEAD"), remap = false, cancellable = true)
-    @SubscribeEvent
     public void blockPlaceEvent(BlockEvent.PlaceEvent event, CallbackInfo ci) {
         if (event.blockSnapshot.replacedBlock instanceof BlockScaffold) {
             CatwalkUtil.giveItemsToPlayer(
