@@ -25,6 +25,17 @@ public class OptimizationsandTweaksConfig {
     @Config.RequiresMcRestart
     public static boolean enablegetPendingBlockUpdatesDebugger;
 
+    @Config.Comment({ "EXPERIMENTAL mod-agnostic worldgen cascade net. During chunk populate, skips neighbour",
+        "notifications that reach into a not-yet-generated chunk (the weak-change/comparator fan-out",
+        "and neighbour block-updates), which is what forces an out-of-order neighbour to generate",
+        "mid-populate (cascading worldgen lag). Content-neutral (worldgen needs no block-update",
+        "physics), and unlike a depth-cap it never cancels the generation a decoration depends on.",
+        "Complements the per-mod MixinFixCascading* fixes; catches the tile-entity-block residual",
+        "they cannot. OFF by default: validate world identity (fingerprint A/B) before enabling." })
+    @Config.DefaultBoolean(false)
+    @Config.RequiresMcRestart
+    public static boolean enableWorldgenCascadeNet;
+
     @Config.Comment("Cache Thaumcraft inferred aspects to disk (config/optimizationsandtweaks/"
         + "thaumcraft-aspect-cache.txt). First boot generates it (~unchanged), later boots skip the "
         + "~40s recipe-graph inference. Auto-invalidated when the modlist or MineTweaker scripts change.")

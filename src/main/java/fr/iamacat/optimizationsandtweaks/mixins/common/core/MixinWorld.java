@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.iamacat.optimizationsandtweaks.config.OptimizationsandTweaksConfig;
 import fr.iamacat.optimizationsandtweaks.eventshandler.TidyChunkBackportEventHandler;
+import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.CascadeGuard;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.vanilla.CachedEntitySearch;
 
 /**
@@ -102,5 +104,40 @@ public abstract class MixinWorld {
         hash = 31 * hash + (int) (aabb.maxY - aabb.minY);
         hash = 31 * hash + (int) (aabb.maxZ - aabb.minZ);
         return hash;
+    }
+
+    // --- Experimental worldgen cascade net (config: enableWorldgenCascadeNet, off by default) ---
+
+    /**
+     * During chunk populate, skip the weak-change / comparator neighbour fan-out
+     * ({@code func_147453_f}, called from setBlock/setTileEntity). It reads up to two blocks out in
+     * all six directions; at a chunk edge those reads reach a not-yet-generated chunk and force it
+     * to generate mid-populate (a cascade — including the tile-entity-block residual the per-mod
+     * fixes cannot reach). Worldgen has no comparators/observers to update, so skipping it is
+     * content-neutral. Only active while {@link CascadeGuard#isPopulating()}.
+     */
+    @Inject(method = "func_147453_f", at = @At("HEAD"), cancellable = true)
+    private void optimizationsAndTweaks$skipWeakChangeDuringPopulate(int x, int y, int z, Block block,
+        CallbackInfo ci) {
+        if (CascadeGuard.isPopulating()) {
+            ci.cancel();
+        }
+    }
+
+    /**
+     * During chunk populate, skip a neighbour block-update that targets a not-yet-generated chunk.
+     * A block placed at a chunk edge notifies its six neighbours; a neighbour in an ungenerated
+     * chunk forces it to generate mid-populate (a cascade). Only the notify INTO an unloaded chunk
+     * is skipped — loaded neighbours are still notified — and worldgen does not need block-update
+     * physics on freshly-placed blocks, so nothing observable changes. Only active while
+     * {@link CascadeGuard#isPopulating()}.
+     */
+    @Inject(method = "notifyBlockOfNeighborChange", at = @At("HEAD"), cancellable = true)
+    private void optimizationsAndTweaks$skipNeighborNotifyIntoUnloadedChunk(int x, int y, int z, Block block,
+        CallbackInfo ci) {
+        if (CascadeGuard.isPopulating() && !((World) (Object) this).getChunkProvider()
+            .chunkExists(x >> 4, z >> 4)) {
+            ci.cancel();
+        }
     }
 }

@@ -17,6 +17,7 @@ public enum Mixin implements IMixin {
         "accessor.PathNavigateAccessor"),
 
     common_core_MixinWorld(Side.COMMON, always(), "core.MixinWorld"),
+    common_core_MixinChunkProviderServerCascadeNet(Side.COMMON, always(), "core.MixinChunkProviderServerCascadeNet"),
     common_core_MixinEventBus(Side.COMMON, always(), "core.MixinEventBus"),
     common_core_MixinExplosion(Side.COMMON, always(), "core.MixinExplosion"),
     common_packagedauto_MixinNeiHandlerPackagedAuto(Side.COMMON, require(TargetedMod.PACKAGEDAUTO),
