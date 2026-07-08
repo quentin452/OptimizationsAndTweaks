@@ -2,15 +2,25 @@ package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntitySpellParticleFX;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
  * Optimizes EntitySpellParticleFX.
+ * <p>
+ * {@code renderParticle} was dropped 2026-07-08: vanilla computes a local clamp variable that is never
+ * actually passed to the {@code super.renderParticle} call it makes (dead code in the vanilla method
+ * itself) -- the mixin's copy already just called super directly, so deleting it is a no-op (vanilla
+ * body now applies, same dead computation, same visible result).
+ * <p>
+ * {@code onUpdate} keeps its own {@code optimizationsAndTweaks$baseSpellTextureIndex} field (instead of
+ * vanilla's {@code baseSpellTextureIndex}, which {@link #optimizationsAndTweaks$setBaseSpellTextureIndex}
+ * writes to) as the ONLY delta vs vanilla -- redirecting that single field read preserves the existing
+ * behavior while letting the rest of the original (untouched) method run.
  */
 @Mixin(EntitySpellParticleFX.class)
 public class MixinEntitySpellParticleFX extends EntityFX {
@@ -34,49 +44,14 @@ public class MixinEntitySpellParticleFX extends EntityFX {
         this.noClip = false;
     }
 
-    /**
-     * @author
-     * @reason
-     */
-
-    @Overwrite
-    public void renderParticle(Tessellator p_70539_1, float p_70539_2, float p_70539_3, float p_70539_4,
-        float p_70539_5, float p_70539_6, float p_70539_7) {
-        super.renderParticle(p_70539_1, p_70539_2, p_70539_3, p_70539_4, p_70539_5, p_70539_6, p_70539_7);
-    }
-
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Overwrite
-    public void onUpdate() {
-
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-
-        if (this.particleAge++ >= this.particleMaxAge) {
-            this.setDead();
-        }
-
-        this.setParticleTextureIndex(
-            this.optimizationsAndTweaks$baseSpellTextureIndex + (7 - this.particleAge * 8 / this.particleMaxAge));
-        this.motionY += 0.004D;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-        if (this.posY == this.prevPosY) {
-            this.motionX *= 1.1D;
-            this.motionZ *= 1.1D;
-        }
-
-        this.motionX *= 0.9599999785423279D;
-        this.motionY *= 0.9599999785423279D;
-        this.motionZ *= 0.9599999785423279D;
-
-        if (this.onGround) {
-            this.motionX *= 0.699999988079071D;
-            this.motionZ *= 0.699999988079071D;
-        }
+    @Redirect(
+        method = "onUpdate",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/particle/EntitySpellParticleFX;baseSpellTextureIndex:I"),
+        remap = false)
+    private int optimizationsAndTweaks$readBaseSpellTextureIndex(EntitySpellParticleFX instance) {
+        return this.optimizationsAndTweaks$baseSpellTextureIndex;
     }
 
     /**

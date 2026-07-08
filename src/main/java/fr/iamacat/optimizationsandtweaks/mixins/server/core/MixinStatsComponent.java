@@ -8,9 +8,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.gui.StatsComponent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * The original {@code func_120034_a} (the 500ms stats-refresh tick) forces a full {@code System.gc()}
+ * every call -- redirecting that single call to a no-op drops the forced GC stall while leaving the rest
+ * of the original (untouched) method (memory/tick-avg string formatting, repaint) unmodified.
+ */
 @Mixin(StatsComponent.class)
 public class MixinStatsComponent extends JComponent {
 
@@ -29,24 +35,9 @@ public class MixinStatsComponent extends JComponent {
         field_120037_e = field120037E;
     }
 
-    @Overwrite
-    private void func_120034_a() {
-        long i = Runtime.getRuntime()
-            .totalMemory()
-            - Runtime.getRuntime()
-                .freeMemory();
-        // System.gc();
-        this.field_120036_d[0] = "Memory use: " + i / 1024L / 1024L
-            + " mb ("
-            + Runtime.getRuntime()
-                .freeMemory() * 100L
-                / Runtime.getRuntime()
-                    .maxMemory()
-            + "% free)";
-        this.field_120036_d[1] = "Avg tick: "
-            + field_120040_a.format(this.func_120035_a(this.field_120037_e.tickTimeArray) * 1.0E-6D)
-            + " ms";
-        this.repaint();
+    @Redirect(method = "func_120034_a", at = @At(value = "INVOKE", target = "Ljava/lang/System;gc()V"), remap = false)
+    private void optimizationsAndTweaks$skipForcedGc() {
+        // no-op: avoid forcing a full GC every 500ms stats-refresh tick
     }
 
     @Shadow

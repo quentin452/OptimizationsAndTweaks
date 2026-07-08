@@ -1,11 +1,8 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.core;
 
-import java.util.Arrays;
-
 import javax.sound.sampled.AudioFormat;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import ibxm.IBXM;
@@ -98,20 +95,28 @@ public abstract class MixinCodecIBXM implements ICodec {
     @Shadow
     private IBXM ibxm;
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    // appendByteArrays() @Overwrite -> @Shadow 2026-07-08: the overwritten body only differed from
+    // vanilla in the both-arrays-null branch (returned byte[0] instead of null), which is unreachable
+    // here -- the sole call site (readAll() below) always passes a non-null, pre-allocated outputBuffer
+    // as the second arg. Since readAll() (below) calls this method directly from mixin source, it can't
+    // just be deleted; shadowing it (body mirrors vanilla, discarded at weave time) makes the call
+    // resolve to the real vanilla implementation, which is behaviorally identical for every reachable
+    // input.
+    @Shadow
     private static byte[] appendByteArrays(byte[] arrayOne, byte[] arrayTwo, int length) {
         if (arrayOne == null && arrayTwo == null) {
-            return new byte[0];
+            return null;
         } else if (arrayOne == null) {
-            return Arrays.copyOf(arrayTwo, length);
+            byte[] newArray = new byte[length];
+            System.arraycopy(arrayTwo, 0, newArray, 0, length);
+            return newArray;
         } else if (arrayTwo == null) {
-            return Arrays.copyOf(arrayOne, arrayOne.length);
+            byte[] newArray = new byte[arrayOne.length];
+            System.arraycopy(arrayOne, 0, newArray, 0, arrayOne.length);
+            return newArray;
         } else {
-            byte[] newArray = Arrays.copyOf(arrayOne, arrayOne.length + length);
+            byte[] newArray = new byte[arrayOne.length + length];
+            System.arraycopy(arrayOne, 0, newArray, 0, arrayOne.length);
             System.arraycopy(arrayTwo, 0, newArray, arrayOne.length, length);
             return newArray;
         }
