@@ -38,7 +38,9 @@ public class MixinFixCascadingFromManaMetalWorldGenRock {
 
     @Redirect(
         method = "generateSurface",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
         remap = false)
     private boolean optimizationsAndTweaks$setBlockLocal(World world, int x, int y, int z, Block block) {
         return optimizationsAndTweaks$chunkLocalSet(world, x, y, z, block);

@@ -83,7 +83,9 @@ public class MixinFixCascadingFromManaMetalAreaClear {
 
     @Redirect(
         method = "clearArea",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_72807_a(II)Lnet/minecraft/world/biome/BiomeGenBase;"),
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;func_72807_a(II)Lnet/minecraft/world/biome/BiomeGenBase;"),
         remap = false)
     private BiomeGenBase optimizationsAndTweaks$getBiomeGenForCoordsGuarded(World world, int x, int z) {
         if (!world.getChunkProvider()
@@ -106,7 +108,9 @@ public class MixinFixCascadingFromManaMetalAreaClear {
 
     @Redirect(
         method = "clearArea",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;func_147449_b(IIILnet/minecraft/block/Block;)Z"),
         remap = false)
     private boolean optimizationsAndTweaks$setBlockGuarded(World world, int x, int y, int z, Block block) {
         return optimizationsAndTweaks$chunkLocalSetIfLoaded(world, x, y, z, block, 0);
@@ -122,8 +126,8 @@ public class MixinFixCascadingFromManaMetalAreaClear {
      * {@code MixinFixCascading*} fixes.
      */
     @Unique
-    private static boolean optimizationsAndTweaks$chunkLocalSetIfLoaded(World world, int x, int y, int z,
-        Block block, int meta) {
+    private static boolean optimizationsAndTweaks$chunkLocalSetIfLoaded(World world, int x, int y, int z, Block block,
+        int meta) {
         if (y < 0 || y >= 256) {
             return false;
         }

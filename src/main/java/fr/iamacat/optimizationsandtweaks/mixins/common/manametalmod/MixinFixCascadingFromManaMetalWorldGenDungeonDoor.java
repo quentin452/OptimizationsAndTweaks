@@ -100,8 +100,7 @@ public class MixinFixCascadingFromManaMetalWorldGenDungeonDoor {
             value = "INVOKE",
             target = "Lnet/minecraft/world/World;func_147455_a(IIILnet/minecraft/tileentity/TileEntity;)V"),
         remap = false)
-    private static void optimizationsAndTweaks$setTileEntityGuarded(World world, int x, int y, int z,
-        TileEntity tile) {
+    private static void optimizationsAndTweaks$setTileEntityGuarded(World world, int x, int y, int z, TileEntity tile) {
         if (!optimizationsAndTweaks$chunkLoaded(world, x, z)) {
             return;
         }

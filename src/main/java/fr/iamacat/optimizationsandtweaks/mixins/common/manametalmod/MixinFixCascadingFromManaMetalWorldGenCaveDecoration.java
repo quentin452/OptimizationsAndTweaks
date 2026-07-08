@@ -39,7 +39,9 @@ public class MixinFixCascadingFromManaMetalWorldGenCaveDecoration {
 
     @Redirect(
         method = { "gen1", "gen3", "gen4" },
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;func_147465_d(IIILnet/minecraft/block/Block;II)Z"),
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;func_147465_d(IIILnet/minecraft/block/Block;II)Z"),
         remap = false)
     private boolean optimizationsAndTweaks$setBlockMetaLocal(World world, int x, int y, int z, Block block, int meta,
         int flag) {
