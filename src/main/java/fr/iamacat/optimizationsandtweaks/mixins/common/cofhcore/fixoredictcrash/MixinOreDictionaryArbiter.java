@@ -6,9 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -39,11 +41,11 @@ public class MixinOreDictionaryArbiter {
     private static boolean optimizationsAndTweaks$initialized = false;
 
     /**
-     * @author iamacatfr
-     * @reason fixing a memory leak by adding a boolean????
+     * @reason fixing a memory leak by adding a boolean guard. HEAD-cancel instead of a full-method replace
+     *         so any other transform on this method still applies.
      */
-    @Overwrite
-    public static void initialize() {
+    @Inject(method = "initialize", at = @At("HEAD"), remap = false, cancellable = true)
+    private static void initialize(CallbackInfo ci) {
         if (!optimizationsAndTweaks$initialized) {
             oreIDs = HashBiMap.create(32);
             oreStacks = new THashMap<>(32);
@@ -75,15 +77,16 @@ public class MixinOreDictionaryArbiter {
 
             optimizationsAndTweaks$initialized = true;
         }
-
+        ci.cancel();
     }
 
     /**
-     * @author iamacatfr
-     * @reason fixing https://github.com/quentin452/privates-minecraft-modpack/issues/353
+     * @reason fixing https://github.com/quentin452/privates-minecraft-modpack/issues/353 (NPE/crash guard on
+     *         invalid stacks). HEAD-cancel instead of a full-method replace so any other transform on this
+     *         method (e.g. Hodgepodge's own NPE guard) still applies.
      */
-    @Overwrite
-    public static void registerOreDictionaryEntry(ItemStack var0, String var1) {
+    @Inject(method = "registerOreDictionaryEntry", at = @At("HEAD"), remap = false, cancellable = true)
+    private static void registerOreDictionaryEntry(ItemStack var0, String var1, CallbackInfo ci) {
         if (true && (var0 != null && var0.getItem() != null && !Strings.isNullOrEmpty(var1))) {
             int var2 = OreDictionary.getOreID(var1);
             oreIDs.put(var1, var2);
@@ -116,5 +119,6 @@ public class MixinOreDictionaryArbiter {
                 e.printStackTrace();
             }
         }
+        ci.cancel();
     }
 }
