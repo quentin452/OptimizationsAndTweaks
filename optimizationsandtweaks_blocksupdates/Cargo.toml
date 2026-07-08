@@ -15,3 +15,10 @@ rayon = "1.10"
 crossbeam = "0.8"
 lru = "0.18"
 optimizationsandtweaks_shared = { path = "../optimizationsandtweaks_shared" }
+# Release size trim (no behavior change): strip debug symbols + LTO. Deliberately NOT panic="abort"
+# (would break the catch_unwind FFI panic guards) and NOT opt-level="z" (would risk perf on the hot
+# native paths). Shrinks the shipped .so/.dll/.dylib on the next cross-OS native build (CI).
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
