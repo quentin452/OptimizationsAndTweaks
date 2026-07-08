@@ -81,6 +81,9 @@ jobs:
       # Native MSVC target (the runner default). Produces the same DLL filenames as
       # build-all.py's mingw cross-build; leaktracer + backtrace build fine on MSVC.
       TARGET: x86_64-pc-windows-msvc
+      # Static CRT: without it the DLLs import VCRUNTIME140.dll (VC++ redist), which is
+      # not guaranteed on players' machines -> silent native-load failure + vanilla fallback.
+      RUSTFLAGS: -C target-feature=+crt-static
     steps:
       - uses: actions/checkout@v4
 
