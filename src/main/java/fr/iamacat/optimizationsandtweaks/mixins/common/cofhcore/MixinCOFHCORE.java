@@ -10,33 +10,23 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import cofh.CoFHCore;
 import cofh.core.CoFHProps;
 import cofh.core.Proxy;
 import cofh.core.entity.DropHandler;
 import cofh.core.gui.GuiHandler;
-import cofh.core.network.PacketHandler;
 import cofh.core.util.ConfigHandler;
-import cofh.core.util.FMLEventHandler;
 import cofh.core.util.IBakeable;
-import cofh.core.util.crafting.RecipeAugmentable;
-import cofh.core.util.crafting.RecipeSecure;
-import cofh.core.util.crafting.RecipeUpgrade;
-import cofh.core.util.crafting.RecipeUpgradeOverride;
-import cofh.core.util.energy.FurnaceFuelHandler;
-import cofh.core.util.fluid.BucketHandler;
-import cofh.core.world.FeatureParser;
-import cofh.core.world.WorldHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cofh.mod.updater.IUpdatableMod;
+import cofh.mod.updater.UpdateManager;
 
 /**
  * Disables the version check from CoFHCore.
@@ -60,40 +50,36 @@ public class MixinCOFHCORE {
     public static MinecraftServer server;
     @Shadow
     private final ArrayList<IBakeable> oven = new ArrayList();
+    @Shadow
+    public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/CoFHCore";
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason disables the version check from CoFHCore: the original {@code new UpdateManager(...)} call starts a
+     *         background {@code UpdateCheckThread} (network request) as a CONSTRUCTOR side effect, so merely
+     *         no-op'ing {@code registerUpdater} would not stop the network hit -- both the constructor call
+     *         itself (redirected to return null, no thread started) and the registration call (redirected to a
+     *         no-op) are intercepted, leaving the rest of preInit's vanilla bytecode untouched.
      */
-    @Overwrite(remap = false)
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent var1) {
-        CoFHProps.configDir = var1.getModConfigurationDirectory();
-        // UpdateManager.registerUpdater(new UpdateManager(this, "https://raw.github.com/CoFH/VERSION/master/CoFHCore",
-        // "http://teamcofh.com/downloads/"));
-        configCore.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/core/common.cfg"), true));
-        configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/core/client.cfg"), true));
-        MinecraftForge.EVENT_BUS.register(proxy);
-        proxy.preInit();
-        this.moduleCore();
-        this.moduleLoot();
-        FeatureParser.initialize();
-        WorldHandler.initialize();
-        FMLEventHandler.initialize();
-        BucketHandler.initialize();
-        FurnaceFuelHandler.initialize();
-        PacketHandler.instance.initialize();
-        RecipeSorter
-            .register("cofh:augment", RecipeAugmentable.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
-        RecipeSorter.register("cofh:secure", RecipeSecure.class, RecipeSorter.Category.SHAPED, "before:cofh:upgrade");
-        RecipeSorter
-            .register("cofh:upgrade", RecipeUpgrade.class, RecipeSorter.Category.SHAPED, "before:forge:shapedore");
-        RecipeSorter.register(
-            "cofh:upgradeoverride",
-            RecipeUpgradeOverride.class,
-            RecipeSorter.Category.SHAPED,
-            "before:forge:shapedore");
-        this.registerOreDictionaryEntries();
+    @Redirect(
+        method = "preInit",
+        at = @At(
+            value = "NEW",
+            target = "(Lcofh/mod/updater/IUpdatableMod;Ljava/lang/String;Ljava/lang/String;)Lcofh/mod/updater/UpdateManager;"),
+        remap = false)
+    private UpdateManager optimizationsandtweaks$skipUpdateManagerConstruction(IUpdatableMod mod, String checkUrl,
+        String downloadUrl) {
+        return null;
+    }
+
+    @Redirect(
+        method = "preInit",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcofh/mod/updater/UpdateManager;registerUpdater(Lcofh/mod/updater/UpdateManager;)V"),
+        remap = false)
+    private static void optimizationsandtweaks$skipRegisterUpdater(UpdateManager updateManager) {
+        // no-op: version check disabled
     }
 
     @Shadow

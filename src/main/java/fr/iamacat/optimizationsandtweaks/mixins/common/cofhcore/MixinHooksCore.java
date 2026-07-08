@@ -22,8 +22,14 @@ import cofh.lib.util.helpers.MathHelper;
 public class MixinHooksCore {
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): vanilla CoFH reuses a cached list stored on a
+     *         {@code World.collidingBoundingBoxes} field that CoFH's OWN ASM core-mod injects into the vanilla
+     *         {@code World} class (not present on plain vanilla/Forge {@code World}); this rewrite drops that
+     *         dependency and allocates a fresh {@code ArrayList} per call instead, to avoid depending on a
+     *         CoFH-ASM-injected field that may not exist depending on which core-mod transforms are active.
+     *         No single call site captures this (the loop body itself is restructured around the different list
+     *         source), so it isn't a redirect-one-call case; left as @Overwrite.
      */
     @Overwrite
     public static List<AxisAlignedBB> getEntityCollisionBoxes(World world, Entity entity, AxisAlignedBB boundingBox) {

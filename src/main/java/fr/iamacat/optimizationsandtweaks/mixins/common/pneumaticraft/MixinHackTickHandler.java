@@ -19,9 +19,22 @@ import pneumaticCraft.client.render.pneumaticArmor.hacking.HackableHandler;
 import pneumaticCraft.common.HackTickHandler;
 import pneumaticCraft.common.util.WorldAndCoord;
 
-/**
- * Reduces TPS lags caused by HackTickHandler from Pneumaticraft.
- */
+// NOTE (2026-07-08 mixin @Overwrite->injector conversion pass): reclassify COMPLEX, entire class left untouched.
+// All 3 @Overwrite methods (trackBlock, onServerTick, worldTick) read/write the SAME @Unique replacement fields
+// (optimizationsAndTweaks$hackedBlocks, $hackableBlockMap, $entityPropertiesMap) -- same all-or-nothing risk as
+// MixinSheetDataPackage (falling back to vanilla body for just one method would desync it from the others'
+// state). Beyond that, onServerTick and worldTick are also genuine algorithm rewrites, not simple call swaps:
+// - onServerTick: vanilla does an O(hackedBlocks x registeredHackableBlocks) linear scan of
+// PneumaticCraftAPIHandler's registry per tracked block every tick; this version replaces it with an O(1)
+// direct lookup via the cached $hackableBlockMap. Real perf fix (matches the class doc), but a full search-
+// strategy rewrite, not a call redirect. Also subtly changes behavior on a lookup miss: vanilla removes the
+// tracked entry when no matching registry entry is found; this version does nothing on a null lookup (relies
+// on $hackableBlockMap always having an entry for every tracked block's class, an invariant not verifiable
+// from this file alone).
+// - worldTick: removes vanilla's try/catch(Throwable) (exceptions now propagate instead of being swallowed) and
+// removes a per-entity-without-hacking-properties Log.warning call (likely THE actual "reduces TPS lag" fix --
+// logging a warning for every ordinary entity every tick is a serious log-spam/perf issue), and adds its own
+// caching layer via $entityPropertiesMap. Multiple interleaved real changes; not mechanically convertible.
 @Mixin(HackTickHandler.class)
 public class MixinHackTickHandler {
 

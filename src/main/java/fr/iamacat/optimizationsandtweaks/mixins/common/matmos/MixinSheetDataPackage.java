@@ -11,6 +11,15 @@ import eu.ha3.matmos.core.sheet.DataPackage;
 import eu.ha3.matmos.core.sheet.Sheet;
 import eu.ha3.matmos.core.sheet.SheetDataPackage;
 
+// NOTE (2026-07-08 mixin @Overwrite->injector conversion pass): reclassify COMPLEX, entire class left untouched.
+// `sheets`/`referencedBlockIDs`/`referencedItemIDs` are declared @Unique with the SAME NAMES as the target's own
+// private fields, instead of @Shadow -- meaning this class re-declares its OWN field storage rather than sharing
+// the target's. All 6 @Overwrite methods below read/write these @Unique fields consistently. Individually 3 of
+// the 6 (getSheet/clear/clearContents) are behavior-identical to vanilla and getSheetNames only adds an
+// unmodifiable wrapper -- all would normally be clean injector conversions -- BUT converting any subset back to
+// vanilla-body-via-injector would make THAT method operate on the vanilla class's own (different, currently-dead)
+// field instance while the rest keep using the @Unique one: a silent state-desync bug. All 6 methods must be
+// converted, or reclassified, as one unit; not attempted this pass given the risk of subtly splitting state.
 @Mixin(SheetDataPackage.class)
 public class MixinSheetDataPackage implements DataPackage {
 

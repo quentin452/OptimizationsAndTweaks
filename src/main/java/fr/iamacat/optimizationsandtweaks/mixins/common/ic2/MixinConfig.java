@@ -1,60 +1,14 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.ic2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 
 import ic2.core.util.Config;
 
-/**
- * Reduces TPS lag caused by the Config class from Industrial Craft 2 (IC2).
- */
+// NOTE (2026-07-08 mixin @Overwrite->injector conversion): the former @Overwrite `split` was a byte-for-byte
+// behavioral copy of vanilla Config.split (a continue-based if-chain rewritten as an if/else chain, numerically
+// and logically identical -- verified against De Morgan's law on the final branch condition). Deleted, no real
+// change. This EMPTIES the mixin entirely (it had no other content) -- candidate for full removal from
+// asm/Mixin.java's registry (out of scope for this batch: no edits to files outside the batch).
 @Mixin(Config.class)
 public class MixinConfig {
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private static List<String> split(String str, char splitChar) {
-        List<String> ret = new ArrayList();
-        StringBuilder current = new StringBuilder();
-        boolean empty = true;
-        boolean passNext = false;
-        boolean quoted = false;
-
-        for (int i = 0; i < str.length(); ++i) {
-            char c = str.charAt(i);
-            if (passNext) {
-                current.append(c);
-                empty = false;
-                passNext = false;
-            } else if (c == '\\') {
-                current.append(c);
-                empty = false;
-                passNext = true;
-            } else if (c == '"') {
-                current.append(c);
-                empty = false;
-                quoted = !quoted;
-            } else if (!quoted && c == splitChar) {
-                ret.add(
-                    current.toString()
-                        .trim());
-                current = new StringBuilder();
-                empty = true;
-            } else if (!Character.isWhitespace(c) || !empty) {
-                current.append(c);
-                empty = false;
-            }
-        }
-
-        ret.add(
-            current.toString()
-                .trim());
-        return ret;
-    }
 }

@@ -207,58 +207,52 @@ public class MixinThaumcraftHelperEU {
 
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     private static void addAspectsDivSigil() {
-        if (ExtraUtils.divisionSigil != null) {
-            ArrayList<Aspect> a = new ArrayList();
-            a.add(Aspect.AURA);
-            a.add(Aspect.EXCHANGE);
-            a.add(Aspect.TOOL);
-            a.add(Aspect.CRAFT);
-            a.add(Aspect.ELDRITCH);
-            a.add(Aspect.SOUL);
-            Collections.sort(a, Comparator.comparing(Aspect::getTag));
-            AspectList b = new AspectList();
-
-            for (int i = 0; i < a.size(); ++i) {
-                b.add(a.get(i), pi[i]);
-            }
-
-            ThaumcraftApi.registerObjectTag(new ItemStack(ExtraUtils.divisionSigil, 1, 32767), b);
+        if (ExtraUtils.divisionSigil == null) {
+            return;
         }
+        ArrayList<Aspect> a = new ArrayList();
+        a.add(Aspect.AURA);
+        a.add(Aspect.EXCHANGE);
+        a.add(Aspect.TOOL);
+        a.add(Aspect.CRAFT);
+        a.add(Aspect.ELDRITCH);
+        a.add(Aspect.SOUL);
+        Collections.sort(a, Comparator.comparing(Aspect::getTag));
+        AspectList b = new AspectList();
+        for (int i = 0; i < a.size(); ++i) {
+            b.add(a.get(i), pi[i]);
+        }
+        ThaumcraftApi.registerObjectTag(new ItemStack(ExtraUtils.divisionSigil, 1, 32767), b);
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     private static void addAspectRecipe(Block block, Object... ingredients) {
         if (block != null) {
             addAspectRecipe(new ItemStack(block), ingredients);
         }
-
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     private static void addAspectRecipe(Item item, Object... ingredients) {
         if (item != null) {
             addAspectRecipe(new ItemStack(item), ingredients);
         }
-
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): two real diffs vs vanilla found -- (a) the
+     *         {@code instanceof Block} ingredient branch is entirely missing here (vanilla wraps a raw
+     *         {@code Block} ingredient into an {@code AspectList}; this version silently drops it, falling
+     *         through the if-chain with no effect); (b) the {@code instanceof String} branch reinterprets the
+     *         string as an ore-dict numeric ID via {@code Integer.parseInt} + {@code OreDictionary.getOres(int)},
+     *         whereas vanilla treats the string as an ore-dict NAME via {@code OreDictionary.getOres(String)} --
+     *         a different overload entirely, and would throw NumberFormatException on a real name like
+     *         "ingotIron". Both are genuine algorithm differences (missing branch, changed overload/semantics),
+     *         not single-call swaps; left as @Overwrite rather than risk guessing which callers rely on which
+     *         behavior.
      */
     @Overwrite
     private static void addAspectRecipe(ItemStack result, Object... ingredients) {

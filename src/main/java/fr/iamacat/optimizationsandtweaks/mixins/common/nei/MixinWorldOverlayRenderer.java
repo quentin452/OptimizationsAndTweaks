@@ -26,8 +26,15 @@ public class MixinWorldOverlayRenderer {
     private static final AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): adds an early "sky light == 0" return-0 check
+     *         (twice: once at the very top, and again -- now unreachable/dead, since sky light cannot change
+     *         between the two checks -- right before the collision/liquid check). This is a real change to the
+     *         NEI spawn-overlay categorization for fully-dark spots (vanilla could still return 2 there if the
+     *         other conditions passed; this version forces 0), not just a call swap, and its exact intent isn't
+     *         fully clear from the diff alone (class doc says this mixin's stated purpose is a null-crash fix
+     *         with Small Stairs, not an overlay-color change) -- too risky to guess and convert. Left as
+     *         @Overwrite; flagging the duplicate/dead second sky-light check for a follow-up look.
      */
     @Overwrite
     private static byte getSpawnMode(Chunk chunk, int x, int y, int z) {

@@ -18,11 +18,11 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.core.lib.render.EntityDropParticleFX;
@@ -103,50 +103,59 @@ public abstract class MixinBlockBuildCraftFluid extends BlockFluidClassic {
         onBlockDestroyedByExplosion(world, x, y, z, explosion);
     }
 
-    @Overwrite
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        if (entity.isBurning()) entity.extinguish();
-        if (!dense) {
-            return;
+    /**
+     * @author iamacatfr
+     * @reason vanilla method already extinguishes burning entities elsewhere in some paths but not here; add it so
+     *         this fluid douses fire on contact, same as real fire-fighting liquids. Rest of the vanilla body
+     *         (motion dampening while dense) is untouched.
+     */
+    @Inject(method = "onEntityCollidedWithBlock", at = @At("HEAD"), remap = false)
+    private void optimizationsandtweaks$extinguishOnContact(World world, int x, int y, int z, Entity entity,
+        CallbackInfo ci) {
+        if (entity.isBurning()) {
+            entity.extinguish();
         }
-
-        entity.motionY = Math.min(0.0, entity.motionY);
-
-        if (entity.motionY < -0.05) {
-            entity.motionY *= 0.05;
-        }
-
-        entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
-        entity.motionY -= 0.05;
-        entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
-    }
-
-    @Overwrite(remap = false)
-    public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
-        return 0;
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason removed fire propagation on this fluid block entirely (like Oil Liquid from BuildCraft OilTweak):
+     *         always non-flammable/non-fire-spreading regardless of the flammable/flammability fields.
      */
-    @Overwrite(remap = false)
-    public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
-        return 0;
+    @Inject(method = "getFireSpreadSpeed", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$disableFireSpread(IBlockAccess world, int x, int y, int z, ForgeDirection face,
+        CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(0);
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason removed fire propagation on this fluid block entirely, see {@link #getFireSpreadSpeed}.
      */
-    @Overwrite(remap = false)
-    public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
-        return false;
+    @Inject(method = "getFlammability", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$disableFlammability(IBlockAccess world, int x, int y, int z,
+        ForgeDirection face, CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(0);
     }
 
-    @Overwrite(remap = false)
-    public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side) {
-        return false;
+    /**
+     * @author iamacatfr
+     * @reason removed fire propagation on this fluid block entirely, see {@link #getFireSpreadSpeed}.
+     */
+    @Inject(method = "isFlammable", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$disableIsFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face,
+        CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(false);
+    }
+
+    /**
+     * @author iamacatfr
+     * @reason removed fire propagation on this fluid block entirely, see {@link #getFireSpreadSpeed}.
+     */
+    @Inject(method = "isFireSource", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$disableFireSource(World world, int x, int y, int z, ForgeDirection side,
+        CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(false);
     }
 
     @Shadow

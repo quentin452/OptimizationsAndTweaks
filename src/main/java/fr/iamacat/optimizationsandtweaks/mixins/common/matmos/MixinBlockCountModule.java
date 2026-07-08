@@ -6,11 +6,9 @@ import net.minecraft.block.Block;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import eu.ha3.matmos.core.expansion.ExpansionManager;
 import eu.ha3.matmos.core.sheet.DataPackage;
 import eu.ha3.matmos.core.sheet.SheetDataPackage;
 import eu.ha3.matmos.data.modules.AbstractThingCountModule;
@@ -79,50 +77,14 @@ public class MixinBlockCountModule extends AbstractThingCountModule<Pair<Block, 
         this.increment(blockMeta, 1);
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public void increment(Pair<Block, Integer> blockMeta, int amount) {
-        Block block = blockMeta.getLeft();
-        int meta = blockMeta.getRight();
-        int id = ExpansionManager.dealiasToID(block, this.sheetData);
-        if (id >= this.size) {
-            this.resize(id + 1);
-        }
+    @Shadow
+    public void increment(Pair<Block, Integer> blockMeta, int amount) {}
 
-        int[] var10000 = this.counts;
-        var10000[id] += amount;
-        if (meta != -1 && meta != 0) {
-            if (this.metadatas[id] == null) {
-                this.metadatas[id] = new TreeMap<>();
-            }
-
-            Integer metaCount = this.metadatas[id].get(meta);
-            this.metadatas[id].put(meta, metaCount == null ? 0 : metaCount + amount);
-        } else if (meta == 0) {
-            var10000 = this.zeroMetadataCounts;
-            var10000[id] += amount;
-        }
-
-        this.blocksCounted += amount;
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
+    // present as a @Shadow stub (never executes; the target's own compiled method runs at runtime) purely to
+    // satisfy AbstractThingCountModule's abstract `get` contract for javac -- see class-level note above.
+    @Shadow
     public int get(Pair<Block, Integer> blockMeta) {
-        Block block = blockMeta.getLeft();
-        int meta = blockMeta.getRight();
-        int id = Block.getIdFromBlock(block);
-        if (id >= this.size) {
-            return 0;
-        } else {
-            return meta == -1 ? this.counts[id] : this.metadatas[id].get(meta);
-        }
+        return 0;
     }
 
     @Shadow
@@ -194,20 +156,5 @@ public class MixinBlockCountModule extends AbstractThingCountModule<Pair<Block, 
         Arrays.stream(this.metadatas)
             .filter(Objects::nonNull)
             .forEach(m -> m.replaceAll((k, v) -> 0));
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    private void resize(int newSize) {
-        int stepSize = 1024;
-        newSize = (int) Math.ceil((double) newSize / (double) stepSize) * stepSize;
-        this.wasZero = Arrays.copyOf(this.wasZero, newSize);
-        this.counts = Arrays.copyOf(this.counts, newSize);
-        this.zeroMetadataCounts = Arrays.copyOf(this.zeroMetadataCounts, newSize);
-        this.metadatas = Arrays.copyOf(this.metadatas, newSize);
-        this.size = newSize;
     }
 }

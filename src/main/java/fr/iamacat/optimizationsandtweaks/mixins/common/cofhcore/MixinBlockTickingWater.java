@@ -23,8 +23,16 @@ public class MixinBlockTickingWater extends BlockDynamicLiquid {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): two interleaved changes vs vanilla --
+     *         (a) a stackoverflow guard wraps the ENTIRE body (including the {@code super.onBlockAdded} call)
+     *         behind "current block != water", where vanilla calls super unconditionally; (b) the hellworld
+     *         conversion condition gains an extra "current block != air" clause guarding the SAME setBlock +
+     *         2 playAuxSFX calls. (a) alone would be a clean HEAD-cancellable guard, but (b) needs the extra
+     *         condition evaluated ONCE before the first mutation (setBlock to air) and then reused for the two
+     *         playAuxSFX calls after -- a per-call recheck (as plain @WrapWithCondition would do) would read
+     *         "air" after the first setBlock has already run, wrongly skipping the SFX calls. Not safely
+     *         expressible without a shared/captured local across 3 call sites; left as @Overwrite.
      */
     @Overwrite
     public void onBlockAdded(World var1, int var2, int var3, int var4) {

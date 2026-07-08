@@ -9,7 +9,6 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentTranslation;
@@ -19,13 +18,14 @@ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import buildcraft.oiltweak.BuildCraftOilTweak;
 import buildcraft.oiltweak.OilTweakEventHandler;
@@ -43,8 +43,14 @@ import fr.iamacat.optimizationsandtweaks.utilsformods.buildcraft.InOil2;
 public class MixinOilTweakEventHandler {
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): routes oil detection through
+     *         {@link #optimizationsAndTweaks$getInOil} which returns this mod's own {@code InOil2} enum instead of
+     *         the vanilla private nested {@code InOil} enum returned by {@code getInOil}. A @Redirect on the
+     *         vanilla {@code getInOil} call would need to return the SAME type the original bytecode expects at
+     *         that call site (private {@code InOil}), so it cannot return {@code InOil2} without a verifier type
+     *         mismatch -- the type swap forces a full method rewrite, only expressible as @Overwrite. Left as-is;
+     *         if/else restructuring vs vanilla's early-return is otherwise behavior-identical.
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
@@ -70,8 +76,9 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX: see {@link #onLivingUpdate} -- same InOil-vs-InOil2 type swap, not mechanically
+     *         convertible via injectors.
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
@@ -97,8 +104,9 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX: see {@link #onLivingUpdate} -- same InOil-vs-InOil2 type swap, not mechanically
+     *         convertible via injectors.
      */
     @Overwrite(remap = false)
     @SideOnly(Side.CLIENT)
@@ -127,8 +135,9 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX: see {@link #onLivingUpdate} -- same InOil-vs-InOil2 type swap, not mechanically
+     *         convertible via injectors.
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
@@ -143,8 +152,9 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX: see {@link #onLivingUpdate} -- same InOil-vs-InOil2 type swap, not mechanically
+     *         convertible via injectors.
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
@@ -162,8 +172,9 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX: see {@link #onLivingUpdate} -- same InOil-vs-InOil2 type swap, not mechanically
+     *         convertible via injectors.
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     @Overwrite(remap = false)
@@ -232,44 +243,47 @@ public class MixinOilTweakEventHandler {
     }
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason no real change vs vanilla (early-return rewritten as an if-block, behavior-identical) -- deleted, now
+     *         shadows the vanilla implementation directly.
      */
-    @Overwrite(remap = false)
+    @Shadow
     private void setNotInOil(EntityLivingBase entity) {
         OilTweakProperties props = getProperties(entity);
-
-        if (props.inOil) {
-            entity.stepHeight = props.realStepHeight;
-            props.inOil = false;
+        if (!props.inOil) {
+            return;
         }
+        entity.stepHeight = props.realStepHeight;
+        props.inOil = false;
     }
 
     @Unique
     private final Map<Block, Boolean> optimizationsAndTweaks$oilBlockCache = new HashMap<>();
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason memoizes the per-block oil lookup (was recomputed on every call from every entity's per-tick
+     *         collision scan); converted from @Overwrite to a HEAD/RETURN cache wrapper around the untouched
+     *         vanilla body -- cache-hit short-circuits at HEAD, cache-miss falls through to the real vanilla
+     *         fluid-registry lookup and the result is captured at RETURN.
      */
-    @Overwrite(remap = false)
+    @Inject(method = "isOil", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$isOilCacheRead(Block block, CallbackInfoReturnable<Boolean> cir) {
+        Boolean cached = optimizationsAndTweaks$oilBlockCache.get(block);
+        if (cached != null) {
+            cir.setReturnValue(cached);
+        }
+    }
+
+    @Inject(method = "isOil", at = @At("RETURN"), remap = false)
+    private void optimizationsandtweaks$isOilCacheWrite(Block block, CallbackInfoReturnable<Boolean> cir) {
+        optimizationsAndTweaks$oilBlockCache.put(block, cir.getReturnValue());
+    }
+
+    // present as a @Shadow stub (never executes; the target's own compiled method runs at runtime, wrapped by the
+    // 2 @Inject handlers above) purely so optimizationsAndTweaks$getInOil's call to isOil(...) resolves for javac.
+    @Shadow
     private boolean isOil(Block block) {
-        Boolean cachedValue = optimizationsAndTweaks$oilBlockCache.get(block);
-        if (cachedValue != null) {
-            return cachedValue.booleanValue();
-        }
-        boolean isOilBlock = false;
-
-        if (block != null && block != Blocks.air) {
-            Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-            if (FluidRegistry.isFluidRegistered(fluid) && fluid.getName() != null
-                && fluid.getName()
-                    .equalsIgnoreCase("oil")) {
-                isOilBlock = true;
-            }
-        }
-
-        optimizationsAndTweaks$oilBlockCache.put(block, isOilBlock);
-        return isOilBlock;
+        return false;
     }
 }

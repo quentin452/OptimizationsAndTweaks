@@ -1,14 +1,17 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.matmos;
 
-import net.minecraft.client.Minecraft;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import eu.ha3.matmos.data.scanners.Scan;
 import eu.ha3.matmos.data.scanners.ScanVolumetric;
 
+// NOTE (2026-07-08 mixin @Overwrite->injector conversion): both former @Overwrite methods (initScan, doRoutine)
+// were byte-for-byte behavioral copies of the vanilla ScanVolumetric methods (if/else chains rewritten as
+// Math.min/max clamps and continue-chains rewritten as if/else, but numerically identical) -- deleted, no real
+// change. This EMPTIES the mixin of all @Overwrite content; only @Shadow field declarations remain, which is now
+// a no-op mixin. Candidate for full removal from asm/Mixin.java's registry (out of scope for this batch: no edits
+// to files outside the batch).
 @Mixin(ScanVolumetric.class)
 public abstract class MixinScanVolumetric extends Scan {
 
@@ -30,46 +33,4 @@ public abstract class MixinScanVolumetric extends Scan {
     private int yy;
     @Shadow
     private int zz;
-
-    /**
-     * @reason
-     */
-    @Overwrite(remap = false)
-    protected void initScan(int x, int y, int z, int xsizeIn, int ysizeIn, int zsizeIn, int opspercallIn) {
-        int worldHeight = Minecraft.getMinecraft().theWorld.getHeight();
-        this.ysize = Math.min(worldHeight, ysizeIn);
-        this.ystart = Math.max(0, Math.min(worldHeight - this.ysize, y - this.ysize / 2));
-        this.xsize = xsizeIn;
-        this.zsize = zsizeIn;
-        this.xstart = x - this.xsize / 2;
-        this.zstart = z - this.zsize / 2;
-        this.finalProgress = this.xsize * this.ysize * this.zsize;
-        this.xx = 0;
-        this.yy = 0;
-        this.zz = 0;
-    }
-
-    /**
-     * @reason
-     */
-    @Overwrite(remap = false)
-    protected boolean doRoutine() {
-        int ops = 0;
-        while (ops < this.opspercall && this.progress < this.finalProgress) {
-            this.pipeline.input(this.xstart + this.xx, this.ystart + this.yy, this.zstart + this.zz);
-            this.xx = (this.xx + 1) % this.xsize;
-            if (this.xx == 0) {
-                this.zz = (this.zz + 1) % this.zsize;
-                if (this.zz == 0) {
-                    this.yy++;
-                    if (this.yy >= this.ysize && this.progress != this.finalProgress - 1) {
-                        System.err.println("LOGIC ERROR");
-                    }
-                }
-            }
-            ops++;
-            this.progress++;
-        }
-        return true;
-    }
 }

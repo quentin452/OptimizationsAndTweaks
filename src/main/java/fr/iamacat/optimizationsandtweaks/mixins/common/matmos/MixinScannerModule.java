@@ -22,6 +22,14 @@ import eu.ha3.matmos.util.BlockPos;
 import eu.ha3.matmos.util.IDontKnowHowToCode;
 import eu.ha3.matmos.util.MAtUtil;
 
+// NOTE (2026-07-08 mixin @Overwrite->injector conversion pass): left entirely untouched, not reclassified with
+// confidence either way. The locally cached/decompiled matmos-366256 artifact (curse.maven fileID 4819513, the
+// exact coordinate this project's dependencies.gradle declares) references `net.minecraft.util.math.BlockPos`
+// (a 1.8+ vanilla API) in ScannerModule's real bytecode, whereas THIS mixin (and its own
+// `eu.ha3.matmos.util.BlockPos`, a custom 1.7.10-era class) targets a structurally different version of the
+// class. Diffing against a mismatched decompile risks a wrong/unsafe conversion (or missing that this mixin may
+// already be stale against its own current dependency) -- flagging for a follow-up with the ACTUAL runtime jar
+// used by the pack, not attempting a diff here.
 @Mixin(ScannerModule.class)
 public abstract class MixinScannerModule implements PassOnceModule, ScanOperations, Progress {
 

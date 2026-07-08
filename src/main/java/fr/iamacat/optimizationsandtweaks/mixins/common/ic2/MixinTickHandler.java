@@ -44,8 +44,14 @@ public class MixinTickHandler {
     private static Throwable lastDebugTrace;
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason reclassify COMPLEX (not mechanically convertible): replaces vanilla's fine-grained skip heuristic
+     *         (server-side: skip only a {@code WorldServer} with no players AND no force-loaded chunks AND
+     *         {@code updateEntityTick} (reflected private field) idle-count >= 1200; client-side: skip only if
+     *         the game is paused) with a single broader guard "skip unless simulating and not remote". This is a
+     *         different guard condition entirely (not a subset/superset of the vanilla one), so it cannot be
+     *         expressed as an added HEAD-cancel on top of the vanilla condition -- it genuinely replaces the
+     *         control-flow decision. Left as @Overwrite.
      */
     @SubscribeEvent
     @Overwrite(remap = false)

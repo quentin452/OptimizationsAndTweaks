@@ -4,12 +4,12 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-import codechicken.core.CommonUtils;
 import codechicken.core.ServerUtils;
 import codechicken.nei.NEIActions;
-import codechicken.nei.NEIServerConfig;
 import codechicken.nei.NEIServerUtils;
 
 /**
@@ -19,40 +19,23 @@ import codechicken.nei.NEIServerUtils;
 public class MixinNEIServerUtils {
 
     /**
-     * @author
-     * @reason
+     * @author iamacatfr
+     * @reason the hardcoded {@code 4} group-count assumed exactly 4 six-hour time zone groups (24 total); derive it
+     *         from {@code NEIActions.timeZones.length} instead so it stays correct if that array's size ever
+     *         changes. Rest of the method (vanilla bytecode) is untouched.
      */
-    @Overwrite
-    public static void advanceDisabledTimes(World world) {
-        int dim = CommonUtils.getDimension(world);
-        int hour = (int) (getTime(world) % 24000) / 1000;
-        int timeZonesLength = NEIActions.timeZones.length;
-
-        int newhour = hour;
-        while (NEIServerConfig.isActionDisabled(dim, NEIActions.timeZones[newhour / 6])) {
-            newhour = ((newhour / 6 + 1) % (timeZonesLength / 6)) * 6;
-        }
-
-        if (newhour != hour) {
-            setHourForward(world, newhour, false);
-        }
+    @ModifyConstant(method = "advanceDisabledTimes", constant = @Constant(intValue = 4), remap = false)
+    private static int optimizationsandtweaks$deriveTimeZoneGroupCount(int original) {
+        return NEIActions.timeZones.length / 6;
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     public static long getTime(World world) {
         return world.getWorldInfo()
             .getWorldTime();
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     public static void setHourForward(World world, int hour, boolean notify) {
         long day = (getTime(world) / 24000L) * 24000L;
         long newTime = day + 24000L + hour * 1000L;
@@ -61,11 +44,7 @@ public class MixinNEIServerUtils {
             ServerUtils.sendChatToAll(new ChatComponentTranslation("nei.chat.time", getTime(world) / 24000L, hour));
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
+    @Shadow
     public static void setTime(long l, World world) {
         world.getWorldInfo()
             .setWorldTime(l);
