@@ -5,8 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import panda.birdsnests.OnJoinWorldHandler;
 
@@ -19,7 +17,6 @@ public class MixinOnJoinWorldHandlerBird {
      *         applies.
      */
     @Inject(method = "onEvent", at = @At("HEAD"), remap = false, cancellable = true)
-    @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
     public void onEvent(TickEvent.PlayerTickEvent event, CallbackInfo ci) {
         ci.cancel();
     }
