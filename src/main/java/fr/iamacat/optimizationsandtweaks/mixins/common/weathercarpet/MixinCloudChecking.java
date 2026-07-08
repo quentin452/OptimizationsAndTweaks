@@ -1,11 +1,11 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.weathercarpet;
 
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import mc.Mitchellbrine.anchormanMod.util.CloudChecking;
 
@@ -15,8 +15,13 @@ import mc.Mitchellbrine.anchormanMod.util.CloudChecking;
 @Mixin(CloudChecking.class)
 public class MixinCloudChecking {
 
-    @Overwrite
-    public static boolean userValidation(EntityPlayer player) throws IOException {
-        return false;
+    /**
+     * @reason disable the Weather Carpet version check (feature disabled by this pack). HEAD-cancel with a
+     *         computed return value instead of a full-method replace so any other transform on this method
+     *         still applies.
+     */
+    @Inject(method = "userValidation", at = @At("HEAD"), remap = false, cancellable = true)
+    private static void userValidation(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(false);
     }
 }
