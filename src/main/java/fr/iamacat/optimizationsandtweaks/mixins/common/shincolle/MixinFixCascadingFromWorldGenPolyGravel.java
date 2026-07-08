@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
 
+/**
+ * Fixes some cascading worldgen by disabling Poly Gravel from worldgen from ShinColle Mod.
+ */
 @Mixin(WorldGenPolyGravel.class)
 public abstract class MixinFixCascadingFromWorldGenPolyGravel extends WorldGenerator {
 

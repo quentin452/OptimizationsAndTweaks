@@ -25,6 +25,9 @@ import powercrystals.minefactoryreloaded.MineFactoryReloadedCore;
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenMassiveTree;
 
+/**
+ * Fixes cascading worldgens caused by WorldGenMassiveTree class from Minefactory Reloaded mod.
+ */
 @Mixin(WorldGenMassiveTree.class)
 public abstract class MixinWorldGenMassiveTree extends WorldGenerator {
 

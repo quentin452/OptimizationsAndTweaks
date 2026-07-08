@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenGVillagetwo;
 import goblin.*;
 
+/**
+ * Fixes cascading worldgens caused by GOBLINWorldGenGVillage1 class from Goblin mod.
+ */
 @Mixin(GOBLINWorldGenGVillage1.class)
 public class MixinGOBLINWorldGenGVillage1 extends GOBLINWorldGen {
 

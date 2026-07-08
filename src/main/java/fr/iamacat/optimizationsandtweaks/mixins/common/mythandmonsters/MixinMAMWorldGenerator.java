@@ -16,6 +16,10 @@ import com.hoopawolf.mam.structure.IceBiomeStructure;
 import com.hoopawolf.mam.structure.MAMWorldGenerator;
 import com.hoopawolf.mam.structure.StructureForest;
 
+/**
+ * Fixes cascading worldgen caused by MAMWorldGenerator from the Mythic and Monsters mod, by rewriting the
+ * worldgen using Recurrent Complex (only applied if both Recurrent Complex and Mythic and Monsters are present).
+ */
 @Mixin(MAMWorldGenerator.class)
 public class MixinMAMWorldGenerator {
 

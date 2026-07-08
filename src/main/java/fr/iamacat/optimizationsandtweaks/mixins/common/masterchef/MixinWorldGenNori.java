@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.chef.mod.generate.features.WorldGenNori;
 
+/**
+ * Fixes cascading worldgen caused by WorldGenNori class from Master Chef mod.
+ */
 @Mixin(WorldGenNori.class)
 public class MixinWorldGenNori {
 

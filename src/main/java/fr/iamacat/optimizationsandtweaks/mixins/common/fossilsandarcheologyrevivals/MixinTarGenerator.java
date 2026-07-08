@@ -16,6 +16,9 @@ import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.gen.TarGenerator;
 import fossilsarcheology.server.gen.feature.TarPitWorldGen;
 
+/**
+ * Fixes some cascading worldgen caused by TarGenerator class from Fossil and Archeology Revivals.
+ */
 @Mixin(TarGenerator.class)
 public class MixinTarGenerator implements IWorldGenerator {
 

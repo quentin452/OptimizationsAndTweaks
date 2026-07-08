@@ -17,6 +17,9 @@ import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldG
 import powercrystals.minefactoryreloaded.setup.MFRThings;
 import powercrystals.minefactoryreloaded.world.WorldGenRubberTree;
 
+/**
+ * Fixes some cascading worldgen caused by rubber trees from the MineFactory Reloaded mod.
+ */
 @Mixin(WorldGenRubberTree.class)
 public abstract class MixinFixRubberTreesCascadingWorldgenLag extends WorldGenerator {
 

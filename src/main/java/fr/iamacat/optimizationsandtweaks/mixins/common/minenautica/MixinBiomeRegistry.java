@@ -15,6 +15,9 @@ import com.minenautica.Minenautica.Biomes.BiomeRegistry;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.minenautica.MinenauticaBiomeIDConfig;
 
+/**
+ * Adds a config to change biome IDs from the Minenautica mod.
+ */
 @Mixin(BiomeRegistry.class)
 public class MixinBiomeRegistry {
 

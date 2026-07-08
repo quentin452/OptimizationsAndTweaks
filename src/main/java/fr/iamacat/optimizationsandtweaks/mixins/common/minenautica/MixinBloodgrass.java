@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.minenautica.Minenautica.Blocks.Bloodgrass;
 import com.minenautica.Minenautica.Blocks.GroundCoral;
 
+/**
+ * Reduces cascading worldgen caused Bloodgrass class from Minenautica (disabled by default cause issues).
+ */
 @Mixin(Bloodgrass.class)
 public abstract class MixinBloodgrass extends Block {
 

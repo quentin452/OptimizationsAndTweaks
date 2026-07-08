@@ -21,6 +21,9 @@ import com.teammetallurgy.atum.world.decorators.WorldGenPyramid;
 
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Fixes some cascading worldgen caused by WorldGenPyramid class from Atum mod.
+ */
 @Mixin(WorldGenPyramid.class)
 public abstract class MixinWorldGenPyramid extends WorldGenerator {
 

@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import DelirusCrux.Netherlicious.World.Features.Terrain.VentGeneratorSingle;
 
+/**
+ * Fixes cascading worldgen caused by VentGeneratorSingle class from Netherlicious.
+ */
 @Mixin(VentGeneratorSingle.class)
 public abstract class MixinVentGeneratorSingle extends WorldGenerator {
 

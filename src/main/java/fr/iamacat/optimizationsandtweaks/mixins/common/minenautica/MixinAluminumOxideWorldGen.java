@@ -23,6 +23,10 @@ import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Fixes an infinite loop during worldgen caused by AluminumOxideWorldGen class from Minenautica (disabled by
+ * default cause issues).
+ */
 @Mixin(AluminumOxideWorldGen.class)
 public class MixinAluminumOxideWorldGen implements IWorldGenerator {
 

@@ -16,6 +16,9 @@ import com.winslow.shipwreckworldgen.shipwrecks.*;
 
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Fixes some cascading worldgen caused by ShipwreckGen from the Shipwrecks mod.
+ */
 @Mixin(ShipwreckGen.class)
 public class MixinFixCascadingFromShipwreckGen implements IWorldGenerator {
 

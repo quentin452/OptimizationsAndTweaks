@@ -17,6 +17,9 @@ import com.jim.obsgreenery.world.WorldGenTreeBlackWattle;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 import fr.iamacat.optimizationsandtweaks.utilsformods.obsgreenery.WorldGenTreeBase2;
 
+/**
+ * Fixes cascading worldgens caused by WorldGenTreeBlackWattle class from ObsGreenery mod.
+ */
 @Mixin(WorldGenTreeBlackWattle.class)
 public class MixinWorldGenTreeBlackWattle extends WorldGenTreeBase {
 

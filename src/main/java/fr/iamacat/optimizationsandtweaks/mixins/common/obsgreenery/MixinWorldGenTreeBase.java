@@ -19,6 +19,9 @@ import com.jim.obsgreenery.world.WorldGenTreeBase;
 
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
 
+/**
+ * Fixes cascading worldgens caused by WorldGenTreeBase class from ObsGreenery mod.
+ */
 @Mixin(WorldGenTreeBase.class)
 public abstract class MixinWorldGenTreeBase extends WorldGenerator {
 

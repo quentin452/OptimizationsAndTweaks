@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Unique;
 import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.CrystalFormationBig;
 import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
 
+/**
+ * Fixes cascading worldgen caused by CrystalFormationBig class from Netherlicious.
+ */
 @Mixin(CrystalFormationBig.class)
 public abstract class MixinCrystalFormationBig extends WorldGeneratorAdv {
 

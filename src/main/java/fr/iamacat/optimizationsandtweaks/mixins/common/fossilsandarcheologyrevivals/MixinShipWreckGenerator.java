@@ -13,6 +13,9 @@ import fossilsarcheology.server.gen.structure.FossilWaterStructureGenerator;
 import fossilsarcheology.server.gen.structure.ShipWreckGenerator;
 import fossilsarcheology.server.structure.util.Structure;
 
+/**
+ * Fixes an infinite loop during worldgen caused by ShipWreckGenerator class from Fossil and archeology Revival.
+ */
 @Mixin(ShipWreckGenerator.class)
 public class MixinShipWreckGenerator {
 

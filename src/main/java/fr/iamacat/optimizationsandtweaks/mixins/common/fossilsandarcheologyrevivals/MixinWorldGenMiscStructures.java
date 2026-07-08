@@ -13,6 +13,9 @@ import fossilsarcheology.Revival;
 import fossilsarcheology.server.gen.WorldGenMiscStructures;
 import fr.iamacat.optimizationsandtweaks.utilsformods.fossilandarchaeologyrevival.WorldGenMiscStructures2;
 
+/**
+ * Fixes cascading worldgens caused by WorldGenMiscStructures class from Fossil and archeology Revival.
+ */
 @Mixin(WorldGenMiscStructures.class)
 public class MixinWorldGenMiscStructures {
 

@@ -17,6 +17,9 @@ import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
 import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 import com.minenautica.Minenautica.Schematics.*;
 
+/**
+ * Reduces cascading worldgen caused GenerateCoral class from Minenautica (disabled by default cause issues).
+ */
 @Mixin(GenerateCoral.class)
 public class MixinGenerateCoral {
 

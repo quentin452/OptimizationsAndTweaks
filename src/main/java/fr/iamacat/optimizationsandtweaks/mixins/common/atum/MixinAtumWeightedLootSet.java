@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.teammetallurgy.atum.items.AtumWeightedLootSet;
 
+/**
+ * Fixes enchantment NPE from Atum mod (AtumWeightedLootSet).
+ */
 @Mixin(AtumWeightedLootSet.class)
 public class MixinAtumWeightedLootSet {
 

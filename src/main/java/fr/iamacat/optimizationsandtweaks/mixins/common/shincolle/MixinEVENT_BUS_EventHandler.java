@@ -16,6 +16,9 @@ import com.lulan.shincolle.utility.LogHelper;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Fixes stackoverflow between Custom Mob Spawner and ShinColle.
+ */
 @Mixin(EVENT_BUS_EventHandler.class)
 public class MixinEVENT_BUS_EventHandler {
 

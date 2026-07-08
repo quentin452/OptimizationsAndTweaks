@@ -17,6 +17,9 @@ import com.jaquadro.minecraft.gardentrees.world.gen.feature.WorldGenCandelilla;
 
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Fixes some cascading worldgen caused by GardenStuff mod.
+ */
 @Mixin(WorldGenCandelilla.class)
 public class MixinWorldGenCandelilla extends WorldGenerator implements IWorldGenerator {
 

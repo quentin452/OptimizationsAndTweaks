@@ -21,6 +21,9 @@ import com.teammetallurgy.atum.items.AtumLoot;
 import com.teammetallurgy.atum.world.decorators.WorldGenOasis;
 import com.teammetallurgy.atum.world.decorators.WorldGenPalm;
 
+/**
+ * Fixes some cascading worldgen caused by WorldGenOasis class from Atum mod.
+ */
 @Mixin(WorldGenOasis.class)
 public abstract class MixinWorldGenOasis extends WorldGenerator {
 

@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Unique;
 import DelirusCrux.Netherlicious.Common.BlockItemUtility.ModBlocks;
 import DelirusCrux.Netherlicious.World.Features.Terrain.RuptureSpike;
 
+/**
+ * Fixes cascading worldgen caused by RuptureSpike class from Netherlicious.
+ */
 @Mixin(RuptureSpike.class)
 public abstract class MixinRuptureSpike extends WorldGenerator {
 

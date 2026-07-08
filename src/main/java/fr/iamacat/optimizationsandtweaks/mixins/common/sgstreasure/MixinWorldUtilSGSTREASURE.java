@@ -11,6 +11,9 @@ import com.someguyssoftware.mod.util.WorldUtil;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.WorldUtil2SGSTREASURE;
 
+/**
+ * Fixes some cascading worldgen caused by WorldUtilSGSTREASURE class from SGS Treasure mod.
+ */
 @Mixin(WorldUtil.class)
 public class MixinWorldUtilSGSTREASURE {
 

@@ -18,6 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import steamcraft.common.init.InitBlocks;
 import steamcraft.common.worldgen.trees.WorldGenBrassTree;
 
+/**
+ * Fixes some cascading worldgen caused by NetherWorldGen class from Gany's Nether mod.
+ */
 @Mixin(WorldGenBrassTree.class)
 public class MixinFixCascadingFromWorldGenBrassTree {
 

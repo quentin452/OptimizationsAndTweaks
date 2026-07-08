@@ -18,6 +18,9 @@ import com.hoopawolf.mam.registry.MAMItems;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
+/**
+ * Disables DevCape Rendering register from Myth and Monsters.
+ */
 @Mixin(ClientProxy.class)
 public class MixinMAMClientProxy {
 

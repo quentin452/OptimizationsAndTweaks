@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 import supremopete.SlimeCarnage.mobs.*;
 import supremopete.SlimeCarnage.worldgen.WorldGenMadLab;
 
+/**
+ * Fixes some cascading worldgen caused by WorldGenMadLab from Slime Carnage Mod.
+ */
 @Mixin(WorldGenMadLab.class)
 public class MixinWorldGenMadLab {
 

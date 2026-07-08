@@ -12,6 +12,9 @@ import com.someguyssoftware.treasure.worldgen.chest.ObsidianChestGenerator;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.ObsidianChestGenerator2;
 
+/**
+ * Fixes some cascading worldgen caused by ObsidianChestGenerator class from SGS Treasure mod.
+ */
 @Mixin(ObsidianChestGenerator.class)
 public class MixinObsidianChestGenerator {
 

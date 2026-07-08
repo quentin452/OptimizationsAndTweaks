@@ -11,6 +11,9 @@ import com.someguyssoftware.plans.exception.ConstructionFailedException;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.sgstreasure.PlansProcessor2;
 
+/**
+ * Fixes some cascading worldgen caused by PlansProcessor class from SGS Treasure mod.
+ */
 @Mixin(PlansProcessor.class)
 public class MixinPlansProcessor {
 

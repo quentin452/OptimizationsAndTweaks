@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenFireplaceTwo;
 import goblin.*;
 
+/**
+ * Fixes cascading worldgens caused by GOBLINWorldGenFireplace class from Goblin mod.
+ */
 @Mixin(GOBLINWorldGenFireplace.class)
 public class MixinGOBLINWorldGenFireplace {
 

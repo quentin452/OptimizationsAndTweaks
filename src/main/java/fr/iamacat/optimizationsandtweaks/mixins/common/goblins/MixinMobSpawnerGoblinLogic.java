@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import goblin.MobSpawnerGoblinLogic;
 
+/**
+ * Fixes NoSuchMethodError caused by MobSpawnerGoblinlogic from Goblin mod.
+ */
 @Mixin(MobSpawnerGoblinLogic.class)
 public abstract class MixinMobSpawnerGoblinLogic {
 

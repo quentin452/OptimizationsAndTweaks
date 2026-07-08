@@ -16,6 +16,10 @@ import com.minenautica.Minenautica.Biomes.BiomeGenKelpForest;
 import com.minenautica.Minenautica.Biomes.GenerateCoral;
 import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 
+/**
+ * Reduces cascading worldgen caused BiomeGenKelpForest class from Minenautica (disabled by default cause
+ * issues).
+ */
 @Mixin(BiomeGenKelpForest.class)
 public abstract class MixinBiomeGenKelpForest extends BiomeGenBase {
 

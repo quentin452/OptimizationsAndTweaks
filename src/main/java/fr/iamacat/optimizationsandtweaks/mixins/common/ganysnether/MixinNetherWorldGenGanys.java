@@ -21,6 +21,9 @@ import ganymedes01.ganysnether.core.utils.Utils;
 import ganymedes01.ganysnether.tileentities.TileEntityUndertaker;
 import ganymedes01.ganysnether.world.NetherWorldGen;
 
+/**
+ * Fixes some cascading worldgen from Steamcraft2 mod.
+ */
 @Mixin(NetherWorldGen.class)
 public class MixinNetherWorldGenGanys {
 

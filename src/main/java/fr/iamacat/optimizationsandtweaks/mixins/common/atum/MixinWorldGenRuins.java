@@ -14,6 +14,9 @@ import com.teammetallurgy.atum.blocks.AtumBlocks;
 import com.teammetallurgy.atum.items.AtumLoot;
 import com.teammetallurgy.atum.world.decorators.WorldGenRuins;
 
+/**
+ * Fixes some cascading worldgen caused by WorldGenRuins class from Atum mod.
+ */
 @Mixin(WorldGenRuins.class)
 public abstract class MixinWorldGenRuins extends WorldGenerator {
 

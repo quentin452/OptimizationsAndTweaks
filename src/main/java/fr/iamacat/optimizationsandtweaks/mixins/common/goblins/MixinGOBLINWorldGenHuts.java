@@ -11,6 +11,9 @@ import fr.iamacat.optimizationsandtweaks.utilsformods.goblins.GOBLINWorldGenHuts
 import goblin.GOBLINWorldGen;
 import goblin.GOBLINWorldGenHuts;
 
+/**
+ * Fixes cascading worldgens caused by GOBLINWorldGenHuts class from Goblin mod.
+ */
 @Mixin(GOBLINWorldGenHuts.class)
 public class MixinGOBLINWorldGenHuts extends GOBLINWorldGen {
 

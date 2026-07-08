@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.minenautica.Minenautica.Blocks.TechneRenderings.CanBlockStay;
 import com.minenautica.Minenautica.CustomRegistry.BlocksAndItems;
 
+/**
+ * Reduces cascading worldgen caused CanBlockStay class from Minenautica (disabled by default cause issues).
+ */
 @Mixin(CanBlockStay.class)
 public class MixinCanBlockStay {
 

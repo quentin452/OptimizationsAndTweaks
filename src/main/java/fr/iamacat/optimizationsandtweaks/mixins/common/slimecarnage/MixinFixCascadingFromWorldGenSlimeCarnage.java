@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.common.IWorldGenerator;
 import supremopete.SlimeCarnage.worldgen.*;
 
+/**
+ * Fixes some cascading worldgen caused by WorldGenSlimeCarnage from Slime Carnage Mod.
+ */
 @Mixin(WorldGenSlimeCarnage.class)
 public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerator {
 

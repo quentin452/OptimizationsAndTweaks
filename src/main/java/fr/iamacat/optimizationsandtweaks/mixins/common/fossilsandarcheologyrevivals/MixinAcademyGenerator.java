@@ -16,6 +16,9 @@ import fossilsarcheology.server.gen.structure.AcademyGenerator;
 import fossilsarcheology.server.gen.structure.FossilStructureGenerator;
 import fossilsarcheology.server.structure.util.Structure;
 
+/**
+ * Fixes an infinite loop during worldgen caused by AcademyGenerator class from Fossil and archeology Revival.
+ */
 @Mixin(AcademyGenerator.class)
 public class MixinAcademyGenerator {
 

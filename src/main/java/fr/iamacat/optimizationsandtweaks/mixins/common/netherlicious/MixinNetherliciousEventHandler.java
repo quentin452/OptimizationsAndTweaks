@@ -20,6 +20,9 @@ import DelirusCrux.Netherlicious.Common.Entities.Passive.EntityPiglin;
 import DelirusCrux.Netherlicious.Utility.NetherliciousEventHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Optimizes NetherliciousEventHandler class from Netherlicious.
+ */
 @Mixin(NetherliciousEventHandler.class)
 public class MixinNetherliciousEventHandler {
 

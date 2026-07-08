@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import fr.iamacat.optimizationsandtweaks.utilsformods.minefactoryreloaded.WorldGenLakesMeta2;
 import powercrystals.minefactoryreloaded.world.WorldGenLakesMeta;
 
+/**
+ * Fixes some cascading worldgen caused by lakes from the MineFactory Reloaded mod.
+ */
 @Mixin(WorldGenLakesMeta.class)
 public class MixinFixWorldGenLakesMetaCascadingWorldgenLag extends WorldGenerator {
 

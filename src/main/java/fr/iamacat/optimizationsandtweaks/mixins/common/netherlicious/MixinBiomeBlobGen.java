@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import DelirusCrux.Netherlicious.World.Features.Terrain.BiomeBlobGen;
 
+/**
+ * Fixes cascading worldgen caused by BiomeBlobGen class from Netherlicious.
+ */
 @Mixin(BiomeBlobGen.class)
 public abstract class MixinBiomeBlobGen extends WorldGenerator {
 

@@ -19,6 +19,9 @@ import com.lulan.shincolle.worldgen.WorldGenPolyGravel;
 
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Fixes some cascading worldgen caused by worldgen from the ShinColle mod.
+ */
 @Mixin(ShinColleWorldGen.class)
 public class MixinFixCascadingFromShinColleWorldGen implements IWorldGenerator {
 
