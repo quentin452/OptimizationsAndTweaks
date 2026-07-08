@@ -206,7 +206,6 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityLiving(Side.COMMON, always(), "core.MixinEntityLiving"),
     common_core_MixinEntityAgeable(Side.COMMON, always(), "core.MixinEntityAgeable"),
     common_nei_MixinNEIServerUtils(Side.COMMON, require(TargetedMod.NEI), "nei.MixinNEIServerUtils"),
-    common_nei_MixinConfig(Side.COMMON, require(TargetedMod.NEI), "ic2.MixinConfig"),
     common_core_MixinBlockLiquid(Side.COMMON, always(), "core.MixinBlockLiquid"),
     common_core_entity_MixinEntityZombie(Side.COMMON, always(), "core.entity.MixinEntityZombie"),
 
@@ -259,8 +258,6 @@ public enum Mixin implements IMixin {
         "lootpluplus.MixinLootPPHelper"),
     common_matmos_MixinForgeBase(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinForgeBase"),
     common_matmos_MixinBlockCountModule(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinBlockCountModule"),
-
-    common_matmos_MixinScanVolumetric(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinScanVolumetric"),
 
     common_matmos_MixinScanRaycast(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinScanRaycast"),
     common_matmos_MixinScannerModule(Side.COMMON, require(TargetedMod.MATMOS), "matmos.MixinScannerModule"),
