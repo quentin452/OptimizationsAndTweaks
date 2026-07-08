@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.*;
 
 import com.pam.harvestcraft.WorldGenPamFruitTree;
 
+/**
+ * Fixes some cascading worldgen from Pams Harvestcraft mod.
+ */
 @Mixin(WorldGenPamFruitTree.class)
 public class MixinFixWorldGenPamFruitTree extends WorldGenAbstractTree {
 

@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import mc.Mitchellbrine.anchormanMod.util.CloudChecking;
 
+/**
+ * Disables the version check from the Weather Carpet mod.
+ */
 @Mixin(CloudChecking.class)
 public class MixinCloudChecking {
 

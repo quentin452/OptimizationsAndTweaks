@@ -13,6 +13,10 @@ import com.gtnewhorizons.angelica.proxy.ClientProxy;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
+/**
+ * Fixes "java.lang.NullPointerException: Unexpected error" caused by onKeypress from ClientProxy class from
+ * Angelica Mod.
+ */
 @Mixin(ClientProxy.class)
 public class MixinClientProxy {
 

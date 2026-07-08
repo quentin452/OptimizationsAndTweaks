@@ -31,6 +31,10 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Tweaks BlockBuildCraftFluid class from Buildcraft (removed fire propagation on the liquid,like Oil Liquid from
+ * Buildcraft oil Tweak).
+ */
 @Mixin(BlockBuildCraftFluid.class)
 public abstract class MixinBlockBuildCraftFluid extends BlockFluidClassic {
 

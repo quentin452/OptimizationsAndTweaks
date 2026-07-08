@@ -16,6 +16,9 @@ import train.common.api.crafting.ITierRecipe;
 import train.common.core.managers.TierRecipe;
 import train.common.core.managers.TierRecipeManager;
 
+/**
+ * Optimizes TierRecipeManager class from TrainCraft/Traincraft RWC Edition.
+ */
 @Mixin(TierRecipeManager.class)
 public class MixinTierRecipeManager implements ITierCraftingManager {
 

@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import cofh.asmhooks.block.BlockTickingWater;
 
+/**
+ * Fixes stackoverflow from cofhcore.
+ */
 @Mixin(BlockTickingWater.class)
 public class MixinBlockTickingWater extends BlockDynamicLiquid {
 

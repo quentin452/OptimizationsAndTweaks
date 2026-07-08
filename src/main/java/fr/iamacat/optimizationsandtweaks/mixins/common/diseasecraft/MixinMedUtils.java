@@ -12,6 +12,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mc.Mitchellbrine.diseaseCraft.modules.med.recipe.MedicationRecipes;
 import mc.Mitchellbrine.diseaseCraft.modules.med.util.MedUtils;
 
+/**
+ * Optimizes MedUtils class from DiseaseCraft.
+ */
 @Mixin(MedUtils.class)
 public class MixinMedUtils {
 

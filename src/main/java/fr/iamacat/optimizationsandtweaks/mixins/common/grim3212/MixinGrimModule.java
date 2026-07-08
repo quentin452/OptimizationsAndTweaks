@@ -8,6 +8,10 @@ import grim3212.mc.core.GrimModule;
 import grim3212.mc.core.manual.ManualRegistry;
 import grim3212.mc.core.manual.ModSection;
 
+/**
+ * Removes Grim3212 Version Checker to prevent https://github.com/quentin452/privates-minecraft-
+ * modpack/issues/903.
+ */
 @Mixin(GrimModule.class)
 public class MixinGrimModule {
 

@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.chrisgli.gemsnjewels.block.ModBlocks;
 
+/**
+ * Adds oredicts for Gems n jewels mod.
+ */
 @Mixin(ModBlocks.class)
 public class MixinModBlocksGemsNJewels {
 

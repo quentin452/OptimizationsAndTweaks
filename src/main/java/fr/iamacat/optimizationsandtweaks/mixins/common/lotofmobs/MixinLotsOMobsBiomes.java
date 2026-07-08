@@ -15,6 +15,9 @@ import com.lom.lotsomobsinit.LotsOMobsBiomes;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.lotsOMobs.LotsOMobsConfigBiomeID;
 
+/**
+ * Adds a config to change biome IDs from the Lots O' Mobs mod.
+ */
 @Mixin(LotsOMobsBiomes.class)
 public class MixinLotsOMobsBiomes {
 

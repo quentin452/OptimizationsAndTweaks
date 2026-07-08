@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * Prevents the Titan mod from unexpectedly despawning mobs from other mods or vanilla.
+ */
 @Mixin(WorldHandler.class)
 public class MixinWorldHandlerTitan {
 

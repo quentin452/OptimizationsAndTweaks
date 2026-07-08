@@ -20,6 +20,9 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import thelm.packagedauto.integration.nei.NEIHandler;
 
+/**
+ * Disables the recipe viewer on NeiHandlerPackagedAuto to reduce RAM usage (Packaged Auto mod).
+ */
 @Mixin(NEIHandler.class)
 public class MixinNeiHandlerPackagedAuto {
 

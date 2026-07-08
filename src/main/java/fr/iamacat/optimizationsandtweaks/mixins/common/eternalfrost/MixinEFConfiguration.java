@@ -14,6 +14,9 @@ import cpw.mods.fml.common.FMLLog;
 import eternalfrost.EFConfiguration;
 import eternalfrost.EternalFrost;
 
+/**
+ * Overwrites Eternal Frost's config defaults to work around a mob-spawning crash and a ClassCastException.
+ */
 @Mixin(EFConfiguration.class)
 public class MixinEFConfiguration {
 

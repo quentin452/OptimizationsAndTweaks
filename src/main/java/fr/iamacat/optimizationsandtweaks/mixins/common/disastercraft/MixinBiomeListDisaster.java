@@ -10,6 +10,9 @@ import fr.emerald.disaster.biome.*;
 import fr.emerald.disaster.world.WorldTypeDisaster;
 import fr.iamacat.optimizationsandtweaks.utilsformods.disastercraft.DisastercraftConfigBiomeID;
 
+/**
+ * Adds a config to change biome IDs from the DisasterCraft mod.
+ */
 @Mixin(BiomeListDisaster.class)
 public class MixinBiomeListDisaster {
 

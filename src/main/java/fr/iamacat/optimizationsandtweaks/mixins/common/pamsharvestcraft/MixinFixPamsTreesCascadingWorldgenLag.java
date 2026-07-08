@@ -18,6 +18,9 @@ import com.pam.harvestcraft.WorldGenPamFruitTree;
 
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Fixes some cascading worldgen caused by PamTrees from Pam's Harvestcraft Mod.
+ */
 @Mixin(PamTreeGenerator.class)
 public class MixinFixPamsTreesCascadingWorldgenLag implements IWorldGenerator {
 

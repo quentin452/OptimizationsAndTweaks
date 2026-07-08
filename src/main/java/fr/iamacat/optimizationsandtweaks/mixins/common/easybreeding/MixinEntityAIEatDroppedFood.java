@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import easyBreeding.EntityAIEatDroppedFood;
 
+/**
+ * Optimizes EntityAIEatDroppedFood from Easy Breeding mod.
+ */
 @Mixin(EntityAIEatDroppedFood.class)
 public abstract class MixinEntityAIEatDroppedFood extends EntityAIBase {
 

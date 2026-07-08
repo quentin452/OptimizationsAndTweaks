@@ -29,6 +29,9 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.relauncher.CoreModManager;
 
+/**
+ * Optimizes ClassDiscoverer from CodeChickenCore.
+ */
 @Mixin(ClassDiscoverer.class)
 public class MixinClassDiscoverer {
 

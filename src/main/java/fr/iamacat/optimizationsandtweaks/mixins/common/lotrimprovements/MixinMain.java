@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.jediexe.lotrimprovements.Main;
 
+/**
+ * Disables the attack indicator from LOTR Improvements if the personal LOTR fork is installed.
+ */
 @Mixin(Main.class)
 public class MixinMain {
 

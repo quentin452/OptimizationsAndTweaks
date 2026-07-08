@@ -19,6 +19,9 @@ import de.pitman87.FamiliarsAPI.common.ConfigHandler;
 import de.pitman87.FamiliarsAPI.common.FamiliarsAPI;
 import de.pitman87.FamiliarsAPI.common.entity.Familiar;
 
+/**
+ * TODO: Fix https://github.com/quentin452/privates-minecraft-modpack/issues/48.
+ */
 @Mixin(Familiar.class)
 public class MixinFamiliar extends EntityLiving implements IAnimals {
 

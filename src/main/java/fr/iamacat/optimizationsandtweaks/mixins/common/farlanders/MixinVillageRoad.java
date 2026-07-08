@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import com.fabiulu.farlanders.common.worldgen.village.*;
 
+/**
+ * Fixes infinite loop when generating roads from farlanders village.
+ */
 @Mixin(VillageRoad.class)
 public class MixinVillageRoad {
 

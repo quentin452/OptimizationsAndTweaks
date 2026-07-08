@@ -11,6 +11,9 @@ import CoroUtil.pathfinding.PFQueue;
 import fr.iamacat.optimizationsandtweaks.mixins.common.accessor.PathNavigateAccessor;
 import fr.iamacat.optimizationsandtweaks.utils.pathfinding.AsyncPathRequestDispatcher;
 
+/**
+ * Optimizes PFQueue class from CoroUtil.
+ */
 @Mixin(PFQueue.class)
 public class MixinPFQueue {
 

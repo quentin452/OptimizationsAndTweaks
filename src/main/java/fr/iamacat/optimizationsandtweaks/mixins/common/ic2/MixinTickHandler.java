@@ -26,6 +26,9 @@ import ic2.core.util.LogCategory;
 import ic2.core.util.ReflectionUtil;
 import ic2.core.util.Util;
 
+/**
+ * Reduces TPS lags caused by TickHandler from Industrial craft 2 (IC2).
+ */
 @Mixin(TickHandler.class)
 public class MixinTickHandler {
 

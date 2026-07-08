@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.eagle.adventurersamulets.common.entity.EntityEagle;
 
+/**
+ * Reduces TPS lags caused by EntityEagle from Adventurer's Amulets.
+ */
 @Mixin(EntityEagle.class)
 public abstract class MixinEntityEagle extends EntityAnimal {
 

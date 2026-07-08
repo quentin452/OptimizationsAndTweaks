@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import mal.core.version.VersionInfo;
 
+/**
+ * Removes the version check from the Mal Core mod.
+ */
 @Mixin(VersionInfo.class)
 public class MixinVersionInfo {
 

@@ -19,6 +19,9 @@ import com.akazuki.animation.common.animations.Kadz.AnimationHandlerKykl3;
 import com.akazuki.entity.PuppetKadz;
 import com.akazuki.entitygun.EntityPlevok;
 
+/**
+ * Reduces TPS lags caused by PuppetKadz from Akatsuki mod.
+ */
 @Mixin(PuppetKadz.class)
 public abstract class MixinPuppetKadz extends EntityMob implements IMCAnimatedEntity {
 

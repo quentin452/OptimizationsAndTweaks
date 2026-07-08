@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import ic2.core.util.Config;
 
+/**
+ * Reduces TPS lag caused by the Config class from Industrial Craft 2 (IC2).
+ */
 @Mixin(Config.class)
 public class MixinConfig {
 

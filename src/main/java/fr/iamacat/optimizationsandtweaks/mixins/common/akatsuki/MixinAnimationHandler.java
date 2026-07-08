@@ -23,6 +23,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Reduces TPS lags caused by AnimationHandler from Akatsuki mod.
+ */
 @Mixin(AnimationHandler.class)
 public class MixinAnimationHandler {
 

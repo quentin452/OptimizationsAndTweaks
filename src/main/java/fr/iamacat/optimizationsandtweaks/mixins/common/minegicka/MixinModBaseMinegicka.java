@@ -28,6 +28,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import fr.iamacat.optimizationsandtweaks.utilsformods.minegicka.MinegickaConfigPotionID;
 
+/**
+ * Adds a config to change PotionID from Minegicka.
+ */
 @Mixin(ModBase.class)
 public class MixinModBaseMinegicka {
 

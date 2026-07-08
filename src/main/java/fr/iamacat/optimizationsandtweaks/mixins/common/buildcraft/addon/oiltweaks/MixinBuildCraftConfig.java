@@ -11,6 +11,9 @@ import buildcraft.oiltweak.reference.Mods;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
 
+/**
+ * Optimizes the BuildCraftConfig class from BuildCraft.
+ */
 @Mixin(BuildCraftConfig.class)
 public class MixinBuildCraftConfig {
 

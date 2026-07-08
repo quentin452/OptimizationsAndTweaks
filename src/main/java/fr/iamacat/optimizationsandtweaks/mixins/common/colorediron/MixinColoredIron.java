@@ -15,6 +15,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+/**
+ * Fixes a crash caused by ColoredIron class from Colored iron mod.
+ */
 @Mixin(ColoredIron.class)
 public class MixinColoredIron {
 

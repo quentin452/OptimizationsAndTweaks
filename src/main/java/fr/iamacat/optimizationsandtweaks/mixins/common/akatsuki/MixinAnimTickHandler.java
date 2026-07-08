@@ -16,6 +16,9 @@ import com.akazuki.animation.common.MCACommonLibrary.animation.AnimTickHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
+/**
+ * Reduces TPS lags caused by AnimTickHandler from Akatsuki mod.
+ */
 @Mixin(AnimTickHandler.class)
 public class MixinAnimTickHandler {
 

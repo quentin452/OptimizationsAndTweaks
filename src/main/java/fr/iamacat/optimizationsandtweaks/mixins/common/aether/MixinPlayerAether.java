@@ -41,6 +41,9 @@ import com.gildedgames.the_aether.world.TeleporterAether;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
+/**
+ * Reduces TPS lags caused by PlayerAether from Aether.
+ */
 @Mixin(PlayerAether.class)
 public class MixinPlayerAether {
 

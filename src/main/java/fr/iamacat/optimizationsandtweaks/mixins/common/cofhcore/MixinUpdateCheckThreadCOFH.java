@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cofh.mod.updater.UpdateCheckThread;
 
+/**
+ * Disables the update checker from CoFHCore (or any mod that requires CoFHCore).
+ */
 @Mixin(UpdateCheckThread.class)
 public class MixinUpdateCheckThreadCOFH {
 

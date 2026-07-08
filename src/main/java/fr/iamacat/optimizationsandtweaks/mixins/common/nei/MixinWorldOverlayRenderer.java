@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import codechicken.nei.WorldOverlayRenderer;
 
+/**
+ * Fixes null crash between F7 Key from NEi and Small Stairs block.
+ */
 @Mixin(WorldOverlayRenderer.class)
 public class MixinWorldOverlayRenderer {
 

@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import coolalias.structuregenapi.util.*;
 
+/**
+ * Optimizes StructureGeneratorBase class from Mowzie's Mobs mod.
+ */
 @Mixin(StructureGeneratorBase.class)
 public abstract class MixinStructureGeneratorBaseMM extends WorldGenerator {
 

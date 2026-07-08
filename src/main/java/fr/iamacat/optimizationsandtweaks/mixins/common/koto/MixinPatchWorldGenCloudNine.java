@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.ani.koto.CloudNine.*;
 import com.ani.koto.WorldGenCloudNine;
 
+/**
+ * Reduces TPS lags during generation of WorldGenCloudNine from Kingdom of the Overworld.
+ */
 @Mixin(WorldGenCloudNine.class)
 public class MixinPatchWorldGenCloudNine extends WorldGenerator {
 

@@ -20,6 +20,10 @@ import dev.tr7zw.entityculling.access.Cullable;
 import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import dev.tr7zw.entityculling.shadow.com.logisticscraft.occlusionculling.util.Vec3d;
 
+/**
+ * Appears to fix issue #936 (https://github.com/quentin452/OptimizationsAndTweaks/issues/936) from privates-
+ * minecraft-modpack.
+ */
 @Mixin(CullTask.class)
 public class MixinCullTask implements Runnable {
 

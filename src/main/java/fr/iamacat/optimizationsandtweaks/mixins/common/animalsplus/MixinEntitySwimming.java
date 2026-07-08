@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import clickme.animals.entity.water.EntitySwimming;
 import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMath;
 
+/**
+ * Optimizes EntitySwimming class from Animal Plus.
+ */
 @Mixin(EntitySwimming.class)
 public abstract class MixinEntitySwimming extends EntityLiving implements IAnimals {
 

@@ -10,6 +10,9 @@ import tuhljin.automagy.lib.TjUtil;
 import tuhljin.automagy.lib.events.AutomagyEventHandler;
 import tuhljin.automagy.lib.inventory.HashableItemWithoutSize;
 
+/**
+ * Optimizes AutomagyEventHandler class from Automagy mod.
+ */
 @Mixin(AutomagyEventHandler.class)
 public class MixinAutomagyEventHandler {
 

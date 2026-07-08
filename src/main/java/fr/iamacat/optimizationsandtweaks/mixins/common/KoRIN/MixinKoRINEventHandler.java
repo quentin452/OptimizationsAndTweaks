@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Optimizes KoRINEventHandler class from Korin Blue Bedrock mod.
+ */
 @Mixin(KoRINEventHandler.class)
 public class MixinKoRINEventHandler {
 

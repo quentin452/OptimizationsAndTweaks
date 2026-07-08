@@ -12,6 +12,9 @@ import ZombieAwareness.EntityScent;
 import ZombieAwareness.ZAUtil;
 import ZombieAwareness.config.ZAConfig;
 
+/**
+ * Optimizes ZAUtil class from Zombie Awareness mod.
+ */
 @Mixin(ZAUtil.class)
 public class MixinZAUtil {
 

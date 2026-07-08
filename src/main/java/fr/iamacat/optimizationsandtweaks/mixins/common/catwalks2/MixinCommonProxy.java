@@ -34,6 +34,10 @@ import codechicken.lib.vec.BlockCoord;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
+/**
+ * Optimizes the CommonProxy class from Catwalks 2 (only applied against the GTNH fork; skipped if the original
+ * mod is used).
+ */
 @Mixin(CommonProxy.class)
 public class MixinCommonProxy {
 

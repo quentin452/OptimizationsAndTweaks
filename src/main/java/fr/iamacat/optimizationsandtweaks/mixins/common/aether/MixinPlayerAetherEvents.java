@@ -14,6 +14,9 @@ import com.gildedgames.the_aether.player.PlayerAetherEvents;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Optimizes PlayerAetherEvents class from Aether mod.
+ */
 @Mixin(PlayerAetherEvents.class)
 public class MixinPlayerAetherEvents {
 

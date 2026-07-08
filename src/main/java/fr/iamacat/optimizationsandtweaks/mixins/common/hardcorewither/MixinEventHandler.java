@@ -11,6 +11,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import thor12022.hardcorewither.EventHandler;
 import thor12022.hardcorewither.powerUps.PowerUpManager;
 
+/**
+ * Fixes null crash caused by onLivingUpdate from Hardcore Wither mod.
+ */
 @Mixin(EventHandler.class)
 public class MixinEventHandler {
 

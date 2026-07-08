@@ -12,6 +12,9 @@ import codechicken.nei.NEIActions;
 import codechicken.nei.NEIServerConfig;
 import codechicken.nei.NEIServerUtils;
 
+/**
+ * Reduces TPS lags caused by NEIServerUtils from NEI.
+ */
 @Mixin(NEIServerUtils.class)
 public class MixinNEIServerUtils {
 

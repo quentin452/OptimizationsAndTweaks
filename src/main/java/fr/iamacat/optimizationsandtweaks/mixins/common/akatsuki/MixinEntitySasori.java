@@ -24,6 +24,9 @@ import com.akazuki.animation.common.MCACommonLibrary.animation.AnimationHandler;
 import com.akazuki.animation.common.animation2.Sasori2.AnimationHandlerSasori2;
 import com.akazuki.entity.EntitySasori;
 
+/**
+ * Reduces TPS lags caused by EntitySasori from Akatsuki mod.
+ */
 @Mixin(EntitySasori.class)
 public abstract class MixinEntitySasori extends EntityMob implements IMCAnimatedEntity, IBossDisplayData {
 

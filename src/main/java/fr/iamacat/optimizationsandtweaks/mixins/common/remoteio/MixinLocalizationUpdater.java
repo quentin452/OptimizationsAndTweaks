@@ -7,6 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import remoteio.common.core.handler.LocalizationUpdater;
 
+/**
+ * Disables LocalizationUpdater from RemoteIO.
+ */
 @Mixin(LocalizationUpdater.class)
 public class MixinLocalizationUpdater {
 

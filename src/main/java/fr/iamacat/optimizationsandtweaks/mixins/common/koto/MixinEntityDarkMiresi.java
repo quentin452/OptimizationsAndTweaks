@@ -18,6 +18,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import com.ani.koto.EntityDarkMiresi;
 
+/**
+ * Optimizes EntityDarkMiresi class.
+ */
 @Mixin(EntityDarkMiresi.class)
 public abstract class MixinEntityDarkMiresi extends EntityMob implements IRangedAttackMob {
 

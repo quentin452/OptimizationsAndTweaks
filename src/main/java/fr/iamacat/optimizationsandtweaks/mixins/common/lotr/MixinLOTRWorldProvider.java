@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import lotr.common.LOTRDimension;
 import lotr.common.world.LOTRWorldProvider;
 
+/**
+ * Fixes a crash between LOTR and EndlessIDs (skipped if the personal LOTR fork is used).
+ */
 @Mixin(LOTRWorldProvider.class)
 public abstract class MixinLOTRWorldProvider extends WorldProvider {
 

@@ -12,6 +12,9 @@ import mcp.mobius.opis.data.profilers.ProfilerAbstract;
 import mcp.mobius.opis.data.profilers.ProfilerEvent;
 import mcp.mobius.shadow.org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+/**
+ * Fixes a null crash when terminating the profiler from the Opis mod alongside certain other mods.
+ */
 @Mixin(ProfilerEvent.class)
 public abstract class MixinopisProfilerEvent extends ProfilerAbstract {
 

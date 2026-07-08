@@ -7,6 +7,10 @@ import com.gildedgames.the_aether.tileentity.*;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 
+/**
+ * Renames Aether's tile entities to avoid tile-entity name conflicts with other mods (e.g. Essence of the God,
+ * Fantastic Fish).
+ */
 @Mixin(AetherTileEntities.class)
 public class MixinAetherTileEntities {
 

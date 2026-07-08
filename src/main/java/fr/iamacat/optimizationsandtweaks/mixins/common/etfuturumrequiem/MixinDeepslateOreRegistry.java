@@ -20,6 +20,10 @@ import ganymedes01.etfuturum.client.sound.ModSounds;
 import ganymedes01.etfuturum.configuration.configs.ConfigBlocksItems;
 import ganymedes01.etfuturum.core.utils.Utils;
 
+/**
+ * Fixes a null crash on startup from DeepslateOreRegistry's init method, from Et Futurum Requiem combined with
+ * certain other mods.
+ */
 @Mixin(DeepslateOreRegistry.class)
 public class MixinDeepslateOreRegistry {
 

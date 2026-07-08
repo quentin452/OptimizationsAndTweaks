@@ -17,6 +17,9 @@ import com.google.common.reflect.ClassPath;
 
 import es.razzleberri.hamsterrific.EntityHamster;
 
+/**
+ * Fixes java.lang.Integer cannot be cast to java.lang.Byte caused by Hamsterific Restored mod.
+ */
 @Mixin(EntityHamster.class)
 public abstract class MixinEntityHamster extends EntityTameable {
 

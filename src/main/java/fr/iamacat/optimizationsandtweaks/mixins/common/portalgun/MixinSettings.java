@@ -22,6 +22,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import portalgun.common.PortalGun;
 import portalgun.common.core.Settings;
 
+/**
+ * Fixes crash caused by Portal Gun mod caused by Recipes.
+ */
 @Mixin(Settings.class)
 public class MixinSettings {
 

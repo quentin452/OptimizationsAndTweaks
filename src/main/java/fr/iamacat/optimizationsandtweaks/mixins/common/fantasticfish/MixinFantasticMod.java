@@ -34,6 +34,9 @@ import fantastic.world.ComponentFishermanHut;
 import fantastic.world.CoralGenerator;
 import fantastic.world.FishermanHandler;
 
+/**
+ * Adds a config to disable book on player spawning in the world.
+ */
 @Mixin(FantasticMod.class)
 public class MixinFantasticMod {
 

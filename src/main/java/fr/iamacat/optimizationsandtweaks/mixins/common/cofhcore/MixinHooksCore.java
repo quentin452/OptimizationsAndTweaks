@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import cofh.asmhooks.HooksCore;
 import cofh.lib.util.helpers.MathHelper;
 
+/**
+ * Optimizes HooksCore class from CofhCore.
+ */
 @Mixin(HooksCore.class)
 public class MixinHooksCore {
 

@@ -23,6 +23,9 @@ import com.akazuki.entity.Puppet;
 import com.akazuki.entity.Puppet2;
 import com.akazuki.entity.PuppetKadz;
 
+/**
+ * Reduces TPS lags caused by EntitySasori2 from Akatsuki mod.
+ */
 @Mixin(EntitySasori2.class)
 public abstract class MixinEntitySasori2 extends EntityMob implements IMCAnimatedEntity, IBossDisplayData {
 

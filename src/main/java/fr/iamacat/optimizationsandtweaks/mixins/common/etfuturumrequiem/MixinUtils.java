@@ -6,6 +6,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import ganymedes01.etfuturum.core.utils.Utils;
 
+/**
+ * Optimizes Utils class from Et Futurum Requiem.
+ */
 @Mixin(Utils.class)
 public class MixinUtils {
 

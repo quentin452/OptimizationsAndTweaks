@@ -11,6 +11,9 @@ import org.wyldmods.kitchencraft.machines.KitchenCraftMachines;
 
 import cpw.mods.fml.common.ModAPIManager;
 
+/**
+ * Removes unnecessary println in KitchenCraftMachines class from KitchenCraft Mod.
+ */
 @Mixin(KitchenCraftMachines.class)
 public class MixinKitchenCraftMachines {
 

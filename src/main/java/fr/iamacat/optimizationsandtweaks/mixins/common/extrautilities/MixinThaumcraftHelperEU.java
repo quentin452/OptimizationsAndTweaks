@@ -26,6 +26,9 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 
+/**
+ * Optimizes ThaumcraftHelper class from Extra Utilities.
+ */
 @Mixin(ThaumcraftHelper.class)
 public class MixinThaumcraftHelperEU {
 

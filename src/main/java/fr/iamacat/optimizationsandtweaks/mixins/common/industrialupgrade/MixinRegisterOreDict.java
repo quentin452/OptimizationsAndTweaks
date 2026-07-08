@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.denfop.IUItem;
 import com.denfop.register.RegisterOreDict;
 
+/**
+ * Adds oredicts for Industrial Upgrade.
+ */
 @Mixin(RegisterOreDict.class)
 public class MixinRegisterOreDict {
 

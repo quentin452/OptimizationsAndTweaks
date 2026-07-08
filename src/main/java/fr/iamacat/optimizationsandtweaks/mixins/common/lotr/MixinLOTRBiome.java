@@ -10,6 +10,9 @@ import fr.iamacat.optimizationsandtweaks.utilsformods.lotr.LOTRConfigBiomeID;
 import lotr.common.LOTRMod;
 import lotr.common.world.biome.*;
 
+/**
+ * Adds config for LOTR biome IDs (not injected if the personal LOTR fork is used).
+ */
 @Mixin(LOTRBiome.class)
 public class MixinLOTRBiome {
 

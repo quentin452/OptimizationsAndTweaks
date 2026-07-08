@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import growthcraft.apples.GrowthCraftApples;
 import growthcraft.apples.handler.AppleFuelHandler;
 
+/**
+ * Fixes null crashes caused by AppleFuelHandler class from Growthcraft.
+ */
 @Mixin(AppleFuelHandler.class)
 public class MixinAppleFuelHandler {
 

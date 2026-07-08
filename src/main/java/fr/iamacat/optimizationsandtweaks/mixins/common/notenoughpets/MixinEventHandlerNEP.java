@@ -29,6 +29,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 
+/**
+ * Reduces TPS lag caused by EventHandlerNEP from NotEnoughPets.
+ */
 @Mixin(EventHandlerNEP.class)
 public class MixinEventHandlerNEP {
 

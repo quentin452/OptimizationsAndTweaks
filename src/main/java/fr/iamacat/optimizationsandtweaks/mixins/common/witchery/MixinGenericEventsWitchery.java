@@ -20,6 +20,10 @@ import com.emoniph.witchery.util.TransformCreature;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Fixes a null crash when opening a manual from some mods if Witchery and Ars Magica are both present, by
+ * disabling a behavior in Witchery.
+ */
 @Mixin(GenericEvents.class)
 public class MixinGenericEventsWitchery {
 

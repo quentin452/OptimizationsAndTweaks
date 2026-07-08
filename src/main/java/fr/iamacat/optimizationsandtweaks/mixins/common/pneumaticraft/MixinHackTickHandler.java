@@ -19,6 +19,9 @@ import pneumaticCraft.client.render.pneumaticArmor.hacking.HackableHandler;
 import pneumaticCraft.common.HackTickHandler;
 import pneumaticCraft.common.util.WorldAndCoord;
 
+/**
+ * Reduces TPS lags caused by HackTickHandler from Pneumaticraft.
+ */
 @Mixin(HackTickHandler.class)
 public class MixinHackTickHandler {
 

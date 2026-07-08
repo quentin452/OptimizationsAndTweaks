@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.sinkillerj.minestones.ItemMinestone;
 
+/**
+ * Makes items from Minestones mod with 64 of stacksize instead of 1.
+ */
 @Mixin(ItemMinestone.class)
 public class MixinItemMinestone extends Item {
 

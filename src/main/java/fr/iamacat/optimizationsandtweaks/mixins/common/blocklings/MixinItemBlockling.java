@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import com.blocklings.entity.EntityBlockling;
 import com.blocklings.items.ItemBlockling;
 
+/**
+ * Fixes null crash from BlockLing.
+ */
 @Mixin(ItemBlockling.class)
 public class MixinItemBlockling extends Item {
 

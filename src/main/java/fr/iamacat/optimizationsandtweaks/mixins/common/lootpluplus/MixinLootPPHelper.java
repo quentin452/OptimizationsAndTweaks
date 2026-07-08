@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.tmtravlr.lootplusplus.LootPPHelper;
 
+/**
+ * Optimizes LootPPHelper from Loot++ Mod.
+ */
 @Mixin(LootPPHelper.class)
 public class MixinLootPPHelper {
 

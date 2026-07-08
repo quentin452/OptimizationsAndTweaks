@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Fixes null crash caused by onLivingTick.
+ */
 @Mixin(BetterBurning.class)
 public class MixinBetterBurning {
 

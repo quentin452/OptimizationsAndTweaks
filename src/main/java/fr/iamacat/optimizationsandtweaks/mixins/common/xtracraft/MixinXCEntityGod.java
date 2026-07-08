@@ -14,6 +14,9 @@ import com.themathe1.xtracraftMod.entity.mob.XCEntityGod;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Fixes Entity God from XTractCraft crashing servers, by disabling its boss bar.
+ */
 @Mixin(XCEntityGod.class)
 public abstract class MixinXCEntityGod extends EntityMob implements IBossDisplayData {
 

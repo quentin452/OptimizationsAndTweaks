@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thetitan.EntityAIFindEntityNearestInjuredAllyPatch;
 import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.thetitan.IMinionHealer;
 
+/**
+ * Reduces lag caused by minions' AI from the Titan mod.
+ */
 @Mixin(
     value = { net.minecraft.entity.titan.minion.EntitySkeletonMinion.class,
         net.minecraft.entity.titan.minion.EntityZombieMinion.class,

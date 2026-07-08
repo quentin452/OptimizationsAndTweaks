@@ -38,6 +38,9 @@ import cofh.core.world.WorldHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+/**
+ * Disables the version check from CoFHCore.
+ */
 @Mixin(CoFHCore.class)
 public class MixinCOFHCORE {
 

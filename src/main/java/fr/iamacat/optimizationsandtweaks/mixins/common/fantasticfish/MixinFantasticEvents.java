@@ -21,6 +21,9 @@ import fantastic.entities.sharks.EntityBasicShark;
 import fantastic.events.FantasticEvents;
 import fantastic.proxies.CommonProxy;
 
+/**
+ * Fixes cascading worldgen caused by FantasticEvents class from Fantastic Fish mod.
+ */
 @Mixin(FantasticEvents.class)
 public class MixinFantasticEvents {
 

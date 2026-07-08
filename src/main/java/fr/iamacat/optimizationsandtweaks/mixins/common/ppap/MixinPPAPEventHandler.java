@@ -19,6 +19,9 @@ import com.laureegrd.ppapmod.util.PPAPEventHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Fixes null crashes caused by PPAPEventHandler from PPAP mod.
+ */
 @Mixin(PPAPEventHandler.class)
 public class MixinPPAPEventHandler {
 

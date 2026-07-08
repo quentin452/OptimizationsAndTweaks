@@ -23,6 +23,9 @@ import tconstruct.plugins.gears.TinkerGears;
 import tconstruct.smeltery.TinkerSmeltery;
 import tconstruct.util.config.PHConstruct;
 
+/**
+ * Fixes https://github.com/quentin452/privates-minecraft-modpack/issues/905 caused by Tinkersconstruct.
+ */
 @Mixin(TinkerGears.class)
 public class MixinTinkerGears {
 

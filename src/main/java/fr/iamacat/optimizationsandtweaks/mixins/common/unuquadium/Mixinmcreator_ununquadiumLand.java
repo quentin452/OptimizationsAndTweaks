@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mod.mcreator.mcreator_ununquadiumLand;
 
+/**
+ * Adds a config to change DimensionId from Ununquadium Land Mod.
+ */
 @Mixin(mcreator_ununquadiumLand.class)
 public class Mixinmcreator_ununquadiumLand {
 
