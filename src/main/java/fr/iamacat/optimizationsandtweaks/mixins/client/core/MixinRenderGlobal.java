@@ -24,6 +24,9 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes RenderGlobal class (skipped if fastcraft or optifine is present).
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(value = RenderGlobal.class, priority = -3)
 public class MixinRenderGlobal {

@@ -29,6 +29,9 @@ import org.spongepowered.asm.mixin.Unique;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes TextureUtil class.
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(value = TextureUtil.class, priority = 999)
 public class MixinTextureUtil {

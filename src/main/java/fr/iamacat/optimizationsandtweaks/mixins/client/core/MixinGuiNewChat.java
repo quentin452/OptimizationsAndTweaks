@@ -21,6 +21,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes GuiNewChat class.
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(value = GuiNewChat.class, priority = 999)
 public class MixinGuiNewChat extends Gui {

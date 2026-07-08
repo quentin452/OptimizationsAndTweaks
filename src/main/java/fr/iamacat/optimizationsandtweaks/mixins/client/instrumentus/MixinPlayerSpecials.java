@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 import info.beanbot.morepaxels.client.player.PlayerSpecials;
 
+/**
+ * Optimizes PlayerSpecials class from Instrumentus.
+ */
 @Mixin(PlayerSpecials.class)
 public class MixinPlayerSpecials {
 

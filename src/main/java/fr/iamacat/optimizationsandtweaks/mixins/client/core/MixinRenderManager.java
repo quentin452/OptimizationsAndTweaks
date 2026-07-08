@@ -22,6 +22,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+/**
+ * Optimizes RenderManager (skipped if skinport mod is loaded to prevent weird skin bug).
+ */
 @Mixin(RenderManager.class)
 public class MixinRenderManager {
 

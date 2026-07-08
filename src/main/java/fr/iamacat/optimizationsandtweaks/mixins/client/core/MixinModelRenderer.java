@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes ModelRenderer class (skipped if optifine is present).
+ */
 @Mixin(ModelRenderer.class)
 public class MixinModelRenderer {
 

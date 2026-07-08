@@ -16,6 +16,9 @@ import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemLogger;
 import paulscode.sound.codecs.CodecIBXM;
 
+/**
+ * Optimizes CodecIBXM class.
+ */
 @Mixin(CodecIBXM.class)
 public abstract class MixinCodecIBXM implements ICodec {
 

@@ -20,6 +20,9 @@ import darkevilmac.archimedes.common.network.ClientOpenGuiMessage;
 import darkevilmac.movingworld.MovingWorld;
 import darkevilmac.movingworld.common.network.MovingWorldClientActionMessage;
 
+/**
+ * Optimizes ShipKeyHandler class from Davinci Vessels.
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(ShipKeyHandler.class)
 public class MixinShipKeyHandler {

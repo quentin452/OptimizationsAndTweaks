@@ -48,6 +48,9 @@ import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes EntityRenderer class (skipped if fastcraft or optifine or alfheim is present).
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(value = EntityRenderer.class, priority = 989)
 public class MixinEntityRenderer implements IResourceManagerReloadListener {

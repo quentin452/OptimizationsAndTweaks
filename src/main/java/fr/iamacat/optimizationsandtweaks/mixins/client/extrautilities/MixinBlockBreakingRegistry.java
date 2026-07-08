@@ -23,6 +23,9 @@ import com.rwtema.extrautils.tileentity.enderquarry.BlockDummy;
 
 import fr.iamacat.optimizationsandtweaks.utilsformods.extrautilities.ClassBytesCache;
 
+/**
+ * Optimizes BlockBreakingRegistry class from Extra Utilities.
+ */
 @Mixin(BlockBreakingRegistry.class)
 public class MixinBlockBreakingRegistry {
 

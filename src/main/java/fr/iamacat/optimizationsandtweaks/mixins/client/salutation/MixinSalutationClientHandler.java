@@ -24,6 +24,9 @@ import speiger.src.salutation.client.gui.chat.ISaluationChat;
 import speiger.src.salutation.client.gui.chat.MPChatScreen;
 import speiger.src.salutation.client.gui.chat.MultilineChatScreen;
 
+/**
+ * Fixes Stackoverflow caused by Salutation mod on servers.
+ */
 @Mixin(ClientHandler.class)
 public class MixinSalutationClientHandler {
 

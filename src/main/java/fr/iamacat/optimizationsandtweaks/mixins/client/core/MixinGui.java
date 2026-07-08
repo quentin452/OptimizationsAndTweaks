@@ -8,6 +8,9 @@ import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+/**
+ * Optimizes Gui class.
+ */
 @Mixin(Gui.class)
 public class MixinGui {
 

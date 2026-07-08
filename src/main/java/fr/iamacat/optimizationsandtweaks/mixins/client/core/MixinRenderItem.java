@@ -30,6 +30,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Optimizes RenderItem class.
+ */
 @SideOnly(Side.CLIENT)
 @Mixin(value = RenderItem.class, priority = 999)
 public abstract class MixinRenderItem extends Render {

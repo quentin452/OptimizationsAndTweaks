@@ -14,6 +14,10 @@ import sonar.logistics.registries.CableRegistry;
 import sonar.logistics.registries.CacheRegistry;
 import sonar.logistics.registries.EventRegistry;
 
+/**
+ * Reduces TPS lag caused by EventRegistry from Practical Logistics; only injected client-side, since injecting
+ * on a dedicated server causes crashes.
+ */
 @Mixin(EventRegistry.class)
 public class MixinEventRegistry {
 
