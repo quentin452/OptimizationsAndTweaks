@@ -1,10 +1,13 @@
-## DON'T FORGET TO RESET THE CONFIGURATION FILE WHEN UPDATING THE MOD
-
 # Description
 A Minecraft 1.7.10 mod to optimize by fixing bugs, and changing things on the backend of the game.
 
 # Incompatibilities
 The original ArchaicFix doesn't work with my mod due to MixinMapGenStructure on it, use my fork instead: [ArchaicFixFork](https://github.com/quentin452/ArchaicFix).
+
+# Configuration
+Since V1.17.2 the config migrates itself on update (old per-mixin booleans are converted
+automatically to `optimizationsandtweaks.cfg` + `optimizationsandtweaks-mixins.cfg`).
+No need to reset or delete your configuration when updating the mod.
 
 # Optimization / Feature List
 [Wiki](https://github.com/quentin452/OptimizationsAndTweaks/wiki)
