@@ -109,7 +109,7 @@ public abstract class MixinBlockBuildCraftFluid extends BlockFluidClassic {
      *         this fluid douses fire on contact, same as real fire-fighting liquids. Rest of the vanilla body
      *         (motion dampening while dense) is untouched.
      */
-    @Inject(method = "onEntityCollidedWithBlock", at = @At("HEAD"), remap = false)
+    @Inject(method = "onEntityCollidedWithBlock", at = @At("HEAD"))
     private void optimizationsandtweaks$extinguishOnContact(World world, int x, int y, int z, Entity entity,
         CallbackInfo ci) {
         if (entity.isBurning()) {

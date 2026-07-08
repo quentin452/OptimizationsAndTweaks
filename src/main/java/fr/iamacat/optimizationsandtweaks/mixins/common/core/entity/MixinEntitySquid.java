@@ -19,18 +19,12 @@ import fr.iamacat.optimizationsandtweaks.utils.apache.commons.math3.util.FastMat
 @Mixin(EntitySquid.class)
 public class MixinEntitySquid {
 
-    @Redirect(
-        method = "onLivingUpdate",
-        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 0),
-        remap = false)
+    @Redirect(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 0))
     private double optimizationsAndTweaks$fastAtan2Yaw(double y, double x) {
         return FastMath.atan2(y, x);
     }
 
-    @Redirect(
-        method = "onLivingUpdate",
-        at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1),
-        remap = false)
+    @Redirect(method = "onLivingUpdate", at = @At(value = "INVOKE", target = "Ljava/lang/Math;atan2(DD)D", ordinal = 1))
     private double optimizationsAndTweaks$fastAtan2Pitch(double y, double x) {
         return FastMath.atan2(y, x);
     }

@@ -24,8 +24,7 @@ public class MixinEntityAnimal {
 
     @Redirect(
         method = "onLivingUpdate",
-        at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;rand:Ljava/util/Random;"),
-        remap = false)
+        at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;rand:Ljava/util/Random;"))
     private Random optimizationsAndTweaks$sharedRandom(EntityAnimal instance) {
         return optimizationsAndTweaks$random;
     }

@@ -48,8 +48,7 @@ public class MixinEntitySpellParticleFX extends EntityFX {
         method = "onUpdate",
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/particle/EntitySpellParticleFX;baseSpellTextureIndex:I"),
-        remap = false)
+            target = "Lnet/minecraft/client/particle/EntitySpellParticleFX;baseSpellTextureIndex:I"))
     private int optimizationsAndTweaks$readBaseSpellTextureIndex(EntitySpellParticleFX instance) {
         return this.optimizationsAndTweaks$baseSpellTextureIndex;
     }
