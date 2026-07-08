@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.IWorldGenerator;
 import supremopete.SlimeCarnage.worldgen.*;
@@ -22,29 +25,48 @@ import supremopete.SlimeCarnage.worldgen.*;
 @Mixin(WorldGenSlimeCarnage.class)
 public class MixinFixCascadingFromWorldGenSlimeCarnage implements IWorldGenerator {
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
+    // generate: kept as @Shadow (stub body) purely so this class still satisfies IWorldGenerator at
+    // compile time - the two @Inject points below instrument the ORIGINAL (no longer @Overwrite'n)
+    // method body.
+    @Shadow
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
-        IChunkProvider chunkProvider) {
-        switch (world.provider.dimensionId) {
-            case -1:
-                generateNether(world, random, chunkX, chunkZ);
-                break;
+        IChunkProvider chunkProvider) {}
 
-            case 0:
-                generateSurface(world, random, chunkX, chunkZ);
-                break;
+    // generate: the ORIGINAL SlimeCarnage WorldGenSlimeCarnage#generate (verified against the decompiled
+    // 1.0.5d jar) is a `switch` on dimensionId with NO `break` statements, so it falls through: e.g. in
+    // the Nether (dim -1) it calls generateNether() [no-op, always empty in the original] AND THEN falls
+    // into generateSurface() [real ruins/sewers/madlab/tomb generation] AND generateEnd() [no-op] - i.e.
+    // the original mod incorrectly also runs the overworld surface generator in the Nether. The OaT delta
+    // is exactly the missing `break` statements (stop after the matching case). No RNG is consumed by the
+    // dispatcher itself, so this is converted to two unconditional @Inject(shift=AFTER)+cancel points
+    // right after the generateNether()/generateSurface() calls - reproducing "stop after this branch"
+    // without touching generateNether/generateEnd (still @Shadow, both always-empty in the real mod) or
+    // generateSurface (kept @Overwrite below, unrelated rewrite). The last case (generateEnd) needs no
+    // inject since nothing follows it in the switch.
+    @Inject(
+        method = "generate",
+        at = @At(
+            value = "INVOKE",
+            target = "Lsupremopete/SlimeCarnage/worldgen/WorldGenSlimeCarnage;generateNether(Lnet/minecraft/world/World;Ljava/util/Random;II)V",
+            shift = At.Shift.AFTER),
+        cancellable = true,
+        remap = false)
+    private void optimizationsAndTweaks$stopAfterNether(Random random, int chunkX, int chunkZ, World world,
+        IChunkProvider chunkGenerator, IChunkProvider chunkProvider, CallbackInfo ci) {
+        ci.cancel();
+    }
 
-            case 1:
-                generateEnd(world, random, chunkX, chunkZ);
-                break;
-
-            default:
-                break;
-        }
+    @Inject(
+        method = "generate",
+        at = @At(
+            value = "INVOKE",
+            target = "Lsupremopete/SlimeCarnage/worldgen/WorldGenSlimeCarnage;generateSurface(Lnet/minecraft/world/World;Ljava/util/Random;II)V",
+            shift = At.Shift.AFTER),
+        cancellable = true,
+        remap = false)
+    private void optimizationsAndTweaks$stopAfterSurface(Random random, int chunkX, int chunkZ, World world,
+        IChunkProvider chunkGenerator, IChunkProvider chunkProvider, CallbackInfo ci) {
+        ci.cancel();
     }
 
     /**

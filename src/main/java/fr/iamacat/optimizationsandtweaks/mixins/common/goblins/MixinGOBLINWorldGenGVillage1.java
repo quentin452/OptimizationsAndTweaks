@@ -2,7 +2,6 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.goblins;
 
 import java.util.Random;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,26 +34,7 @@ public class MixinGOBLINWorldGenGVillage1 extends GOBLINWorldGen {
         return false;
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public boolean canGenerate(World world, Random rand, int i, int j, int k) {
-        int countGrass = 0;
-        for (int i1 = 0; i1 <= 20; ++i1) {
-            for (int k1 = 0; k1 <= 30; ++k1) {
-                for (int j1 = -1; j1 <= 1; ++j1) {
-                    if (world.getBlock(i + i1, j + j1, k + k1) == Blocks.grass) {
-                        if (j1 == 1) {
-                            ++countGrass;
-                        } else {
-                            countGrass += 2;
-                        }
-                    }
-                }
-            }
-        }
-        return countGrass > 1100;
-    }
+    // canGenerate: no longer @Overwrite'n here - the OaT body was byte-for-byte identical to the
+    // original GOBLINWorldGenGVillage1#canGenerate (pure dead dupe, verified against decompiled
+    // goblins_mod_6.0), so it was deleted; the vanilla bytecode (unchanged) now runs directly.
 }

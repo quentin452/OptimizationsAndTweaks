@@ -11,9 +11,12 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.fluids.BlockFluidBase;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.jim.obsgreenery.world.WorldGenTreeBase;
 
@@ -309,32 +312,37 @@ public abstract class MixinWorldGenTreeBase extends WorldGenerator {
 
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    protected void leafRing(World world, int x, int y, int z, Block leaves, int leavesMeta, int radius) {
-        int minX = x - radius;
-        int maxX = x + radius;
-        int minZ = z - radius;
-        int maxZ = z + radius;
+    // leafRing: no RNG anywhere in this method, so both OaT deltas vs the original (ObsGreenery
+    // WorldGenTreeBase#leafRing) are pure guards - converted from @Overwrite to:
+    // (1) a HEAD @Inject cancelling the whole call when the centre chunk isn't loaded yet, and
+    // (2) a @Redirect on the canPlaceLeaves() call adding a blockExists() pre-check so a cell in an
+    // unloaded neighbour chunk is never forced to load. Same behavior as the previous @Overwrite,
+    // byte-for-byte (original loop/corner/center conditions untouched). Kept as @Shadow (stub body, only
+    // for compilation of the growPine() call below) so the @Inject/@Redirect can still target it by name.
+    @Shadow
+    protected void leafRing(World world, int x, int y, int z, Block leaves, int leavesMeta, int radius) {}
 
+    @Inject(method = "leafRing", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsAndTweaks$guardLeafRingChunkLoaded(World world, int x, int y, int z, Block leaves,
+        int leavesMeta, int radius, CallbackInfo ci) {
         Chunk chunk = world.getChunkFromBlockCoords(x, z);
-
         if (!chunk.isChunkLoaded) {
-            return;
+            ci.cancel();
         }
+    }
 
-        for (int xPos = minX; xPos <= maxX; ++xPos) {
-            for (int zPos = minZ; zPos <= maxZ; ++zPos) {
-                if ((xPos != minX && xPos != maxX || zPos != minZ && zPos != maxZ) && (zPos != z || xPos != x)
-                    && (world.blockExists(xPos, y, zPos)
-                        && this.canPlaceLeaves(world, xPos, y, zPos, leaves, leavesMeta))) {
-                    this.placeBlock(world, xPos, y, zPos, leaves, leavesMeta);
-                }
-            }
+    @Redirect(
+        method = "leafRing",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/jim/obsgreenery/world/WorldGenTreeBase;canPlaceLeaves(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)Z"),
+        remap = false)
+    private boolean optimizationsAndTweaks$canPlaceLeavesGuarded(World world, int x, int y, int z, Block leaves,
+        int leavesMeta) {
+        if (!world.blockExists(x, y, z)) {
+            return false;
         }
+        return this.canPlaceLeaves(world, x, y, z, leaves, leavesMeta);
     }
 
     @Shadow

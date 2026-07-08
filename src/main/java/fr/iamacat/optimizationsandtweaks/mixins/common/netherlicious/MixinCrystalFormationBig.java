@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.CrystalFormationBig;
 import DelirusCrux.Netherlicious.World.Features.Terrain.Crystal.WorldGeneratorAdv;
@@ -72,22 +75,14 @@ public abstract class MixinCrystalFormationBig extends WorldGeneratorAdv {
         }
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    private void setBlock(World world, Random random, int i, int j, int k, int mask) {
+    // setBlock: no RNG in the original body, so the neighbour-chunk guard added here is a pure
+    // guard/early-return - converted from @Overwrite to a HEAD @Inject cancelling before the original
+    // (unmodified) method body runs. Same behavior as the previous @Overwrite, byte-for-byte.
+    @Inject(method = "setBlock", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsAndTweaks$guardSetBlockNeighbourChunks(World world, Random random, int i, int j, int k,
+        int mask, CallbackInfo ci) {
         if (!optimizationsAndTweaks$isNearbyChunksLoaded(world, i >> 4, k >> 4)) {
-            return;
-        }
-
-        Block blockAtPos = this.worldObj.getBlock(i, j, k);
-        if (blockAtPos != Blocks.bedrock && blockAtPos != this.block
-            && blockAtPos != Blocks.nether_brick
-            && blockAtPos != Blocks.nether_brick_fence
-            && blockAtPos != Blocks.mob_spawner) {
-            this.placeBlock(this.worldObj, i, j, k, this.block, this.metaCrystal, mask);
+            ci.cancel();
         }
     }
 }

@@ -44,21 +44,9 @@ public abstract class MixinWorldGeneratorAdv extends WorldGenerator {
         ++this.callcount;
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public final boolean func_76484_a(World worldObj, Random rand, int x, int y, int z) {
-        this.blockcount = 0;
-        ++this.callcount;
-        boolean flag = this.doGeneration(worldObj, rand, x, y, z);
-        if (this.profiling && this.blockcount > 0) {
-            ++this.fillcount;
-        }
-
-        return flag;
-    }
+    // func_76484_a: no longer @Overwrite'n here - the OaT body was byte-for-byte identical to the
+    // original WorldGeneratorAdv#func_76484_a (pure dead dupe, verified against decompiled Netherlicious
+    // 3.2.8), so it was deleted; the vanilla bytecode (unchanged) now runs directly.
 
     @Shadow
     public abstract boolean doGeneration(World var1, Random var2, int var3, int var4, int var5);

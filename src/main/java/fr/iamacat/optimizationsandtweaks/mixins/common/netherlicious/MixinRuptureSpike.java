@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import DelirusCrux.Netherlicious.Common.BlockItemUtility.ModBlocks;
 import DelirusCrux.Netherlicious.World.Features.Terrain.RuptureSpike;
 
 /**
@@ -113,16 +112,10 @@ public abstract class MixinRuptureSpike extends WorldGenerator {
             .isLiquid();
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    private void placeRandomBlackstone(World world, Random random, int x, int y, int z) {
-        if (random.nextInt(7) == 0) {
-            this.setBlockAndNotifyAdequately(world, x, y, z, ModBlocks.MagmaBlock, 1);
-        } else {
-            this.setBlockAndNotifyAdequately(world, x, y, z, Blocks.netherrack, 0);
-        }
-    }
+    // placeRandomBlackstone: no longer @Overwrite'n here - the OaT body was byte-for-byte identical to
+    // the original RuptureSpike#placeRandomBlackstone (pure dead dupe, verified against decompiled
+    // Netherlicious 3.2.8), so it was deleted; the vanilla bytecode (unchanged) now runs directly. Kept
+    // as @Shadow (stub body, only for compilation of the checkSphereArea() call above).
+    @Shadow
+    private void placeRandomBlackstone(World world, Random random, int x, int y, int z) {}
 }
