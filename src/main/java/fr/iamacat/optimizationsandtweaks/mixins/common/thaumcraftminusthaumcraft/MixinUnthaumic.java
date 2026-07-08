@@ -20,6 +20,9 @@ import thaumcraft.common.Thaumcraft;
 import thaumcraft.common.lib.research.ResearchManager;
 import thaumcraft.common.lib.research.ScanManager;
 
+/**
+ * Optimizes Unthaumic class from ThaumcraftMinusThaumcraft.
+ */
 @Mixin(Unthaumic.class)
 public class MixinUnthaumic {
 

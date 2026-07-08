@@ -12,6 +12,9 @@ import thaumrev.api.wardenic.WardenicChargeEvents;
 import thaumrev.item.ItemWardenWeapon;
 import thaumrev.item.armor.ItemWardenArmor;
 
+/**
+ * Optimizes WardenicChargeEvents class from Thaumic Revelation.
+ */
 @Mixin(WardenicChargeEvents.class)
 public class MixinWardenicChargeEvents {
 

@@ -24,6 +24,9 @@ import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.utils.BlockUtils;
 import thaumcraft.common.lib.world.WorldGenGreatwoodTrees;
 
+/**
+ * Fixes some cascading worldgen from WorldGenGreatwoodTrees from Thaumcraft4 mod.
+ */
 @Mixin(WorldGenGreatwoodTrees.class)
 public abstract class MixinWorldGenGreatwoodTrees extends WorldGenAbstractTree {
 

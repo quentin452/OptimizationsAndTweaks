@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import thaumcraft.common.blocks.BlockMagicalLeaves;
 import thaumcraft.common.config.ConfigBlocks;
 
+/**
+ * Fixes TPS lags caused by Leaves from Thaumcraft4.
+ */
 @Mixin(BlockMagicalLeaves.class)
 public class MixinPatchBlockMagicalLeavesPerformances {
 

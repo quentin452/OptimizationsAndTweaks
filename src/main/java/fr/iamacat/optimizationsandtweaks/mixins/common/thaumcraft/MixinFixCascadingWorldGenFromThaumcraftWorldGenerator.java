@@ -38,6 +38,9 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.lib.world.dim.MazeThread;
 import thaumcraft.common.tiles.TileNode;
 
+/**
+ * Fixes some cascading worldgen from WorldGenSilverwoodTrees from Thaumcraft4 mod.
+ */
 @Mixin(ThaumcraftWorldGenerator.class)
 public abstract class MixinFixCascadingWorldGenFromThaumcraftWorldGenerator implements IWorldGenerator {
 

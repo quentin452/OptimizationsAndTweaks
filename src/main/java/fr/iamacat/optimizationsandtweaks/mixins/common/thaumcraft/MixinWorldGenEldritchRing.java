@@ -19,6 +19,9 @@ import thaumcraft.common.lib.world.dim.MazeHandler;
 import thaumcraft.common.tiles.TileBanner;
 import thaumcraft.common.tiles.TileEldritchAltar;
 
+/**
+ * Fixes some cascading worldgen from WorldGenEldritchRing from Thaumcraft4 mod.
+ */
 @Mixin(WorldGenEldritchRing.class)
 public abstract class MixinWorldGenEldritchRing extends WorldGenerator {
 

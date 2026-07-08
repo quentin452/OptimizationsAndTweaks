@@ -18,6 +18,9 @@ import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.lib.world.WorldGenManaPods;
 import thaumcraft.common.lib.world.biomes.BiomeGenMagicalForest;
 
+/**
+ * Reduces TPS lags during generation of MagicalForest biome from Thaumcraft4.
+ */
 @Mixin(BiomeGenMagicalForest.class)
 public abstract class MixinPatchBiomeGenMagicalForest extends BiomeGenBase {
 

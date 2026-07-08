@@ -17,6 +17,9 @@ import thaumrev.item.baubles.ItemWardenAmulet;
 import thaumrev.lib.network.entities.CreatePacketClientSide;
 import thaumrev.lib.utils.KeyHandler;
 
+/**
+ * Fixes null crash caused by KeyHandler from Thaumic Revelation.
+ */
 @Mixin(KeyHandler.class)
 public class MixinKeyHandlerTHAUMREV {
 

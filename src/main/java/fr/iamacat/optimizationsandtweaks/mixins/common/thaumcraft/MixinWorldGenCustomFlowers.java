@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import thaumcraft.common.lib.world.WorldGenCustomFlowers;
 
+/**
+ * Fixes some cascading worldgen from WorldGenCustomFlowers from Thaumcraft4 mod.
+ */
 @Mixin(WorldGenCustomFlowers.class)
 public class MixinWorldGenCustomFlowers extends WorldGenerator {
 

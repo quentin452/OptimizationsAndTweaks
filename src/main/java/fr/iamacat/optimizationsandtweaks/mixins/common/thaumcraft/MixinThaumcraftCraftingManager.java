@@ -21,6 +21,9 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.items.wands.ItemWandCasting;
 import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 
+/**
+ * Optimizes ThaumcraftCraftingManager from Thaumcraft to reduce loading time.
+ */
 @Mixin(ThaumcraftCraftingManager.class)
 public class MixinThaumcraftCraftingManager {
 

@@ -34,6 +34,9 @@ import thaumcraft.common.lib.events.EventHandlerEntity;
 import thaumcraft.common.lib.research.ResearchManager;
 import thaumcraft.common.lib.utils.EntityUtils;
 
+/**
+ * Optimizes EventHandlerEntity class from Thaumcraft.
+ */
 @Mixin(EventHandlerEntity.class)
 public class MixinEventHandlerEntity {
 

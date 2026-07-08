@@ -21,6 +21,9 @@ import thaumcraft.common.lib.world.ThaumcraftWorldGenerator;
 import thaumcraft.common.lib.world.WorldGenCustomFlowers;
 import thaumcraft.common.lib.world.WorldGenSilverwoodTrees;
 
+/**
+ * Fixes some cascading worldgen from ThaumcraftWorldGenerator from Thaumcraft4 mod.
+ */
 @Mixin(WorldGenSilverwoodTrees.class)
 public abstract class MixinWorldGenSilverwoodTrees extends WorldGenAbstractTree {
 

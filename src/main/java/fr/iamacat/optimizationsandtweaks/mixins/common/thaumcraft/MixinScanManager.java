@@ -14,6 +14,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.common.lib.research.ScanManager;
 
+/**
+ * Fixes null crash from thaumcraft from ScanManager class.
+ */
 @Mixin(ScanManager.class)
 public class MixinScanManager {
 

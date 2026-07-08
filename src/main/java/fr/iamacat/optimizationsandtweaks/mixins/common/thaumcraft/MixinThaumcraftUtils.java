@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Unique;
 import thaumcraft.common.items.equipment.ItemElementalAxe;
 import thaumcraft.common.lib.utils.Utils;
 
+/**
+ * Fixes some cascading worldgen from Utils class from Thaumcraft4 mod.
+ */
 @Mixin(Utils.class)
 public class MixinThaumcraftUtils {
 

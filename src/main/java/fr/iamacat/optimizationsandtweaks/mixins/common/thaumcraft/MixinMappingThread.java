@@ -16,6 +16,9 @@ import thaumcraft.client.gui.GuiResearchRecipe;
 import thaumcraft.client.gui.MappingThread;
 import thaumcraft.common.lib.research.ScanManager;
 
+/**
+ * Optimizes MappingThread class from Thaumcraft.
+ */
 @Mixin(value = MappingThread.class, priority = 999)
 public class MixinMappingThread {
 
