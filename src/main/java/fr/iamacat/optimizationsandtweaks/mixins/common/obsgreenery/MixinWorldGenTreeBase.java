@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.jim.obsgreenery.world.WorldGenTreeBase;
@@ -329,20 +328,6 @@ public abstract class MixinWorldGenTreeBase extends WorldGenerator {
         if (!chunk.isChunkLoaded) {
             ci.cancel();
         }
-    }
-
-    @Redirect(
-        method = "leafRing",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/jim/obsgreenery/world/WorldGenTreeBase;canPlaceLeaves(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)Z"),
-        remap = false)
-    private boolean optimizationsAndTweaks$canPlaceLeavesGuarded(World world, int x, int y, int z, Block leaves,
-        int leavesMeta) {
-        if (!world.blockExists(x, y, z)) {
-            return false;
-        }
-        return this.canPlaceLeaves(world, x, y, z, leaves, leavesMeta);
     }
 
     @Shadow
