@@ -1,59 +1,33 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.potionshards;
 
-import java.util.Random;
-
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.world.BlockEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mod.posh.EventHandler;
-import mod.posh.ModBlocks;
-import mod.posh.ModItems;
-import mod.posh.ModTools;
 
+/**
+ * Original {@code onHarvest} calls {@code event.harvester.getHeldItem()} unconditionally per ore check --
+ * NPEs when the block is harvested by something other than a player-with-a-held-item-check path (e.g. an
+ * explosion or non-player harvester leaves {@code event.harvester} null). The fix adds a single
+ * {@code event.harvester != null} guard before all 9 ore checks; injecting it at HEAD preserves the
+ * original per-ore drop logic untouched (when {@code event.harvester} isn't null, the original's own
+ * {@code getHeldItem() != null} check already guards the rest).
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Fixes null crashes caused by PotionShards' EventHandler#onHarvest when harvested by a non-player
+ *         source.
+ */
 @Mixin(EventHandler.class)
 public class MixinEventHandlerPotionShards {
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    @SubscribeEvent
-    public void onHarvest(BlockEvent.HarvestDropsEvent event) {
-        if (event.harvester != null && event.harvester.getHeldItem() != null
-            && event.harvester.getHeldItem()
-                .getItem() == ModTools.cleansePickaxe) {
-            Random rand = new Random();
-            ItemStack drop = null;
-
-            if (event.block == ModBlocks.slownessOre) {
-                drop = new ItemStack(ModItems.speedShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.miningFatigueOre) {
-                drop = new ItemStack(ModItems.hasteShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.instantDamageOre) {
-                drop = new ItemStack(ModItems.healthShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.poisonOre) {
-                drop = new ItemStack(ModItems.regenerationShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.witherOre) {
-                drop = new ItemStack(ModItems.regenerationShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.nauseaOre) {
-                drop = new ItemStack(ModItems.nightVisionShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.blindnessOre) {
-                drop = new ItemStack(ModItems.nightVisionShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.weaknessOre) {
-                drop = new ItemStack(ModItems.strengthShard, rand.nextInt(2) + 1);
-            } else if (event.block == ModBlocks.rainbowOre) {
-                drop = new ItemStack(ModItems.rainbowShard, rand.nextInt(2) + 1);
-            }
-
-            if (drop != null) {
-                event.drops.clear();
-                event.drops.add(drop);
-            }
+    @Inject(method = "onHarvest", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$guardNullHarvester(BlockEvent.HarvestDropsEvent event, CallbackInfo ci) {
+        if (event.harvester == null) {
+            ci.cancel();
         }
     }
 }

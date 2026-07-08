@@ -1,39 +1,29 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.betterburning;
 
 import net.darkhax.betterburning.BetterBurning;
-import net.darkhax.betterburning.Config;
-import net.minecraft.potion.Potion;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Fixes null crash caused by onLivingTick.
+ * Original {@code onLivingTick} dereferences {@code event.entityLiving.worldObj} unconditionally; the fix
+ * only adds null guards for {@code event}/{@code event.entityLiving}/{@code worldObj} before that. This
+ * injects the same combined guard at HEAD instead of copying the whole method; when it doesn't trip, the
+ * original body (fire-resistance extinguish check) runs unchanged.
+ *
+ * @author iamacatfr
+ * @reason fix null crash caused by onLivingTick from Better Burning mod
  */
 @Mixin(BetterBurning.class)
 public class MixinBetterBurning {
 
-    @Shadow
-    private final Config configuration = new Config();
-
-    /**
-     * @author iamacatfr
-     * @reason fix null crash caused by onLivingTick from Better Burning mod
-     */
-    @Overwrite(remap = false)
-    @SubscribeEvent
-    public void onLivingTick(LivingEvent.LivingUpdateEvent event) {
-        if (event != null && event.entityLiving != null
-            && event.entityLiving.worldObj != null
-            && (this.configuration.shouldFireResExtinguish() && !event.entityLiving.worldObj.isRemote
-                && event.entityLiving.isBurning()
-                && event.entityLiving.isPotionActive(Potion.fireResistance))) {
-            event.entityLiving.extinguish();
-
+    @Inject(method = "onLivingTick", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$guardNullCrash(LivingEvent.LivingUpdateEvent event, CallbackInfo ci) {
+        if (event == null || event.entityLiving == null || event.entityLiving.worldObj == null) {
+            ci.cancel();
         }
     }
 }

@@ -6,8 +6,10 @@ import java.util.TreeSet;
 import java.util.function.Function;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
@@ -16,12 +18,16 @@ import codechicken.nei.event.NEIConfigsLoadedEvent;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.IRecipeHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import thelm.packagedauto.integration.nei.NEIHandler;
 
 /**
- * Disables the recipe viewer on NeiHandlerPackagedAuto to reduce RAM usage (Packaged Auto mod).
+ * Original {@code onNEIConfigsLoaded} rebuilds the recipe-category handler map from every loaded
+ * GuiCraftingRecipe handler; that's the RAM cost this mixin disables (see javadoc). Instead of copying
+ * the whole method with the real body deleted, this injects at HEAD, clears the map as a side effect and
+ * cancels -- the original body (which would repopulate it) never runs.
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Disables the recipe viewer on NeiHandlerPackagedAuto to reduce RAM usage (Packaged Auto mod).
  */
 @Mixin(NEIHandler.class)
 public class MixinNeiHandlerPackagedAuto {
@@ -34,22 +40,10 @@ public class MixinNeiHandlerPackagedAuto {
         .arrayListValues()
         .build();
 
-    // Disabling GuiCraftingRecipe Load because Made too much ram usage on large modpacks
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    @Overwrite(remap = false)
-    public void onNEIConfigsLoaded(NEIConfigsLoadedEvent event) {
+    @Inject(method = "onNEIConfigsLoaded", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$disableRecipeViewer(NEIConfigsLoadedEvent event, CallbackInfo ci) {
         HANDLERS.clear();
-        /*
-         * Stream.concat(GuiCraftingRecipe.craftinghandlers.stream(),
-         * GuiCraftingRecipe.serialCraftingHandlers.stream()).forEach((handler) -> {
-         * Iterator var2 = this.getRecipeCategories(handler).iterator();
-         * while(var2.hasNext()) {
-         * String category = (String)var2.next();
-         * API.registerGuiOverlayHandler(GuiEncoder.class, EncoderOverlayHandler.INSTANCE, category);
-         * HANDLERS.put(category, handler.getRecipeHandler(category, new Object[0]));
-         * }
-         * });
-         */
+        ci.cancel();
     }
 
     @Shadow

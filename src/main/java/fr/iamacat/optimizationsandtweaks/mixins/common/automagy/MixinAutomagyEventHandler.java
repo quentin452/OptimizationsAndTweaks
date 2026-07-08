@@ -1,38 +1,20 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.automagy;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 
-import tuhljin.automagy.lib.TjUtil;
 import tuhljin.automagy.lib.events.AutomagyEventHandler;
-import tuhljin.automagy.lib.inventory.HashableItemWithoutSize;
 
 /**
- * Optimizes AutomagyEventHandler class from Automagy mod.
+ * {@code getNearbyPlayerWithItem} was a behavioral copy of the original Automagy method: same distance
+ * check, same {@code TjUtil.playerHasItem} call, same result -- the only differences are an enhanced-for
+ * loop instead of an indexed one and a redundant (always-true) {@code instanceof EntityPlayer} check on
+ * {@code world.playerEntities}, neither of which changes behavior. No real delta found against decompiled
+ * Automagy 222153; deleted as a dead dupe. This empties the mixin (no members left at all).
+ *
+ * @author OptimizationsAndTweaks
+ * @reason dead whole-method @Overwrite dupe, no behavioral delta vs original Automagy AutomagyEventHandler
  */
 @Mixin(AutomagyEventHandler.class)
 public class MixinAutomagyEventHandler {
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public EntityPlayer getNearbyPlayerWithItem(HashableItemWithoutSize item, World world, double x, double y, double z,
-        double maxDistance) {
-        for (Object obj : world.playerEntities) {
-            if (obj instanceof EntityPlayer) {
-                EntityPlayer entityPlayer = (EntityPlayer) obj;
-                double distanceSquared = entityPlayer.getDistanceSq(x, y, z);
-                if ((maxDistance < 0.0 || distanceSquared < maxDistance * maxDistance)
-                    && TjUtil.playerHasItem(entityPlayer, item)) {
-                    return entityPlayer;
-                }
-            }
-        }
-        return null;
-    }
 }

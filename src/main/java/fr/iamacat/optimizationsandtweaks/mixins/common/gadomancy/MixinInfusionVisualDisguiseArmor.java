@@ -1,42 +1,39 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.gadomancy;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import fr.iamacat.optimizationsandtweaks.utils.optimizationsandtweaks.mixins.Classers;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import makeo.gadomancy.common.crafting.InfusionVisualDisguiseArmor;
-import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.api.internal.IInternalMethodHandler;
 
+/**
+ * Original {@code getResearchKey} does {@code result == null ? null : (String) result[0]} -- if
+ * {@code getCraftingRecipeKey} ever returns a non-null but EMPTY array, {@code result[0]} throws
+ * {@link ArrayIndexOutOfBoundsException}. The fix only adds a {@code result.length > 0} guard, so instead
+ * of copying the whole method this wraps the {@code getCraftingRecipeKey} call and coerces an empty
+ * result to {@code null}, letting the original (untouched) ternary take its existing null-branch.
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Avoid an ArrayIndexOutOfBoundsException when Thaumcraft's fake research-key handler returns an
+ *         empty (non-null) array.
+ */
 @Mixin(InfusionVisualDisguiseArmor.class)
 public class MixinInfusionVisualDisguiseArmor {
 
-    @Unique
-    private static final IInternalMethodHandler FAKE_HANDLER_2 = new Classers.FakeMethodHandler();
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    @SideOnly(Side.CLIENT)
-    private static String getResearchKey(ItemStack stack) {
-        IInternalMethodHandler old = ThaumcraftApi.internalMethods;
-        ThaumcraftApi.internalMethods = FAKE_HANDLER_2;
-        Object[] result = ThaumcraftApi.getCraftingRecipeKey(Minecraft.getMinecraft().thePlayer, stack);
-        ThaumcraftApi.internalMethods = old;
-
-        // Check if the result is not null and has at least one element
-        if (result != null && result.length > 0) {
-            return (String) result[0];
-        } else {
-            return null;
-        }
+    @WrapOperation(
+        method = "getResearchKey",
+        at = @At(
+            value = "INVOKE",
+            target = "Lthaumcraft/api/ThaumcraftApi;getCraftingRecipeKey(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;)[Ljava/lang/Object;"),
+        remap = false)
+    private static Object[] optimizationsandtweaks$nullifyEmptyResult(EntityPlayer player, ItemStack stack,
+        Operation<Object[]> original) {
+        Object[] result = original.call(player, stack);
+        return (result != null && result.length == 0) ? null : result;
     }
 }

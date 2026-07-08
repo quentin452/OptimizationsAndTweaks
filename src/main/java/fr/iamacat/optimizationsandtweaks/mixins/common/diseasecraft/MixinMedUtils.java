@@ -2,18 +2,21 @@ package fr.iamacat.optimizationsandtweaks.mixins.common.diseasecraft;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mc.Mitchellbrine.diseaseCraft.modules.med.recipe.MedicationRecipes;
 import mc.Mitchellbrine.diseaseCraft.modules.med.util.MedUtils;
 
 /**
- * Optimizes MedUtils class from DiseaseCraft.
+ * {@code medTimedown} was a byte-for-byte behavioral copy of DiseaseCraft's original method (same
+ * world-isRemote guard, same per-disease loop, same getInteger/setInteger/attackEntityFrom calls,
+ * identical StringBuilder-driven key concatenation in both versions) -- no actual delta found against
+ * decompiled DiseaseCraft 223623, despite the "fix lag caused by StringBuilder" doc. Deleted as a dead
+ * dupe; nothing left in this mixin actually overrides/injects behavior (dead shadows only).
+ *
+ * @author OptimizationsAndTweaks
+ * @reason dead whole-method @Overwrite dupe, no behavioral delta vs original DiseaseCraft MedUtils
  */
 @Mixin(MedUtils.class)
 public class MixinMedUtils {
@@ -27,27 +30,5 @@ public class MixinMedUtils {
             .hasKey("block" + id)
             && entity.getEntityData()
                 .getInteger("block" + id) > 0;
-    }
-
-    /**
-     * @author iamacatfr
-     * @reason fix lag caused by StringBuilder
-     */
-    @Overwrite(remap = false)
-    @SubscribeEvent
-    public void medTimedown(LivingEvent.LivingUpdateEvent event) {
-        if (!event.entityLiving.worldObj.isRemote) {
-            for (String diseaseId : MedicationRecipes.diseaseRemoval.values()) {
-                if (areMedsActive(event.entityLiving, diseaseId)) {
-                    int newMeds = event.entityLiving.getEntityData()
-                        .getInteger("block" + diseaseId) - 1;
-                    event.entityLiving.getEntityData()
-                        .setInteger("block" + diseaseId, newMeds);
-                    if (newMeds > 24000) {
-                        event.entityLiving.attackEntityFrom(medication, 1.0F);
-                    }
-                }
-            }
-        }
     }
 }

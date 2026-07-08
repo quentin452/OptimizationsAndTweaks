@@ -1,44 +1,27 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.kitchencraft;
 
-import net.minecraft.block.Block;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.wyldmods.kitchencraft.machines.KitchenCraftMachines;
 
-import cpw.mods.fml.common.ModAPIManager;
-
 /**
- * Removes unnecessary println in KitchenCraftMachines class from KitchenCraft Mod.
+ * KitchenCraft's {@code loadRF()} prints "Initialized RF value to ..." once (on the first call, guarded
+ * by {@code rfCheckLoaded}) and then ALSO prints "Checking RF: ..." on every single call, unconditionally
+ * -- spam on every check. This drops only the second, unconditional println; the first (one-time) println
+ * and the RF-detection logic itself are untouched original bytecode.
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Removes the unconditional per-call "Checking RF" println spam from KitchenCraft - Machines.
  */
 @Mixin(KitchenCraftMachines.class)
 public class MixinKitchenCraftMachines {
 
-    @Shadow
-    public static int renderIDPot;
-    @Shadow
-    public static Block pot;
-    @Shadow
-    public static final Logger logger = LogManager.getLogger("KitchenCraft - Machines");
-    @Shadow
-    private static boolean rfCheckLoaded = false;
-    @Shadow
-    private static boolean loadRF = false;
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public static boolean loadRF() {
-        if (!rfCheckLoaded) {
-            loadRF = ModAPIManager.INSTANCE.hasAPI("CoFHAPI|energy");
-            System.out.println("Initialized RF value to " + loadRF);
-            rfCheckLoaded = true;
-        }
-        return loadRF;
+    @Redirect(
+        method = "loadRF",
+        at = @At(value = "INVOKE", target = "Ljava/io/PrintStream;println(Ljava/lang/String;)V", ordinal = 1),
+        remap = false)
+    private static void optimizationsandtweaks$skipCheckingRfLog(java.io.PrintStream out, String message) {
+        // no-op: drop the noisy unconditional "Checking RF: ..." println (see class javadoc)
     }
 }

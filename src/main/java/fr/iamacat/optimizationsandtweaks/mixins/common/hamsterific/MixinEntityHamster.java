@@ -1,24 +1,35 @@
 package fr.iamacat.optimizationsandtweaks.mixins.common.hamsterific;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import com.google.common.reflect.ClassPath;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import es.razzleberri.hamsterrific.EntityHamster;
 
 /**
- * Fixes java.lang.Integer cannot be cast to java.lang.Byte caused by Hamsterific Restored mod.
+ * Original {@code setInBall}/{@code setBallColor} store their flag via
+ * {@code dataWatcher.updateObject(id, (byte) value)} -- boxed as {@link Byte}. Some other read path
+ * expects an {@link Integer} there, causing a "java.lang.Integer cannot be cast to java.lang.Byte" crash.
+ * The fix is only the boxed TYPE of the stored value (same numeric value, {@code Integer} instead of
+ * {@code Byte}); a shared {@link ModifyArg} on the {@code updateObject} call in both setters reboxes it
+ * without copying either method body. {@code isInBall}/{@code getBallColor} (read side,
+ * {@code getWatchableObjectInt}) and {@code hamsterColorInitialize} were byte-for-byte behavioral copies
+ * of the original -- deleted as dead dupes.
+ * <p>
+ * {@code getRandomHamsterColor} adds one real guard: an empty-list check (after
+ * {@code hamsterColorInitialize()}) to avoid an {@link IndexOutOfBoundsException} when zero hamster color
+ * textures were found; injected right after that call instead of copying the method.
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Fixes java.lang.Integer cannot be cast to java.lang.Byte caused by Hamsterific Restored mod.
  */
 @Mixin(EntityHamster.class)
 public abstract class MixinEntityHamster extends EntityTameable {
@@ -30,81 +41,24 @@ public abstract class MixinEntityHamster extends EntityTameable {
         super(p_i1604_1_);
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public void setInBall(boolean b) {
-        this.dataWatcher.updateObject(20, (b ? 1 : 0));
+    @ModifyArg(
+        method = { "setInBall", "setBallColor" },
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DataWatcher;updateObject(ILjava/lang/Object;)V"))
+    private Object optimizationsandtweaks$reboxAsInteger(Object value) {
+        return ((Number) value).intValue();
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public boolean isInBall() {
-        return this.dataWatcher.getWatchableObjectInt(20) == 1;
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public int getBallColor() {
-        return this.dataWatcher.getWatchableObjectInt(21);
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public void setBallColor(int b) {
-        this.dataWatcher.updateObject(21, b);
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    private String getRandomHamsterColor() {
-        this.hamsterColorInitialize();
-        if (!hamsterColorList.isEmpty()) {
-            Collections.shuffle(hamsterColorList);
-            return hamsterColorList.get(0);
-        }
-        return "";
-    }
-
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite(remap = false)
-    private void hamsterColorInitialize() {
-        if (hamsterColorList == null) {
-            hamsterColorList = new ArrayList<>();
-
-            try {
-                Pattern p = Pattern.compile("assets/minecraft/(mob/hamster/hamster_.*)");
-
-                for (ClassPath.ResourceInfo i : ClassPath.from(
-                    this.getClass()
-                        .getClassLoader())
-                    .getResources()) {
-                    Matcher m = p.matcher(i.getResourceName());
-                    if (m.matches()) {
-                        String s = m.group(1);
-                        hamsterColorList.add(s);
-                    }
-                }
-            } catch (Exception var6) {
-                var6.printStackTrace();
-            }
+    @Inject(
+        method = "getRandomHamsterColor",
+        at = @At(
+            value = "INVOKE",
+            target = "Les/razzleberri/hamsterrific/EntityHamster;hamsterColorInitialize()V",
+            shift = At.Shift.AFTER),
+        cancellable = true,
+        remap = false)
+    private void optimizationsandtweaks$guardEmptyColorList(CallbackInfoReturnable<String> cir) {
+        if (hamsterColorList.isEmpty()) {
+            cir.setReturnValue("");
         }
     }
 }

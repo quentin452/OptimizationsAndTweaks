@@ -1,74 +1,35 @@
 package fr.iamacat.optimizationsandtweaks.mixins.client.salutation;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraftforge.client.event.GuiOpenEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import speiger.src.salutation.Salutation;
 import speiger.src.salutation.client.ClientHandler;
-import speiger.src.salutation.client.gui.chat.ChatScreen;
-import speiger.src.salutation.client.gui.chat.ISaluationChat;
-import speiger.src.salutation.client.gui.chat.MPChatScreen;
-import speiger.src.salutation.client.gui.chat.MultilineChatScreen;
 
 /**
- * Fixes Stackoverflow caused by Salutation mod on servers.
+ * Original {@code onGuiOpen} runs its GUI-swap logic unconditionally on whichever side dispatches the
+ * event, which can stack-overflow when a dedicated/integrated server context reaches it (and conflicts
+ * with chunkpregen's own GUI handling). The fix is two added early-return guards
+ * (effective-side-is-client, chunkpregen not loaded); this injects them at HEAD instead of copying the
+ * whole method -- the GUI-swap logic itself is untouched original bytecode.
+ *
+ * @author OptimizationsAndTweaks
+ * @reason Fixes Stackoverflow caused by Salutation mod on servers.
  */
 @Mixin(ClientHandler.class)
 public class MixinSalutationClientHandler {
 
-    @Shadow
-    boolean replacedChat = false;
-
-    @SubscribeEvent
-    @Overwrite(remap = false)
-    public void onGuiOpen(GuiOpenEvent event) {
+    @Inject(method = "onGuiOpen", at = @At("HEAD"), cancellable = true, remap = false)
+    private void optimizationsandtweaks$guardServerAndChunkpregen(GuiOpenEvent event, CallbackInfo ci) {
         if (!FMLCommonHandler.instance()
             .getEffectiveSide()
-            .isClient()) return;
-        GuiScreen screen = event.gui;
-        Minecraft mc = Minecraft.getMinecraft();
-        if (Loader.isModLoaded("chunkpregen")) return;
-        boolean disable = Salutation.DISABLE_OVERRIDE.get();
-        if (screen instanceof GuiMainMenu) {
-            if (!replacedChat && !disable) {
-                ReflectionHelper.setPrivateValue(
-                    GuiIngame.class,
-                    mc.ingameGUI,
-                    new MultilineChatScreen(),
-                    "persistantChatGUI",
-                    "field_73840_e");
-                replacedChat = true;
-            } else if (replacedChat && disable) {
-                ReflectionHelper.setPrivateValue(
-                    GuiIngame.class,
-                    mc.ingameGUI,
-                    new GuiNewChat(mc),
-                    "persistantChatGUI",
-                    "field_73840_e");
-                replacedChat = false;
-            }
-        } else if (!disable && screen instanceof GuiChat && !(screen instanceof ISaluationChat)) {
-            if (screen instanceof GuiSleepMP) {
-                event.setCanceled(true);
-                mc.displayGuiScreen(new MPChatScreen());
-            } else {
-                event.setCanceled(true);
-                mc.displayGuiScreen(new ChatScreen((GuiChat) screen));
-            }
+            .isClient() || Loader.isModLoaded("chunkpregen")) {
+            ci.cancel();
         }
     }
 }
