@@ -252,6 +252,8 @@ public enum Mixin implements IMixin {
         "thaumcraft.MixinEventHandlerEntity"),
     common_codechickencore_MixinClassDiscoverer(Side.COMMON, require(TargetedMod.CODECHICKENCORE),
         "codechickencore.MixinClassDiscoverer"),
+    common_codechickencore_MixinWorldExtensionManager(Side.COMMON, require(TargetedMod.CODECHICKENCORE),
+        "codechickencore.MixinWorldExtensionManager"),
     common_traincraft_MixinTierRecipeManager(Side.COMMON, require(TargetedMod.TRAINCRAFT),
         "traincraft.MixinTierRecipeManager"),
     common_lootpluplus_MixinLootPPHelper(Side.COMMON, require(TargetedMod.LOOTPLUSPLUS),
