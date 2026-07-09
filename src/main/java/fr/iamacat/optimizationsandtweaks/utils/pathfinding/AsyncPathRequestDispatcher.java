@@ -1,5 +1,6 @@
 package fr.iamacat.optimizationsandtweaks.utils.pathfinding;
 
+import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
 import net.minecraft.entity.Entity;
@@ -8,6 +9,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
+import fr.iamacat.optimizationsandtweaks.utils.natives.DirectSnapshotPool;
 import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
 
 /**
@@ -72,10 +74,54 @@ public final class AsyncPathRequestDispatcher {
             return 0;
         }
 
-        // Copy the region on the server thread (safe world read).
-        byte[] snapshot = RustPathfindingBridge.encodeBlockCache(world, minX, minY, minZ, width, height, depth);
-
         int priority = AsyncPathfindingExecutor.determinePriority(entity);
+
+        // A/B PoC: zero-copy off-heap snapshot path (-Doptimizationsandtweaks.pathfinding.directSnapshot=true).
+        // Encodes straight into a pooled DirectByteBuffer that Rust reads in place — no byte[]
+        // allocation, no JNI array copy. Falls through to the legacy heap path when the pool is
+        // exhausted or the loaded native library does not export the direct symbol yet.
+        if (DirectSnapshotPool.isEnabled() && AsyncPathfindingExecutor.isDirectSubmitAvailable()) {
+            DirectSnapshotPool.Slot slot = DirectSnapshotPool.acquire();
+            if (slot != null) {
+                ByteBuffer buf = slot.beginWrite();
+                RustPathfindingBridge.encodeBlockCacheDirect(world, minX, minY, minZ, width, height, depth, buf);
+
+                long requestId = AsyncPathfindingExecutor.submitSnapshotPathfindingDirect(
+                    entity,
+                    priority,
+                    isWoodenDoorAllowed,
+                    isMovementBlockAllowed,
+                    isPathingInWater,
+                    canEntityDrown,
+                    minX,
+                    minY,
+                    minZ,
+                    width,
+                    height,
+                    depth,
+                    slot,
+                    targetX,
+                    targetY,
+                    targetZ,
+                    maxDistance,
+                    onComplete,
+                    onFailure);
+
+                if (requestId != 0) {
+                    return requestId;
+                }
+                if (AsyncPathfindingExecutor.isDirectSubmitAvailable()) {
+                    // Genuine rejection (native queue full): the legacy path would be rejected
+                    // too — let the caller fall back to a synchronous path, as before.
+                    return 0;
+                }
+                // Symbol missing in the loaded native lib: degrade to the legacy heap path below.
+            }
+            // Pool exhausted: legacy heap path below.
+        }
+
+        // Copy the region on the server thread (safe world read) — legacy heap snapshot path.
+        byte[] snapshot = RustPathfindingBridge.encodeBlockCache(world, minX, minY, minZ, width, height, depth);
 
         return AsyncPathfindingExecutor.submitSnapshotPathfinding(
             entity,

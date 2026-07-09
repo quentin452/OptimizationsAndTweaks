@@ -40,6 +40,28 @@ public class RustPathfindingBridge {
         return cache;
     }
 
+    /**
+     * Encode a region of blocks directly into an off-heap buffer for the zero-copy submit path
+     * (PoC A/B alternative to {@link #encodeBlockCache}). Same block encoding and [y][z][x]
+     * layout; writes with relative puts starting at the buffer's current position (the caller
+     * positions it past the {@link DirectSnapshotPool} generation header via
+     * {@code Slot.beginWrite()}).
+     *
+     * <p>
+     * Must run on the server thread (it reads the live world), and only into a slot that is not
+     * in-flight — see the ownership protocol on {@link DirectSnapshotPool}.
+     */
+    public static void encodeBlockCacheDirect(IBlockAccess world, int offsetX, int offsetY, int offsetZ, int width,
+        int height, int depth, java.nio.ByteBuffer target) {
+        for (int y = 0; y < height; y++) {
+            for (int z = 0; z < depth; z++) {
+                for (int x = 0; x < width; x++) {
+                    target.put(encodeBlock(world, offsetX + x, offsetY + y, offsetZ + z));
+                }
+            }
+        }
+    }
+
     private static byte encodeBlock(IBlockAccess world, int x, int y, int z) {
         try {
             net.minecraft.block.Block b = world.getBlock(x, y, z);

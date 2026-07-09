@@ -108,6 +108,30 @@ public class RustPathfinding {
         float maxDistance, boolean isInWater, int maxSafePointTries);
 
     /**
+     * Zero-copy variant of {@link #submitAsyncPathfinding}: the block snapshot lives in a pooled
+     * direct {@link java.nio.ByteBuffer} that Rust reads in place (GetDirectBufferAddress) instead
+     * of copying a heap {@code byte[]} (GetByteArrayRegion). PoC — see DirectSnapshotPool.
+     *
+     * <p>
+     * Contract: {@code blockCache} is a direct buffer whose first 8 bytes (native order) hold
+     * {@code generation}; block codes follow at offset 8, {@code width*height*depth} bytes,
+     * [y][z][x] layout. The buffer must stay alive and unmodified from this call until the
+     * request's result is drained by {@link #tryRecvAsyncResult} — the pool enforces that. Rust
+     * re-validates the generation header after the A* run and discards the result on mismatch.
+     *
+     * <p>
+     * May throw {@link UnsatisfiedLinkError} when the loaded native library predates this symbol;
+     * callers must catch it and fall back to the heap path (see AsyncPathfindingExecutor).
+     *
+     * @return the request id if accepted, 0 if the native queue is full or the buffer is invalid
+     */
+    public static native long submitAsyncPathfindingDirect(long requestId, int priority, boolean isWoodenDoorAllowed,
+        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown, int offsetX, int offsetY,
+        int offsetZ, int width, int height, int depth, java.nio.ByteBuffer blockCache, long generation, double entityX,
+        double entityY, double entityZ, double targetX, double targetY, double targetZ, float entityWidth,
+        float entityHeight, float maxDistance, boolean isInWater, int maxSafePointTries);
+
+    /**
      * Try to receive a completed async pathfinding result (non-blocking)
      */
     public static native long tryRecvAsyncResult(int[] outRequestId);

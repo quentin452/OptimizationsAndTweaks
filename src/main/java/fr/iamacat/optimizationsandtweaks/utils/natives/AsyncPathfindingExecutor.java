@@ -32,6 +32,13 @@ public class AsyncPathfindingExecutor {
     private static boolean initialized = false;
     private static final AtomicLong nextRequestId = new AtomicLong(1);
 
+    /**
+     * Whether the loaded native library exports {@code submitAsyncPathfindingDirect}. Starts
+     * optimistic; latched to false on the first {@link UnsatisfiedLinkError} so an old .so/.dll
+     * degrades to the heap path once instead of throwing per request.
+     */
+    private static volatile boolean directSubmitAvailable = true;
+
     // Track pending requests and their callbacks (keyed by request id).
     private static final ConcurrentHashMap<Long, RequestContext> pendingRequests = new ConcurrentHashMap<>();
 
@@ -149,6 +156,95 @@ public class AsyncPathfindingExecutor {
     }
 
     /**
+     * Whether the zero-copy direct submit is still believed to be exported by the loaded native
+     * library. Callers use this to distinguish "queue full" (retry legacy is pointless) from
+     * "symbol missing" (fall back to the legacy heap path) after a 0 return.
+     */
+    public static boolean isDirectSubmitAvailable() {
+        return directSubmitAvailable;
+    }
+
+    /**
+     * Zero-copy variant of {@link #submitSnapshotPathfinding}: the snapshot was encoded into a
+     * pooled off-heap {@code slot} (see {@link DirectSnapshotPool}) that Rust reads in place —
+     * no {@code byte[]} allocation, no JNI array copy. <b>Must be called on the server thread.</b>
+     *
+     * <p>
+     * Slot ownership: on an accepted submit the slot is registered in-flight and released when the
+     * result is drained in {@link #pollResults()}; on any rejection it is returned to the pool
+     * here. Either way the caller stops touching the slot after this call.
+     *
+     * @return request id, or 0 if rejected — check {@link #isDirectSubmitAvailable()} to decide
+     *         whether to retry via the legacy heap path (symbol missing) or give up (queue full)
+     */
+    public static long submitSnapshotPathfindingDirect(Entity entity, int priority, boolean isWoodenDoorAllowed,
+        boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown, int offsetX, int offsetY,
+        int offsetZ, int width, int height, int depth, DirectSnapshotPool.Slot slot, double targetX, double targetY,
+        double targetZ, float maxDistance, Consumer<PathEntity> onComplete, Consumer<String> onFailure) {
+
+        if (!initialized || !directSubmitAvailable) {
+            DirectSnapshotPool.release(slot);
+            return 0;
+        }
+
+        long requestId = nextRequestId.getAndIncrement();
+
+        RequestContext context = new RequestContext(entity);
+        context.onComplete = onComplete;
+        context.onFailure = onFailure;
+        pendingRequests.put(requestId, context);
+
+        long accepted;
+        try {
+            accepted = RustPathfinding.submitAsyncPathfindingDirect(
+                requestId,
+                priority,
+                isWoodenDoorAllowed,
+                isMovementBlockAllowed,
+                isPathingInWater,
+                canEntityDrown,
+                offsetX,
+                offsetY,
+                offsetZ,
+                width,
+                height,
+                depth,
+                slot.buffer(),
+                slot.generation(),
+                entity.posX,
+                entity.posY,
+                entity.posZ,
+                targetX,
+                targetY,
+                targetZ,
+                (float) entity.width,
+                (float) entity.height,
+                maxDistance,
+                entity.isInWater(),
+                entity.getMaxSafePointTries());
+        } catch (UnsatisfiedLinkError e) {
+            // Loaded native lib predates the zero-copy symbol: latch off and degrade to heap path.
+            directSubmitAvailable = false;
+            FMLLog.warning(
+                "[AsyncPathfinding] Native submitAsyncPathfindingDirect not exported by the loaded library"
+                    + " - falling back to heap byte[] snapshots");
+            pendingRequests.remove(requestId);
+            DirectSnapshotPool.release(slot);
+            return 0;
+        }
+
+        if (accepted == 0) {
+            // Queue full or invalid buffer: drop the context, return the slot, caller falls back.
+            pendingRequests.remove(requestId);
+            DirectSnapshotPool.release(slot);
+            return 0;
+        }
+
+        DirectSnapshotPool.markInFlight(requestId, slot);
+        return requestId;
+    }
+
+    /**
      * Poll for completed pathfinding results and run their callbacks.
      * <b>Must be called on the server tick only</b> so callbacks mutate entities on the
      * server thread.
@@ -172,6 +268,9 @@ public class AsyncPathfindingExecutor {
             }
 
             long requestId = outRequestId[0];
+            // Rust is done reading this request's snapshot: return its off-heap slot (if any) to
+            // the pool BEFORE running callbacks, so a re-path from a callback can reuse it.
+            DirectSnapshotPool.releaseByRequestId(requestId);
             RequestContext context = pendingRequests.remove(requestId);
 
             if (context != null) {
@@ -257,11 +356,13 @@ public class AsyncPathfindingExecutor {
 
         FMLLog.info("[AsyncPathfinding] Shutting down - %d pending requests", pendingRequests.size());
         FMLLog.info(getStatisticsString());
+        FMLLog.info(DirectSnapshotPool.statsString());
 
         try {
             RustPathfinding.shutdownAsyncExecutor();
         } catch (Throwable ignore) {}
         pendingRequests.clear();
+        DirectSnapshotPool.reset();
         initialized = false;
     }
 
