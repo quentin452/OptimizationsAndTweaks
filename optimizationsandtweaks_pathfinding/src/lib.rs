@@ -1,7 +1,7 @@
 use optimizationsandtweaks_shared::{ffi_panic_guard, ffi_panic_guard_void, log_native_line};
-use async_executor::CachedWorldAccess;
+use async_executor::{CachedWorldAccess, BlockSource};
 use jni::JNIEnv;
-use jni::objects::{JClass, JString, JByteArray, JObject, JValue, JIntArray};
+use jni::objects::{JClass, JString, JByteArray, JByteBuffer, JObject, JValue, JIntArray};
 use jni::sys::{jstring, jlong, jint, jboolean, jintArray, jlongArray, jdouble, jfloat};
 use std::sync::Mutex;
 use std::collections::HashMap;
@@ -508,7 +508,103 @@ pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_nativ
             width,
             height,
             depth,
-            block_cache_vec,
+            BlockSource::Owned(block_cache_vec),
+            entity_x,
+            entity_y,
+            entity_z,
+            target_x,
+            target_y,
+            target_z,
+            entity_width,
+            entity_height,
+            max_distance,
+            is_in_water != 0,
+            max_safe_point_tries,
+        );
+
+        if success { request_id } else { 0 }
+    })
+}
+
+/// Zero-copy sibling of `submitAsyncPathfinding`: the snapshot lives in a pooled Java
+/// `DirectByteBuffer` slot that the worker reads in place (`GetDirectBufferAddress`) instead of
+/// copying a heap `byte[]` (`GetByteArrayRegion` + a re-collect = two copies). The slot's `i64`
+/// generation header (offset 0, native order, written by `DirectSnapshotPool.Slot#beginWrite`) is
+/// validated here at submit and re-checked by the worker after the A* run (seqlock-style) so a slot
+/// reused mid-read is rejected rather than yielding a torn path. Legacy path left untouched — both
+/// symbols coexist in one binary for A/B benching.
+#[no_mangle]
+pub unsafe extern "system" fn Java_fr_iamacat_optimizationsandtweaks_utils_natives_RustPathfinding_submitAsyncPathfindingDirect(
+    env: JNIEnv,
+    _class: JClass,
+    request_id: jlong,
+    priority: jint,
+    wd: jboolean,
+    mb: jboolean,
+    pw: jboolean,
+    cd: jboolean,
+    offset_x: jint,
+    offset_y: jint,
+    offset_z: jint,
+    width: jint,
+    height: jint,
+    depth: jint,
+    block_cache: JByteBuffer,
+    generation: jlong,
+    entity_x: jdouble,
+    entity_y: jdouble,
+    entity_z: jdouble,
+    target_x: jdouble,
+    target_y: jdouble,
+    target_z: jdouble,
+    entity_width: jfloat,
+    entity_height: jfloat,
+    max_distance: jfloat,
+    is_in_water: jboolean,
+    max_safe_point_tries: jint,
+) -> jlong {
+    ffi_panic_guard("submitAsyncPathfindingDirect", 0, || {
+        const HEADER_BYTES: usize = 8;
+        let base = match env.get_direct_buffer_address(&block_cache) {
+            Ok(p) if !p.is_null() => p,
+            _ => {
+                log_native_line("submitAsyncPathfindingDirect: not a direct buffer");
+                return 0;
+            }
+        };
+        let cap = env.get_direct_buffer_capacity(&block_cache).unwrap_or(0);
+        let volume = (width as i64) * (height as i64) * (depth as i64);
+        if volume <= 0 || (HEADER_BYTES as i64) + volume > cap as i64 {
+            log_native_line("submitAsyncPathfindingDirect: buffer too small for volume");
+            return 0;
+        }
+        // Validate the generation header before running A* (rejects a stale/misrouted slot).
+        let gen_ptr = base as *const i64;
+        if unsafe { gen_ptr.read_unaligned() } != generation {
+            log_native_line("submitAsyncPathfindingDirect: generation mismatch at submit");
+            return 0;
+        }
+        let source = BlockSource::Borrowed {
+            payload: unsafe { base.add(HEADER_BYTES) } as *const i8,
+            len: volume as usize,
+            gen_ptr,
+            generation,
+        };
+
+        let success = async_executor::submit_request(
+            request_id,
+            priority,
+            wd != 0,
+            mb != 0,
+            pw != 0,
+            cd != 0,
+            offset_x,
+            offset_y,
+            offset_z,
+            width,
+            height,
+            depth,
+            source,
             entity_x,
             entity_y,
             entity_z,
@@ -600,7 +696,7 @@ pub unsafe extern "system" fn Java_org_nothing_optimizationsandtweaks_Optimizati
             width,
             height,
             depth,
-            block_cache_vec,
+            BlockSource::Owned(block_cache_vec),
             entity_x,
             entity_y,
             entity_z,

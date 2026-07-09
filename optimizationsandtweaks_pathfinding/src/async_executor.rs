@@ -20,8 +20,55 @@ use crate::{ffi_panic_guard, ffi_panic_guard_void};
 // Internal cached world accessor identical to the one used in lib.rs for cached paths
 // =====================================================================================
 
+/// Source of the block snapshot a job's A* reads. `Owned` is the legacy heap path (the `byte[]`
+/// copied across JNI); `Borrowed` is the zero-copy PoC path — a raw view into a Java
+/// `DirectByteBuffer` slot (see `DirectSnapshotPool`) that the worker reads in place.
+pub enum BlockSource {
+    Owned(Vec<i8>),
+    /// `payload` = first block byte (slot base + `HEADER_BYTES`); `gen_ptr` = slot base as `i64`
+    /// (the generation header, native order); `generation` = value expected at submit time.
+    Borrowed {
+        payload: *const i8,
+        len: usize,
+        gen_ptr: *const i64,
+        generation: i64,
+    },
+}
+
+// SAFETY: the `Borrowed` variant points into a Java direct buffer kept alive by a strong reference
+// in `DirectSnapshotPool` for the whole job lifetime, under a single-writer (server thread) /
+// single-reader (worker) protocol guarded by the generation header.
+unsafe impl Send for BlockSource {}
+
+impl BlockSource {
+    #[inline]
+    fn as_slice(&self) -> &[i8] {
+        match self {
+            BlockSource::Owned(v) => v.as_slice(),
+            // SAFETY: see the `unsafe impl Send` note — valid for the job's lifetime.
+            BlockSource::Borrowed { payload, len, .. } => unsafe {
+                std::slice::from_raw_parts(*payload, *len)
+            },
+        }
+    }
+
+    /// Seqlock-style post-read check: for a borrowed slot returns `false` if Java bumped the
+    /// generation header while the worker was reading (a pool-protocol violation) so the result is
+    /// discarded instead of returning a path built from a torn snapshot. Always true for owned.
+    #[inline]
+    fn still_valid(&self) -> bool {
+        match self {
+            BlockSource::Owned(_) => true,
+            // SAFETY: gen_ptr points at the live slot header for the job's lifetime.
+            BlockSource::Borrowed { gen_ptr, generation, .. } => unsafe {
+                gen_ptr.read_unaligned() == *generation
+            },
+        }
+    }
+}
+
 pub struct CachedWorldAccess {
-    blocks: Vec<i8>,
+    blocks: BlockSource,
     width: i32,
     height: i32,
     depth: i32,
@@ -32,7 +79,7 @@ pub struct CachedWorldAccess {
 
 impl CachedWorldAccess {
     pub fn new(
-        blocks: Vec<i8>,
+        blocks: BlockSource,
         width: i32,
         height: i32,
         depth: i32,
@@ -52,6 +99,7 @@ impl CachedWorldAccess {
     }
 
     fn get_block_code(&self, x: i32, y: i32, z: i32) -> i8 {
+        let blocks = self.blocks.as_slice();
         let local_x = x - self.offset_x;
         let local_y = y - self.offset_y;
         let local_z = z - self.offset_z;
@@ -78,12 +126,18 @@ impl CachedWorldAccess {
         if let Some(idx) = idx128 {
             if idx >= 0 {
                 let index = idx as usize;
-                if index < self.blocks.len() {
-                    return self.blocks[index];
+                if index < blocks.len() {
+                    return blocks[index];
                 }
             }
         }
         0
+    }
+
+    /// Post-A* seqlock check delegated to the snapshot source (meaningful for borrowed slots only).
+    #[inline]
+    pub fn snapshot_still_valid(&self) -> bool {
+        self.blocks.still_valid()
     }
 }
 
@@ -119,7 +173,8 @@ impl pathfinding::path_finder::IBlockAccess for CachedWorldAccess {
 // Async executor core
 // =====================================================================================
 
-#[derive(Clone)]
+// Not Clone: a Borrowed block_cache holds a raw pointer into a single Java slot — a job must never
+// be duplicated (it isn't; it moves through the channel once).
 struct Job {
     request_id: i64,
     _priority: i32,
@@ -135,7 +190,7 @@ struct Job {
     width: i32,
     height: i32,
     depth: i32,
-    block_cache: Vec<i8>,
+    block_cache: BlockSource,
     // entity and target
     entity_x: f64,
     entity_y: f64,
@@ -278,7 +333,7 @@ pub fn submit_request(
     width: i32,
     height: i32,
     depth: i32,
-    block_cache: Vec<i8>,
+    block_cache: BlockSource,
     entity_x: f64,
     entity_y: f64,
     entity_z: f64,
@@ -439,7 +494,12 @@ fn process_job(job: Job) -> Completed {
             max_distance,
         );
 
-        if let Some(path_entity) = path_entity {
+        if !world_access.snapshot_still_valid() {
+            // Java bumped the slot generation while the worker was reading (pool-protocol
+            // violation) → discard rather than return a path built from a torn snapshot.
+            log_native_line("process_job: snapshot generation mismatch post-A* — discarding result");
+            -1
+        } else if let Some(path_entity) = path_entity {
             let id = get_next_id();
             PATH_ENTITIES.lock().unwrap().insert(id, path_entity);
             id
