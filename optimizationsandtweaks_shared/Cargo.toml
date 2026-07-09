@@ -8,12 +8,16 @@ name = "optimizationsandtweaks_shared"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+# Shared native FFI infra (panic guard, logger, off-heap helper). Linked rlib; a sibling-cloned
+# `path` dep (this repo and matoulib live side by side under ~/Documents/GitHub). Switch to
+# `{ git = "https://github.com/quentin452/matoulib.git", rev = "<commit>" }` if OaT ever needs to
+# build without a matoulib checkout (reproducible-but-requires-push); see hub docs/23b.
+matoulib_native_shared = { path = "../../matoulib/matoulib_native_shared" }
 jni = "0.21"
 lazy_static = "1.5.0"
 leaktracer = "0.1"
-rayon = "1.10"
-crossbeam = "0.8"
-lru = "0.18"
+# rayon / crossbeam / lru dropped: never imported by this crate's lib.rs (dead since before the
+# extraction). Sub-crates that DO use them declare them in their own Cargo.toml.
 # Release size trim (no behavior change): strip debug symbols + LTO. Deliberately NOT panic="abort"
 # (would break the catch_unwind FFI panic guards) and NOT opt-level="z" (would risk perf on the hot
 # native paths). Shrinks the shipped .so/.dll/.dylib on the next cross-OS native build (CI).
