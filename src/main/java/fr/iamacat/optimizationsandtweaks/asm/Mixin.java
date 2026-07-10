@@ -72,7 +72,6 @@ public enum Mixin implements IMixin {
     common_core_MixinEntityList(Side.COMMON, always(), "core.MixinEntityList"),
     common_core_MixinNBTTagCompound(Side.COMMON, avoid(TargetedMod.DRAGONAPI), "core.MixinNBTTagCompound"),
     common_core_MixinNBTBase(Side.COMMON, avoid(TargetedMod.DRAGONAPI), "core.MixinNBTBase"),
-    common_core_MixinMapGenStructure(Side.COMMON, avoid(TargetedMod.DRAGONAPI), "core.MixinMapGenStructure"),
 
     common_core_MixinEntityArrowAttack(Side.COMMON, always(), "core.MixinEntityArrowAttack"),
     common_core_MixinEntityAITempt(Side.COMMON, always(), "core.MixinEntityAITempt"),
