@@ -8,6 +8,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 
+import fr.iamacat.exec.Handle;
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
 import fr.iamacat.optimizationsandtweaks.utils.natives.DirectSnapshotPool;
 import fr.iamacat.optimizationsandtweaks.utils.natives.RustPathfindingBridge;
@@ -76,6 +77,10 @@ public final class AsyncPathRequestDispatcher {
 
         int priority = AsyncPathfindingExecutor.determinePriority(entity);
 
+        // The request as a matoulib execution-seam job (hub doc 28): compute (the A*) runs natively behind
+        // NativePathBackend, apply/isValid run on the server tick when the result is drained.
+        PathfindingJob job = new PathfindingJob(entity, onComplete, onFailure);
+
         // A/B PoC: zero-copy off-heap snapshot path (-Doptimizationsandtweaks.pathfinding.directSnapshot=true).
         // Encodes straight into a pooled DirectByteBuffer that Rust reads in place — no byte[]
         // allocation, no JNI array copy. Falls through to the legacy heap path when the pool is
@@ -86,13 +91,7 @@ public final class AsyncPathRequestDispatcher {
                 ByteBuffer buf = slot.beginWrite();
                 RustPathfindingBridge.encodeBlockCacheDirect(world, minX, minY, minZ, width, height, depth, buf);
 
-                long requestId = AsyncPathfindingExecutor.submitSnapshotPathfindingDirect(
-                    entity,
-                    priority,
-                    isWoodenDoorAllowed,
-                    isMovementBlockAllowed,
-                    isPathingInWater,
-                    canEntityDrown,
+                PathSnapshot snap = PathSnapshot.direct(
                     minX,
                     minY,
                     minZ,
@@ -104,11 +103,19 @@ public final class AsyncPathRequestDispatcher {
                     targetY,
                     targetZ,
                     maxDistance,
-                    onComplete,
-                    onFailure);
+                    priority,
+                    isWoodenDoorAllowed,
+                    isMovementBlockAllowed,
+                    isPathingInWater,
+                    canEntityDrown);
 
-                if (requestId != 0) {
-                    return requestId;
+                // The native direct submit owns the slot's lifecycle (releases it on rejection,
+                // marks it in-flight on acceptance), so we never touch the slot after this call.
+                Handle<PathEntity> handle = NativePathBackend.get()
+                    .submit(job, snap);
+
+                if (handle != null) {
+                    return ((NativePathBackend.PathHandle) handle).requestId();
                 }
                 if (AsyncPathfindingExecutor.isDirectSubmitAvailable()) {
                     // Genuine rejection (native queue full): the legacy path would be rejected
@@ -123,13 +130,7 @@ public final class AsyncPathRequestDispatcher {
         // Copy the region on the server thread (safe world read) — legacy heap snapshot path.
         byte[] snapshot = RustPathfindingBridge.encodeBlockCache(world, minX, minY, minZ, width, height, depth);
 
-        return AsyncPathfindingExecutor.submitSnapshotPathfinding(
-            entity,
-            priority,
-            isWoodenDoorAllowed,
-            isMovementBlockAllowed,
-            isPathingInWater,
-            canEntityDrown,
+        PathSnapshot snap = PathSnapshot.heap(
             minX,
             minY,
             minZ,
@@ -141,7 +142,14 @@ public final class AsyncPathRequestDispatcher {
             targetY,
             targetZ,
             maxDistance,
-            onComplete,
-            onFailure);
+            priority,
+            isWoodenDoorAllowed,
+            isMovementBlockAllowed,
+            isPathingInWater,
+            canEntityDrown);
+
+        Handle<PathEntity> handle = NativePathBackend.get()
+            .submit(job, snap);
+        return handle == null ? 0 : ((NativePathBackend.PathHandle) handle).requestId();
     }
 }

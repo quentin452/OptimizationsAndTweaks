@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import fr.iamacat.optimizationsandtweaks.utils.natives.AsyncPathfindingExecutor;
 import fr.iamacat.optimizationsandtweaks.utils.pathfinding.AsyncPathCaches;
+import fr.iamacat.optimizationsandtweaks.utils.pathfinding.NativePathBackend;
 
 /**
  * Drains completed async pathfinding results on the <b>server tick only</b>.
@@ -34,7 +35,10 @@ public class AsyncPathfindingTickHandler {
             return;
         }
 
-        AsyncPathfindingExecutor.pollResults();
+        // Drain completed native results through the execution seam (hub doc 28): NativePathBackend
+        // applies each finished path via Job.apply on this (server) tick.
+        NativePathBackend.get()
+            .drainAndApply();
 
         // Prune stale cached paths for entities that vanished without a death event.
         if (++sweepCounter >= SWEEP_INTERVAL) {

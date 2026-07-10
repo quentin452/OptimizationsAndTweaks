@@ -54,6 +54,11 @@ configurations.all {
 }
 
 dependencies {
+    // matou-exec: the pure execution seam (Job/Handle/ExecutionBackend, hub doc 28), shared with
+    // matoulib. OaT routes its async pathfinding through it WITHOUT depending on the matoulib
+    // content lib. Shaded (relocated to fr.iamacat.shadow.*) so OaT still ships self-contained.
+    shadowImplementation("fr.iamacat:matou-exec:1.0.0")
+
     //Dev-only deps
     compileOnly("org.projectlombok:lombok:[1.18.24,1.19)") {
         transitive = false

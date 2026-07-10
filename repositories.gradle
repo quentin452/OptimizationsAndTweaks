@@ -2,6 +2,8 @@
 
 repositories {
     mavenCentral()
+    // matou-exec (the extracted execution seam, hub doc 28) is published here.
+    mavenLocal()
     maven {
         name = "forge"
         url = "https://maven.minecraftforge.net/"
