@@ -57,6 +57,29 @@ public class MixinEntityRenderer implements IResourceManagerReloadListener {
 
     @Unique
     private EntityRenderer multithreadingandtweaks$entityRenderer;
+
+    /**
+     * Size-aware entity-interaction reach (BUG-042). Default ON; disable with -Doat.entityreach=false.
+     */
+    @Unique
+    private static final boolean multithreadingandtweaks$entityReach = !"false"
+        .equals(System.getProperty("oat.entityreach", "true"));
+
+    /**
+     * Extra interaction reach granted by a target's size, so a giant mob is hittable from proportionally
+     * farther while small mobs stay EXACTLY vanilla. clamp(max(halfWidth, halfHeight) - 1.0, 0.0, 12.0):
+     * a zombie (0.6x1.8, extent 0.9) yields 0 (vanilla), a colossus (6.2x11.4, extent 5.7) yields ~4.7.
+     */
+    @Unique
+    private static double multithreadingandtweaks$sizeBonus(Entity entity) {
+        AxisAlignedBB bb = entity.boundingBox;
+        double half = Math.max((bb.maxX - bb.minX) * 0.5D, (bb.maxY - bb.minY) * 0.5D) - 1.0D;
+        if (half <= 0.0D) {
+            return 0.0D;
+        }
+        return half > 12.0D ? 12.0D : half;
+    }
+
     @Shadow
     private static final Logger logger = LogManager.getLogger();
     @Shadow
@@ -399,9 +422,12 @@ public class MixinEntityRenderer implements IResourceManagerReloadListener {
             this.pointedEntity = null;
             Vec3 vec33 = null;
             float f1 = 1.0F;
+            // Widen the broad-phase sweep by the max possible size-bonus so giant entities are not culled.
+            double broad = multithreadingandtweaks$entityReach ? d0 + 12.0D : d0;
             List list = this.mc.theWorld.getEntitiesWithinAABBExcludingEntity(
                 this.mc.renderViewEntity,
-                this.mc.renderViewEntity.boundingBox.addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0)
+                this.mc.renderViewEntity.boundingBox
+                    .addCoord(vec31.xCoord * broad, vec31.yCoord * broad, vec31.zCoord * broad)
                     .expand(f1, f1, f1));
             double d2 = d1;
 
@@ -411,7 +437,14 @@ public class MixinEntityRenderer implements IResourceManagerReloadListener {
                 if (entity.canBeCollidedWith()) {
                     float f2 = entity.getCollisionBorderSize();
                     AxisAlignedBB axisalignedbb = entity.boundingBox.expand(f2, f2, f2);
-                    MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+                    // Extend the ray per-entity so a big target's far surface is geometrically reachable.
+                    double bonus = multithreadingandtweaks$entityReach ? multithreadingandtweaks$sizeBonus(entity)
+                        : 0.0D;
+                    Vec3 vec32e = bonus > 0.0D ? vec3.addVector(
+                        vec31.xCoord * (d0 + bonus),
+                        vec31.yCoord * (d0 + bonus),
+                        vec31.zCoord * (d0 + bonus)) : vec32;
+                    MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32e);
 
                     if (axisalignedbb.isVecInside(vec3)) {
                         if (0.0D < d2 || d2 == 0.0D) {
@@ -421,8 +454,11 @@ public class MixinEntityRenderer implements IResourceManagerReloadListener {
                         }
                     } else if (movingobjectposition != null) {
                         double d3 = vec3.distanceTo(movingobjectposition.hitVec);
+                        // Size-adjusted distance: a big target counts as bonus blocks closer for the gate,
+                        // while a real block closer than the adjusted distance still wins (occlusion kept).
+                        double d3adj = d3 - bonus;
 
-                        if (d3 < d2 || d2 == 0.0D) {
+                        if (d3adj < d2 || d2 == 0.0D) {
                             if (entity == this.mc.renderViewEntity.ridingEntity && !entity.canRiderInteract()) {
                                 if (d2 == 0.0D) {
                                     this.pointedEntity = entity;
@@ -431,7 +467,7 @@ public class MixinEntityRenderer implements IResourceManagerReloadListener {
                             } else {
                                 this.pointedEntity = entity;
                                 vec33 = movingobjectposition.hitVec;
-                                d2 = d3;
+                                d2 = d3adj;
                             }
                         }
                     }
