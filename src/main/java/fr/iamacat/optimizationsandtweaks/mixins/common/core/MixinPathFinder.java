@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.world.IBlockAccess;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -175,6 +176,7 @@ public abstract class MixinPathFinder {
             canEntityDrown,
             // onComplete — runs on the server tick (see poll handler), so setPath is safe.
             path -> {
+                final long applyNow = System.currentTimeMillis();
                 AsyncPathCaches.cachedPaths.put(
                     entityId,
                     new CachedPath(
@@ -185,10 +187,31 @@ public abstract class MixinPathFinder {
                         fTargetX,
                         fTargetY,
                         fTargetZ,
-                        System.currentTimeMillis()));
+                        applyNow));
                 AsyncPathCaches.pendingPaths.remove(entityId);
-                // A path was found: the target is reachable, drop any unreachable-backoff (#49).
-                AsyncPathCaches.clearNoPath(entityId);
+                // Unreachable-target backoff, issue #49. A non-null result is NOT proof the goal is reachable:
+                // vanilla A* (and its Rust port) returns a partial path to the closest reachable node when the
+                // target cannot be reached. Only a path that actually ENDS at the target clears the backoff.
+                if (optimizationsAndTweaks$reaches(path, fTargetX, fTargetY, fTargetZ)) {
+                    AsyncPathCaches.clearNoPath(entityId);
+                    AsyncPathCaches.clearApproach(entityId);
+                } else {
+                    // Partial path that does not reach the target. Do NOT clear the backoff here: in a dense
+                    // pile-up a stuck mob is jostled every tick and keeps emitting fresh partial paths, which
+                    // would wipe its own verdict and re-flood the async queue. Start the backoff once the mob
+                    // stops closing the distance — a far but reachable target keeps making progress and is spared.
+                    double d2 = optimizationsAndTweaks$distSq(
+                        entity.posX,
+                        entity.posY,
+                        entity.posZ,
+                        fTargetX,
+                        fTargetY,
+                        fTargetZ);
+                    if (AsyncPathCaches
+                        .noteUnreachedAndCheckStuck(entityId, fTargetX, fTargetY, fTargetZ, d2, applyNow)) {
+                        AsyncPathCaches.recordNoPath(entityId, fTargetX, fTargetY, fTargetZ, applyNow);
+                    }
+                }
                 try {
                     if (!entity.isDead && path != null && entity instanceof EntityLiving) {
                         // Restore the speed the AI originally asked for (panic 2.0, follow, ...),
@@ -225,5 +248,39 @@ public abstract class MixinPathFinder {
         if (traced)
             AiEventTrace.record(entityId, "pathfinder.requestPath -> SUBMIT id=" + requestId + " (return null)");
         return OPT$PENDING;
+    }
+
+    /** Squared distance the target must move to count as reached (~2 blocks — covers a mob stopping adjacent). */
+    @Unique
+    private static final double OPT$REACH_SQ = 4.0;
+
+    /**
+     * Whether {@code path} actually ends at (roughly) the requested target, rather than at the closest reachable
+     * node short of an unreachable goal. Used to tell a genuine arrival from a partial approach (issue #49).
+     */
+    @Unique
+    private static boolean optimizationsAndTweaks$reaches(PathEntity path, double targetX, double targetY,
+        double targetZ) {
+        if (path == null) {
+            return false;
+        }
+        PathPoint end = path.getFinalPathPoint();
+        if (end == null) {
+            return false;
+        }
+        return optimizationsAndTweaks$distSq(
+            end.xCoord + 0.5,
+            end.yCoord + 0.5,
+            end.zCoord + 0.5,
+            targetX,
+            targetY,
+            targetZ) <= OPT$REACH_SQ;
+    }
+
+    @Unique
+    private static double optimizationsAndTweaks$distSq(double x1, double y1, double z1, double x2, double y2,
+        double z2) {
+        double dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+        return dx * dx + dy * dy + dz * dz;
     }
 }

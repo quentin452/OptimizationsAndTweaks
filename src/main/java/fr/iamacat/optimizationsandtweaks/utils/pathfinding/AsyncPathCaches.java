@@ -28,10 +28,26 @@ public final class AsyncPathCaches {
      */
     public static final Map<Integer, NoPathVerdict> noPathBackoff = new ConcurrentHashMap<>();
 
+    /**
+     * entityId -> progress toward an unreachable target across successive partial paths (issue #49). The plain
+     * null-result backoff only fires once a mob is <i>already sitting</i> on the closest reachable node (the native
+     * A* then returns a single-node path -> null -> {@code onFailure}). In a dense pile-up a stuck mob is jostled
+     * every tick, so it never sits still: each request yields a fresh multi-node <i>partial</i> path that reaches
+     * nowhere near the goal, the completion path clears the verdict, and the flood resumes. We track whether the
+     * mob is actually closing distance on the target; when it stops making progress on a non-reaching path we start
+     * the backoff even though no clean null ever arrived. A far but <i>reachable</i> target keeps closing the
+     * distance (vanilla staged approach via maxDistance), so it is never flagged.
+     */
+    public static final Map<Integer, Approach> approachTracker = new ConcurrentHashMap<>();
+
     /** How long a "no path" verdict suppresses re-pathing to the same target. */
     private static final long NO_PATH_COOLDOWN_MS = 2000L;
     /** Squared distance the target must move to invalidate the verdict (the goal may have become reachable). */
     private static final double NO_PATH_TARGET_MOVE_SQ = 4.0; // 2.0^2
+    /** How much closer (squared blocks) the mob must get to the target to count as progress, not jitter. */
+    private static final double PROGRESS_EPS_SQ = 1.0; // ~1.0 block
+    /** Consecutive no-progress partial paths before a mob is judged stuck and backed off. */
+    private static final int STUCK_STRIKES = 2;
 
     /**
      * entityId -> speed the navigator was last asked to move at (panic 2.0, follow/flee > 1, wander
@@ -49,6 +65,7 @@ public final class AsyncPathCaches {
         pendingPaths.remove(entityId);
         requestedSpeed.remove(entityId);
         noPathBackoff.remove(entityId);
+        approachTracker.remove(entityId);
     }
 
     /**
@@ -83,6 +100,63 @@ public final class AsyncPathCaches {
         noPathBackoff.remove(entityId);
     }
 
+    /**
+     * Feed the outcome of a completed <b>partial</b> path (one that did not reach the target) and report whether the
+     * mob should now back off (issue #49). Returns {@code true} when the mob has failed to close the distance to
+     * (roughly) this target on {@link #STUCK_STRIKES} successive attempts — it is stuck against an unreachable goal.
+     * A moved target resets the tracker; any attempt that closes the distance by more than {@link #PROGRESS_EPS_SQ}
+     * resets the strike count (a far but reachable target is walked toward in stages and never trips this).
+     *
+     * @param entityToTargetSq squared distance from the mob's CURRENT position to the target
+     */
+    public static boolean noteUnreachedAndCheckStuck(int entityId, double targetX, double targetY, double targetZ,
+        double entityToTargetSq, long now) {
+        Approach a = approachTracker.get(entityId);
+        if (a == null || movedTooFar(a.targetX - targetX, a.targetY - targetY, a.targetZ - targetZ)) {
+            approachTracker.put(entityId, new Approach(targetX, targetY, targetZ, entityToTargetSq, now));
+            return false;
+        }
+        if (entityToTargetSq < a.bestDistSq - PROGRESS_EPS_SQ) {
+            // Closed the distance since the last attempt: still approaching a reachable goal, keep pathing.
+            a.bestDistSq = entityToTargetSq;
+            a.strikes = 0;
+            a.timestamp = now;
+            return false;
+        }
+        a.strikes++;
+        a.timestamp = now;
+        return a.strikes >= STUCK_STRIKES;
+    }
+
+    /** Drop the approach tracker for {@code entityId} (target reached, or target changed). */
+    public static void clearApproach(int entityId) {
+        approachTracker.remove(entityId);
+    }
+
+    private static boolean movedTooFar(double dx, double dy, double dz) {
+        return dx * dx + dy * dy + dz * dz > NO_PATH_TARGET_MOVE_SQ;
+    }
+
+    /**
+     * Per-entity record of the best distance reached toward a stubborn target, and the failed-approach strike count.
+     */
+    public static final class Approach {
+
+        final double targetX, targetY, targetZ;
+        double bestDistSq;
+        int strikes;
+        long timestamp;
+
+        Approach(double targetX, double targetY, double targetZ, double bestDistSq, long timestamp) {
+            this.targetX = targetX;
+            this.targetY = targetY;
+            this.targetZ = targetZ;
+            this.bestDistSq = bestDistSq;
+            this.strikes = 0;
+            this.timestamp = timestamp;
+        }
+    }
+
     /** A remembered "no path found" outcome for a target position. */
     public static final class NoPathVerdict {
 
@@ -108,6 +182,16 @@ public final class AsyncPathCaches {
             if (now - it.next()
                 .getValue().timestamp > maxAgeMs) {
                 it.remove();
+            }
+        }
+        // approachTracker has no expiry-on-read (unlike noPathBackoff), so age it out here to stay bounded
+        // for mobs that vanished without a death event (despawn, chunk unload).
+        Iterator<Map.Entry<Integer, Approach>> at = approachTracker.entrySet()
+            .iterator();
+        while (at.hasNext()) {
+            if (now - at.next()
+                .getValue().timestamp > maxAgeMs) {
+                at.remove();
             }
         }
     }
