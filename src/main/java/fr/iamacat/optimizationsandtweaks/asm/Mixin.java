@@ -53,6 +53,8 @@ public enum Mixin implements IMixin {
     common_core_MixinWorldType(Side.COMMON, always(), "core.MixinWorldType"),
     common_core_MixinFMLClientHandler(Side.COMMON, always(), "core.MixinFMLClientHandler"),
     common_core_MixinFMLServerHandler(Side.COMMON, always(), "core.MixinFMLServerHandler"),
+    common_core_MixinFMLClientHandlerMissingDeps(Side.COMMON, always(), "core.MixinFMLClientHandlerMissingDeps"),
+    client_core_MixinGuiModsMissing(Side.CLIENT, always(), "core.MixinGuiModsMissing"),
     common_core_MixinStartupQuery(Side.COMMON,
         m -> OptimizationsandTweaksConfig.enableFMLAutoConfirmAfterFirstConfirmation, "core.MixinStartupQuery"),
     /*
