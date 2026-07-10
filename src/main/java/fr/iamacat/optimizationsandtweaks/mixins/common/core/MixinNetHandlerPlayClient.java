@@ -37,9 +37,9 @@ public class MixinNetHandlerPlayClient {
         double d2 = (double) packetIn.func_149029_h() / 32.0D;
         float f = (float) (packetIn.func_149028_l() * 360) / 256.0F;
         float f1 = (float) (packetIn.func_149030_m() * 360) / 256.0F;
-        EntityLivingBase entitylivingbase = (EntityLivingBase) EntityList
+        net.minecraft.entity.Entity spawned = EntityList
             .createEntityByID(packetIn.func_149025_e(), this.gameController.theWorld);
-        if (entitylivingbase == null) {
+        if (spawned == null) {
             cpw.mods.fml.common.FMLLog.info(
                 "Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!",
                 packetIn.func_149025_e(),
@@ -48,6 +48,20 @@ public class MixinNetHandlerPlayClient {
                 d2);
             return;
         }
+        // A mod (e.g. OreSpawn's UltimateFishHook) can wrongly send a non-living entity via the spawn-mob packet;
+        // the raw vanilla cast to EntityLivingBase then crashes the client (issue #127). Skip it instead.
+        if (!(spawned instanceof EntityLivingBase)) {
+            cpw.mods.fml.common.FMLLog.info(
+                "Server attempted to spawn a non-living entity ({0}, ID {1}) via the spawn-mob packet at ({2}, {3}, {4}); skipping!",
+                spawned.getClass()
+                    .getName(),
+                packetIn.func_149025_e(),
+                d0,
+                d1,
+                d2);
+            return;
+        }
+        EntityLivingBase entitylivingbase = (EntityLivingBase) spawned;
         entitylivingbase.serverPosX = packetIn.func_149023_f();
         entitylivingbase.serverPosY = packetIn.func_149034_g();
         entitylivingbase.serverPosZ = packetIn.func_149029_h();
