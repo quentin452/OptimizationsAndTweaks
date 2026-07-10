@@ -74,6 +74,24 @@ public abstract class MixinStructureGeneratorBaseMM extends WorldGenerator {
     private final void setBlockAt(World world, int fakeID, int realID, int meta, int customData1, int customData2,
         int x, int y, int z) {
         Block block = Block.getBlockById(realID);
+        // realID can be negative or an unregistered id (e.g. a small negative fakeID marker that passes the
+        // <=4095 range check in generateLayer), for which getBlockById returns null. The downstream
+        // BlockRotationData.getBlockRotationType(block), GenHelper.getMetadata(...) and world.setBlock(...,block,...)
+        // all dereference it, crashing structure generation with an NPE (issue #120). Skip the cell instead.
+        if (block == null) {
+            LogHelper.warning(
+                "No block registered for id " + realID
+                    + " (fake "
+                    + fakeID
+                    + ") at "
+                    + x
+                    + ","
+                    + y
+                    + ","
+                    + z
+                    + "; skipping.");
+            return;
+        }
         boolean isRealBlock = realID >= 0;
         boolean isAirBlock = world.isAirBlock(x, y, z);
         boolean canBlockMove = !world.getBlock(x, y, z)
