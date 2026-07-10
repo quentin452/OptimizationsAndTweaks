@@ -152,6 +152,15 @@ public abstract class MixinPathFinder {
             return OPT$PENDING;
         }
 
+        // Unreachable-target backoff (issue #49): a recent request to (roughly) this target already found no path.
+        // Re-computing it every AI interval is wasted work — it floods the async queue and churns the AI while the
+        // mob keeps failing to reach an unreachable goal (e.g. a player on a ledge it cannot climb). Skip until the
+        // backoff expires or the target moves; returning no path here also stops the mob walking toward the dead goal.
+        if (AsyncPathCaches.isNoPathCooling(entityId, targetX, targetY, targetZ, now)) {
+            if (traced) AiEventTrace.record(entityId, "pathfinder.requestPath -> NOPATH_BACKOFF (skip)");
+            return OPT$PENDING;
+        }
+
         final double fTargetX = targetX, fTargetY = targetY, fTargetZ = targetZ;
         long requestId = AsyncPathRequestDispatcher.submit(
             entity,
@@ -178,6 +187,8 @@ public abstract class MixinPathFinder {
                         fTargetZ,
                         System.currentTimeMillis()));
                 AsyncPathCaches.pendingPaths.remove(entityId);
+                // A path was found: the target is reachable, drop any unreachable-backoff (#49).
+                AsyncPathCaches.clearNoPath(entityId);
                 try {
                     if (!entity.isDead && path != null && entity instanceof EntityLiving) {
                         // Restore the speed the AI originally asked for (panic 2.0, follow, ...),
@@ -198,8 +209,11 @@ public abstract class MixinPathFinder {
                     }
                 } catch (Throwable ignored) {}
             },
-            // onFailure
-            error -> AsyncPathCaches.pendingPaths.remove(entityId));
+            // onFailure — no path: clear the in-flight marker and start the unreachable-backoff (#49).
+            error -> {
+                AsyncPathCaches.pendingPaths.remove(entityId);
+                AsyncPathCaches.recordNoPath(entityId, fTargetX, fTargetY, fTargetZ, System.currentTimeMillis());
+            });
 
         if (requestId == 0) {
             // Region too large or native queue full: let vanilla run this tick.
